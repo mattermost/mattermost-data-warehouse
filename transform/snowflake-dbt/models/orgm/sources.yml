@@ -1,0 +1,21 @@
+version: 2
+
+sources:
+  - name: orgm
+    database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
+    schema: orgm
+    loader: Stitch
+    loaded_at_field: _sdc_batched_at
+    
+    quoting:
+      database: true
+      schema: false
+      identifier: false
+
+    freshness:
+        warn_after: {count: 8, period: hour}
+        error_after: {count: 24, period: hour}
+
+    tables: 
+      - name: account
+        description: 'SFDC Account'

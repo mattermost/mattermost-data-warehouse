@@ -1,0 +1,253 @@
+version: "1.0"
+
+# Databases
+databases:
+    - analytics:
+        shared: no
+
+    - raw:
+        shared: no
+
+    - snowflake:
+        shared: yes
+
+    - testing_db:
+        shared: no
+
+
+# Roles
+roles:
+    ## Admin Roles
+    - accountadmin:
+        warehouses:
+            - loading
+        member_of:
+            - sysadmin
+
+    - securityadmin:
+        warehouses:
+            - loading
+        member_of:
+            - sysadmin
+
+    - sysadmin:
+        warehouses:
+            - loading
+        privileges:
+            databases:
+                read:
+                    - raw
+                    - analytics
+                write:
+                    - raw
+                    - analytics
+            schemas:
+                read:
+                    - raw.*
+                    - analytics.*
+                write:
+                    - raw.*
+                    - analytics.*
+            tables:
+                read:
+                    - raw.*.*
+                    - analytics.*.*
+                write:
+                    - raw.*.*
+                    - analytics.*.*
+
+    ## Regular Roles
+    - analyst_core:
+        warehouses:
+            - analyst_xs
+        member_of:
+            - boneyard
+        privileges:
+            databases:
+                read:
+                    - raw
+                    - analytics
+                    - snowflake
+                write:
+                    - analytics
+            schemas:
+                read:
+                    - raw.*
+                    - analytics.*
+                    - snowflake.*
+            tables:
+                read:
+                    - raw.*.*
+                    - analytics.*.*
+                    - snowflake.*.*
+    - loader:
+        warehouses:
+            - loading
+            - fivetran_warehouse
+            - stitch
+        owns:
+            schemas:
+                - raw.*
+            tables:
+                - raw.*.*
+        privileges:
+            databases:
+                read:
+                    - raw
+                    - analytics
+                write:
+                    - raw
+                    - analytics
+            schemas:
+                read:
+                    - raw.*
+                    - analytics.boneyard
+                write:
+                    - raw.*
+                    - analytics.boneyard
+            tables:
+                read:
+                    - raw.*.*
+                    - analytics.boneyard.*
+                write:
+                    - raw.*.*
+                    - analytics.boneyard.*
+
+    - reporter:
+        warehouses:
+            - reporting
+        member_of:
+            - boneyard
+        privileges:
+            databases:
+                read:
+                    - analytics
+                    - snowflake
+            schemas:
+                read:
+                    - analytics.*
+                    - snowflake.account_usage
+
+            tables:
+                read:
+                    - analytics.analytics.*
+                    - snowflake.account_usage.*
+
+    - transformer: # For automated jobs
+        warehouses:
+            - transforming_xs
+        owns:
+            schemas:
+                - analytics.*
+            tables:
+                - analytics.*.*
+        privileges:
+            databases:
+                read:
+                    - raw
+                    - analytics
+                write:
+                    - analytics
+            schemas:
+                read:
+                    - raw.*
+                write:
+                    - analytics.*
+            tables:
+                read:
+                    - raw.*.*
+                write:
+                    - analytics.*.*
+
+    # Object Roles
+    - boneyard:
+        warehouses:
+            - analyst_xs
+        privileges:
+            databases:
+                read:
+                    - analytics
+            schemas:
+                read:
+                    - analytics.boneyard
+            tables:
+                read:
+                    - analytics.boneyard.*
+
+    # User Roles
+    - adovenmuehle:
+        warehouses:
+            - analyst_xs
+
+    - rachel:
+        warehouses:
+            - analyst_xs
+
+    - airflow:
+        warehouses:
+            - loading
+            - transforming_xs
+
+    - schiff:
+        warehouses:
+            - reporting
+
+    - stitch:
+        warehouses:
+            - stitch
+    
+
+# Users
+users:
+    - adovenmuehle:
+        can_login: yes
+        member_of:
+            - accountadmin
+            - securityadmin
+
+    - rachel:
+        can_login: yes
+        member_of:
+            - accountadmin
+            - securityadmin
+
+    - schiff:
+        can_login: yes
+        member_of:
+            - accountadmin
+            - securityadmin
+
+    - airflow:
+        can_login: yes
+        member_of:
+            - airflow
+            - loader
+            - reporter
+            - sysadmin
+            - transformer
+
+    - stitch:
+        can_login: yes
+        member_of:
+            - stitch
+            - loader
+
+# Warehouses
+warehouses:
+    - admin:
+        size: x-small
+
+    - analyst_xs:
+        size: x-small
+
+    - loading:
+        size: x-small
+
+    - reporting:
+        size: x-small
+
+    - stitch:
+        size: x-small
+
+    - transforming_xs:
+        size: x-small

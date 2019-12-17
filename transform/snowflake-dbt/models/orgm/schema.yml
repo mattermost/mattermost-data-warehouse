@@ -1,0 +1,9 @@
+version: 2
+models:
+  - name: sfdc_account
+    description: base model for SFDC Accounts
+    columns:
+      - name: account_id
+        tests:
+          - not_null
+          - unique
