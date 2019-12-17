@@ -49,7 +49,7 @@ pod_resources = Resources(request_memory="500Mi", request_cpu="500m")
 pod_defaults = dict(
     get_logs=True,
     image_pull_policy="Always",
-    in_cluster=True,
+    in_cluster=False,
     is_delete_operator_pod=True,
     namespace=os.environ["NAMESPACE"],
 #    resources=pod_resources,
