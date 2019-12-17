@@ -7,7 +7,7 @@ from typing import List
 from airflow.contrib.kubernetes.pod import Resources
 
 DATA_IMAGE = "registry.gitlab.com/gitlab-data/data-image/data-image:latest"
-DBT_IMAGE = "mm-dbt-image:v1"
+DBT_IMAGE = "registry.gitlab.com/gitlab-data/data-image/dbt-image:latest"
 
 
 def split_date_parts(day: date, partition: str) -> List[dict]:
