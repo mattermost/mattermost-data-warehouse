@@ -22,7 +22,7 @@ from dags.kube_secrets import (
 
 # Load the env vars into a dict and set Secrets
 env = os.environ.copy()
-pod_env_vars = {**pod_env_vars, **{}}
+env_vars = {**pod_env_vars, **{}}
 
 # Default arguments for the DAG
 default_args = {
@@ -56,7 +56,7 @@ dbt_run = KubernetesPodOperator(
         SNOWFLAKE_TRANSFORM_WAREHOUSE,
         SNOWFLAKE_TRANSFORM_SCHEMA,
     ],
-    env_vars=pod_env_vars,
+    env_vars=env_vars,
     arguments=[dbt_run_cmd],
     dag=dag,
 )
