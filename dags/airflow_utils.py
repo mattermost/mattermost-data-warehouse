@@ -51,6 +51,7 @@ pod_defaults = dict(
     image_pull_policy="Always",
     in_cluster=True,
     is_delete_operator_pod=True,
+    namespace=os.environ["NAMESPACE"],
     resources=pod_resources,
     cmds=["/bin/bash", "-c"],
 )
