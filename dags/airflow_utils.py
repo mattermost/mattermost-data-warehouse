@@ -57,7 +57,7 @@ pod_defaults = dict(
 
 # Default environment variables for worker pods
 env = os.environ.copy()
-gitlab_pod_env_vars = {
+pod_env_vars = {
     "CI_PROJECT_DIR": "/analytics",
     "EXECUTION_DATE": "{{ next_execution_date }}",
     "SNOWFLAKE_LOAD_DATABASE": "RAW",
@@ -67,7 +67,7 @@ gitlab_pod_env_vars = {
 # Warehouse variable declaration
 xs_warehouse = f"'{{warehouse_name: transforming_xs}}'"
 
-clone_repo_cmd = f"git clone -b master --single-branch --depth 1 some-repo"
+clone_repo_cmd = f"git clone -b master --single-branch --depth 1 https://github.com/adovenmuehle/dbt"
 
 clone_and_setup_extraction_cmd = f"""
     {clone_repo_cmd} &&

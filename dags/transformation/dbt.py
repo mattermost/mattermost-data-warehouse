@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
-from airflow_utils import (
+from dags.airflow_utils import (
     DBT_IMAGE,
     dbt_install_deps_and_seed_cmd,
     dbt_install_deps_cmd,
@@ -11,7 +11,7 @@ from airflow_utils import (
     pod_env_vars,
     xs_warehouse,
 )
-from kube_secrets import (
+from dags.kube_secrets import (
     SNOWFLAKE_ACCOUNT,
     SNOWFLAKE_PASSWORD,
     SNOWFLAKE_TRANSFORM_ROLE,
