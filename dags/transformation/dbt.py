@@ -41,7 +41,7 @@ dag = DAG("dbt", default_args=default_args, schedule_interval="0 */8 * * *")
 # dbt-run
 dbt_run_cmd = f"""
     {dbt_install_deps_cmd} &&
-    dbt run --profiles-dir profile --target prod --models tag:nightly
+    dbt run --profiles-dir profile
 """
 dbt_run = KubernetesPodOperator(
     **pod_defaults,
