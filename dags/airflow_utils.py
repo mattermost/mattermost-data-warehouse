@@ -76,6 +76,7 @@ clone_and_setup_extraction_cmd = f"""
     cd analytics/extract/"""
 
 clone_and_setup_dbt_cmd = f"""
+    {clone_repo_cmd} &&
     cd dbt/transform/snowflake-dbt/"""
 
 dbt_install_deps_cmd = f"""
