@@ -61,7 +61,7 @@ env = os.environ.copy()
 pod_env_vars = {
     "CI_PROJECT_DIR": "/analytics",
     "EXECUTION_DATE": "{{ next_execution_date }}",
-    "SNOWFLAKE_LOAD_DATABASE": "RAW",
+    "SNOWFLAKE_LOAD_DATABASE": "DWH",
     "SNOWFLAKE_TRANSFORM_DATABASE": "ANALYTICS"
 }
 
