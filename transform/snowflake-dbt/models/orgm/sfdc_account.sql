@@ -7,7 +7,7 @@
 WITH source AS (
 
     SELECT *
-    FROM {{ source('salesforce', 'account') }}
+    FROM {{ source('orgm', 'account') }}
 
 )
 
