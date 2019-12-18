@@ -1,6 +1,5 @@
 {{config({
-    "materialized": "table",
-    "schema": "orgm"
+    "materialized": "table"
   })
 }}
 
@@ -8,7 +7,6 @@ WITH source AS (
 
     SELECT *
     FROM {{ source('orgm', 'account') }}
-
 )
 
 select *
