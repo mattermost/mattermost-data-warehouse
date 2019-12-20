@@ -4,10 +4,53 @@ import urllib.parse
 from datetime import date, timedelta
 from typing import List
 
+import apprise
+
 from airflow.contrib.kubernetes.pod import Resources
 
 DATA_IMAGE = "registry.gitlab.com/gitlab-data/data-image/data-image:latest"
 DBT_IMAGE = "registry.gitlab.com/gitlab-data/data-image/dbt-image:latest"
+
+apprise = apprise.Apprise()
+
+mm_webhook_url = os.getenv('MATTERMOST_WEBHOOK_URL')
+apprise.add(mm_webhook_url)
+
+
+def mm_failed_task(context):
+    """
+    Function to be used as a callable for on_failure_callback.
+    Send a Mattermost alert.
+    """
+    if mm_webhook_url == None:
+        return
+
+    # Set all of the contextual vars
+    base_url = "http://localhost:8000"
+    execution_date = context["ts"]
+    dag_context = context["dag"]
+    dag_name = dag_context.dag_id
+    dag_id = context["dag"].dag_id
+    task_name = context["task"].task_id
+    task_id = context["task_instance"].task_id
+    execution_date_pretty = context["execution_date"].strftime(
+        "%a, %b %d, %Y at %-I:%M %p UTC"
+    )
+
+    # Generate the link to the logs
+    log_params = urllib.parse.urlencode(
+        {"dag_id": dag_id, "task_id": task_id, "execution_date": execution_date}
+    )
+    log_link = f"{base_url}/log?{log_params}"
+    log_link_markdown = f"[View Logs]({log_link})"
+
+    apprise.notify(
+        body = f"""
+            | DAG | Task | Logs | Timestamp |
+            |-----|------|------|-----------|
+            |{dag_name}|{task_name}|{log_link_markdown}|{execution_date_pretty}|
+        """
+    )
 
 
 def split_date_parts(day: date, partition: str) -> List[dict]:

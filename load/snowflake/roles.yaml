@@ -83,7 +83,6 @@ roles:
     - loader:
         warehouses:
             - loading
-            - fivetran_warehouse
             - stitch
         owns:
             schemas:
@@ -236,9 +235,13 @@ users:
 warehouses:
     - admin:
         size: x-small
+        auto_resume: True
 
     - analyst_xs:
         size: x-small
+
+    - analyst_xl:
+        size: x-large
 
     - loading:
         size: x-small

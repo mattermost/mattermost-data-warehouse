@@ -7,6 +7,7 @@ from dags.airflow_utils import (
     DBT_IMAGE,
     dbt_install_deps_and_seed_cmd,
     dbt_install_deps_cmd,
+    mm_failed_task,
     pod_defaults,
     pod_env_vars,
     xs_warehouse,
@@ -29,6 +30,7 @@ default_args = {
     "catchup": False,
     "depends_on_past": False,
     "owner": "airflow",
+    "on_failure_callback": mm_failed_task,
     "retries": 0,
     "retry_delay": timedelta(minutes=1),
     "sla": timedelta(hours=8),
@@ -43,6 +45,7 @@ dbt_run_cmd = f"""
     {dbt_install_deps_cmd} &&
     dbt run --profiles-dir profile
 """
+
 dbt_run = KubernetesPodOperator(
     **pod_defaults,
     image=DBT_IMAGE,
@@ -57,6 +60,7 @@ dbt_run = KubernetesPodOperator(
         SNOWFLAKE_TRANSFORM_SCHEMA,
     ],
     env_vars=env_vars,
-    arguments=[dbt_run_cmd],
+    #arguments=[dbt_run_cmd],
+    arguments=["exit 1"],
     dag=dag,
 )
