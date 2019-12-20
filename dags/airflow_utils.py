@@ -1,20 +1,16 @@
 """ This file contains common operators/functions to be used across multiple DAGs """
+import json
 import os
 import urllib.parse
 from datetime import date, timedelta
 from typing import List
-
-import apprise
 
 from airflow.contrib.kubernetes.pod import Resources
 
 DATA_IMAGE = "registry.gitlab.com/gitlab-data/data-image/data-image:latest"
 DBT_IMAGE = "registry.gitlab.com/gitlab-data/data-image/dbt-image:latest"
 
-apprise = apprise.Apprise()
-
 mm_webhook_url = os.getenv('MATTERMOST_WEBHOOK_URL')
-apprise.add(mm_webhook_url)
 
 
 def mm_failed_task(context):
@@ -26,7 +22,7 @@ def mm_failed_task(context):
         return
 
     # Set all of the contextual vars
-    base_url = "http://localhost:8000"
+    base_url = "http://localhost:8080"
     execution_date = context["ts"]
     dag_context = context["dag"]
     dag_name = dag_context.dag_id
@@ -44,13 +40,19 @@ def mm_failed_task(context):
     log_link = f"{base_url}/log?{log_params}"
     log_link_markdown = f"[View Logs]({log_link})"
 
-    apprise.notify(
-        body = f"""
-            | DAG | Task | Logs | Timestamp |
-            |-----|------|------|-----------|
-            |{dag_name}|{task_name}|{log_link_markdown}|{execution_date_pretty}|
-        """
-    )
+    body = f"""
+        | DAG | Task | Logs | Timestamp |
+        |-----|------|------|-----------|
+        |{dag_name}|{task_name}|{log_link_markdown}|{execution_date_pretty}|
+    """
+
+    payload = {
+        'username': 'Airflow',
+        'text': body
+    }
+
+    os.system(f"curl -i -X POST -H 'Content-Type: application/json' -d '{json.dumps(payload)}') {mm_webhook_url}")
+
 
 
 def split_date_parts(day: date, partition: str) -> List[dict]:
