@@ -40,8 +40,7 @@ def mm_failed_task(context):
     log_link = f"{base_url}/log?{log_params}"
     log_link_markdown = f"[View Logs]({log_link})"
 
-    body = f"""
-        | DAG | Task | Logs | Timestamp |
+    body = f"""| DAG | Task | Logs | Timestamp |
         |-----|------|------|-----------|
         |{dag_name}|{task_name}|{log_link_markdown}|{execution_date_pretty}|
     """
@@ -51,7 +50,11 @@ def mm_failed_task(context):
         'text': body
     }
 
-    os.system(f"curl -i -X POST -H 'Content-Type: application/json' -d '{json.dumps(payload)}') {mm_webhook_url}")
+    os.system(f"""curl -i -X POST {mm_webhook_url} -H 'Content-Type: application/json' \
+        --data-binary @- <<'EOF'
+            {json.dumps(payload)}
+        EOF
+    """)
 
 
 
