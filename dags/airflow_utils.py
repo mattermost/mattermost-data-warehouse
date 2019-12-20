@@ -42,8 +42,7 @@ def mm_failed_task(context):
 
     body = f"""| DAG | Task | Logs | Timestamp |
         |-----|------|------|-----------|
-        |{dag_name}|{task_name}|{log_link_markdown}|{execution_date_pretty}|
-    """
+        |{dag_name}|{task_name}|{log_link_markdown}|{execution_date_pretty}|"""
 
     payload = {
         'username': 'Airflow',
