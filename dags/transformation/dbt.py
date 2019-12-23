@@ -60,7 +60,6 @@ dbt_run = KubernetesPodOperator(
         SNOWFLAKE_TRANSFORM_SCHEMA,
     ],
     env_vars=env_vars,
-    #arguments=[dbt_run_cmd],
-    arguments=["exit 1"],
+    arguments=[dbt_run_cmd],
     dag=dag,
 )
