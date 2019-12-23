@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
-from dags.airflow_utils import DATA_IMAGE, clone_repo_cmd, gitlab_defaults, mm_failed_task
+from dags.airflow_utils import DATA_IMAGE, clone_repo_cmd, pod_defaults, mm_failed_task
 from dags.kube_secrets import (
     PERMISSION_BOT_ACCOUNT,
     PERMISSION_BOT_DATABASE,
@@ -44,7 +44,7 @@ dag = DAG(
 
 # Task 1
 snowflake_load = KubernetesPodOperator(
-    **gitlab_defaults,
+    **pod_defaults,
     image=DATA_IMAGE,
     task_id="snowflake-permissions",
     name="snowflake-permissions",
