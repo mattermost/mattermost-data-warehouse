@@ -231,6 +231,12 @@ users:
             - stitch
             - loader
 
+    - permission_bot:
+        can_login: yes
+        member_of:
+            - permission_bot
+            - securityadmin
+
 # Warehouses
 warehouses:
     - admin:
@@ -239,9 +245,6 @@ warehouses:
 
     - analyst_xs:
         size: x-small
-
-    - analyst_xl:
-        size: x-large
 
     - loading:
         size: x-small
