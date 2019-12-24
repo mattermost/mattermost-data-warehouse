@@ -11,9 +11,6 @@ databases:
     - snowflake:
         shared: yes
 
-    - testing_db:
-        shared: no
-
 
 # Roles
 roles:
@@ -144,25 +141,13 @@ roles:
     # Object Roles
 
     # User Roles
-    - adovenmuehle:
-        warehouses:
-            - analyst_xs
-
-    - rachel:
-        warehouses:
-            - analyst_xs
-
-    - airflow:
-        warehouses:
-            - analyst_xs
-
-    - schiff:
-        warehouses:
-            - reporting
-
     - stitch:
         warehouses:
             - stitch
+
+    - reporting:
+        warehouses:
+            - analyst_xs
     
 
 # Users
@@ -210,9 +195,6 @@ users:
 # Warehouses
 warehouses:
     - analyst_xs:
-        size: x-small
-
-    - reporting:
         size: x-small
 
     - stitch:
