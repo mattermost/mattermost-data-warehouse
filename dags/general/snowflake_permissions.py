@@ -32,7 +32,7 @@ default_args = {
 container_cmd = f"""
     {clone_repo_cmd} &&
     meltano init airflow_job &&
-    cp analytics/load/snowflake/roles.yml airflow_job/load/roles.yml &&
+    cp dbt/load/snowflake/roles.yml airflow_job/load/roles.yml &&
     cd airflow_job/ &&
     meltano permissions grant load/roles.yml --db snowflake $DRY
 """
