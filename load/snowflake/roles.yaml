@@ -239,10 +239,6 @@ users:
 
 # Warehouses
 warehouses:
-    - admin:
-        size: x-small
-        auto_resume: True
-
     - analyst_xs:
         size: x-small
 
