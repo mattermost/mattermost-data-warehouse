@@ -63,7 +63,7 @@ roles:
                     - analytics.*.*
 
     ## Regular Roles
-    - loader:
+    - stitch:
         warehouses:
             - stitch
         owns:
@@ -94,7 +94,7 @@ roles:
                     - raw.*.*
                     - analytics.*.*
 
-    - reporter:
+    - reporting:
         warehouses:
             - analyst_xs
         member_of:
@@ -131,7 +131,7 @@ roles:
             schemas:
                 read:
                     - raw.*
-                    - analtics.*
+                    - analytics.*
                 write:
                     - analytics.*
             tables:
@@ -154,8 +154,7 @@ roles:
 
     - airflow:
         warehouses:
-            - loading
-            - transforming_xs
+            - analyst_xs
 
     - schiff:
         warehouses:
@@ -189,9 +188,6 @@ users:
     - airflow:
         can_login: yes
         member_of:
-            - airflow
-            - loader
-            - reporter
             - sysadmin
             - transformer
 
@@ -199,7 +195,6 @@ users:
         can_login: yes
         member_of:
             - stitch
-            - loader
 
     - permission_bot:
         can_login: yes
