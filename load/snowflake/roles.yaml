@@ -20,19 +20,25 @@ roles:
     ## Admin Roles
     - accountadmin:
         warehouses:
-            - loading
+            - analyst_xs
         member_of:
             - sysadmin
 
     - securityadmin:
         warehouses:
-            - loading
+            - analyst_xs
         member_of:
             - sysadmin
 
+    - permission_bot:
+        warehouses:
+            - analyst_xs
+        member_of:
+            - securityadmin
+
     - sysadmin:
         warehouses:
-            - loading
+            - analyst_xs
         privileges:
             databases:
                 read:
@@ -57,32 +63,8 @@ roles:
                     - analytics.*.*
 
     ## Regular Roles
-    - analyst_core:
-        warehouses:
-            - analyst_xs
-        member_of:
-            - boneyard
-        privileges:
-            databases:
-                read:
-                    - raw
-                    - analytics
-                    - snowflake
-                write:
-                    - analytics
-            schemas:
-                read:
-                    - raw.*
-                    - analytics.*
-                    - snowflake.*
-            tables:
-                read:
-                    - raw.*.*
-                    - analytics.*.*
-                    - snowflake.*.*
     - loader:
         warehouses:
-            - loading
             - stitch
         owns:
             schemas:
@@ -100,23 +82,23 @@ roles:
             schemas:
                 read:
                     - raw.*
-                    - analytics.boneyard
+                    - analytics.*
                 write:
                     - raw.*
-                    - analytics.boneyard
+                    - analytics.*
             tables:
                 read:
                     - raw.*.*
-                    - analytics.boneyard.*
+                    - analytics.*.*
                 write:
                     - raw.*.*
-                    - analytics.boneyard.*
+                    - analytics.*.*
 
     - reporter:
         warehouses:
-            - reporting
+            - analyst_xs
         member_of:
-            - boneyard
+            - reporting
         privileges:
             databases:
                 read:
@@ -126,15 +108,14 @@ roles:
                 read:
                     - analytics.*
                     - snowflake.account_usage
-
             tables:
                 read:
-                    - analytics.analytics.*
+                    - analytics.*.*
                     - snowflake.account_usage.*
 
     - transformer: # For automated jobs
         warehouses:
-            - transforming_xs
+            - analyst_xs
         owns:
             schemas:
                 - analytics.*
@@ -150,28 +131,17 @@ roles:
             schemas:
                 read:
                     - raw.*
+                    - analtics.*
                 write:
                     - analytics.*
             tables:
                 read:
                     - raw.*.*
+                    - analytics.*.*
                 write:
                     - analytics.*.*
 
     # Object Roles
-    - boneyard:
-        warehouses:
-            - analyst_xs
-        privileges:
-            databases:
-                read:
-                    - analytics
-            schemas:
-                read:
-                    - analytics.boneyard
-            tables:
-                read:
-                    - analytics.boneyard.*
 
     # User Roles
     - adovenmuehle:
@@ -237,19 +207,18 @@ users:
             - permission_bot
             - securityadmin
 
+    - looker:
+        can_login: yes
+        member_of:
+            - reporting
+
 # Warehouses
 warehouses:
     - analyst_xs:
-        size: x-small
-
-    - loading:
         size: x-small
 
     - reporting:
         size: x-small
 
     - stitch:
-        size: x-small
-
-    - transforming_xs:
         size: x-small
