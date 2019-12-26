@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: util
+    database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
+    schema: util
+
+    tables:
+      - name: dates
+        description: 'Date utility table'

@@ -19,3 +19,9 @@ sources:
     tables: 
       - name: account
         description: 'SFDC Account'
+
+      - name: opportunity
+        description: 'SFDC Opportunity'
+
+      - name: opportunitylineitem
+        description: 'SFDC Opportunity Line Item'
