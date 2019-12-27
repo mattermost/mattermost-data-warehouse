@@ -20,8 +20,8 @@ WITH account_monthly_arr_deltas_by_type AS (
         sum(CASE WHENtotal_arr_delta < 0 AND coalesce(account_daily_arr.total_arr,0) != 0then total_arr_delta ELSE 0 END) AS total_arr_contraction,
         sum(CASE WHENtotal_arr_delta < 0 AND coalesce(account_daily_arr.total_arr,0) = 0 THEN total_arr_delta ELSE 0 END) AS total_arr_churn,
         sum(total_arr_delta) AS total_arr_delta
-    FROM {{ ref('finance', 'account_monthly_arr_deltas') }}
-        LEFT JOIN {{ ref('finance', 'account_daily_arr') }}
+    FROM {{ ref('account_monthly_arr_deltas') }}
+        LEFT JOIN {{ ref('account_daily_arr') }}
             ON account_monthly_arr_deltas.account_sfid = account_daily_arr.account_sfid AND account_monthly_arr_deltas.month_end = account_daily_arr.day
     WHERE abs(total_arr_norm_delta) > 0
     GROUP BY 1, 2, 3, 4

@@ -39,8 +39,8 @@ WITH account_daily_arr_deltas AS (
                 THEN 0 
             ELSE  coalesce(previous_day.total_arr,0)
         END  AS total_arr_delta
-    FROM {{ ref('finance', 'account_util_dates') }}
-    LEFT JOIN {{ ref('finance', 'account_daily_arr') }} AS new_day  ON  account_util_dates.account_sfid = new_day.account_sfid AND account_util_dates.day = new_day.day
-    LEFT JOIN {{ ref('finance', 'account_daily_arr') }} AS previous_day  ON  account_util_dates.account_sfid = previous_day.account_sfid AND account_util_dates.day - interval '1 day' = previous_day.day;
+    FROM {{ ref('account_util_dates') }}
+    LEFT JOIN {{ ref('account_daily_arr') }} AS new_day  ON  account_util_dates.account_sfid = new_day.account_sfid AND account_util_dates.day = new_day.day
+    LEFT JOIN {{ ref('account_daily_arr') }} AS previous_day  ON  account_util_dates.account_sfid = previous_day.account_sfid AND account_util_dates.day - interval '1 day' = previous_day.day;
 )
 SELECT * FROM account_daily_arr_deltas
