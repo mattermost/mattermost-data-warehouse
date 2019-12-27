@@ -6,3 +6,27 @@ models:
       - name: account_sfid
         tests:
           - not_null
+  - name: account_daily_arr
+    description: Daily ARR at the Account level
+    columns:
+      - name: account_sfid
+        tests:
+          - not_null
+  - name: account_daily_arr_deltas
+    description: Daily ARR deltas at the Account level
+    columns:
+      - name: account_sfid
+        tests:
+          - not_null
+  - name: account_montly_arr_deltas
+    description: Monthly ARR deltas at the Account level
+    columns:
+      - name: account_sfid
+        tests:
+          - not_null
+  - name: account_monthly_arr_deltas_by_type
+    description: Monthly ARR Deltas by ARR type
+    columns:
+      - name: account_sfid
+        tests:
+          - not_null
