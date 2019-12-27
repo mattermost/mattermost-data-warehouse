@@ -26,3 +26,4 @@ WITH account_monthly_arr_deltas_by_type AS (
     WHERE abs(total_arr_norm_delta) > 0
     GROUP BY 1, 2, 3, 4
 )
+select * from account_monthly_arr_deltas_by_type
