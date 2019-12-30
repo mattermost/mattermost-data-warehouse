@@ -120,7 +120,7 @@ clone_repo_cmd = f"git clone -b master --single-branch --depth 1 https://github.
 clone_and_setup_extraction_cmd = f"""
     {clone_repo_cmd} &&
     export PYTHONPATH="/opt/bitnami/airflow/dags/git/:$PYTHONPATH" &&
-    cd analytics/extract/"""
+    cd dbt"""
 
 clone_and_setup_dbt_cmd = f"""
     {clone_repo_cmd} &&

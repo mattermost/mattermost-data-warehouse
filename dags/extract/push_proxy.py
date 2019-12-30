@@ -31,7 +31,6 @@ default_args = {
 # Note the {{{{ }}}} is because we format this string but want the resulting string to just have {{ execution_date... }}
 container_cmd = """
     {} &&
-    cd dbt &&
     python extract/s3_extract/push_proxy_job.py --log-type {} --date {{{{ execution_date.strftime("%Y/%m/%d") }}}}
 """
 
