@@ -8,7 +8,7 @@ def extract_from_stage(import_table, stage, schema, path, pattern, env):
     engine = snowflake_engine_factory(env, 'LOADER', schema)
 
     query = f"""
-        COPY INTO {import_table}
+        COPY INTO raw.{schema}.{import_table}
         FROM @{stage}/{path}
         PATTERN = '{pattern}'
         ON_ERROR = 'CONTINUE';
