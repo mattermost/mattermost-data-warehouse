@@ -110,6 +110,26 @@ roles:
                     - analytics.*.*
                     - snowflake.account_usage.*
 
+    - loader:
+        warehouses:
+            - analyst_xs
+        member_of:
+            - loader
+        privileges:
+            databases:
+                read:
+                    - raw
+                write:
+                    - raw
+            schemas:
+                read:
+                    - raw.*
+                write:
+                    - raw.*
+            tables:
+                read:
+                    - raw.*.*
+
     - transformer: # For automated jobs
         warehouses:
             - analyst_xs
@@ -191,6 +211,11 @@ users:
         can_login: yes
         member_of:
             - reporting
+
+    - loader:
+        can_login: yes
+        member_of:
+            - loader
 
 # Warehouses
 warehouses:

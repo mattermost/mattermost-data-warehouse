@@ -1,5 +1,10 @@
 from airflow.contrib.kubernetes.secret import Secret
 
+# AWS
+AWS_ACCOUNT_ID = Secret(
+    "env", "AWS_ACCOUNT_ID", "airflow", "AWS_ACCOUNT_ID"
+)
+
 # Snowflake Load
 SNOWFLAKE_LOAD_DATABASE = Secret(
     "env", "SNOWFLAKE_LOAD_DATABASE", "airflow", "SNOWFLAKE_LOAD_DATABASE"
