@@ -67,5 +67,6 @@ for log_type in ["US", "TEST", "EU"]:
 
     if job is not None:
         job << new_job
-        job = new_job
+
+    job = new_job
 
