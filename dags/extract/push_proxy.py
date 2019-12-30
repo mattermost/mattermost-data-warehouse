@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
-from dags.airflow_utils import DATA_IMAGE, clone_repo_cmd, pod_defaults, mm_failed_task
+from dags.airflow_utils import DATA_IMAGE, clone_and_setup_extraction_cmd, pod_defaults, mm_failed_task
 from dags.kube_secrets import (
     AWS_ACCOUNT_ID,
     SNOWFLAKE_LOAD_USER,
@@ -63,7 +63,7 @@ def get_push_proxy_job(log_type, cmd):
 
 job = None
 for log_type in ["US", "TEST", "EU"]:
-    new_job = get_push_proxy_job(log_type.lower(), container_cmd.format(clone_repo_cmd, log_type))
+    new_job = get_push_proxy_job(log_type.lower(), container_cmd.format(clone_and_setup_extraction_cmd, log_type))
 
     if job is not None:
         job << new_job

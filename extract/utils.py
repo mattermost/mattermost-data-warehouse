@@ -1,5 +1,4 @@
 import logging
-import pandas as pd
 import sys
 from time import time
 from typing import Any, Dict, List, Tuple
