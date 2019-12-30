@@ -40,17 +40,9 @@ dag = DAG(
     "push_proxy", default_args=default_args, schedule_interval="0 4 * * *"
 )
 
-job = None
-for log_type in ["US", "TEST", "EU"]:
-    new_job = get_push_proxy_job(container_cmd.format(clone_repo_cmd, log_type))
-
-    if job is not None:
-        job << new_job
-        job = new_job
-
 
 def get_push_proxy_job(log_type, cmd):
-    KubernetesPodOperator(
+    return KubernetesPodOperator(
         **pod_defaults,
         image=DATA_IMAGE,
         task_id=f"push-proxy-{log_type}",
@@ -67,3 +59,13 @@ def get_push_proxy_job(log_type, cmd):
         arguments=[cmd],
         dag=dag,
     )
+
+
+job = None
+for log_type in ["US", "TEST", "EU"]:
+    new_job = get_push_proxy_job(log_type, container_cmd.format(clone_repo_cmd, log_type))
+
+    if job is not None:
+        job << new_job
+        job = new_job
+
