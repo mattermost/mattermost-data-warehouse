@@ -61,11 +61,11 @@ def get_push_proxy_job(log_type, cmd):
 
 
 job = None
-for log_type in ["US", "TEST", "EU"]:
+for log_type in ["US", "TEST", "DE"]:
     new_job = get_push_proxy_job(log_type.lower(), container_cmd.format(clone_and_setup_extraction_cmd, log_type))
 
     if job is not None:
-        job << new_job
+        job >> new_job
 
     job = new_job
 
