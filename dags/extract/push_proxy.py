@@ -31,7 +31,7 @@ default_args = {
 # Note the {{{{ }}}} is because we format this string but want the resulting string to just have {{ execution_date... }}
 container_cmd = """
     {} &&
-    python extract/s3_extract/push_proxy_job.py -t {} -d {{{{ execution_date.strftime("%Y/%m/%d") }}}}
+    python extract/s3_extract/push_proxy_job.py {} {{{{ execution_date.strftime("%Y/%m/%d") }}}}
 """
 
 # Create the DAG
