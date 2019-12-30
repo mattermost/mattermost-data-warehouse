@@ -63,7 +63,7 @@ def get_push_proxy_job(log_type, cmd):
 
 job = None
 for log_type in ["US", "TEST", "EU"]:
-    new_job = get_push_proxy_job(log_type, container_cmd.format(clone_repo_cmd, log_type))
+    new_job = get_push_proxy_job(lower(log_type), container_cmd.format(clone_repo_cmd, log_type))
 
     if job is not None:
         job << new_job
