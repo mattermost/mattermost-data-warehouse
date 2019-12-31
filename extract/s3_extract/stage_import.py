@@ -39,6 +39,12 @@ DIAGNOSTICS_LOCATIONS = [
 ]
 
 
+def releases_import(import_date):
+    loc = os.getenv('RELEASE_LOCATION')
+    # Releases and diagnostics S3 folders have the same format so we re-use the pattern
+    extract_from_stage('log_entries', 'releases_stage', 'releases', loc, get_diagnostics_pattern(loc, import_date), os.environ.copy())
+
+
 def diagnostics_import(import_date):
     for env_loc in DIAGNOSTICS_LOCATIONS:
         loc = os.getenv(env_loc)
