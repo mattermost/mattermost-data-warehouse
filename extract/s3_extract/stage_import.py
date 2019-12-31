@@ -46,7 +46,12 @@ def push_proxy_import(log_type, import_date):
     aws_account_id = os.getenv('AWS_ACCOUNT_ID')
     az = loc['az']
 
-    extract_from_stage(loc['table'], loc['stage'], 'push_proxy', get_path(aws_account_id, az), import_date, os.environ)
+    extract_from_stage(loc['table'], loc['stage'], 'push_proxy', get_path(aws_account_id, az), get_pattern(import_date), os.environ)
+
+
+def get_pattern(import_date):
+    date = import_date.replace('/', '\\/')
+    return f".*{date}\\/.*"
 
 
 def get_path(aws_account_id, az):
