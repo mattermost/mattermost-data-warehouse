@@ -34,6 +34,17 @@ PUSH_PROXY_LOCATIONS = {
     }
 }
 
+DIAGNOSTICS_LOCATIONS = [
+    'DIAGNOSTIC_LOCATION_ONE', 'DIAGNOSTIC_LOCATION_TWO'
+]
+
+
+def diagnostics_import(import_date):
+    for env_loc in DIAGNOSTICS_LOCATIONS:
+        loc = os.getenv(env_loc)
+        extract_from_stage('log_entries', 'diagnostics_stage', 'diagnostics', loc, get_diagnostics_pattern(loc, import_date), os.environ.copy())
+
+
 def push_proxy_import(log_type, import_date):
     """
     Function to load data from a previously set up Snowflake stage
@@ -46,12 +57,16 @@ def push_proxy_import(log_type, import_date):
     aws_account_id = os.getenv('AWS_ACCOUNT_ID')
     az = loc['az']
 
-    extract_from_stage(loc['table'], loc['stage'], 'push_proxy', get_path(aws_account_id, az), get_pattern(import_date), os.environ)
+    extract_from_stage(loc['table'], loc['stage'], 'push_proxy', get_path(aws_account_id, az), get_push_proxy_pattern(import_date), os.environ.copy())
 
 
-def get_pattern(import_date):
+def get_push_proxy_pattern(import_date):
     date = import_date.replace('/', '\\/')
     return f".*{date}\\/.*"
+
+
+def get_diagnostics_pattern(loc, import_date):
+    return f".*{loc}.{import_date}.*"
 
 
 def get_path(aws_account_id, az):
