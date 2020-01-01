@@ -29,10 +29,10 @@ default_args = {
 }
 
 # Set the command for the container
-# Note the {{{{ }}}} is because we format this string but want the resulting string to just have {{ execution_date... }}
+# Note the {{{{ }}}} is because we format this string but want the resulting string to just have {{ yesterday_ds }}
 container_cmd = f"""
     {clone_and_setup_extraction_cmd} &&
-    python extract/s3_extract/diagnostics_job.py {{{{ execution_date.strftime("%Y-%m-%d") }}}}
+    python extract/s3_extract/diagnostics_job.py {{{{ yesterday_ds }}}}
 """
 
 # Create the DAG
