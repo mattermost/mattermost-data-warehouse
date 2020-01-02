@@ -40,7 +40,7 @@ DIAGNOSTICS_LOCATIONS = [
 
 
 def licenses_import(import_date):
-    extract_from_stage('licenses', 'licenses_stage', 'blp', import_date, f".*{import_date}.csv", os.environ.copy())
+    extract_from_stage('licenses', 'licenses_stage', 'licenses', import_date, f".*{import_date}.csv", os.environ.copy())
 
 
 def releases_import(import_date):
