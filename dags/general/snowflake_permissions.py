@@ -36,9 +36,9 @@ container_cmd = f"""
     cp dbt/load/snowflake/roles.yaml airflow_job/load/roles.yml &&
     cd airflow_job/ &&
     tmpfile=$(mktemp)
-    meltano permissions grant load/roles.yml --db snowflake $DRY > tmpfile &&
+    meltano permissions grant load/roles.yml --db snowflake $DRY > $tmpfile &&
     cd ../dbt &&
-    cat tmpfile &&
+    cat $tmpfile &&
     python utils/run_snowflake_queries.py $tmpfile PERMISSIONS analytics &&
     rm $tmpfile
 """
