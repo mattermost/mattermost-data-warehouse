@@ -31,7 +31,7 @@ default_args = {
 # Set the command for the container
 container_cmd = f"""
     {clone_repo_cmd} &&
-    export PYTHONPATH="/opt/bitnami/airflow/dags/git/:$PYTHONPATH" &&
+    export PYTHONPATH="/opt/bitnami/airflow/dags/git/dbt/:$PYTHONPATH" &&
     meltano init airflow_job &&
     cp dbt/load/snowflake/roles.yaml airflow_job/load/roles.yml &&
     cd airflow_job/ &&
