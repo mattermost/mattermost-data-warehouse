@@ -40,7 +40,7 @@ KubernetesPodOperator(
     **pod_defaults,
     image=DATA_IMAGE,
     task_id="licenses",
-    name="license_import",
+    name="license-import",
     secrets=[
         SNOWFLAKE_LOAD_USER,
         SNOWFLAKE_LOAD_PASSWORD,
