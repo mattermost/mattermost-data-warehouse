@@ -33,7 +33,7 @@ container_cmd = f"""
 
 # Create the DAG
 dag = DAG(
-    "licenses", default_args=default_args, schedule_interval="0 4 * * 0"
+    "licenses", default_args=default_args, schedule_interval="0 4 * * *"
 )
 
 KubernetesPodOperator(
