@@ -42,12 +42,12 @@ def snowflake_engine_factory(
             "ROLE": "LOADER",
         },
         "PERMISSIONS": {
-            "USER": "SNOWFLAKE_PERMISSION_USER",
-            "PASSWORD": "SNOWFLAKE_PERMISSION_PASSWORD",
-            "ACCOUNT": "SNOWFLAKE_ACCOUNT",
-            "DATABASE": "SNOWFLAKE_PERMISSION_DATABASE",
-            "WAREHOUSE": "SNOWFLAKE_PERMISSION_WAREHOUSE",
-            "ROLE": "SNOWFLAKE_PERMISSION_ROLE",
+            "USER": "PERMISSION_BOT_USER",
+            "PASSWORD": "PERMISSION_BOT_PASSWORD",
+            "ACCOUNT": "PERMISSION_BOT_ACCOUNT",
+            "DATABASE": "PERMISSION_BOT_DATABASE",
+            "WAREHOUSE": "PERMISSION_BOT_WAREHOUSE",
+            "ROLE": "PERMISSION_BOT_ROLE",
         },
     }
 
