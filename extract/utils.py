@@ -41,13 +41,13 @@ def snowflake_engine_factory(
             "WAREHOUSE": "SNOWFLAKE_LOAD_WAREHOUSE",
             "ROLE": "LOADER",
         },
-        "CI_USER": {
-            "USER": "SNOWFLAKE_USER",  ## this is the CI User
-            "PASSWORD": "SNOWFLAKE_PASSWORD",
+        "PERMISSIONS": {
+            "USER": "SNOWFLAKE_PERMISSION_USER",
+            "PASSWORD": "SNOWFLAKE_PERMISSION_PASSWORD",
             "ACCOUNT": "SNOWFLAKE_ACCOUNT",
-            "DATABASE": "SNOWFLAKE_TRANSFORM_DATABASE",
-            "WAREHOUSE": "SNOWFLAKE_TRANSFORM_WAREHOUSE",
-            "ROLE": "SNOWFLAKE_TRANSFORM_ROLE",
+            "DATABASE": "SNOWFLAKE_PERMISSION_DATABASE",
+            "WAREHOUSE": "SNOWFLAKE_PERMISSION_WAREHOUSE",
+            "ROLE": "SNOWFLAKE_PERMISSION_ROLE",
         },
     }
 
