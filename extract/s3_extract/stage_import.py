@@ -39,6 +39,10 @@ DIAGNOSTICS_LOCATIONS = [
 ]
 
 
+def licenses_import(import_date):
+    extract_from_stage('licenses', 'licenses_stage', 'blp', import_date, f".*{import_date}.csv", os.environ.copy())
+
+
 def releases_import(import_date):
     loc = os.getenv('RELEASE_LOCATION')
     # Releases and diagnostics S3 folders have the same format so we re-use the pattern
