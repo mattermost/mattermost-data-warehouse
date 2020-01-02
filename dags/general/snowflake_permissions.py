@@ -38,8 +38,8 @@ container_cmd = f"""
     tmpfile=$(mktemp)
     meltano permissions grant load/roles.yml --db snowflake $DRY > tmpfile &&
     cd ../dbt &&
-    python utils/run_snowflake_queries.py tmpfile PERMISSIONS analytics &&
-    rm tmpfile
+    python utils/run_snowflake_queries.py $tmpfile PERMISSIONS analytics &&
+    rm $tmpfile
 """
 
 # Create the DAG
