@@ -35,7 +35,11 @@ container_cmd = f"""
     meltano init airflow_job &&
     cp dbt/load/snowflake/roles.yaml airflow_job/load/roles.yml &&
     cd airflow_job/ &&
-    meltano permissions grant load/roles.yml --db snowflake $DRY | PYTHONPATH=../ python ../dbt/utils/run_snowflake_queries.py PERMISSIONS analytics
+    tmpfile=$(mktemp)
+    meltano permissions grant load/roles.yml --db snowflake $DRY > tmpfile &&
+    cd ../dbt &&
+    python utils/run_snowflake_queries.py tmpfile PERMISSIONS analytics &&
+    rm tmpfile
 """
 
 # Create the DAG
