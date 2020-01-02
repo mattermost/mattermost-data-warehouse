@@ -1,7 +1,7 @@
 version: 2
 models:
   - name: account_util_dates
-    description: Util for calculating ARR
+    description: Util for calculating ARR at Account Level
     columns:
       - name: account_sfid
         tests:
@@ -25,8 +25,38 @@ models:
         tests:
           - not_null
   - name: account_monthly_arr_deltas_by_type
-    description: Monthly ARR Deltas by ARR type
+    description: Monthly Account ARR Deltas by ARR type
     columns:
       - name: account_sfid
+        tests:
+          - not_null
+  - name: master_account_util_dates
+    description: Util for calculating ARR at Master Account Level
+    columns:
+      - name: master_account_sfid
+        tests:
+          - not_null
+  - name: master_account_daily_arr
+    description: Daily ARR at the Master Account level
+    columns:
+      - name: master_account_sfid
+        tests:
+          - not_null
+  - name: master_account_daily_arr_deltas
+    description: Daily ARR deltas at the Master Account level
+    columns:
+      - name: master_account_sfid
+        tests:
+          - not_null
+  - name: master_account_monthly_arr_deltas
+    description: Monthly ARR deltas at the Master Account level
+    columns:
+      - name: master_account_sfid
+        tests:
+          - not_null
+  - name: master_account_monthly_arr_deltas_by_type
+    description: Monthly Master Account ARR Deltas by ARR type
+    columns:
+      - name: master_account_sfid
         tests:
           - not_null
