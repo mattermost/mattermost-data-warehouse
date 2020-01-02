@@ -38,6 +38,7 @@ container_cmd = f"""
     tmpfile=$(mktemp)
     meltano permissions grant load/roles.yml --db snowflake $DRY > tmpfile &&
     cd ../dbt &&
+    cat tmpfile &&
     python utils/run_snowflake_queries.py $tmpfile PERMISSIONS analytics &&
     rm $tmpfile
 """
