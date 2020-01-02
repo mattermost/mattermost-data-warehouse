@@ -47,7 +47,7 @@ def snowflake_engine_factory(
             "ACCOUNT": "PERMISSION_BOT_ACCOUNT",
             "DATABASE": "PERMISSION_BOT_DATABASE",
             "WAREHOUSE": "PERMISSION_BOT_WAREHOUSE",
-            "ROLE": "PERMISSION_BOT_ROLE",
+            "ROLE": "PERMISSION_BOT",
         },
     }
 
