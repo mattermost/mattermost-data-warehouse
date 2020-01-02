@@ -72,7 +72,7 @@ def execute_query(engine: Engine, query: str) -> List[Tuple[Any]]:
     """
 
     try:
-        logging.info(f"Running query on Snowflake: \n{query}")
+        logging.warning(f"Running query on Snowflake: \n{query}")
         connection = engine.connect()
         results = connection.execute(query).fetchall()
     finally:
