@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: licenses
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: licenses
+
+    tables:
+      - name: licenses
+        description: 'License data'

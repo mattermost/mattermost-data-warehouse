@@ -1,0 +1,9 @@
+version: 2
+
+models:
+  - name: license_overview
+    description: Overview of license information
+    columns:
+      - name: licenseid
+        tests:
+          - not_null
