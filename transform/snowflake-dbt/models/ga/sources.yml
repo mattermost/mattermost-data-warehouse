@@ -1,0 +1,18 @@
+version: 2
+
+sources:
+  - name: ga_traffic_org
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: ga_traffic_org
+
+    tables: 
+      - name: report
+        description: 'Users visiting Mattermost.org by Source and Channel Grouping'
+
+  - name: ga_traffic_com
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: ga_traffic_com
+
+    tables: 
+      - name: report
+        description: 'Users visiting Mattermost.com by Source and Channel Grouping'
