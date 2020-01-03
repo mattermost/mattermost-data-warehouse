@@ -14,7 +14,7 @@ WITH license_overview AS (
         to_timestamp(licenses.expiresat/1000) as expiresat,
         licenses.customerid, 
         licenses.email as license_email,
-        COALESCE(master_account.name, account.name) as master_account.name, 
+        COALESCE(master_account.name, account.name) as master_account_name, 
         COALESCE(master_account.sfid, account.sfid) as master_account_sfid,
         account.name as account_name, 
         account.sfid as account_sfid,
