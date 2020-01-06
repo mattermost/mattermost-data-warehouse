@@ -63,3 +63,23 @@ dbt_run = KubernetesPodOperator(
     arguments=[dbt_run_cmd],
     dag=dag,
 )
+
+dbt_seed = KubernetesPodOperator(
+    **pod_defaults,
+    image=DBT_IMAGE,
+    task_id="dbt-seed",
+    name="dbt-seed",
+    secrets=[
+        SNOWFLAKE_ACCOUNT,
+        SNOWFLAKE_USER,
+        SNOWFLAKE_PASSWORD,
+        SNOWFLAKE_TRANSFORM_ROLE,
+        SNOWFLAKE_TRANSFORM_WAREHOUSE,
+        SNOWFLAKE_TRANSFORM_SCHEMA,
+    ],
+    env_vars=env_vars,
+    arguments=[dbt_install_deps_and_seed_cmd],
+    dag=dag,
+)
+
+dbt_seed >> dbt_run

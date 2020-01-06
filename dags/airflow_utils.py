@@ -132,4 +132,4 @@ dbt_install_deps_cmd = f"""
 
 dbt_install_deps_and_seed_cmd = f"""
     {dbt_install_deps_cmd} &&
-    dbt seed --profiles-dir profile --target prod --vars {xs_warehouse}"""
+    dbt seed --profiles-dir profile --target prod"""
