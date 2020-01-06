@@ -92,8 +92,6 @@ roles:
     - reporting:
         warehouses:
             - analyst_xs
-        member_of:
-            - reporting
         privileges:
             databases:
                 read:
@@ -111,8 +109,6 @@ roles:
     - loader:
         warehouses:
             - analyst_xs
-        member_of:
-            - loader
         privileges:
             databases:
                 read:
