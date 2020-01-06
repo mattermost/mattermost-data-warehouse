@@ -14,3 +14,9 @@
     {%- endif -%}
 
 {%- endmacro %}
+
+{% macro get_sys_var(var_name) -%}
+
+select get_sys_var({{ var_name }})
+
+{%- endmacro %}
