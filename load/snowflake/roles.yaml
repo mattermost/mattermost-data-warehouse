@@ -30,8 +30,6 @@ roles:
     - permission_bot:
         warehouses:
             - analyst_xs
-        member_of:
-            - permission_bot
 
     - sysadmin:
         warehouses:
