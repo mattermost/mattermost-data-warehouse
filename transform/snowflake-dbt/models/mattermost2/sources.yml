@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: mattermost2
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: mattermost2
+
+    tables: 
+      - name: servers
+        description: 'Daily server data'
+    
+    tables: 
+      - name: license
+        description: 'Daily license data'

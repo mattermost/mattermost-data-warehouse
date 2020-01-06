@@ -1,0 +1,9 @@
+version: 2
+
+models:
+  - name: server_daily_details
+    description: Server daily details
+    columns:
+      - name: server_id
+        tests:
+          - not_null
