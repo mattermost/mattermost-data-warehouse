@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: diagnostics
+    database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
+    schema: diagnostics
+
+    tables:
+      - name: log_entries
+        description: 'Diagnostics log entries'

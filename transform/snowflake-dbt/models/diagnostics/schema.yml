@@ -1,0 +1,5 @@
+version: 2
+
+models:
+  - name: security
+    description: Security data from diagnostics log entries
