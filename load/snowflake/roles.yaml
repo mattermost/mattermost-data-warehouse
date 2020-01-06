@@ -167,38 +167,46 @@ roles:
 # Users
 users:
     - adovenmuehle:
+        can_login: yes
         member_of:
             - accountadmin
             - securityadmin
 
     - rachel:
+        can_login: yes
         member_of:
             - accountadmin
             - securityadmin
 
     - schiff:
+        can_login: yes
         member_of:
             - accountadmin
             - securityadmin
 
     - airflow:
+        can_login: yes
         member_of:
             - sysadmin
             - transformer
 
     - stitch:
+        can_login: yes
         member_of:
             - stitch
 
     - permission_bot:
+        can_login: yes
         member_of:
             - permission_bot
 
     - looker:
+        can_login: yes
         member_of:
             - reporting
 
     - loader:
+        can_login: yes
         member_of:
             - loader
 
