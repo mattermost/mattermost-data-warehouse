@@ -31,7 +31,7 @@ roles:
         warehouses:
             - analyst_xs
         member_of:
-            - securityadmin
+            - permission_bot
 
     - sysadmin:
         warehouses:
@@ -205,7 +205,6 @@ users:
         can_login: yes
         member_of:
             - permission_bot
-            - securityadmin
 
     - looker:
         can_login: yes
