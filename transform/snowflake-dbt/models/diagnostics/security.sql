@@ -1,6 +1,6 @@
 {{config({
     "materialized": "table",
-    "schema": "finance"
+    "schema": "events"
   })
 }}
 
