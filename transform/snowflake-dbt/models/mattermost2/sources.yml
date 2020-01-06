@@ -6,7 +6,7 @@ sources:
     schema: mattermost2
 
     tables: 
-      - name: servers
+      - name: server
         description: 'Daily server data'
     
     tables: 
