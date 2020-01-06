@@ -9,6 +9,5 @@ sources:
       - name: server
         description: 'Daily server data'
     
-    tables: 
       - name: license
         description: 'Daily license data'
