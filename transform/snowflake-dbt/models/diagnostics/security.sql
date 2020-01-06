@@ -19,18 +19,18 @@ WITH security AS (
             END, 0) AS active_user_count, 
         COALESCE(
             CASE
-                WHEN "substring"(regexp_substr(cs_uri_query, '(^|&)uc=([^&]*)'), 5, 100) = '' THEN NULL
-                ELSE "substring"(regexp_substr(cs_uri_query, '(^|&)uc=([^&]*)'), 5, 100)::int
+                WHEN substring(regexp_substr(cs_uri_query, '(^|&)uc=([^&]*)'), 5, 100) = '' THEN NULL
+                ELSE substring(regexp_substr(cs_uri_query, '(^|&)uc=([^&]*)'), 5, 100)::int
             END, 0) AS user_count,
         substring(regexp_substr(cs_uri_query, '(^|&)b=([^&]*)'), 4, 100) AS version,
                 CASE
-                    WHEN "position"(regexp_substr(cs_uri_query, '(^|&)b=([^&]*)'), '_BUILD_NUMBER_') > 1 THEN true
+                    WHEN position(regexp_substr(cs_uri_query, '(^|&)b=([^&]*)'), '_BUILD_NUMBER_') > 1 THEN true
                     ELSE false
                 END AS dev_build, 
         substring(regexp_substr(cs_uri_query, '(^|&)db=([^&]*)'), 5, 100) AS db_type, 
         substring(regexp_substr(cs_uri_query, '(^|&)os=([^&]*)'), 5, 100) AS os_type,
         CASE
-            WHEN "substring"(regexp_substr(cs_uri_query, '(^|&)ut=([^&]*)'), 5, 100) = '1' THEN true
+            WHEN substring(regexp_substr(cs_uri_query, '(^|&)ut=([^&]*)'), 5, 100) = '1' THEN true
             ELSE false
         END AS ran_tests
     FROM {{ source('diagnostics', 'log_entries') }}

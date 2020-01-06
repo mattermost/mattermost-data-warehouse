@@ -1,5 +1,5 @@
 {{config({
-    "materialized": "table"
+    "materialized": 'incremental'
   })
 }}
 
@@ -10,7 +10,13 @@ WITH server_security_details AS (
 		max(user_count) AS user_count,
   		max(active_user_count) AS active_user_count
 	FROM {{ ref('security') }}
-    WHERE date >= '2016-01-01'
+    {% if is_incremental() %}
+
+        -- this filter will only be applied on an incremental run
+        where date > (select max(day) from {{ this }})
+
+    {% endif %}
+
 	GROUP BY id, day
 ), server_daily_details AS (
     SELECT 
@@ -27,3 +33,4 @@ WITH server_security_details AS (
 )
 
 SELECT * FROM server_daily_details
+
