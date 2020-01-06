@@ -115,16 +115,16 @@ pod_env_vars = {
 # Warehouse variable declaration
 xs_warehouse = f"'{{warehouse_name: transforming_xs}}'"
 
-clone_repo_cmd = f"git clone -b master --single-branch --depth 1 https://github.com/adovenmuehle/dbt"
+clone_repo_cmd = f"git clone -b master --single-branch --depth 1 https://github.com/mattermost/mattermost-data-warehouse"
 
 clone_and_setup_extraction_cmd = f"""
     {clone_repo_cmd} &&
     export PYTHONPATH="/opt/bitnami/airflow/dags/git/:$PYTHONPATH" &&
-    cd dbt"""
+    cd mattermost-data-warehouse"""
 
 clone_and_setup_dbt_cmd = f"""
     {clone_repo_cmd} &&
-    cd dbt/transform/snowflake-dbt/"""
+    cd mattermost-data-warehouse/transform/snowflake-dbt/"""
 
 dbt_install_deps_cmd = f"""
     {clone_and_setup_dbt_cmd} &&

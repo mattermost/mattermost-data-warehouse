@@ -31,13 +31,13 @@ default_args = {
 # Set the command for the container
 container_cmd = f"""
     {clone_repo_cmd} &&
-    export PYTHONPATH="/opt/bitnami/airflow/dags/git/dbt/:$PYTHONPATH" &&
+    export PYTHONPATH="/opt/bitnami/airflow/dags/git/mattermost-data-warehouse/:$PYTHONPATH" &&
     meltano init airflow_job &&
-    cp dbt/load/snowflake/roles.yaml airflow_job/load/roles.yml &&
+    cp mattermost-data-warehouse/load/snowflake/roles.yaml airflow_job/load/roles.yml &&
     cd airflow_job/ &&
     tmpfile=$(mktemp)
     meltano permissions grant load/roles.yml --db snowflake $DRY | grep ";$" | grep -vi "sysadmin" | grep -vi "disabled" > $tmpfile &&
-    cd ../dbt &&
+    cd ../mattermost-data-warehouse &&
     cat $tmpfile &&
     python utils/run_snowflake_queries.py $tmpfile PERMISSIONS analytics &&
     rm $tmpfile
