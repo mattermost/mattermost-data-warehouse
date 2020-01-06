@@ -26,4 +26,19 @@ quoting:
 
 models:
   mm_snowflake:
-    tags: "nightly" 
+    tags: "nightly"
+
+seeds:
+  enabled: true
+  schema: seed_data
+  quote_columns: False
+
+  mm_snowflake:
+    sys_vars:
+      schema: util
+    excludable_servers:
+      schema: mattermost
+    staff_list:
+      schema: employee
+    world_cities:
+      schema: util
