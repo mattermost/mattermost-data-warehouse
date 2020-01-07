@@ -11,7 +11,7 @@ parser.add_argument("sql_file", help="Name of file in the transform/sql folder")
 if __name__ == "__main__":
     args = parser.parse_args()
 
-    sql_file = Path(__file__).parent.parent / f'transform/sql/{args.sql_file}.sql'
+    sql_file = f'../../transform/sql/{args.sql_file}.sql'
 
     command = f"psql $HEROKU_POSTGRESQL_URL -f {sql_file}"
 
