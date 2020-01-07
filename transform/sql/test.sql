@@ -1,4 +1,4 @@
-create table if not exists test(int foo);
+create table if not exists test(foo int);
 
 truncate table test;
 
