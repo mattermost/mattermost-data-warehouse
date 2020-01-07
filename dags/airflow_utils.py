@@ -9,7 +9,7 @@ from airflow.contrib.kubernetes.pod import Resources
 
 DATA_IMAGE = "registry.gitlab.com/gitlab-data/data-image/data-image:latest"
 DBT_IMAGE = "registry.gitlab.com/gitlab-data/data-image/dbt-image:latest"
-PSQL_IMAGE = "docker.io/bitnami/postgresql:11.5.0-debian-9-r84"
+PSQL_IMAGE = "docker.io/adovenmm/data-warehouse-psql"
 
 mm_webhook_url = os.getenv('MATTERMOST_WEBHOOK_URL')
 
