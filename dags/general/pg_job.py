@@ -29,7 +29,7 @@ def get_container_operator(task_name, job_name):
         export PYTHONPATH="/opt/bitnami/airflow/dags/git/mattermost-data-warehouse/:$PYTHONPATH" &&
         python utils/run_sql.py {job_name}
     """
-    pod_operator = KubernetesPodOperator(
+    return KubernetesPodOperator(
         **pod_defaults,
         image=PSQL_IMAGE,
         task_id=f"pg-{task_name}",
