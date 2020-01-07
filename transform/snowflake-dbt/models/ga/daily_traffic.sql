@@ -12,7 +12,7 @@ WITH ga_daily_traffic AS (
         end_date,
         source,
         users
-    FROM {{ source('ga_channelgroupingsource_users_com', 'report') }}
+    FROM {{ source('ga_channelgrouping_source_users_com', 'report') }}
     UNION ALL
     SELECT 
         'mattermost.org' AS site, 
@@ -21,6 +21,6 @@ WITH ga_daily_traffic AS (
         end_date,
         source,
         users
-    FROM {{ source('ga_channelgroupingsource_users_org', 'report') }}
+    FROM {{ source('ga_channelgrouping_source_users_org', 'report') }}
 )
 SELECT * FROM ga_daily_traffic

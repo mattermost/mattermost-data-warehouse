@@ -1,7 +1,7 @@
 version: 2
 
 sources:
-  - name: ga_channelgroupingsource_users_org
+  - name: ga_channelgrouping_source_users_org
     database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
     schema: ga_channelgroupingsource_users_org
 
@@ -9,7 +9,7 @@ sources:
       - name: report
         description: 'Users visiting Mattermost.org by Source and Channel Grouping'
 
-  - name: ga_channelgroupingsource_users_com
+  - name: ga_channelgrouping_source_users_com
     database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
     schema: ga_channelgroupingsource_users_com
 
