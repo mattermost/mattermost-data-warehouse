@@ -15,6 +15,10 @@ if __name__ == "__main__":
 
     command = f"psql $HEROKU_POSTGRESQL_URL -f {sql_file}"
 
-    process = subprocess.run(command, shell=True, check=True, capture_output=True)
+    process = subprocess.run(command, shell=True, capture_output=True)
+
+    if process.returncode != 0:
+        logging.error(process.stderr)
+        raise subprocess.CalledProcessError(process.returncode, process.cmd, process.output)
 
     logging.info(process.stdout)
