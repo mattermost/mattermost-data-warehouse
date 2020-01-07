@@ -3,7 +3,7 @@ version: 2
 sources:
   - name: ga_channel_grouping_source_users_org
     database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
-    schema: ga_channelgroupingsource_users_org
+    schema: ga_channelgrouping_source_users_org
 
     tables: 
       - name: report
@@ -11,7 +11,7 @@ sources:
 
   - name: ga_channel_grouping_source_users_com
     database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
-    schema: ga_channelgroupingsource_users_com
+    schema: ga_channel_grouping_source_users_com
 
     tables: 
       - name: report
