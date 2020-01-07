@@ -63,9 +63,9 @@ roles:
             - stitch
         owns:
             schemas:
-                - raw.*
+                - analytics.*
             tables:
-                - raw.*.*
+                - analytics.*.*
         privileges:
             databases:
                 read:
