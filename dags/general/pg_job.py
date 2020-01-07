@@ -36,7 +36,7 @@ def get_container_operator(task_name, job_name):
         secrets=[
             HEROKU_POSTGRESQL_URL,
         ],
-        arguments=[container_cmd],
+        arguments=[cmd],
         dag=dag,
     )
 
