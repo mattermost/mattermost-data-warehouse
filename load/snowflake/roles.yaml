@@ -63,9 +63,15 @@ roles:
             - stitch
         owns:
             schemas:
-                - analytics.*
+                - analytics.ga_traffic_com
+                - analytics.ga_traffic_org
+                - analytics.ga_traffic_user_visits
+                - analytics.orgm
             tables:
-                - analytics.*.*
+                - analytics.ga_traffic_com.*
+                - analytics.ga_traffic_org.*
+                - analytics.ga_traffic_user_visits.*
+                - analytics.orgm.*
         privileges:
             databases:
                 read:
@@ -129,9 +135,17 @@ roles:
             - analyst_xs
         owns:
             schemas:
-                - analytics.*
+                - analytics.blp
+                - analytics.finance
+                - analytics.ga
+                - analytics.mattermost
+                - analytics.util
             tables:
-                - analytics.*.*
+                - analytics.blp.*
+                - analytics.finance.*
+                - analytics.ga.*
+                - analytics.mattermost.*
+                - analytics.util.*
         privileges:
             databases:
                 read:
