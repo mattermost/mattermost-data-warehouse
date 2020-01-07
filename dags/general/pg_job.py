@@ -25,6 +25,7 @@ default_args = {
 def get_container_operator(task_name, job_name):
     cmd = f"""
         {clone_repo_cmd} &&
+        cd mattermost-data-warehouse &&
         export PYTHONPATH="/opt/bitnami/airflow/dags/git/mattermost-data-warehouse/:$PYTHONPATH" &&
         python utils/run_sql.py {job_name}
     """
