@@ -1,0 +1,8 @@
+sources:
+  - name: sales
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: sales
+
+    tables: 
+      - name: quotas_rep
+        description: 'Rep Quotas'
