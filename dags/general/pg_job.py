@@ -49,6 +49,6 @@ dag = DAG(
 
 test = get_container_operator('test', 'test')
 
-account_arr = get_container_operator('account_arr', 'account_arr')
+account_arr = get_container_operator('account-arr', 'account_arr')
 
 test >> account_arr
