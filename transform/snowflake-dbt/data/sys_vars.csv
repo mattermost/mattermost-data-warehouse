@@ -2,3 +2,5 @@ var_name,var_value,var_description
 curr_fy,2020,Current Fiscal Year
 curr_mo,2020-01,Current Fiscal Month
 curr_qtr,2020-Q4,Current Fiscal Quarter
+ytd_mo_begin,2019-02, YTD Mnth Begin
+ytd_mo_end,2020-01, YTD Month End
