@@ -47,6 +47,6 @@ dag = DAG(
     "pg_one_off", default_args=default_args, schedule_interval="@daily"
 )
 
-schiff_one_off = get_container_operator('schiff_one_off', 'schiff_one_off')
+schiff_one_off = get_container_operator('schiff-one-off', 'schiff_one_off')
 
 schiff_one_off
