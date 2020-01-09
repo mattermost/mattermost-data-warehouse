@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: releases
+    database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
+    schema: releases
+
+    tables:
+      - name: log_entries
+        description: 'Releases log entries'

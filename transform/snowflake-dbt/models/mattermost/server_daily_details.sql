@@ -8,13 +8,13 @@ WITH server_security_details AS (
     SELECT
   		id,
   		date AS day,
-		max(user_count) AS user_count,
-  		max(active_user_count) AS active_user_count
+		MAX(user_count) AS user_count,
+  		MAX(active_user_count) AS active_user_count
 	FROM {{ ref('security') }}
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        where date > (select max(day) from {{ this }})
+        WHERE date > (SELECT MAX(day) FROM {{ this }})
 
     {% endif %}
 

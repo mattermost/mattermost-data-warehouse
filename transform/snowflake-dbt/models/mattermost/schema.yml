@@ -7,3 +7,6 @@ models:
       - name: server_id
         tests:
           - not_null
+
+  - name: downloads
+    description: Mattermost downloads
