@@ -42,3 +42,5 @@ seeds:
       schema: employee
     world_cities:
       schema: util
+    arr_historical:
+      schema: finance
