@@ -6,7 +6,7 @@
 
 WITH downloads AS (
     SELECT
-        logdate,
+        logdate::date as logdate,
         cip,
         CASE
             WHEN uri LIKE '%desktop%' THEN 'Desktop'
