@@ -33,7 +33,7 @@ WITH downloads AS (
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        WHERE logdate > (SELECT MAX(day) FROM {{ this }})
+        AND logdate > (SELECT MAX(day) FROM {{ this }})
 
     {% endif %}
     GROUP BY logdate, cip, type
