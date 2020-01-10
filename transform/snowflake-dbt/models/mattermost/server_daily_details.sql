@@ -18,7 +18,7 @@ WITH server_security_details AS (
 
     {% endif %}
 
-	GROUP BY id, day
+	GROUP BY 1, 2
 ), server_daily_details AS (
     SELECT 
         day, 
