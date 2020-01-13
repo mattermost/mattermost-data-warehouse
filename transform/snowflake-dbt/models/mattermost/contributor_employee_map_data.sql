@@ -6,7 +6,7 @@
 
 WITH contributor_employee_map_data AS (
     SELECT 
-        'employee' AS reason, 
+        'Employee' AS reason, 
         major_city,
         region_country
         email as unique_identifier
