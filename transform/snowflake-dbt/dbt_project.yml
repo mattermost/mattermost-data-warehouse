@@ -44,5 +44,5 @@ seeds:
       schema: util
     arr_historical:
       schema: finance
-    user_map_data:
+    contributor_map_data:
       schema: staging
