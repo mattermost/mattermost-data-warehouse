@@ -23,7 +23,7 @@ def mm_failed_task(context):
         return
 
     # Set all of the contextual vars
-    base_url = "http://internal-data-eng-lb-330289075.us-east-1.elb.amazonaws.com/"
+    base_url = "http://airflow.internal.mattermost.com/"
     execution_date = context["ts"]
     dag_context = context["dag"]
     dag_name = dag_context.dag_id
