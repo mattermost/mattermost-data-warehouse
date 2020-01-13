@@ -4,7 +4,7 @@
   })
 }}
 
-WITH contributor_map_data AS (
+WITH contributor_employee_map_data AS (
     SELECT 
         'employee' AS reason, 
         major_city,
