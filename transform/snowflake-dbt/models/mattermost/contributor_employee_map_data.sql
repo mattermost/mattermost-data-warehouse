@@ -8,7 +8,7 @@ WITH contributor_employee_map_data AS (
     SELECT 
         'Employee' AS reason, 
         major_city,
-        region_country
+        region_country,
         email as unique_identifier
     FROM {{ source('employee', 'staff_list') }}
     UNION ALL
