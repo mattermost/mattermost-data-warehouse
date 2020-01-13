@@ -45,4 +45,4 @@ seeds:
     arr_historical:
       schema: finance
     user_map_data:
-      schema: mattermost
+      schema: staging

@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: staging
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: staging
+
+    tables: 
+      - name: contributor_map_data

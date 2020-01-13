@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: employee
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: employee
+
+    tables: 
+      - name: staff_list

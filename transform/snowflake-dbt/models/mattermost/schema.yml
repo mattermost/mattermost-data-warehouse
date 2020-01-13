@@ -10,3 +10,6 @@ models:
 
   - name: downloads
     description: Mattermost downloads
+  
+  - name: contributor_employee_map_data
+    description: Location data on contributors and employees
