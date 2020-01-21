@@ -28,10 +28,10 @@ WITH staff_list AS (
         'Employee' AS reason, 
         major_city,
         region_country,
-        email as unique_identifier,
+        email as email,
         1 as count,
-        latitude,
-        longitude
+        lat,
+        lng
     FROM staff_list
     LEFT JOIN {{ source('util', 'world_cities') }} ON staff_list.major_city = world_cities.city AND staff_list.region_country = world_cities.country
     UNION ALL
