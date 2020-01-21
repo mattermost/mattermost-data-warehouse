@@ -8,3 +8,5 @@ sources:
     tables:
       - name: dates
         description: 'Date utility table'
+      - name: world_cities
+        description: 'City information (Latitude/Longitude'
