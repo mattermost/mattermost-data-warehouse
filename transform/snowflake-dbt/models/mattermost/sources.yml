@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: mattermost
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: mattermost
+
+    tables: 
+      - name: github_contributions

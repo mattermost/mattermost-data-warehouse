@@ -7,3 +7,4 @@ sources:
 
     tables: 
       - name: staff_list
+      - name: staff_github_usernames

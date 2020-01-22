@@ -46,3 +46,7 @@ seeds:
       schema: finance
     contributor_map_data:
       schema: staging
+    github_contributions:
+      schema: mattermost
+    staff_github_usernames:
+      schema: employee
