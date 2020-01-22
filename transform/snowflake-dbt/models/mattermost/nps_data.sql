@@ -14,6 +14,7 @@ WITH nps_data AS (
        nps_score.license_sku,
        nps_score.user_create_at,
        nps_score.score,
+       CASE WHEN nps_score.score < 7 THEN 'Detractor' WHEN nps_score.score < 9 THEN 'Passive' ELSE 'Promoters' END AS promotor_type,
        nps_score.user_actual_id AS user_id,
        nps_score.user_id AS server_id,
        nps_feedback.feedback

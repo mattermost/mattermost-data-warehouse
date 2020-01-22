@@ -16,3 +16,6 @@ models:
 
   - name: github_contributors
     description: Statistics on GitHub contributors
+  
+  - name: nps_data
+    description: NPS scores and feedback
