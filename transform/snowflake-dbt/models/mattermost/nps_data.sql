@@ -19,8 +19,7 @@ WITH daily_nps_scores AS (
           FROM {{ source('mattermost_nps', 'nps_feedback') }}
       )
   	where rownum = 1
-)
-nps_data AS (
+), nps_data AS (
     SELECT
        daily_nps_scores.license_id,
        daily_nps_scores.date,
