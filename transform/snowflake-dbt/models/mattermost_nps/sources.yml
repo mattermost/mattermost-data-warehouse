@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: mattermost_nps
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: mattermost_nps
+
+    tables: 
+      - name: nps_score
+        description: 'NPS score data'
+      
+      - name: nps_feedback
+        description: 'NPS feedback data'
