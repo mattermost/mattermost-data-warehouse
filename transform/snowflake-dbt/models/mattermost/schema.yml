@@ -13,3 +13,6 @@ models:
   
   - name: contributor_employee_map_data
     description: Location data on contributors and employees
+
+  - name: github_contributors
+    description: Statistics on GitHub contributors
