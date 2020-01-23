@@ -29,7 +29,7 @@ WITH daily_nps_scores AS (
        daily_nps_scores.license_sku,
        to_timestamp(daily_nps_scores.user_create_at/1000)::DATE AS user_create_at,
        daily_nps_scores.score,
-       CASE WHEN daily_nps_scores.score < 7 THEN 'Detractor' WHEN daily_nps_scores.score < 9 THEN 'Passive' ELSE 'Promoters' END AS promotor_type,
+       CASE WHEN daily_nps_scores.score < 7 THEN 'Detractor' WHEN daily_nps_scores.score < 9 THEN 'Passive' ELSE 'Promoter' END AS promotor_type,
        daily_nps_scores.user_actual_id AS user_id,
        daily_nps_scores.user_id AS server_id,
        daily_feedback_scores.feedback
