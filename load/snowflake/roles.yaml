@@ -161,6 +161,12 @@ users:
             - accountadmin
             - securityadmin
 
+    - eric:
+        can_login: yes
+        member_of:
+            - accountadmin
+            - securityadmin
+
     - schiff:
         can_login: yes
         member_of:
