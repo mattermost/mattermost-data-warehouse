@@ -4,14 +4,28 @@
   })
 }}
 
-WITH account_daily_arr AS (
+WITH leap_years AS (
+    SELECT dates.date
+    FROM {{ source('util', 'dates') }}
+    WHERE util.date LIKE '%-02-29'
+    GROUP BY 1
+), opportunitylineitems_impacted AS (
+    SELECT
+      opportunity.sfid AS opportunity_sfid,
+      opportunitylineitem.sfid AS opportunitylineitem_sfid,
+      MAX(CASE WHEN leap_years.date BETWEEN start_date__c::date AND end_date__c::date THEN 1 ELSE 0 END) AS crosses_leap_day
+    FROM {{ source('orgm', 'opportunity') }}  AS opportunity ON opportunity.sfid = opportunitylineitem.opportunityid
+    LEFT JOIN {{ source('orgm', 'opportunitylineitem') }}  AS opportunitylineitem ON opportunity.sfid = opportunitylineitem.opportunityid
+    LEFT JOIN leap_years ON 1 = 1
+    GROUP BY opportunity_sfid, opportunitylineitem_sfid
+account_daily_arr AS (
   SELECT
     account.sfid AS account_sfid,
     coalesce(master_account.sfid, account.sfid) AS master_account_sfid,
   	util_dates.date::date AS day,
-    SUM(opportunitylineitem.totalprice)::int AS total_arr,
-  	SUM(365*(opportunitylineitem.totalprice)/(opportunitylineitem.end_date__c::date-opportunitylineitem.start_date__c::date))::int AS total_arr_norm
+  	SUM(365*(opportunitylineitem.totalprice)/(opportunitylineitem.end_date__c::date - opportunitylineitem.start_date__c::date + 1 - crosses_leap_day))::int AS total_arr
   FROM {{ source('orgm', 'opportunitylineitem') }}  AS opportunitylineitem
+  LEFT JOIN opportunitylineitems_impacted ON opportunitylineitems_impacted.opportunitylineitem_sfid = opportunitylineitem.sfid
   LEFT JOIN {{ source('orgm', 'opportunity') }}  AS opportunity ON opportunity.sfid = opportunitylineitem.opportunityid
   LEFT JOIN {{ source('orgm', 'account') }}  AS account ON account.sfid = opportunity.accountid
   LEFT JOIN {{ source('orgm', 'account') }}  AS master_account ON master_account.sfid = account.parentid
