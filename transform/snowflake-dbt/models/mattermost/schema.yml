@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: server_daily_details
-    description: Server daily details
+    description: Production server daily details table. Derived from event.security. Only includes production servers defined in TEDAS logic.
     columns:
       - name: server_id
         tests:
