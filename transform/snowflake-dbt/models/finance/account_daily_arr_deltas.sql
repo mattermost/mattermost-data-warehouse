@@ -10,6 +10,11 @@ WITH account_daily_arr_deltas AS (
         (account_util_dates.day - interval '1 day')::DATE AS previous_day,
         account_util_dates.master_account_sfid AS master_account_sfid,
         account_util_dates.account_sfid AS account_sfid,
+        CASE
+            WHEN account_util_dates.day = (SELECT min(day) FROM finance.account_daily_arr AS original WHERE new_day.account_sfid = original.account_sfid ) 
+                THEN true 
+            ELSE  false 
+        END  AS account_new_arr,
         coalesce(new_day.total_arr,0) AS new_day_total_arr,
         CASE
             WHEN account_util_dates.day = (SELECT min(day) FROM finance.account_daily_arr AS original WHERE new_day.account_sfid = original.account_sfid ) 
