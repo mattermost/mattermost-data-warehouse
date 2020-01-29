@@ -7,7 +7,7 @@
 WITH leap_years AS (
     SELECT dates.date
     FROM {{ source('util', 'dates') }}
-    WHERE util.date LIKE '%-02-29'
+    WHERE dates.date LIKE '%-02-29'
     GROUP BY 1
 ), opportunitylineitems_impacted AS (
     SELECT
