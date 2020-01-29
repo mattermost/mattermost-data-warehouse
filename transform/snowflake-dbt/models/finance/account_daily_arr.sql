@@ -18,7 +18,7 @@ WITH leap_years AS (
     LEFT JOIN {{ source('orgm', 'opportunitylineitem') }} AS opportunitylineitem ON opportunity.sfid = opportunitylineitem.opportunityid
     LEFT JOIN leap_years ON 1 = 1
     GROUP BY opportunity_sfid, opportunitylineitem_sfid
-account_daily_arr AS (
+), account_daily_arr AS (
   SELECT
     account.sfid AS account_sfid,
     coalesce(master_account.sfid, account.sfid) AS master_account_sfid,
