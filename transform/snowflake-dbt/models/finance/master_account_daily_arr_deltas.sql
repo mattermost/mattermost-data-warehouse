@@ -9,6 +9,11 @@ WITH master_account_daily_arr_deltas AS (
         master_account_util_dates.day::DATE AS new_day,
         (master_account_util_dates.day - interval '1 day')::DATE AS previous_day,
         master_account_util_dates.master_account_sfid AS master_account_sfid,
+        CASE
+            WHEN master_account_util_dates.day = (SELECT min(day) FROM {{ ref('master_account_daily_arr') }} AS original WHERE new_day.master_account_sfid = original.master_account_sfid ) 
+                THEN true 
+            ELSE  false 
+        END  AS master_account_new_arr,
         coalesce(new_day.total_arr,0) AS new_day_total_arr,
         CASE
             WHEN master_account_util_dates.day = (SELECT min(day) FROM {{ ref('master_account_daily_arr') }} AS original WHERE new_day.master_account_sfid = original.master_account_sfid ) 
