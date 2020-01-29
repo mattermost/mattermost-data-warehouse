@@ -100,6 +100,22 @@ roles:
                 read:
                     - analytics.*.*
                     - snowflake.account_usage.*
+    - reporting_all:
+        warehouses:
+            - analyst_xs
+        privileges:
+            databases:
+                read:
+                    - raw
+                    - analytics
+            schemas:
+                read:
+                    - raw.*
+                    - analytics.*
+            tables:
+                read:
+                    - raw.*.*
+                    - analytics.*.*
 
     - loader:
         warehouses:
@@ -172,6 +188,11 @@ users:
         member_of:
             - accountadmin
             - securityadmin
+    
+    - daniel.schalla@mattermost.com:
+        can_login: yes
+        member_of:
+            - reporting_all
 
     - airflow:
         can_login: yes
