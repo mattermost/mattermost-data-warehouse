@@ -188,11 +188,6 @@ users:
         member_of:
             - accountadmin
             - securityadmin
-    
-    - '"daniel.schalla@mattermost.com"':
-        can_login: yes
-        member_of:
-            - reporting_all
 
     - airflow:
         can_login: yes
