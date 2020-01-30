@@ -100,7 +100,7 @@ WITH security AS (
             license_overview.account_sfid, 
             license.license_id
         FROM server_security_details s
-        LEFT JOIN {{ source('mattermost2', 'license') }} ON license.user_id = s.user_id
+        LEFT JOIN {{ source('mattermost2', 'license') }} ON license.user_id = s.id
         LEFT JOIN {{ ref('license_overview') }} ON license_overview.licenseid = license.license_id
         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
     )
