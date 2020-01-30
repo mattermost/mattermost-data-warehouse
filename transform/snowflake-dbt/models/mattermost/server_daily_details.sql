@@ -31,31 +31,31 @@ WITH security AS (
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        and date > (SELECT MAX(day) FROM {{ this }})
+        AND date > (SELECT MAX(day) FROM {{ this }})
 
     {% endif %}
       ),
      max_users AS (
          SELECT 
             sec.date,
-            coalesce(nullif(sec.id, ''), sec.ip_address) AS id,
-            max(sec.active_user_count)                   AS max_active_users,
-            count(sec.id)                                AS occurrences
+            COALESCE(NULLIF(sec.id, ''), sec.ip_address) AS id,
+            MAX(sec.active_user_count)                   AS max_active_users,
+            COUNT(sec.id)                                AS occurrences
          FROM security sec
          GROUP BY 1, 2
          ),
     max_hour AS (
          SELECT 
             s.date,
-            coalesce(nullif(s.id, ''), s.ip_address) AS id,
+            COALESCE(NULLIF(s.id, ''), s.ip_address) AS id,
             m.max_active_users,
             m.occurrences,
-            max(s.hour)                              AS max_hour,
-            max(ip_address)                          AS max_ip,
-            max(version)                             AS max_version
+            MAX(s.hour)                              AS max_hour,
+            MAX(ip_address)                          AS max_ip,
+            MAX(version)                             AS max_version
          FROM security s
                   JOIN max_users m
-                       ON coalesce(nullif(s.id, ''), s.ip_address) = m.id
+                       ON COALESCE(NULLIF(s.id, ''), s.ip_address) = m.id
                            AND s.date = m.date
                            AND s.active_user_count = m.max_active_users
          GROUP BY 1, 2, 3, 4
@@ -77,7 +77,7 @@ WITH security AS (
             s.ran_tests
         FROM security s
                 JOIN max_hour m
-                    ON coalesce(nullif(s.id, ''), s.ip_address) = m.id
+                    ON COALESCE(NULLIF(s.id, ''), s.ip_address) = m.id
                         AND s.date = m.date
                         AND s.active_user_count = m.max_active_users
                         AND s.hour = m.max_hour
@@ -95,16 +95,14 @@ WITH security AS (
             s.active_user_count,
             s.user_count,
             s.version,
-            s.dev_build,
             s.db_type,
             s.os_type,
-            s.ran_tests 
             license_overview.account_sfid, 
             license.license_id
         FROM server_security_details
         LEFT JOIN {{ source('mattermost2', 'license') }} ON license.user_id = server.user_id
         LEFT JOIN {{ ref('license_overview') }} ON license_overview.licenseid = license.license_id
-        GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+        GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
     )
 
 SELECT * FROM server_daily_details
