@@ -104,6 +104,5 @@ WITH security AS (
         LEFT JOIN {{ ref('license_overview') }} ON license_overview.licenseid = license.license_id
         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
     )
-
 SELECT * FROM server_daily_details
 
