@@ -31,7 +31,7 @@ WITH security AS (
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND date > (SELECT MAX(day) FROM {{ this }})
+        AND date > (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
       ),
