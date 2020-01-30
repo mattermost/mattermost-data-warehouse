@@ -16,6 +16,5 @@ WITH server_fact AS (
     FROM {{ ref('server_daily_details') }}
     GROUP BY 1, 2, 3
 )
-
 SELECT *
-FROM server_fact;
+FROM server_fact
