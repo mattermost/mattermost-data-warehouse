@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: server_daily_details
-    description: Server daily details
+    description: Production server daily details table. Derived from events.security. Only includes production servers defined by TEDAS logic.
     columns:
       - name: server_id
         tests:
@@ -19,3 +19,6 @@ models:
   
   - name: nps_data
     description: NPS scores and feedback
+
+  - name: server_fact
+    description: Production server attributes including the server's first active date (telemetry-enabled), last active date (telemetry-enabled), the all-time max active users logged on the server, and the last date the server logged active users.
