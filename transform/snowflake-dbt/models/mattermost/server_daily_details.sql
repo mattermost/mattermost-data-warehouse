@@ -84,6 +84,16 @@ WITH security AS (
                         AND s.ip_address = m.max_ip
         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
     ),
+    license AS (
+        SELECT 
+            license.timestamp::DATE AS license_date,
+            license.user_id,
+            license.license_id,
+            license_overview.account_sfid
+        FROM {{ source('mattermost2', 'license') }}
+        JOIN {{ ref('license_overview') }} ON license.license_id = license_overview.licenseid
+        GROUP BY 1, 2, 3, 4
+    ),
     server_daily_details AS (
         SELECT 
             s.id,
@@ -97,11 +107,12 @@ WITH security AS (
             s.version,
             s.db_type,
             s.os_type,
-            license_overview.account_sfid, 
+            license.account_sfid, 
             license.license_id
         FROM server_security_details s
-        LEFT JOIN {{ source('mattermost2', 'license') }} ON license.user_id = s.id
-        LEFT JOIN {{ ref('license_overview') }} ON license_overview.licenseid = license.license_id
+        LEFT JOIN license 
+            ON s.id = license.user_id
+            AND s.date = license.license_date
         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
     )
 SELECT * FROM server_daily_details
