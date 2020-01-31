@@ -12,7 +12,7 @@ WITH server_details AS (
         MAX(active_user_count) AS max_active_user_count,
         MAX(CASE WHEN active_user_count > 0 THEN date ELSE null END) AS last_active_user_date
     FROM {{ ref('server_daily_details') }}
-    GROUP BY 1, 2, 3
+    GROUP BY 1
 ),
 server_fact AS (
     SELECT
