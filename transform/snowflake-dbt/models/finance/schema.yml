@@ -30,6 +30,12 @@ models:
       - name: account_sfid
         tests:
           - not_null
+  - name: account_monthly_arr_deltas_by_type_v2
+    description: Monthly Account ARR Deltas by ARR type
+    columns:
+      - name: account_sfid
+        tests:
+          - not_null
   - name: master_account_util_dates
     description: Util for calculating ARR at Master Account Level
     columns:
