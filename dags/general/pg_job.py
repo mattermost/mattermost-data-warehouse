@@ -50,6 +50,10 @@ dag = DAG(
 test = get_container_operator('test', 'test')
 
 account_arr = get_container_operator('account-arr', 'account_arr')
+opportunitylineitem_snapshot = get_container_operator('opportunitylineitem_snapshot', 'opportunitylineitem_snapshot')
+opportunity_snapshot = get_container_operator('opportunity_snapshot', 'opportunity_snapshot')
+
+account_arr >> opportunitylineitem_snapshot >> opportunitylineitem_snapshot
 
 # Test comment
 test >> account_arr
