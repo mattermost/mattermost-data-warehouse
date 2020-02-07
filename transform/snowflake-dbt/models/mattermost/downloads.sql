@@ -87,7 +87,7 @@ WITH outliers         AS (
            , log_entries.file_encrypted_fields
            , o.diff                                                                                AS bytessent_diff_from_uri_mean
            , o.std                                                                                 AS bytessent_std_from_uri_mean
-           , o.avg                                                                                 AS bytessent_uri_avg                                                                              AS bytessent_uri_avg
+           , o.avg                                                                                 AS bytessent_uri_avg
          FROM {{ source('releases', 'log_entries') }} log_entries
               JOIN outliers o
                    ON log_entries.logdate::DATE = o.logdate::DATE
