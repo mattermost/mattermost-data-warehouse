@@ -11,6 +11,11 @@ WITH download_stats         AS (
       , cip
       , uri
       , bytessent
+      , abs(bytessent - avg(bytessent) OVER (PARTITION BY uri)) AS diff
+      , avg(bytessent) OVER (PARTITION BY uri)                  AS avg
+      , max(bytessent) OVER (PARTITION BY uri)                  AS max
+      , stddev(bytessent) OVER (PARTITION BY uri) * 1           AS std
+      , count(bytessent) OVER (PARTITION BY uri)                AS count
       , CASE
             WHEN abs(bytessent - avg(bytessent) OVER (PARTITION BY uri)) >
                  stddev(bytessent) OVER (PARTITION BY uri) * 1 THEN TRUE
