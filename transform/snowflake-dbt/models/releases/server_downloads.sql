@@ -32,12 +32,15 @@ WITH outliers         AS (
 
      server_downloads AS (
          SELECT
-             log_entries.logdate::DATE                                                 AS logdate
+             log_entries.logdate::DATE                                                             AS logdate
            , log_entries.logtime
-           , log_entries.cip                                                           AS ip_address
+           , log_entries.cip                                                                       AS ip_address
            , log_entries.uri
-           , CASE WHEN log_entries.uri LIKE '%team%' THEN 'team' ELSE 'enterprise' END AS server_type
-           , split_part(log_entries.uri, '/', 2)                                       AS server_edition
+           , CASE WHEN log_entries.uri LIKE '%team%' THEN 'team' ELSE 'enterprise' END             AS server_edition
+           , split_part(log_entries.uri, '/', 2)                                                   AS server_version
+           , nullif(regexp_replace(
+                            regexp_replace(regexp_replace(split_part(log_entries.creferrer, '/', 3), '^[w]{3}[.]', '')
+                                , '.com[0-9_a-z_A-Z:.]{1,}$', '.com'), ':{1}[0-9]{1,4}$', ''), '') AS server_source
            , log_entries.edge
            , log_entries.bytessent
            , log_entries.method
@@ -60,9 +63,9 @@ WITH outliers         AS (
            , log_entries.cs_protocol_version
            , log_entries.file_status
            , log_entries.file_encrypted_fields
-           , o.diff                                                                    AS bytessent_diff_from_uri_mean
-           , o.std                                                                     AS bytessent_std_from_uri_mean
-           , o.avg                                                                     AS bytessent_uri_avg
+           , o.diff                                                                                AS bytessent_diff_from_uri_mean
+           , o.std                                                                                 AS bytessent_std_from_uri_mean
+           , o.avg                                                                                 AS bytessent_uri_avg
          FROM {{ source('releases', 'log_entries') }} log_entries
               JOIN outliers o
                    ON log_entries.logdate::DATE = o.logdate::DATE
@@ -75,7 +78,7 @@ WITH outliers         AS (
            AND log_entries.status LIKE '2%'
            AND NOT o.one_std_from_mean
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
-                , 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
+                , 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
      )
 
 SELECT *
