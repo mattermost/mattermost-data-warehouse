@@ -25,7 +25,8 @@ WITH outliers         AS (
                  stddev(bytessent) OVER (PARTITION BY date_trunc('year', logdate::DATE), uri) * 2 THEN TRUE
             ELSE FALSE END                                                                         AS two_std_from_mean
     FROM {{ source('releases', 'log_entries') }} log_entries
-    WHERE regexp_like(uri, '^\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}[/].*')
+    WHERE (regexp_like(uri, '^\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*') OR
+           regexp_like(log_entries.uri, '^\/desktop\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*'))
       AND bytessent > 0
       AND status LIKE '2%'
 ),
@@ -36,8 +37,38 @@ WITH outliers         AS (
            , log_entries.logtime
            , log_entries.cip                                                                       AS ip_address
            , log_entries.uri
-           , CASE WHEN log_entries.uri LIKE '%team%' THEN 'team' ELSE 'enterprise' END             AS server_edition
-           , split_part(log_entries.uri, '/', 2)                                                   AS server_version
+           , CASE
+                 WHEN regexp_like(log_entries.uri, '^\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*') THEN 'server'
+                 WHEN regexp_like(log_entries.uri, '^\/desktop\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*') THEN 'app'
+                 ELSE NULL END                                                                     AS download_type
+           , CASE
+                 WHEN regexp_like(log_entries.uri, '^\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*')
+                     THEN CASE
+                              WHEN log_entries.uri LIKE '%team%' THEN 'team'
+                              ELSE 'enterprise' END
+                 WHEN regexp_like(log_entries.uri, '^\/desktop\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*')
+                     THEN 'desktop'
+                 ELSE NULL END                                                                     AS type
+           , CASE
+                 WHEN regexp_like(log_entries.uri, '^\/desktop\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*')
+                     THEN CASE
+                              WHEN log_entries.uri LIKE '%linux%' THEN 'linux'
+                              WHEN regexp_like(log_entries.uri,
+                                               '.*msi$|.*win[0-9]{2}.*$|.*\-win\-.*$|.*\-win\.[a-z]{3}$') THEN 'windows'
+                              WHEN regexp_like(log_entries.uri, '.*mac\.[a-z]{3}$|.*\-osx\..*$') THEN 'mac'
+                              ELSE NULL END
+                 WHEN regexp_like(log_entries.uri, '^\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*')
+                     THEN CASE
+                              WHEN log_entries.uri LIKE '%linux%' THEN 'linux'
+                              WHEN regexp_like(log_entries.uri, '.*\-windows\-.*$') THEN 'windows'
+                              ELSE NULL END
+                 ELSE NULL END                                                                     AS os
+           , CASE
+                 WHEN regexp_like(log_entries.uri, '^\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*')
+                     THEN split_part(log_entries.uri, '/', 2)
+                 WHEN regexp_like(log_entries.uri, '^\/desktop\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*')
+                     THEN split_part(log_entries.uri, '/', 3)
+                 ELSE NULL END                                                                     AS version
            , nullif(regexp_replace(
                             regexp_replace(regexp_replace(split_part(log_entries.creferrer, '/', 3), '^[w]{3}[.]', '')
                                 , '.com[0-9_a-z_A-Z:.]{1,}$', '.com'), ':{1}[0-9]{1,4}$', ''), '') AS server_source
@@ -65,7 +96,7 @@ WITH outliers         AS (
            , log_entries.file_encrypted_fields
            , o.diff                                                                                AS bytessent_diff_from_uri_mean
            , o.std                                                                                 AS bytessent_std_from_uri_mean
-           , o.avg                                                                                 AS bytessent_uri_avg
+           , o.avg                                                                                 AS bytessent_uri_avg                                                                              AS bytessent_uri_avg
          FROM {{ source('releases', 'log_entries') }} log_entries
               JOIN outliers o
                    ON log_entries.logdate::DATE = o.logdate::DATE
@@ -73,12 +104,13 @@ WITH outliers         AS (
                        AND log_entries.uri = o.uri
                        AND log_entries.bytessent = o.bytessent
                        AND log_entries.logtime = o.logtime
-         WHERE regexp_like(log_entries.uri, '^\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}[/].*')
+         WHERE (regexp_like(log_entries.uri, '^\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*') OR
+                regexp_like(log_entries.uri, '^\/desktop\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*'))
            AND log_entries.bytessent > 1000000
            AND log_entries.status LIKE '2%'
            AND NOT o.one_std_from_mean
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
-                , 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
+                , 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34
      )
 
 SELECT *
