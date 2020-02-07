@@ -22,7 +22,7 @@ WITH outliers         AS (
       AND status LIKE '2%'
 ),
 
-     server_downloads AS (
+     downloads AS (
          SELECT
              log_entries.logdate::DATE                                                             AS logdate
            , log_entries.logtime
@@ -111,5 +111,5 @@ WITH outliers         AS (
      )
 
 SELECT *
-FROM server_downloads
+FROM downloads
 ORDER BY 1 DESC, 2 DESC
