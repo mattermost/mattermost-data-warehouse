@@ -11,19 +11,10 @@ WITH outliers         AS (
       , cip
       , uri
       , bytessent
-      , abs(bytessent - avg(bytessent) OVER (PARTITION BY uri)) AS diff
-      , avg(bytessent) OVER (PARTITION BY uri)                  AS avg
-      , max(bytessent) OVER (PARTITION BY uri)                  AS max
-      , stddev(bytessent) OVER (PARTITION BY uri) * 1           AS std
-      , count(bytessent) OVER (PARTITION BY uri)                AS count
       , CASE
             WHEN abs(bytessent - avg(bytessent) OVER (PARTITION BY uri)) >
                  stddev(bytessent) OVER (PARTITION BY uri) * 1 THEN TRUE
             ELSE FALSE END                                      AS one_std_from_mean
-      , CASE
-            WHEN abs(bytessent - avg(bytessent) OVER (PARTITION BY uri)) >
-                 stddev(bytessent) OVER (PARTITION BY uri) * 2 THEN TRUE
-            ELSE FALSE END                                      AS two_std_from_mean
     FROM {{ source('releases', 'log_entries') }} log_entries
     WHERE (regexp_like(uri, '^\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*') OR
            regexp_like(log_entries.uri, '^\/desktop\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*'))
