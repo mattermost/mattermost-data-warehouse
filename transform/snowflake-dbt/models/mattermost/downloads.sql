@@ -4,7 +4,7 @@
   })
 }}
 
-WITH outliers         AS (
+WITH download_stats         AS (
     SELECT
         logdate::DATE                                           AS logdate
       , logtime
@@ -31,7 +31,7 @@ WITH outliers         AS (
            , CASE
                  WHEN regexp_like(log_entries.uri, '^\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*') THEN 'server'
                  WHEN regexp_like(log_entries.uri, '^\/desktop\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*') THEN 'app'
-                 ELSE NULL END                                                                     AS download_type
+                 ELSE NULL END                                                                     AS category
            , CASE
                  WHEN regexp_like(log_entries.uri, '^\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*')
                      THEN CASE
@@ -89,7 +89,7 @@ WITH outliers         AS (
            , o.std                                                                                 AS bytessent_std_from_uri_mean
            , o.avg                                                                                 AS bytessent_uri_avg
          FROM {{ source('releases', 'log_entries') }} log_entries
-              JOIN outliers o
+              JOIN download_stats o
                    ON log_entries.logdate::DATE = o.logdate::DATE
                        AND log_entries.cip = o.cip
                        AND log_entries.uri = o.uri
