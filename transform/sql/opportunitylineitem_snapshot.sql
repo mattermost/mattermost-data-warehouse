@@ -12,7 +12,6 @@ SELECT
     listprice,
     unitprice,
     discount,
-    discounted_unit_price__c,
     quantity,
     totalprice,
     start_date__c,
