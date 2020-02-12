@@ -41,7 +41,7 @@ WITH security                AS (
              sec.date
            , COALESCE(NULLIF(sec.id, ''), sec.ip_address) AS id
            , MAX(sec.active_user_count)                   AS max_active_users
-           , COUNT(sec.id)                                AS occurrences,
+           , COUNT(sec.id)                                AS occurrences
            , COUNT(DISTINCT sec.ip_address)               AS ip_count
          FROM security sec
          GROUP BY 1, 2
@@ -73,16 +73,16 @@ WITH security                AS (
            , s.grouping
            , s.ip_address
            , MAX(CASE WHEN m.max_location_count = s.location_count THEN s.location 
-                    ELSE NULL END) AS location
+                    ELSE NULL END)  AS location
            , s.active_user_count
-           , MAX(s.user_count)     AS user_count
-           , MAX(s.version)        AS version
+           , MAX(s.user_count)      AS user_count
+           , MAX(s.version)         AS version
            , s.dev_build
            , s.db_type
            , s.os_type
            , s.ran_tests
-           , MAX(m.ip_count)      AS ip_count
-           , MAX(m.occurrences)   AS occurrences
+           , MAX(m.ip_count)       AS ip_count
+           , MAX(m.occurrences)    AS occurrences
          FROM security      s
               JOIN max_hour m
                    ON COALESCE(NULLIF(s.id, ''), s.ip_address) = m.id
