@@ -41,7 +41,8 @@ WITH security                AS (
              sec.date
            , COALESCE(NULLIF(sec.id, ''), sec.ip_address) AS id
            , MAX(sec.active_user_count)                   AS max_active_users
-           , COUNT(sec.id)                                AS occurrences
+           , COUNT(sec.id)                                AS occurrences,
+           , COUNT(DISTINCT sec.ip_address)               AS ip_count
          FROM security sec
          GROUP BY 1, 2
      ),
@@ -55,6 +56,8 @@ WITH security                AS (
            , MAX(ip_address)                          AS max_ip
            , MAX(version)                             AS max_version
            , MAX(s.location_count)                    AS max_location_count
+           , MAX(m.ip_count)                          AS ip_count
+           , MAX(m.occurrences)                       AS occurrences
          FROM security       s
               JOIN max_users m
                    ON COALESCE(NULLIF(s.id, ''), s.ip_address) = m.id
@@ -78,6 +81,8 @@ WITH security                AS (
            , s.db_type
            , s.os_type
            , s.ran_tests
+           , MAX(m.ip_count)      AS ip_count
+           , MAX(m.occurrences)   AS occurrences
          FROM security      s
               JOIN max_hour m
                    ON COALESCE(NULLIF(s.id, ''), s.ip_address) = m.id
@@ -115,11 +120,13 @@ WITH security                AS (
            , s.os_type
            , license.account_sfid
            , license.license_id
+           , s.ip_count
+           , s.occurrences
          FROM server_security_details s
               LEFT JOIN license
                         ON s.id = license.user_id
                             AND s.date = license.license_date
-         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
      )
 SELECT *
 FROM events_security_staging
