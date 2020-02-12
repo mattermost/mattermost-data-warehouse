@@ -19,6 +19,7 @@ WITH security                AS (
       , sec.db_type
       , sec.os_type
       , sec.ran_tests
+      , count(sec.location) over (partition by sec.id, sec.date, sec.hour, sec.active_user_count, sec.ip_address, sec.location) as location_count
     FROM {{ ref('security') }} sec
          LEFT JOIN {{ ref('excludable_servers') }} es
                    ON sec.id = es.server_id
@@ -53,6 +54,7 @@ WITH security                AS (
            , MAX(s.hour)                              AS max_hour
            , MAX(ip_address)                          AS max_ip
            , MAX(version)                             AS max_version
+           , MAX(s.location_count)                    AS max_location_count
          FROM security       s
               JOIN max_users m
                    ON COALESCE(NULLIF(s.id, ''), s.ip_address) = m.id
@@ -67,10 +69,11 @@ WITH security                AS (
            , s.hour
            , s.grouping
            , s.ip_address
-           , s.location
+           , MAX(CASE WHEN m.max_location_count = s.location_count THEN s.location 
+                    ELSE NULL END) AS location
            , s.active_user_count
-           , s.user_count
-           , s.version
+           , MAX(s.user_count)     AS user_count
+           , MAX(s.version)        AS version
            , s.dev_build
            , s.db_type
            , s.os_type
@@ -82,7 +85,7 @@ WITH security                AS (
                        AND s.active_user_count = m.max_active_users
                        AND s.hour = m.max_hour
                        AND s.ip_address = m.max_ip
-         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+         GROUP BY 1, 2, 3, 4, 5, 7, 10, 11, 12, 13
      ),
      license                 AS (
          SELECT
