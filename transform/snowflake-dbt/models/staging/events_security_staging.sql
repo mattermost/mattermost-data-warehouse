@@ -41,7 +41,7 @@ WITH security                AS (
              sec.date
            , COALESCE(NULLIF(sec.id, ''), sec.ip_address) AS id
            , MAX(sec.active_user_count)                   AS max_active_users
-           , COUNT(sec.id)                                AS occurrences,
+           , COUNT(sec.id)                                AS occurrences
            , COUNT(DISTINCT sec.ip_address)               AS ip_count
          FROM security sec
          GROUP BY 1, 2
