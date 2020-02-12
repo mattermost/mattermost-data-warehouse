@@ -13,7 +13,7 @@ WITH max_timestamp              AS (
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-    WHERE date > (SELECT MAX(date) FROM {{ this }})
+    WHERE server.timestamp::DATE > (SELECT MAX(timestamp::date) FROM {{ this }})
 
     {% endif %}
     GROUP BY 1, 2
