@@ -1,5 +1,5 @@
 {{config({
-    "materialized": "table",
+    "materialized": "incremental",
     "schema": "staging"
   })
 }}
@@ -10,6 +10,12 @@ WITH max_timestamp              AS (
       , server.user_id
       , max(server.timestamp)  AS max_timestamp
     FROM {{ source('mattermost2', 'server') }}
+    {% if is_incremental() %}
+
+        -- this filter will only be applied on an incremental run
+    WHERE date > (SELECT MAX(date) FROM {{ this }})
+
+    {% endif %}
     GROUP BY 1, 2
 ),
      mattermost2_server_staging AS (
@@ -35,4 +41,4 @@ WITH max_timestamp              AS (
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
      )
 SELECT *
-FROM mattermost2_server_staging;
+FROM mattermost2_server_staging
