@@ -25,6 +25,6 @@ WITH master_account_monthly_arr_deltas_by_type AS (
         LEFT JOIN {{ ref('master_account_daily_arr') }}
             ON master_account_monthly_arr_deltas.master_account_sfid = master_account_daily_arr.master_account_sfid AND master_account_monthly_arr_deltas.month_end = master_account_daily_arr.day
     WHERE abs(total_arr_delta) > 0
-    GROUP BY 1, 2, 3
+    GROUP BY 1, 2, 3, 4
 )
 select * from master_account_monthly_arr_deltas_by_type
