@@ -57,7 +57,6 @@ WITH security                AS (
            , MAX(version)                             AS max_version
            , MAX(s.location_count)                    AS max_location_count
            , MAX(m.ip_count)                          AS ip_count
-           , MAX(m.occurrences)                       AS occurrences
          FROM security       s
               JOIN max_users m
                    ON COALESCE(NULLIF(s.id, ''), s.ip_address) = m.id
