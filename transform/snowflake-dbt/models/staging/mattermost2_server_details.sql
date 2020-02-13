@@ -19,7 +19,7 @@ WITH max_timestamp              AS (
     {% endif %}
     GROUP BY 1, 2
 ),
-     mattermost2_server_staging AS (
+     mattermost2_server_details AS (
          SELECT
              s.timestamp::DATE AS date
            , s.user_id         AS server_id
@@ -43,4 +43,4 @@ WITH max_timestamp              AS (
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
      )
 SELECT *
-FROM mattermost2_server_staging
+FROM mattermost2_server_details
