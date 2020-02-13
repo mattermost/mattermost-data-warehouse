@@ -117,9 +117,9 @@ WITH security                AS (
            , s.version
            , MAX(s.db_type)                       AS db_type
            , s.os_type
-           , license.account_sfid
+           , MAX(license.account_sfid)            AS account_sfid
            , MAX(license.license_id)              AS license_id1
-           , CASE WHEN MAX(license.license_id) = MIN(license.license_id) then MIN(NULL)
+           , CASE WHEN MAX(license.license_id) = MIN(license.license_id) THEN MIN(NULL)
                ELSE MIN(license.license_id) END   AS license_id2
            , s.ip_count
            , s.occurrences
@@ -127,7 +127,7 @@ WITH security                AS (
               LEFT JOIN license
                         ON s.id = license.user_id
                             AND s.date = license.license_date
-         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 15, 16
+         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 15, 16
      )
 SELECT *
 FROM server_security_details
