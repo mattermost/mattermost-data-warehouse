@@ -77,11 +77,11 @@ WITH security                AS (
            , MAX(s.user_count)      AS user_count
            , MAX(s.version)         AS version
            , s.dev_build
-           , s.db_type
+           , MAX(s.db_type)         AS db_type
            , s.os_type
            , s.ran_tests
-           , MAX(m.ip_count)       AS ip_count
-           , MAX(m.occurrences)    AS occurrences
+           , MAX(m.ip_count)        AS ip_count
+           , MAX(m.occurrences)     AS occurrences
          FROM security      s
               JOIN max_hour m
                    ON COALESCE(NULLIF(s.id, ''), s.ip_address) = m.id
@@ -89,7 +89,7 @@ WITH security                AS (
                        AND s.active_user_count = m.max_active_users
                        AND s.hour = m.max_hour
                        AND s.ip_address = m.max_ip
-         GROUP BY 1, 2, 3, 4, 5, 7, 10, 11, 12, 13
+         GROUP BY 1, 2, 3, 4, 5, 7, 10, 12, 13
      ),
      license                 AS (
          SELECT
