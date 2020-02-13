@@ -64,7 +64,7 @@ WITH security                AS (
                        AND s.active_user_count = m.max_active_users
          GROUP BY 1, 2, 3, 4
      ),
-     server_security_details AS (
+     server_details AS (
          SELECT
              s.id
            , s.date
@@ -121,7 +121,7 @@ WITH security                AS (
            , license.license_id
            , s.ip_count
            , s.occurrences
-         FROM server_security_details s
+         FROM server_details s
               LEFT JOIN license
                         ON s.id = license.user_id
                             AND s.date = license.license_date
