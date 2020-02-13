@@ -115,17 +115,19 @@ WITH security                AS (
            , s.active_user_count
            , s.user_count
            , s.version
-           , s.db_type
+           , MAX(s.db_type)                       AS db_type
            , s.os_type
            , license.account_sfid
-           , license.license_id
+           , MAX(license.license_id)              AS license_id1
+           , CASE WHEN MAX(license.license_id) = MIN(license.license_id) then MIN(NULL)
+               ELSE MIN(license.license_id) END   AS license_id2
            , s.ip_count
            , s.occurrences
          FROM server_details s
               LEFT JOIN license
                         ON s.id = license.user_id
                             AND s.date = license.license_date
-         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 15, 16
      )
 SELECT *
 FROM server_security_details
