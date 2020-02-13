@@ -104,7 +104,7 @@ WITH security                AS (
                    AND license_overview.issuedat::DATE <= license.timestamp::DATE
          GROUP BY 1, 2, 3, 4
      ),
-     security_server_details    AS (
+     server_security_details    AS (
          SELECT
              s.id
            , s.date
@@ -128,4 +128,4 @@ WITH security                AS (
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
      )
 SELECT *
-FROM security_server_details
+FROM server_security_details
