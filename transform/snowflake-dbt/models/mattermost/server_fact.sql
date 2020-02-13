@@ -28,7 +28,7 @@ server_fact AS (
         server_details.last_active_license_date
     FROM server_details 
     JOIN {{ ref('server_daily_details') }}
-        ON server_details.server_id = server_daily_details.id
+        ON server_details.server_id = server_daily_details.server_id
         AND server_details.last_active_date = server_daily_details.date
     GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9
 )
