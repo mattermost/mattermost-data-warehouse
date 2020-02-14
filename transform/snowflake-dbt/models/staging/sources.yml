@@ -15,3 +15,136 @@ sources:
     tables:
       - name: config_analytics
         description: The raw Server analytics configuration data sent to Mattermost by Telemetry-Enabled Servers.
+    
+    tables:
+      - name: config_announcement
+        description: The raw Server announcements configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_client_requirements
+        description: The raw Server client requirements configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_cluster
+        description: The raw Server cluster configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_compliance
+        description: The raw Server compliance configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_data_retention
+        description: The raw Server data retention configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_display
+        description: The raw Server disply configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_elasticsearch
+        description: The raw Server ElasticSearch configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_email
+        description: The raw Server email configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_experimental
+        description: The raw Server experimental configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_extension
+        description: The raw Server extension configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_file
+        description: The raw Server file configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_guest_accounts
+        description: The raw Server guest account configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_image_proxy
+        description: The raw Server image proxy configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_ldap
+        description: The raw Server LDAP configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_localization
+        description: The raw Server localization configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_log
+        description: The raw Server log configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_message_export
+        description: The raw Server message export configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_metrics
+        description: The raw Server metrics configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_nativeapp
+        description: The raw Server Native App configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_notifications_log
+        description: The raw Server notifications log configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_oauth
+        description: The raw Server OAuth configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_password
+        description: The raw Server password configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_plugin
+        description: The raw Server plugin configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_privacy
+        description: The raw Server privacy configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_rate
+        description: The raw Server rate configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_saml
+        description: The raw Server SAML configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_service
+        description: The raw Server service configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_sql
+        description: The raw Server sql configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_support
+        description: The raw Server support configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_team
+        description: The raw Server team configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_theme
+        description: The raw Server theme configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_timezone
+        description: The raw Server timezone configuration data sent to Mattermost by Telemetry-Enabled Servers.
+        
+    tables:
+      - name: config_webrtc
+        description: The raw Server WebRTC configuration data sent to Mattermost by Telemetry-Enabled Servers.
+    
