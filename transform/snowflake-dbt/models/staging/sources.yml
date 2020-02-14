@@ -7,3 +7,11 @@ sources:
 
     tables: 
       - name: contributor_map_data
+  
+  - name: staging_analytics
+    database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
+    schema: mattermost2
+
+    tables:
+      - name: config_analytics
+        description: The raw Server analytics configuration data sent to Mattermost by Telemetry-Enabled Servers.
