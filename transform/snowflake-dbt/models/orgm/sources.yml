@@ -28,3 +28,6 @@ sources:
       
       - name: contact
         description: 'SFDC Contact'
+
+      - name: delete_history__c
+        description: 'History of deleted objects in SFDC'
