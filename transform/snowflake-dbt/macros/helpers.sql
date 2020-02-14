@@ -33,7 +33,7 @@ select get_sys_var({{ var_name }})
     {% set query %}
         delete from {{ source('orgm', orgm_table) }}
         where sfid
-            in (select object_id__c from {{ audit_table }})
+            in (select deleted_sfid from {{ audit_table }})
     {% endset %}
 
     {% do run_query(query) %}
