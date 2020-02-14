@@ -22,3 +22,6 @@ models:
 
   - name: server_fact
     description: Production server attributes including the server's first active date (telemetry-enabled), last active date (telemetry-enabled), the all-time max active users logged on the server, and the last date the server logged active users.
+
+  - name: orgm_delete_audit
+    description: Audit log of records we've deleted from the OrgM schema based on the OrgM Delete_History__c object
