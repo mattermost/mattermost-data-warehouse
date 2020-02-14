@@ -5,7 +5,7 @@
   })
 }}
 
-select now() as processed_at, object_id__c as deleted_sfid
+select current_timestamp as processed_at, object_id__c as deleted_sfid
 from {{ source('orgm', 'delete_history__c') }}
 
 {% if is_incremental() %}
