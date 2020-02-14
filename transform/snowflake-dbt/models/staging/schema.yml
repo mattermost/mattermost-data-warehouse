@@ -2,7 +2,10 @@ version: 2
 
 models:
   - name: server_mattermost2_details
-    description: Part of staging tables to create mattermost.server_daily_details table. Contains cleaned version of raw.mattermost2.server table by retreiving the row with the most recent timestamp per server per day. Output is 1 row per server per day.
+    description: Part of staging data models to create mattermost.server_daily_details table. Contains cleaned version of raw.mattermost2.server table by retreiving the row with the most recent timestamp per server per day. Output is 1 row per server per day.
   
   - name: server_security_details
-    description: Part of staging tables to create mattermost.server_daily_details table. Contains cleaned version of analytics.events.security table. Implements logic to remove non-production servers and retrieves the row with max active user count per server per day. Output is 1 row per server per day.
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of analytics.events.security table. Implements logic to remove non-production servers and retrieves the row with max active user count per server per day. Output is 1 row per server per day.
+
+  - name: server_analytics_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_analytics.
