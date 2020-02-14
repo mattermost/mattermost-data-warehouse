@@ -20,14 +20,23 @@ sources:
       - name: account
         description: 'SFDC Account'
 
-      - name: opportunity
-        description: 'SFDC Opportunity'
+      - name: campaign
+        description: 'SFDC Campaign'
 
-      - name: opportunitylineitem
-        description: 'SFDC Opportunity Line Item'
+      - name: campaignmember
+        description: 'SFDC Campaign member'
       
       - name: contact
         description: 'SFDC Contact'
 
       - name: delete_history__c
         description: 'History of deleted objects in SFDC'
+
+      - name: lead
+        description: 'SFDC Lead'
+
+      - name: opportunity
+        description: 'SFDC Opportunity'
+
+      - name: opportunitylineitem
+        description: 'SFDC Opportunity Line Item'
