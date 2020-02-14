@@ -36,5 +36,5 @@ select get_sys_var({{ var_name }})
             in (select object_id__c from {{ audit_table }})
     {% endset %}
 
-    {% do run_query(query) }
+    {% do run_query(query) %}
 {% endmacro %}
