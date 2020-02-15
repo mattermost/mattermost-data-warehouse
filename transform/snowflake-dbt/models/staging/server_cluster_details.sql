@@ -28,7 +28,7 @@ WITH max_timestamp          AS (
            , max(advertise_address)       AS advertise_address
            , max(enable)                  AS cluster_enabled
            , max(read_only_config)        AS read_only_config
-           , max(use_ip_address)          AS enable_custom_emoji
+           , max(use_ip_address)          AS use_ip_address
          FROM {{ source('staging_config', 'config_cluster') }} cc
               JOIN max_timestamp         mt
                    ON cc.user_id = mt.user_id
