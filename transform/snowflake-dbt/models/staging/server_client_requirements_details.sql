@@ -9,7 +9,14 @@ WITH max_timestamp               AS (
         timestamp::DATE AS date
       , user_id
       , max(timestamp)  AS max_timestamp
-    FROM {{ source('staging_analytics', 'config_client_requirements') }}
+    FROM {{ source('staging_config', 'config_client_requirements') }}
+    {% if is_incremental() %}
+
+        -- this filter will only be applied on an incremental run
+        WHERE timestamp::date > (SELECT MAX(date) FROM {{ this }})
+
+    {% endif %}
+    GROUP BY 1, 2
 ),
      server_client_requirements_details AS (
          SELECT
@@ -27,7 +34,7 @@ WITH max_timestamp               AS (
          , max(enable_incoming_webhooks)      AS enable_incoming_webhooks
          , max(enable_multifactor_authentication)      AS enable_multifactor_authentication
          , max(enable_only_admin_integrations)      AS enable_only_admin_integrations
-         FROM {{ source('staging_analytics', 'config_client_requirements') }} ccr
+         FROM {{ source('staging_config', 'config_client_requirements') }} ccr
               JOIN max_timestamp              mt
                    ON ccr.user_id = mt.user_id
                        AND mt.max_timestamp = ccr.timestamp

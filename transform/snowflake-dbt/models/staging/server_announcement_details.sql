@@ -9,7 +9,13 @@ WITH max_timestamp               AS (
         timestamp::DATE AS date
       , user_id
       , max(timestamp)  AS max_timestamp
-    FROM {{ source('staging_analytics', 'config_announcement') }}
+    FROM {{ source('staging_config', 'config_announcement') }}
+    {% if is_incremental() %}
+
+        -- this filter will only be applied on an incremental run
+        WHERE timestamp::date > (SELECT MAX(date) FROM {{ this }})
+
+    {% endif %}
     GROUP BY 1, 2
 ),
      server_announcement_details AS (
@@ -20,7 +26,7 @@ WITH max_timestamp               AS (
            , max(isdefault_banner_color)      AS isdefault_banner_color
            , max(isdefault_banner_text_color) AS isdefault_banner_text_color
            , max(allow_banner_dismissal)      AS allow_banner_dismissal
-         FROM {{ source('staging_analytics', 'config_announcement') }} ca
+         FROM {{ source('staging_config', 'config_announcement') }} ca
               JOIN max_timestamp              mt
                    ON ca.user_id = mt.user_id
                        AND mt.max_timestamp = ca.timestamp

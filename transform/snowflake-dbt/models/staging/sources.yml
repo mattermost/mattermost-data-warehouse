@@ -8,7 +8,7 @@ sources:
     tables: 
       - name: contributor_map_data
   
-  - name: staging_analytics
+  - name: staging_config
     database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
     schema: mattermost2
 
