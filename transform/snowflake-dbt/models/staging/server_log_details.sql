@@ -8,7 +8,7 @@ WITH max_timestamp       AS (
     SELECT
         timestamp::DATE AS date
       , user_id
-      , max(timestamp)  AS max_timestamp
+      , MAX(timestamp)  AS max_timestamp
     FROM {{ source('staging_config', 'config_log') }}
     {% if is_incremental() %}
 
@@ -20,17 +20,17 @@ WITH max_timestamp       AS (
 ),
      server_log_details AS (
          SELECT
-             timestamp::DATE                             AS date
-           , l.user_id                                   AS server_id
-           , max(enable_console)                         AS console_logging
-           , max(console_level)                          AS log_console_level
-           , max(console_json)                           AS log_console_json
-           , max(enable_file)                            AS file_logging
-           , max(file_level)                             AS log_file_level
-           , max(file_json)                              AS log_file_json
-           , max(isdefault_file_location)                AS isdefault_file_log_location
-           , max(isdefault_file_format)                  AS isdefault_file_log_format
-           , max(enable_webhook_debugging)               AS enable_webhook_debugging
+             timestamp::DATE               AS date
+           , l.user_id                     AS server_id
+           , MAX(console_json)             AS console_json
+           , MAX(console_level)            AS console_level
+           , MAX(enable_console)           AS enable_console
+           , MAX(enable_file)              AS enable_file
+           , MAX(enable_webhook_debugging) AS enable_webhook_debugging
+           , MAX(file_json)                AS file_json
+           , MAX(file_level)               AS file_level
+           , MAX(isdefault_file_format)    AS isdefault_file_format
+           , MAX(isdefault_file_location)  AS isdefault_file_location
          FROM {{ source('staging_config', 'config_log') }} l
               JOIN max_timestamp     mt
                    ON l.user_id = mt.user_id

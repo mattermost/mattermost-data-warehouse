@@ -8,7 +8,7 @@ WITH max_timestamp       AS (
     SELECT
         timestamp::DATE AS date
       , user_id
-      , max(timestamp)  AS max_timestamp
+      , MAX(timestamp)  AS max_timestamp
     FROM {{ source('staging_config', 'config_password') }}
     {% if is_incremental() %}
 
@@ -22,11 +22,11 @@ WITH max_timestamp       AS (
          SELECT
              timestamp::DATE                             AS date
            , p.user_id                                   AS server_id
-           , max(lowercase)                              AS password_lowercase
-           , max(uppercase)                              AS password_uppercase
-           , max(symbol)                                 AS password_symbol
-           , max(number)                                 AS password_number
-           , max(minimum_length)                         AS password_minimum_length
+           , MAX(lowercase)                              AS enable_lowercase
+           , MAX(uppercase)                              AS enable_uppercase
+           , MAX(symbol)                                 AS enable_symbol
+           , MAX(number)                                 AS enable_number
+           , MAX(minimum_length)                         AS password_minimum_length
          FROM {{ source('staging_config', 'config_password') }} p
               JOIN max_timestamp          mt
                    ON p.user_id = mt.user_id

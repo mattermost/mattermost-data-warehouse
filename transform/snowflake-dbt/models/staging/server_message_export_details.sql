@@ -8,7 +8,7 @@ WITH max_timestamp       AS (
     SELECT
         timestamp::DATE AS date
       , user_id
-      , max(timestamp)  AS max_timestamp
+      , MAX(timestamp)  AS max_timestamp
     FROM {{ source('staging_config', 'config_message_export') }}
     {% if is_incremental() %}
 
@@ -20,17 +20,16 @@ WITH max_timestamp       AS (
 ),
      server_message_export_details AS (
          SELECT
-             timestamp::DATE                             AS date
-           , m.user_id                                   AS server_id
-           , max(enable_message_export)                  AS enable_message_export
-           , max(is_default_global_relay_email_address)  AS is_default_global_relay_email_address
-           , max(is_default_global_relay_smtp_username)  AS is_default_global_relay_smtp_username
-           , max(is_default_global_relay_smtp_password)  AS is_default_global_relay_smtp_password
-           , max(global_relay_customer_type)             AS global_relay_customer_type
-           , max(default_export_from_timestamp)          AS default_export_from_timestamp
-           , max(export_format)                          AS export_format
-           , max(batch_size)                             AS batch_size
-           , max(daily_run_time)                         AS daily_run_time
+             timestamp::DATE                            AS date
+           , m.user_id                                  AS server_id
+           , MAX(batch_size)                            AS batch_size
+           , MAX(daily_run_time)                        AS daily_run_time
+           , MAX(enable_message_export)                 AS enable_message_export
+           , MAX(export_format)                         AS export_format
+           , MAX(global_relay_customer_type)            AS global_relay_customer_type
+           , MAX(is_default_global_relay_email_address) AS is_default_global_relay_email_address
+           , MAX(is_default_global_relay_smtp_password) AS is_default_global_relay_smtp_password
+           , MAX(is_default_global_relay_smtp_username) AS is_default_global_relay_smtp_username
          FROM {{ source('staging_config', 'config_message_export') }} m
               JOIN max_timestamp                mt
                    ON m.user_id = mt.user_id

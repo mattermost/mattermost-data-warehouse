@@ -8,7 +8,7 @@ WITH max_timestamp       AS (
     SELECT
         timestamp::DATE AS date
       , user_id
-      , max(timestamp)  AS max_timestamp
+      , MAX(timestamp)  AS max_timestamp
     FROM {{ source('staging_config', 'config_localization') }}
     {% if is_incremental() %}
 
@@ -20,11 +20,11 @@ WITH max_timestamp       AS (
 ),
      server_localization_details AS (
          SELECT
-             timestamp::DATE                             AS date
-           , l.user_id                                   AS server_id
-           , max(default_server_locale)                  AS default_server_locale
-           , max(default_client_locale)                  AS default_client_locale
-           , max(available_locales)                      AS available_locales
+             timestamp::DATE            AS date
+           , l.user_id                  AS server_id
+           , MAX(available_locales)     AS available_locales
+           , MAX(default_client_locale) AS default_client_locale
+           , MAX(default_server_locale) AS default_server_locale
          FROM {{ source('staging_config', 'config_localization') }} l
               JOIN max_timestamp      mt
                    ON l.user_id = mt.user_id

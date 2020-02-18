@@ -8,7 +8,7 @@ WITH max_timestamp       AS (
     SELECT
         timestamp::DATE AS date
       , user_id
-      , max(timestamp)  AS max_timestamp
+      , MAX(timestamp)  AS max_timestamp
     FROM {{ source('staging_config', 'config_sql') }}
     {% if is_incremental() %}
 

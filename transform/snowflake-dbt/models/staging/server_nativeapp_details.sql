@@ -8,7 +8,7 @@ WITH max_timestamp       AS (
     SELECT
         timestamp::DATE AS date
       , user_id
-      , max(timestamp)  AS max_timestamp
+      , MAX(timestamp)  AS max_timestamp
     FROM {{ source('staging_config', 'config_nativeapp') }}
     {% if is_incremental() %}
 
@@ -20,11 +20,11 @@ WITH max_timestamp       AS (
 ),
      server_nativeapp_details AS (
          SELECT
-             timestamp::DATE                             AS date
-           , n.user_id                                   AS server_id
-           , max(isdefault_app_download_link)            AS isdefault_app_download_link
-           , max(isdefault_android_app_download_link)    AS isdefault_android_app_download_link
-           , max(isdefault_iosapp_download_link)         AS isdefault_iosapp_download_link
+             timestamp::DATE                          AS date
+           , n.user_id                                AS server_id
+           , MAX(isdefault_android_app_download_link) AS isdefault_android_app_download_link
+           , MAX(isdefault_app_download_link)         AS isdefault_app_download_link
+           , MAX(isdefault_iosapp_download_link)      AS isdefault_iosapp_download_link
          FROM {{ source('staging_config', 'config_nativeapp') }} n
               JOIN max_timestamp         mt
                    ON n.user_id = mt.user_id

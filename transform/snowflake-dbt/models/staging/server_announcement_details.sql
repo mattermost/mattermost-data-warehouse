@@ -8,7 +8,7 @@ WITH max_timestamp               AS (
     SELECT
         timestamp::DATE AS date
       , user_id
-      , max(timestamp)  AS max_timestamp
+      , MAX(timestamp)  AS max_timestamp
     FROM {{ source('staging_config', 'config_announcement') }}
     {% if is_incremental() %}
 
@@ -22,10 +22,10 @@ WITH max_timestamp               AS (
          SELECT
              timestamp::DATE                  AS date
            , ca.user_id                       AS server_id
-           , max(enable_banner)               AS enabled_banner
-           , max(isdefault_banner_color)      AS isdefault_banner_color
-           , max(isdefault_banner_text_color) AS isdefault_banner_text_color
-           , max(allow_banner_dismissal)      AS allow_banner_dismissal
+           , MAX(allow_banner_dismissal)      AS allow_banner_dismissal
+           , MAX(enable_banner)               AS enable_banner
+           , MAX(isdefault_banner_color)      AS isdefault_banner_color
+           , MAX(isdefault_banner_text_color) AS isdefault_banner_text_color
          FROM {{ source('staging_config', 'config_announcement') }} ca
               JOIN max_timestamp              mt
                    ON ca.user_id = mt.user_id

@@ -8,7 +8,7 @@ WITH max_timestamp            AS (
     SELECT
         timestamp::DATE AS date
       , user_id
-      , max(timestamp)  AS max_timestamp
+      , MAX(timestamp)  AS max_timestamp
     FROM {{ source('staging_config', 'config_analytics') }}
     {% if is_incremental() %}
 
@@ -22,7 +22,7 @@ WITH max_timestamp            AS (
          SELECT
              timestamp::DATE                         AS date
            , ca.user_id                              AS server_id
-           , max(isdefault_max_users_for_statistics) AS isdefault_max_users_for_statistics
+           , MAX(isdefault_max_users_for_statistics) AS isdefault_max_users_for_statistics
          FROM {{ source('staging_config', 'config_analytics') }} ca
               JOIN max_timestamp           mt
                    ON ca.user_id = mt.user_id

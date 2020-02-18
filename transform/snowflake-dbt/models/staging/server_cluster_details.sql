@@ -8,7 +8,7 @@ WITH max_timestamp          AS (
     SELECT
         timestamp::DATE AS date
       , user_id
-      , max(timestamp)  AS max_timestamp
+      , MAX(timestamp)  AS max_timestamp
     FROM {{ source('staging_config', 'config_cluster') }}
     {% if is_incremental() %}
 
@@ -22,13 +22,13 @@ WITH max_timestamp          AS (
          SELECT
              timestamp::DATE              AS date
            , cc.user_id                   AS server_id
-           , max(bind_address)            AS has_bind_address
-           , max(network_interface)       AS has_network_interface
-           , max(use_experimental_gossip) AS use_experimental_gossip
-           , max(advertise_address)       AS advertise_address
-           , max(enable)                  AS cluster_enabled
-           , max(read_only_config)        AS read_only_config
-           , max(use_ip_address)          AS use_ip_address
+           , MAX(advertise_address)       AS advertise_address
+           , MAX(bind_address)            AS bind_address
+           , MAX(enable)                  AS enable_cluster
+           , MAX(network_interface)       AS network_interface
+           , MAX(read_only_config)        AS read_only_config
+           , MAX(use_experimental_gossip) AS use_experimental_gossip
+           , MAX(use_ip_address)          AS use_ip_address
          FROM {{ source('staging_config', 'config_cluster') }} cc
               JOIN max_timestamp         mt
                    ON cc.user_id = mt.user_id

@@ -8,7 +8,7 @@ WITH max_timestamp        AS (
     SELECT
         timestamp::DATE AS date
       , user_id
-      , max(timestamp)  AS max_timestamp
+      , MAX(timestamp)  AS max_timestamp
     FROM {{ source('staging_config', 'config_experimental') }}
     {% if is_incremental() %}
 
@@ -20,14 +20,15 @@ WITH max_timestamp        AS (
 ),
      server_experimental_details AS (
          SELECT
-             timestamp::DATE                          AS date
-           , e.user_id                                AS server_id
-           , max(enable_click_to_reply)               AS enable_click_to_reply
-           , max(client_side_cert_enable)             AS client_side_cert_enable
-           , max(enable_post_metadata)                AS enable_post_metadata
-           , max(restrict_system_admin)               AS restrict_system_admin
-           , max(isdefault_client_side_cert_check)    AS isdefault_client_side_cert_check
-           , max(link_metadata_timeout_milliseconds)  AS link_metadata_timeout_milliseconds
+             timestamp::DATE                         AS date
+           , e.user_id                               AS server_id
+           , MAX(client_side_cert_enable)            AS client_side_cert_enable
+           , MAX(enable_click_to_reply)              AS enable_click_to_reply
+           , MAX(enable_post_metadata)               AS enable_post_metadata
+           , MAX(isdefault_client_side_cert_check)   AS isdefault_client_side_cert_check
+           , MAX(link_metadata_timeout_milliseconds) AS link_metadata_timeout_milliseconds
+           , MAX(restrict_system_admin)              AS restrict_system_admin
+           , MAX(use_new_saml_library)               AS use_new_saml_library
          FROM {{ source('staging_config', 'config_experimental') }} e
               JOIN max_timestamp              mt
                    ON e.user_id = mt.user_id

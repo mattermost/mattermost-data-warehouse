@@ -8,7 +8,7 @@ WITH max_timestamp       AS (
     SELECT
         timestamp::DATE AS date
       , user_id
-      , max(timestamp)  AS max_timestamp
+      , MAX(timestamp)  AS max_timestamp
     FROM {{ source('staging_config', 'config_notifications_log') }}
     {% if is_incremental() %}
 
@@ -20,15 +20,15 @@ WITH max_timestamp       AS (
 ),
      server_notifications_log_details AS (
          SELECT
-             timestamp::DATE                             AS date
-           , n.user_id                                   AS server_id
-           , max(enable_file)                            AS file_notification_logging
-           , max(file_level)                             AS notification_log_file_level
-           , max(file_json)                              AS notification_log_file_json
-           , max(isdefault_file_location)                AS default_notification_log_file_location
-           , max(enable_console)                         AS console_notification_logging
-           , max(console_level)                          AS notification_log_console_level
-           , max(console_json)                           AS notification_log_console_level
+             timestamp::DATE              AS date
+           , n.user_id                    AS server_id
+           , MAX(console_json)            AS console_json
+           , MAX(console_level)           AS console_level
+           , MAX(enable_console)          AS enable_console
+           , MAX(enable_file)             AS enable_file
+           , MAX(file_json)               AS file_json
+           , MAX(file_level)              AS file_level
+           , MAX(isdefault_file_location) AS isdefault_file_location
          FROM {{ source('staging_config', 'config_notifications_log') }} n
               JOIN max_timestamp                   mt
                    ON n.user_id = mt.user_id

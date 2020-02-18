@@ -8,7 +8,7 @@ WITH max_timestamp       AS (
     SELECT
         timestamp::DATE AS date
       , user_id
-      , max(timestamp)  AS max_timestamp
+      , MAX(timestamp)  AS max_timestamp
     FROM {{ source('staging_config', 'config_rate') }}
     {% if is_incremental() %}
 
@@ -22,13 +22,13 @@ WITH max_timestamp       AS (
          SELECT
              timestamp::DATE               AS date
            , r.user_id                     AS server_id
-           , max(max_burst)                AS max_burst
-           , max(isdefault_vary_by_header) AS isdefault_vary_by_header
-           , max(memory_store_size)        AS memory_store_size
-           , max(per_sec)                  AS per_sec
-           , max(vary_by_remote_address)   AS vary_by_remote_address
-           , max(vary_by_user)             AS vary_by_user
-           , max(enable_rate_limiter)      AS enable_rate_limiter
+           , MAX(enable_rate_limiter)      AS enable_rate_limiter
+           , MAX(isdefault_vary_by_header) AS isdefault_vary_by_header
+           , MAX(max_burst)                AS max_burst
+           , MAX(memory_store_size)        AS memory_store_size
+           , MAX(per_sec)                  AS per_sec
+           , MAX(vary_by_remote_address)   AS vary_by_remote_address
+           , MAX(vary_by_user)             AS vary_by_user
          FROM {{ source('staging_config', 'config_rate') }} r
               JOIN max_timestamp      mt
                    ON r.user_id = mt.user_id

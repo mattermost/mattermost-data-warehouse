@@ -8,7 +8,7 @@ WITH max_timestamp                 AS (
     SELECT
         timestamp::DATE AS date
       , user_id
-      , max(timestamp)  AS max_timestamp
+      , MAX(timestamp)  AS max_timestamp
     FROM {{ source('staging_config', 'config_data_retention') }}
     {% if is_incremental() %}
 
@@ -22,10 +22,10 @@ WITH max_timestamp                 AS (
          SELECT
              timestamp::DATE              AS date
            , dr.user_id                   AS server_id
-           , max(message_retention_days)  AS message_retention_day
-           , max(file_retention_days)     AS file_retention_days
-           , max(enable_message_deletion) AS enable_message_deletion
-           , max(enable_file_deletion)    AS enable_file_deletion
+           , MAX(message_retention_days)  AS message_retention_days
+           , MAX(file_retention_days)     AS file_retention_days
+           , MAX(enable_message_deletion) AS enable_message_deletion
+           , MAX(enable_file_deletion)    AS enable_file_deletion
          FROM {{ source('staging_config', 'config_data_retention') }} dr
               JOIN max_timestamp                mt
                    ON dr.user_id = mt.user_id
