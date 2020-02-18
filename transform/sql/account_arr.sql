@@ -17,7 +17,7 @@ WITH leap_years AS (
 ), account_w_arr AS (
   SELECT
     account.sfid AS account_sfid,
-  	SUM(365*(opportunitylineitem.totalprice)/(opportunitylineitem.end_date__c::date - opportunitylineitem.start_date__c::date + 1 - crosses_leap_day))::int AS total_arr
+  	SUM(365*(opportunitylineitem.totalprice)/(opportunitylineitem.end_date__c::date - opportunitylineitem.start_date__c::date + 1 - crosses_leap_day)) AS total_arr
   FROM orgm.opportunitylineitem
   LEFT JOIN opportunitylineitems_impacted ON opportunitylineitems_impacted.opportunitylineitem_sfid = opportunitylineitem.sfid
   LEFT JOIN orgm.opportunity ON opportunity.sfid = opportunitylineitem.opportunityid
