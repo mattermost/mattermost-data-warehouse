@@ -9,3 +9,103 @@ models:
 
   - name: server_analytics_details
     description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_analytics.
+
+  - name: server_announcement_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_announcement.
+
+  - name: server_client_requirements_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_client_requirements.
+
+  - name: server_cluster_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_cluster.
+
+  - name: server_compliance_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_compliance.
+
+  - name: server_data_retention_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_data_retention.
+
+  - name: server_display_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_display.
+
+  - name: server_elasticsearch_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_elasticsearch.
+  
+  - name: server_email_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_email.
+  
+  - name: server_experimental_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_experimental.
+  
+  - name: server_extension_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_extension.
+    
+  - name: server_file_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_file.
+    
+  - name: server_guest_account_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_guest_accounts.
+    
+  - name: server_image_proxy_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_image_proxy.
+      
+  - name: server_ldap_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_ldap.
+      
+  - name: server_localization_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_localization.
+      
+  - name: server_log_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_log.
+      
+  - name: server_message_export_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_message_export.
+      
+  - name: server_metric_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_metric.
+      
+  - name: server_nativeapp_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_nativeapp.
+      
+  - name: server_notifications_log_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_notifications_log.
+      
+  - name: server_oauth_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_oauth.
+      
+  - name: server_password_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_password.
+      
+  - name: server_plugin_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_plugin.
+      
+  - name: server_privacy_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_privacy.
+      
+  - name: server_rate_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_rate.
+      
+  - name: server_saml_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_saml.
+      
+  - name: server_service_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_service.
+      
+  - name: server_sql_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_sql.
+      
+  - name: server_support_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_support.
+      
+  - name: server_team_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_team.
+      
+  - name: server_theme_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_theme.
+      
+  - name: server_timezone_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_timezone.
+      
+  - name: server_webrtc_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_webrtc.
+  
