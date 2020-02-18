@@ -18,7 +18,7 @@ WITH server_daily_details AS (
       , coalesce(s2.system_admins, NULL)                                            AS system_admins
       , coalesce(s1.os_type, s2.operating_system)                                   AS operating_system
       , coalesce(s1.db_type, s2.database_type)                                      AS database_type
-      , CASE WHEN s1.id IS NOT NULL THEN TRUE ELSE FALSE END                        AS in_security
+      , CASE WHEN s1.server_id IS NOT NULL THEN TRUE ELSE FALSE END                 AS in_security
       , CASE WHEN s2.server_id IS NOT NULL THEN TRUE ELSE FALSE END                 AS in_mm2_server
       , CASE WHEN s1.occurrences > 1 OR s2.occurrences > 1 THEN TRUE ELSE FALSE END AS has_dupes
       , CASE WHEN coalesce(s1.ip_count, NULL) > 1 THEN TRUE ELSE FALSE END          AS has_multi_ips
