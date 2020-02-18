@@ -9,7 +9,7 @@ WITH max_timestamp       AS (
         timestamp::DATE AS date
       , user_id
       , MAX(timestamp)  AS max_timestamp
-    FROM {{ source('staging_config', 'config_password') }}
+    FROM {{ source('mattermost2', 'config_password') }}
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -27,7 +27,7 @@ WITH max_timestamp       AS (
            , MAX(symbol)                                 AS enable_symbol
            , MAX(number)                                 AS enable_number
            , MAX(minimum_length)                         AS password_minimum_length
-         FROM {{ source('staging_config', 'config_password') }} p
+         FROM {{ source('mattermost2', 'config_password') }} p
               JOIN max_timestamp          mt
                    ON p.user_id = mt.user_id
                        AND mt.max_timestamp = p.timestamp

@@ -9,7 +9,7 @@ WITH max_timestamp       AS (
         timestamp::DATE AS date
       , user_id
       , MAX(timestamp)  AS max_timestamp
-    FROM {{ source('staging_config', 'config_localization') }}
+    FROM {{ source('mattermost2', 'config_localization') }}
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -25,7 +25,7 @@ WITH max_timestamp       AS (
            , MAX(available_locales)     AS available_locales
            , MAX(default_client_locale) AS default_client_locale
            , MAX(default_server_locale) AS default_server_locale
-         FROM {{ source('staging_config', 'config_localization') }} l
+         FROM {{ source('mattermost2', 'config_localization') }} l
               JOIN max_timestamp      mt
                    ON l.user_id = mt.user_id
                        AND mt.max_timestamp = l.timestamp

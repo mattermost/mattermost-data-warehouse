@@ -9,7 +9,7 @@ WITH max_timestamp       AS (
         timestamp::DATE AS date
       , user_id
       , MAX(timestamp)  AS max_timestamp
-    FROM {{ source('staging_config', 'config_file') }}
+    FROM {{ source('mattermost2', 'config_file') }}
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -40,7 +40,7 @@ WITH max_timestamp       AS (
            , MAX(profile_width)           AS profile_width
            , MAX(thumbnail_height)        AS thumbnail_height
            , MAX(thumbnail_width)         AS thumbnail_width
-         FROM {{ source('staging_config', 'config_file') }} f
+         FROM {{ source('mattermost2', 'config_file') }} f
               JOIN max_timestamp      mt
                    ON f.user_id = mt.user_id
                        AND mt.max_timestamp = f.timestamp

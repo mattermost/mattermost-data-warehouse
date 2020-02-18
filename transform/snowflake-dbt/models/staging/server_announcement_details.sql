@@ -9,7 +9,7 @@ WITH max_timestamp               AS (
         timestamp::DATE AS date
       , user_id
       , MAX(timestamp)  AS max_timestamp
-    FROM {{ source('staging_config', 'config_announcement') }}
+    FROM {{ source('mattermost2', 'config_announcement') }}
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -26,7 +26,7 @@ WITH max_timestamp               AS (
            , MAX(enable_banner)               AS enable_banner
            , MAX(isdefault_banner_color)      AS isdefault_banner_color
            , MAX(isdefault_banner_text_color) AS isdefault_banner_text_color
-         FROM {{ source('staging_config', 'config_announcement') }} ca
+         FROM {{ source('mattermost2', 'config_announcement') }} ca
               JOIN max_timestamp              mt
                    ON ca.user_id = mt.user_id
                        AND mt.max_timestamp = ca.timestamp

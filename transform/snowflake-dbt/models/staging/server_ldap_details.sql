@@ -9,7 +9,7 @@ WITH max_timestamp       AS (
         timestamp::DATE AS date
       , user_id
       , MAX(timestamp)  AS max_timestamp
-    FROM {{ source('staging_config', 'config_ldap') }}
+    FROM {{ source('mattermost2', 'config_ldap') }}
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -48,7 +48,7 @@ WITH max_timestamp       AS (
            , MAX(segment_dedupe_id)                      AS segment_dedupe_id
            , MAX(skip_certificate_verification)          AS skip_certificate_verification
            , MAX(sync_interval_minutes)                  AS sync_interval_minutes
-         FROM {{ source('staging_config', 'config_ldap') }} l
+         FROM {{ source('mattermost2', 'config_ldap') }} l
               JOIN max_timestamp      mt
                    ON l.user_id = mt.user_id
                        AND mt.max_timestamp = l.timestamp

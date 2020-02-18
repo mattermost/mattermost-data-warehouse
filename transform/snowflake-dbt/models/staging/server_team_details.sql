@@ -9,7 +9,7 @@ WITH max_timestamp       AS (
         timestamp::DATE AS date
       , user_id
       , MAX(timestamp)  AS max_timestamp
-    FROM {{ source('staging_config', 'config_team') }}
+    FROM {{ source('mattermost2', 'config_team') }}
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -54,7 +54,7 @@ WITH max_timestamp       AS (
            , MAX(restrict_team_invite)                      AS restrict_team_invite
            , MAX(teammate_name_display)                     AS teammate_name_display
            , MAX(view_archived_channels)                    AS view_archived_channels
-         FROM {{ source('staging_config', 'config_team') }} t
+         FROM {{ source('mattermost2', 'config_team') }} t
               JOIN max_timestamp      mt
                    ON t.user_id = mt.user_id
                        AND mt.max_timestamp = t.timestamp

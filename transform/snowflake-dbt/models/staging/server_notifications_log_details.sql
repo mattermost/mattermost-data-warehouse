@@ -9,7 +9,7 @@ WITH max_timestamp       AS (
         timestamp::DATE AS date
       , user_id
       , MAX(timestamp)  AS max_timestamp
-    FROM {{ source('staging_config', 'config_notifications_log') }}
+    FROM {{ source('mattermost2', 'config_notifications_log') }}
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -29,7 +29,7 @@ WITH max_timestamp       AS (
            , MAX(file_json)               AS file_json
            , MAX(file_level)              AS file_level
            , MAX(isdefault_file_location) AS isdefault_file_location
-         FROM {{ source('staging_config', 'config_notifications_log') }} n
+         FROM {{ source('mattermost2', 'config_notifications_log') }} n
               JOIN max_timestamp                   mt
                    ON n.user_id = mt.user_id
                        AND mt.max_timestamp = n.timestamp

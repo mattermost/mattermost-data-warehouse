@@ -9,7 +9,7 @@ WITH max_timestamp       AS (
         timestamp::DATE AS date
       , user_id
       , MAX(timestamp)  AS max_timestamp
-    FROM {{ source('staging_config', 'config_oauth') }}
+    FROM {{ source('mattermost2', 'config_oauth') }}
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -25,7 +25,7 @@ WITH max_timestamp       AS (
            , MAX(enable_office365)                       AS enable_office365_oauth
            , MAX(enable_google)                          AS enable_google_oauth
            , MAX(enable_gitlab)                          AS enable_gitlab_oauth
-         FROM {{ source('staging_config', 'config_oauth') }} o
+         FROM {{ source('mattermost2', 'config_oauth') }} o
               JOIN max_timestamp                   mt
                    ON o.user_id = mt.user_id
                        AND mt.max_timestamp = o.timestamp

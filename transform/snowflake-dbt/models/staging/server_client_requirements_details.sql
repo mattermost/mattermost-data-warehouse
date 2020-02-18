@@ -9,7 +9,7 @@ WITH max_timestamp               AS (
         timestamp::DATE AS date
       , user_id
       , MAX(timestamp)  AS max_timestamp
-    FROM {{ source('staging_config', 'config_client_requirements') }}
+    FROM {{ source('mattermost2', 'config_client_requirements') }}
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -41,7 +41,7 @@ WITH max_timestamp               AS (
            , MAX(enable_only_admin_integrations)       AS enable_only_admin_integrations
            , MAX(ios_latest_version)                   AS ios_latest_version
            , MAX(ios_min_version)                      AS ios_min_version
-         FROM {{ source('staging_config', 'config_client_requirements') }} ccr
+         FROM {{ source('mattermost2', 'config_client_requirements') }} ccr
               JOIN max_timestamp              mt
                    ON ccr.user_id = mt.user_id
                        AND mt.max_timestamp = ccr.timestamp

@@ -9,7 +9,7 @@ WITH max_timestamp       AS (
         timestamp::DATE AS date
       , user_id
       , MAX(timestamp)  AS max_timestamp
-    FROM {{ source('staging_config', 'config_message_export') }}
+    FROM {{ source('mattermost2', 'config_message_export') }}
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -30,7 +30,7 @@ WITH max_timestamp       AS (
            , MAX(is_default_global_relay_email_address) AS is_default_global_relay_email_address
            , MAX(is_default_global_relay_smtp_password) AS is_default_global_relay_smtp_password
            , MAX(is_default_global_relay_smtp_username) AS is_default_global_relay_smtp_username
-         FROM {{ source('staging_config', 'config_message_export') }} m
+         FROM {{ source('mattermost2', 'config_message_export') }} m
               JOIN max_timestamp                mt
                    ON m.user_id = mt.user_id
                        AND mt.max_timestamp = m.timestamp

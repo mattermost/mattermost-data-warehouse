@@ -9,7 +9,7 @@ WITH max_timestamp                AS (
         timestamp::DATE AS date
       , user_id
       , MAX(timestamp)  AS max_timestamp
-    FROM {{ source('staging_config', 'config_elasticsearch') }}
+    FROM {{ source('mattermost2', 'config_elasticsearch') }}
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -41,7 +41,7 @@ WITH max_timestamp                AS (
            , MAX(trace)                             AS trace
            , MAX(user_index_replicas)               AS user_index_replicas
            , MAX(user_index_shards)                 AS user_index_shards
-         FROM {{ source('staging_config', 'config_elasticsearch') }} e
+         FROM {{ source('mattermost2', 'config_elasticsearch') }} e
               JOIN max_timestamp               mt
                    ON e.user_id = mt.user_id
                        AND mt.max_timestamp = e.timestamp

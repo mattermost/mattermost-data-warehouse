@@ -9,7 +9,7 @@ WITH max_timestamp       AS (
         timestamp::DATE AS date
       , user_id
       , MAX(timestamp)  AS max_timestamp
-    FROM {{ source('staging_config', 'config_webrtc') }}
+    FROM {{ source('mattermost2', 'config_webrtc') }}
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -25,7 +25,7 @@ WITH max_timestamp       AS (
            , MAX(enable)             AS enable
            , MAX(isdefault_stun_uri) AS isdefault_stun_uri
            , MAX(isdefault_turn_uri) AS isdefault_turn_uri
-         FROM {{ source('staging_config', 'config_webrtc') }} w
+         FROM {{ source('mattermost2', 'config_webrtc') }} w
               JOIN max_timestamp        mt
                    ON w.user_id = mt.user_id
                        AND mt.max_timestamp = w.timestamp

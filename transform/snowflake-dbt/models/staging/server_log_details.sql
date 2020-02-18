@@ -9,7 +9,7 @@ WITH max_timestamp       AS (
         timestamp::DATE AS date
       , user_id
       , MAX(timestamp)  AS max_timestamp
-    FROM {{ source('staging_config', 'config_log') }}
+    FROM {{ source('mattermost2', 'config_log') }}
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -31,7 +31,7 @@ WITH max_timestamp       AS (
            , MAX(file_level)               AS file_level
            , MAX(isdefault_file_format)    AS isdefault_file_format
            , MAX(isdefault_file_location)  AS isdefault_file_location
-         FROM {{ source('staging_config', 'config_log') }} l
+         FROM {{ source('mattermost2', 'config_log') }} l
               JOIN max_timestamp     mt
                    ON l.user_id = mt.user_id
                        AND mt.max_timestamp = l.timestamp

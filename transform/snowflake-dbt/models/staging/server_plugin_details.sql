@@ -9,7 +9,7 @@ WITH max_timestamp       AS (
         timestamp::DATE AS date
       , user_id
       , MAX(timestamp)  AS max_timestamp
-    FROM {{ source('staging_config', 'config_plugin') }}
+    FROM {{ source('mattermost2', 'config_plugin') }}
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -57,7 +57,7 @@ WITH max_timestamp       AS (
            , MAX(version_webex)                  AS version_webex
            , MAX(version_welcome_bot)            AS version_welcome_bot
            , MAX(version_zoom)                   AS version_zoom
-         FROM {{ source('staging_config', 'config_plugin') }} p
+         FROM {{ source('mattermost2', 'config_plugin') }} p
               JOIN max_timestamp        mt
                    ON p.user_id = mt.user_id
                        AND mt.max_timestamp = p.timestamp

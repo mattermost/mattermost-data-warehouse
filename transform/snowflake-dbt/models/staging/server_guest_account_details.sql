@@ -9,7 +9,7 @@ WITH max_timestamp                AS (
         timestamp::DATE AS date
       , user_id
       , MAX(timestamp)  AS max_timestamp
-    FROM {{ source('staging_config', 'config_guest_accounts') }}
+    FROM {{ source('mattermost2', 'config_guest_accounts') }}
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -26,7 +26,7 @@ WITH max_timestamp                AS (
            , MAX(enable)                                 AS enable_guest_accounts
            , MAX(enforce_multifactor_authentication)     AS enforce_multifactor_authentication
            , MAX(isdefault_restrict_creation_to_domains) AS isdefault_restrict_creation_to_domains
-         FROM {{ source('staging_config', 'config_guest_accounts') }} g
+         FROM {{ source('mattermost2', 'config_guest_accounts') }} g
               JOIN max_timestamp                mt
                    ON g.user_id = mt.user_id
                        AND mt.max_timestamp = g.timestamp

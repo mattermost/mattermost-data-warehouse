@@ -9,7 +9,7 @@ WITH max_timestamp        AS (
         timestamp::DATE AS date
       , user_id
       , MAX(timestamp)  AS max_timestamp
-    FROM {{ source('staging_config', 'config_experimental') }}
+    FROM {{ source('mattermost2', 'config_experimental') }}
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -29,7 +29,7 @@ WITH max_timestamp        AS (
            , MAX(link_metadata_timeout_milliseconds) AS link_metadata_timeout_milliseconds
            , MAX(restrict_system_admin)              AS restrict_system_admin
            , MAX(use_new_saml_library)               AS use_new_saml_library
-         FROM {{ source('staging_config', 'config_experimental') }} e
+         FROM {{ source('mattermost2', 'config_experimental') }} e
               JOIN max_timestamp              mt
                    ON e.user_id = mt.user_id
                        AND mt.max_timestamp = e.timestamp

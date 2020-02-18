@@ -9,7 +9,7 @@ WITH max_timestamp          AS (
         timestamp::DATE AS date
       , user_id
       , MAX(timestamp)  AS max_timestamp
-    FROM {{ source('staging_config', 'config_cluster') }}
+    FROM {{ source('mattermost2', 'config_cluster') }}
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -29,7 +29,7 @@ WITH max_timestamp          AS (
            , MAX(read_only_config)        AS read_only_config
            , MAX(use_experimental_gossip) AS use_experimental_gossip
            , MAX(use_ip_address)          AS use_ip_address
-         FROM {{ source('staging_config', 'config_cluster') }} cc
+         FROM {{ source('mattermost2', 'config_cluster') }} cc
               JOIN max_timestamp         mt
                    ON cc.user_id = mt.user_id
                        AND mt.max_timestamp = cc.timestamp

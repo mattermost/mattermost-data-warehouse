@@ -9,7 +9,7 @@ WITH max_timestamp       AS (
         timestamp::DATE AS date
       , user_id
       , MAX(timestamp)  AS max_timestamp
-    FROM {{ source('staging_config', 'config_saml') }}
+    FROM {{ source('mattermost2', 'config_saml') }}
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -47,7 +47,7 @@ WITH max_timestamp       AS (
            , MAX(isdefault_username_attribute)        AS isdefault_username_attribute
            , MAX(sign_request)                        AS sign_request
            , MAX(verify)                              AS verify_saml
-         FROM {{ source('staging_config', 'config_saml') }} s
+         FROM {{ source('mattermost2', 'config_saml') }} s
               JOIN max_timestamp      mt
                    ON s.user_id = mt.user_id
                        AND mt.max_timestamp = s.timestamp

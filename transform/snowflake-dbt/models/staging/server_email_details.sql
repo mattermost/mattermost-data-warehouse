@@ -9,7 +9,7 @@ WITH max_timestamp                AS (
         timestamp::DATE AS date
       , user_id
       , MAX(timestamp)  AS max_timestamp
-    FROM {{ source('staging_config', 'config_email') }}
+    FROM {{ source('mattermost2', 'config_email') }}
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -45,7 +45,7 @@ WITH max_timestamp                AS (
            , MAX(send_push_notifications)              AS send_push_notifications
            , MAX(skip_server_certificate_verification) AS skip_server_certificate_verification
            , MAX(use_channel_in_email_notifications)   AS use_channel_in_email_notifications
-         FROM {{ source('staging_config', 'config_email') }} e
+         FROM {{ source('mattermost2', 'config_email') }} e
               JOIN max_timestamp       mt
                    ON e.user_id = mt.user_id
                        AND mt.max_timestamp = e.timestamp

@@ -9,7 +9,7 @@ WITH max_timestamp       AS (
         timestamp::DATE AS date
       , user_id
       , MAX(timestamp)  AS max_timestamp
-    FROM {{ source('staging_config', 'config_nativeapp') }}
+    FROM {{ source('mattermost2', 'config_nativeapp') }}
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -25,7 +25,7 @@ WITH max_timestamp       AS (
            , MAX(isdefault_android_app_download_link) AS isdefault_android_app_download_link
            , MAX(isdefault_app_download_link)         AS isdefault_app_download_link
            , MAX(isdefault_iosapp_download_link)      AS isdefault_iosapp_download_link
-         FROM {{ source('staging_config', 'config_nativeapp') }} n
+         FROM {{ source('mattermost2', 'config_nativeapp') }} n
               JOIN max_timestamp         mt
                    ON n.user_id = mt.user_id
                        AND mt.max_timestamp = n.timestamp

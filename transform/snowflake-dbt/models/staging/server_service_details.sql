@@ -9,7 +9,7 @@ WITH max_timestamp       AS (
         timestamp::DATE AS date
       , user_id
       , MAX(timestamp)  AS max_timestamp
-    FROM {{ source('staging_config', 'config_service') }}
+    FROM {{ source('mattermost2', 'config_service') }}
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -100,7 +100,7 @@ WITH max_timestamp       AS (
            , MAX(uses_letsencrypt)                                        AS uses_letsencrypt
            , MAX(websocket_url)                                           AS websocket_url
            , MAX(web_server_mode)                                         AS web_server_mode
-         FROM {{ source('staging_config', 'config_service') }} s
+         FROM {{ source('mattermost2', 'config_service') }} s
               JOIN max_timestamp         mt
                    ON s.user_id = mt.user_id
                        AND mt.max_timestamp = s.timestamp
