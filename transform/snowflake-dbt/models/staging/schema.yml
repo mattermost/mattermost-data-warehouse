@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: server_mattermost2_details
+  - name: server_server_details
     description: Part of staging data models to create mattermost.server_daily_details table. Contains cleaned version of raw.mattermost2.server table by retreiving the row with the most recent timestamp per server per day. Output is 1 row per server per day.
   
   - name: server_security_details
