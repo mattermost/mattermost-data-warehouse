@@ -7,7 +7,7 @@
 WITH server_daily_details AS (
     SELECT
         COALESCE(s1.date, s2.date)                                                  AS date
-      , coalesce(s1.id, s2.server_id)                                               AS server_id
+      , coalesce(s1.server_id, s2.server_id)                                        AS server_id
       , coalesce(s1.ip_address, NULL)                                               AS ip_address
       , coalesce(s1.location, NULL)                                                 AS location
       , coalesce(s1.version, s2.version)                                            AS version
@@ -27,10 +27,16 @@ WITH server_daily_details AS (
       , coalesce(s1.license_id1, NULL)                                              AS license_id1
       , coalesce(s1.license_id2, NULL)                                              AS license_id2
     FROM {{ ref('server_security_details') }}                    s1
-         FULL OUTER JOIN {{ ref('server_mattermost2_details') }} s2
-                         ON s1.id = s2.server_id
+         FULL OUTER JOIN {{ ref('server_server_details') }} s2
+                         ON s1.server_id = s2.server_id
                              AND s1.date = s2.date
     WHERE COALESCE(s1.date, s2.date) < CURRENT_DATE
+    {% if is_incremental() %}
+
+        -- this filter will only be applied on an incremental run
+        AND COALESCE(s1.date, s2.date)::date > (SELECT MAX(date) FROM {{ this }})
+
+    {% endif %}
     GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
     )
 SELECT *

@@ -8,8 +8,8 @@ WITH max_timestamp              AS (
     SELECT
         server.timestamp::DATE AS date
       , server.user_id
-      , max(server.timestamp)  AS max_timestamp
-      , count(server.user_id)  AS occurrences
+      , MAX(server.timestamp)  AS max_timestamp
+      , COUNT(server.user_id)  AS occurrences
     FROM {{ source('mattermost2', 'server') }}
     {% if is_incremental() %}
 
@@ -19,7 +19,7 @@ WITH max_timestamp              AS (
     {% endif %}
     GROUP BY 1, 2
 ),
-     server_mattermost2_details AS (
+     server_server_details AS (
          SELECT
              s.timestamp::DATE AS date
            , s.user_id         AS server_id
@@ -43,4 +43,4 @@ WITH max_timestamp              AS (
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
      )
 SELECT *
-FROM server_mattermost2_details
+FROM server_server_details
