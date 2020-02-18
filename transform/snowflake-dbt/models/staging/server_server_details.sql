@@ -34,7 +34,7 @@ WITH max_timestamp              AS (
         ),
      server_server_details AS (
          SELECT
-             s.timestamp::DATE AS date
+             s.timestamp::DATE                    AS date
            , s.user_id                            AS server_id
            , s.version
            , s.context_library_version
@@ -59,7 +59,7 @@ WITH max_timestamp              AS (
                        AND s.timestamp = mt.max_timestamp
               LEFT JOIN license
                         ON s.id = license.user_id
-                          AND s.date = license.license_date
+                          AND s.timestamp::DATE = license.license_date
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
      )
 SELECT *
