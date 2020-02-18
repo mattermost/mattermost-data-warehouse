@@ -8,7 +8,7 @@ WITH max_timestamp                 AS (
     SELECT
         timestamp::DATE AS date
       , user_id
-      , max(timestamp)  AS max_timestamp
+      , MAX(timestamp)  AS max_timestamp
     FROM {{ source('staging_config', 'config_display') }}
     {% if is_incremental() %}
 
@@ -22,8 +22,8 @@ WITH max_timestamp                 AS (
          SELECT
              timestamp::DATE                    AS date
            , d.user_id                          AS server_id
-           , max(isdefault_custom_url_schemes)  AS isdefault_custom_url_schemes
-           , max(experimental_timezone)         AS experimental_timezone
+           , MAX(experimental_timezone)         AS experimental_timezone
+           , MAX(isdefault_custom_url_schemes)  AS isdefault_custom_url_schemes
          FROM {{ source('staging_config', 'config_display') }} d
               JOIN max_timestamp                mt
                    ON d.user_id = mt.user_id
