@@ -19,7 +19,7 @@ WITH security                AS (
       , sec.db_type
       , sec.os_type
       , sec.ran_tests
-      , count(sec.location) over (partition by sec.id, sec.date, sec.hour, sec.active_user_count, sec.ip_address, sec.location) as location_count
+      , COUNT(sec.location) over (partition by sec.id, sec.date, sec.hour, sec.active_user_count, sec.ip_address, sec.location) as location_count
     FROM {{ ref('security') }} sec
          LEFT JOIN {{ ref('excludable_servers') }} es
                    ON sec.id = es.server_id
@@ -29,6 +29,7 @@ WITH security                AS (
       AND sec.version LIKE '_.%._._.%._'
       AND sec.ip_address <> '194.30.0.184'
       AND sec.user_count >= sec.active_user_count
+      AND NULLIF(sec.id, '') IS NOT NULL
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -106,7 +107,7 @@ WITH security                AS (
      ),
      server_security_details    AS (
          SELECT
-             s.id
+             s.id                                 AS server_id
            , s.date
            , s.hour
            , s.grouping
