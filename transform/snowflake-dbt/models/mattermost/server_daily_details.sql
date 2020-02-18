@@ -23,9 +23,9 @@ WITH server_daily_details AS (
       , CASE WHEN s1.occurrences > 1 OR s2.occurrences > 1 THEN TRUE ELSE FALSE END AS has_dupes
       , CASE WHEN coalesce(s1.ip_count, NULL) > 1 THEN TRUE ELSE FALSE END          AS has_multi_ips
       , coalesce(s2.timestamp, NULL)                                                AS timestamp
-      , coalesce(s1.account_sfid, NULL)                                             AS account_sfid
-      , coalesce(s1.license_id1, NULL)                                              AS license_id1
-      , coalesce(s1.license_id2, NULL)                                              AS license_id2
+      , coalesce(s1.account_sfid, s2.account_sfid)                                  AS account_sfid
+      , coalesce(s1.license_id1, s2.license_id1)                                    AS license_id1
+      , coalesce(s1.license_id2, s2.license_id2)                                    AS license_id2
     FROM {{ ref('server_security_details') }}                    s1
          FULL OUTER JOIN {{ ref('server_server_details') }} s2
                          ON s1.server_id = s2.server_id
