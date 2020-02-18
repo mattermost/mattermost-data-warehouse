@@ -14,31 +14,27 @@ WITH leap_years AS (
     LEFT JOIN orgm.opportunitylineitem ON opportunity.sfid = opportunitylineitem.opportunityid
     LEFT JOIN leap_years ON 1 = 1
     GROUP BY opportunity_sfid, opportunitylineitem_sfid
-), account_w_arr AS (
+), oppt_w_arr AS (
   SELECT
-    account.sfid AS account_sfid,
+    opportunity.sfid AS opportunity_sfid,
   	SUM(365*(opportunitylineitem.totalprice)/(opportunitylineitem.end_date__c::date - opportunitylineitem.start_date__c::date + 1 - crosses_leap_day))::int AS total_arr
   FROM orgm.opportunitylineitem
   LEFT JOIN opportunitylineitems_impacted ON opportunitylineitems_impacted.opportunitylineitem_sfid = opportunitylineitem.sfid
   LEFT JOIN orgm.opportunity ON opportunity.sfid = opportunitylineitem.opportunityid
-  LEFT JOIN orgm.account ON account.sfid = opportunity.accountid
   WHERE opportunity.iswon
     AND opportunitylineitem.end_date__c::date-opportunitylineitem.start_date__c::date <> 0
-    AND current_date >= opportunitylineitem.start_date__c::date
-    AND current_date <= opportunitylineitem.end_date__c::date
   GROUP BY 1
-), all_accounts_arr AS (
+), all_oppt_arr AS (
   SELECT
-    account.sfid AS account_sfid,
+    opportunity.sfid AS opportunity_sfid,
     COALESCE(total_arr,0) AS total_arr
-  FROM orgm.account
-  LEFT JOIN account_w_arr ON account.sfid = account_w_arr.account_sfid
+  FROM orgm.opportunity
+  LEFT JOIN oppt_w_arr ON opportunity.sfid = oppt_w_arr.opportunity_sfid
 )
-UPDATE orgm.account
-    SET arr_current__c = all_accounts_arr.total_arr
-FROM all_accounts_arr
-WHERE all_accounts_arr.account_sfid = account.sfid
-    AND (all_accounts_arr.total_arr <> account.arr_current__c OR account.arr_current__c ISNULL);
+UPDATE orgm.opportunity
+    SET arr_contributed__c = all_oppt_arr.total_arr
+FROM all_oppt_arr
+WHERE all_oppt_arr.opportunity_sfid = opportunity.sfid
+    AND (all_oppt_arr.total_arr <> opportunity.arr_contributed__c OR opportunity.arr_contributed__c ISNULL);
 
 COMMIT;
-
