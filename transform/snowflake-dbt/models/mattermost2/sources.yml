@@ -116,9 +116,6 @@ sources:
       
       - name: plugins
         description: Contains the raw plugin configurations of a server at a given point in time. Represented by integer counts. No plugin names or details provided.
-
-      - name: license
-        description: Contains raw customer license details at a given point in time. Boolean fields indicate whether specific features are enabled.
       
       - name: permissions_general
         description: Contains the raw general permissions for each server at a given point in time/on a specific date.
