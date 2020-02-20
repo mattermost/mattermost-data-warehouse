@@ -56,4 +56,4 @@ WITH max_timestamp              AS (
                        AND l.timestamp = mt.max_timestamp
          GROUP BY 1, 2)
 SELECT *
-FROM server_license_details;
+FROM server_license_details
