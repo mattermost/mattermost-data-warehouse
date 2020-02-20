@@ -127,6 +127,3 @@ models:
   - name: server_webrtc_details
     description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_webrtc.
   
-  - name: user_events_by_date
-    description: Contains an aggregated table from raw.mattermost2.event table that counts the total number of time each event was performed the number of each event performed by 
-  
