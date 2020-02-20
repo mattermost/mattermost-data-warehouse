@@ -20,6 +20,12 @@ dates as (
   JOIN servers s
        ON d.date >= s.min_date
        AND d.date <= CURRENT_DATE - INTERVAL '1 day'
+    {% if is_incremental() %}
+
+        -- this filter will only be applied on an incremental run
+        WHERE d.date > (SELECT MAX(date) FROM {{ this }})
+
+    {% endif %}
   GROUP BY 1, 2
 ),
   server_daily_details AS (
