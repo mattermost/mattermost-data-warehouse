@@ -7,6 +7,9 @@ models:
   - name: server_security_details
     description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of analytics.events.security table. Implements logic to remove non-production servers and retrieves the row with max active user count per server per day. Output is 1 row per server per day.
 
+  - name: server_activity_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.activity table. 
+
   - name: server_analytics_details
     description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_analytics.
 
@@ -51,6 +54,9 @@ models:
       
   - name: server_ldap_details
     description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_ldap.
+
+  - name: server_license_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.license.
       
   - name: server_localization_details
     description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_localization.
@@ -75,9 +81,21 @@ models:
       
   - name: server_password_details
     description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_password.
+  
+  - name: server_permissions_general_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.permissions_general.
+  
+  - name: server_permissions_system_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.permissions_system_scheme.
+  
+  - name: server_permissions_team_schemes_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.permissions_team_schemes.
       
   - name: server_plugin_details
     description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_plugin.
+
+  - name: server_plugins_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.plugins.
       
   - name: server_privacy_details
     description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_privacy.
