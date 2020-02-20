@@ -154,11 +154,14 @@ sources:
       - name: licenses
         description: Contains raw customer license details at a given point in time. Boolean fields indicate whether specific features are enabled.
       
+      - name: permissions_general
+        description: Contains the raw general permissions for each server at a given point in time/on a specific date.
+      
       - name: permissions_system_scheme
-        descritpion: Contains the raw system scheme permissions for each server's user type - system admin, team guest user, system user, team admin, channel admin, channel guest, and channel user
+        descritpion: Contains the raw system scheme permissions for each server's user type at a given point in time/on a specific date - system admin, team guest user, system user, team admin, channel admin, channel guest, and channel user
 
-      - name: permissions_team_scheme
-        description: Contains the raw team scheme permissions for each server's user type - team guest, channel admin, channel user, team admin, channel guest, and team user.
+      - name: permissions_team_schemes
+        description: Contains the raw team scheme permissions for each server's user type at a given point in time/on a specific date - team guest, channel admin, channel user, team admin, channel guest, and team user.
       
       - name: activity
         description: Contains the raw server-level activity at a given point in time/on a specific date. Includes number of posts, channels, slash commands, api calls, bot accounts, etc.

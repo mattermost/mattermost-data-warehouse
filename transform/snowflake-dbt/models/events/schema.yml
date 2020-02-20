@@ -3,3 +3,9 @@ version: 2
 models:
   - name: security
     description: Security data from diagnostics log entries
+  
+  - name: events_registry
+    description: Contains id, name, category, and description of all user events currently being logged by Telemetry-Enabled Mattermost servers.
+
+  - name: user_events_by_date
+    description: Contains event uuid, user id, user role, event name, event category, and count of events performed each day.
