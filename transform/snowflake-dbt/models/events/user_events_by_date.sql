@@ -16,13 +16,13 @@ WITH user_events_by_date AS (
     FROM {{ source('mattermost2', 'event')}} e
     LEFT JOIN {{ ref('events_registry') }} r
               ON LOWER(e.type) = r.event_name
+    WHERE user_actual_id IS NOT NULL
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-    WHERE timestamp::DATE > (SELECT MAX(date) FROM {{ this }})
+    AND timestamp::DATE > (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
-    AND user_actual_id IS NOT NULL
     GROUP BY 1, 2, 3, 5, 6)
 SELECT *
 FROM user_events_by_date
