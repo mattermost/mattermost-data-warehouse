@@ -124,7 +124,7 @@ sources:
         description: Contains the raw general permissions for each server at a given point in time/on a specific date.
       
       - name: permissions_system_scheme
-        descritpion: Contains the raw system scheme permissions for each server's user type at a given point in time/on a specific date - system admin, team guest user, system user, team admin, channel admin, channel guest, and channel user
+        description: Contains the raw system scheme permissions for each server's user type at a given point in time/on a specific date - system admin, team guest user, system user, team admin, channel admin, channel guest, and channel user
 
       - name: permissions_team_schemes
         description: Contains the raw team scheme permissions for each server's user type at a given point in time/on a specific date - team guest, channel admin, channel user, team admin, channel guest, and team user.
