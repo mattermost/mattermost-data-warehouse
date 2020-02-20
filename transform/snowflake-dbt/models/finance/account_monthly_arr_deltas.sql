@@ -11,8 +11,8 @@ WITH account_monthly_arr_deltas AS (
         master_account_sfid,
         account_sfid,
         account_new_arr,
-        max(coalesce(CASE WHEN starting_month_total_arr THEN previous_day_total_arr ELSE 0 END, 0)) as month_starting_arr,
-        max(coalesce(CASE WHEN ending_month_total_arr THEN new_day_total_arr ELSE 0 END, 0)) as month_ending_arr,
+        max(coalesce(CASE WHEN month_start THEN previous_day_total_arr ELSE 0 END, 0)) as month_starting_arr,
+        max(coalesce(CASE WHEN month_end THEN new_day_total_arr ELSE 0 END, 0)) as month_ending_arr,
         sum(total_arr_delta) AS total_arr_delta
     FROM {{ ref('account_daily_arr_deltas') }}
     GROUP BY 1, 2, 3, 4, 5
