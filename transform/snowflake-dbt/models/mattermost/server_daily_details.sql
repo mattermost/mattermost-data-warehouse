@@ -10,6 +10,8 @@ WITH servers as (
     , MIN(COALESCE(s1.date, s2.date))       AS min_date
   FROM {{ ref('server_security_details') }}                    s1
          FULL OUTER JOIN {{ ref('server_server_details') }}    s2
+                         ON s1.server_id = s2.server_id
+                            AND s1.date = s2.date
   GROUP BY 1
 ),
 dates as (
