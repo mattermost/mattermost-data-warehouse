@@ -15,6 +15,16 @@ WITH account_daily_arr_deltas AS (
                 THEN true 
             ELSE  false 
         END  AS account_new_arr,
+        CASE
+            WHEN DATE_PART('day' ,account_util_dates.day) = 1
+                THEN true
+            ELSE false
+        END AS starting_month_total_arr,
+        CASE
+            WHEN DATE_PART('day', account_util_dates.day + interval '1 day') = 1
+                THEN true
+            ELSE false 
+        END AS ending_month_total_arr,
         coalesce(new_day.total_arr,0) AS new_day_total_arr,
         CASE
             WHEN account_util_dates.day = (SELECT min(day) FROM finance.account_daily_arr AS original WHERE new_day.account_sfid = original.account_sfid ) 
