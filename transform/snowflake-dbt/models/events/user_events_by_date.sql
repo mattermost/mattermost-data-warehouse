@@ -19,7 +19,7 @@ WITH user_events_by_date AS (
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-    WHERE timestamp::DATE > (SELECT MAX(timestamp::date) FROM {{ this }})
+    WHERE timestamp::DATE > (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
     AND user_actual_id IS NOT NULL
