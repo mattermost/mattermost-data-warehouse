@@ -9,7 +9,7 @@ WITH server_details AS (
         server_id,
         MIN(date) AS first_active_date,
         MAX(CASE WHEN in_security THEN date ELSE NULL END) AS last_telemetry_active_date,
-        MAX(CASE WHEN in_security OR in_mm2_server THEN date ELSE NULL END) AS last_active_date
+        MAX(CASE WHEN in_security OR in_mm2_server THEN date ELSE NULL END) AS last_active_date,
         MAX(active_user_count) AS max_active_user_count,
         MAX(CASE WHEN active_user_count > 0 THEN date ELSE NULL END) AS last_active_user_date,
         MAX(CASE WHEN license_id1 IS NOT NULL or license_id2 IS NOT NULL THEN date ELSE NULL END) AS last_active_license_date
