@@ -8,6 +8,7 @@ WITH max_timestamp              AS (
     SELECT
         timestamp::DATE AS date
       , user_id
+      , license_id
       , MAX(timestamp)  AS max_timestamp
       , COUNT(user_id)  AS occurrences
     FROM {{ source('mattermost2', 'license') }}
@@ -17,11 +18,12 @@ WITH max_timestamp              AS (
         WHERE timestamp::DATE > (SELECT MAX(timestamp::date) FROM {{ this }})
 
     {% endif %}
-    GROUP BY 1, 2
+    GROUP BY 1, 2, 3
 ),
      server_license_details AS (
          SELECT
              l.timestamp::DATE                        AS date
+           , l.user_id                                AS server_id
            , l.license_id
            , MAX(_start)                              AS _start
            , MAX(edition)                             AS edition
@@ -54,6 +56,6 @@ WITH max_timestamp              AS (
               JOIN max_timestamp      mt
                    ON l.license_id = mt.license_id
                        AND l.timestamp = mt.max_timestamp
-         GROUP BY 1, 2)
+         GROUP BY 1, 2, 3)
 SELECT *
 FROM server_license_details
