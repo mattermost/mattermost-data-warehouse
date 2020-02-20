@@ -42,4 +42,4 @@ WITH max_timestamp            AS (
                        AND p.timestamp = mt.max_timestamp
          GROUP BY 1, 2)
 SELECT *
-FROM server_plugins_details;
+FROM server_plugins_details

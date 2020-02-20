@@ -38,4 +38,4 @@ WITH max_timestamp          AS (
                        AND p.timestamp = mt.max_timestamp
          GROUP BY 1, 2, 3)
 SELECT *
-FROM server_permissions_team_schemes_details;
+FROM server_permissions_team_schemes_details

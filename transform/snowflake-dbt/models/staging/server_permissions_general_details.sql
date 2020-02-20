@@ -31,4 +31,4 @@ WITH max_timestamp              AS (
                        AND p.timestamp = mt.max_timestamp
          GROUP BY 1, 2)
 SELECT *
-FROM server_permissions_general_details;
+FROM server_permissions_general_details

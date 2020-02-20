@@ -25,4 +25,4 @@ WITH user_events_by_date AS (
     AND user_actual_id IS NOT NULL
     GROUP BY 1, 2, 3, 5, 6)
 SELECT *
-FROM user_events_by_date;
+FROM user_events_by_date
