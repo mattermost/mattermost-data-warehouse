@@ -11,7 +11,7 @@ WITH servers as (
   FROM {{ ref('server_security_details') }}                    s1
          FULL OUTER JOIN {{ ref('server_server_details') }}    s2
   GROUP BY 1
-)
+),
 dates as (
   SELECT 
       d.date
