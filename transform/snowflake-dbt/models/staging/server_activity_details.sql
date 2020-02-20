@@ -48,4 +48,4 @@ WITH max_timestamp               AS (
                        AND a.timestamp = mt.max_timestamp
          GROUP BY 1, 2)
 SELECT *
-FROM server_activity_details;
+FROM server_activity_details

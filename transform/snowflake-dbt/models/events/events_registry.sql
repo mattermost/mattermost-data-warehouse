@@ -31,4 +31,4 @@ WITH events          AS (
          GROUP BY 1, 2, 3, 4, 5
      )
 SELECT *
-FROM events_registry;
+FROM events_registry
