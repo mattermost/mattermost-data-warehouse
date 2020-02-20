@@ -58,11 +58,10 @@ dates as (
          LEFT JOIN {{ ref('server_server_details') }}      s2
                          ON d.server_id = s2.server_id
                              AND d.date = s2.date
-    WHERE d.date < CURRENT_DATE
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND d.date > (SELECT MAX(date) FROM {{ this }})
+        WHERE d.date > (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
     GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
