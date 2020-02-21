@@ -47,8 +47,6 @@ dag = DAG(
     "pg_job", default_args=default_args, schedule_interval="@hourly"
 )
 
-test = get_container_operator('test', 'test')
-
 tasks_filtered = get_container_operator('tasks-filtered', 'tasks_filtered')
 account_arr = get_container_operator('account-arr', 'account_arr')
 # opportunity_arr = get_container_operator('opportunity-arr', 'opportunity_arr')
@@ -57,6 +55,3 @@ opportunitylineitem_snapshot = get_container_operator('opportunitylineitem-snaps
 opportunity_snapshot = get_container_operator('opportunity-snapshot', 'opportunity_snapshot')
 
 tasks_filtered >> account_arr >> opportunity_snapshot >> opportunitylineitem_snapshot
-
-# Test comment
-test >> account_arr
