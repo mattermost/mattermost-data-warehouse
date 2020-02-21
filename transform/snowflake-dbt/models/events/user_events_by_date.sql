@@ -25,6 +25,6 @@ WITH user_events_by_date AS (
     AND timestamp::DATE > (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
-    GROUP BY 1, 2, 3, 5, 6)
+    GROUP BY 1, 2, 3, 7, 8)
 SELECT *
 FROM user_events_by_date
