@@ -50,7 +50,7 @@ WITH account_health_facts AS (
        * 25 AS ticket_health_score,
        account_health_facts.days_since_last_task,
        CASE
-            WHEN account_health_facts.days_since_last_task >= 90 THEN (1 - .75)
+            WHEN account_health_facts.days_since_last_task >= 90 OR account_health_facts.days_since_last_task IS NULL THEN (1 - .75)
             WHEN account_health_facts.days_since_last_task >= 60 THEN (1 - .50)
             WHEN account_health_facts.days_since_last_task >= 30 THEN (1 - .25)
             WHEN account_health_facts.days_since_last_task < 30 THEN (1 - .00)
