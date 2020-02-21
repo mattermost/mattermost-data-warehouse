@@ -43,8 +43,8 @@ WITH account_health_facts AS (
        account_health_facts.count_tickets_prev_90,
        CASE
             WHEN account_health_facts.count_tickets_prev_90 >= 5 THEN (1 - .75)
-            WHEN account_health_facts.count_tickets_prev_90 >= 3 THEN (1 - .50)
-            WHEN account_health_facts.count_tickets_prev_90 >= 1 THEN (1 - .25)
+            WHEN account_health_facts.count_tickets_prev_90 >= 3 THEN (1 - .25)
+            WHEN account_health_facts.count_tickets_prev_90 >= 1 THEN (1 - .00)
             WHEN account_health_facts.count_tickets_prev_90 = 0 THEN (1 - .50)
        END
        * 25 AS ticket_health_score,
