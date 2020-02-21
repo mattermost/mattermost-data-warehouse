@@ -31,7 +31,7 @@ WITH leap_years AS (
   LEFT JOIN {{ source('orgm', 'account') }}  AS master_account ON master_account.sfid = account.parentid
   LEFT JOIN {{ source('util', 'dates') }}  AS util_dates ON util_dates.date::date >= opportunitylineitem.start_date__c::date AND util_dates.date::date <= opportunitylineitem.end_date__c::date
   WHERE opportunity.iswon
-    AND opportunitylineitem.end_date__c::date-opportunitylineitem.start_date__c::date <> 0
+    AND opportunitylineitem.end_date__c::date-opportunitylineitem.start_date__c::date <> 0 AND opportunitylineitem.product_type__c = 'Recurring'
   GROUP BY 1, 2, 3
 )
 SELECT * FROM account_daily_arr
