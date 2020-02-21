@@ -10,6 +10,8 @@ WITH user_events_by_date AS (
       , e.user_id                                                                              AS server_id
       , e.user_actual_id                                                                       AS user_id
       , MIN(e.user_actual_role)                                                                AS user_role
+      , CASE WHEN MIN(e.user_actual_role) LIKE '%system_admin%' THEN TRUE ELSE FALSE END       AS system_admin
+      , CASE WHEN MIN(e.user_actual_role) = 'system_user' THEN TRUE ELSE FALSE END             AS system_user
       , r.uuid
       , LOWER(e.type)                                                                          AS event_name
       , COUNT(*)                                                                               AS num_events
