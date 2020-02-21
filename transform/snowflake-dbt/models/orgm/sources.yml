@@ -40,3 +40,6 @@ sources:
 
       - name: opportunitylineitem
         description: 'SFDC Opportunity Line Item'
+
+      - name: tasks_filtered
+        description: 'SFDC Tasks with Marketo removed'
