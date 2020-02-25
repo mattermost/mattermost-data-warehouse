@@ -28,7 +28,7 @@ SELECT
     ,sfid
     ,now()
 FROM orgm.task
-WHERE task.type IS NOT NULL
+WHERE task.createdbyid != '0051R00000GnvhhQAB' --Marketo Mattermost
     AND NOT EXISTS (SELECT 1 FROM staging.tasks_filtered WHERE tasks_filtered.sfid = task.sfid);
 
 UPDATE staging.tasks_filtered
