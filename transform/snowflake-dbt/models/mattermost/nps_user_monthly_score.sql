@@ -30,7 +30,7 @@ WITH min_nps                AS (
              d.month
            , d.server_id
            , d.user_id
-           , {{ dbt_utils.surrogate_key('d.month', 'd.server_id', 'd.user_id') }} as id
+           , {{ surrogate_key('d.month', 'd.server_id', 'd.user_id') }} as id
            , max(nps.timestamp)      AS max_timestamp
            , max(feedback.timestamp) AS max_feedback_timestamp
          FROM dates                                 d
