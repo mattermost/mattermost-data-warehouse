@@ -16,3 +16,19 @@ sources:
     tables: 
       - name: report
         description: 'Users visiting Mattermost.com by Source and Channel Grouping'
+
+  - name: ga_developers_pages_visits
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: ga_developers_pages_visits_sources
+
+    tables: 
+      - name: report
+        description: 'Page visits to developers.mattermost.com'
+  
+  - name: ga_mattermost_com_pages_visits
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: ga_mattermost_com_pages_visits
+
+    tables: 
+      - name: report
+        description: 'Page visits to Mattermost.com'
