@@ -52,12 +52,12 @@ WITH min_nps                AS (
            , m.user_id
            , nps.user_role
            , nps.server_version
-           , nps.score
+           , MAX(nps.score)                                     AS nps_score
            , m.max_timestamp::DATE                              AS score_submission_date
            , nps.license_id
            , nps.license_sku
-           , CASE WHEN nps.score < 7 THEN 'Detractor'
-                  WHEN nps.score < 9 THEN 'Passive'
+           , CASE WHEN MAX(nps.score) < 7 THEN 'Detractor'
+                  WHEN MAX(nps.score) < 9 THEN 'Passive'
                   ELSE 'Promoter' END                           AS promoter_type
            , to_timestamp(nps.user_create_at / 1000)::DATE      AS user_created_at
            , to_timestamp(nps.server_install_date / 1000)::DATE AS server_install_date
@@ -78,6 +78,7 @@ WITH min_nps                AS (
           WHERE m.month >= (SELECT MAX(month) FROM {{this}})
 
           {% endif %}
+          GROUP BY 1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 13, 14, 14, 15
      )
 SELECT *
 FROM nps_user_monthly_score
