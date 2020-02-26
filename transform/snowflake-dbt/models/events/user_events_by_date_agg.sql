@@ -15,7 +15,7 @@ WITH min_active              AS (
          SELECT
              d.date
            , m.user_id
-         FROM {{ source('utils', 'dates') }}      d
+         FROM {{ source('util', 'dates') }}      d
               JOIN min_active m
                    ON d.date >= m.min_active_date
                        AND d.date < current_date
@@ -112,7 +112,7 @@ WITH min_active              AS (
          {% if is_incremental() %}
 
          WHERE e1.date >= (SELECT MAX(date) FROM {{this}})
-         
+
          {% endif %}
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22)
 SELECT *
