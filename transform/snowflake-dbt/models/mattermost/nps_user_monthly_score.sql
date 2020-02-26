@@ -1,6 +1,6 @@
 {{config({
     "materialized": 'incremental',
-    "unique_key": 'new_key',
+    "unique_key": 'id',
     "schema": "mattermost"
   })
 }}
