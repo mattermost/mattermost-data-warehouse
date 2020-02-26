@@ -1,5 +1,6 @@
 {{config({
     "materialized": 'incremental',
+    "unique_key": 'new_key'
     "schema": "mattermost"
   })
 }}
@@ -29,6 +30,7 @@ WITH min_nps                AS (
              d.month
            , d.server_id
            , d.user_id
+           , {{ dbt_utils.surrogate_key('d.month', 'd.server_id', 'd.user_id') }} as id
            , max(nps.timestamp)      AS max_timestamp
            , max(feedback.timestamp) AS max_feedback_timestamp
          FROM dates                                 d
@@ -61,6 +63,7 @@ WITH min_nps                AS (
            , to_timestamp(nps.server_install_date / 1000)::DATE AS server_install_date
            , feedback.feedback
            , m.max_feedback_timestamp::DATE                     AS feedback_submission_date
+           , id
          FROM max_date_by_month                     m
               JOIN {{ source('mattermost_nps', 'nps_score') }}         nps
                    ON m.server_id = nps.server_id
@@ -70,6 +73,11 @@ WITH min_nps                AS (
                         ON m.server_id = feedback.server_id
                             AND m.user_id = feedback.user_actual_id
                             AND m.max_feedback_timestamp = feedback.timestamp
+          {% if is_incremental() %}
+
+          WHERE m.month >= (SELECT MAX(month) FROM {{this}})
+
+          {% endif %}
      )
 SELECT *
 FROM nps_user_monthly_score;
