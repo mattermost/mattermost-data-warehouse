@@ -19,6 +19,9 @@ models:
   
   - name: nps_data
     description: NPS scores and feedback
+  
+  - name: nps_user_monthly_score
+    description: User NPS score snapshot at a monthly level. Retrieves the User's latest NPS score submission on or before the record month.
 
   - name: server_fact
     description: Production server attributes including the server's first active date (telemetry-enabled), last active date (telemetry-enabled), the all-time max active users logged on the server, and the last date the server logged active users.
