@@ -1,6 +1,6 @@
 {{config({
     "materialized": 'incremental',
-    "unique_key": 'new_key'
+    "unique_key": 'new_key',
     "schema": "mattermost"
   })
 }}
@@ -42,7 +42,7 @@ WITH min_nps                AS (
                         ON d.month >= date_trunc('month', feedback.timestamp::DATE)
                             AND d.server_id = feedback.server_id
                             AND d.user_id = feedback.user_actual_id
-         GROUP BY 1, 2, 3
+         GROUP BY 1, 2, 3, 4
      ),
 
      nps_user_monthly_score AS (
@@ -63,7 +63,7 @@ WITH min_nps                AS (
            , to_timestamp(nps.server_install_date / 1000)::DATE AS server_install_date
            , feedback.feedback
            , m.max_feedback_timestamp::DATE                     AS feedback_submission_date
-           , id
+           , m.id
          FROM max_date_by_month                     m
               JOIN {{ source('mattermost_nps', 'nps_score') }}         nps
                    ON m.server_id = nps.server_id
