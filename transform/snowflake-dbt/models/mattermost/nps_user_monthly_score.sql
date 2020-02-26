@@ -80,4 +80,4 @@ WITH min_nps                AS (
           {% endif %}
      )
 SELECT *
-FROM nps_user_monthly_score;
+FROM nps_user_monthly_score
