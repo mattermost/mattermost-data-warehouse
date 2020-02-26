@@ -9,3 +9,6 @@ models:
 
   - name: user_events_by_date
     description: Contains event uuid, user id, user role, event name, event category, and count of events performed each day.
+
+  - name: user_events_by_date_agg
+    description: Contains an aggregated version of user_events by date w/ MAU and DAU-specific dimensions.
