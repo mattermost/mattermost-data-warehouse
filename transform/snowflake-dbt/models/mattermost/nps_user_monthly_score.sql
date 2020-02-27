@@ -80,7 +80,7 @@ WITH min_nps                AS (
           WHERE m.month >= (SELECT MAX(month) FROM {{this}})
 
           {% endif %}
-          GROUP BY 1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 13, 14, 14, 15
+          GROUP BY 1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 13, 14, 14, 15, 16
      )
 SELECT *
 FROM nps_user_monthly_score
