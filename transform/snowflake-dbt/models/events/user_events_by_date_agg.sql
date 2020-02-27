@@ -19,11 +19,13 @@ WITH min_active              AS (
               JOIN min_active m
                    ON d.date >= m.min_active_date
                        AND d.date < current_date
+         GROUP BY 1, 2
      ),
      events                  AS (
          SELECT
              d.date
            , d.user_id
+           , e.server_id
            , e.system_admin
            , e.system_user
            , CASE WHEN sum(e.num_events) > 0 THEN TRUE ELSE FALSE END                        AS active
@@ -44,7 +46,7 @@ WITH min_active              AS (
                             AND d.date = e.date
               LEFT JOIN {{ ref('events_registry') }}     r
                         ON e.uuid = r.uuid
-         GROUP BY 1, 2, 3, 4),
+         GROUP BY 1, 2, 3, 4, 5),
 
      mau                     AS (
          SELECT
@@ -69,7 +71,7 @@ WITH min_active              AS (
          FROM events           e1
               JOIN min_active  m
                    ON e1.user_id = m.user_id
-              LEFT JOIN events e2
+              LEFT JOIN (SELECT date, user_id, active, total_events FROM events GROUP BY 1, 2, 3, 4) e2
                         ON e1.user_id = e2.user_id
                             AND e2.date <= e1.date
                             AND e2.date >= e1.date - INTERVAL '31 days'
@@ -79,6 +81,7 @@ WITH min_active              AS (
          SELECT
              e1.date
            , e1.user_id
+           , e1.server_Id
            , e1.system_admin
            , e1.system_user
            , e1.active
@@ -106,7 +109,7 @@ WITH min_active              AS (
               JOIN mau         m
                    ON e1.user_id = m.user_id
                        AND e1.date = m.date
-              LEFT JOIN events e2
+              LEFT JOIN (SELECT date, user_id, active, total_events FROM events GROUP BY 1, 2, 3, 4) e2
                         ON e1.user_id = e2.user_id
                             AND e2.date <= e1.date
          {% if is_incremental() %}
@@ -114,6 +117,6 @@ WITH min_active              AS (
          WHERE e1.date >= (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
-         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22)
+         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23)
 SELECT *
 FROM user_events_by_date_agg
