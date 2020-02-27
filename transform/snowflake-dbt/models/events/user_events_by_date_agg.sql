@@ -19,11 +19,13 @@ WITH min_active              AS (
               JOIN min_active m
                    ON d.date >= m.min_active_date
                        AND d.date < current_date
+         GROUP BY 1, 2
      ),
      events                  AS (
          SELECT
              d.date
            , d.user_id
+           , e.server_id
            , e.system_admin
            , e.system_user
            , CASE WHEN sum(e.num_events) > 0 THEN TRUE ELSE FALSE END                        AS active
@@ -44,41 +46,47 @@ WITH min_active              AS (
                             AND d.date = e.date
               LEFT JOIN {{ ref('events_registry') }}     r
                         ON e.uuid = r.uuid
-         GROUP BY 1, 2, 3, 4),
+         GROUP BY 1, 2, 3, 4, 5),
 
      mau                     AS (
          SELECT
              e1.user_id
            , e1.date
            , m.min_active_date
-           , count(DISTINCT e2.date)           AS date_count
-           , CASE WHEN min(m.min_active_date) = e1.date AND sum(e1.total_events) > 0 THEN 'First Time MAU'
-                  WHEN sum(CASE WHEN e2.date < e1.date AND e2.date >= e1.date - INTERVAL '30 days' THEN e2.total_events
-                                ELSE 0 END) = 0
-                      AND sum(CASE WHEN e2.date = e1.date THEN e2.total_events ELSE 0 END) > 0
-                                                                                     THEN 'Reengaged MAU'
-                  WHEN sum(CASE WHEN e2.date >= e1.date - INTERVAL '30 days' AND e2.date <= e1.date THEN e2.total_events
-                                ELSE 0 END) > 0
-                                                                                     THEN 'Current MAU'
-                  WHEN sum(CASE WHEN e2.date = e1.date - INTERVAL '31 days' THEN e2.total_events ELSE 0 END) > 0
-                                                                                     THEN 'Newly Disengaged'
-                  ELSE 'Disengaged' END        AS mau_segment
-           , coalesce(sum(CASE WHEN e2.date >= e1.date - INTERVAL '30 days' AND e2.date <= e1.date THEN e2.total_events
-                               ELSE 0 END), 0) AS events_last_30_days
-           , coalesce(sum(e2.total_events), 0) AS events_last_31_days
-         FROM events           e1
-              JOIN min_active  m
+           , CASE WHEN m.min_active_date = e1.date AND e1.total_events > 0 THEN 'First Time MAU'
+                  WHEN SUM(e1.total_events)
+                           OVER (PARTITION BY e1.user_id ORDER BY e1.date ROWS BETWEEN 30 PRECEDING AND 1 PRECEDING) = 0
+                      AND e1.total_events > 0                              THEN 'Reengaged MAU'
+                  WHEN SUM(e1.total_events)
+                           OVER (PARTITION BY e1.user_id ORDER BY e1.date ROWS BETWEEN 30 PRECEDING AND CURRENT ROW) > 0
+                                                                           THEN 'Current MAU'
+                  WHEN sum(e1.total_events)
+                           OVER (PARTITION BY e1.user_id ORDER BY e1.date ROWS BETWEEN 31 PRECEDING AND 31 PRECEDING) >
+                       0                                                   THEN 'Newly Disengaged'
+                  ELSE 'Disengaged' END                                                                            AS mau_segment
+           , coalesce(SUM(e1.total_events)
+                          OVER (PARTITION BY e1.user_id ORDER BY e1.date ROWS BETWEEN 30 PRECEDING AND CURRENT ROW ),
+                      0)                                                                                           AS events_last_30_days
+           , coalesce(sum(e1.total_events)
+                          OVER (PARTITION BY e1.user_id ORDER BY e1.date ROWS BETWEEN 31 PRECEDING AND CURRENT ROW ),
+                      0)                                                                                           AS events_last_31_days
+           , coalesce(SUM(e1.total_events)
+                          OVER (PARTITION BY e1.user_id ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ),
+                      0)                                                                                           AS events_alltime
+           , coalesce(MAX(e1.total_events)
+                          OVER (PARTITION BY e1.user_id ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ),
+                      0)                                                                                           AS max_events
+           , MAX(CASE WHEN e1.total_events > 0 THEN e1.date ELSE NULL END)
+                 OVER (PARTITION BY e1.user_id ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) AS last_active_date
+         FROM events          e1
+              JOIN min_active m
                    ON e1.user_id = m.user_id
-              LEFT JOIN events e2
-                        ON e1.user_id = e2.user_id
-                            AND e2.date <= e1.date
-                            AND e2.date >= e1.date - INTERVAL '31 days'
-         GROUP BY 1, 2, 3
      ),
      user_events_by_date_agg AS (
          SELECT
              e1.date
            , e1.user_id
+           , e1.server_id
            , e1.system_admin
            , e1.system_user
            , e1.active
@@ -95,25 +103,22 @@ WITH min_active              AS (
            , e1.ui_events
            , m.mau_segment
            , CASE WHEN m.mau_segment IN ('First Time MAU', 'Reengaged MAU', 'Current MAU') THEN TRUE
-                  ELSE FALSE END                                 AS mau
-           , m.min_active_date                                   AS first_active_date
-           , MAX(CASE WHEN e2.active THEN e2.date ELSE NULL END) AS last_active_date
+                  ELSE FALSE END     AS mau
+           , m.min_active_date       AS first_active_date
+           , MAX(m.last_active_date) AS last_active_date
            , m.events_last_30_days
            , m.events_last_31_days
-           , SUM(e2.total_events)                                AS events_alltime
-           , MAX(e2.total_events)                                AS max_events
-         FROM events           e1
-              JOIN mau         m
+           , SUM(m.events_alltime)   AS events_alltime
+           , MAX(m.max_events)       AS max_events
+         FROM events   e1
+              JOIN mau m
                    ON e1.user_id = m.user_id
                        AND e1.date = m.date
-              LEFT JOIN events e2
-                        ON e1.user_id = e2.user_id
-                            AND e2.date <= e1.date
          {% if is_incremental() %}
 
          WHERE e1.date >= (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
-         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22)
+         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23)
 SELECT *
-FROM user_events_by_date_agg
+FROM user_events_by_date_agg;

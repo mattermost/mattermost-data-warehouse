@@ -21,7 +21,7 @@ WITH min_nps                AS (
          FROM {{ source('util', 'dates') }}   d
               JOIN min_nps nps
                    ON d.date >= nps.min_nps_date
-                       AND d.date <= date_trunc('month', current_date)
+                       AND date_trunc('month', d.date) <= date_trunc('month', current_date)
          GROUP BY 1, 2, 3
      ),
 
@@ -31,8 +31,9 @@ WITH min_nps                AS (
            , d.server_id
            , d.user_id
            , {{ dbt_utils.surrogate_key('d.month', 'd.server_id', 'd.user_id') }} as id
-           , max(nps.timestamp)      AS max_timestamp
-           , max(feedback.timestamp) AS max_feedback_timestamp
+           , max(nps.timestamp)        AS max_timestamp
+           , max(feedback.timestamp)   AS max_feedback_timestamp
+           , count(nps.user_actual_id) AS responses
          FROM dates                                 d
               JOIN {{ source('mattermost_nps', 'nps_score') }}         nps
                    ON d.month >= date_trunc('month', nps.timestamp::DATE)
@@ -63,6 +64,7 @@ WITH min_nps                AS (
            , to_timestamp(nps.server_install_date / 1000)::DATE AS server_install_date
            , feedback.feedback
            , m.max_feedback_timestamp::DATE                     AS feedback_submission_date
+           , m.responses                                        AS total_responses
            , m.id
          FROM max_date_by_month                     m
               JOIN {{ source('mattermost_nps', 'nps_score') }}         nps
