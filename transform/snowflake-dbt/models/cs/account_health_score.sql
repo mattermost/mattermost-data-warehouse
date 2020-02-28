@@ -1,6 +1,7 @@
 {{config({
     "materialized": "table",
-    "schema": "cs"
+    "schema": "cs",
+    "post-hook": "{{ pg_import('staging.account_health_score', 'pg_update_account_health_score')"
   })
 }}
 
@@ -57,8 +58,8 @@ WITH account_health_facts AS (
        END
        * 25 AS task_health_score,
        0 AS cs_attrition_likelihood, -- to be updated when we get new field on account level
-       tenure_health_score + license_end_date_health_score + ticket_health_score + task_health_score AS health_score_no_override,
-       greatest(tenure_health_score + license_end_date_health_score + ticket_health_score + task_health_score,0) AS health_score_w_override
+       round(tenure_health_score + license_end_date_health_score + ticket_health_score + task_health_score,0) AS health_score_no_override,
+       round(greatest(tenure_health_score + license_end_date_health_score + ticket_health_score + task_health_score,0),0) AS health_score_w_override
     FROM account_health_facts
 )
 
