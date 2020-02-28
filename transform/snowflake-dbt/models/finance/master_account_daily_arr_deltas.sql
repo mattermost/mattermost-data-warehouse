@@ -14,6 +14,16 @@ WITH master_account_daily_arr_deltas AS (
                 THEN true 
             ELSE  false 
         END  AS master_account_new_arr,
+        CASE
+            WHEN DATE_PART('day' , master_account_util_dates.day) = 1
+                THEN true
+            ELSE false
+        END AS month_start,
+        CASE
+            WHEN DATE_PART('day', master_account_util_dates.day + interval '1 day') = 1
+                THEN true
+            ELSE false 
+        END AS month_end,
         coalesce(new_day.total_arr,0) AS new_day_total_arr,
         CASE
             WHEN master_account_util_dates.day = (SELECT min(day) FROM {{ ref('master_account_daily_arr') }} AS original WHERE new_day.master_account_sfid = original.master_account_sfid ) 
