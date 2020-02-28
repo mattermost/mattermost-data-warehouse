@@ -38,3 +38,12 @@ select get_sys_var({{ var_name }})
 
     {% do run_query(query) %}
 {% endmacro %}
+
+{% macro pg_import(destination_table, script) %}
+    {% set query %}
+        insert into analytics.util.pg_imports (source_table, destination_table, created_at, post_process_file)
+        values ('{{ this.schema }}.{{ this.table }}', '{{ destination_table }}', current_timestamp, '{{ script }}')
+    {% endset %}
+
+    {% do run_query(query) %}
+{% endmacro %}
