@@ -9,13 +9,13 @@ WITH min_nps                AS (
     SELECT
         server_id
       , user_actual_id       AS user_id
-      , min(timestamp::DATE) AS min_nps_date
+      , MIN(timestamp::DATE) AS min_nps_date
     FROM {{ source('mattermost_nps', 'nps_score') }} 
     GROUP BY 1, 2),
 
      dates                  AS (
          SELECT
-             date_trunc('month', d.date) AS month
+             DATE_TRUNC('month', d.date) AS month
            , server_id
            , user_id
          FROM {{ source('util', 'dates') }}   d
@@ -30,17 +30,19 @@ WITH min_nps                AS (
              d.month
            , d.server_id
            , d.user_id
-           , {{ dbt_utils.surrogate_key('d.month', 'd.server_id', 'd.user_id') }} as id
-           , max(nps.timestamp)        AS max_timestamp
-           , max(feedback.timestamp)   AS max_feedback_timestamp
-           , count(nps.user_actual_id) AS responses
+           , {{ dbt_utils.surrogate_key('d.month', 'd.server_id', 'd.user_id') }} AS id
+           , MAX(nps.timestamp)                                                   AS max_timestamp
+           , MAX(feedback.timestamp)                                              AS max_feedback_timestamp
+           , COUNT(nps.user_actual_id)                                            AS responses_alltime
+           , COUNT(CASE WHEN date_trunc('month', nps.timestamp::date) = d.month THEN nps.user_actual_id
+                        ELSE NULL END)                                            AS responses 
          FROM dates                                 d
               JOIN {{ source('mattermost_nps', 'nps_score') }}         nps
-                   ON d.month >= date_trunc('month', nps.timestamp::DATE)
+                   ON d.month >= DATE_TRUNC('month', nps.timestamp::DATE)
                        AND d.server_id = nps.server_id
                        AND d.user_id = nps.user_actual_id
               LEFT JOIN {{ source('mattermost_nps', 'nps_feedback') }} feedback
-                        ON d.month >= date_trunc('month', feedback.timestamp::DATE)
+                        ON d.month >= DATE_TRUNC('month', feedback.timestamp::DATE)
                             AND d.server_id = feedback.server_id
                             AND d.user_id = feedback.user_actual_id
          GROUP BY 1, 2, 3, 4
@@ -64,7 +66,8 @@ WITH min_nps                AS (
            , to_timestamp(nps.server_install_date / 1000)::DATE AS server_install_date
            , feedback.feedback
            , m.max_feedback_timestamp::DATE                     AS feedback_submission_date
-           , m.responses                                        AS total_responses
+           , m.responses_alltime                          
+           , m.responses
            , m.id
          FROM max_date_by_month                     m
               JOIN {{ source('mattermost_nps', 'nps_score') }}         nps
@@ -80,7 +83,7 @@ WITH min_nps                AS (
           WHERE m.month >= (SELECT MAX(month) FROM {{this}})
 
           {% endif %}
-          GROUP BY 1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 13, 14, 14, 15, 16
+          GROUP BY 1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 13, 14, 14, 15, 16, 17
      )
 SELECT *
 FROM nps_user_monthly_score
