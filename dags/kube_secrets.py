@@ -4,6 +4,12 @@ from airflow.contrib.kubernetes.secret import Secret
 AWS_ACCOUNT_ID = Secret(
     "env", "AWS_ACCOUNT_ID", "airflow", "AWS_ACCOUNT_ID"
 )
+AWS_ACCESS_KEY_ID = Secret(
+    "env", "AWS_ACCESS_KEY_ID", "airflow", "AWS_ACCESS_KEY_ID"
+)
+AWS_SECRET_ACCESS_KEY = Secret(
+    "env", "AWS_SECRET_ACCESS_KEY", "airflow", "AWS_SECRET_ACCESS_KEY"
+)
 
 # Snowflake Load
 SNOWFLAKE_LOAD_DATABASE = Secret(
@@ -80,4 +86,7 @@ RELEASE_LOCATION = Secret(
 # Heroku
 HEROKU_POSTGRESQL_URL = Secret(
     "env", "HEROKU_POSTGRESQL_URL", "airflow", "HEROKU_POSTGRESQL_URL"
+)
+PG_IMPORT_BUCKET = Secret(
+    "env", "PG_IMPORT_BUCKET", "airflow", "PG_IMPORT_BUCKET"
 )

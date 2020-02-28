@@ -41,6 +41,14 @@ def snowflake_engine_factory(
             "WAREHOUSE": "SNOWFLAKE_LOAD_WAREHOUSE",
             "ROLE": "LOADER",
         },
+        "TRANSFORMER": {
+            "USER": "SNOWFLAKE_USER",
+            "PASSWORD": "SNOWFLAKE_PASSWORD",
+            "ACCOUNT": "SNOWFLAKE_ACCOUNT",
+            "DATABASE": "SNOWFLAKE_TRANSFORM_DATABASE",
+            "WAREHOUSE": "SNOWFLAKE_TRANSFORM_WAREHOUSE",
+            "ROLE": "TRANSFORMER",
+        },
         "PERMISSIONS": {
             "USER": "PERMISSION_BOT_USER",
             "PASSWORD": "PERMISSION_BOT_PASSWORD",

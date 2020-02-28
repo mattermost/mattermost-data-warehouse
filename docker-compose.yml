@@ -19,3 +19,15 @@ services:
           source: ${DBT_PROFILE_PATH}
           target: /usr/local/dbt_profiles/
           read_only: True
+
+    data_image:
+      image: registry.gitlab.com/gitlab-data/data-image/data-image:latest
+      env_file:
+        - .env
+      restart: always
+      command: bash -c "/bin/bash"
+      working_dir: /usr/local/analytics/
+      volumes:
+        - type: bind
+          source: .
+          target: /usr/local/analytics
