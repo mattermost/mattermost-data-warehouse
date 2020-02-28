@@ -55,7 +55,7 @@ WITH min_nps                AS (
            , m.user_id
            , nps.user_role
            , nps.server_version
-           , MAX(nps.score)                                     AS nps_score
+           , MAX(nps.score)                                     AS score
            , m.max_timestamp::DATE                              AS score_submission_date
            , nps.license_id
            , nps.license_sku
