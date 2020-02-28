@@ -33,9 +33,9 @@ WITH min_nps                AS (
            , {{ dbt_utils.surrogate_key('d.month', 'd.server_id', 'd.user_id') }} AS id
            , MAX(nps.timestamp)                                                   AS max_timestamp
            , MAX(feedback.timestamp)                                              AS max_feedback_timestamp
-           , COUNT(nps.user_actual_id)                                            AS nps_responses_alltime
+           , COUNT(nps.user_actual_id)                                            AS responses_alltime
            , COUNT(CASE WHEN date_trunc('month', nps.timestamp::date) = d.month THEN nps.user_actual_id
-                        ELSE NULL END)                                            AS nps_responses 
+                        ELSE NULL END)                                            AS responses 
          FROM dates                                 d
               JOIN {{ source('mattermost_nps', 'nps_score') }}         nps
                    ON d.month >= DATE_TRUNC('month', nps.timestamp::DATE)
@@ -66,7 +66,8 @@ WITH min_nps                AS (
            , to_timestamp(nps.server_install_date / 1000)::DATE AS server_install_date
            , feedback.feedback
            , m.max_feedback_timestamp::DATE                     AS feedback_submission_date
-           , m.responses                                        AS total_responses
+           , m.responses_alltime                          
+           , m.responses
            , m.id
          FROM max_date_by_month                     m
               JOIN {{ source('mattermost_nps', 'nps_score') }}         nps
@@ -82,7 +83,7 @@ WITH min_nps                AS (
           WHERE m.month >= (SELECT MAX(month) FROM {{this}})
 
           {% endif %}
-          GROUP BY 1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 13, 14, 14, 15, 16
+          GROUP BY 1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 13, 14, 14, 15, 16, 17
      )
 SELECT *
 FROM nps_user_monthly_score
