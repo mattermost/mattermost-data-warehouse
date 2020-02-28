@@ -33,8 +33,8 @@ WITH min_nps                AS (
            , {{ dbt_utils.surrogate_key('d.month', 'd.server_id', 'd.user_id') }} AS id
            , MAX(nps.timestamp)                                                   AS max_timestamp
            , MAX(feedback.timestamp)                                              AS max_feedback_timestamp
-           , COUNT(nps.user_actual_id)                                            AS responses_alltime
-           , COUNT(CASE WHEN date_trunc('month', nps.timestamp::date) = d.month THEN nps.user_actual_id
+           , COUNT(DISTINCT nps.id)                                               AS responses_alltime
+           , COUNT(DISTINCT CASE WHEN date_trunc('month', nps.timestamp::date) = d.month THEN nps.id
                         ELSE NULL END)                                            AS responses 
          FROM dates                                 d
               JOIN {{ source('mattermost_nps', 'nps_score') }}         nps
