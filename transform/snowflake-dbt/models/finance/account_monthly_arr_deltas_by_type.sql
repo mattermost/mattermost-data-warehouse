@@ -4,7 +4,7 @@
   })
 }}
 
-WITH account_monthly_arr_deltas_by_type_v2 AS (
+WITH account_monthly_arr_deltas_by_type AS (
     SELECT
         account_monthly_arr_deltas.month_start,
         account_monthly_arr_deltas.month_end,
