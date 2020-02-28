@@ -110,7 +110,7 @@ pg_import = KubernetesPodOperator(
         PG_IMPORT_BUCKET,
     ],
     env_vars=env_vars,
-    arguments=[dbt_run_cmd],
+    arguments=[pg_import_cmd],
     dag=dag,
 )
 
