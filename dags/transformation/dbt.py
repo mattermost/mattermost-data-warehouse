@@ -8,6 +8,7 @@ from dags.airflow_utils import (
     DATA_IMAGE,
     dbt_install_deps_and_seed_cmd,
     dbt_install_deps_cmd,
+    clone_and_setup_extraction_cmd,
     mm_failed_task,
     pod_defaults,
     pod_env_vars,
