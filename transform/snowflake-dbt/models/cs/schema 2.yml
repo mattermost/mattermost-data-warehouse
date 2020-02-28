@@ -1,0 +1,9 @@
+version: 2
+
+models:
+  - name: account_health_score
+    description: Overview of Account Health Score
+    columns:
+      - name: account_sfid
+        tests:
+          - not_null
