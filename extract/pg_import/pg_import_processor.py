@@ -15,8 +15,13 @@ class SnowflakeToPgDataTypeMapper(object):
     }
 
     @classmethod
-    def get_pg_type(cls, sf_type):
-       return cls.DATA_TYPE_MAP.get(sf_type, sf_type)
+    def get_pg_type(cls, sf_type, numeric_precision, numeric_scale):
+        if numeric_precision is not None:
+            if numeric_scale == 0:
+                return "integer"
+            else:
+                return f"numeric({numeric_precision}, {numeric_scale})"
+        return cls.DATA_TYPE_MAP.get(sf_type, sf_type)
 
 
 class PgImporter(object):
@@ -35,7 +40,7 @@ class PgImporter(object):
 
         columns = []
         for column in column_specs:
-            columns.append(f"{column[0].lower()} {SnowflakeToPgDataTypeMapper.get_pg_type(column[1].lower())}")
+            columns.append(f"{column[0].lower()} {SnowflakeToPgDataTypeMapper.get_pg_type(column[1].lower(), column[2], column[3])}")
 
         column_query = ", ".join(columns)
 
@@ -48,7 +53,9 @@ class PgImporter(object):
             column_query = f"""
                 select
                     column_name,
-                    data_type
+                    data_type,
+                    numeric_precision,
+                    numeric_scale
                 from analytics.information_schema.columns
                 where table_schema = '{self.source_schema.upper()}' and table_name = '{self.source_table.upper()}'
                 order by ordinal_position;
@@ -84,7 +91,7 @@ class PgImporter(object):
                 self._create_pg_table(cursor)
                 full_table = f"{self.destination_schema}.{self.destination_table}"
                 cursor.execute(f"delete from {full_table};")
-                cursor.copy_expert(f"COPY {full_table} FROM STDIN WITH CSV", f)
+                cursor.copy_expert(f"COPY {full_table} FROM STDIN WITH CSV NULL 'NULL'", f)
 
                 with open(f"transform/sql/{self.post_process_file}.sql") as sql_file:
                     queries = sql_file.read().split(";")

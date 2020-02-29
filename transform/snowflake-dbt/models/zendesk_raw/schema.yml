@@ -1,0 +1,5 @@
+version: 2
+
+models:
+  - name: custom_ticket_fields
+    description: All custom ticket fields and values for each Zendesk ticket

@@ -24,6 +24,7 @@ from dags.kube_secrets import (
     AWS_ACCESS_KEY_ID,
     AWS_SECRET_ACCESS_KEY,
     PG_IMPORT_BUCKET,
+    HEROKU_POSTGRESQL_URL,
 )
 
 # Load the env vars into a dict and set Secrets
@@ -108,6 +109,7 @@ pg_import = KubernetesPodOperator(
         AWS_ACCESS_KEY_ID,
         AWS_SECRET_ACCESS_KEY,
         PG_IMPORT_BUCKET,
+        HEROKU_POSTGRESQL_URL,
     ],
     env_vars=env_vars,
     arguments=[pg_import_cmd],
