@@ -22,7 +22,7 @@ WITH array_to_string AS (
             ELSE NULL
         END AS field_value
     FROM array_to_string
-    LEFT JOIN {{ source('zendesk_raw', 'ticket_fields') }} ON split_part(split_part(value,':',2),',',1).id = ticket_fields.id
+    LEFT JOIN {{ source('zendesk_raw', 'ticket_fields') }} ON (split_part(split_part(value,':',2),',',1).id) = ticket_fields.id
 )
 
 SELECT * FROM custom_ticket_fields
