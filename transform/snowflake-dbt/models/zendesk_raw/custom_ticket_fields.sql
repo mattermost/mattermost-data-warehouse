@@ -17,6 +17,7 @@ WITH array_to_string AS (
     ) AS splittable, LATERAL SPLIT_TO_TABLE(splittable.string, '},{')
 ), custom_ticket_fields as (
     SELECT 
+        ticket_fields.title,
         ticket_id,
         ticket_field_id,
         CASE WHEN field_value NOT IN ('','null') THEN field_value ELSE NULL END AS field_value
