@@ -22,7 +22,7 @@ sources:
         description: 'Zendesk Ticket Forms'
       - name: ticket_fields
         description: 'Zendesk Ticket Fields'
-       - name: ticket_metrics
+      - name: ticket_metrics
         description: 'Zendesk Ticket Metrics'
       - name: ticket_users
         description: 'Zendesk Users'
