@@ -10,3 +10,21 @@ sources:
         description: 'Zendesk Tickets'
       - name: organizations
         description: 'Zendesk Organizations (maps one to one with SFDC Accounts)'
+      - name: sla_policies
+        description: 'Zendesk SLA Policies'
+      - name: tags
+        description: 'Zendesk Tags'
+      - name: ticket_audits
+        description: 'Zendesk Ticket Audits'
+      - name: ticket_comments
+        description: 'Zendesk Ticket Comments'
+      - name: ticket_forms
+        description: 'Zendesk Ticket Forms'
+      - name: ticket_fields
+        description: 'Zendesk Ticket Fields'
+       - name: ticket_metrics
+        description: 'Zendesk Ticket Metrics'
+      - name: ticket_users
+        description: 'Zendesk Users'
+      - name: satisfaction_ratings
+        description: 'Zendesk Satisfaction Ratings'

@@ -18,7 +18,7 @@ WITH account_health_facts AS (
         LEFT JOIN {{ source('orgm', 'opportunity') }}  ON opportunity.accountid = account.sfid AND iswon
         LEFT JOIN {{ source('orgm', 'opportunitylineitem') }} ON opportunitylineitem.opportunityid = opportunity.sfid
         LEFT JOIN {{ source('orgm', 'tasks_filtered') }} ON account.sfid = tasks_filtered.accountid
-        LEFT JOIN {{ source('zendesk_raw', 'organizations') }} ON organizations.id = account.zendesk__zendesk_organization_id__C
+        LEFT JOIN {{ source('zendesk_raw', 'organizations') }} ON organizations.id = account.zendesk__zendesk_organization_id__c
         LEFT JOIN {{ source('zendesk_raw', 'tickets') }} ON tickets.organization_id = organizations.id AND tickets.created_at > current_date - INTERVAL '90 days'
     GROUP BY 1
 ), account_health_score AS (
