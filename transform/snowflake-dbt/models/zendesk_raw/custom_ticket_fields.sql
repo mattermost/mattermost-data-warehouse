@@ -4,15 +4,14 @@
   })
 }}
 
-WITH array_to_string (
+WITH array_to_string AS (
     SELECT *
     FROM (
         SELECT 
             ticket.id AS ticket_id, 
             ARRAY_TO_STRING(custom_fields, ',') AS string
         FROM {{ source('zendesk_raw', 'tickets') }}
-        ) AS splittable, 
-        LATERAL SPLIT_TO_TABLE(splittable.string, '},{')
+    ) AS splittable, LATERAL SPLIT_TO_TABLE(splittable.string, '},{')
 ), custom_ticket_fields as (
     SELECT 
         ticket_id,

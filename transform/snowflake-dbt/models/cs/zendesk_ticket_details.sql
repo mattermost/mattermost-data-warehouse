@@ -29,7 +29,7 @@ WITH zendesk_ticket_details as (
     LEFT JOIN {{ source('zendesk_raw', 'organizations') }} ON tickets.organization_id = organizations.id
     LEFT JOIN {{ source('orgm', 'account') }} ON organizations.id = account.zendesk__zendesk_organization_id__C
     LEFT JOIN {{ source('zendesk_raw', 'users') }} ON users.id = tickets.assignee_id
-    LEFT JOIN {{ source('zendesk_raw', 'satisfaction_ratings') }} ON satisfaction_ratings.id = tickets.satisfaction_ratings:id
+    LEFT JOIN {{ source('zendesk_raw', 'satisfaction_ratings') }} ON satisfaction_ratings.id = tickets.satisfaction_rating:id
 )
 
 select * from zendesk_ticket_details
