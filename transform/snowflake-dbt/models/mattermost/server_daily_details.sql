@@ -21,7 +21,7 @@ dates as (
   FROM {{ source('util', 'dates') }} d
   JOIN servers s
        ON d.date >= s.min_date
-       AND d.date <= CURRENT_DATE - INTERVAL '1 day'
+       AND d.date <= CURRENT_DATE
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
