@@ -22,8 +22,8 @@ WITH zendesk_ticket_details as (
         reply_time_in_minutes:calendar::int reply_time_in_minutes_cal,
         requester_wait_time_in_minutes:business::int requester_wait_time_in_minutes_bus,
         requester_wait_time_in_minutes:calendar::int requester_wait_time_in_minutes_cal,
-        satisfaction_ratings:score::varchar satisfaction_rating_score,
-        satisfaction_ratings:reason::varchar satisfaction_rating_reason
+        satisfaction_ratings.score::varchar satisfaction_rating_score,
+        satisfaction_ratings.reason::varchar satisfaction_rating_reason
     FROM {{ source('zendesk_raw', 'tickets') }}
     LEFT JOIN {{ source('zendesk_raw', 'ticket_metrics') }} ON tickets.id = ticket_metrics.ticket_id
     LEFT JOIN {{ source('zendesk_raw', 'organizations') }} ON tickets.organization_id = organizations.id
