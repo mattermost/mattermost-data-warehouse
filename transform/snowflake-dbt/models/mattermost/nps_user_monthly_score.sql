@@ -73,13 +73,13 @@ WITH min_nps                AS (
                   ELSE 'Promoter' END                                                          AS promoter_type
            , to_timestamp(nps.user_create_at / 1000)::DATE                                     AS user_created_at
            , to_timestamp(nps.server_install_date / 1000)::DATE                                AS server_install_date
-           , LIST_AGG(feedback.feedback, '; ') WITHIN GROUP (ORDER BY feedback.timestamp DESC) AS feedback
+           , LISTAGG(feedback.feedback, '; ') WITHIN GROUP (ORDER BY feedback.timestamp DESC) AS feedback
            , MAX(feedback.timestamp::DATE)                                                     AS last_feedback_date                        
            , m.responses
            , m.promoter_responses
            , m.detractor_responses
            , m.responses_alltime
-           , m.promoter_responses_alltime
+           , m.promot   ser_responses_alltime
            , m.detractor_responses_alltime
            , m.feedback_count
            , m.feedback_count_alltime
