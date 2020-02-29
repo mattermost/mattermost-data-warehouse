@@ -4,7 +4,7 @@
   })
 }}
 
-SELECT zendesk_ticket_details as (
+WITH zendesk_ticket_details as (
     SELECT
         tickets.id as ticket_id,
         organizations.name as organization_name,

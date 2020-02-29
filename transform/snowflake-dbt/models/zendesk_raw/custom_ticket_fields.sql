@@ -13,7 +13,7 @@ WITH array_to_string (
         FROM {{ source('zendesk_raw', 'tickets') }}
         ) AS splittable, 
         LATERAL SPLIT_TO_TABLE(splittable.string, '},{')
-), as custom_ticket_fields as (
+), custom_ticket_fields as (
     SELECT 
         ticket_id,
         split_part(split_part(value,':',2),',',1) as ticket_field_id, 
