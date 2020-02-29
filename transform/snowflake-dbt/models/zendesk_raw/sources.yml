@@ -24,7 +24,7 @@ sources:
         description: 'Zendesk Ticket Fields'
       - name: ticket_metrics
         description: 'Zendesk Ticket Metrics'
-      - name: ticket_users
+      - name: users
         description: 'Zendesk Users'
       - name: satisfaction_ratings
         description: 'Zendesk Satisfaction Ratings'
