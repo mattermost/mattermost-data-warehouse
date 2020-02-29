@@ -1,6 +1,6 @@
 {{config({
     "materialized": 'table',
-    "schema": "zendesk"
+    "schema": "zendesk_raw"
   })
 }}
 
@@ -10,7 +10,7 @@ WITH array_to_string (
         SELECT 
             ticket.id AS ticket_id, 
             ARRAY_TO_STRING(custom_fields, ',') AS string
-        FROM {{ source('zendesk', 'tickets') }}
+        FROM {{ source('zendesk_raw', 'tickets') }}
         ) AS splittable, 
         LATERAL SPLIT_TO_TABLE(splittable.string, '},{')
 ), as custom_ticket_fields as (
@@ -23,7 +23,7 @@ WITH array_to_string (
             ELSE NULL
         END AS field_value
     FROM array_to_string
-    LEFT JOIN {{ source('zendesk', 'ticket_fields') }} ON split_part(split_part(value,':',2),',',1).id = ticket_fields.id
+    LEFT JOIN {{ source('zendesk_raw', 'ticket_fields') }} ON split_part(split_part(value,':',2),',',1).id = ticket_fields.id
 )
 
 SELECT * FROM custom_ticket_fields

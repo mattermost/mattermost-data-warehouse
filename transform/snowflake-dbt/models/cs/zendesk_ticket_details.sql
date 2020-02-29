@@ -24,12 +24,12 @@ SELECT zendesk_ticket_details as (
         requester_wait_time_in_minutes:calendar::int requester_wait_time_in_minutes_cal,
         satisfaction_ratings:score::varchar satisfaction_rating_score,
         satisfaction_ratings:reason::varchar satisfaction_rating_reason
-    FROM {{ source('zendesk', 'tickets') }}
-    LEFT JOIN {{ source('zendesk', 'ticket_metrics') }} ON tickets.id = ticket_metrics.ticket_id
-    LEFT JOIN {{ source('zendesk', 'organizations') }} ON tickets.organization_id = organizations.id
+    FROM {{ source('zendesk_raw', 'tickets') }}
+    LEFT JOIN {{ source('zendesk_raw', 'ticket_metrics') }} ON tickets.id = ticket_metrics.ticket_id
+    LEFT JOIN {{ source('zendesk_raw', 'organizations') }} ON tickets.organization_id = organizations.id
     LEFT JOIN {{ source('orgm', 'account') }} ON organizations.id = account.zendesk__zendesk_organization_id__C
-    LEFT JOIN {{ source('zendesk', 'users') }} ON users.id = tickets.assignee_id
-    LEFT JOIN {{ source('zendesk', 'satisfaction_ratings') }} ON satisfaction_ratings.id = tickets.satisfaction_ratings:id
+    LEFT JOIN {{ source('zendesk_raw', 'users') }} ON users.id = tickets.assignee_id
+    LEFT JOIN {{ source('zendesk_raw', 'satisfaction_ratings') }} ON satisfaction_ratings.id = tickets.satisfaction_ratings:id
 )
 
 select * from zendesk_ticket_details
