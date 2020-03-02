@@ -127,3 +127,11 @@ models:
   - name: server_webrtc_details
     description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mattermost2.config_webrtc.
   
+  - name: orgm_account_data_check
+    description: OrgM Account data sent to Heroku Postgres to confirm data integrity across systems.
+
+  - name: orgm_opportunity_data_check
+    description: OrgM Opportunity data sent to Heroku Postgres to confirm data integrity across systems.
+
+  - name: orgm_opportunitylineitem_data_check
+    description: OrgM Opportunity Line Item data sent to Heroku Postgres to confirm data integrity across systems.
