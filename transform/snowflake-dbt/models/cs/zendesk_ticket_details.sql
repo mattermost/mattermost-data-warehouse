@@ -10,6 +10,7 @@ WITH zendesk_ticket_details as (
         organizations.name as organization_name,
         account.sfid as account_sfid,
         users.name as assignee_name,
+        created_at,
         agent_wait_time_in_minutes:business::int agent_wait_time_in_minutes_bus,
         agent_wait_time_in_minutes:calendar::int agent_wait_time_in_minutes_cal,
         first_resolution_time_in_minutes:business::int first_resolution_time_in_minutes_bus,
