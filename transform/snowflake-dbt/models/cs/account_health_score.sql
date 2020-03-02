@@ -61,6 +61,7 @@ WITH account_health_facts AS (
        round(tenure_health_score + license_end_date_health_score + ticket_health_score + task_health_score,0) AS health_score_no_override,
        round(greatest(tenure_health_score + license_end_date_health_score + ticket_health_score + task_health_score,0),0) AS health_score_w_override
     FROM account_health_facts
+    WHERE account_health_facts.license_start_date <= current_date AND account_health_facts.license_end_date >= current_date
 )
 
 SELECT * FROM account_health_score
