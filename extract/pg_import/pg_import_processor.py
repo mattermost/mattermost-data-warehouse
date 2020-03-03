@@ -11,7 +11,8 @@ class SnowflakeToPgDataTypeMapper(object):
     DATA_TYPE_MAP = {
         "number": "integer",
         "timestamp_ntz": "timestamp without time zone",
-        "text": "varchar"
+        "text": "varchar",
+        "timestamp_tz": "timestamp with time zone"
     }
 
     @classmethod
