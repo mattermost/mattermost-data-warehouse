@@ -9,6 +9,7 @@ from airflow.contrib.kubernetes.pod import Resources
 
 DATA_IMAGE = "registry.gitlab.com/gitlab-data/data-image/data-image:latest"
 DBT_IMAGE = "registry.gitlab.com/gitlab-data/data-image/dbt-image:latest"
+MELTANO_IMAGE = "registry.gitlab.com/meltano/meltano:v1.20.0"
 PSQL_IMAGE = "docker.io/adovenmm/data-warehouse-psql:latest"
 
 mm_webhook_url = os.getenv('MATTERMOST_WEBHOOK_URL')
