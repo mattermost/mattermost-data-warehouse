@@ -16,7 +16,7 @@ WITH zendesk_ticket_details as (
         organizations.organization_fields:premium_support as premium_support,
         array_to_string(tickets.tags, ', ') as tags,
         tickets.created_at,
-        tickets.solved_at,
+        ticket_metrics.solved_at,
         tickets.status,
         ticket_metrics.agent_wait_time_in_minutes:business::int agent_wait_time_in_minutes_bus,
         ticket_metrics.agent_wait_time_in_minutes:calendar::int agent_wait_time_in_minutes_cal,
