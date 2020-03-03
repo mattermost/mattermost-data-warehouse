@@ -10,7 +10,7 @@ WITH orgm_account_data_check AS (
         sfid,
         systemmodstamp,
         createddate,
-        current_timestamp AS processed_at
+        TO_TIMESTAMP_NTZ(current_timestamp) AS processed_at
     FROM {{ source('orgm','account') }}
 )
 SELECT * FROM orgm_account_data_check
