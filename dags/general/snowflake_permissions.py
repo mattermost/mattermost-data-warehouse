@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
-from dags.airflow_utils import DATA_IMAGE, clone_repo_cmd, pod_defaults, mm_failed_task
+from dags.airflow_utils import MELTANO_IMAGE, clone_repo_cmd, pod_defaults, mm_failed_task
 from dags.kube_secrets import (
     PERMISSION_BOT_ACCOUNT,
     PERMISSION_BOT_DATABASE,
@@ -12,10 +12,6 @@ from dags.kube_secrets import (
     PERMISSION_BOT_USER,
     PERMISSION_BOT_WAREHOUSE,
 )
-
-# Load the env vars into a dict and set Secrets
-env = os.environ.copy()
-pod_env_vars = {"DRY": "--dry"}
 
 # Default arguments for the DAG
 default_args = {
@@ -33,14 +29,9 @@ container_cmd = f"""
     {clone_repo_cmd} &&
     export PYTHONPATH="/opt/bitnami/airflow/dags/git/mattermost-data-warehouse/:$PYTHONPATH" &&
     meltano init airflow_job &&
-    cp mattermost-data-warehouse/load/snowflake/roles.yaml airflow_job/load/roles.yml &&
+    cp mattermost-data-warehouse/load/snowflake/roles.yml airflow_job/load/roles.yml &&
     cd airflow_job/ &&
-    tmpfile=$(mktemp)
-    meltano permissions grant load/roles.yml --db snowflake $DRY | grep ";$" | grep -vi "sysadmin" | grep -vi "disabled" > $tmpfile &&
-    cd ../mattermost-data-warehouse &&
-    cat $tmpfile &&
-    python utils/run_snowflake_queries.py $tmpfile PERMISSIONS analytics &&
-    rm $tmpfile
+    meltano permissions grant load/roles.yml --db snowflake
 """
 
 # Create the DAG
@@ -51,7 +42,7 @@ dag = DAG(
 # Task 1
 snowflake_load = KubernetesPodOperator(
     **pod_defaults,
-    image=DATA_IMAGE,
+    image=MELTANO_IMAGE,
     task_id="snowflake-permissions",
     name="snowflake-permissions",
     secrets=[
@@ -62,7 +53,6 @@ snowflake_load = KubernetesPodOperator(
         PERMISSION_BOT_DATABASE,
         PERMISSION_BOT_WAREHOUSE,
     ],
-    env_vars=pod_env_vars,
     arguments=[container_cmd],
     dag=dag,
 )
