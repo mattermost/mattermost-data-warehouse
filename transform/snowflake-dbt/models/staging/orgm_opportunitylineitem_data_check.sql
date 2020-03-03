@@ -10,7 +10,7 @@ WITH orgm_opportunitylineitem_data_check AS (
         sfid,
         systemmodstamp,
         createddate,
-        current_timestamp AS processed_at
+        TO_TIMESTAMP_NTZ(current_timestamp) AS processed_at
     FROM {{ source('orgm','opportunitylineitem') }}
 )
 SELECT * FROM orgm_opportunitylineitem_data_check
