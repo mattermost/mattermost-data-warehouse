@@ -46,3 +46,5 @@ seeds:
       schema: mattermost
     staff_github_usernames:
       schema: employee
+    testing:
+      schema: util
