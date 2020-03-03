@@ -16,6 +16,8 @@ WITH zendesk_ticket_details as (
         organizations.organization_fields:premium_support as premium_support,
         array_to_string(tickets.tags, ', ') as tags,
         tickets.created_at,
+        ticket_metrics.solved_at,
+        tickets.status,
         ticket_metrics.agent_wait_time_in_minutes:business::int agent_wait_time_in_minutes_bus,
         ticket_metrics.agent_wait_time_in_minutes:calendar::int agent_wait_time_in_minutes_cal,
         ticket_metrics.first_resolution_time_in_minutes:business::int first_resolution_time_in_minutes_bus,
@@ -36,7 +38,7 @@ WITH zendesk_ticket_details as (
     LEFT JOIN {{ source('orgm', 'account') }} ON organizations.id = account.zendesk__zendesk_organization_id__C
     LEFT JOIN {{ source('zendesk_raw', 'users') }} ON users.id = tickets.assignee_id
     LEFT JOIN {{ ref('custom_ticket_fields') }} ON tickets.id = custom_ticket_fields.ticket_id
-    GROUP BY 1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24
+    GROUP BY 1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26
 )
 
 select * from zendesk_ticket_details
