@@ -135,3 +135,6 @@ models:
 
   - name: orgm_opportunitylineitem_data_check
     description: OrgM Opportunity Line Item data sent to Heroku Postgres to confirm data integrity across systems.
+  
+  - name: server_config_details
+    description: Contains a daily snapshot of all relevant server configuration dimensions and measures from server details tables in analytics.staging schema per server.

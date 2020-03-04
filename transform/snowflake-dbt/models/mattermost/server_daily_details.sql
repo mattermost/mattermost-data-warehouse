@@ -6,8 +6,19 @@
 
 WITH servers as (
   SELECT 
-      coalesce(s1.server_id, s2.server_id)  AS server_id
-    , MIN(COALESCE(s1.date, s2.date))       AS min_date
+      coalesce(s1.server_id, s2.server_id)                 AS server_id
+    , CASE WHEN MIN(COALESCE(s1.date, s2.date)) <= MIN(COALESCE(s2.date, s1.date)) 
+            THEN MIN(COALESCE(s1.date, s2.date)) 
+              ELSE MIN(COALESCE(s2.date, s1.date)) END     AS min_date
+    , CASE WHEN MAX(CURRENT_DATE) < 
+                  CASE WHEN MAX(COALESCE(s1.date, s2.date)) >= MAX(COALESCE(s2.date, s1.date)) 
+                    THEN MAX(COALESCE(s1.date, s2.date)) 
+                    ELSE MAX(COALESCE(s2.date, s1.date)) END
+          THEN MAX(CURRENT_DATE)
+          ELSE CASE WHEN MAX(COALESCE(s1.date, s2.date)) >= MAX(COALESCE(s2.date, s1.date)) 
+                    THEN MAX(COALESCE(s1.date, s2.date)) 
+                    ELSE MAX(COALESCE(s2.date, s1.date)) END
+          END                                             AS max_date
   FROM {{ ref('server_security_details') }}                    s1
          FULL OUTER JOIN {{ ref('server_server_details') }}    s2
                          ON s1.server_id = s2.server_id
@@ -21,7 +32,7 @@ dates as (
   FROM {{ source('util', 'dates') }} d
   JOIN servers s
        ON d.date >= s.min_date
-       AND d.date <= CURRENT_DATE - INTERVAL '1 DAY'
+       AND d.date <= s.max_date
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
