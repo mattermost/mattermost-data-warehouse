@@ -46,5 +46,7 @@ seeds:
       schema: mattermost
     staff_github_usernames:
       schema: employee
+    fy21_arr_by_month:
+      schema: targets
     testing:
       schema: util
