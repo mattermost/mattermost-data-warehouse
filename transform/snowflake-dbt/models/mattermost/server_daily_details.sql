@@ -10,9 +10,15 @@ WITH servers as (
     , CASE WHEN MIN(COALESCE(s1.date, s2.date)) <= MIN(COALESCE(s2.date, s1.date)) 
             THEN MIN(COALESCE(s1.date, s2.date)) 
               ELSE MIN(COALESCE(s2.date, s1.date)) END     AS min_date
-    , CASE WHEN MAX(COALESCE(s1.date, s2.date)) >= MAX(COALESCE(s2.date, s1.date)) 
-            THEN MAX(COALESCE(s1.date, s2.date)) 
-              ELSE MAX(COALESCE(s2.date, s1.date)) END     AS max_date
+    , CASE WHEN MAX(CURRENT_DATE) < 
+                  CASE WHEN MAX(COALESCE(s1.date, s2.date)) >= MAX(COALESCE(s2.date, s1.date)) 
+                    THEN MAX(COALESCE(s1.date, s2.date)) 
+                    ELSE MAX(COALESCE(s2.date, s1.date)) END
+          THEN MAX(CURRENT_DATE)
+          ELSE CASE WHEN MAX(COALESCE(s1.date, s2.date)) >= MAX(COALESCE(s2.date, s1.date)) 
+                    THEN MAX(COALESCE(s1.date, s2.date)) 
+                    ELSE MAX(COALESCE(s2.date, s1.date)) END
+          END                                             AS max_date
   FROM {{ ref('server_security_details') }}                    s1
          FULL OUTER JOIN {{ ref('server_server_details') }}    s2
                          ON s1.server_id = s2.server_id
