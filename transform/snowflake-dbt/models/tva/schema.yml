@@ -1,6 +1,6 @@
 version: 2
 
 models:
-  - name: curr_fy_arr_by_mo
+  - name: tva_curr_fy_arr_by_mo
     description: ARR by Month Target vs Actuals for the Current Fiscal Year
   
