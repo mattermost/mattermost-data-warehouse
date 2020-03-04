@@ -30,7 +30,7 @@ models:
 
 seeds:
   enabled: true
-  schema: seed_data
+  schema: targets
   quote_columns: False
 
   mm_snowflake:
@@ -46,5 +46,3 @@ seeds:
       schema: mattermost
     staff_github_usernames:
       schema: employee
-    testing:
-      schema: util
