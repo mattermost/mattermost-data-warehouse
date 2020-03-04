@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: targets
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: targets
+
+    tables:
+      - name: curr_fy_arr_by_mo
+        description: 'Current Fiscal Year Targets for ARR by Month'
