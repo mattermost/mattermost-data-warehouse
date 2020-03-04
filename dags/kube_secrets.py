@@ -90,3 +90,8 @@ HEROKU_POSTGRESQL_URL = Secret(
 PG_IMPORT_BUCKET = Secret(
     "env", "PG_IMPORT_BUCKET", "airflow", "PG_IMPORT_BUCKET"
 )
+
+# SSH Key
+SSH_KEY = Secret(
+    "env", "SSH_KEY", "airflow", "SSH_KEY"
+)

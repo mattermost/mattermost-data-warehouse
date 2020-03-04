@@ -25,6 +25,7 @@ from dags.kube_secrets import (
     AWS_SECRET_ACCESS_KEY,
     PG_IMPORT_BUCKET,
     HEROKU_POSTGRESQL_URL,
+    SSH_KEY,
 )
 
 # Load the env vars into a dict and set Secrets
@@ -64,6 +65,7 @@ dbt_seed = KubernetesPodOperator(
         SNOWFLAKE_TRANSFORM_ROLE,
         SNOWFLAKE_TRANSFORM_WAREHOUSE,
         SNOWFLAKE_TRANSFORM_SCHEMA,
+        SSH_KEY,
     ],
     env_vars=env_vars,
     arguments=[dbt_install_deps_and_seed_cmd],

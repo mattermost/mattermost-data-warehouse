@@ -7,8 +7,8 @@ from typing import List
 
 from airflow.contrib.kubernetes.pod import Resources
 
-DATA_IMAGE = "registry.gitlab.com/gitlab-data/data-image/data-image:latest"
-DBT_IMAGE = "registry.gitlab.com/gitlab-data/data-image/dbt-image:latest"
+DATA_IMAGE = "docker.io/adovenmm/data-image:latest"
+DBT_IMAGE = "docker.io/adovenmm/dbt-image:latest"
 MELTANO_IMAGE = "registry.gitlab.com/meltano/meltano:v1.20.0"
 PSQL_IMAGE = "docker.io/adovenmm/data-warehouse-psql:latest"
 
@@ -134,4 +134,7 @@ dbt_install_deps_cmd = f"""
 
 dbt_install_deps_and_seed_cmd = f"""
     {dbt_install_deps_cmd} &&
+    echo "$SSH_KEY" > /root/ssh_key && chmod 400 /root/ssh_key &&
+    ssh-agent sh -c 'ssh-add /root/ssh_key; git clone -b master --single-branch --depth 1 git@github.com:mattermost/mattermost-data-warehouse-internal.git' &&
+    cp -R mattermost-data-warehouse-internal/. data/ &&
     dbt seed --profiles-dir profile --target prod"""
