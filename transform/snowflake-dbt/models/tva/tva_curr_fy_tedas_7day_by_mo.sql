@@ -10,7 +10,7 @@ WITH actual_tedas_7day_by_mo AS (
         COUNT(DISTINCT CASE WHEN server_daily_details.date - server_fact.first_active_date >= 7 THEN server_daily_details.server_id ELSE NULL END) AS tedas_7day
     FROM {{ ref('server_daily_details') }}
     INNER JOIN {{ ref('server_fact') }} ON server_daily_details.server_id = server_fact.server_id
-    WHERE DATE_PART('day', server_daily_details.date + INTERVAL '1 day') = 1 
+    WHERE (DATE_PART('day', server_daily_details.date + INTERVAL '1 day') = 1 OR (server_daily_details.date = CURRENT_DATE - INTERVAL '1 day'))
         AND server_daily_details.in_security
     GROUP BY server_daily_details.date
 ), tva_curr_fy_tedas_7day_by_mo AS (
