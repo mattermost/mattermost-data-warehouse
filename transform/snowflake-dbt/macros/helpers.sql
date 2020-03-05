@@ -49,7 +49,7 @@ select get_sys_var({{ var_name }})
 {% endmacro %}
 
 {% macro resume_warehouse(warehouse) %}
-    alter warehouse {{warehouse}} resume
+    alter warehouse {{warehouse}} resume if suspended
 {% endmacro %}
 
 {% macro suspend_warehouse(run, warehouse) %}
