@@ -1,6 +1,12 @@
 version: 2
 
 models:
+  - name: tva_all_by_mo
+    description: All Monthly Target vs Actuals
+  
   - name: tva_curr_fy_arr_by_mo
     description: ARR by Month Target vs Actuals for the Current Fiscal Year
+
+  - name: tva_curr_fy_tedas_7day_by_mo
+    description: TEDAS > 7 Day by Month Target vs Actuals for the Current Fiscal Year
   
