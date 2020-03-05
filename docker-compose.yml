@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
     dbt_image:
-      image: registry.gitlab.com/gitlab-data/data-image/dbt-image:latest
+      image: docker.io/adovenmm/dbt-image:latest
       environment:
         DBT_PROFILES_DIR: /usr/local/dbt_profiles/
         SNOWFLAKE_LOAD_DATABASE: "RAW"
@@ -21,7 +21,7 @@ services:
           read_only: True
 
     data_image:
-      image: registry.gitlab.com/gitlab-data/data-image/data-image:latest
+      image: docker.io/adovenmm/data-image:latest
       env_file:
         - .env
       restart: always
