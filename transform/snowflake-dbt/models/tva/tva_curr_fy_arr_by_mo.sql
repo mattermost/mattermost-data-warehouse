@@ -15,7 +15,7 @@ WITH actual_arr_by_mo AS (
     SELECT
         curr_fy_arr_by_mo.month,
         curr_fy_arr_by_mo.target,
-        actual_arr_by_mo.total_arr,
+        actual_arr_by_mo.total_arr as actual,
         round((actual_arr_by_mo.total_arr/curr_fy_arr_by_mo.target),2) as tva
     FROM {{ source('targets', 'curr_fy_arr_by_mo') }}
     LEFT JOIN actual_arr_by_mo ON curr_fy_arr_by_mo.month = actual_arr_by_mo.month
