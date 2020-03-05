@@ -49,7 +49,7 @@ dag = DAG("dbt_nightly", default_args=default_args, schedule_interval="0 5 * * *
 # dbt-run
 dbt_run_cmd = f"""
     {dbt_install_deps_cmd} &&
-    SNOWFLAKE_TRANSFORM_WAREHOUSE=TRANSFORM-L dbt run --profiles-dir profile --models tag:nightly
+    SNOWFLAKE_TRANSFORM_WAREHOUSE=transform_l dbt run --profiles-dir profile --models tag:nightly
 """
 
 dbt_seed = KubernetesPodOperator(
