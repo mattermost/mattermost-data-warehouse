@@ -45,7 +45,7 @@ default_args = {
 }
 
 # Create the DAG
-dag = DAG("dbt", default_args=default_args, schedule_interval="@hourly")
+dag = DAG("dbt", default_args=default_args, schedule_interval="*/30 * * * *")
 
 # dbt-run
 dbt_run_cmd = f"""
