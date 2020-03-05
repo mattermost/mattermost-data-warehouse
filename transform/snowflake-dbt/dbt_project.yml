@@ -26,7 +26,24 @@ quoting:
 
 models:
   mm_snowflake:
-    tags: "nightly"
+    blp:
+      tags: "blp"
+
+    cs:
+      tags: "cs"
+
+    events:
+      tags: ["events", "nightly"]
+
+    finance:
+      tags: "finance"
+
+    ga:
+      tags: "ga"
+
+    staging:
+      server:
+        tags: ["server", "nightly"]
 
 seeds:
   enabled: true
