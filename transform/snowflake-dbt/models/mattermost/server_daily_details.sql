@@ -14,7 +14,7 @@ WITH servers as (
                   CASE WHEN MAX(COALESCE(s1.date, s2.date)) >= MAX(COALESCE(s2.date, s1.date)) 
                     THEN MAX(COALESCE(s1.date, s2.date)) 
                     ELSE MAX(COALESCE(s2.date, s1.date)) END
-          THEN MAX(CURRENT_DATE)
+          THEN MAX(CURRENT_DATE - interval '1 day')
           ELSE CASE WHEN MAX(COALESCE(s1.date, s2.date)) >= MAX(COALESCE(s2.date, s1.date)) 
                     THEN MAX(COALESCE(s1.date, s2.date)) 
                     ELSE MAX(COALESCE(s2.date, s1.date)) END
