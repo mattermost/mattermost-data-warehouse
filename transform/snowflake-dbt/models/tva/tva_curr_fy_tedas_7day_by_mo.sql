@@ -15,10 +15,10 @@ WITH actual_tedas_7day_by_mo AS (
     GROUP BY server_daily_details.date
 ), tva_curr_fy_tedas_7day_by_mo AS (
     SELECT
-        curr_fy_tedas_7day_by_mo.month,
+        actual_tedas_7day_by_mo.month,
         curr_fy_tedas_7day_by_mo.target,
-        curr_fy_tedas_7day_by_mo.tedas_7day as actual,
-        round((curr_fy_tedas_7day_by_mo.tedas_7day/curr_fy_tedas_7day_by_mo.target),2) as tva
+        actual_tedas_7day_by_mo.tedas_7day as actual,
+        round((actual_tedas_7day_by_mo.tedas_7day/curr_fy_tedas_7day_by_mo.target),2) as tva
     FROM {{ source('targets', 'curr_fy_tedas_7day_by_mo') }}
     LEFT JOIN actual_tedas_7day_by_mo ON curr_fy_tedas_7day_by_mo.month = actual_tedas_7day_by_mo.month
 )

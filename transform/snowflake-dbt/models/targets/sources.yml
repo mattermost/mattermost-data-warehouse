@@ -8,3 +8,6 @@ sources:
     tables:
       - name: curr_fy_arr_by_mo
         description: 'Current Fiscal Year Targets for ARR by Month'
+
+      - name: curr_fy_tedas_7day_by_mo
+        description: 'Current Fiscal Year Targets for TEDAS 7 Day by Month'
