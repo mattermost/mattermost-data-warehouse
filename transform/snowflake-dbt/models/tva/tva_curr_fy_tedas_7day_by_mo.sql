@@ -15,7 +15,7 @@ WITH actual_tedas_7day_by_mo AS (
     GROUP BY server_daily_details.date
 ), tva_curr_fy_tedas_7day_by_mo AS (
     SELECT
-        actual_tedas_7day_by_mo.month,
+        curr_fy_tedas_7day_by_mo.month,
         curr_fy_tedas_7day_by_mo.target,
         actual_tedas_7day_by_mo.tedas_7day as actual,
         round((actual_tedas_7day_by_mo.tedas_7day/curr_fy_tedas_7day_by_mo.target),2) as tva
