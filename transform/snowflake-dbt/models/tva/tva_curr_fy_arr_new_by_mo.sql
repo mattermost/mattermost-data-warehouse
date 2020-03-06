@@ -7,7 +7,7 @@
 WITH actual_arr_new_by_mo AS (
     SELECT 
         account_monthly_arr_deltas_by_type.month_start AS month,
-        SUM(account_monthly_arr_deltas_by_type.total_arr_expansion) AS total_arr
+        SUM(account_monthly_arr_deltas_by_type.total_arr_new) AS total_arr
     FROM  {{ ref('account_monthly_arr_deltas_by_type') }}
     WHERE account_monthly_arr_deltas_by_type.month_start < CURRENT_DATE
     GROUP BY 1
