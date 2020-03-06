@@ -78,6 +78,15 @@ WITH min_active              AS (
            , coalesce(MAX(e1.total_events)
                           OVER (PARTITION BY e1.user_id ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ),
                       0)                                                                                           AS max_events
+           , coalesce(SUM(e1.mobile_events)
+                          OVER (PARTITION BY e1.user_id ORDER BY e1.date ROWS BETWEEN 30 PRECEDING AND CURRENT ROW ),
+                      0)                                                                                           AS mobile_events_last_30_days
+           , coalesce(SUM(e1.mobile_events)
+                          OVER (PARTITION BY e1.user_id ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ),
+                      0)                                                                                           AS mobile_events_alltime
+           , coalesce(MAX(e1.mobile_events)
+                          OVER (PARTITION BY e1.user_id ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ),
+                      0)                                                                                           AS max_mobile_events
            , MAX(CASE WHEN e1.total_events > 0 THEN e1.date ELSE NULL END)
                  OVER (PARTITION BY e1.user_id ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW ) AS last_active_date
          FROM events          e1
@@ -109,12 +118,15 @@ WITH min_active              AS (
            , m.mau_segment
            , CASE WHEN m.mau_segment IN ('First Time MAU', 'Reengaged MAU', 'Current MAU') THEN TRUE
                   ELSE FALSE END                                       AS mau
-           , m.min_active_date                                         AS first_active_date
+           , MIN(m.min_active_date)                                         AS first_active_date
            , MAX(m.last_active_date)                                   AS last_active_date
-           , m.events_last_30_days
-           , m.events_last_31_days
-           , SUM(m.events_alltime)                                     AS events_alltime
+           , MAX(m.events_last_30_days)                                AS events_last_30_days
+           , MAX(m.events_last_31_days)                                AS events_last_31_days
+           , MAX(m.events_alltime)                                     AS events_alltime
            , MAX(m.max_events)                                         AS max_events
+           , MAX(m.mobile_events_last_30_days)                         AS mobile_events_last_30_days
+           , MAX(m.mobile_events_alltime)                              AS mobile_events_alltime
+           , MAX(e.max_mobile_events)                                  AS max_mobile_events
          FROM events   e1
               JOIN mau m
                    ON e1.user_id = m.user_id
@@ -124,6 +136,7 @@ WITH min_active              AS (
          WHERE e1.date >= (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
-         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23, 24, 25, 26)
+         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+         , 21, 22)
 SELECT *
 FROM user_events_by_date_agg
