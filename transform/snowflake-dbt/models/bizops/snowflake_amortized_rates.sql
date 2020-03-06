@@ -7,7 +7,7 @@
 WITH contract_rates AS (
 
     SELECT *
-    FROM {{ ref('snowflake_contract_rates')}}
+    FROM {{ source('bizops','snowflake_contract_rates')}}
 
 ), contract_rate_rework AS (
 
