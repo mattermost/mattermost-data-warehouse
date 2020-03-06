@@ -127,7 +127,10 @@ sources:
         description: Contains the raw team scheme permissions for each server's user type at a given point in time/on a specific date - team guest, channel admin, channel user, team admin, channel guest, and team user.
       
       - name: activity
-        description: Contains the raw server-level activity at a given point in time/on a specific date. Includes number of posts, channels, slash commands, api calls, bot accounts, etc.
+        description: Contains raw server-level activity at a given point in time/on a specific date. Includes number of posts, channels, slash commands, api calls, bot accounts, etc.
 
       - name: event
-        description: Contains the raw user-level activity for each server at a given point in time/on a specific data. Includes api calls like posts, channel joins, replies, logouts, etc.. Also includes UI events like channel selection, channel switch, team selection, button clicks, etc..
+        description: Contains raw user-level event data as a single row per event.
+      
+      - name: event_mobile
+        description: Contains raw user-level, mobile event data as a single row per event.
