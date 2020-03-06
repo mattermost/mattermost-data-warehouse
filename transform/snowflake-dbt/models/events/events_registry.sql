@@ -10,6 +10,7 @@ WITH events          AS (
         LOWER(type)                                                                   AS event_name
       , CASE WHEN lower(category) = 'actions' THEN 'action' ELSE lower(category) END  AS event_category
       , MIN(timestamp::date)                                                          AS date_added
+      , MAX(timestamp::date)                                                          AS last_triggered
     FROM {{ source('mattermost2', 'event')}}
     {% if is_incremental() %}
 
@@ -25,6 +26,7 @@ WITH events          AS (
         LOWER(type)                                                                   AS event_name
       , CASE WHEN lower(category) = 'actions' THEN 'action' ELSE lower(category) END  AS event_category
       , MIN(timestamp::date)                                                          AS date_added
+      , MAX(timestamp::date)                                                          AS last_triggered
     FROM {{ source('mattermost2', 'event_mobile')}}
     {% if is_incremental() %}
 
@@ -52,6 +54,7 @@ WITH events          AS (
               THIS FIELD IS MEANT TO BE USED TO PROVIDE A BRIEF DESCRIPTION OF THE EVENT IN QUESTION 
               I.E. HOW THE EVENT IS TRIGGERED AND WHY IT FALLS INTO A SPECIFIC CATEGORY.' AS description
            , MIN(date_added)                                                              AS date_added
+           , MAX(last_triggered)                                                          AS last_triggered
          FROM all_events
          GROUP BY 1, 2, 3, 4
      )
