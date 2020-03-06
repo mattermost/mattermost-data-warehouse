@@ -38,7 +38,7 @@ dag = DAG(
 # Task 1
 snowflake_load = KubernetesPodOperator(
     **pod_defaults,
-    image=MELTANO_IMAGE,
+    image=PERMIFROST_IMAGE,
     task_id="snowflake-permissions",
     name="snowflake-permissions",
     secrets=[
