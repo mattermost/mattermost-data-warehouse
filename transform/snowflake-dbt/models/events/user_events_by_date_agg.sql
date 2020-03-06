@@ -126,7 +126,7 @@ WITH min_active              AS (
            , MAX(m.max_events)                                         AS max_events
            , MAX(m.mobile_events_last_30_days)                         AS mobile_events_last_30_days
            , MAX(m.mobile_events_alltime)                              AS mobile_events_alltime
-           , MAX(e.max_mobile_events)                                  AS max_mobile_events
+           , MAX(m.max_mobile_events)                                  AS max_mobile_events
          FROM events   e1
               JOIN mau m
                    ON e1.user_id = m.user_id
