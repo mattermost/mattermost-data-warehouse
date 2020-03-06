@@ -31,3 +31,15 @@ services:
         - type: bind
           source: .
           target: /usr/local/analytics
+
+    permifrost:
+      image: docker.io/adovenmm/permifrost:latest
+      env_file:
+        - .env
+      restart: always
+      command: /bin/bash -c "permifrost grant roles.yaml"
+      volumes:
+        - type: bind
+          source: ./load/snowflake/roles.yaml
+          target: /roles.yaml
+          read_only: True

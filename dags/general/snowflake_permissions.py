@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
-from dags.airflow_utils import MELTANO_IMAGE, clone_repo_cmd, pod_defaults, mm_failed_task
+from dags.airflow_utils import PERMIFROST_IMAGE, clone_repo_cmd, pod_defaults, mm_failed_task
 from dags.kube_secrets import (
     PERMISSION_BOT_ACCOUNT,
     PERMISSION_BOT_DATABASE,
@@ -27,11 +27,7 @@ default_args = {
 # Set the command for the container
 container_cmd = f"""
     {clone_repo_cmd} &&
-    export PYTHONPATH="/opt/bitnami/airflow/dags/git/mattermost-data-warehouse/:$PYTHONPATH" &&
-    meltano init airflow_job &&
-    cp mattermost-data-warehouse/load/snowflake/roles.yaml airflow_job/load/roles.yml &&
-    cd airflow_job/ &&
-    meltano permissions grant load/roles.yml --db snowflake
+    permifrost grant mattermost-data-warehouse/load/snowflake/roles.yaml
 """
 
 # Create the DAG

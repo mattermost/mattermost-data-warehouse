@@ -86,7 +86,7 @@ roles:
 
     - reporting:
         warehouses:
-            - looker_s
+            - reporting_s
         privileges:
             databases:
                 read:
@@ -102,7 +102,7 @@ roles:
                     - snowflake.account_usage.*
     - reporting_all:
         warehouses:
-            - analyst_xs
+            - reporting_s
         privileges:
             databases:
                 read:
@@ -207,6 +207,7 @@ users:
         member_of:
             - permission_bot
             - securityadmin
+            - sysadmin
 
     - looker:
         can_login: yes
