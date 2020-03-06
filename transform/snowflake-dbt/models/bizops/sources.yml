@@ -8,3 +8,11 @@ sources:
     tables:
       - name: warehouse_metering_history
         description: 'Snowflake warehouse usage tracking'
+
+  - name: bizops
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: bizops
+
+    tables:
+      - name: snowflake_contract_rates
+        description: 'Snowflake contract rates'
