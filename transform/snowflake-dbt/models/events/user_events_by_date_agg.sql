@@ -47,7 +47,7 @@ WITH min_active              AS (
                         ON d.user_id = e.user_id
                             AND d.date = e.date
               LEFT JOIN {{ ref('events_registry') }}     r
-                        ON e.uuid = r.uuid
+                        ON e.event_id = r.event_id
          GROUP BY 1, 2, 3, 4, 5),
 
      mau                     AS (
