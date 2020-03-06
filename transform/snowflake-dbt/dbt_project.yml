@@ -40,6 +40,9 @@ models:
     warehouse_name: "{{ env_var('SNOWFLAKE_TRANSFORM_WAREHOUSE') }}"
 
   mm_snowflake:
+    bizops:
+      tags: ["bizops", "nightly"]
+
     blp:
       tags: "blp"
 
@@ -71,6 +74,8 @@ seeds:
       schema: mattermost
     world_cities:
       schema: util
+    snowflake_contract_rates:
+      schema: bizops
     contributor_map_data:
       schema: staging
     github_contributions:
