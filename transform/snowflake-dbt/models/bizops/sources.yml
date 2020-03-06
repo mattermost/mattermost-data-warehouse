@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: account_usage
+    database: SNOWFLAKE
+    schema: account_usage
+
+    tables:
+      - name: warehouse_metering_history
+        description: 'Snowflake warehouse usage tracking'
