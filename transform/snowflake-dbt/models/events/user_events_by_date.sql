@@ -69,4 +69,4 @@ WITH mobile_events       AS (
          GROUP BY 1, 2, 3, 7, 8
      )
 SELECT *
-FROM user_events_by_date;
+FROM user_events_by_date
