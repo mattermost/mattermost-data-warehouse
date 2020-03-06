@@ -1,6 +1,7 @@
 {{config({
     "materialized": "incremental",
-    "schema": "events"
+    "schema": "events",
+    "unique_key": "id"
   })
 }}
 
@@ -20,7 +21,7 @@ WITH events          AS (
 ),
      events_registry AS (
          SELECT
-             uuid_string()                                                                AS uuid
+             {{ dbt_utils.surrogate_key('event_name', 'event_category') }}                AS event_id
            , event_name
            , event_category
            , 'THIS IS A PLACEHOLDER DESCRIPTION. IT IS ONLY MEANT TO ESTABLISH THE MINIMUM LENGTH OF THIS FIELD. 
