@@ -126,6 +126,9 @@ clone_and_setup_extraction_cmd = f"""
 
 clone_and_setup_dbt_cmd = f"""
     {clone_repo_cmd} &&
+    echo "$SSH_KEY" > /root/ssh_key && chmod 400 /root/ssh_key &&
+    ssh-agent sh -c 'ssh-add /root/ssh_key; git clone -b master --single-branch --depth 1 git@github.com:mattermost/mattermost-data-warehouse-internal.git' &&
+    cp -R mattermost-data-warehouse-internal/. mattermost-data-warehouse/transform/snowflake-dbt/data/ &&
     cd mattermost-data-warehouse/transform/snowflake-dbt/"""
 
 dbt_install_deps_cmd = f"""
@@ -134,7 +137,4 @@ dbt_install_deps_cmd = f"""
 
 dbt_install_deps_and_seed_cmd = f"""
     {dbt_install_deps_cmd} &&
-    echo "$SSH_KEY" > /root/ssh_key && chmod 400 /root/ssh_key &&
-    ssh-agent sh -c 'ssh-add /root/ssh_key; git clone -b master --single-branch --depth 1 git@github.com:mattermost/mattermost-data-warehouse-internal.git' &&
-    cp -R mattermost-data-warehouse-internal/. data/ &&
     dbt seed --profiles-dir profile --target prod"""
