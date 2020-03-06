@@ -117,12 +117,7 @@ pod_env_vars = {
 # Warehouse variable declaration
 xs_warehouse = f"'{{warehouse_name: transforming_xs}}'"
 
-clone_repo_cmd = f"""
-    git clone -b master --single-branch --depth 1 https://github.com/mattermost/mattermost-data-warehouse &&
-    echo "$SSH_KEY" > /root/ssh_key && chmod 400 /root/ssh_key &&
-    ssh-agent sh -c 'ssh-add /root/ssh_key; git clone -b master --single-branch --depth 1 git@github.com:mattermost/mattermost-data-warehouse-internal.git' &&
-    cp -R mattermost-data-warehouse-internal/. data/
-"""
+clone_repo_cmd = f"git clone -b master --single-branch --depth 1 https://github.com/mattermost/mattermost-data-warehouse"
 
 clone_and_setup_extraction_cmd = f"""
     {clone_repo_cmd} &&
@@ -131,6 +126,9 @@ clone_and_setup_extraction_cmd = f"""
 
 clone_and_setup_dbt_cmd = f"""
     {clone_repo_cmd} &&
+    echo "$SSH_KEY" > /root/ssh_key && chmod 400 /root/ssh_key &&
+    ssh-agent sh -c 'ssh-add /root/ssh_key; git clone -b master --single-branch --depth 1 git@github.com:mattermost/mattermost-data-warehouse-internal.git' &&
+    cp -R mattermost-data-warehouse-internal/. mattermost-data-warehouse/transform/snowflake-dbt/data/ &&
     cd mattermost-data-warehouse/transform/snowflake-dbt/"""
 
 dbt_install_deps_cmd = f"""
