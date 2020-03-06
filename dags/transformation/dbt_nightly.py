@@ -5,7 +5,6 @@ from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 from dags.airflow_utils import (
     DBT_IMAGE,
-    DATA_IMAGE,
     dbt_install_deps_and_seed_cmd,
     dbt_install_deps_cmd,
     clone_and_setup_extraction_cmd,
@@ -45,13 +44,33 @@ default_args = {
 }
 
 # Create the DAG
-dag = DAG("dbt", default_args=default_args, schedule_interval="*/30 * * * *")
+dag = DAG("dbt_nightly", default_args=default_args, schedule_interval="0 5 * * *")
 
 # dbt-run
 dbt_run_cmd = f"""
     {dbt_install_deps_cmd} &&
-    dbt run --profiles-dir profile --exclude tag:nightly
+    SNOWFLAKE_TRANSFORM_WAREHOUSE=transform_l dbt run --profiles-dir profile --models tag:nightly
 """
+
+dbt_seed = KubernetesPodOperator(
+    **pod_defaults,
+    image=DBT_IMAGE,
+    task_id="dbt-seed",
+    name="dbt-seed",
+    secrets=[
+        SNOWFLAKE_ACCOUNT,
+        SNOWFLAKE_USER,
+        SNOWFLAKE_PASSWORD,
+        SNOWFLAKE_TRANSFORM_ROLE,
+        SNOWFLAKE_TRANSFORM_WAREHOUSE,
+        SNOWFLAKE_TRANSFORM_SCHEMA,
+        SSH_KEY,
+    ],
+    env_vars=env_vars,
+    arguments=[dbt_install_deps_and_seed_cmd],
+    dag=dag,
+)
+
 
 dbt_run = KubernetesPodOperator(
     **pod_defaults,
@@ -71,31 +90,4 @@ dbt_run = KubernetesPodOperator(
     dag=dag,
 )
 
-pg_import_cmd = f"""
-    {clone_and_setup_extraction_cmd} &&
-    python extract/pg_import/pg_import.py
-"""
-
-pg_import = KubernetesPodOperator(
-    **pod_defaults,
-    image=DATA_IMAGE,
-    task_id="pg-import",
-    name="pg-import",
-    secrets=[
-        SNOWFLAKE_ACCOUNT,
-        SNOWFLAKE_USER,
-        SNOWFLAKE_PASSWORD,
-        SNOWFLAKE_TRANSFORM_ROLE,
-        SNOWFLAKE_TRANSFORM_WAREHOUSE,
-        SNOWFLAKE_TRANSFORM_SCHEMA,
-        AWS_ACCESS_KEY_ID,
-        AWS_SECRET_ACCESS_KEY,
-        PG_IMPORT_BUCKET,
-        HEROKU_POSTGRESQL_URL,
-    ],
-    env_vars=env_vars,
-    arguments=[pg_import_cmd],
-    dag=dag,
-)
-
-dbt_run >> pg_import
+dbt_seed >> dbt_run

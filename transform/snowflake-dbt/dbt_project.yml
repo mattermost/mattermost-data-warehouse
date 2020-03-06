@@ -19,18 +19,52 @@ clean-targets:         # directories to be removed by `dbt clean`
     - "target"
     - "dbt_modules"
 
+
+# ======
+# Run Hooks
+# ======
+on-run-start:
+    - "{{ resume_warehouse(var('warehouse_name')) }}"
+
+on-run-end:
+    - "{{ suspend_warehouse(var('warehouse_name')) }}"
+
+
 quoting:
     database: true
     identifier: false
     schema: false
 
 models:
+  vars:
+    warehouse_name: "{{ env_var('SNOWFLAKE_TRANSFORM_WAREHOUSE') }}"
+
   mm_snowflake:
-    tags: "nightly"
+    bizops:
+      tags: ["bizops", "nightly"]
+
+    blp:
+      tags: "blp"
+
+    cs:
+      tags: "cs"
+
+    events:
+      tags: ["events", "nightly"]
+
+    finance:
+      tags: "finance"
+
+    ga:
+      tags: "ga"
+
+    staging:
+      server:
+        tags: ["server", "nightly"]
 
 seeds:
   enabled: true
-  schema: seed_data
+  schema: targets
   quote_columns: False
 
   mm_snowflake:
@@ -40,11 +74,11 @@ seeds:
       schema: mattermost
     world_cities:
       schema: util
+    snowflake_contract_rates:
+      schema: bizops
     contributor_map_data:
       schema: staging
     github_contributions:
       schema: mattermost
     staff_github_usernames:
       schema: employee
-    testing:
-      schema: util

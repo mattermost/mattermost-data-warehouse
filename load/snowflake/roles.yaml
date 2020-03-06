@@ -86,7 +86,7 @@ roles:
 
     - reporting:
         warehouses:
-            - analyst_xs
+            - reporting_s
         privileges:
             databases:
                 read:
@@ -102,7 +102,7 @@ roles:
                     - snowflake.account_usage.*
     - reporting_all:
         warehouses:
-            - analyst_xs
+            - reporting_s
         privileges:
             databases:
                 read:
@@ -120,6 +120,7 @@ roles:
     - loader:
         warehouses:
             - analyst_xs
+            - stitch
         privileges:
             databases:
                 read:
@@ -137,7 +138,8 @@ roles:
 
     - transformer: # For automated jobs
         warehouses:
-            - analyst_xs
+            - transform_xs
+            - transform_l
         privileges:
             databases:
                 read:
@@ -204,6 +206,8 @@ users:
         can_login: yes
         member_of:
             - permission_bot
+            - securityadmin
+            - sysadmin
 
     - looker:
         can_login: yes
@@ -222,3 +226,12 @@ warehouses:
 
     - stitch:
         size: x-small
+
+    - transform_xs:
+        size: x-small
+
+    - transform_l:
+        size: large
+
+    - reporting_s:
+        size: small
