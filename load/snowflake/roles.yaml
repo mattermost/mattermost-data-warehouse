@@ -145,19 +145,25 @@ roles:
                 read:
                     - raw
                     - analytics
+                    - snowflake
                 write:
+                    - raw
                     - analytics
             schemas:
                 read:
                     - raw.*
                     - analytics.*
+                    - snowflake.account_usage
                 write:
+                    - raw.*
                     - analytics.*
             tables:
                 read:
                     - raw.*.*
                     - analytics.*.*
+                    - snowflake.account_usage.*
                 write:
+                    - raw.*.*
                     - analytics.*.*
 
     # Object Roles
