@@ -135,6 +135,8 @@ roles:
             tables:
                 read:
                     - raw.*.*
+                write:
+                    - raw.*.*
 
     - transformer: # For automated jobs
         warehouses:
@@ -155,7 +157,6 @@ roles:
                     - analytics.*
                     - snowflake.account_usage
                 write:
-                    - raw.*
                     - analytics.*
             tables:
                 read:
@@ -163,7 +164,6 @@ roles:
                     - analytics.*.*
                     - snowflake.account_usage.*
                 write:
-                    - raw.*.*
                     - analytics.*.*
 
     # Object Roles
