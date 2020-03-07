@@ -1,7 +1,7 @@
 {{config({
     "materialized": "incremental",
     "schema": "events",
-    "unique_key": "id"
+    "unique_key": "event_id"
   })
 }}
 
