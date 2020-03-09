@@ -86,4 +86,9 @@ seeds:
       schema: target
       column_types:
         id: int
+        name: text
+        slug: text
+        definition: text
         ga: boolean
+        visibility: text
+
