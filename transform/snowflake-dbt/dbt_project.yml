@@ -84,3 +84,11 @@ seeds:
       schema: employee
     target_fact:
       schema: targets
+      column_types:
+        id: int
+        name: varchar(50)
+        slug: varchar(50)
+        definition: varchar(255)
+        ga: boolean
+        visibility: varchar(50)
+
