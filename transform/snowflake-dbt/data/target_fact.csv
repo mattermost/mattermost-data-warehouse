@@ -4,3 +4,6 @@ id,name,slug,definition,ga,visibility
 3,ARR Expansion by Month,arr_expansion_by_mo,Expansion ARR contributed to ARR in a given month,true,mlt
 4,ARR Churn by Month,arr_churn_by_mo,Churned ARR in a given month,true,mlt
 5,TEDAS (7 Day Active) by Month,tedas_7day_by_mo,false,all
+6,New Bookings by Month,bookings_new_by_mo,New Bookings in a given month,true,mlt
+7,Expansion Bookings by Month,bookings_exp_by_mo,Expansion Bookings in a given month,true,mlt
+8,Renewal Bookings by Month,bookings_ren_by_mo,Renewal Bookings in a given month,true,mlt
