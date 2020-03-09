@@ -1,2 +1,9 @@
 id,name,slug,target_definition,ga,visibility
-1,ARR,arr_by_mo,Ending ARR of the given period,true,mlt
+1,ARR by Mo,arr_by_mo,Ending ARR of the given period,true,mlt
+2,ARR New by Mo,arr_new_by_mo,New ARR contributed to ARR in the given period,true,mlt
+3,ARR Expansion by Mo,arr_expansion_by_mo,Expansion ARR contributed to ARR in the given period,true,mlt
+4,ARR Churn by Mo,arr_churn_by_mo,Churned ARR in the given period,true,mlt
+5,TEDAS (7 Day Active) by Mo,tedas_7day_by_mo,,false,all
+6,New Bookings by Mo,bookings_new_by_mo,New Bookings in the given preiod,true,mlt
+7,Expansion Bookings by Mo,bookings_exp_by_mo,Expansion Bookings in the given preiod,true,mlt
+8,Renewal Bookings by Mo,bookings_ren_by_mo,Renewal Bookings in the given preiod,true,mlt 
