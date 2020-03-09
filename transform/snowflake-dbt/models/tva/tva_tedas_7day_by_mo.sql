@@ -15,6 +15,7 @@ WITH actual_tedas_7day_by_mo AS (
     GROUP BY server_daily_details.date
 ), tva_tedas_7day_by_mo AS (
     SELECT
+        'tedas_7day_by_mo' as target_slug,
         tedas_7day_by_mo.month,
         tedas_7day_by_mo.target,
         actual_tedas_7day_by_mo.tedas_7day as actual,

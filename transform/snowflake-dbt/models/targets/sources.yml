@@ -6,6 +6,9 @@ sources:
     schema: targets
 
     tables:
+      - name: target_fact
+        description: 'Target fact table'
+      
       - name: arr_by_mo
         description: 'Current Fiscal Year Targets for ARR by Month'
 
