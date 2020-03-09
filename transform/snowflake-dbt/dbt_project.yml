@@ -83,7 +83,7 @@ seeds:
     staff_github_usernames:
       schema: employee
     target_fact:
-      schema: target
+      schema: targets
       column_types:
         id: int
         name: text
