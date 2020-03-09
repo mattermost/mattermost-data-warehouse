@@ -84,6 +84,6 @@ seeds:
       schema: employee
     target_fact:
       schema: target
-        column_types:
-          id: int
-          ga: boolean
+      column_types:
+        id: int
+        ga: boolean
