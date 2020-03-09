@@ -84,11 +84,3 @@ seeds:
       schema: employee
     target_fact:
       schema: targets
-      column_types:
-        id: int
-        name: text
-        slug: text
-        definition: text
-        ga: boolean
-        visibility: text
-
