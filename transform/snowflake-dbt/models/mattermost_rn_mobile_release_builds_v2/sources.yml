@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: mattermost_rn_mobile_release_builds_v2
+    database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
+    schema: mattermost_rn_mobile_release_builds_v2
+
+    tables: 
+      - name: event
+        description: 'Contains the raw mobile user event data.'

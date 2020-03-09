@@ -27,7 +27,7 @@ WITH events          AS (
       , CASE WHEN lower(category) = 'actions' THEN 'action' ELSE lower(category) END  AS event_category
       , MIN(timestamp::date)                                                          AS date_added
       , MAX(timestamp::date)                                                          AS last_triggered
-    FROM {{ source('mattermost2', 'event_mobile')}}
+    FROM {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}}
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
