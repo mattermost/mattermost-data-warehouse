@@ -1,2 +1,2 @@
-id,name,slug,definition,ga,visibility
+id,name,slug,target_definition,ga,visibility
 1,ARR,arr_by_mo,Ending ARR of the given period,true,mlt
