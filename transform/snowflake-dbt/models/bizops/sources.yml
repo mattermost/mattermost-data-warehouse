@@ -1,0 +1,18 @@
+version: 2
+
+sources:
+  - name: account_usage
+    database: SNOWFLAKE
+    schema: account_usage
+
+    tables:
+      - name: warehouse_metering_history
+        description: 'Snowflake warehouse usage tracking'
+
+  - name: bizops
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: bizops
+
+    tables:
+      - name: snowflake_contract_rates
+        description: 'Snowflake contract rates'

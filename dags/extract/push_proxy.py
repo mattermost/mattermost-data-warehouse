@@ -36,7 +36,7 @@ container_cmd = """
 
 # Create the DAG
 dag = DAG(
-    "push_proxy", default_args=default_args, schedule_interval="0 4 * * *"
+    "push_proxy", default_args=default_args, schedule_interval="0 3 * * *"
 )
 
 

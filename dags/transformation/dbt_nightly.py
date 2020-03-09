@@ -84,6 +84,7 @@ dbt_run = KubernetesPodOperator(
         SNOWFLAKE_TRANSFORM_ROLE,
         SNOWFLAKE_TRANSFORM_WAREHOUSE,
         SNOWFLAKE_TRANSFORM_SCHEMA,
+        SSH_KEY,
     ],
     env_vars=env_vars,
     arguments=[dbt_run_cmd],

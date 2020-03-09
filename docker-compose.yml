@@ -6,7 +6,7 @@ services:
       environment:
         DBT_PROFILES_DIR: /usr/local/dbt_profiles/
         SNOWFLAKE_LOAD_DATABASE: "RAW"
-        SNOWFLAKE_TRANSFORM_WAREHOUSE: "ANALYST_XS"
+        SNOWFLAKE_TRANSFORM_WAREHOUSE: "TRANSFORM_XS"
         SNOWFLAKE_TRANSFORM_DATABASE: "ANALYTICS"
       restart: always
       command: bash -c "/bin/bash"
@@ -31,3 +31,15 @@ services:
         - type: bind
           source: .
           target: /usr/local/analytics
+
+    permifrost:
+      image: docker.io/adovenmm/permifrost:latest
+      env_file:
+        - .env
+      restart: always
+      command: /bin/bash -c "permifrost grant roles.yaml"
+      volumes:
+        - type: bind
+          source: ./load/snowflake/roles.yaml
+          target: /roles.yaml
+          read_only: True
