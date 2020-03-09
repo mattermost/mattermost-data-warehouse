@@ -21,5 +21,17 @@ sources:
       - name: arr_churn_by_mo
         description: 'Current Fiscal Year Targets for Churn ARR by Month'
 
+      - name: bookings_by_mo
+        description: 'Current Fiscal Year Targets for Bookings by Month'
+
+      - name: bookings_new_by_mo
+        description: 'Current Fiscal Year Targets for New Bookings by Month'
+
+      - name: bookings_exp_by_mo
+        description: 'Current Fiscal Year Targets for Expansion Bookings by Month'
+
+      - name: bookings_ren_by_mo
+        description: 'Current Fiscal Year Targets for Renewal Bookings by Month'
+      
       - name: tedas_7day_by_mo
         description: 'Current Fiscal Year Targets for TEDAS 7 Day by Month'

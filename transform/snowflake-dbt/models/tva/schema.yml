@@ -4,9 +4,30 @@ models:
   - name: tva_all_by_mo
     description: All Monthly Target vs Actuals
   
-  - name: tva_curr_fy_arr_by_mo
+  - name: tva_arr_by_mo
     description: ARR by Month Target vs Actuals for the Current Fiscal Year
+  
+  - name: tva_arr_new_by_mo
+    description: New ARR by Month Target vs Actuals for the Current Fiscal Year
 
-  - name: tva_curr_fy_tedas_7day_by_mo
+  - name: tva_arr_exp_by_mo
+    description: Expansion ARR by Month Target vs Actuals for the Current Fiscal Year
+
+  - name: tva_arr_churn_by_mo
+    description: Churn ARR by Month Target vs Actuals for the Current Fiscal Year
+
+  - name: tva_bookings_by_mo
+    description: Bookings by Month Target vs Actuals for the Current Fiscal Year  
+  
+  - name: tva_bookings_new_by_mo
+    description: New Booking by Month Target vs Actuals for the Current Fiscal Year
+
+  - name: tva_bookings_exp_by_mo
+    description: Expansion Bookings by Month Target vs Actuals for the Current Fiscal Year
+
+  - name: tva_bookings_ren_by_mo
+    description: Renewal Bookings by Month Target vs Actuals for the Current Fiscal Year
+
+  - name: tva_tedas_7day_by_mo
     description: TEDAS > 7 Day by Month Target vs Actuals for the Current Fiscal Year
   
