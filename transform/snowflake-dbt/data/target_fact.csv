@@ -1,4 +1,4 @@
-id,name,slug,category,target_definition,ga,visibility
+id,name,slug,target_category,target_definition,ga,visibility
 1,ARR by Mo,arr_by_mo,Finance,Ending ARR of the given period,true,mlt
 2,ARR New by Mo,arr_new_by_mo,Finance,New ARR contributed to ARR in the given period,true,mlt
 3,ARR Expansion by Mo,arr_expansion_by_mo,Finance,Expansion ARR contributed to ARR in the given period,true,mlt
