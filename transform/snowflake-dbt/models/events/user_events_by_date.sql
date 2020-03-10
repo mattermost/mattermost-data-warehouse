@@ -13,7 +13,7 @@ WITH mobile_events       AS (
       , LOWER(m.type)           AS event_name
       , 'mobile'                AS event_type
       , COUNT(*)                AS num_events
-    FROM {{ source('mattermost2', 'event_mobile')}} m
+    FROM {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}} m
     WHERE user_actual_id IS NOT NULL
     {% if is_incremental() %}
 

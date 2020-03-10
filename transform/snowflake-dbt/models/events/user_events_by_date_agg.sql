@@ -18,7 +18,7 @@ WITH min_active              AS (
          FROM {{ source('util', 'dates') }}      d
               JOIN min_active m
                    ON d.date >= m.min_active_date
-                       AND d.date < current_date
+                       AND d.date <= current_date
          GROUP BY 1, 2
      ),
      events                  AS (
