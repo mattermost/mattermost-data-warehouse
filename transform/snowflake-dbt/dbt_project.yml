@@ -57,6 +57,10 @@ models:
 
     ga:
       tags: "ga"
+    
+    mattermost:
+      nightly:
+        tags: "nightly"
 
     staging:
       server:
