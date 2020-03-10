@@ -25,7 +25,7 @@ WITH bookings_ren AS (
     SELECT 
         util.fiscal_year(month)|| '-' || util.fiscal_quarter(month) AS qtr,
         SUM(target) as target
-    FROM {{ source('targets', 'bookings_by_mo') }}
+    FROM {{ source('targets', 'bookings_ren_by_mo') }}
     GROUP BY 1
 ), tva_bookings_ren_by_qtr AS (
     SELECT
