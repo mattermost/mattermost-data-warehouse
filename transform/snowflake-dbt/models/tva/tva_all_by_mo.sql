@@ -26,6 +26,26 @@ WITH tva_all_by_mo_raw AS (
   UNION ALL
 
   SELECT *
+  FROM {{ ref('tva_bookings_by_mo') }}
+
+  UNION ALL
+
+  SELECT *
+  FROM {{ ref('tva_bookings_ren_by_mo') }}
+
+  UNION ALL
+
+  SELECT *
+  FROM {{ ref('tva_bookings_new_by_mo') }}
+
+  UNION ALL
+
+  SELECT *
+  FROM {{ ref('tva_bookings_exp_by_mo') }}
+
+  UNION ALL
+
+  SELECT *
   FROM {{ ref('tva_tedas_7day_by_mo') }}
 ), tva_all_by_mo AS (
   SELECT target_fact.name, target_fact.category, tva_all_by_mo_raw.*
