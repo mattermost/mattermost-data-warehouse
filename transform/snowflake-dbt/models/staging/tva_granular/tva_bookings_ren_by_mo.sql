@@ -25,6 +25,7 @@ WITH bookings_ren AS (
     SELECT
         'bookings_ren_by_mo' as target_slug,
         bookings_ren_by_mo.month,
+        bookings_ren_by_mo.month + interval '1 month' - interval '1 day' as period_last_day,
         bookings_ren_by_mo.target,
         actual_bookings_ren_by_mo.total_bookings as actual,
         round((actual_bookings_ren_by_mo.total_bookings/bookings_ren_by_mo.target),2) as tva
