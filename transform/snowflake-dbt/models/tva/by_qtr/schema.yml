@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: tva_all_by_qtr
+    description: All Quarter Target vs Actuals
+  
+  # - name: tva_arr_by_qtr
+  #   description: ARR by Quarter Target vs Actuals for the Current Fiscal Year
+  
+  # - name: tva_arr_new_by_qtr
+  #   description: New ARR by Quarter Target vs Actuals for the Current Fiscal Year
+
+  # - name: tva_arr_exp_by_qtr
+  #   description: Expansion ARR by Quarter Target vs Actuals for the Current Fiscal Year
+
+  # - name: tva_arr_churn_by_qtr
+  #   description: Churn ARR by Quarter Target vs Actuals for the Current Fiscal Year
+
+  # - name: tva_bookings_by_qtr
+  #   description: Bookings by Quarter Target vs Actuals for the Current Fiscal Year  
+  
+  # - name: tva_bookings_new_by_qtr
+  #   description: New Booking by Quarter Target vs Actuals for the Current Fiscal Year
+
+  # - name: tva_bookings_exp_by_qtr
+  #   description: Expansion Bookings by Quarter Target vs Actuals for the Current Fiscal Year
+
+  # - name: tva_bookings_ren_by_qtr
+  #   description: Renewal Bookings by Quarter Target vs Actuals for the Current Fiscal Year
+
+  # - name: tva_tedas_7day_by_qtr
+  #   description: TEDAS > 7 Day by Quarter Target vs Actuals for the Current Fiscal Year
+  
