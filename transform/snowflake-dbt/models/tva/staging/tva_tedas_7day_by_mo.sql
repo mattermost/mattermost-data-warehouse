@@ -13,14 +13,15 @@ WITH actual_tedas_7day_by_mo AS (
     WHERE (DATE_PART('day', server_daily_details.date + INTERVAL '1 day') = 1 OR (server_daily_details.date = CURRENT_DATE - INTERVAL '1 day'))
         AND server_daily_details.in_security
     GROUP BY server_daily_details.date
-), tva_curr_fy_tedas_7day_by_mo AS (
+), tva_tedas_7day_by_mo AS (
     SELECT
-        curr_fy_tedas_7day_by_mo.month,
-        curr_fy_tedas_7day_by_mo.target,
+        'tedas_7day_by_mo' as target_slug,
+        tedas_7day_by_mo.month,
+        tedas_7day_by_mo.target,
         actual_tedas_7day_by_mo.tedas_7day as actual,
-        round((actual_tedas_7day_by_mo.tedas_7day/curr_fy_tedas_7day_by_mo.target),2) as tva
-    FROM {{ source('targets', 'curr_fy_tedas_7day_by_mo') }}
-    LEFT JOIN actual_tedas_7day_by_mo ON curr_fy_tedas_7day_by_mo.month = actual_tedas_7day_by_mo.month
+        round((actual_tedas_7day_by_mo.tedas_7day/tedas_7day_by_mo.target),2) as tva
+    FROM {{ source('targets', 'tedas_7day_by_mo') }}
+    LEFT JOIN actual_tedas_7day_by_mo ON tedas_7day_by_mo.month = actual_tedas_7day_by_mo.month
 )
 
-SELECT * FROM tva_curr_fy_tedas_7day_by_mo
+SELECT * FROM tva_tedas_7day_by_mo

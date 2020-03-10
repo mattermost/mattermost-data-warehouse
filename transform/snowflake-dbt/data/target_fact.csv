@@ -1,0 +1,17 @@
+id,name,slug,category,target_definition,ga,visibility
+1,ARR by Mo,arr_by_mo,Finance,Ending ARR of the given period,true,mlt
+2,ARR New by Mo,arr_new_by_mo,Finance,New ARR contributed to ARR in the given period,true,mlt
+3,ARR Expansion by Mo,arr_expansion_by_mo,Finance,Expansion ARR contributed to ARR in the given period,true,mlt
+4,ARR Churn by Mo,arr_churn_by_mo,Finance,Churned ARR in the given period,true,mlt
+5,TEDAS (7 Day Active) by Mo,tedas_7day_by_mo,Product,Ending TEDAS (7 Day Active) of the given period,false,all
+6,New Bookings by Mo,bookings_new_by_mo,Finance,New Bookings in the given preiod,true,mlt
+7,Expansion Bookings by Mo,bookings_exp_by_mo,Finance,Expansion Bookings in the given preiod,true,mlt
+8,Renewal Bookings by Mo,bookings_ren_by_mo,Finance,Renewal Bookings in the given preiod,true,mlt
+9,ARR by Qtr,arr_by_qtr,Finance,Ending ARR of the given period,true,mlt
+10,ARR New by Qtr,arr_new_by_qtr,Finance,New ARR contributed to ARR in the given period,true,mlt
+11,ARR Expansion by Qtr,arr_expansion_by_qtr,Finance,Expansion ARR contributed to ARR in the given period,true,mlt
+12,ARR Churn by Qtr,arr_churn_by_mo,Finance,Churned ARR in the given period,true,mlt
+13,TEDAS (7 Day Active) by Qtr,tedas_7day_by_qtr,Product,Ending TEDAS (7 Day Active) of the given period,false,all
+14,New Bookings by Qtr,bookings_new_by_qtr,Finance,New Bookings in the given preiod,true,mlt
+15,Expansion Bookings by Qtr,bookings_exp_by_qtr,Finance,Expansion Bookings in the given preiod,true,mlt
+16,Renewal Bookings by Qtr,bookings_ren_by_qtr,Finance,Renewal Bookings in the given preiod,true,mlt
