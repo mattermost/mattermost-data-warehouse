@@ -17,7 +17,7 @@ WITH bookings_ren AS (
     WHERE iswon AND opportunitylineitem.product_line_type__c = 'Ren'
 ), actual_bookings_ren_by_mo AS (
     SELECT 
-        date_trunc('month', closedate) AS month,
+        date_trunc('month', closedate)::date AS month,
         sum(bookings) AS total_bookings
     FROM bookings_ren
     GROUP BY 1
