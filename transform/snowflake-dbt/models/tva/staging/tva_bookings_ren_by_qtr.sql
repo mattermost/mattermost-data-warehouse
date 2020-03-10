@@ -17,7 +17,7 @@ WITH bookings_ren AS (
     WHERE iswon AND opportunitylineitem.product_line_type__c = 'Ren'
 ), actual_bookings_ren_by_qtr AS (
     SELECT 
-        util.fiscal_year(day)|| '-' || util.fiscal_quarter(day) AS qtr,
+        util.fiscal_year(month)|| '-' || util.fiscal_quarter(month) AS qtr,
         sum(bookings) AS total_bookings
     FROM bookings_ren
     GROUP BY 1
