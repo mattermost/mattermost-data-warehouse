@@ -17,7 +17,7 @@ WITH bookings AS (
     WHERE iswon
 ), actual_bookings_by_mo AS (
     SELECT 
-        date_trunc('month', closedate) AS month,
+        date_trunc('month', closedate)::date AS month,
         sum(bookings) AS total_bookings
     FROM bookings
     GROUP BY 1
