@@ -13,7 +13,7 @@ WITH actual_arr_by_qtr AS (
         AND date_part('month', day) in (1,4,7,10)
     GROUP BY 1
 ), arr_by_qtr AS (
-    SELECT util.fiscal_year(day)|| '-' || util.fiscal_quarter(day) AS qtr, *
+    SELECT util.fiscal_year(month)|| '-' || util.fiscal_quarter(month) AS qtr, *
     FROM {{ source('targets', 'arr_by_mo') }}
     WHERE date_part('month', month) in (1,4,7,10)
 ), tva_arr_by_qtr AS (
