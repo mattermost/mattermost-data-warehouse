@@ -131,9 +131,10 @@ WITH min_active              AS (
               JOIN mau m
                    ON e1.user_id = m.user_id
                        AND e1.date = m.date
+         WHERE e1.date < CURRENT_DATE
          {% if is_incremental() %}
 
-         WHERE e1.date > (SELECT MAX(date) FROM {{this}})
+         AND e1.date > (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
