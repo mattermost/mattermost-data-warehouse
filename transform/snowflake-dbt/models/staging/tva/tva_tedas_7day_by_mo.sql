@@ -1,6 +1,6 @@
 {{config({
     "materialized": 'table',
-    "schema": "tva"
+    "schema": "staging"
   })
 }}
 
@@ -17,6 +17,7 @@ WITH actual_tedas_7day_by_mo AS (
     SELECT
         'tedas_7day_by_mo' as target_slug,
         tedas_7day_by_mo.month,
+        tedas_7day_by_mo.month + interval '1 month' - interval '1 day' as period_last_day,
         tedas_7day_by_mo.target,
         actual_tedas_7day_by_mo.tedas_7day as actual,
         round((actual_tedas_7day_by_mo.tedas_7day/tedas_7day_by_mo.target),2) as tva

@@ -1,6 +1,6 @@
 {{config({
     "materialized": 'table',
-    "schema": "tva"
+    "schema": "staging"
   })
 }}
 
@@ -15,6 +15,7 @@ WITH actual_arr_exp_by_mo AS (
     SELECT
         'arr_exp_by_mo' as target_slug,
         arr_exp_by_mo.month,
+        arr_exp_by_mo.month + interval '1 month' - interval '1 day' as period_last_day,
         arr_exp_by_mo.target,
         actual_arr_exp_by_mo.total_arr as actual,
         round((actual_arr_exp_by_mo.total_arr/arr_exp_by_mo.target),2) as tva

@@ -87,5 +87,5 @@ seeds:
     staff_github_usernames:
       schema: employee
     target_fact:
-      schema: targets
+      schema: tva
 
