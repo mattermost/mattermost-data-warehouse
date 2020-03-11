@@ -4,7 +4,7 @@
   })
 }}
 
-WITH tva_all_by_qtr_raw AS (
+WITH tva_all_by_qtr AS (
 
   SELECT *
   FROM {{ ref('tva_arr_by_qtr') }}
@@ -14,12 +14,6 @@ WITH tva_all_by_qtr_raw AS (
   SELECT *
   FROM {{ ref('tva_bookings_ren_by_qtr') }}
 
-), tva_all_by_qtr AS (
-
-  SELECT target_fact.name, target_fact.category, tva_all_by_qtr_raw.*
-  FROM {{ source('tva', 'target_fact') }}
-  JOIN tva_all_by_qtr_raw ON tva_all_by_qtr_raw.target_slug = target_fact.slug
-  
 )
 
 SELECT * FROM tva_all_by_qtr
