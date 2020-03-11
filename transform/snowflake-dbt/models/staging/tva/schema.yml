@@ -56,3 +56,12 @@ models:
   - name: tva_tedas_7day_by_qtr
     description: TEDAS > 7 Day by Quarter Target vs Actuals for the Current Fiscal Year
   
+  - name: tva_downloads_by_mo
+    description: Downloads by Day Target vs Actuals for the Current Fiscal Year
+
+  - name: tva_downloads_by_qtr
+    description: Downloads by Quarter Target vs Actuals for the Current Fiscal Year
+
+  - name: tva_downloads_by_fy
+    description: Downloads by Fiscal Year Target vs Actuals for the Current Fiscal Year
+  
