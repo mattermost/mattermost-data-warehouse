@@ -23,3 +23,6 @@ id,name,name_by_period,slug,category,target_definition,ga,visibility,period,metr
 22,New Bookings,New Bookings by FY,bookings_new_by_fy,Finance,New Bookings in the given preiod,true,mlt,fy,SoP
 23,Expansion Bookings,Expansion Bookings by FY,bookings_exp_by_fy,Finance,Expansion Bookings in the given preiod,true,mlt,fy,SoP
 24,Renewal Bookings,Renewal Bookings by FY,bookings_ren_by_fy,Finance,Renewal Bookings in the given preiod,true,mlt,fy,SoP
+25,Downloads,Downloads by Mo,downloads,Product,Downloads in the given period,true,all,mo,SoP
+26,Downloads,Downloads by Qtr,downloads,Product,Downloads in the given period,true,all,qtr,SoP
+27,Downloads,Downloads by FY,downloads,Product,Downloads in the given period,true,all,qtr,SoP
