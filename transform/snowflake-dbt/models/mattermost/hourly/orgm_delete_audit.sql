@@ -11,5 +11,5 @@ select
 from {{ source('orgm', 'delete_history__c') }}
 
 {% if is_incremental() %}
-where deleted_date_time__c > (select max(processed_at) from {{ this }})
+  where object_id__c not in (select deleted_sfid from {{ this }})
 {% endif %}
