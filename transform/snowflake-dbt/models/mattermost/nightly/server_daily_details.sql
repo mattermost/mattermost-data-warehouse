@@ -10,7 +10,7 @@ WITH servers as (
     , CASE WHEN MIN(COALESCE(s1.date, s2.date)) <= MIN(COALESCE(s2.date, s1.date)) 
             THEN MIN(COALESCE(s1.date, s2.date)) 
               ELSE MIN(COALESCE(s2.date, s1.date)) END     AS min_date
-    , CASE WHEN MAX(CURRENT_DATE) < 
+    , CASE WHEN MAX(CURRENT_DATE - interval '1 day') < 
                   CASE WHEN MAX(COALESCE(s1.date, s2.date)) >= MAX(COALESCE(s2.date, s1.date)) 
                     THEN MAX(COALESCE(s1.date, s2.date)) 
                     ELSE MAX(COALESCE(s2.date, s1.date)) END
@@ -33,12 +33,6 @@ dates as (
   JOIN servers s
        ON d.date >= s.min_date
        AND d.date <= s.max_date
-    {% if is_incremental() %}
-
-        -- this filter will only be applied on an incremental run
-        WHERE d.date > (SELECT MAX(date) FROM {{ this }})
-
-    {% endif %}
   GROUP BY 1, 2
 ),
   server_daily_details AS (
