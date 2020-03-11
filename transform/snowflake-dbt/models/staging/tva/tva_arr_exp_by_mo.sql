@@ -1,13 +1,12 @@
 {{config({
     "materialized": 'table',
-    "schema": "tva"
+    "schema": "staging"
   })
 }}
 
 WITH actual_arr_exp_by_mo AS (
     SELECT 
         account_monthly_arr_deltas_by_type.month_start AS month,
-        max(month_end) as period_last_day,
         SUM(account_monthly_arr_deltas_by_type.total_arr_expansion) AS total_arr
     FROM  {{ ref('account_monthly_arr_deltas_by_type') }}
     WHERE account_monthly_arr_deltas_by_type.month_start < CURRENT_DATE
@@ -16,7 +15,7 @@ WITH actual_arr_exp_by_mo AS (
     SELECT
         'arr_exp_by_mo' as target_slug,
         arr_exp_by_mo.month,
-        actual_arr_exp_by_mo.period_last_day,
+        arr_exp_by_mo.month + interval '1 month' - interval '1 day' as period_last_day,
         arr_exp_by_mo.target,
         actual_arr_exp_by_mo.total_arr as actual,
         round((actual_arr_exp_by_mo.total_arr/arr_exp_by_mo.target),2) as tva

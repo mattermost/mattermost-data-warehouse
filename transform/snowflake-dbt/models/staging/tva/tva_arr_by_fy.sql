@@ -1,27 +1,27 @@
 {{config({
     "materialized": 'table',
-    "schema": "tva"
+    "schema": "staging"
   })
 }}
 
 WITH actual_arr_by_fy AS (
     SELECT 
         util.fiscal_year(day) AS fy,
-        max(day) as period_last_day,
         sum(total_arr) AS total_arr
     FROM  {{ ref('account_daily_arr') }}
     WHERE date_part('day', day + interval '1 day') = 1
         AND date_part('month', day) = 1
     GROUP BY 1
 ), arr_by_fy AS (
-    SELECT util.fiscal_year(month) AS fy, *
+    SELECT util.fiscal_year(month) AS fy, max(month) as max_month, *
     FROM {{ source('targets', 'arr_by_mo') }}
     WHERE date_part('month', month) = 1
+    GROUP BY 1,3,4
 ), tva_arr_by_fy AS (
     SELECT
         'arr_by_fy' as target_slug,
         arr_by_fy.fy,
-        actual_arr_by_fy.period_last_day,
+        arr_by_fy.max_month + interval '1 month' - interval '1 day' as period_last_day,
         arr_by_fy.target,
         actual_arr_by_fy.total_arr as actual,
         round((actual_arr_by_fy.total_arr/arr_by_fy.target),2) as tva
