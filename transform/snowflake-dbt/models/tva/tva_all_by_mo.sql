@@ -49,7 +49,7 @@ WITH tva_all_by_mo_raw AS (
   FROM {{ ref('tva_tedas_7day_by_mo') }}
 ), tva_all_by_mo AS (
   SELECT target_fact.name, target_fact.category, tva_all_by_mo_raw.*
-  FROM {{ source('targets', 'target_fact') }}
+  FROM {{ source('tva', 'target_fact') }}
   JOIN tva_all_by_mo_raw ON tva_all_by_mo_raw.target_slug = target_fact.slug
 )
 

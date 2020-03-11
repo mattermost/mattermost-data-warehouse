@@ -17,7 +17,7 @@ WITH tva_all_by_fy_raw AS (
 ), tva_all_by_fy AS (
 
   SELECT target_fact.name, target_fact.category, tva_all_by_fy_raw.*
-  FROM {{ source('targets', 'target_fact') }}
+  FROM {{ source('tva', 'target_fact') }}
   JOIN tva_all_by_fy_raw ON tva_all_by_fy_raw.target_slug = target_fact.slug
   
 )
