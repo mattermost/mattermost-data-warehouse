@@ -16,6 +16,7 @@ WITH actual_arr_by_fy AS (
     SELECT util.fiscal_year(month) AS fy, max(month) as max_month, *
     FROM {{ source('targets', 'arr_by_mo') }}
     WHERE date_part('month', month) = 1
+    GROUP BY 1,3,4
 ), tva_arr_by_fy AS (
     SELECT
         'arr_by_fy' as target_slug,
