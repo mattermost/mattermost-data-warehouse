@@ -133,7 +133,7 @@ WITH min_active              AS (
                        AND e1.date = m.date
          {% if is_incremental() %}
 
-         WHERE e1.date >= (SELECT MAX(date) FROM {{this}})
+         WHERE e1.date > (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
