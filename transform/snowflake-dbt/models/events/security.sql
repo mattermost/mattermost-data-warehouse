@@ -19,7 +19,7 @@ WITH security AS (
             END, 0) AS active_user_count, 
         COALESCE(
             CASE
-                WHEN plit_part(regexp_substr(cs_uri_query, '[^a]uc=[0-9]{1,10}'),'=',2) = '' THEN NULL
+                WHEN split_part(regexp_substr(cs_uri_query, '[^a]uc=[0-9]{1,10}'),'=',2) = '' THEN NULL
                 ELSE split_part(regexp_substr(cs_uri_query, '[^a]uc=[0-9]{1,10}'),'=',2)::int
             END, 0) AS user_count,
         substring(regexp_substr(cs_uri_query, '(^|&)b=([^&]*)'), 4, 100) AS version,
