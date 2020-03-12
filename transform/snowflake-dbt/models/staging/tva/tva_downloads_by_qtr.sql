@@ -11,7 +11,7 @@ WITH tva_downloads_by_qtr AS (
         min(period_first_day) AS period_first_day,
         max(period_last_day) AS period_last_day,
         sum(tva_downloads_by_mo.target) AS target,
-        sum(tva_downloads_by_mo.actual) as actual,
+        sum(tva_downloads_by_mo.actual) AS actual,
         round(sum(tva_downloads_by_mo.actual)/sum(tva_downloads_by_mo.target),2) AS tva
     FROM {{ ref('tva_downloads_by_mo') }}
     GROUP BY 1,2

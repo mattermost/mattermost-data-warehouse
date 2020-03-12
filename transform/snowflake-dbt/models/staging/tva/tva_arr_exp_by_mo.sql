@@ -13,12 +13,13 @@ WITH actual_arr_exp_by_mo AS (
     GROUP BY 1
 ), tva_arr_exp_by_mo AS (
     SELECT
-        'arr_exp_by_mo' as target_slug,
+        'arr_exp_by_mo' AS target_slug,
         arr_exp_by_mo.month,
-        arr_exp_by_mo.month + interval '1 month' - interval '1 day' as period_last_day,
+        arr_exp_by_mo.month AS period_first_day,
+        arr_exp_by_mo.month + interval '1 month' - interval '1 day' AS period_last_day,
         arr_exp_by_mo.target,
-        actual_arr_exp_by_mo.total_arr as actual,
-        round((actual_arr_exp_by_mo.total_arr/arr_exp_by_mo.target),2) as tva
+        actual_arr_exp_by_mo.total_arr AS actual,
+        round((actual_arr_exp_by_mo.total_arr/arr_exp_by_mo.target),2) AS tva
     FROM {{ source('targets', 'arr_exp_by_mo') }}
     LEFT JOIN actual_arr_exp_by_mo ON arr_exp_by_mo.month = actual_arr_exp_by_mo.month
 )
