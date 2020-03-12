@@ -21,7 +21,7 @@ WITH actual_arr_by_fy AS (
     SELECT
         'arr_by_fy' AS target_slug,
         arr_by_fy.fy,
-        arr_by_fy.min_month AS period_first_day,
+        arr_by_fy.max_month - interval '11 months' AS period_first_day,
         arr_by_fy.max_month + interval '1 month' - interval '1 day' AS period_last_day,
         arr_by_fy.target,
         actual_arr_by_fy.total_arr AS actual,
