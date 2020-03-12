@@ -12,8 +12,9 @@ WITH actual_downloads_by_mo AS (
     GROUP BY 1
 ), tva_downloads_by_mo AS (
     SELECT
-        'downloads_by_mo' as target_slug,
+        'downloads_by_mo' AS target_slug,
         downloads_by_mo.month,
+        downloads_by_mo.month AS period_first_day,
         downloads_by_mo.month + interval '1 month' - interval '1 day' AS period_last_day,
         downloads_by_mo.target,
         actual_downloads_by_mo.download_count AS actual,

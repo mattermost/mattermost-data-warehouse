@@ -8,6 +8,7 @@ WITH tva_downloads_by_fy AS (
     SELECT
         'downloads_by_fy' AS target_slug,
         util.fiscal_year(tva_downloads_by_mo.month) AS fy,
+        min(period_first_day) AS period_first_day,
         max(period_last_day) AS period_last_day,
         sum(tva_downloads_by_mo.target) AS target,
         sum(tva_downloads_by_mo.actual) AS actual,

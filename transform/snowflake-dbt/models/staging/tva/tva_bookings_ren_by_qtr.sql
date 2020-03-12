@@ -8,6 +8,7 @@ WITH tva_bookings_ren_by_qtr AS (
     SELECT
         'bookings_ren_by_qtr' AS target_slug,
         util.fiscal_year(tva_bookings_ren_by_mo.month)|| '-' || util.fiscal_quarter(tva_bookings_ren_by_mo.month) AS qtr,
+        min(period_first_day) AS period_first_day,
         max(period_last_day) AS period_last_day,
         sum(tva_bookings_ren_by_mo.target) AS target,
         sum(tva_bookings_ren_by_mo.actual) as actual,
