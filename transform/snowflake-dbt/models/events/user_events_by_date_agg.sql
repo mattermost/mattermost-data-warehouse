@@ -18,7 +18,7 @@ WITH min_active              AS (
          FROM {{ source('util', 'dates') }}      d
               JOIN min_active m
                    ON d.date >= m.min_active_date
-                       AND d.date <= current_date
+                       AND d.date <= current_date - interval '1 day'
          GROUP BY 1, 2
      ),
      events                  AS (
@@ -131,7 +131,7 @@ WITH min_active              AS (
               JOIN mau m
                    ON e1.user_id = m.user_id
                        AND e1.date = m.date
-         WHERE e1.date < CURRENT_DATE
+         WHERE e1.date <= CURRENT_DATE - interval '1 day'
          {% if is_incremental() %}
 
          AND e1.date > (SELECT MAX(date) FROM {{this}})
