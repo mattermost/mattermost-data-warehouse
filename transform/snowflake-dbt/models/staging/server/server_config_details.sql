@@ -532,9 +532,10 @@ FROM {{ ref('server_daily_details') }}                      s
     ON s.server_id = stimezone.server_id AND s.date = stimezone.date
     LEFT JOIN {{ ref('server_webrtc_details') }}              swebrtc
     ON s.server_id = swebrtc.server_id AND s.date = swebrtc.date
+WHERE s.date <= CURRENT_DATE - INTERVAL '1 DAY'
 {% if is_incremental() %}
 
-WHERE s.date > (SELECT MAX(date) FROM {{this}})
+AND s.date > (SELECT MAX(date) FROM {{this}})
 
 {% endif %}
 GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 
