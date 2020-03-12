@@ -13,10 +13,10 @@ WITH actual_arr_by_fy AS (
         AND date_part('month', day) = 1
     GROUP BY 1
 ), arr_by_fy AS (
-    SELECT util.fiscal_year(month) AS fy, min(month) AS min_month, max(month) AS max_month, *
+    SELECT *, util.fiscal_year(month) AS fy, min(month) AS min_month, max(month) AS max_month
     FROM {{ source('targets', 'arr_by_mo') }}
     WHERE date_part('month', month) = 1
-    GROUP BY 1,3,4
+    GROUP BY 1,2,3
 ), tva_arr_by_fy AS (
     SELECT
         'arr_by_fy' AS target_slug,
