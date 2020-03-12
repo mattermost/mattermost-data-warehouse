@@ -12,10 +12,11 @@ WITH max_timestamp              AS (
       , MAX(timestamp)  AS max_timestamp
       , COUNT(user_id)  AS occurrences
     FROM {{ source('mattermost2', 'license') }}
+    WHERE timestamp::DATE <= CURRENT_DATE - INTERVAL '1 DAY'
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        WHERE timestamp::DATE > (SELECT MAX(date) FROM {{ this }})
+        AND timestamp::date > (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
     GROUP BY 1, 2, 3

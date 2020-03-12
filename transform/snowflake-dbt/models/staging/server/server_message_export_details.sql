@@ -10,10 +10,11 @@ WITH max_timestamp       AS (
       , user_id
       , MAX(timestamp)  AS max_timestamp
     FROM {{ source('mattermost2', 'config_message_export') }}
+    WHERE timestamp::DATE <= CURRENT_DATE - INTERVAL '1 DAY'
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        WHERE timestamp::date > (SELECT MAX(date) FROM {{ this }})
+        AND timestamp::date > (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
     GROUP BY 1, 2

@@ -11,10 +11,11 @@ WITH max_timestamp          AS (
       , scheme_id
       , max(timestamp)  AS max_timestamp
     FROM {{ source('mattermost2', 'permissions_team_schemes') }}
+    WHERE timestamp::DATE <= CURRENT_DATE - INTERVAL '1 DAY'
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        WHERE timestamp::date > (SELECT MAX(date) FROM {{ this }})
+        AND timestamp::date > (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
     GROUP BY 1, 2, 3
