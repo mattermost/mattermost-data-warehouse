@@ -36,7 +36,7 @@ WITH security AS (
         (logdate || ' ' || logtime)::TIMESTAMP                            AS timestamp 
     FROM {{ source('diagnostics', 'log_entries') }}
     WHERE uri = '/security'
-    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
 )
 
 SELECT * FROM security
