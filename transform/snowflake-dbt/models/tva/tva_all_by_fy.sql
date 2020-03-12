@@ -6,17 +6,17 @@
 
 WITH tva_all_by_fy AS (
 
-  SELECT *
+  SELECT target_slug,fy,period_first_day,period_last_day,target,actual,tva
   FROM {{ ref('tva_arr_by_fy') }}
 
   UNION ALL
 
-  SELECT *
+  SELECT target_slug,fy,period_first_day,period_last_day,target,actual,tva
   FROM {{ ref('tva_bookings_ren_by_fy') }}
 
   UNION ALL
 
-  SELECT *
+  SELECT target_slug,fy,period_first_day,period_last_day,target,actual,tva
   FROM {{ ref('tva_downloads_by_fy') }}
 
 )
