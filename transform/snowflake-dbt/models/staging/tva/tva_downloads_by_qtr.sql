@@ -6,7 +6,7 @@
 
 WITH tva_downloads_by_qtr AS (
     SELECT
-        'bookings_ren_by_qtr' AS target_slug,
+        'downloads_by_qtr' AS target_slug,
         util.fiscal_year(tva_downloads_by_mo.month)|| '-' || util.fiscal_quarter(tva_downloads_by_mo.month) AS qtr,
         max(period_last_day) AS period_last_day,
         sum(tva_downloads_by_mo.target) AS target,
