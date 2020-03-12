@@ -15,6 +15,7 @@ WITH mobile_events       AS (
       , COUNT(*)                AS num_events
     FROM {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}} m
     WHERE user_actual_id IS NOT NULL
+    AND m.timestamp::DATE <= CURRENT_DATE - INTERVAL '1 DAY'
     {% if is_incremental() %}
 
       AND timestamp::DATE > (SELECT MAX(date) from {{this}})
@@ -33,6 +34,7 @@ WITH mobile_events       AS (
            , COUNT(*)                                                                                  AS num_events
          FROM {{ source('mattermost2', 'event') }} e
          WHERE user_actual_id IS NOT NULL
+         AND e.timestamp::DATE <= CURRENT_DATE - INTERVAL '1 DAY'
          {% if is_incremental() %}
 
           AND timestamp::DATE > (SELECT MAX(date) from {{this}})
