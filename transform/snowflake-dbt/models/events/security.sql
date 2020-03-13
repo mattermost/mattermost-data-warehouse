@@ -14,13 +14,13 @@ WITH security AS (
         substring(edge, 1, 3) AS location, 
         COALESCE( 
             CASE 
-                WHEN substring(regexp_substr(cs_uri_query, '(^|&)auc=([^&]*)'), 5, 100) = '' THEN NULL 
-                ELSE substring(regexp_substr(cs_uri_query, '(^|&)auc=([^&]*)'), 5, 100)::INT
+                WHEN split_part(regexp_substr(cs_uri_query, 'auc=[0-9]{1,10}'), '=', 2) = '' THEN NULL 
+                ELSE split_part(regexp_substr(cs_uri_query, 'auc=[0-9]{1,10}'), '=', 2)::INT
             END, 0) AS active_user_count, 
         COALESCE(
             CASE
-                WHEN substring(regexp_substr(cs_uri_query, '(^|&)uc=([^&]*)'), 5, 100) = '' THEN NULL
-                ELSE substring(regexp_substr(cs_uri_query, '(^|&)uc=([^&]*)'), 5, 100)::int
+                WHEN split_part(regexp_substr(cs_uri_query, '[^a]uc=[0-9]{1,10}'),'=',2) = '' THEN NULL
+                ELSE split_part(regexp_substr(cs_uri_query, '[^a]uc=[0-9]{1,10}'),'=',2)::int
             END, 0) AS user_count,
         substring(regexp_substr(cs_uri_query, '(^|&)b=([^&]*)'), 4, 100) AS version,
                 CASE
@@ -32,9 +32,11 @@ WITH security AS (
         CASE
             WHEN substring(regexp_substr(cs_uri_query, '(^|&)ut=([^&]*)'), 5, 100) = '1' THEN true
             ELSE false
-        END AS ran_tests
+        END AS ran_tests,
+        (logdate || ' ' || logtime)::TIMESTAMP                            AS timestamp 
     FROM {{ source('diagnostics', 'log_entries') }}
     WHERE uri = '/security'
+    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
 )
 
 SELECT * FROM security
