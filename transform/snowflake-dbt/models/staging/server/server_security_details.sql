@@ -19,6 +19,7 @@ WITH security                AS (
       , sec.db_type
       , sec.os_type
       , sec.ran_tests
+      , sec.timestamp
       , COUNT(sec.location) over (partition by sec.id, sec.date, sec.hour, sec.active_user_count, sec.ip_address, sec.location) as location_count
     FROM {{ ref('security') }} sec
          LEFT JOIN {{ ref('excludable_servers') }} es
@@ -54,7 +55,7 @@ WITH security                AS (
            , COALESCE(NULLIF(s.id, ''), s.ip_address) AS id
            , m.max_active_users
            , m.occurrences
-           , MAX(s.hour)                              AS max_hour
+           , MAX(s.timestamp)                         AS max_timestamp
            , MAX(ip_address)                          AS max_ip
            , MAX(version)                             AS max_version
            , MAX(s.location_count)                    AS max_location_count
@@ -89,7 +90,7 @@ WITH security                AS (
                    ON COALESCE(NULLIF(s.id, ''), s.ip_address) = m.id
                        AND s.date = m.date
                        AND s.active_user_count = m.max_active_users
-                       AND s.hour = m.max_hour
+                       AND s.timestamp = m.max_timestamp
                        AND s.ip_address = m.max_ip
          GROUP BY 1, 2, 3, 4, 5, 7, 10, 12, 13
      ),
