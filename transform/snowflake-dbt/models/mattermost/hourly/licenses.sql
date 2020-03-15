@@ -63,7 +63,7 @@ WITH license        AS (
            , l.feature_password
            , l.feature_saml
            , m.max_timestamp                    AS timestamp
-         FROM r{{ source('matttermost2' , 'license') }} l
+         FROM r{{ source('mattermost2' , 'license') }} l
               JOIN max_date           m
                    ON l.license_id = m.license_id
                        AND l.user_id = m.server_id
