@@ -25,7 +25,7 @@ WITH license        AS (
            , l.license_id
            , l.user_id         AS server_id
            , max(l.timestamp)  AS max_timestamp
-         FROM {{ source('matttermost2' , 'license') }} l
+         FROM {{ source('mattermost2','license') }} l
          GROUP BY 1, 2, 3
      ),
 
