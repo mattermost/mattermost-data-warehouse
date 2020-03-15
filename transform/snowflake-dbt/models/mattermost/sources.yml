@@ -11,3 +11,6 @@ sources:
   - name: licenses
     database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
     schema: licenses
+
+    tables:
+      - name: licenses
