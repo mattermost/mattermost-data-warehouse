@@ -89,7 +89,7 @@ WITH license        AS (
          , 10, 11
      ),
 
-     license_overview AS (
+     license_details_all AS (
          SELECT
              ld.license_id
            , ld.server_id
@@ -191,7 +191,7 @@ WITH license        AS (
            , ld.feature_saml
            , ld.timestamp
            , ld.id
-         FROM license_overview ld
+         FROM license_details_all ld
      )
 SELECT *
 FROM licenses
