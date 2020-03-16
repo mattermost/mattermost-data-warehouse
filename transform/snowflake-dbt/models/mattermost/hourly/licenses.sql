@@ -71,7 +71,25 @@ WITH license        AS (
                 , 23, 24, 25, 26, 27, 28, 29, 30
      ),
 
-     licenses        AS (
+     license_overview AS (
+         SELECT 
+            lo.licenseid
+          , lo.company
+          , lo.stripeid
+          , lo.customerid
+          , lo.license_email
+          , lo.master_account_sfid
+          , lo.master_account_name
+          , lo.account_sfid
+          , lo.account_name
+          , lo.contact_sfid
+          , lo.contact_name
+         FROM {{ ref('license_overview') }} lo
+         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9
+         , 10, 11
+     ),
+
+     licenses         AS (
          SELECT
              ld.license_id
            , ld.server_id
@@ -81,7 +99,13 @@ WITH license        AS (
            , ld.issued_date
            , ld.start_date
            , ld.expire_date
-           , l.email
+           , lo.master_account_sfid
+           , lo.master_account_name
+           , lo.account_sfid
+           , lo.account_name
+           , l.email                                                                                AS license_email
+           , lo.contact_sfid
+           , lo.contact_name
            , l.number
            , l.stripeid
            , ld.users
@@ -112,15 +136,12 @@ WITH license        AS (
          FROM license_details    ld
               LEFT JOIN license l
                         ON ld.license_id = l.licenseid
-         {% if is_incremental() %}
-
-         WHERE ld.date > (SELECT MAX(date) FROM {{this}})
-
-         {% endif %} 
+              LEFT JOIN license_overview lo
+                        ON ld.license_id = lo.licenseid
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
                 , 13, 14, 15, 16, 17, 18, 19, 20, 21, 22
                 , 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
-                , 33, 34, 35, 36
+                , 33, 34, 35, 36, 37, 38, 39, 40, 41, 42
      )
 SELECT *
 FROM licenses
