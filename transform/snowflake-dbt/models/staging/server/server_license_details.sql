@@ -23,7 +23,7 @@ WITH max_timestamp              AS (
          FROM {{ source('util', 'dates') }}   d
               JOIN max_timestamp m
                    ON d.date >= m.start_date
-                      AND d.date <= m.expire_date
+                      AND d.date <= CASE WHEN CURRENT_DATE <= m.expire_date THEN CURRENT_DATE ELSE m.expire_date END
           GROUP BY 1, 2, 3, 4
      ),
      server_license_details AS (
