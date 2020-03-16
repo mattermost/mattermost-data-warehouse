@@ -89,7 +89,7 @@ WITH license        AS (
          , 10, 11
      ),
 
-     licenses         AS (
+     license_overview AS (
          SELECT
              ld.license_id
            , ld.server_id
@@ -142,6 +142,56 @@ WITH license        AS (
                 , 13, 14, 15, 16, 17, 18, 19, 20, 21, 22
                 , 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
                 , 33, 34, 35, 36, 37, 38, 39, 40, 41, 42
+     ),
+     
+     licenses as (
+         SELECT
+             ld.license_id
+           , ld.server_id
+           , ld.customer_id
+           , ld.company
+           , ld.edition
+           , ld.issued_date
+           , ld.start_date
+           , CASE WHEN lead(ld.start_date, 1) OVER (PARTITION BY ld.server_id ORDER BY ld.start_date, ld.users) <= ld.expire_date
+                 THEN lead(ld.start_date, 1) OVER (PARTITION BY ld.server_id ORDER BY ld.start_date, ld.users) - INTERVAL '1 DAY'
+             ELSE
+                 ld.expire_date END      AS expire_date
+           , ld.master_account_sfid
+           , ld.master_account_name
+           , ld.account_sfid
+           , ld.account_name
+           , ld.license_email
+           , ld.contact_sfid
+           , ld.contact_email
+           , ld.number
+           , ld.stripeid
+           , ld.users
+           , ld.feature_cluster
+           , ld.feature_compliance
+           , ld.feature_custom_brand
+           , ld.feature_custom_permissions_schemes
+           , ld.feature_data_retention
+           , ld.feature_elastic_search
+           , ld.feature_email_notification_contents
+           , ld.feature_future
+           , ld.feature_google
+           , ld.feature_guest_accounts
+           , ld.feature_guest_accounts_permissions
+           , ld.feature_id_loaded
+           , ld.feature_ldap
+           , ld.feature_ldap_groups
+           , ld.feature_lock_teammate_name_display
+           , ld.feature_message_export
+           , ld.feature_metrics
+           , ld.feature_mfa
+           , ld.feature_mhpns
+           , ld.feature_office365
+           , ld.feature_password
+           , ld.feature_saml
+           , ld.timestamp
+           , ld.id
+         FROM license_overview
      )
 SELECT *
 FROM licenses
