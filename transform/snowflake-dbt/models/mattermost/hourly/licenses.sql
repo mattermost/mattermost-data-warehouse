@@ -83,7 +83,7 @@ WITH license        AS (
           , lo.account_sfid
           , lo.account_name
           , lo.contact_sfid
-          , lo.contact_name
+          , lo.contact_email
          FROM {{ ref('license_overview') }} lo
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9
          , 10, 11
@@ -105,7 +105,7 @@ WITH license        AS (
            , lo.account_name
            , l.email                                                                                AS license_email
            , lo.contact_sfid
-           , lo.contact_name
+           , lo.contact_email
            , l.number
            , l.stripeid
            , ld.users
