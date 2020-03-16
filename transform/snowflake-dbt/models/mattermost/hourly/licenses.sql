@@ -21,18 +21,16 @@ WITH license        AS (
 
      max_date        AS (
          SELECT
-             l.timestamp::DATE AS date
-           , l.license_id
+             l.license_id
            , l.user_id         AS server_id
            , max(l.timestamp)  AS max_timestamp
          FROM {{ source('mattermost2','license') }} l
-         GROUP BY 1, 2, 3
+         GROUP BY 1, 2
      ),
 
      license_details AS (
          SELECT
-             l.timestamp::DATE                   AS date
-           , l.license_id
+             l.license_id
            , l.user_id                           AS server_id
            , l.customer_id
            , l.edition
@@ -62,22 +60,20 @@ WITH license        AS (
            , l.feature_office365
            , l.feature_password
            , l.feature_saml
-           , m.max_timestamp                    AS timestamp
+           , MAX(m.max_timestamp)                 AS timestamp
          FROM {{ source('mattermost2' , 'license') }} l
               JOIN max_date           m
                    ON l.license_id = m.license_id
                        AND l.user_id = m.server_id
-                       AND l.timestamp::DATE = m.date
                        AND l.timestamp = m.max_timestamp
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
                 , 13, 14, 15, 16, 17, 18, 19, 20, 21, 22
-                , 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
+                , 23, 24, 25, 26, 27, 28, 29, 30
      ),
 
      licenses        AS (
          SELECT
-             ld.date
-           , ld.license_id
+             ld.license_id
            , ld.server_id
            , ld.customer_id
            , l.company
@@ -112,7 +108,7 @@ WITH license        AS (
            , ld.feature_password
            , ld.feature_saml
            , ld.timestamp
-           , {{ dbt_utils.surrogate_key('ld.date', 'ld.license_id', 'ld.server_id','ld.customer_id') }} AS id
+           , {{ dbt_utils.surrogate_key('ld.license_id', 'ld.server_id','ld.customer_id') }} AS id
          FROM license_details    ld
               LEFT JOIN license l
                         ON ld.license_id = l.licenseid
@@ -124,7 +120,7 @@ WITH license        AS (
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
                 , 13, 14, 15, 16, 17, 18, 19, 20, 21, 22
                 , 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
-                , 33, 34, 35, 36, 37
+                , 33, 34, 35, 36
      )
 SELECT *
 FROM licenses
