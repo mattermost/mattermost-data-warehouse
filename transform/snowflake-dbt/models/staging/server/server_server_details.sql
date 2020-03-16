@@ -70,7 +70,7 @@ WITH max_timestamp              AS (
          SELECT
              s.timestamp::DATE                    AS date
            , s.user_id                            AS server_id
-           , s.version
+           , MAX(s.version)                       AS version
            , MAX(s.context_library_version)       AS context_library_version
            , s.edition
            , s.system_admins
@@ -98,7 +98,7 @@ WITH max_timestamp              AS (
                         ON s.user_id = license.server_id
                             AND s.timestamp::date >= license.start_date
                             AND s.timestamp::date <= license.expire_date
-         GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+         GROUP BY 1, 2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
      )
 SELECT *
 FROM server_server_details
