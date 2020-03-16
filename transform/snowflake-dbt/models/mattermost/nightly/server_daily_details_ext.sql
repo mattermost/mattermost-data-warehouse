@@ -178,9 +178,9 @@ WITH server_daily_details_ext AS (
       , sc.skip_certificate_verification
       , sc.sync_interval_minutes
       , sc.license_id
-      , sc._start
+      , sc.start_date
       , sc.edition AS license_edition
-      , sc.expire
+      , sc.expire_date
       , sc.feature_cluster
       , sc.feature_compliance
       , sc.feature_custom_brand
@@ -203,7 +203,7 @@ WITH server_daily_details_ext AS (
       , sc.feature_office365
       , sc.feature_password
       , sc.feature_saml
-      , sc.issued
+      , sc.issued_date
       , sc.users
       , sc.available_locales
       , sc.default_client_locale

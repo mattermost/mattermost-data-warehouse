@@ -49,9 +49,12 @@ dates as (
       , coalesce(s2.system_admins, NULL)                                                 AS system_admins
       , coalesce(s1.os_type, s2.operating_system)                                        AS operating_system
       , coalesce(s1.db_type, s2.database_type)                                           AS database_type
+      , coalesce(s1.master_account_sfid, s2.master_account_sfid)                         AS master_account_sfid
       , coalesce(s1.account_sfid, s2.account_sfid)                                       AS account_sfid
       , coalesce(s1.license_id1, s2.license_id1)                                         AS license_id1
       , coalesce(s1.license_id2, s2.license_id2)                                         AS license_id2
+      , coalesce(s1.license_email, s2.license_email)                                     AS license_email
+      , coalesce(s1.license_contact_sfid, s2.license_contact_sfid)                       AS license_contact_sfid
       , CASE WHEN s1.server_id IS NOT NULL THEN TRUE ELSE FALSE END                      AS in_security
       , CASE WHEN s2.server_id IS NOT NULL THEN TRUE ELSE FALSE END                      AS in_mm2_server
       , CASE WHEN s1.server_id IS NULL AND s2.server_id IS NULL THEN TRUE ELSE FALSE END AS tracking_disabled
@@ -72,6 +75,7 @@ dates as (
 
     {% endif %}
     GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
+    , 22, 23, 24
     )
 SELECT *
 FROM server_daily_details
