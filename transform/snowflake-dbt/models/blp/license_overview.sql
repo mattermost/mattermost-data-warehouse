@@ -27,5 +27,6 @@ LEFT JOIN {{ source('orgm', 'opportunity') }} ON opportunity.license_key__c = li
 LEFT JOIN {{ source('orgm', 'account') }} ON account.sfid = opportunity.accountid
 LEFT JOIN {{ source('orgm', 'account') }} AS master_account ON master_account.sfid = account.parentid
 LEFT JOIN {{ source('orgm', 'contact') }} ON licenses.email = contact.email AND contact.accountid = account.sfid
+GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
 )
 SELECT * FROM license_overview

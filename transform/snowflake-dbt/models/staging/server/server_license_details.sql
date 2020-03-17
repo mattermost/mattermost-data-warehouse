@@ -6,29 +6,34 @@
 
 WITH max_timestamp              AS (
     SELECT
-        timestamp::DATE AS date
-      , user_id
+        server_id
       , license_id
-      , MAX(timestamp)  AS max_timestamp
-      , COUNT(user_id)  AS occurrences
-    FROM {{ source('mattermost2', 'license') }}
-    WHERE timestamp::DATE <= CURRENT_DATE - INTERVAL '1 DAY'
-    {% if is_incremental() %}
-
-        -- this filter will only be applied on an incremental run
-        AND timestamp::date > (SELECT MAX(date) FROM {{ this }})
-
-    {% endif %}
+      , customer_id
+      , MAX(expire_date)  AS expire_date
+      , MIN(start_date)   AS start_date
+    FROM {{ ref('licenses') }}
     GROUP BY 1, 2, 3
 ),
+     dates as (
+         SELECT 
+             d.date
+           , m.server_id
+           , m.license_id
+           , m.customer_id
+         FROM {{ source('util', 'dates') }}   d
+              JOIN max_timestamp m
+                   ON d.date >= m.start_date
+                      AND d.date <= CASE WHEN CURRENT_DATE <= m.expire_date THEN CURRENT_DATE ELSE m.expire_date END
+          GROUP BY 1, 2, 3, 4
+     ),
      server_license_details AS (
          SELECT
-             l.timestamp::DATE                        AS date
-           , l.user_id                                AS server_id
-           , l.license_id
-           , MAX(_start)                              AS _start
+             d.date
+           , d.server_id
+           , d.license_id
+           , MAX(start_date)                          AS start_date
            , MAX(edition)                             AS edition
-           , MAX(expire)                              AS expire
+           , MAX(expire_date)                         AS expire_date
            , MAX(feature_cluster)                     AS feature_cluster
            , MAX(feature_compliance)                  AS feature_compliance
            , MAX(feature_custom_brand)                AS feature_custom_brand
@@ -51,12 +56,13 @@ WITH max_timestamp              AS (
            , MAX(feature_office365)                   AS feature_office365
            , MAX(feature_password)                    AS feature_password
            , MAX(feature_saml)                        AS feature_saml
-           , MAX(issued)                              AS issued
+           , MAX(issued_date)                         AS issued_date
            , MAX(users)                               AS users
-         FROM {{ source('mattermost2', 'license') }} l
-              JOIN max_timestamp      mt
-                   ON l.license_id = mt.license_id
-                       AND l.timestamp = mt.max_timestamp
+         FROM dates d
+              JOIN {{ ref('licenses') }} l
+                   ON d.server_id = l.server_id
+                      AND d.license_id = l.license_id
+                      AND d.customer_id = l.customer_id
          GROUP BY 1, 2, 3)
 SELECT *
 FROM server_license_details

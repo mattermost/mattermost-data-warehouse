@@ -160,9 +160,9 @@ SELECT
   , sldap.skip_certificate_verification
   , sldap.sync_interval_minutes
   , slicense.license_id
-  , slicense._start
+  , slicense.start_date
   , slicense.edition
-  , slicense.expire
+  , slicense.expire_date
   , slicense.feature_cluster
   , slicense.feature_compliance
   , slicense.feature_custom_brand
@@ -185,7 +185,7 @@ SELECT
   , slicense.feature_office365
   , slicense.feature_password
   , slicense.feature_saml
-  , slicense.issued
+  , slicense.issued_date
   , slicense.users
   , slocalization.available_locales
   , slocalization.default_client_locale

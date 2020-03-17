@@ -22,6 +22,11 @@ WITH security AS (
                 WHEN split_part(regexp_substr(cs_uri_query, '[^a]uc=[0-9]{1,10}'),'=',2) = '' THEN NULL
                 ELSE split_part(regexp_substr(cs_uri_query, '[^a]uc=[0-9]{1,10}'),'=',2)::int
             END, 0) AS user_count,
+        COALESCE(
+            CASE
+                WHEN split_part(regexp_substr(cs_uri_query, 'tc=[0-9]{1,10}'),'=',2) = '' THEN NULL
+                ELSE split_part(regexp_substr(cs_uri_query, 'tc=[0-9]{1,10}'),'=',2)::int
+            END, 0) AS team_count,
         substring(regexp_substr(cs_uri_query, '(^|&)b=([^&]*)'), 4, 100) AS version,
                 CASE
                     WHEN position(regexp_substr(cs_uri_query, '(^|&)b=([^&]*)'), '_BUILD_NUMBER_') > 1 THEN true
@@ -36,7 +41,7 @@ WITH security AS (
         (logdate || ' ' || logtime)::TIMESTAMP                            AS timestamp 
     FROM {{ source('diagnostics', 'log_entries') }}
     WHERE uri = '/security'
-    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
+    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 )
 
 SELECT * FROM security
