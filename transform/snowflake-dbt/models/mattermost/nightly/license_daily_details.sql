@@ -72,7 +72,7 @@ WITH max_timestamp              AS (
            , l.feature_password
            , l.feature_saml
            , l.timestamp
-           , {{ dbt_utils.surrogate_key('d.date', 'l.license', 'l.server_id')}} AS id
+           , {{ dbt_utils.surrogate_key('d.date', 'l.license_id', 'l.server_id')}} AS id
          FROM dates d
          JOIN {{ ref('licenses') }} l
               ON d.license_id = l.license_id
@@ -80,7 +80,7 @@ WITH max_timestamp              AS (
          WHERE d.date <= CURRENT_DATE - INTERVAL '1 day'
          {% if is_incremental() %}
 
-         AND d.date > (SELECT MAX(date) FROM {{this}})
+         AND d.date >= (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
