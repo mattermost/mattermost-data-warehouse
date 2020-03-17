@@ -13,8 +13,8 @@ WITH license        AS (
       , l.email
       , l.stripeid
       , l.licenseid
-      , to_timestamp(l.issuedat / 1000)::DATE  AS issuedat
-      , to_timestamp(l.expiresat / 1000)::DATE AS expiresat
+      , to_timestamp(l.issuedat / 1000)::DATE  AS issued_date
+      , to_timestamp(l.expiresat / 1000)::DATE AS expire_date
     FROM {{ source('licenses', 'licenses') }} l
     GROUP BY 1, 2, 3, 4, 5, 6, 7, 8
 ),
@@ -91,14 +91,14 @@ WITH license        AS (
 
      license_details_all AS (
          SELECT
-             ld.license_id
+             l.licenseid                                                                           AS license_id
            , ld.server_id
-           , ld.customer_id
+           , l.customerid                                                                          AS customer_id
            , l.company
            , ld.edition
-           , ld.issued_date
-           , ld.start_date
-           , ld.expire_date
+           , l.issued_date
+           , COALESCE(ld.start_date, l.issued_date)                                                AS start_date
+           , l.expire_date
            , lo.master_account_sfid
            , lo.master_account_name
            , lo.account_sfid
@@ -132,15 +132,15 @@ WITH license        AS (
            , ld.feature_password
            , ld.feature_saml
            , ld.timestamp
-           , {{ dbt_utils.surrogate_key('ld.license_id', 'ld.server_id','ld.customer_id') }} AS id
-         FROM license_details    ld
-              LEFT JOIN license l
+           , {{ dbt_utils.surrogate_key('l.licenseid', 'ld.server_id','l.customerid') }} AS id
+         FROM license    l
+              LEFT JOIN license_details ld
                         ON ld.license_id = l.licenseid
               LEFT JOIN license_overview lo
-                        ON ld.license_id = lo.licenseid
+                        ON l.licenseid = lo.licenseid
          {% if is_incremental() %}
 
-         WHERE ld.timestamp > (SELECT MAX(timestamp) FROM {{this}})
+         WHERE l.issued_date > (SELECT MAX(issued_date) FROM {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
