@@ -23,7 +23,7 @@ WITH max_timestamp              AS (
          FROM {{ source('util', 'dates') }}   d
               JOIN max_timestamp m
                    ON d.date >= m.start_date
-                      AND d.date <= CASE WHEN CURRENT_DATE <= m.expire_date THEN CURRENT_DATE ELSE m.expire_date END
+                      AND d.date <= CASE WHEN (CURRENT_DATE - INTERVAL '1 day') <= m.expire_date THEN CURRENT_DATE - INTERVAL '1 day' ELSE m.expire_date END
           GROUP BY 1, 2, 3, 4
      ),
      server_license_details AS (
@@ -63,6 +63,12 @@ WITH max_timestamp              AS (
                    ON d.server_id = l.server_id
                       AND d.license_id = l.license_id
                       AND d.customer_id = l.customer_id
+         WHERE d.date <= CURRENT_DATE - INTERVAL '1 day'
+         {% if is_incremental() %}
+         
+         AND d.date > (SELECT MAX(date) FROM {{this}})
+
+         {% endif %}
          GROUP BY 1, 2, 3)
 SELECT *
 FROM server_license_details

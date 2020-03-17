@@ -34,3 +34,6 @@ models:
 
   - name: licenses
     description: Contains the license data with feature configuration as an aggregated table from both raw.mattermost2.license and raw.licenses.licenses.
+  
+  - name: license_daily_details
+    description: Contatins a daily snapshot of licenses to trend licenses and configurations over time.
