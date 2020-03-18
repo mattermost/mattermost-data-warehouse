@@ -80,8 +80,8 @@ WITH max_timestamp              AS (
            , l.timestamp
            , {{ dbt_utils.surrogate_key('d.date', 'l.license_id', 'l.server_id')}} AS id
            , MAX(a.timestamp::DATE) as last_telemetry_date
-           , COUNT(DISTINCT CASE WHEN e.active THEN e.user_id ELSE NULL END)       AS license_dau
-           , COUNT(DISTINCT CASE WHEN e.mau THEN e.user_id ELSE NULL END)          AS license_mau
+           , SUM(dau_total)                                                        AS server_dau
+           , SUM(mau_total)                                                        AS server_mau
          FROM dates d
          JOIN {{ ref('licenses') }} l
               ON d.license_id = l.license_id
@@ -94,6 +94,9 @@ WITH max_timestamp              AS (
          ) a
                    ON d.server_id = a.user_id
                    AND a.timestamp::DATE <= d.date
+         LEFT JOIN {{ ref('server_events_by_date') }} e
+                   ON d.date = e.date
+                   AND d.server_id = e.server_id
          WHERE d.date <= CURRENT_DATE - INTERVAL '1 day'
          {% if is_incremental() %}
 
