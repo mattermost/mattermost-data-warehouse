@@ -7,25 +7,27 @@
 WITH min_active              AS (
     SELECT
         user_id
+      , server_id
       , min(date) AS min_active_date
     FROM {{ ref('user_events_by_date') }}
-    GROUP BY 1),
+    GROUP BY 1, 2),
 
      dates                   AS (
          SELECT
              d.date
            , m.user_id
+           , m.server_id
          FROM {{ source('util', 'dates') }}      d
               JOIN min_active m
                    ON d.date >= m.min_active_date
                        AND d.date <= current_date - interval '1 day'
-         GROUP BY 1, 2
+         GROUP BY 1, 2, 3
      ),
      events                  AS (
          SELECT
              d.date
            , d.user_id
-           , e.server_id
+           , d.server_id
            , e.system_admin
            , e.system_user
            , coalesce(sum(e.total_events), 0)                                                  AS total_events
