@@ -79,7 +79,7 @@ WITH max_timestamp              AS (
            , l.feature_saml
            , l.timestamp
            , {{ dbt_utils.surrogate_key('d.date', 'l.license_id', 'l.server_id')}} AS id
-           , MAX(a.timestamp::DATE) as last_telemetry_date
+           , MAX(a.timestamp::DATE)                                                AS last_telemetry_date
            , SUM(dau_total)                                                        AS server_dau
            , SUM(mau_total)                                                        AS server_mau
          FROM dates d
