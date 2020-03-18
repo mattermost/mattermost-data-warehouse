@@ -9,7 +9,7 @@ WITH max_timestamp              AS (
         server_id
       , license_id
       , customer_id
-      , MAX(expire_date)  AS expire_date
+      , MAX(server_expire_date)  AS expire_date
       , MIN(start_date)   AS start_date
     FROM {{ ref('licenses') }}
     GROUP BY 1, 2, 3
@@ -33,7 +33,7 @@ WITH max_timestamp              AS (
            , d.license_id
            , MAX(start_date)                          AS start_date
            , MAX(edition)                             AS edition
-           , MAX(expire_date)                         AS expire_date
+           , MAX(server_expire_date)                  AS expire_date
            , MAX(feature_cluster)                     AS feature_cluster
            , MAX(feature_compliance)                  AS feature_compliance
            , MAX(feature_custom_brand)                AS feature_custom_brand

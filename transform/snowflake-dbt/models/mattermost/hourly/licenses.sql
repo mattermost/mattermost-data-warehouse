@@ -16,16 +16,17 @@ WITH license        AS (
       , to_timestamp(l.issuedat / 1000)::DATE  AS issuedat
       , to_timestamp(l.expiresat / 1000)::DATE AS expiresat
     FROM {{ source('licenses', 'licenses') }} l
-    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8
+    {{ dbt_utils.group_by(n=8) }}
 ),
 
      max_date        AS (
          SELECT
              l.license_id
            , l.user_id         AS server_id
+           , l.customer_id
            , max(l.timestamp)  AS max_timestamp
          FROM {{ source('mattermost2','license') }} l
-         GROUP BY 1, 2
+         {{ dbt_utils.group_by(n=3) }}
      ),
 
      license_details AS (
@@ -65,10 +66,9 @@ WITH license        AS (
               JOIN max_date           m
                    ON l.license_id = m.license_id
                        AND l.user_id = m.server_id
+                       AND l.customer_id = m.customer_id
                        AND l.timestamp = m.max_timestamp
-         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
-                , 13, 14, 15, 16, 17, 18, 19, 20, 21, 22
-                , 23, 24, 25, 26, 27, 28, 29, 30
+         {{ dbt_utils.group_by(n=30) }}
      ),
 
      license_overview AS (
@@ -85,20 +85,19 @@ WITH license        AS (
           , lo.contact_sfid
           , lo.contact_email
          FROM {{ ref('license_overview') }} lo
-         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9
-         , 10, 11
+         {{ dbt_utils.group_by(n=11) }}
      ),
 
      license_details_all AS (
          SELECT
-             ld.license_id
+             l.licenseid                                                                           AS license_id
            , ld.server_id
-           , ld.customer_id
+           , l.customerid                                                                          AS customer_id
            , l.company
            , ld.edition
-           , ld.issued_date
-           , ld.start_date
-           , ld.expire_date
+           , COALESCE(l.issuedat, ld.issued_date)                                                  AS issued_date
+           , COALESCE(ld.start_date, l.issuedat)                                                   AS start_date
+           , COALESCE(l.expiresat, ld.expire_date)                                                 AS expire_date
            , lo.master_account_sfid
            , lo.master_account_name
            , lo.account_sfid
@@ -132,21 +131,18 @@ WITH license        AS (
            , ld.feature_password
            , ld.feature_saml
            , ld.timestamp
-           , {{ dbt_utils.surrogate_key('ld.license_id', 'ld.server_id','ld.customer_id') }} AS id
-         FROM license_details    ld
-              LEFT JOIN license l
-                        ON ld.license_id = l.licenseid
+           , {{ dbt_utils.surrogate_key('l.licenseid', 'l.customerid') }} AS id
+         FROM license    l
+              LEFT JOIN license_details ld
+                        ON l.licenseid = ld.license_id
               LEFT JOIN license_overview lo
-                        ON ld.license_id = lo.licenseid
+                        ON l.licenseid = lo.licenseid
          {% if is_incremental() %}
 
-         WHERE ld.timestamp > (SELECT MAX(timestamp) FROM {{this}})
+         WHERE l.licenseid NOT IN (SELECT license_id FROM {{this}} GROUP BY 1)
 
          {% endif %}
-         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
-                , 13, 14, 15, 16, 17, 18, 19, 20, 21, 22
-                , 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
-                , 33, 34, 35, 36, 37, 38, 39, 40, 41, 42
+         {{ dbt_utils.group_by(n=42) }}
      ),
 
      licenses as (
@@ -156,12 +152,16 @@ WITH license        AS (
            , ld.customer_id
            , ld.company
            , ld.edition
+           , CASE WHEN REGEXP_SUBSTR(company, '[^a-zA-Z]TRIAL$') in ('-TRIAL', 'TRIAL', ' TRIAL') THEN TRUE 
+                  WHEN DATEDIFF(day, ld.start_date, ld.expire_date) <= 35 THEN TRUE
+                  ELSE FALSE END        AS trial
            , ld.issued_date
            , ld.start_date
+           , ld.expire_date
            , CASE WHEN lead(ld.start_date, 1) OVER (PARTITION BY ld.server_id ORDER BY ld.start_date, ld.users) <= ld.expire_date
                  THEN lead(ld.start_date, 1) OVER (PARTITION BY ld.server_id ORDER BY ld.start_date, ld.users) - INTERVAL '1 DAY'
              ELSE
-                 ld.expire_date END      AS expire_date
+                 ld.expire_date END     AS server_expire_date
            , ld.master_account_sfid
            , ld.master_account_name
            , ld.account_sfid
