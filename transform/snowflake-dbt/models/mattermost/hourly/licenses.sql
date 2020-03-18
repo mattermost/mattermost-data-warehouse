@@ -152,7 +152,7 @@ WITH license        AS (
            , ld.customer_id
            , ld.company
            , ld.edition
-           , CASE WHEN SPLIT_PART(ld.company, ' - ', 2) = 'TRIAL' THEN TRUE 
+           , CASE WHEN REGEXP_SUBSTR(company, '[^a-zA-Z]TRIAL$') in ('-TRIAL', 'TRIAL', ' TRIAL') THEN TRUE 
                   WHEN DATEDIFF(day, ld.start_date, ld.expire_date) <= 35 THEN TRUE
                   ELSE FALSE END        AS trial
            , ld.issued_date
