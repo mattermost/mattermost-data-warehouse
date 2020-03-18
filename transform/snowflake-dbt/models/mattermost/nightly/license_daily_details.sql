@@ -25,7 +25,12 @@ WITH max_timestamp              AS (
               JOIN max_timestamp m
                    ON d.date >= m.start_date
                       AND d.date <= CASE WHEN CURRENT_DATE - interval '1 day' <= m.expire_date THEN CURRENT_DATE - interval '1 day' ELSE m.expire_date END
-          {{ dbt_utils.group_by(n=4) }}
+         {% if is_incremental() %}
+
+         WHERE d.date >= (SELECT MAX(date) FROM {{this}})
+
+         {% endif %}
+        {{ dbt_utils.group_by(n=4) }}
      ),
 
      license_daily_details as (
@@ -80,11 +85,27 @@ WITH max_timestamp              AS (
          FROM dates d
          JOIN {{ ref('licenses') }} l
               ON d.license_id = l.license_id
-         LEFT JOIN {{ source('mattermost2', 'activity') }} a
+         LEFT JOIN (
+                    SELECT 
+                        timestamp::date as timestamp
+                      , user_id
+                    FROM {{ source('mattermost2', 'activity') }} 
+                    {{ dbt_utils.group_by(n=2) }}
+         ) a
                    ON d.server_id = a.user_id
                    AND a.timestamp::DATE <= d.date
-         LEFT JOIN {{ ref('user_events_by_date_agg') }} e
+         LEFT JOIN (
+                    SELECT 
+                        date
+                      , server_id
+                      , user_id
+                      , dau
+                      , mau
+                    FROM {{ ref('user_events_by_date_agg') }}
+                    {{ dbt_utils.group_by(n=5) }}
+         ) e
                    ON d.server_id = e.server_id
+                   AND l.server_id = e.server_id
                    AND d.date = e.date
                    AND e.date <= l.server_expire_date
          WHERE d.date <= CURRENT_DATE - INTERVAL '1 day'
