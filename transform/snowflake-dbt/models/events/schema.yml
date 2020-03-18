@@ -12,3 +12,6 @@ models:
 
   - name: user_events_by_date_agg
     description: Contains an aggregated version of user_events by date w/ MAU and DAU-specific dimensions.
+
+  - name: server_events_by_date
+    description: Contains an aggregated version of user_events_by_date at the server level.
