@@ -94,20 +94,6 @@ WITH max_timestamp              AS (
          ) a
                    ON d.server_id = a.user_id
                    AND a.timestamp::DATE <= d.date
-         LEFT JOIN (
-                    SELECT 
-                        date
-                      , server_id
-                      , user_id
-                      , dau
-                      , mau
-                    FROM {{ ref('user_events_by_date_agg') }}
-                    {{ dbt_utils.group_by(n=5) }}
-         ) e
-                   ON d.server_id = e.server_id
-                   AND l.server_id = e.server_id
-                   AND d.date = e.date
-                   AND e.date <= l.server_expire_date
          WHERE d.date <= CURRENT_DATE - INTERVAL '1 day'
          {% if is_incremental() %}
 
