@@ -90,14 +90,14 @@ WITH license        AS (
 
      license_details_all AS (
          SELECT
-             ld.license_id
+             l.licenseid                                                                           AS license_id
            , ld.server_id
-           , ld.customer_id
+           , l.customerid                                                                          AS customer_id
            , l.company
            , ld.edition
-           , ld.issued_date
-           , ld.start_date
-           , ld.expire_date
+           , COALESCE(l.issuedat, ld.issued_date)                                                  AS issued_date
+           , COALESCE(ld.start_date, l.issuedat)                                                   AS start_date
+           , COALESCE(l.expiresat, ld.expire_date)                                                 AS expire_date
            , lo.master_account_sfid
            , lo.master_account_name
            , lo.account_sfid
@@ -131,15 +131,15 @@ WITH license        AS (
            , ld.feature_password
            , ld.feature_saml
            , ld.timestamp
-           , {{ dbt_utils.surrogate_key('ld.license_id', 'ld.server_id','ld.customer_id') }} AS id
-         FROM license_details    ld
-              LEFT JOIN license l
-                        ON ld.license_id = l.licenseid
+           , {{ dbt_utils.surrogate_key('l.licenseid', 'l.customerid') }} AS id
+         FROM license    l
+              LEFT JOIN license_details ld
+                        ON l.licenseid = ld.license_id
               LEFT JOIN license_overview lo
-                        ON ld.license_id = lo.licenseid
+                        ON l.licenseid = lo.licenseid
          {% if is_incremental() %}
 
-         WHERE ld.timestamp > (SELECT MAX(timestamp) FROM {{this}})
+         WHERE l.licenseid NOT IN (SELECT license_id FROM {{this}} GROUP BY 1)
 
          {% endif %}
          {{ dbt_utils.group_by(n=42) }}
