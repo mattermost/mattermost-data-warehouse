@@ -25,7 +25,7 @@ WITH max_timestamp              AS (
               JOIN max_timestamp m
                    ON d.date >= m.start_date
                       AND d.date <= CASE WHEN CURRENT_DATE - interval '1 day' <= m.expire_date THEN CURRENT_DATE - interval '1 day' ELSE m.expire_date END
-          GROUP BY 1, 2, 3, 4
+          {{ dbt_utils.group_by(n=4) }}
      ),
 
      license_daily_details as (
@@ -36,6 +36,7 @@ WITH max_timestamp              AS (
            , l.customer_id
            , l.company
            , l.edition
+           , l.trial
            , l.issued_date
            , l.start_date
            , l.expire_date
@@ -73,21 +74,26 @@ WITH max_timestamp              AS (
            , l.feature_saml
            , l.timestamp
            , {{ dbt_utils.surrogate_key('d.date', 'l.license_id', 'l.server_id')}} AS id
+           , MAX(a.timestamp::DATE) as last_telemetry_date
+           , COUNT(DISTINCT CASE WHEN e.active THEN e.user_id ELSE NULL END)       AS license_dau
+           , COUNT(DISTINCT CASE WHEN e.mau THEN e.user_id ELSE NULL END)          AS license_mau
          FROM dates d
          JOIN {{ ref('licenses') }} l
               ON d.license_id = l.license_id
-              AND d.server_id = l.server_id
+         LEFT JOIN {{ source('mattermost2', 'activity') }} a
+                   ON d.server_id = a.user_id
+                   AND a.timestamp::DATE <= d.date
+         LEFT JOIN {{ ref('user_events_by_date_agg') }} e
+                   ON d.server_id = e.server_id
+                   AND d.date = e.date
+                   AND e.date <= l.server_expire_date
          WHERE d.date <= CURRENT_DATE - INTERVAL '1 day'
          {% if is_incremental() %}
 
          AND d.date >= (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
-         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
-                , 13, 14, 15, 16, 17, 18, 19, 20, 21, 22
-                , 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
-                , 33, 34, 35, 36, 37, 38, 39, 40, 41, 42
-                , 43 
+         {{ dbt_utils.group_by(n=44) }}
      )
      SELECT *
      FROM license_daily_details
