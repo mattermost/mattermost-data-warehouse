@@ -7,9 +7,10 @@
 WITH min_active              AS (
     SELECT
         user_id
+      , server_id
       , min(date) AS min_active_date
     FROM {{ ref('user_events_by_date') }}
-    GROUP BY 1),
+    GROUP BY 1, 2),
 
      dates                   AS (
          SELECT
