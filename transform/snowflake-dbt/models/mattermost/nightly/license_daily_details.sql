@@ -80,8 +80,8 @@ WITH max_timestamp              AS (
            , l.timestamp
            , {{ dbt_utils.surrogate_key('d.date', 'l.license_id', 'l.server_id')}} AS id
            , MAX(a.timestamp::DATE)                                                AS last_telemetry_date
-           , SUM(dau_total)                                                        AS server_dau
-           , SUM(mau_total)                                                        AS server_mau
+           , COALESCE(MAX(dau_total), 0)                                           AS server_dau
+           , COALESCE(MAX(mau_total), 0)                                           AS server_mau
          FROM dates d
          JOIN {{ ref('licenses') }} l
               ON d.license_id = l.license_id
