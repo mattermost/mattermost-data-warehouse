@@ -153,7 +153,7 @@ WITH license        AS (
            , ld.feature_password
            , ld.feature_saml
            , ld.timestamp
-           , {{ dbt_utils.surrogate_key('l.licenseid', 'l.customerid') }} AS id
+           , {{ dbt_utils.surrogate_key('l.licenseid', 'l.customerid', 'l.date', 'l.server_id') }} AS id
          FROM date_ranges    l
               LEFT JOIN license_details ld
                         ON l.licenseid = ld.license_id
@@ -162,7 +162,7 @@ WITH license        AS (
                         ON l.licenseid = lo.licenseid
          {% if is_incremental() %}
 
-         WHERE l.licenseid NOT IN (SELECT license_id FROM {{this}} GROUP BY 1)
+         WHERE date >= (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
          {{ dbt_utils.group_by(n=43) }}
