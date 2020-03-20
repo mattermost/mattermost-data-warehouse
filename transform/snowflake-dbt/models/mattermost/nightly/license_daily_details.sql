@@ -57,12 +57,12 @@ WITH license_daily_details as (
          FROM {{ ref('licenses') }} l
          LEFT JOIN (
                     SELECT 
-                        user_id
+                        a.user_id
                       , l.date
                       , MAX(timestamp::date) as timestamp
                     FROM {{ ref('licenses') }} l
                          JOIN {{ source('mattermost2', 'activity') }} a
-                              ON l.server_id = l.user_id
+                              ON l.server_id = a.user_id
                               AND a.timestamp::date <= l.date
                     {{ dbt_utils.group_by(n=2) }}
          ) a
