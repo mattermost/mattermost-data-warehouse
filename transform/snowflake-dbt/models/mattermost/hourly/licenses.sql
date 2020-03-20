@@ -158,6 +158,7 @@ WITH license        AS (
               LEFT JOIN license_details ld
                         ON l.licenseid = ld.license_id
                         AND l.date = ld.date
+                        AND l
               LEFT JOIN license_overview lo
                         ON l.licenseid = lo.licenseid
          {% if is_incremental() %}
@@ -182,15 +183,15 @@ WITH license        AS (
            , ld.issued_date
            , ld.start_date
            , ld.expire_date
-           , CASE WHEN lead(ld.start_date, 1) OVER (PARTITION BY ld.server_id ORDER BY ld.start_date, ld.users) <= ld.expire_date
-                    AND lead(ld.start_date, 2) OVER (PARTITION BY ld.server_id ORDER BY ld.start_date, ld.users) <= ld.expire_date
-                    AND lead(ld.start_date, 3) OVER (PARTITION BY ld.server_id ORDER BY ld.start_date, ld.users) <= ld.expire_date
-                    THEN lead(ld.start_date, 3) OVER (PARTITION BY ld.server_id ORDER BY ld.start_date, ld.users) - INTERVAL '1 DAY'
-                  WHEN lead(ld.start_date, 1) OVER (PARTITION BY ld.server_id ORDER BY ld.start_date, ld.users) <= ld.expire_date
-                    AND lead(ld.start_date, 2) OVER (PARTITION BY ld.server_id ORDER BY ld.start_date, ld.users) <= ld.expire_date
-                    THEN lead(ld.start_date, 2) OVER (PARTITION BY ld.server_id ORDER BY ld.start_date, ld.users) - INTERVAL '1 DAY'
-                  WHEN lead(ld.start_date, 1) OVER (PARTITION BY ld.server_id ORDER BY ld.start_date, ld.users) <= ld.expire_date
-                    THEN lead(ld.start_date, 1) OVER (PARTITION BY ld.server_id ORDER BY ld.start_date, ld.users) - INTERVAL '1 DAY'
+           , CASE WHEN lead(ld.start_date, 1) OVER (PARTITION BY ld.date, ld.server_id ORDER BY ld.start_date, ld.users) <= ld.expire_date
+                    AND lead(ld.start_date, 2) OVER (PARTITION BY ld.date, ld.server_id ORDER BY ld.start_date, ld.users) <= ld.expire_date
+                    AND lead(ld.start_date, 3) OVER (PARTITION BY ld.date, ld.server_id ORDER BY ld.start_date, ld.users) <= ld.expire_date
+                    THEN lead(ld.start_date, 3) OVER (PARTITION BY ld.date, ld.server_id ORDER BY ld.start_date, ld.users) - INTERVAL '1 DAY'
+                  WHEN lead(ld.start_date, 1) OVER (PARTITION BY ld.date, ld.server_id ORDER BY ld.start_date, ld.users) <= ld.expire_date
+                    AND lead(ld.start_date, 2) OVER (PARTITION BY ld.date, ld.server_id ORDER BY ld.start_date, ld.users) <= ld.expire_date
+                    THEN lead(ld.start_date, 2) OVER (PARTITION BY ld.date, ld.server_id ORDER BY ld.start_date, ld.users) - INTERVAL '1 DAY'
+                  WHEN lead(ld.start_date, 1) OVER (PARTITION BY ld.date, ld.server_id ORDER BY ld.start_date, ld.users) <= ld.expire_date
+                    THEN lead(ld.start_date, 1) OVER (PARTITION BY ld.date, ld.server_id ORDER BY ld.start_date, ld.users) - INTERVAL '1 DAY'
              ELSE
                  ld.expire_date END     AS server_expire_date
            , ld.master_account_sfid
