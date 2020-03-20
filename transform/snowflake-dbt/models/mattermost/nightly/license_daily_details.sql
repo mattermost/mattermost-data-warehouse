@@ -52,14 +52,16 @@ WITH license_daily_details as (
            , MAX(l.timestamp)                                                        AS timestamp
            , COUNT(DISTINCT l.server_id)                                             AS servers
            , MAX(a.timestamp::DATE)                                                  AS last_telemetry_date
-           , COALESCE(SUM(dau_total), 0)                                             AS server_dau
-           , COALESCE(SUM(mau_total), 0)                                             AS server_mau
+           , COALESCE(SUM(dau_total), SUM(a.active_users), 0)                        AS server_dau
+           , COALESCE(SUM(mau_total), SUM(a.active_users_monthly), 0)                AS server_mau
          FROM {{ ref('licenses') }} l
          LEFT JOIN (
                     SELECT 
                         a.user_id
                       , l.date
-                      , MAX(a.timestamp::date) as timestamp
+                      , MAX(COALESCE(a.active_users_daily, a.active_users)) AS active_users
+                      , MAX(a.active_users_monthly)                        AS active_users_monthly
+                      , MAX(a.timestamp::date)                             AS timestamp
                     FROM {{ ref('licenses') }} l
                          JOIN {{ source('mattermost2', 'activity') }} a
                               ON l.server_id = a.user_id
