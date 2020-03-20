@@ -22,11 +22,10 @@ WITH license        AS (
      max_date        AS (
          SELECT
              l.license_id
-           , l.user_id         AS server_id
            , l.customer_id
            , max(l.timestamp)  AS max_timestamp
          FROM {{ source('mattermost2','license') }} l
-         {{ dbt_utils.group_by(n=3) }}
+         {{ dbt_utils.group_by(n=2) }}
      ),
 
      license_details AS (
@@ -65,7 +64,6 @@ WITH license        AS (
          FROM {{ source('mattermost2' , 'license') }} l
               JOIN max_date           m
                    ON l.license_id = m.license_id
-                       AND l.user_id = m.server_id
                        AND l.customer_id = m.customer_id
                        AND l.timestamp = m.max_timestamp
          {{ dbt_utils.group_by(n=30) }}
