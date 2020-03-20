@@ -21,17 +21,36 @@ WITH license        AS (
 
      max_date        AS (
          SELECT
-             l.license_id
+             timestamp::DATE   AS date
+           , l.license_id
            , l.user_id         AS server_id
            , l.customer_id
            , max(l.timestamp)  AS max_timestamp
          FROM {{ source('mattermost2','license') }} l
-         {{ dbt_utils.group_by(n=3) }}
+         {{ dbt_utils.group_by(n=4) }}
      ),
+
+     date_ranges      AS (
+       SELECT
+           d.date
+         , l.company
+         , l.number
+         , l.email
+         , l.stripeid
+         , l.licenseid
+         , l.issuedat
+         , l.expiresat
+       FROM {{ source('util', 'dates') }} d
+            JOIN license l
+                 ON d.date >= l.issuedat
+                 AND d.date <= CASE WHEN CURRENT_DATE - interval '1 day' <= l.expiresat THEN CURRENT_DATE - interval '1 day' ELSE l.expiresat END
+       {{ dbt_utils.group_by(n=8) }}
+     ), 
 
      license_details AS (
          SELECT
-             l.license_id
+             l.timestamp::date                     AS date
+           , l.license_id
            , l.user_id                           AS server_id
            , l.customer_id
            , l.edition
@@ -67,8 +86,9 @@ WITH license        AS (
                    ON l.license_id = m.license_id
                        AND l.user_id = m.server_id
                        AND l.customer_id = m.customer_id
+                       AND l.timestamp::DATE = m.date
                        AND l.timestamp = m.max_timestamp
-         {{ dbt_utils.group_by(n=30) }}
+         {{ dbt_utils.group_by(n=31) }}
      ),
 
      license_overview AS (
@@ -90,7 +110,8 @@ WITH license        AS (
 
      license_details_all AS (
          SELECT
-             l.licenseid                                                                           AS license_id
+             l.date
+           , l.licenseid                                                                           AS license_id
            , ld.server_id
            , l.customerid                                                                          AS customer_id
            , l.company
@@ -135,6 +156,7 @@ WITH license        AS (
          FROM license    l
               LEFT JOIN license_details ld
                         ON l.licenseid = ld.license_id
+                        AND l.date = ld.date
               LEFT JOIN license_overview lo
                         ON l.licenseid = lo.licenseid
          {% if is_incremental() %}
@@ -142,12 +164,13 @@ WITH license        AS (
          WHERE l.licenseid NOT IN (SELECT license_id FROM {{this}} GROUP BY 1)
 
          {% endif %}
-         {{ dbt_utils.group_by(n=42) }}
+         {{ dbt_utils.group_by(n=43) }}
      ),
 
      licenses as (
          SELECT
-             ld.license_id
+             ld.date
+           , ld.license_id
            , ld.server_id
            , ld.customer_id
            , ld.company
