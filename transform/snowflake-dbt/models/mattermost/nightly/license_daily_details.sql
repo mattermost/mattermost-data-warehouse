@@ -68,7 +68,7 @@ WITH license_daily_details as (
                    ON l.date = e.date
                    AND l.server_id = e.server_id
          WHERE l.date <= CURRENT_DATE - INTERVAL '1 day'
-         AND l.expire_date <= l.date
+         AND l.date <= l.server_expire_date
          {% if is_incremental() %}
 
          AND l.date >= (SELECT MAX(date) FROM {{this}})
