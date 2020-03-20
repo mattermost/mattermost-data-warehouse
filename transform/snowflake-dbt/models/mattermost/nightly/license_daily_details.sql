@@ -59,7 +59,7 @@ WITH license_daily_details as (
                     SELECT 
                         a.user_id
                       , l.date
-                      , MAX(timestamp::date) as timestamp
+                      , MAX(a.timestamp::date) as timestamp
                     FROM {{ ref('licenses') }} l
                          JOIN {{ source('mattermost2', 'activity') }} a
                               ON l.server_id = a.user_id
