@@ -158,7 +158,6 @@ WITH license        AS (
               LEFT JOIN license_details ld
                         ON l.licenseid = ld.license_id
                         AND l.date = ld.date
-                        AND l
               LEFT JOIN license_overview lo
                         ON l.licenseid = lo.licenseid
          {% if is_incremental() %}
