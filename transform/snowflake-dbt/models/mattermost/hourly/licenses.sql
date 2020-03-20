@@ -153,7 +153,7 @@ WITH license        AS (
            , ld.feature_password
            , ld.feature_saml
            , ld.timestamp
-           , {{ dbt_utils.surrogate_key('l.licenseid', 'l.customerid', 'l.date', 'l.server_id') }} AS id
+           , {{ dbt_utils.surrogate_key('l.licenseid', 'l.customerid', 'l.date', 'ld.server_id') }} AS id
          FROM date_ranges    l
               LEFT JOIN license_details ld
                         ON l.licenseid = ld.license_id
