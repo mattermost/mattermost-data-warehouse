@@ -10,8 +10,8 @@ WITH max_timestamp              AS (
         server_id
       , license_id
       , customer_id
-      , MAX(expire_date)  AS expire_date
-      , MIN(start_date)   AS start_date
+      , MAX(server_expire_date)  AS expire_date
+      , MIN(start_date)          AS start_date
     FROM {{ ref('licenses') }}
     GROUP BY 1, 2, 3
 ),
@@ -37,14 +37,13 @@ WITH max_timestamp              AS (
          SELECT 
              d.date
            , l.license_id
-           , l.server_id
            , l.customer_id
            , l.company
            , l.edition
            , l.trial
            , l.issued_date
            , l.start_date
-           , l.expire_date
+           , l.server_expire_date                                                AS expire_date
            , l.master_account_sfid
            , l.master_account_name
            , l.account_sfid
@@ -78,10 +77,11 @@ WITH max_timestamp              AS (
            , l.feature_password
            , l.feature_saml
            , l.timestamp
-           , {{ dbt_utils.surrogate_key('d.date', 'l.license_id', 'l.server_id')}} AS id
-           , MAX(a.timestamp::DATE)                                                AS last_telemetry_date
-           , COALESCE(MAX(dau_total), 0)                                           AS server_dau
-           , COALESCE(MAX(mau_total), 0)                                           AS server_mau
+           , {{ dbt_utils.surrogate_key('d.date', 'l.license_id', 'l.customer_id')}} AS id
+           , COUNT(DISTINCT l.server_id)                                             AS servers
+           , MAX(a.timestamp::DATE)                                                  AS last_telemetry_date
+           , COALESCE(SUM(dau_total), 0)                                             AS server_dau
+           , COALESCE(SUM(mau_total), 0)                                             AS server_mau
          FROM dates d
          JOIN {{ ref('licenses') }} l
               ON d.license_id = l.license_id
@@ -103,7 +103,7 @@ WITH max_timestamp              AS (
          AND d.date >= (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
-         {{ dbt_utils.group_by(n=44) }}
+         {{ dbt_utils.group_by(n=43) }}
      )
      SELECT *
      FROM license_daily_details
