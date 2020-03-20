@@ -33,6 +33,7 @@ WITH license        AS (
      date_ranges      AS (
        SELECT
            d.date
+         , l.customerid
          , l.company
          , l.number
          , l.email
@@ -44,7 +45,7 @@ WITH license        AS (
             JOIN license l
                  ON d.date >= l.issuedat
                  AND d.date <= CASE WHEN CURRENT_DATE - interval '1 day' <= l.expiresat THEN CURRENT_DATE - interval '1 day' ELSE l.expiresat END
-       {{ dbt_utils.group_by(n=8) }}
+       {{ dbt_utils.group_by(n=9) }}
      ), 
 
      license_details AS (
