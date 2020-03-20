@@ -48,8 +48,8 @@ WITH license_daily_details as (
            , l.feature_office365
            , l.feature_password
            , l.feature_saml
-           , l.timestamp
            , {{ dbt_utils.surrogate_key('l.date', 'l.license_id', 'l.customer_id')}} AS id
+           , MAX(l.timestamp)                                                        AS timestamp
            , COUNT(DISTINCT l.server_id)                                             AS servers
            , MAX(a.timestamp::DATE)                                                  AS last_telemetry_date
            , COALESCE(SUM(dau_total), 0)                                             AS server_dau
@@ -78,7 +78,7 @@ WITH license_daily_details as (
          AND l.date >= (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
-         {{ dbt_utils.group_by(n=43) }}
+         {{ dbt_utils.group_by(n=42) }}
      )
      SELECT *
      FROM license_daily_details
