@@ -83,7 +83,7 @@ WITH max_timestamp              AS (
            , COALESCE(MAX(dau_total), 0)                                           AS server_dau
            , COALESCE(MAX(mau_total), 0)                                           AS server_mau
          FROM dates d
-         JOIN {{ source('licenses') }} l
+         JOIN {{ source('mattermost','licenses') }} l
               ON d.license_id = l.license_id
          LEFT JOIN (
                     SELECT 
