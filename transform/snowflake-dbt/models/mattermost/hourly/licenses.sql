@@ -255,6 +255,11 @@ WITH license        AS (
            , ld.timestamp
            , ld.id
          FROM license_details_all ld
+         {% if is_incremental() %}
+
+         WHERE date >= (SELECT MAX(date) FROM {{this}})
+
+         {% endif %}
      )
 SELECT *
 FROM licenses

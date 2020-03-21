@@ -52,8 +52,12 @@ WITH license_daily_details as (
            , MAX(l.timestamp)                                                        AS timestamp
            , COUNT(DISTINCT l.server_id)                                             AS servers
            , MAX(a.timestamp::DATE)                                                  AS last_telemetry_date
-           , COALESCE(SUM(nullif(dau_total,0)), SUM(a.active_users), 0)              AS server_dau
-           , COALESCE(SUM(nullif(mau_total,0)), SUM(a.active_users_monthly), 0)      AS server_mau
+           , COALESCE(CASE WHEN SUM(nullif(dau_total,0)) >= SUM(a.active_users)
+                        THEN SUM(nullif(dau_total,0)) ELSE SUM(a.active_users)
+                        END, 0)                                                      AS server_dau
+           , COALESCE(CASE WHEN SUM(nullif(mau_total,0)) >= SUM(a.active_users_monthly)
+                        THEN SUM(nullif(mau_total,0)) ELSE SUM(a.active_users_monthly)
+                        END , 0)                                                     AS server_mau
          FROM {{ ref('licenses') }} l
          LEFT JOIN (
                     SELECT 
