@@ -11,7 +11,7 @@ WITH max_timestamp              AS (
       , customer_id
       , MAX(server_expire_date)  AS expire_date
       , MIN(start_date)   AS start_date
-    FROM {{ ref('licenses') }}
+    FROM {{ source('mattermost','licenses') }}
     GROUP BY 1, 2, 3
 ),
      dates as (
@@ -59,7 +59,7 @@ WITH max_timestamp              AS (
            , MAX(issued_date)                         AS issued_date
            , MAX(users)                               AS users
          FROM dates d
-              JOIN {{ ref('licenses') }} l
+              JOIN {{ source('mattermost','licenses') }} l
                    ON d.server_id = l.server_id
                       AND d.license_id = l.license_id
                       AND d.customer_id = l.customer_id
