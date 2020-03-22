@@ -9,7 +9,7 @@ WITH license_daily_details as (
              l.date
            , l.license_id
            , l.customer_id
-           , l.serverid
+           , l.server_id
            , l.company
            , l.edition
            , l.trial
