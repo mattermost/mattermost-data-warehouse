@@ -5,46 +5,17 @@
   })
 }}
 
-WITH max_timestamp              AS (
-    SELECT
-        server_id
-      , license_id
-      , customer_id
-      , MAX(expire_date)  AS expire_date
-      , MIN(start_date)   AS start_date
-    FROM {{ source('mattermost','licenses') }}
-    GROUP BY 1, 2, 3
-),
-     dates as (
+WITH license_daily_details as (
          SELECT 
-             d.date
-           , m.server_id
-           , m.license_id
-           , m.customer_id
-         FROM {{ source('util', 'dates') }}   d
-              JOIN max_timestamp m
-                   ON d.date >= m.start_date
-                      AND d.date <= CASE WHEN CURRENT_DATE - interval '1 day' <= m.expire_date THEN CURRENT_DATE - interval '1 day' ELSE m.expire_date END
-         {% if is_incremental() %}
-
-         WHERE d.date >= (SELECT MAX(date) FROM {{this}})
-
-         {% endif %}
-        {{ dbt_utils.group_by(n=4) }}
-     ),
-
-     license_daily_details as (
-         SELECT 
-             d.date
+             l.date
            , l.license_id
-           , l.server_id
            , l.customer_id
            , l.company
            , l.edition
            , l.trial
            , l.issued_date
            , l.start_date
-           , l.expire_date
+           , l.server_expire_date                                                AS expire_date
            , l.master_account_sfid
            , l.master_account_name
            , l.account_sfid
@@ -77,33 +48,43 @@ WITH max_timestamp              AS (
            , l.feature_office365
            , l.feature_password
            , l.feature_saml
-           , l.timestamp
-           , {{ dbt_utils.surrogate_key('d.date', 'l.license_id', 'l.server_id')}} AS id
-           , MAX(a.timestamp::DATE)                                                AS last_telemetry_date
-           , COALESCE(MAX(dau_total), 0)                                           AS server_dau
-           , COALESCE(MAX(mau_total), 0)                                           AS server_mau
-         FROM dates d
-         JOIN {{ source('mattermost','licenses') }} l
-              ON d.license_id = l.license_id
+           , {{ dbt_utils.surrogate_key('l.date', 'l.license_id', 'l.customer_id')}} AS id
+           , MAX(l.timestamp)                                                        AS timestamp
+           , COUNT(DISTINCT l.server_id)                                             AS servers
+           , MAX(a.timestamp::DATE)                                                  AS last_telemetry_date
+           , COALESCE(CASE WHEN SUM(nullif(dau_total,0)) >= SUM(a.active_users)
+                        THEN SUM(nullif(dau_total,0)) ELSE SUM(a.active_users)
+                        END, 0)                                                      AS server_dau
+           , COALESCE(CASE WHEN SUM(nullif(mau_total,0)) >= SUM(a.active_users_monthly)
+                        THEN SUM(nullif(mau_total,0)) ELSE SUM(a.active_users_monthly)
+                        END , 0)                                                     AS server_mau
+         FROM {{ ref('licenses') }} l
          LEFT JOIN (
                     SELECT 
-                        timestamp::date as timestamp
-                      , user_id
-                    FROM {{ source('mattermost2', 'activity') }} 
+                        a.user_id
+                      , l.date
+                      , MAX(COALESCE(a.active_users_daily, a.active_users)) AS active_users
+                      , MAX(a.active_users_monthly)                        AS active_users_monthly
+                      , MAX(a.timestamp::date)                             AS timestamp
+                    FROM {{ ref('licenses') }} l
+                         JOIN {{ source('mattermost2', 'activity') }} a
+                              ON l.server_id = a.user_id
+                              AND a.timestamp::date <= l.date
                     {{ dbt_utils.group_by(n=2) }}
          ) a
-                   ON d.server_id = a.user_id
-                   AND a.timestamp::DATE <= d.date
+                   ON l.server_id = a.user_id
+                   AND a.date = l.date
          LEFT JOIN {{ ref('server_events_by_date') }} e
-                   ON d.date = e.date
-                   AND d.server_id = e.server_id
-         WHERE d.date <= CURRENT_DATE - INTERVAL '1 day'
+                   ON l.date = e.date
+                   AND l.server_id = e.server_id
+         WHERE l.date <= CURRENT_DATE - INTERVAL '1 day'
+         AND l.date <= l.server_expire_date
          {% if is_incremental() %}
 
-         AND d.date >= (SELECT MAX(date) FROM {{this}})
+         AND l.date >= (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
-         {{ dbt_utils.group_by(n=44) }}
+         {{ dbt_utils.group_by(n=42) }}
      )
      SELECT *
      FROM license_daily_details
