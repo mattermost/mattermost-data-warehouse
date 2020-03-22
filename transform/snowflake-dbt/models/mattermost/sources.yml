@@ -7,3 +7,4 @@ sources:
 
     tables: 
       - name: github_contributions
+      - name: licenses
