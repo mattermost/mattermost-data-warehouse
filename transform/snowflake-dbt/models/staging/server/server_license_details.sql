@@ -4,28 +4,85 @@
   })
 }}
 
-WITH max_timestamp              AS (
-    SELECT
-        server_id
-      , license_id
-      , customer_id
-      , MAX(server_expire_date)  AS expire_date
-      , MIN(start_date)   AS start_date
-    FROM {{ ref('licenses') }}
-    GROUP BY 1, 2, 3
-),
-     dates as (
+WITH license_daily_details as (
          SELECT 
-             d.date
-           , m.server_id
-           , m.license_id
-           , m.customer_id
-         FROM {{ source('util', 'dates') }}   d
-              JOIN max_timestamp m
-                   ON d.date >= m.start_date
-                      AND d.date <= CASE WHEN (CURRENT_DATE - INTERVAL '1 day') <= m.expire_date THEN CURRENT_DATE - INTERVAL '1 day' ELSE m.expire_date END
-          GROUP BY 1, 2, 3, 4
+             l.date
+           , l.license_id
+           , l.customer_id
+           , l.serverid
+           , l.company
+           , l.edition
+           , l.trial
+           , l.issued_date
+           , l.start_date
+           , l.server_expire_date                                                AS expire_date
+           , l.master_account_sfid
+           , l.master_account_name
+           , l.account_sfid
+           , l.account_name
+           , l.license_email
+           , l.contact_sfid
+           , l.contact_email
+           , l.number
+           , l.stripeid
+           , l.users
+           , l.feature_cluster
+           , l.feature_compliance
+           , l.feature_custom_brand
+           , l.feature_custom_permissions_schemes
+           , l.feature_data_retention
+           , l.feature_elastic_search
+           , l.feature_email_notification_contents
+           , l.feature_future
+           , l.feature_google
+           , l.feature_guest_accounts
+           , l.feature_guest_accounts_permissions
+           , l.feature_id_loaded
+           , l.feature_ldap
+           , l.feature_ldap_groups
+           , l.feature_lock_teammate_name_display
+           , l.feature_message_export
+           , l.feature_metrics
+           , l.feature_mfa
+           , l.feature_mhpns
+           , l.feature_office365
+           , l.feature_password
+           , l.feature_saml
+           , {{ dbt_utils.surrogate_key('l.date', 'l.license_id', 'l.customer_id')}} AS id
+           , MAX(l.timestamp)                                                        AS timestamp
+           , MAX(a.timestamp::DATE)                                                  AS last_telemetry_date
+           , COALESCE(CASE WHEN SUM(nullif(dau_total,0)) >= SUM(a.active_users)
+                        THEN SUM(nullif(dau_total,0)) ELSE SUM(a.active_users)
+                        END, 0)                                                      AS server_dau
+           , COALESCE(CASE WHEN SUM(nullif(mau_total,0)) >= SUM(a.active_users_monthly)
+                        THEN SUM(nullif(mau_total,0)) ELSE SUM(a.active_users_monthly)
+                        END , 0)                                                     AS server_mau
+         FROM {{ ref('licenses') }} l
+         LEFT JOIN (
+                    SELECT 
+                        a.user_id
+                      , l.date
+                      , MAX(COALESCE(a.active_users_daily, a.active_users)) AS active_users
+                      , MAX(a.active_users_monthly)                        AS active_users_monthly
+                      , MAX(a.timestamp::date)                             AS timestamp
+                    FROM {{ ref('licenses') }} l
+                         JOIN {{ source('mattermost2', 'activity') }} a
+                              ON l.server_id = a.user_id
+                              AND a.timestamp::date <= l.date
+                    {{ dbt_utils.group_by(n=2) }}
+                    ) a
+                      ON l.server_id = a.user_id
+                      AND a.date = l.date
+         WHERE l.date <= CURRENT_DATE - INTERVAL '1 day'
+         AND l.date <= l.server_expire_date
+         {% if is_incremental() %}
+
+         AND l.date >= (SELECT MAX(date) FROM {{this}})
+
+         {% endif %}
+         {{ dbt_utils.group_by(n=43) }}
      ),
+
      server_license_details AS (
          SELECT
              d.date
@@ -58,11 +115,7 @@ WITH max_timestamp              AS (
            , MAX(feature_saml)                        AS feature_saml
            , MAX(issued_date)                         AS issued_date
            , MAX(users)                               AS users
-         FROM dates d
-              JOIN {{ ref('licenses') }} l
-                   ON d.server_id = l.server_id
-                      AND d.license_id = l.license_id
-                      AND d.customer_id = l.customer_id
+         FROM license_daily_details d
          WHERE d.date <= CURRENT_DATE - INTERVAL '1 day'
          {% if is_incremental() %}
          
