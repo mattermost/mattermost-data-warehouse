@@ -50,29 +50,7 @@ WITH license_daily_details as (
            , l.feature_saml
            , {{ dbt_utils.surrogate_key('l.date', 'l.license_id', 'l.customer_id')}} AS id
            , MAX(l.timestamp)                                                        AS timestamp
-           , MAX(a.timestamp::DATE)                                                  AS last_telemetry_date
-           , COALESCE(CASE WHEN SUM(nullif(dau_total,0)) >= SUM(a.active_users)
-                        THEN SUM(nullif(dau_total,0)) ELSE SUM(a.active_users)
-                        END, 0)                                                      AS server_dau
-           , COALESCE(CASE WHEN SUM(nullif(mau_total,0)) >= SUM(a.active_users_monthly)
-                        THEN SUM(nullif(mau_total,0)) ELSE SUM(a.active_users_monthly)
-                        END , 0)                                                     AS server_mau
          FROM {{ ref('licenses') }} l
-         LEFT JOIN (
-                    SELECT 
-                        a.user_id
-                      , l.date
-                      , MAX(COALESCE(a.active_users_daily, a.active_users)) AS active_users
-                      , MAX(a.active_users_monthly)                        AS active_users_monthly
-                      , MAX(a.timestamp::date)                             AS timestamp
-                    FROM {{ ref('licenses') }} l
-                         JOIN {{ source('mattermost2', 'activity') }} a
-                              ON l.server_id = a.user_id
-                              AND a.timestamp::date <= l.date
-                    {{ dbt_utils.group_by(n=2) }}
-                    ) a
-                      ON l.server_id = a.user_id
-                      AND a.date = l.date
          WHERE l.date <= CURRENT_DATE - INTERVAL '1 day'
          AND l.date <= l.server_expire_date
          {% if is_incremental() %}
