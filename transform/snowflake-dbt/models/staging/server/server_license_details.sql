@@ -68,7 +68,7 @@ WITH license_daily_details as (
            , d.license_id
            , MAX(start_date)                          AS start_date
            , MAX(edition)                             AS edition
-           , MAX(server_expire_date)                  AS expire_date
+           , MAX(expire_date)                         AS expire_date
            , MAX(feature_cluster)                     AS feature_cluster
            , MAX(feature_compliance)                  AS feature_compliance
            , MAX(feature_custom_brand)                AS feature_custom_brand
