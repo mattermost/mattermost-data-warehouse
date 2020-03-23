@@ -35,6 +35,7 @@ WITH license        AS (
          JOIN {{ source('mattermost2','license') }} l
               ON d.date <= to_timestamp(l.expire / 1000)::DATE
               AND d.date <= CURRENT_DATE - INTERVAL '1 DAY'
+              AND d.date >= to_timestamp(l.issued / 1000)::DATE
          {{ dbt_utils.group_by(n=4) }}
      ),
 
