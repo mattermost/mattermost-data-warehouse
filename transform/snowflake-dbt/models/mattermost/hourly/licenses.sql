@@ -96,7 +96,6 @@ WITH license        AS (
                    ON l.license_id = m.license_id
                        AND l.user_id = m.server_id
                        AND l.customer_id = m.customer_id
-                       AND l.timestamp::DATE = m.date
                        AND l.timestamp = m.max_timestamp
          {{ dbt_utils.group_by(n=9) }}
      ),
