@@ -21,12 +21,20 @@ WITH license        AS (
 
      max_date        AS (
          SELECT
-             timestamp::DATE   AS date
+             d.date
            , l.license_id
            , l.user_id         AS server_id
            , l.customer_id
+           , MAX(l.edition)                           AS edition
+           , MAX(to_timestamp(l.issued / 1000)::DATE) AS issued_date
+           , MAX(to_timestamp(l._start / 1000)::DATE) AS start_date
+           , MAX(to_timestamp(l.expire / 1000)::DATE) AS expire_date
+           , MAX(l.users)      AS users
            , max(l.timestamp)  AS max_timestamp
-         FROM {{ source('mattermost2','license') }} l
+         FROM {{ source('util', 'dates') }} d
+         JOIN {{ source('mattermost2','license') }} l
+              ON l.timestamp::DATE <= d.date
+              AND d.date <= CURRENT_DATE - INTERVAL '1 DAY'
          {{ dbt_utils.group_by(n=4) }}
      ),
 
@@ -50,15 +58,15 @@ WITH license        AS (
 
      license_details AS (
          SELECT
-             l.timestamp::date                     AS date
-           , l.license_id
-           , l.user_id                           AS server_id
-           , l.customer_id
-           , l.edition
-           , to_timestamp(l.issued / 1000)::DATE AS issued_date
-           , to_timestamp(l._start / 1000)::DATE AS start_date
-           , to_timestamp(l.expire / 1000)::DATE AS expire_date
-           , users
+             m.date                              AS date
+           , m.license_id
+           , m.server_id
+           , m.customer_id
+           , m.edition
+           , m.issued_date
+           , m.start_date
+           , m.expire_date
+           , m.users
            , l.feature_cluster
            , l.feature_compliance
            , l.feature_custom_brand
@@ -82,8 +90,8 @@ WITH license        AS (
            , l.feature_password
            , l.feature_saml
            , MAX(m.max_timestamp)                 AS timestamp
-         FROM {{ source('mattermost2' , 'license') }} l
-              JOIN max_date           m
+         FROM max_date           m
+              JOIN {{ source('mattermost2' , 'license') }} l
                    ON l.license_id = m.license_id
                        AND l.user_id = m.server_id
                        AND l.customer_id = m.customer_id
