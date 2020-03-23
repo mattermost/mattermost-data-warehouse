@@ -33,7 +33,7 @@ WITH license        AS (
            , max(l.timestamp)  AS max_timestamp
          FROM {{ source('util', 'dates') }} d
          JOIN {{ source('mattermost2','license') }} l
-              ON d.date <= l.timestamp::date
+              ON l.timestamp::date <= d.date
               AND d.date <= CURRENT_DATE - INTERVAL '1 DAY'
               AND d.date >= to_timestamp(l.issued / 1000)::DATE
          {{ dbt_utils.group_by(n=4) }}
