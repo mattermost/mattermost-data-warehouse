@@ -31,7 +31,7 @@ WITH license_daily_details as (
            , MAX(l.feature_custom_brand)                                             AS feature_custom_brand
            , MAX(l.feature_custom_permissions_schemes)                               AS feature_custom_permissions_schemes
            , MAX(l.feature_data_retention)                                           AS feature_data_retention
-           , MAX(.feature_elastic_search)                                            AS feature_elastic_search
+           , MAX(l.feature_elastic_search)                                           AS feature_elastic_search
            , MAX(l.feature_email_notification_contents)                              AS feature_email_notification_contents                        
            , MAX(l.feature_future)                                                   AS feature_future
            , MAX(l.feature_google)                                                   AS feature_google
@@ -84,7 +84,7 @@ WITH license_daily_details as (
          AND l.date >= (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
-         {{ dbt_utils.group_by(n=20) }}
+         {{ dbt_utils.group_by(n=19) }}
      )
      SELECT *
      FROM license_daily_details
