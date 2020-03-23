@@ -100,7 +100,7 @@ WITH license_daily_details_all as (
           , ld.trial
           , ld.issued_date
           , ld.start_date
-          , ld.end_date
+          , ld.expire_date
           , ld.master_account_sfid
           , ld.master_account_name
           , ld.account_sfid
