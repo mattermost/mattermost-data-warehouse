@@ -162,7 +162,7 @@ WITH license        AS (
                         ON l.licenseid = lo.licenseid
          {% if is_incremental() %}
 
-         WHERE date >= (SELECT MAX(date) FROM {{this}})
+         WHERE l.date >= (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
          {{ dbt_utils.group_by(n=43) }}
@@ -257,7 +257,7 @@ WITH license        AS (
          FROM license_details_all ld
          {% if is_incremental() %}
 
-         WHERE date >= (SELECT MAX(date) FROM {{this}})
+         WHERE ld.date >= (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
      )
