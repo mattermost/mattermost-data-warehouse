@@ -63,13 +63,17 @@ WITH license_daily_details as (
                     SELECT 
                         a.user_id
                       , l.date
-                      , MAX(COALESCE(a.active_users_daily, a.active_users)) AS active_users
-                      , MAX(a.active_users_monthly)                        AS active_users_monthly
-                      , MAX(a.timestamp::date)                             AS timestamp
+                      , MAX(CASE WHEN a.timestamp::DATE = l.date 
+                                THEN COALESCE(a.active_users_daily, a.active_users) 
+                                    ELSE 0 END)                                  AS active_users
+                      , MAX(CASE WHEN a.timestamp::DATE = l.date 
+                                THEN a.active_users_monthly 
+                                    ELSE 0 END)                                  AS active_users_monthly
+                      , MAX(a.timestamp::date)                                      AS timestamp
                     FROM {{ ref('licenses') }} l
                          JOIN {{ source('mattermost2', 'activity') }} a
                               ON l.server_id = a.user_id
-                              AND a.timestamp::date <= l.date
+                              AND a.timestamp::DATE <= l.date
                     {{ dbt_utils.group_by(n=2) }}
          ) a
                    ON l.server_id = a.user_id
