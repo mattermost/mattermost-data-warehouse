@@ -256,8 +256,8 @@ WITH license        AS (
            , ld.id
          FROM license_details_all ld
          {% if is_incremental() %}
-
-         WHERE ld.date >= (SELECT MAX(date) FROM {{this}})
+       
+         WHERE ld.date >= (SELECT MAX(date) FROM {{this}}
 
          {% endif %}
      )
