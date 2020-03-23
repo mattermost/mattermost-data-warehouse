@@ -5,7 +5,7 @@
   })
 }}
 
-WITH license_daily_details as (
+WITH license_daily_details_all as (
          SELECT 
              l.date
            , l.license_id
@@ -89,6 +89,62 @@ WITH license_daily_details as (
 
          {% endif %}
          {{ dbt_utils.group_by(n=17) }}
+     ),
+
+     license_daily_details AS (
+        SELECT
+            ld.date
+          , ld.license_id
+          , ld.customer_id
+          , ld.company
+          , ld.trial
+          , ld.issued_date
+          , ld.start_date
+          , ld.end_date
+          , ld.master_account_sfid
+          , ld.master_account_name
+          , ld.account_sfid
+          , ld.account_name
+          , ld.license_email
+          , ld.contact_sfid
+          , ld.contact_email
+          , ld.number
+          , ld.stripeid
+          , ld.edition
+          , ld.users                                                                AS license_users
+          , MAX(ld.users) OVER (PARTITION BY ld.date, ld.customer_id)               AS customer_users
+          , ld.feature_cluster
+          , ld.feature_compliance
+          , ld.feature_custom_brand
+          , ld.feature_custom_permissions_schemes
+          , ld.feature_data_retention
+          , ld.feature_elastic_search
+          , ld.feature_email_notification_contents
+          , ld.feature_future
+          , ld.feature_google
+          , ld.feature_guest_accounts
+          , ld.feature_guest_accounts_permissions
+          , ld.feature_id_loaded
+          , ld.feature_ldap
+          , ld.feature_ldap_groups
+          , ld.feature_lock_teammate_name_display
+          , ld.feature_message_export
+          , ld.feature_metrics
+          , ld.feature_mfa
+          , ld.feature_mhpns
+          , ld.feature_office365
+          , ld.feature_password
+          , ld.feature_saml
+          , ld.id
+          , ld.timestamp
+          , ld.servers
+          , ld.server_dau                                                           AS license_server_dau
+          , MAX(ld.server_dau) OVER (PARTITION BY ld.date, ld.customer_id)          AS customer_server_dau
+          , ld.server_mau                                                           AS license_server_mau
+          , MAX(ld.server_mau) OVER (PARTITION BY ld.date, ld.customer_id)          AS customer_server_mau
+          , ld.last_telemetry_date                                                  AS last_license_telemetry_date
+          , MAX(ld.last_telemetry_date) OVER (PARTITION BY ld.date, ld.customer_id) AS last_customer_telemetry_date
+        FROM license_daily_details_all ld
      )
      SELECT *
      FROM license_daily_details
