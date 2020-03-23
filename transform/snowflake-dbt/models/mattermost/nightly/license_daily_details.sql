@@ -11,7 +11,6 @@ WITH license_daily_details as (
            , l.license_id
            , l.customer_id
            , l.company
-           , l.edition
            , l.trial
            , l.issued_date
            , l.start_date
@@ -25,7 +24,8 @@ WITH license_daily_details as (
            , l.contact_email
            , l.number
            , l.stripeid
-           , l.users
+           , MAX(l.edition)                                                          AS edition
+           , MAX(l.users)                                                            AS users
            , MAX(l.feature_cluster)                                                  AS feature_cluster
            , MAX(l.feature_compliance)                                               AS feature_compliance
            , MAX(l.feature_custom_brand)                                             AS feature_custom_brand
@@ -84,7 +84,7 @@ WITH license_daily_details as (
          AND l.date >= (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
-         {{ dbt_utils.group_by(n=19) }}
+         {{ dbt_utils.group_by(n=17) }}
      )
      SELECT *
      FROM license_daily_details
