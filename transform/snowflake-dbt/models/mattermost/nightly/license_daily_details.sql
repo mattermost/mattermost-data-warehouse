@@ -120,7 +120,7 @@ WITH license_daily_details_all as (
                                     ELSE 0 END)                                  AS bot_accounts
                       , MAX(CASE WHEN a.timestamp::DATE = l.date
                                 THEN a.context_library_version 
-                                    ELSE 0 END)                                  AS server_version
+                                    ELSE NULL END)                                  AS server_version
                       , MAX(a.timestamp::date)                                   AS timestamp
                     FROM {{ ref('licenses') }} l
                          JOIN {{ source('mattermost2', 'activity') }} a
