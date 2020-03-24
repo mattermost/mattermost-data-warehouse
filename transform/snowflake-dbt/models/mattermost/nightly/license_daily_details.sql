@@ -150,13 +150,13 @@ WITH license_daily_details_all as (
           , ld.customer_id
           , ld.company
           , ld.trial
-          , ld.issued_date
-          , ld.start_date
-          , ld.expire_date
-          , ld.master_account_sfid
-          , ld.master_account_name
-          , ld.account_sfid
-          , ld.account_name
+          , MIN(ld.issued_date) OVER (PARTITION BY ld.date, ld.customer_id)                 AS issued_date
+          , MIN(ld.start_date) OVER (PARTITION BY ld.date, ld.customer_id)                  AS start_date
+          , MAX(ld.expire_date) OVER (PARTITION BY ld.date, ld.customer_id)                 AS expire_date
+          , MAX(ld.master_account_sfid) OVER (PARTITION BY ld.date, ld.customer_id)         AS master_account_sfid
+          , MAX(ld.master_account_name) OVER (PARTITION BY ld.date, ld.customer_id)         AS master_account_name
+          , MAX(ld.account_sfid) OVER (PARTITION BY ld.date, ld.customer_id)                AS account_sfid
+          , MAX(ld.account_name) OVER (PARTITION BY ld.date, ld.customer_id)                AS account_name
           , ld.license_email
           , ld.contact_sfid
           , ld.contact_email
