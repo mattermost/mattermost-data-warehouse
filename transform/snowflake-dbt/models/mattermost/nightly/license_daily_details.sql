@@ -70,7 +70,7 @@ WITH license_daily_details_all as (
            , SUM(NULLIF(a.public_channels, 0))                                       AS public_channels
            , SUM(NULLIF(a.public_channels_deleted, 0))                               AS public_channels_deleted
            , SUM(NULLIF(a.bot_accounts, 0))                                          AS bot_accounts
-           , MAX(a.server_version)                                                   AS server_version
+           , MAX(s.version)                                                          AS server_version
          FROM {{ ref('licenses') }} l
          LEFT JOIN (
                     SELECT 
@@ -133,6 +133,9 @@ WITH license_daily_details_all as (
          LEFT JOIN {{ ref('server_events_by_date') }} e
                    ON l.date = e.date
                    AND l.server_id = e.server_id
+         LEFT JOIN {{ ref('server_daily_details') }} s
+                   ON l.date = s.date
+                   AND l.server_id = s.server_id
          WHERE l.date <= CURRENT_DATE - INTERVAL '1 day'
          AND l.date <= l.server_expire_date
          {% if is_incremental() %}
@@ -227,7 +230,7 @@ WITH license_daily_details_all as (
           , ROW_NUMBER() OVER 
                              (PARTITION BY ld.date, ld.company 
                               ORDER BY CASE WHEN ld.users IS NOT NULL THEN ld.expire_date 
-                              ELSE ld.start_date END desc, ld.users desc, ld.edition desc)   AS customer_rank
+                              ELSE ld.start_date END desc, ld.users desc, ld.last_telemetry_date desc, ld.edition desc)   AS customer_rank
         FROM license_daily_details_all ld
      )
      SELECT *

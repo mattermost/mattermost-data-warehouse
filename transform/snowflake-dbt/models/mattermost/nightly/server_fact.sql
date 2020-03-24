@@ -20,6 +20,7 @@ WITH server_details AS (
 server_fact AS (
     SELECT
         server_details.server_id,
+        server_daily_details.version,
         server_daily_details.account_sfid AS last_account_sfid,
         server_daily_details.license_id1 AS last_license_id1,
         server_daily_details.license_id2 AS last_license_id2,
@@ -34,7 +35,7 @@ server_fact AS (
     JOIN {{ ref('server_daily_details') }}
         ON server_details.server_id = server_daily_details.server_id
         AND server_details.last_active_date = server_daily_details.date
-    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
+    {{ dbt_utils.group_by(n=12) }}
 )
 SELECT *
 FROM server_fact
