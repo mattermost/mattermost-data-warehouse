@@ -226,7 +226,8 @@ WITH license_daily_details_all as (
           , MAX(ld.server_version) OVER (PARTITION BY ld.date, ld.customer_id)               AS customer_server_version
           , ROW_NUMBER() OVER 
                              (PARTITION BY ld.date, ld.company 
-                              ORDER BY ld.expire_date desc, ld.users desc, ld.edition desc)  AS customer_rank
+                              ORDER BY CASE WHEN ld.users IS NULL THEN ld.expire_date 
+                              ELSE ld.start_date END desc, ld.users desc, ld.edition desc)   AS customer_rank
         FROM license_daily_details_all ld
      )
      SELECT *
