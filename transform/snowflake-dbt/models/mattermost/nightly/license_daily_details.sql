@@ -224,6 +224,9 @@ WITH license_daily_details_all as (
           , MAX(ld.bot_accounts) OVER (PARTITION BY ld.date, ld.customer_id)                 AS customer_bot_accounts
           , ld.server_version                                                                AS license_server_version
           , MAX(ld.server_version) OVER (PARTITION BY ld.date, ld.customer_id)               AS customer_server_version
+          , ROW_NUMBER() OVER 
+                             (PARTITION BY ld.date, ld.company 
+                              ORDER BY ld.users desc, ld.expire_date desc, ld.edition desc)  AS customer_rank
         FROM license_daily_details_all ld
      )
      SELECT *
