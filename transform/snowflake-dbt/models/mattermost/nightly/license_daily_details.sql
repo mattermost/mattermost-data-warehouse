@@ -162,7 +162,9 @@ WITH license_daily_details_all as (
           , ld.contact_email
           , ld.number
           , ld.stripeid
-          , ld.edition
+          , CASE WHEN ld.edition IS NOT NULL THEN ld.edition
+                 WHEN MAX(ld.feature_compliance) OVER (PARTITION BY ld.date, ld.customer_id) 
+                 THEN 'E20' ELSE 'E10' END                                                   AS edition
           , ld.users                                                                         AS license_users
           , MAX(ld.users) OVER (PARTITION BY ld.date, ld.customer_id)                        AS customer_users
           , ld.feature_cluster
