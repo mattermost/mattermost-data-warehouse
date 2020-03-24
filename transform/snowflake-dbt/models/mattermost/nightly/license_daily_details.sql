@@ -52,12 +52,13 @@ WITH license_daily_details_all as (
            , MAX(l.timestamp)                                                        AS timestamp
            , COUNT(DISTINCT l.server_id)                                             AS servers
            , MAX(a.timestamp::DATE)                                                  AS last_telemetry_date
-           , COALESCE(CASE WHEN SUM(nullif(dau_total,0)) >= SUM(a.active_users)
-                        THEN SUM(nullif(dau_total,0)) ELSE SUM(a.active_users)
+           , COALESCE(CASE WHEN SUM(NULLIF(dau_total,0)) >= SUM(a.active_users)
+                        THEN SUM(NULLIF(dau_total,0)) ELSE SUM(a.active_users)
                         END, 0)                                                      AS server_dau
-           , COALESCE(CASE WHEN SUM(nullif(mau_total,0)) >= SUM(a.active_users_monthly)
-                        THEN SUM(nullif(mau_total,0)) ELSE SUM(a.active_users_monthly)
+           , COALESCE(CASE WHEN SUM(NULLIF(mau_total,0)) >= SUM(a.active_users_monthly)
+                        THEN SUM(NULLIF(mau_total,0)) ELSE SUM(a.active_users_monthly)
                         END , 0)                                                     AS server_mau
+           , SUM(NULLIF(a.registered_users, 0))                                      AS registered_users
          FROM {{ ref('licenses') }} l
          LEFT JOIN (
                     SELECT 
@@ -69,7 +70,10 @@ WITH license_daily_details_all as (
                       , MAX(CASE WHEN a.timestamp::DATE = l.date 
                                 THEN a.active_users_monthly 
                                     ELSE 0 END)                                  AS active_users_monthly
-                      , MAX(a.timestamp::date)                                      AS timestamp
+                      , MAX(CASE WHEN a.timestamp::DATE = l.date
+                                THEN a.registered_users 
+                                    ELSE 0 END)                                  AS registered_users
+                      , MAX(a.timestamp::date)                                   AS timestamp
                     FROM {{ ref('licenses') }} l
                          JOIN {{ source('mattermost2', 'activity') }} a
                               ON l.server_id = a.user_id
@@ -144,6 +148,8 @@ WITH license_daily_details_all as (
           , MAX(ld.server_mau) OVER (PARTITION BY ld.date, ld.customer_id)          AS customer_server_mau
           , ld.last_telemetry_date                                                  AS last_license_telemetry_date
           , MAX(ld.last_telemetry_date) OVER (PARTITION BY ld.date, ld.customer_id) AS last_customer_telemetry_date
+          , ld.registered_users                                                     AS license_registered_users
+          , MAX(ld.registered_users) OVER (PARTITION BY ld.date, ld.customer_id)    AS customer_registered_users
         FROM license_daily_details_all ld
      )
      SELECT *
