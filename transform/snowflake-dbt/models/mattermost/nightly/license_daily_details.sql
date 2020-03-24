@@ -5,7 +5,7 @@
   })
 }}
 
-WITH license_daily_details as (
+WITH license_daily_details_all as (
          SELECT 
              l.date
            , l.license_id
@@ -52,12 +52,13 @@ WITH license_daily_details as (
            , MAX(l.timestamp)                                                        AS timestamp
            , COUNT(DISTINCT l.server_id)                                             AS servers
            , MAX(a.timestamp::DATE)                                                  AS last_telemetry_date
-           , COALESCE(CASE WHEN SUM(nullif(dau_total,0)) >= SUM(a.active_users)
-                        THEN SUM(nullif(dau_total,0)) ELSE SUM(a.active_users)
+           , COALESCE(CASE WHEN SUM(NULLIF(dau_total,0)) >= SUM(a.active_users)
+                        THEN SUM(NULLIF(dau_total,0)) ELSE SUM(a.active_users)
                         END, 0)                                                      AS server_dau
-           , COALESCE(CASE WHEN SUM(nullif(mau_total,0)) >= SUM(a.active_users_monthly)
-                        THEN SUM(nullif(mau_total,0)) ELSE SUM(a.active_users_monthly)
+           , COALESCE(CASE WHEN SUM(NULLIF(mau_total,0)) >= SUM(a.active_users_monthly)
+                        THEN SUM(NULLIF(mau_total,0)) ELSE SUM(a.active_users_monthly)
                         END , 0)                                                     AS server_mau
+           , SUM(NULLIF(a.registered_users, 0))                                      AS registered_users
          FROM {{ ref('licenses') }} l
          LEFT JOIN (
                     SELECT 
@@ -69,7 +70,10 @@ WITH license_daily_details as (
                       , MAX(CASE WHEN a.timestamp::DATE = l.date 
                                 THEN a.active_users_monthly 
                                     ELSE 0 END)                                  AS active_users_monthly
-                      , MAX(a.timestamp::date)                                      AS timestamp
+                      , MAX(CASE WHEN a.timestamp::DATE = l.date
+                                THEN a.registered_users 
+                                    ELSE 0 END)                                  AS registered_users
+                      , MAX(a.timestamp::date)                                   AS timestamp
                     FROM {{ ref('licenses') }} l
                          JOIN {{ source('mattermost2', 'activity') }} a
                               ON l.server_id = a.user_id
@@ -89,6 +93,64 @@ WITH license_daily_details as (
 
          {% endif %}
          {{ dbt_utils.group_by(n=17) }}
+     ),
+
+     license_daily_details AS (
+        SELECT
+            ld.date
+          , ld.license_id
+          , ld.customer_id
+          , ld.company
+          , ld.trial
+          , ld.issued_date
+          , ld.start_date
+          , ld.expire_date
+          , ld.master_account_sfid
+          , ld.master_account_name
+          , ld.account_sfid
+          , ld.account_name
+          , ld.license_email
+          , ld.contact_sfid
+          , ld.contact_email
+          , ld.number
+          , ld.stripeid
+          , ld.edition
+          , ld.users                                                                AS license_users
+          , MAX(ld.users) OVER (PARTITION BY ld.date, ld.customer_id)               AS customer_users
+          , ld.feature_cluster
+          , ld.feature_compliance
+          , ld.feature_custom_brand
+          , ld.feature_custom_permissions_schemes
+          , ld.feature_data_retention
+          , ld.feature_elastic_search
+          , ld.feature_email_notification_contents
+          , ld.feature_future
+          , ld.feature_google
+          , ld.feature_guest_accounts
+          , ld.feature_guest_accounts_permissions
+          , ld.feature_id_loaded
+          , ld.feature_ldap
+          , ld.feature_ldap_groups
+          , ld.feature_lock_teammate_name_display
+          , ld.feature_message_export
+          , ld.feature_metrics
+          , ld.feature_mfa
+          , ld.feature_mhpns
+          , ld.feature_office365
+          , ld.feature_password
+          , ld.feature_saml
+          , ld.id
+          , ld.timestamp
+          , ld.servers
+          , ld.server_dau                                                           AS license_server_dau
+          , MAX(ld.server_dau) OVER (PARTITION BY ld.date, ld.customer_id)          AS customer_server_dau
+          , ld.server_mau                                                           AS license_server_mau
+          , MAX(ld.server_mau) OVER (PARTITION BY ld.date, ld.customer_id)          AS customer_server_mau
+          , ld.last_telemetry_date                                                  AS last_license_telemetry_date
+          , MAX(ld.last_telemetry_date) OVER (PARTITION BY ld.date, ld.customer_id) AS last_customer_telemetry_date
+          , ld.registered_users                                                     AS license_registered_users
+          , MAX(ld.registered_users) OVER (PARTITION BY ld.date, ld.customer_id)    AS customer_registered_users
+        FROM license_daily_details_all ld
      )
      SELECT *
      FROM license_daily_details
