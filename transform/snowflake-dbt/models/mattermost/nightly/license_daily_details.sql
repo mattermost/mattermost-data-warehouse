@@ -52,12 +52,12 @@ WITH license_daily_details_all as (
            , MAX(l.timestamp)                                                        AS timestamp
            , COUNT(DISTINCT l.server_id)                                             AS servers
            , MAX(a.timestamp::DATE)                                                  AS last_telemetry_date
-           , COALESCE(CASE WHEN SUM(NULLIF(dau_total,0)) >= SUM(a.active_users)
-                        THEN SUM(NULLIF(dau_total,0)) ELSE SUM(a.active_users)
-                        END, 0)                                                      AS server_dau
-           , COALESCE(CASE WHEN SUM(NULLIF(mau_total,0)) >= SUM(a.active_users_monthly)
-                        THEN SUM(NULLIF(mau_total,0)) ELSE SUM(a.active_users_monthly)
-                        END , 0)                                                     AS server_mau
+           , CASE WHEN SUM(e.dau_total) >= SUM(a.active_users)
+                        THEN SUM(e.dau_total) ELSE SUM(a.active_users)
+                        END                                                          AS server_dau
+           , CASE WHEN SUM(e.mau_total) >= SUM(a.active_users_monthly)
+                        THEN SUM(mau_total) ELSE SUM(a.active_users_monthly)
+                        END                                                          AS server_mau
            , SUM(NULLIF(a.registered_users, 0))                                      AS registered_users
            , SUM(NULLIF(a.registered_inactive_users, 0))                             AS registered_inactive_users
            , SUM(NULLIF(a.registered_deactivated_users, 0))                          AS registered_deactivated_users
