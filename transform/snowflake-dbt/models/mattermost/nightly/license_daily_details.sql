@@ -96,25 +96,25 @@ WITH license_daily_details_all as (
                                     ELSE 0 END)                                  AS posts
                       , MAX(CASE WHEN a.timestamp::DATE = l.date
                                 THEN a.direct_message_channels
-                                    ELSE O END)                                  AS direct_message_channels
+                                    ELSE 0 END)                                  AS direct_message_channels
                       , MAX(CASE WHEN a.timestamp::DATE = l.date
                                 THEN a.outgoing_webhooks
-                                    ELSE O END)                                  AS outgoing_webhooks
+                                    ELSE 0 END)                                  AS outgoing_webhooks
                       , MAX(CASE WHEN a.timestamp::DATE = l.date
                                 THEN a.teams
-                                    ELSE O END)                                  AS teams
+                                    ELSE 0 END)                                  AS teams
                       , MAX(CASE WHEN a.timestamp::DATE = l.date
                                 THEN a.private_channels
-                                    ELSE O END)                                  AS private_channels
+                                    ELSE 0 END)                                  AS private_channels
                       , MAX(CASE WHEN a.timestamp::DATE = l.date
                                 THEN a.private_channels
-                                    ELSE O END)                                  AS private_channels_deleted
+                                    ELSE 0 END)                                  AS private_channels_deleted
                       , MAX(CASE WHEN a.timestamp::DATE = l.date
                                 THEN a.public_channels
-                                    ELSE O END)                                  AS public_channels
+                                    ELSE 0 END)                                  AS public_channels
                       , MAX(CASE WHEN a.timestamp::DATE = l.date
                                 THEN a.public_channels
-                                    ELSE O END)                                  AS public_channels_deleted
+                                    ELSE 0 END)                                  AS public_channels_deleted
                       , MAX(CASE WHEN a.timestamp::DATE = l.date
                                 THEN a.bot_accounts
                                     ELSE 0 END)                                  AS bot_accounts
