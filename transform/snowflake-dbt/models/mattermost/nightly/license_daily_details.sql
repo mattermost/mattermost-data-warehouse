@@ -52,13 +52,25 @@ WITH license_daily_details_all as (
            , MAX(l.timestamp)                                                        AS timestamp
            , COUNT(DISTINCT l.server_id)                                             AS servers
            , MAX(a.timestamp::DATE)                                                  AS last_telemetry_date
-           , COALESCE(CASE WHEN SUM(NULLIF(dau_total,0)) >= SUM(a.active_users)
-                        THEN SUM(NULLIF(dau_total,0)) ELSE SUM(a.active_users)
-                        END, 0)                                                      AS server_dau
-           , COALESCE(CASE WHEN SUM(NULLIF(mau_total,0)) >= SUM(a.active_users_monthly)
-                        THEN SUM(NULLIF(mau_total,0)) ELSE SUM(a.active_users_monthly)
-                        END , 0)                                                     AS server_mau
+           , CASE WHEN SUM(e.dau_total) >= SUM(a.active_users)
+                        THEN SUM(e.dau_total) ELSE SUM(a.active_users)
+                        END                                                          AS server_dau
+           , CASE WHEN SUM(e.mau_total) >= SUM(a.active_users_monthly)
+                        THEN SUM(mau_total) ELSE SUM(a.active_users_monthly)
+                        END                                                          AS server_mau
            , SUM(NULLIF(a.registered_users, 0))                                      AS registered_users
+           , SUM(NULLIF(a.registered_inactive_users, 0))                             AS registered_inactive_users
+           , SUM(NULLIF(a.registered_deactivated_users, 0))                          AS registered_deactivated_users
+           , SUM(NULLIF(a.posts, 0))                                                 AS posts
+           , SUM(NULLIF(a.direct_message_channels, 0))                               AS direct_message_channels
+           , SUM(NULLIF(a.outgoing_webhooks, 0))                                     AS outgoing_webhooks
+           , SUM(NULLIF(a.teams, 0))                                                 AS teams
+           , SUM(NULLIF(a.private_channels, 0))                                      AS private_channels
+           , SUM(NULLIF(a.private_channels_deleted, 0))                              AS private_channels_deleted
+           , SUM(NULLIF(a.public_channels, 0))                                       AS public_channels
+           , SUM(NULLIF(a.public_channels_deleted, 0))                               AS public_channels_deleted
+           , SUM(NULLIF(a.bot_accounts, 0))                                          AS bot_accounts
+           , MAX(s.version)                                                          AS server_version
          FROM {{ ref('licenses') }} l
          LEFT JOIN (
                     SELECT 
@@ -73,6 +85,42 @@ WITH license_daily_details_all as (
                       , MAX(CASE WHEN a.timestamp::DATE = l.date
                                 THEN a.registered_users 
                                     ELSE 0 END)                                  AS registered_users
+                      , MAX(CASE WHEN a.timestamp::DATE = l.date
+                                THEN a.registered_inactive_users 
+                                    ELSE 0 END)                                  AS registered_inactive_users
+                      , MAX(CASE WHEN a.timestamp::DATE = l.date
+                                THEN a.registered_deactivated_users 
+                                    ELSE 0 END)                                  AS registered_deactivated_users
+                      , MAX(CASE WHEN a.timestamp::DATE = l.date
+                                THEN a.posts 
+                                    ELSE 0 END)                                  AS posts
+                      , MAX(CASE WHEN a.timestamp::DATE = l.date
+                                THEN a.direct_message_channels
+                                    ELSE 0 END)                                  AS direct_message_channels
+                      , MAX(CASE WHEN a.timestamp::DATE = l.date
+                                THEN a.outgoing_webhooks
+                                    ELSE 0 END)                                  AS outgoing_webhooks
+                      , MAX(CASE WHEN a.timestamp::DATE = l.date
+                                THEN a.teams
+                                    ELSE 0 END)                                  AS teams
+                      , MAX(CASE WHEN a.timestamp::DATE = l.date
+                                THEN a.private_channels
+                                    ELSE 0 END)                                  AS private_channels
+                      , MAX(CASE WHEN a.timestamp::DATE = l.date
+                                THEN a.private_channels
+                                    ELSE 0 END)                                  AS private_channels_deleted
+                      , MAX(CASE WHEN a.timestamp::DATE = l.date
+                                THEN a.public_channels
+                                    ELSE 0 END)                                  AS public_channels
+                      , MAX(CASE WHEN a.timestamp::DATE = l.date
+                                THEN a.public_channels
+                                    ELSE 0 END)                                  AS public_channels_deleted
+                      , MAX(CASE WHEN a.timestamp::DATE = l.date
+                                THEN a.bot_accounts
+                                    ELSE 0 END)                                  AS bot_accounts
+                      , MAX(CASE WHEN a.timestamp::DATE = l.date
+                                THEN a.context_library_version 
+                                    ELSE NULL END)                                  AS server_version
                       , MAX(a.timestamp::date)                                   AS timestamp
                     FROM {{ ref('licenses') }} l
                          JOIN {{ source('mattermost2', 'activity') }} a
@@ -85,6 +133,9 @@ WITH license_daily_details_all as (
          LEFT JOIN {{ ref('server_events_by_date') }} e
                    ON l.date = e.date
                    AND l.server_id = e.server_id
+         LEFT JOIN {{ ref('server_daily_details') }} s
+                   ON l.date = s.date
+                   AND l.server_id = s.server_id
          WHERE l.date <= CURRENT_DATE - INTERVAL '1 day'
          AND l.date <= l.server_expire_date
          {% if is_incremental() %}
@@ -102,21 +153,23 @@ WITH license_daily_details_all as (
           , ld.customer_id
           , ld.company
           , ld.trial
-          , ld.issued_date
-          , ld.start_date
-          , ld.expire_date
-          , ld.master_account_sfid
-          , ld.master_account_name
-          , ld.account_sfid
-          , ld.account_name
+          , MIN(ld.issued_date) OVER (PARTITION BY ld.date, ld.customer_id)                 AS issued_date
+          , MIN(ld.start_date) OVER (PARTITION BY ld.date, ld.customer_id)                  AS start_date
+          , MAX(ld.expire_date) OVER (PARTITION BY ld.date, ld.customer_id)                 AS expire_date
+          , MAX(ld.master_account_sfid) OVER (PARTITION BY ld.date, ld.customer_id)         AS master_account_sfid
+          , MAX(ld.master_account_name) OVER (PARTITION BY ld.date, ld.customer_id)         AS master_account_name
+          , MAX(ld.account_sfid) OVER (PARTITION BY ld.date, ld.customer_id)                AS account_sfid
+          , MAX(ld.account_name) OVER (PARTITION BY ld.date, ld.customer_id)                AS account_name
           , ld.license_email
           , ld.contact_sfid
           , ld.contact_email
           , ld.number
           , ld.stripeid
-          , ld.edition
-          , ld.users                                                                AS license_users
-          , MAX(ld.users) OVER (PARTITION BY ld.date, ld.customer_id)               AS customer_users
+          , CASE WHEN ld.edition IS NOT NULL THEN ld.edition
+                 WHEN MAX(ld.feature_compliance) OVER (PARTITION BY ld.date, ld.customer_id) 
+                 THEN 'E20' ELSE 'E10' END                                                   AS edition
+          , ld.users                                                                         AS license_users
+          , MAX(ld.users) OVER (PARTITION BY ld.date, ld.customer_id)                        AS customer_users
           , ld.feature_cluster
           , ld.feature_compliance
           , ld.feature_custom_brand
@@ -142,14 +195,42 @@ WITH license_daily_details_all as (
           , ld.id
           , ld.timestamp
           , ld.servers
-          , ld.server_dau                                                           AS license_server_dau
-          , MAX(ld.server_dau) OVER (PARTITION BY ld.date, ld.customer_id)          AS customer_server_dau
-          , ld.server_mau                                                           AS license_server_mau
-          , MAX(ld.server_mau) OVER (PARTITION BY ld.date, ld.customer_id)          AS customer_server_mau
-          , ld.last_telemetry_date                                                  AS last_license_telemetry_date
-          , MAX(ld.last_telemetry_date) OVER (PARTITION BY ld.date, ld.customer_id) AS last_customer_telemetry_date
-          , ld.registered_users                                                     AS license_registered_users
-          , MAX(ld.registered_users) OVER (PARTITION BY ld.date, ld.customer_id)    AS customer_registered_users
+          , ld.server_dau                                                                    AS license_server_dau
+          , MAX(ld.server_dau) OVER (PARTITION BY ld.date, ld.customer_id)                   AS customer_server_dau
+          , ld.server_mau                                                                    AS license_server_mau
+          , MAX(ld.server_mau) OVER (PARTITION BY ld.date, ld.customer_id)                   AS customer_server_mau
+          , ld.last_telemetry_date                                                           AS last_license_telemetry_date
+          , MAX(ld.last_telemetry_date) OVER (PARTITION BY ld.date, ld.customer_id)          AS last_customer_telemetry_date
+          , ld.registered_users                                                              AS license_registered_users
+          , MAX(ld.registered_users) OVER (PARTITION BY ld.date, ld.customer_id)             AS customer_registered_users
+          , ld.registered_inactive_users                                                     AS license_registered_inactive_users
+          , MAX(ld.registered_inactive_users) OVER (PARTITION BY ld.date, ld.customer_id)    AS customer_registered_inactive_users
+          , ld.registered_deactivated_users                                                  AS license_registered_deactivated_users
+          , MAX(ld.registered_deactivated_users) OVER (PARTITION BY ld.date, ld.customer_id) AS customer_registered_deactivated_users
+          , ld.posts                                                                         AS license_posts
+          , MAX(ld.posts) OVER (PARTITION BY ld.date, ld.customer_id)                        AS customer_posts
+          , ld.direct_message_channels                                                       AS license_direct_message_channels
+          , MAX(ld.direct_message_channels) OVER (PARTITION BY ld.date, ld.customer_id)      AS customer_direct_message_channels
+          , ld.outgoing_webhooks                                                             AS license_outgoing_webooks
+          , MAX(ld.outgoing_webhooks) OVER (PARTITION BY ld.date, ld.customer_id)            AS customer_outgoing_webooks
+          , ld.teams                                                                         AS license_teams
+          , MAX(ld.teams) OVER (PARTITION BY ld.date, ld.customer_id)                        AS customer_teams
+          , ld.private_channels                                                              AS license_private_channels
+          , MAX(ld.private_channels) OVER (PARTITION BY ld.date, ld.customer_id)             AS customer_private_channels
+          , ld.private_channels_deleted                                                      AS license_private_channels_deleted
+          , MAX(ld.private_channels_deleted) OVER (PARTITION BY ld.date, ld.customer_id)     AS customer_private_channels_deleted
+          , ld.public_channels                                                               AS license_public_channels
+          , MAX(ld.public_channels) OVER (PARTITION BY ld.date, ld.customer_id)              AS customer_public_channels
+          , ld.public_channels_deleted                                                       AS license_public_channels_deleted
+          , MAX(ld.public_channels_deleted) OVER (PARTITION BY ld.date, ld.customer_id)      AS customer_public_channels_deleted
+          , ld.bot_accounts                                                                  AS license_bot_accounts
+          , MAX(ld.bot_accounts) OVER (PARTITION BY ld.date, ld.customer_id)                 AS customer_bot_accounts
+          , ld.server_version                                                                AS license_server_version
+          , MAX(ld.server_version) OVER (PARTITION BY ld.date, ld.customer_id)               AS customer_server_version
+          , ROW_NUMBER() OVER 
+                             (PARTITION BY ld.date, ld.company 
+                              ORDER BY CASE WHEN ld.users IS NOT NULL THEN ld.expire_date 
+                              ELSE ld.start_date END desc, ld.users desc, ld.last_telemetry_date desc, ld.edition desc)   AS customer_rank
         FROM license_daily_details_all ld
      )
      SELECT *
