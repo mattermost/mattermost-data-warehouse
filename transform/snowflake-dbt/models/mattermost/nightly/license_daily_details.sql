@@ -220,7 +220,7 @@ WITH license_daily_details_all as (
           , MAX(ld.public_channels_deleted) OVER (PARTITION BY ld.date, ld.customer_id)      AS customer_public_channels_deleted
           , ld.bot_accounts                                                                  AS license_bot_accounts
           , MAX(ld.bot_accounts) OVER (PARTITION BY ld.date, ld.customer_id)                 AS customer_bot_accounts
-          , ld.server_versoin                                                                AS license_server_version
+          , ld.server_version                                                                AS license_server_version
           , MAX(ld.server_version) OVER (PARTITION BY ld.date, ld.customer_id)               AS customer_server_version
         FROM license_daily_details_all ld
      )
