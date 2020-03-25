@@ -61,13 +61,13 @@ WITH license        AS (
          SELECT
              m.date                              AS date
            , m.license_id
-           , m.server_id
-           , m.customer_id
-           , m.edition
-           , m.issued_date
-           , m.start_date
-           , m.expire_date
-           , m.users
+           , MAX(m.server_id)                                                        AS server_id
+           , MAX(m.customer_id)                                                      AS customer_id
+           , MAX(m.edition)                                                          AS edition
+           , MAX(m.issued_date)                                                      AS issued_date
+           , MAX(m.start_date)                                                       AS start_date
+           , MAX(m.expire_date)                                                      AS expire_date
+           , MAX(m.users)                                                            AS users
            , MAX(l.feature_cluster)                                                  AS feature_cluster
            , MAX(l.feature_compliance)                                               AS feature_compliance
            , MAX(l.feature_custom_brand)                                             AS feature_custom_brand
@@ -97,7 +97,7 @@ WITH license        AS (
                        AND l.user_id = m.server_id
                        AND l.customer_id = m.customer_id
                        AND l.timestamp = m.max_timestamp
-         {{ dbt_utils.group_by(n=9) }}
+         {{ dbt_utils.group_by(n=2) }}
      ),
 
      license_overview AS (
