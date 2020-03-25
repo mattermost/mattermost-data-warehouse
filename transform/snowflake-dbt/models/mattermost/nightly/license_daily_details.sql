@@ -140,7 +140,7 @@ WITH license_daily_details_all as (
          AND l.date <= l.server_expire_date
          {% if is_incremental() %}
 
-         AND l.date >= (SELECT MAX(date) FROM {{this}})
+         AND l.date > (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
          {{ dbt_utils.group_by(n=17) }}
