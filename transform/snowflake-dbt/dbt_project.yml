@@ -88,4 +88,6 @@ seeds:
       schema: employee
     target_fact:
       schema: tva
+    account_industry_mapping:
+      schema: util
 
