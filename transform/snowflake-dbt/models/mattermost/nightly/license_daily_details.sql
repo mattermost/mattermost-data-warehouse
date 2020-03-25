@@ -24,53 +24,53 @@ WITH license_daily_details_all as (
            , l.contact_email
            , l.number
            , l.stripeid
-           , MAX(l.edition)                                                          AS edition
-           , MAX(l.users)                                                            AS users
-           , MAX(l.feature_cluster)                                                  AS feature_cluster
-           , MAX(l.feature_compliance)                                               AS feature_compliance
-           , MAX(l.feature_custom_brand)                                             AS feature_custom_brand
-           , MAX(l.feature_custom_permissions_schemes)                               AS feature_custom_permissions_schemes
-           , MAX(l.feature_data_retention)                                           AS feature_data_retention
-           , MAX(l.feature_elastic_search)                                           AS feature_elastic_search
-           , MAX(l.feature_email_notification_contents)                              AS feature_email_notification_contents                        
-           , MAX(l.feature_future)                                                   AS feature_future
-           , MAX(l.feature_google)                                                   AS feature_google
-           , MAX(l.feature_guest_accounts)                                           AS feature_guest_accounts
-           , MAX(l.feature_guest_accounts_permissions)                               AS feature_guest_accounts_permissions   
-           , MAX(l.feature_id_loaded)                                                AS feature_id_loaded
-           , MAX(l.feature_ldap)                                                     AS feature_ldap
-           , MAX(l.feature_ldap_groups)                                              AS feature_ldap_groups
-           , MAX(l.feature_lock_teammate_name_display)                               AS feature_lock_teammate_name_display
-           , MAX(l.feature_message_export)                                           AS feature_message_export
-           , MAX(l.feature_metrics)                                                  AS feature_metrics
-           , MAX(l.feature_mfa)                                                      AS feature_mfa
-           , MAX(l.feature_mhpns)                                                    AS feature_mhpns
-           , MAX(l.feature_office365)                                                AS feature_office365
-           , MAX(l.feature_password)                                                 AS feature_password
-           , MAX(l.feature_saml)                                                     AS feature_saml
-           , {{ dbt_utils.surrogate_key('l.date', 'l.license_id', 'l.customer_id')}} AS id
-           , MAX(l.timestamp)                                                        AS timestamp
-           , COUNT(DISTINCT l.server_id)                                             AS servers
-           , MAX(a.timestamp::DATE)                                                  AS last_telemetry_date
+           , MAX(l.edition)                                                                 AS edition
+           , MAX(l.users)                                                                   AS users
+           , MAX(l.feature_cluster)                                                         AS feature_cluster
+           , MAX(l.feature_compliance)                                                      AS feature_compliance
+           , MAX(l.feature_custom_brand)                                                    AS feature_custom_brand
+           , MAX(l.feature_custom_permissions_schemes)                                      AS feature_custom_permissions_schemes
+           , MAX(l.feature_data_retention)                                                  AS feature_data_retention
+           , MAX(l.feature_elastic_search)                                                  AS feature_elastic_search
+           , MAX(l.feature_email_notification_contents)                                     AS feature_email_notification_contents                        
+           , MAX(l.feature_future)                                                          AS feature_future
+           , MAX(l.feature_google)                                                          AS feature_google
+           , MAX(l.feature_guest_accounts)                                                  AS feature_guest_accounts
+           , MAX(l.feature_guest_accounts_permissions)                                      AS feature_guest_accounts_permissions   
+           , MAX(l.feature_id_loaded)                                                       AS feature_id_loaded
+           , MAX(l.feature_ldap)                                                            AS feature_ldap
+           , MAX(l.feature_ldap_groups)                                                     AS feature_ldap_groups
+           , MAX(l.feature_lock_teammate_name_display)                                      AS feature_lock_teammate_name_display
+           , MAX(l.feature_message_export)                                                  AS feature_message_export
+           , MAX(l.feature_metrics)                                                         AS feature_metrics
+           , MAX(l.feature_mfa)                                                             AS feature_mfa
+           , MAX(l.feature_mhpns)                                                           AS feature_mhpns
+           , MAX(l.feature_office365)                                                       AS feature_office365
+           , MAX(l.feature_password)                                                        AS feature_password
+           , MAX(l.feature_saml)                                                            AS feature_saml
+           , {{ dbt_utils.surrogate_key('l.date', 'l.license_id', 'l.customer_id')}}        AS id
+           , MAX(l.timestamp)                                                               AS timestamp
+           , COUNT(DISTINCT l.server_id)                                                    AS servers
+           , MAX(a.timestamp::DATE)                                                         AS last_telemetry_date
            , CASE WHEN SUM(e.dau_total) >= SUM(a.active_users)
                         THEN SUM(e.dau_total) ELSE SUM(a.active_users)
-                        END                                                          AS server_dau
+                        END                                                                 AS server_dau
            , CASE WHEN SUM(e.mau_total) >= SUM(a.active_users_monthly)
                         THEN SUM(mau_total) ELSE SUM(a.active_users_monthly)
-                        END                                                          AS server_mau
-           , SUM(NULLIF(a.registered_users, 0))                                      AS registered_users
-           , SUM(NULLIF(a.registered_inactive_users, 0))                             AS registered_inactive_users
-           , SUM(NULLIF(a.registered_deactivated_users, 0))                          AS registered_deactivated_users
-           , SUM(NULLIF(a.posts, 0))                                                 AS posts
-           , SUM(NULLIF(a.direct_message_channels, 0))                               AS direct_message_channels
-           , SUM(NULLIF(a.outgoing_webhooks, 0))                                     AS outgoing_webhooks
-           , SUM(NULLIF(a.teams, 0))                                                 AS teams
-           , SUM(NULLIF(a.private_channels, 0))                                      AS private_channels
-           , SUM(NULLIF(a.private_channels_deleted, 0))                              AS private_channels_deleted
-           , SUM(NULLIF(a.public_channels, 0))                                       AS public_channels
-           , SUM(NULLIF(a.public_channels_deleted, 0))                               AS public_channels_deleted
-           , SUM(NULLIF(a.bot_accounts, 0))                                          AS bot_accounts
-           , MAX(s.version)                                                          AS server_version
+                        END                                                                 AS server_mau
+           , SUM(NULLIF(a.registered_users, 0))                                             AS registered_users
+           , SUM(NULLIF(a.registered_inactive_users, 0))                                    AS registered_inactive_users
+           , SUM(NULLIF(a.registered_deactivated_users, 0))                                 AS registered_deactivated_users
+           , SUM(NULLIF(a.posts, 0))                                                        AS posts
+           , SUM(NULLIF(a.direct_message_channels, 0))                                      AS direct_message_channels
+           , SUM(NULLIF(a.outgoing_webhooks, 0))                                            AS outgoing_webhooks
+           , SUM(NULLIF(a.teams, 0))                                                        AS teams
+           , SUM(NULLIF(a.private_channels, 0))                                             AS private_channels
+           , SUM(NULLIF(a.private_channels_deleted, 0))                                     AS private_channels_deleted
+           , SUM(NULLIF(a.public_channels, 0))                                              AS public_channels
+           , SUM(NULLIF(a.public_channels_deleted, 0))                                      AS public_channels_deleted
+           , SUM(NULLIF(a.bot_accounts, 0))                                                 AS bot_accounts
+           , MAX(regexp_substr(s.version,'^[0-9]{1,2}[.]{1}[0-9]{1,2}[.]{1}[0-9]{1,2}'))    AS server_version
          FROM {{ ref('licenses') }} l
          LEFT JOIN (
                     SELECT 
