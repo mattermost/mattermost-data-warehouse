@@ -78,10 +78,10 @@ WITH license_daily_details_all as (
                       , l.date
                       , MAX(CASE WHEN a.timestamp::DATE = l.date 
                                 THEN COALESCE(a.active_users_daily, a.active_users) 
-                                    ELSE 0 END)                                  AS active_users
+                                    ELSE NULL END)                                  AS active_users
                       , MAX(CASE WHEN a.timestamp::DATE = l.date 
                                 THEN a.active_users_monthly 
-                                    ELSE 0 END)                                  AS active_users_monthly
+                                    ELSE NULL END)                                  AS active_users_monthly
                       , MAX(CASE WHEN a.timestamp::DATE = l.date
                                 THEN a.registered_users 
                                     ELSE 0 END)                                  AS registered_users
