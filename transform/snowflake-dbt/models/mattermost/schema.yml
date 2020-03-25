@@ -31,9 +31,3 @@ models:
   
   - name: server_daily_details_ext
     description: Contains daily snapshot of all server-related fields and dimensions from staging server details tables per server.
-
-  - name: licenses
-    description: Contains the license data with feature configuration as an aggregated table from both raw.mattermost2.license and raw.licenses.licenses.
-  
-  - name: license_daily_details
-    description: Contatins a daily snapshot of licenses to trend licenses and configurations over time.
