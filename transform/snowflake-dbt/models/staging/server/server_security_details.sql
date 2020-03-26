@@ -103,7 +103,7 @@ WITH security                AS (
            , l.edition
            , l.issued_date
            , l.start_date
-           , l.server_expire_date          AS expire_date
+           , l.server_expire_date_join          AS expire_date
            , l.master_account_sfid
            , l.master_account_name
            , l.account_sfid
@@ -165,8 +165,12 @@ WITH security                AS (
          FROM server_details s
               LEFT JOIN license
                         ON s.id = license.server_id
-                            AND s.date >= license.issued_date
+                            AND s.date >= license.start_date
                             AND s.date <= license.expire_date
+                            AND CASE WHEN l.has_trial_and_non_trial AND NOT l.trial THEN TRUE
+                                  WHEN NOT l.has_trial_and_non_trial AND l.trial THEN TRUE
+                                  WHEN NOT l.has_trial_and_non_trial AND NOT l.trial THEN TRUE
+                                  ELSE FALSE END
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 18, 19
      )
 SELECT *
