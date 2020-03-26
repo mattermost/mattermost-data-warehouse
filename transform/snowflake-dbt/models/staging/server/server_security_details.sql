@@ -168,9 +168,9 @@ WITH security                AS (
                         ON s.id = license.server_id
                             AND s.date >= license.start_date
                             AND s.date <= license.expire_date
-                            AND CASE WHEN l.has_trial_and_non_trial AND NOT l.trial THEN TRUE
-                                  WHEN NOT l.has_trial_and_non_trial AND l.trial THEN TRUE
-                                  WHEN NOT l.has_trial_and_non_trial AND NOT l.trial THEN TRUE
+                            AND CASE WHEN license.has_trial_and_non_trial AND NOT license.trial THEN TRUE
+                                  WHEN NOT license.has_trial_and_non_trial AND license.trial THEN TRUE
+                                  WHEN NOT license.has_trial_and_non_trial AND NOT licensel.trial THEN TRUE
                                   ELSE FALSE END
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 18, 19
      )
