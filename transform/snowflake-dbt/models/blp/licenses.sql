@@ -262,6 +262,15 @@ WITH license        AS (
            , ld.feature_saml
            , ld.timestamp
            , ld.id
+           , CASE WHEN
+                  COUNT(CASE WHEN REGEXP_SUBSTR(company, '[^a-zA-Z]TRIAL$') in ('-TRIAL', 'TRIAL', ' TRIAL') THEN ld.server_id
+                          WHEN DATEDIFF(day, ld.start_date, ld.expire_date) <= 35 THEN ld.server_id
+                          ELSE NULL END) OVER (PARTITION BY ld.date, ld.server_id) >= 1
+              AND COUNT(ld.server_id) OVER (PARTITION BY ld.date, ld.server_Id) > 
+                  COUNT(CASE WHEN REGEXP_SUBSTR(company, '[^a-zA-Z]TRIAL$') in ('-TRIAL', 'TRIAL', ' TRIAL') THEN ld.server_id
+                          WHEN DATEDIFF(day, ld.start_date, ld.expire_date) <= 35 THEN ld.server_id
+                          ELSE NULL END) OVER (PARTITION BY ld.date, ld.server_id)
+              THEN TRUE ELSE FALSE END      AS has_trial_and_non_trial
          FROM license_details_all ld
          {% if is_incremental() %}
 
