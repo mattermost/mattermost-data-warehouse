@@ -29,7 +29,7 @@ WITH max_timestamp              AS (
            , l.edition
            , l.issued_date
            , l.start_date
-           , l.server_expire_date   AS expire_date
+           , l.server_expire_date_join   AS expire_date
            , l.master_account_sfid
            , l.master_account_name
            , l.account_sfid
@@ -98,6 +98,10 @@ WITH max_timestamp              AS (
                         ON s.user_id = license.server_id
                             AND s.timestamp::date >= license.issued_date
                             AND s.timestamp::date <= license.expire_date
+                            AND CASE WHEN l.has_trial_and_non_trial AND NOT l.trial THEN TRUE
+                                  WHEN NOT l.has_trial_and_non_trial AND l.trial THEN TRUE
+                                  WHEN NOT l.has_trial_and_non_trial AND NOT l.trial THEN TRUE
+                                  ELSE FALSE END
          GROUP BY 1, 2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
      )
 SELECT *
