@@ -53,7 +53,7 @@ WITH license_daily_details as (
          FROM {{ ref('licenses') }} l
          WHERE l.date <= CURRENT_DATE - INTERVAL '1 day'
          AND l.date <= l.server_expire_date_join
-         AND l.date >= l.issued_date
+         AND l.date >= l.start_date
          AND CASE WHEN l.has_trial_and_non_trial AND NOT l.trial THEN TRUE
               WHEN NOT l.has_trial_and_non_trial AND l.trial THEN TRUE
               WHEN NOT l.has_trial_and_non_trial AND NOT l.trial THEN TRUE
