@@ -15,7 +15,7 @@ WITH license_daily_details as (
            , l.trial
            , l.issued_date
            , l.start_date
-           , l.server_expire_date                                                AS expire_date
+           , l.server_expire_date_join                                               AS expire_date
            , l.master_account_sfid
            , l.master_account_name
            , l.account_sfid
@@ -52,7 +52,7 @@ WITH license_daily_details as (
            , MAX(l.timestamp)                                                        AS timestamp
          FROM {{ ref('licenses') }} l
          WHERE l.date <= CURRENT_DATE - INTERVAL '1 day'
-         AND l.date <= l.server_expire_date
+         AND l.date <= l.server_expire_date_join
          AND l.date >= l.issued_date
          AND CASE WHEN l.has_trial_and_non_trial AND NOT l.trial THEN TRUE
               WHEN NOT l.has_trial_and_non_trial AND l.trial THEN TRUE
