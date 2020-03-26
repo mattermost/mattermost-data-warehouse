@@ -103,7 +103,7 @@ WITH security                AS (
            , l.edition
            , l.issued_date
            , l.start_date
-           , l.expire_date
+           , l.server_expire_date          AS expire_date
            , l.master_account_sfid
            , l.master_account_name
            , l.account_sfid
@@ -136,7 +136,7 @@ WITH security                AS (
            , l.feature_office365
            , l.feature_password
            , l.feature_saml
-         FROM {{ source('mattermost','licenses') }} l
+         FROM {{ ref('licenses') }} l
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
          , 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40
      ),
@@ -165,7 +165,7 @@ WITH security                AS (
          FROM server_details s
               LEFT JOIN license
                         ON s.id = license.server_id
-                            AND s.date >= license.start_date
+                            AND s.date >= license.issued_date
                             AND s.date <= license.expire_date
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 18, 19
      )
