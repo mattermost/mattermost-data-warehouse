@@ -54,9 +54,9 @@ WITH license_daily_details as (
          WHERE l.date <= CURRENT_DATE - INTERVAL '1 day'
          AND l.date <= l.server_expire_date
          AND l.date >= l.issued_date
-         AND CASE WHEN l.has_trial_and_nontrial AND NOT l.trial THEN TRUE
-              WHEN NOT l.has_trial_and_nontrial AND l.trial THEN TRUE
-              WHEN NOT l.has_trial_and_nontrial AND NOT l.trial THEN TRUE
+         AND CASE WHEN l.has_trial_and_non_trial AND NOT l.trial THEN TRUE
+              WHEN NOT l.has_trial_and_non_trial AND l.trial THEN TRUE
+              WHEN NOT l.has_trial_and_non_trial AND NOT l.trial THEN TRUE
               ELSE FALSE END
          {% if is_incremental() %}
 
