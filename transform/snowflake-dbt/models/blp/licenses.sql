@@ -205,7 +205,7 @@ WITH license        AS (
                     THEN lead(ld.start_date, 3) OVER (PARTITION BY ld.date, ld.server_id, ld.customer_id,
                   CASE WHEN REGEXP_SUBSTR(company, '[^a-zA-Z]TRIAL$') in ('-TRIAL', 'TRIAL', ' TRIAL') THEN TRUE 
                   WHEN DATEDIFF(day, ld.start_date, ld.expire_date) <= 35 THEN TRUE
-                  ELSE FALSE END ORDER BY ld.start_date, ld.users) - INTERVAL '1 DAY'
+                  ELSE FALSE END ORDER BY ld.start_date, ld.users) - INTERVAL '3 DAY'
                   WHEN lead(ld.start_date, 1) OVER (PARTITION BY ld.date, ld.server_id, ld.customer_id,
                   CASE WHEN REGEXP_SUBSTR(company, '[^a-zA-Z]TRIAL$') in ('-TRIAL', 'TRIAL', ' TRIAL') THEN TRUE 
                   WHEN DATEDIFF(day, ld.start_date, ld.expire_date) <= 35 THEN TRUE
@@ -217,7 +217,7 @@ WITH license        AS (
                     THEN lead(ld.start_date, 2) OVER (PARTITION BY ld.date, ld.server_id, ld.customer_id,
                   CASE WHEN REGEXP_SUBSTR(company, '[^a-zA-Z]TRIAL$') in ('-TRIAL', 'TRIAL', ' TRIAL') THEN TRUE 
                   WHEN DATEDIFF(day, ld.start_date, ld.expire_date) <= 35 THEN TRUE
-                  ELSE FALSE END ORDER BY ld.start_date, ld.users) - INTERVAL '1 DAY'
+                  ELSE FALSE END ORDER BY ld.start_date, ld.users) - INTERVAL '2 DAY'
                   WHEN lead(ld.start_date, 1) OVER (PARTITION BY ld.date, ld.server_id, ld.customer_id,
                   CASE WHEN REGEXP_SUBSTR(company, '[^a-zA-Z]TRIAL$') in ('-TRIAL', 'TRIAL', ' TRIAL') THEN TRUE 
                   WHEN DATEDIFF(day, ld.start_date, ld.expire_date) <= 35 THEN TRUE
@@ -286,7 +286,7 @@ WITH license        AS (
                     THEN lead(ld.start_date, 3) OVER (PARTITION BY ld.date, ld.server_id,
                   CASE WHEN REGEXP_SUBSTR(company, '[^a-zA-Z]TRIAL$') in ('-TRIAL', 'TRIAL', ' TRIAL') THEN TRUE 
                   WHEN DATEDIFF(day, ld.start_date, ld.expire_date) <= 35 THEN TRUE
-                  ELSE FALSE END ORDER BY ld.start_date, ld.users) - INTERVAL '1 DAY'
+                  ELSE FALSE END ORDER BY ld.start_date, ld.users) - INTERVAL '3 DAY'
                   WHEN lead(ld.start_date, 1) OVER (PARTITION BY ld.date, ld.server_id,
                   CASE WHEN REGEXP_SUBSTR(company, '[^a-zA-Z]TRIAL$') in ('-TRIAL', 'TRIAL', ' TRIAL') THEN TRUE 
                   WHEN DATEDIFF(day, ld.start_date, ld.expire_date) <= 35 THEN TRUE
@@ -298,7 +298,7 @@ WITH license        AS (
                     THEN lead(ld.start_date, 2) OVER (PARTITION BY ld.date, ld.server_id,
                   CASE WHEN REGEXP_SUBSTR(company, '[^a-zA-Z]TRIAL$') in ('-TRIAL', 'TRIAL', ' TRIAL') THEN TRUE 
                   WHEN DATEDIFF(day, ld.start_date, ld.expire_date) <= 35 THEN TRUE
-                  ELSE FALSE END ORDER BY ld.start_date, ld.users) - INTERVAL '1 DAY'
+                  ELSE FALSE END ORDER BY ld.start_date, ld.users) - INTERVAL '2 DAY'
                   WHEN lead(ld.start_date, 1) OVER (PARTITION BY ld.date, ld.server_id,
                   CASE WHEN REGEXP_SUBSTR(company, '[^a-zA-Z]TRIAL$') in ('-TRIAL', 'TRIAL', ' TRIAL') THEN TRUE 
                   WHEN DATEDIFF(day, ld.start_date, ld.expire_date) <= 35 THEN TRUE
