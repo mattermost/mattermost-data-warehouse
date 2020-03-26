@@ -62,9 +62,11 @@ WITH max_timestamp              AS (
            , l.feature_office365
            , l.feature_password
            , l.feature_saml
+           , l.has_trial_and_non_trial
+           , l.trial
          FROM {{ ref('licenses') }} l
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
-         , 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40
+         , 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42
      ),
      server_server_details AS (
          SELECT
@@ -98,9 +100,9 @@ WITH max_timestamp              AS (
                         ON s.user_id = license.server_id
                             AND s.timestamp::date >= license.issued_date
                             AND s.timestamp::date <= license.expire_date
-                            AND CASE WHEN l.has_trial_and_non_trial AND NOT l.trial THEN TRUE
-                                  WHEN NOT l.has_trial_and_non_trial AND l.trial THEN TRUE
-                                  WHEN NOT l.has_trial_and_non_trial AND NOT l.trial THEN TRUE
+                            AND CASE WHEN license.has_trial_and_non_trial AND NOT license.trial THEN TRUE
+                                  WHEN NOT license.has_trial_and_non_trial AND license.trial THEN TRUE
+                                  WHEN NOT license.has_trial_and_non_trial AND NOT license.trial THEN TRUE
                                   ELSE FALSE END
          GROUP BY 1, 2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
      )
