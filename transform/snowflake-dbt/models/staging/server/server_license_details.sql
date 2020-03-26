@@ -53,9 +53,10 @@ WITH license_daily_details as (
          FROM {{ ref('licenses') }} l
          WHERE l.date <= CURRENT_DATE - INTERVAL '1 day'
          AND l.date <= l.server_expire_date
+         AND l.date >= l.issued_date
          {% if is_incremental() %}
 
-         AND l.date >= (SELECT MAX(date) FROM {{this}})
+         AND l.date > (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
          {{ dbt_utils.group_by(n=43) }}
