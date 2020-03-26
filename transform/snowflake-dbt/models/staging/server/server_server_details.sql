@@ -98,7 +98,7 @@ WITH max_timestamp              AS (
                        AND s.timestamp = mt.max_timestamp
               LEFT JOIN license
                         ON s.user_id = license.server_id
-                            AND s.timestamp::date >= license.start_date
+                            AND s.timestamp::date >= license.issued_date
                             AND s.timestamp::date <= license.expire_date
                             AND CASE WHEN license.has_trial_and_non_trial AND NOT license.trial THEN TRUE
                                   WHEN NOT license.has_trial_and_non_trial AND license.trial THEN TRUE

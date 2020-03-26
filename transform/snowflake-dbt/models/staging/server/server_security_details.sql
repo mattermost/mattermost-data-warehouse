@@ -167,7 +167,7 @@ WITH security                AS (
          FROM server_details s
               LEFT JOIN license
                         ON s.id = license.server_id
-                            AND s.date >= license.start_date
+                            AND s.date >= license.issued_date
                             AND s.date <= license.expire_date
                             AND CASE WHEN license.has_trial_and_non_trial AND NOT license.trial THEN TRUE
                                   WHEN NOT license.has_trial_and_non_trial AND license.trial THEN TRUE
