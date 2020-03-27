@@ -61,7 +61,7 @@ WITH license        AS (
          SELECT
              m.date                              AS date
            , m.license_id
-           , MAX(m.server_id)                                                        AS server_id
+           , m.server_id                                                             AS server_id
            , MAX(m.customer_id)                                                      AS customer_id
            , MAX(m.edition)                                                          AS edition
            , MAX(m.issued_date)                                                      AS issued_date
@@ -97,7 +97,7 @@ WITH license        AS (
                        AND l.user_id = m.server_id
                        AND l.customer_id = m.customer_id
                        AND l.timestamp = m.max_timestamp
-         {{ dbt_utils.group_by(n=2) }}
+         {{ dbt_utils.group_by(n=3) }}
      ),
 
      license_overview AS (
