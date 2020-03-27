@@ -128,7 +128,6 @@ WITH license_daily_details_all as (
                          JOIN {{ source('mattermost2', 'activity') }} a
                               ON l.server_id = a.user_id
                               AND a.timestamp::DATE <= l.date
-                              AND a.timestamp::DATE >= l.issued_date
                     {{ dbt_utils.group_by(n=2) }}
          ) a
                    ON l.server_id = a.user_id
