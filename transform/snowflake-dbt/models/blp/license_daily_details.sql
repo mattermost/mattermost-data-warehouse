@@ -157,20 +157,20 @@ WITH license_daily_details_all as (
           , ld.customer_id
           , ld.company
           , ld.trial
-          , MIN(ld.issued_date) OVER (PARTITION BY ld.date, ld.customer_id)                 AS issued_date
-          , MIN(ld.start_date) OVER (PARTITION BY ld.date, ld.customer_id)                  AS start_date
-          , MAX(ld.expire_date) OVER (PARTITION BY ld.date, ld.customer_id)                 AS expire_date
-          , MAX(ld.master_account_sfid) OVER (PARTITION BY ld.date, ld.customer_id)         AS master_account_sfid
-          , MAX(ld.master_account_name) OVER (PARTITION BY ld.date, ld.customer_id)         AS master_account_name
-          , MAX(ld.account_sfid) OVER (PARTITION BY ld.date, ld.customer_id)                AS account_sfid
-          , MAX(ld.account_name) OVER (PARTITION BY ld.date, ld.customer_id)                AS account_name
+          , MIN(ld.issued_date) OVER (PARTITION BY ld.date, ld.customer_id, ld.license_id)         AS issued_date
+          , MIN(ld.start_date) OVER (PARTITION BY ld.date, ld.customer_id, ld.license_id)          AS start_date
+          , MAX(ld.expire_date) OVER (PARTITION BY ld.date, ld.customer_id, ld.license_id)         AS expire_date
+          , MAX(ld.master_account_sfid) OVER (PARTITION BY ld.date, ld.customer_id, ld.license_id) AS master_account_sfid
+          , MAX(ld.master_account_name) OVER (PARTITION BY ld.date, ld.customer_id, ld.license_id) AS master_account_name
+          , MAX(ld.account_sfid) OVER (PARTITION BY ld.date, ld.customer_id, ld.license_id)        AS account_sfid
+          , MAX(ld.account_name) OVER (PARTITION BY ld.date, ld.customer_id, ld.license_id)        AS account_name
           , ld.license_email
           , ld.contact_sfid
           , ld.contact_email
           , ld.number
           , ld.stripeid
           , CASE WHEN ld.edition IS NOT NULL THEN ld.edition
-                 WHEN MAX(ld.feature_compliance) OVER (PARTITION BY ld.date, ld.customer_id) 
+                 WHEN MAX(ld.feature_compliance) OVER (PARTITION BY ld.date, ld.customer_id, ld.license_id) 
                  THEN 'E20' ELSE 'E10' END                                                   AS edition
           , ld.users                                                                         AS license_users
           , MAX(ld.users) OVER (PARTITION BY ld.date, ld.customer_id)                        AS customer_users
@@ -205,6 +205,8 @@ WITH license_daily_details_all as (
           , MAX(ld.server_mau) OVER (PARTITION BY ld.date, ld.customer_id)                   AS customer_server_mau
           , ld.last_telemetry_date                                                           AS last_license_telemetry_date
           , MAX(ld.last_telemetry_date) OVER (PARTITION BY ld.date, ld.customer_id)          AS last_customer_telemetry_date
+          , ld.first_telemetry_date                                                          AS first_license_telemetry_date
+          , MIN(ld.first_telemetry_date) OVER (PARTITION BY ld.date, ld.customer_id)         AS first_customer_telemetry_date
           , ld.registered_users                                                              AS license_registered_users
           , MAX(ld.registered_users) OVER (PARTITION BY ld.date, ld.customer_id)             AS customer_registered_users
           , ld.registered_inactive_users                                                     AS license_registered_inactive_users
