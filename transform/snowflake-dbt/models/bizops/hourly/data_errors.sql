@@ -32,11 +32,11 @@ WITH data_errors AS (
         'opportunity' AS object,
         opportunity.sfid AS object_id,
         'oppt open in prior month' AS error_short,
-        'oppt open in prior month/' || o.name  || '/' || u.name AS error_long
+        'oppt open in prior month/' || opportunity.name  || '/' || opportunity_owner.name AS error_long
     FROM {{ source('orgm','opportunity')}}
     JOIN {{ source('orgm','user')}} AS opportunity_owner ON opportunity.ownerid = opportunity_owner.sfid
     WHERE opportunity.status_wlo__c = 'Open' 
-        AND to_char(opportunity.closedate,'YYYY-MM') < to_char(NOW(),'YYYY-MM')
+        AND to_char(opportunity.closedate,'YYYY-MM') < to_char(current_date,'YYYY-MM')
 )
 
 SELECT * FROM data_errors
