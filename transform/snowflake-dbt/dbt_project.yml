@@ -41,7 +41,8 @@ models:
 
   mm_snowflake:
     bizops:
-      tags: ["bizops", "nightly"]
+      nightly:
+        tags: ["bizops", "nightly"]
 
     blp:
       tags: "blp"
