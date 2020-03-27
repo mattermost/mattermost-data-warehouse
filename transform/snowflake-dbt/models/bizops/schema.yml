@@ -6,3 +6,6 @@ models:
 
     - name: snowflake_warehouse_cost
       description: 'How long we used each virtual warehouse per day and how much it cost us in Snowflake'
+
+    - name: data_errors
+      description: 'Errors from different data checks'

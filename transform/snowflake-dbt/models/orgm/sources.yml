@@ -43,3 +43,6 @@ sources:
 
       - name: tasks_filtered
         description: 'SFDC Tasks with Marketo removed'
+
+      - name: user
+        description: 'SFDC User'
