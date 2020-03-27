@@ -46,13 +46,34 @@ default_args = {
 # Create the DAG
 dag = DAG("dbt_nightly", default_args=default_args, schedule_interval="0 7 * * *")
 
+seed_dag = DAG("dbt_seeds", default_args=default_args, schedule_interval=None)
+
+dbt_seed_unscheduled = KubernetesPodOperator(
+    **pod_defaults,
+    image=DBT_IMAGE,
+    task_id="dbt-seed-unscheduled",
+    name="dbt-seed-unscheduled",
+    secrets=[
+        SNOWFLAKE_ACCOUNT,
+        SNOWFLAKE_USER,
+        SNOWFLAKE_PASSWORD,
+        SNOWFLAKE_TRANSFORM_ROLE,
+        SNOWFLAKE_TRANSFORM_WAREHOUSE,
+        SNOWFLAKE_TRANSFORM_SCHEMA,
+        SSH_KEY,
+    ],
+    env_vars=env_vars,
+    arguments=[dbt_install_deps_and_seed_cmd],
+    dag=dag,
+)
+
 # dbt-run
 dbt_run_cmd = f"""
     {dbt_install_deps_cmd} &&
     SNOWFLAKE_TRANSFORM_WAREHOUSE=transform_l dbt run --profiles-dir profile --models tag:nightly
 """
 
-dbt_seed = KubernetesPodOperator(
+dbt_seed_nightly = KubernetesPodOperator(
     **pod_defaults,
     image=DBT_IMAGE,
     task_id="dbt-seed",
