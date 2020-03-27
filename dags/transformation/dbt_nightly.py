@@ -64,7 +64,7 @@ dbt_seed_unscheduled = KubernetesPodOperator(
     ],
     env_vars=env_vars,
     arguments=[dbt_install_deps_and_seed_cmd],
-    dag=dag,
+    dag=seed_dag,
 )
 
 # dbt-run
@@ -112,4 +112,4 @@ dbt_run = KubernetesPodOperator(
     dag=dag,
 )
 
-dbt_seed >> dbt_run
+dbt_seed_nightly >> dbt_run
