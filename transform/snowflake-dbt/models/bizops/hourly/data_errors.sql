@@ -13,7 +13,7 @@ WITH data_errors AS (
     FROM {{ source('orgm','account')}}
     JOIN {{ source('orgm','opportunity')}} ON opportunity.accountid = account.sfid
     WHERE opportunity.status_wlo__c = 'Open'
-        AND opportunity.csm_owner__c <> account.csm_lookup__c;
+        AND opportunity.csm_owner__c <> account.csm_lookup__c
     
     UNION ALL
 
@@ -29,14 +29,14 @@ WITH data_errors AS (
     UNION ALL
 
     SELECT
-        'opportunity' as object,
-        opportunity.sfid as object_id,
-        'oppt open in prior month' as error_short,
-        'oppt open in prior month/' || o.name  || '/' || u.name as error_long
+        'opportunity' AS object,
+        opportunity.sfid AS object_id,
+        'oppt open in prior month' AS error_short,
+        'oppt open in prior month/' || opportunity.name  || '/' || opportunity_owner.name AS error_long
     FROM {{ source('orgm','opportunity')}}
     JOIN {{ source('orgm','user')}} AS opportunity_owner ON opportunity.ownerid = opportunity_owner.sfid
     WHERE opportunity.status_wlo__c = 'Open' 
-        AND to_char(opportunity.closedate,'YYYY-MM') < to_char(NOW(),'YYYY-MM')
+        AND to_char(opportunity.closedate,'YYYY-MM') < to_char(current_date,'YYYY-MM')
 )
 
 SELECT * FROM data_errors
