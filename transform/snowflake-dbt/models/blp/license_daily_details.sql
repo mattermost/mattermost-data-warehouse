@@ -52,6 +52,7 @@ WITH license_daily_details_all as (
            , MAX(l.timestamp)                                                               AS timestamp
            , COUNT(DISTINCT l.server_id)                                                    AS servers
            , MAX(a.timestamp::DATE)                                                         AS last_telemetry_date
+           , MIN(a.min_telemetry_date::DATE)                                                AS first_telemetry_date
            , CASE WHEN SUM(e.dau_total) >= SUM(a.active_users)
                         THEN SUM(e.dau_total) ELSE SUM(a.active_users)
                         END                                                                 AS server_dau
@@ -122,10 +123,12 @@ WITH license_daily_details_all as (
                                 THEN a.context_library_version 
                                     ELSE NULL END)                                  AS server_version
                       , MAX(a.timestamp::date)                                   AS timestamp
+                      , MIN(a.timestamp::date)                                   AS min_telemetry_date
                     FROM {{ ref('licenses') }} l
                          JOIN {{ source('mattermost2', 'activity') }} a
                               ON l.server_id = a.user_id
                               AND a.timestamp::DATE <= l.date
+                              AND a.timestamp::DATE >= l.issued_date
                     {{ dbt_utils.group_by(n=2) }}
          ) a
                    ON l.server_id = a.user_id
