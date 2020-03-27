@@ -21,21 +21,20 @@ WITH data_errors AS (
         account.sfid AS object_id,
         'Customer, no ARR' AS error_short,
         'Type = Customer, ARR = 0' AS error_long
-    FROM account
-    WHERE arr_current__c =0
-    AND type = 'Customer'
+    FROM {{ source('orgm','account')}}
+    WHERE account.arr_current__c =0
+        AND account.type = 'Customer'
                    
     UNION ALL
                    
     SELECT
         'account' AS object,
-        a.sfid AS object_id,
+        account.sfid AS object_id,
         'Owner not Rep' AS error_short,
         'Account owner System Type <> Rep' AS error_long
-    FROM account a, "user" u
-    WHERE
-        a.ownerid = u.sfid AND
-        u.system_type__c <> 'Rep'
+    FROM {{ source('orgm','account')}}
+    JOIN {{ source('orgm','user')}} AS account_owner ON account.ownerid = account_owner.sfid
+    WHERE account_owner.system_type__c <> 'Rep'
                    
     UNION ALL
                         
