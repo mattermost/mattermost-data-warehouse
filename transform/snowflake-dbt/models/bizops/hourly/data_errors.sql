@@ -98,6 +98,30 @@ WITH data_errors AS (
     JOIN {{ source('orgm','user')}} AS opportunity_owner ON opportunity.ownerid = opportunity_owner.sfid
     WHERE opportunity.status_wlo__c = 'Open' 
         AND to_char(opportunity.closedate,'YYYY-MM') < to_char(current_date,'YYYY-MM')
+                   
+    UNION ALL
+
+    SELECT
+        'opportunity' AS object,
+        opportunity.sfid AS object_id,
+        'Owner not Rep' AS error_short,
+        'Oppt not owned by rep/' || opportunity.name  || '/' || opportunity_owner.name AS error_long
+    FROM {{ source('orgm','opportunity')}}
+    JOIN {{ source('orgm','user')}} AS opportunity_owner ON opportunity.ownerid = opportunity_owner.sfid
+    WHERE opportunity_owner.system_type__c <> 'Rep'
+                   
+    UNION ALL
+
+    SELECT
+        'opportunity' AS object,
+        opportunity.sfid AS object_id,
+        'No license key' AS error_short,
+        'Closed Won - No license key/' || opportunity.name  || '/' || opportunity_owner.name AS error_long
+    FROM {{ source('orgm','opportunity')}}
+    JOIN {{ source('orgm','user')}} AS opportunity_owner ON opportunity.ownerid = opportunity_owner.sfid
+    WHERE COALESCE(opportunity.license_key__c,'') = ''
+       AND opportunity.status_wlo__c = 'Won'
+       AND to_char(opportunity.closedate, 'YYYY-MM') >= '2018-02'
 )
 
 SELECT * FROM data_errors
