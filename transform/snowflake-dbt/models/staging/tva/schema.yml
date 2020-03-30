@@ -23,9 +23,6 @@ models:
   - name: tva_bookings_exp_by_mo
     description: Expansion Bookings by Month Target vs Actuals for the Current Fiscal Year
 
-  - name: tva_bookings_ren_by_mo
-    description: Renewal Bookings by Month Target vs Actuals for the Current Fiscal Year
-
   - name: tva_tedas_7day_by_mo
     description: TEDAS > 7 Day by Month Target vs Actuals for the Current Fiscal Year
   
