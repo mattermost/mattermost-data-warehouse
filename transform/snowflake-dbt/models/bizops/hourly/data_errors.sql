@@ -38,7 +38,45 @@ WITH data_errors AS (
     WHERE account_owner.system_type__c <> 'Rep'
                    
     UNION ALL
-                        
+                   
+    SELECT
+        'account' AS object,
+        account.sfid AS object_id,
+        'No Website' AS error_short,
+        'No Website,Type = Customer' AS error_long
+    FROM {{ source('orgm','account')}}
+    WHERE COALESCE(account.company_type__c,'') =''
+        AND account.type = 'Customer'
+                   
+    UNION ALL
+                   
+    SELECT
+        'account' AS object,
+        account.sfid AS object_id,
+        'Dupe Domain' AS error_short,
+        'Duplicate Domain (not blank)' AS error_long
+    FROM {{ source('orgm','account')}}
+    WHERE COALESCE(cbit__clearbitdomain__c,'') IN
+        (SELECT cbit__clearbitdomain__c
+         FROM {{ source('orgm','account')}}
+         WHERE COALESCE(cbit__clearbitdomain__c,'')<>''
+         GROUP BY 1
+         HAVING count(*) > 1
+        )
+                   
+    UNION ALL 
+            
+    SELECT
+        'account' AS object,
+        account.sfid AS object_id,
+        'No CSM' AS error_short,
+        'No CSM,Type = Customer' AS error_long
+    FROM {{ source('orgm','account')}}
+    WHERE COALESCE(account.csm_lookup__c,'') =''
+        AND account.type = 'Customer'
+                   
+    UNION ALL                   
+           
     SELECT
         'opportunity' AS object,
         opportunity.sfid AS object_id,
