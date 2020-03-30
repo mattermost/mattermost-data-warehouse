@@ -108,7 +108,7 @@ WITH mobile_events       AS (
            , CASE WHEN MAX(e.user_role) = 'system_user' THEN TRUE ELSE FALSE END                      AS system_user
            , e.os
            , e.browser
-           , r.version                                                                                AS browser_version
+           , e.version                                                                                AS browser_version
            , r.event_id                                                                               AS event_id
            , e.event_name
            , sum(e.num_events)                                                                        AS total_events
