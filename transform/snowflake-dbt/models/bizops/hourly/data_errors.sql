@@ -13,7 +13,7 @@ WITH data_errors AS (
     FROM {{ source('orgm','account')}}
     JOIN {{ source('orgm','user')}} AS account_owner ON account.ownerid = account_owner.sfid
     WHERE account_owner.lastname = 'Brown'
-        AND COALESCE(account_owner.company_type__c,'') =''
+        AND COALESCE(account.company_type__c,'') =''
     
     UNION ALL
                    
