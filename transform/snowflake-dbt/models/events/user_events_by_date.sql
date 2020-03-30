@@ -11,8 +11,8 @@ WITH mobile_events       AS (
       , m.user_actual_id        AS user_id
       , min(m.user_actual_role) AS user_role
       , CASE
-          WHEN context_device_type = 'ios' THEN 'iPhone App'            
-          WHEN context_device_type = 'android' THEN 'Android App'
+          WHEN context_device_type = 'ios' THEN 'iPhone'            
+          WHEN context_device_type = 'android' THEN 'Android'
           ELSE 'Other'
           END                   AS browser
       , CASE
@@ -21,7 +21,7 @@ WITH mobile_events       AS (
           ELSE 'Other'
           END                   AS os
       , CASE
-          WHEN context_device_type = 'ios' THEN 'iOS/' || context_app_version::VARCHAR
+          WHEN context_device_type = 'ios' THEN 'iPhone/' || context_app_version::VARCHAR
           WHEN context_device_type = 'android' THEN  'Android/'|| context_app_version::VARCHAR
           ELSE 'Other'
           END                   AS version
@@ -45,13 +45,16 @@ WITH mobile_events       AS (
            , e.user_actual_id                                                                          AS user_id
            , min(e.user_actual_role)                                                                   AS user_role
            , CASE
+              WHEN context_user_agent LIKE '%iPhone%'    THEN 'iPhone'
+              WHEN context_user_agent LIKE '%iPad%'      THEN 'iPad'
+              WHEN context_user_agent LIKE '%Android%'   THEN 'Android'
               WHEN context_user_agent LIKE '%Electron/%' THEN 'Electron'
               WHEN context_user_agent LIKE '%Edge/%'     THEN 'Edge'
               WHEN context_user_agent LIKE '%Edg/%'      THEN 'Edge'
               WHEN context_user_agent LIKE '%MSIE%'      THEN 'IE'
               WHEN context_user_agent LIKE '%Trident/%'  THEN 'IE'
-              WHEN context_user_agent LIKE '%Chrome/%'   THEN 'Chrome'
               WHEN context_user_agent LIKE '%Firefox/%'  THEN 'Firefox'
+              WHEN context_user_agent LIKE '%Chrome/%'   THEN 'Chrome'
               WHEN context_user_agent LIKE '%Safari/%'   THEN 'Safari'
               ELSE 'Other'
               END                                                                                        AS browser
