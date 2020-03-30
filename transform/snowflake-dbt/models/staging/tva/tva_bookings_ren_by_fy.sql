@@ -7,13 +7,13 @@
 WITH tva_bookings_ren_by_fy AS (
     SELECT
         'bookings_ren_by_fy' AS target_slug,
-        util.fiscal_year(tva_bookings_ren_by_mo.month) AS fy,
+        util.fiscal_year(tva_bookings_ren_by_qtr.period_first_day) AS fy,
         min(period_first_day) AS period_first_day,
         max(period_last_day) AS period_last_day,
-        sum(tva_bookings_ren_by_mo.target) AS target,
-        sum(tva_bookings_ren_by_mo.actual) AS actual,
-        round(sum(tva_bookings_ren_by_mo.actual)/sum(tva_bookings_ren_by_mo.target),2) AS tva
-    FROM {{ ref('tva_bookings_ren_by_mo') }}
+        sum(tva_bookings_ren_by_qtr.target) AS target,
+        sum(tva_bookings_ren_by_qtr.actual) AS actual,
+        round(sum(tva_bookings_ren_by_qtr.actual)/sum(tva_bookings_ren_by_qtr.target),2) AS tva
+    FROM {{ ref('tva_bookings_ren_by_qtr') }}
     GROUP BY 1,2
 )
 
