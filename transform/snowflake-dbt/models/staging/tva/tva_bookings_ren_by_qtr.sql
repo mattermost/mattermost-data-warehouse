@@ -18,8 +18,6 @@ WITH bookings_ren AS (
 ), actual_bookings_ren_by_qtr AS (
     SELECT 
         util.fiscal_year(bookings_ren.closedate)|| '-' || util.fiscal_quarter(bookings_ren.closedate) AS qtr,
-        min(date_trunc('month', closedate)::date) AS period_first_day,
-        max(date_trunc('month', closedate)::date + interval '1 month' - interval '1 day') as period_last_day,
         sum(bookings) AS total_bookings
     FROM bookings_ren
     GROUP BY 1
@@ -27,8 +25,8 @@ WITH bookings_ren AS (
     SELECT
         'bookings_ren_by_qtr' AS target_slug,
         bookings_ren_by_qtr.qtr,
-        actual_bookings_ren_by_qtr.period_first_day,
-        actual_bookings_ren_by_qtr.period_last_day,
+        util.fiscal_quarter_start(bookings_ren_by_qtr.qtr) AS  period_first_day,
+        util.fiscal_quarter_end(bookings_ren_by_qtr.qtr) AS  period_last_day,
         bookings_ren_by_qtr.target,
         actual_bookings_ren_by_qtr.total_bookings AS actual,
         round((actual_bookings_ren_by_qtr.total_bookings/bookings_ren_by_qtr.target),2) AS tva
