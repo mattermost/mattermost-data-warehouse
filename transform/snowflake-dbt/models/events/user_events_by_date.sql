@@ -21,8 +21,8 @@ WITH mobile_events       AS (
           ELSE 'Other'
           END                   AS os
       , CASE
-          WHEN context_device_type = 'ios' THEN 'iPhone/' || context_app_version::VARCHAR
-          WHEN context_device_type = 'android' THEN  'Android/'|| context_app_version::VARCHAR
+          WHEN context_device_type = 'ios' THEN context_app_version::VARCHAR
+          WHEN context_device_type = 'android' THEN context_app_version::VARCHAR
           ELSE 'Other'
           END                   AS version
       , LOWER(m.type)           AS event_name
