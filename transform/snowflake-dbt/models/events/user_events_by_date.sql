@@ -50,11 +50,9 @@ WITH mobile_events       AS (
               WHEN context_user_agent LIKE '%Android%'   THEN 'Android'
               WHEN context_user_agent LIKE '%Electron/%' THEN 'Electron'
               WHEN context_user_agent LIKE '%Edge/%'     THEN 'Edge'
-              WHEN context_user_agent LIKE '%Edg/%'      THEN 'Edge'
               WHEN context_user_agent LIKE '%MSIE%'      THEN 'IE'
-              WHEN context_user_agent LIKE '%Trident/%'  THEN 'IE'
-              WHEN context_user_agent LIKE '%Firefox/%'  THEN 'Firefox'
               WHEN context_user_agent LIKE '%Chrome/%'   THEN 'Chrome'
+              WHEN context_user_agent LIKE '%Firefox/%'  THEN 'Firefox'
               WHEN context_user_agent LIKE '%Safari/%'   THEN 'Safari'
               ELSE 'Other'
               END                                                                                        AS browser
