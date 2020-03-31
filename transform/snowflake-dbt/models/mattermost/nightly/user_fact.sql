@@ -19,6 +19,8 @@ WITH user_events AS (
       , COUNT(CASE WHEN e1.mau_segment = 'Reengaged MAU' THEN e1.date ELSE NULL END)    AS reengaged_count
       , COUNT(CASE WHEN NOT e1.mau THEN e1.date ELSE NULL END)                          AS days_not_in_mau
       , COUNT(CASE WHEN e1.mau_segment = 'Newly Disengaged' THEN e1.date ELSE NULL END) AS disengaged_count
+      , COUNT(CASE WHEN e1.active THEN e1.date ELSE NULL END)                           AS days_active
+      , COUNT(CASE WHEN NOT e1.active THEN e1.date ELSE NULL END)                       AS days_inactive
       , MAX(e1.events_alltime)                                                          AS events_alltime
       , ROUND(SUM(e1.total_events) / COUNT(e1.date), 2)                                 AS avg_events_per_day
       , SUM(e1.web_app_events)                                                          AS webapp_events_alltime
@@ -95,6 +97,8 @@ WITH user_events AS (
            , MAX(e.reengaged_count)                                 AS reengaged_count
            , MAX(e.days_not_in_mau)                                 AS days_not_in_mau
            , MAX(e.disengaged_count)                                AS disengaged_count
+           , MAX(e.days_active)                                     AS days_active
+           , MAX(e.days_inactive)                                   AS days_inactive
            , MAX(e.events_alltime)                                  AS events_alltime
            , MAX(e.avg_events_per_day)                              AS avg_events_per_day
            , MAX(e.webapp_events_alltime)                           AS webapp_events_alltime
