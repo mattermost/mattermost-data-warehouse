@@ -75,8 +75,18 @@ WITH data_errors AS (
     WHERE COALESCE(account.csm_lookup__c,'') =''
         AND account.type = 'Customer'
                    
-    UNION ALL                   
-           
+    UNION ALL
+                   
+    SELECT
+        'account' AS object,
+        account.sfid AS object_id,
+        'No Territory' AS error_short,
+        'No TerritoryID__c' AS error_long
+    FROM {{ source('orgm','account')}}
+    WHERE COALESCE(territoryid__c,'')=''
+                   
+    UNION ALL
+                   
     SELECT
         'opportunity' AS object,
         opportunity.sfid AS object_id,
