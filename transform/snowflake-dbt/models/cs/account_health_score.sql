@@ -61,7 +61,7 @@ WITH account_health_facts AS (
        * 25 AS task_health_score,
        risk_override_score AS risk_override_score,
        round(tenure_health_score + license_end_date_health_score + ticket_health_score + task_health_score,0) AS health_score_no_override,
-       round(least(tenure_health_score + license_end_date_health_score + ticket_health_score + task_health_score,risk_override_score),0) AS health_score_w_override
+       round(coalesce(risk_override_score,tenure_health_score + license_end_date_health_score + ticket_health_score + task_health_score),0) AS health_score_w_override
     FROM account_health_facts
     WHERE account_health_facts.license_start_date <= current_date AND account_health_facts.license_end_date >= current_date
 )
