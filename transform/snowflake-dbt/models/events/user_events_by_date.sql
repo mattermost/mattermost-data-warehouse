@@ -123,6 +123,7 @@ WITH mobile_events       AS (
              e.date
            , e.server_id
            , e.user_id
+           , e.event_type
            , max(e.user_role)                                                                         AS user_role
            , CASE WHEN MAX(split_part(e.user_role, ',', 1)) = 'system_admin' THEN TRUE ELSE FALSE END AS system_admin
            , CASE WHEN MAX(e.user_role) = 'system_user' THEN TRUE ELSE FALSE END                      AS system_user
@@ -139,7 +140,7 @@ WITH mobile_events       AS (
          FROM all_events                  e
               LEFT JOIN {{ ref('events_registry') }} r
                    ON e.event_name = r.event_name
-         GROUP BY 1, 2, 3, 7, 8, 9, 10, 11, 12
+         GROUP BY 1, 2, 3, 4, 8, 9, 10, 11, 12, 13
      )
 SELECT *
 FROM user_events_by_date
