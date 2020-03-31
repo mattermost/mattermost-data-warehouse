@@ -13,8 +13,14 @@ WITH user_events AS (
       , DATEDIFF(DAY, MIN(CASE WHEN e1.total_events > 0 THEN e1.date ELSE NULL END),
                  MAX(CASE WHEN e1.total_events > 0 THEN e1.date ELSE NULL END))         AS days_first_to_last_mau
       , MIN(CASE WHEN e1.web_app_events > 0 THEN e1.date ELSE NULL END)                 AS first_webapp_date
+      , MAX(CASE WHEN e1.web_app_events > 0 THEN e1.date ELSE NULL END)                 AS last_webapp_date
+      , COUNT(CASE WHEN e1.web_app_events > 0 THEN e1.date ELSE NULL END)               AS webapp_active_days
       , MIN(CASE WHEN e1.desktop_events > 0 THEN e1.date ELSE NULL END)                 AS first_desktop_date
+      , MAX(CASE WHEN e1.desktop_events > 0 THEN e1.date ELSE NULL END)                 AS last_desktop_date
+      , COUNT(CASE WHEN e1.desktop_events > 0 THEN e1.date ELSE NULL END)               AS desktop_active_days
       , MIN(CASE WHEN e1.mobile_events > 0 THEN e1.date ELSE NULL END)                  AS first_mobile_date
+      , MAX(CASE WHEN e1.mobile_events > 0 THEN e1.date ELSE NULL END)                  AS last_mobile_date
+      , COUNT(CASE WHEN e1.mobile_events > 0 THEN e1.date ELSE NULL END)                AS mobile_active_days
       , COUNT(CASE WHEN e1.mau THEN e1.date ELSE NULL END)                              AS days_in_mau
       , COUNT(CASE WHEN e1.mau_segment = 'Reengaged MAU' THEN e1.date ELSE NULL END)    AS reengaged_count
       , COUNT(CASE WHEN NOT e1.mau THEN e1.date ELSE NULL END)                          AS days_not_in_mau
@@ -91,8 +97,14 @@ WITH user_events AS (
            , MAX(e.last_mau_date)                                   AS last_active_date
            , MAX(e.days_first_to_last_mau)                          AS days_first_to_last_active
            , MAX(e.first_webapp_date)                               AS first_webapp_date
+           , MAX(e.last_webapp_date)                                AS last_webapp_date
+           , MAX(e.webapp_active_days)                              AS webapp_active_days
            , MAX(e.first_desktop_date)                              AS first_desktop_date
+           , MAX(e.last_desktop_date)                               AS last_desktop_date
+           , MAX(e.desktop_active_days)                             AS desktop_active_days
            , MAX(e.first_mobile_date)                               AS first_mobile_date
+           , MAX(e.last_mobile_date)                                AS last_mobile_date
+           , MAX(e.mobile_active_days)                              AS mobile_active_days
            , MAX(e.days_in_mau)                                     AS days_in_mau
            , MAX(e.reengaged_count)                                 AS reengaged_count
            , MAX(e.days_not_in_mau)                                 AS days_not_in_mau
