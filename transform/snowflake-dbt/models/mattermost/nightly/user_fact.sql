@@ -1,6 +1,6 @@
 {{config({
     "materialized": 'table',
-    "schema": "events"
+    "schema": "mattermost"
   })
 }}
 
@@ -41,7 +41,7 @@ WITH user_events AS (
                    ON e1.user_id = e2.user_id
                        AND e1.date = e2.server_date
          LEFT JOIN {{ ref('server_fact') }} s
-                   ON e1.server_id = s.server_id
+                   ON TRIM(e1.server_id) = TRIM(s.server_id)
     GROUP BY 1
 ),
      user_nps    AS (
@@ -74,12 +74,12 @@ WITH user_events AS (
                          GROUP BY 1)            n2
                         ON n1.user_id = n2.user_id
               LEFT JOIN {{ ref('server_fact') }} s
-                        ON n1.server_id = s.server_id
+                        ON TRIM(n1.server_id) = TRIM(s.server_id)
          GROUP BY 1
      ),
      user_fact   AS (
          SELECT
-             COALESCE(e.user_id, n.user_id)                         AS user_id
+             TRIM(COALESCE(e.user_id, n.user_id))                   AS user_id
            , COALESCE(n.user_created_at, e.first_mau_date)          AS user_created_at
            , COALESCE(e.server_id, n.server_id)                     AS server_id
            , COALESCE(e.server_install_date, n.server_install_date) AS server_install_date
@@ -114,7 +114,7 @@ WITH user_events AS (
            , MAX(n.all_nps_feedback)                                AS all_nps_feedback
          FROM user_events              e
               FULL OUTER JOIN user_nps n
-                              ON e.user_id = n.user_id
+                              ON TRIM(e.user_id) = TRIM(n.user_id)
          GROUP BY 1, 2, 3, 4, 5, 6
      )
 SELECT *
