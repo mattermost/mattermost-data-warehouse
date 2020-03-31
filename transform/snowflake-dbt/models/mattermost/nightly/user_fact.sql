@@ -6,8 +6,8 @@
 
 WITH user_events AS (
     SELECT
-        e1.user_id
-      , MAX(CASE WHEN e2.user_id IS NOT NULL THEN e1.server_id ELSE NULL END)           AS server_id
+        TRIM(e1.user_id)                                                                AS user_id
+      , MAX(CASE WHEN e2.user_id IS NOT NULL THEN TRIM(e1.server_id) ELSE NULL END)     AS server_id
       , MIN(CASE WHEN e1.total_events > 0 THEN e1.date ELSE NULL END)                   AS first_mau_date
       , MAX(CASE WHEN e1.total_events > 0 THEN e1.date ELSE NULL END)                   AS last_mau_date
       , DATEDIFF(DAY, MIN(CASE WHEN e1.total_events > 0 THEN e1.date ELSE NULL END),
@@ -33,8 +33,8 @@ WITH user_events AS (
     FROM {{ ref('user_events_by_date_agg') }}   e1
          LEFT JOIN (
         SELECT
-            user_id
-          , MAX(date) AS server_date
+            TRIM(user_id) AS user_id
+          , MAX(date)     AS server_date
         FROM {{ ref('user_events_by_date_agg') }}
         WHERE server_id IS NOT NULL
         GROUP BY 1)                       e2
@@ -46,8 +46,8 @@ WITH user_events AS (
 ),
      user_nps    AS (
          SELECT
-             n1.user_id
-           , MAX(CASE WHEN n1.month = n2.server_month THEN n1.server_id ELSE NULL END)           AS server_id
+             TRIM(n1.user_id)                                                                    AS user_id
+           , MAX(CASE WHEN n1.month = n2.server_month THEN TRIM(n1.server_id) ELSE NULL END)     AS server_id
            , MIN(n1.server_install_date)                                                         AS server_install_date
            , MIN(n1.user_created_at)                                                             AS user_created_at
            , MIN(n1.last_score_date)                                                             AS first_nps_date
@@ -64,7 +64,7 @@ WITH user_events AS (
            , MAX(s.last_account_sfid)                                                            AS account_sfid
          FROM {{ ref('nps_user_monthly_score') }} n1
               LEFT JOIN (SELECT
-                             user_id
+                             TRIM(user_id)                                                  AS user_id
                            , MAX(CASE WHEN server_id IS NOT NULL THEN month ELSE NULL END)  AS server_month
                            , MAX(CASE WHEN license_id IS NOT NULL THEN month ELSE NULL END) AS license_month
                            , MIN(last_score_date)                                           AS first_nps_date
@@ -79,7 +79,7 @@ WITH user_events AS (
      ),
      user_fact   AS (
          SELECT
-             TRIM(COALESCE(e.user_id, n.user_id))                   AS user_id
+             COALESCE(e.user_id, n.user_id)                         AS user_id
            , COALESCE(n.user_created_at, e.first_mau_date)          AS user_created_at
            , COALESCE(e.server_id, n.server_id)                     AS server_id
            , COALESCE(e.server_install_date, n.server_install_date) AS server_install_date
@@ -114,7 +114,7 @@ WITH user_events AS (
            , MAX(n.all_nps_feedback)                                AS all_nps_feedback
          FROM user_events              e
               FULL OUTER JOIN user_nps n
-                              ON TRIM(e.user_id) = TRIM(n.user_id)
+                              ON e.user_id = n.user_id
          GROUP BY 1, 2, 3, 4, 5, 6
      )
 SELECT *
