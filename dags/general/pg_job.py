@@ -53,4 +53,4 @@ opportunity_snapshot = get_container_operator(
 )
 heroku_connect_retry = get_container_operator("heroku-connect-retry", "connect_retry")
 
-tasks_filtered >> account_arr >> account_type >> opportunity_snapshot >> opportunitylineitem_snapshot
+tasks_filtered >> account_arr >> account_type >> opportunity_snapshot >> opportunitylineitem_snapshot >> heroku_connect_retry
