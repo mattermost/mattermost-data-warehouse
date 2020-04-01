@@ -181,6 +181,6 @@ WITH min_active              AS (
          AND e1.date > (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
-         GROUP BY 1, 2
+         GROUP BY 1, 2)
 SELECT *
 FROM user_events_by_date_agg
