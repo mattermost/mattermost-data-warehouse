@@ -51,7 +51,7 @@ WITH min_active              AS (
                             AND d.date = e.date
               LEFT JOIN {{ ref('events_registry') }}     r
                         ON e.event_id = r.event_id
-         GROUP BY 1, 3, 4, 5),
+         GROUP BY 1, 2, 4, 5),
 
      mau                     AS (
          SELECT
