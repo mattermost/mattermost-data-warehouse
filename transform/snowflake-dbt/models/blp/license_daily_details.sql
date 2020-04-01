@@ -11,7 +11,7 @@ WITH license_daily_details_all as (
              l.date
            , l.license_id
            , l.customer_id
-           , l.company
+           , REPLACE(TRIM(l.company), '  ', ' ')                                 AS company
            , l.trial
            , l.issued_date
            , l.start_date
@@ -160,10 +160,10 @@ WITH license_daily_details_all as (
           , MIN(ld.issued_date) OVER (PARTITION BY ld.date, ld.customer_id, ld.license_id)         AS issued_date
           , MIN(ld.start_date) OVER (PARTITION BY ld.date, ld.customer_id, ld.license_id)          AS start_date
           , MAX(ld.expire_date) OVER (PARTITION BY ld.date, ld.customer_id, ld.license_id)         AS expire_date
-          , MAX(ld.master_account_sfid) OVER (PARTITION BY ld.date, ld.customer_id, ld.license_id) AS master_account_sfid
-          , MAX(ld.master_account_name) OVER (PARTITION BY ld.date, ld.customer_id, ld.license_id) AS master_account_name
-          , MAX(ld.account_sfid) OVER (PARTITION BY ld.date, ld.customer_id, ld.license_id)        AS account_sfid
-          , MAX(ld.account_name) OVER (PARTITION BY ld.date, ld.customer_id, ld.license_id)        AS account_name
+          , MAX(ld.master_account_sfid) OVER (PARTITION BY ld.date, ld.company) AS master_account_sfid
+          , MAX(ld.master_account_name) OVER (PARTITION BY ld.date, ld.company) AS master_account_name
+          , MAX(ld.account_sfid) OVER (PARTITION BY ld.date, ld.company)        AS account_sfid
+          , MAX(ld.account_name) OVER (PARTITION BY ld.date, ld.company)        AS account_name
           , ld.license_email
           , ld.contact_sfid
           , ld.contact_email
