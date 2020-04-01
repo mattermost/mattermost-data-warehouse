@@ -11,7 +11,7 @@ WITH license_daily_details_all as (
              l.date
            , l.license_id
            , l.customer_id
-           , l.company
+           , REPLACE(TRIM(l.company), '  ', ' ')                                 AS company
            , l.trial
            , l.issued_date
            , l.start_date
