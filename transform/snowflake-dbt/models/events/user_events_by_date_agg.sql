@@ -27,7 +27,7 @@ WITH min_active              AS (
          SELECT
              d.date
            , d.user_id
-           , d.server_id
+           , MAX(d.server_id)                                                                  AS server_id 
            , e.system_admin
            , e.system_user
            , coalesce(sum(e.total_events), 0)                                                  AS total_events
@@ -47,10 +47,11 @@ WITH min_active              AS (
          FROM dates                                d
               LEFT JOIN {{ ref('user_events_by_date') }} e
                         ON d.user_id = e.user_id
+                            AND d.server_id = e.server_id
                             AND d.date = e.date
               LEFT JOIN {{ ref('events_registry') }}     r
                         ON e.event_id = r.event_id
-         GROUP BY 1, 2, 3, 4, 5),
+         GROUP BY 1, 3, 4, 5),
 
      mau                     AS (
          SELECT
