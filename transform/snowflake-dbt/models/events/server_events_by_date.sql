@@ -28,7 +28,7 @@ WITH server_events_by_date AS (
       , SUM(api_events)                                                                             AS api_events
       , SUM(gfycat_events)                                                                          AS gfycat_events
       , SUM(performance_events)                                                                     AS performance_events
-      , SUM(plugins_events)                                                                         AS plugins_events
+      , SUM(plugin_events)                                                                         AS plugins_events
       , SUM(settings_events)                                                                        AS settings_events
       , SUM(signup_events)                                                                          AS signup_events
       , SUM(system_console_events)                                                                  AS system_console_events
