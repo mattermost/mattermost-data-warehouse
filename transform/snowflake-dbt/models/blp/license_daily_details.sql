@@ -2,6 +2,7 @@
     "materialized": 'incremental',
     "schema": "blp",
     "unique_key": 'id'
+    "tags":"nightly"
   })
 }}
 
@@ -235,7 +236,7 @@ WITH license_daily_details_all as (
           , ROW_NUMBER() OVER 
                              (PARTITION BY ld.date, ld.company, ld.trial 
                               ORDER BY CASE WHEN ld.users IS NOT NULL THEN ld.expire_date 
-                              ELSE ld.start_date END desc, ld.users desc, ld.last_telemetry_date desc, ld.edition desc)   AS customer_rank
+                              ELSE ld.start_date END desc NULLS LAST, ld.users desc NULLS LAST, ld.last_telemetry_date desc NULLS LAST, ld.edition desc NULLS LAST)   AS customer_rank
         FROM license_daily_details_all ld
      )
      SELECT *
