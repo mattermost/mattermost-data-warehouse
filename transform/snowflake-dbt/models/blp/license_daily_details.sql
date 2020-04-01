@@ -1,7 +1,7 @@
 {{config({
     "materialized": 'incremental',
     "schema": "blp",
-    "unique_key": 'id'
+    "unique_key": 'id',
     "tags":"nightly"
   })
 }}
