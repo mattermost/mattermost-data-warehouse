@@ -28,11 +28,14 @@ WITH user_events AS (
       , COUNT(CASE WHEN e1.active THEN e1.date ELSE NULL END)                           AS days_active
       , COUNT(CASE WHEN NOT e1.active THEN e1.date ELSE NULL END)                       AS days_inactive
       , MAX(e1.events_alltime)                                                          AS events_alltime
-      , ROUND(SUM(e1.total_events) / COUNT(e1.date), 2)                                 AS avg_events_per_day
+      , ROUND(SUM(e1.total_events) / 
+        COUNT(CASE WHEN e1.total_events > 0 THEN e1.date ELSE NULL END), 2)             AS avg_events_per_day
       , SUM(e1.web_app_events)                                                          AS webapp_events_alltime
-      , ROUND(SUM(e1.web_app_events) / COUNT(e1.date), 2)                               AS avg_webapp_events_per_day
+      , ROUND(SUM(e1.web_app_events) / 
+        COUNT(CASE WHEN e1.total_events > 0 THEN e1.date ELSE NULL END), 2)             AS avg_webapp_events_per_day
       , SUM(e1.desktop_events)                                                          AS desktop_events_alltime
-      , ROUND(SUM(e1.desktop_events) / COUNT(e1.date), 2)                               AS avg_desktop_events_per_day
+      , ROUND(SUM(e1.desktop_events) / 
+        COUNT(CASE WHEN e1.total_events > 0 THEN e1.date ELSE NULL END), 2)             AS avg_desktop_events_per_day
       , MAX(e1.mobile_events_alltime)                                                   AS mobile_events_alltime
       , ROUND(SUM(e1.mobile_events) / COUNT(e1.date), 2)                                AS avg_mobile_events_per_day
       , MIN(s.first_active_date)                                                        AS server_install_date
