@@ -139,7 +139,7 @@ WITH user_events AS (
                               ON e.user_id = n.user_id
          GROUP BY 1, 2, 3, 4, 5, 6
      ),
-     user_fact (
+     user_fact AS (
          SELECT
               u.user_id                                                  AS user_id
             , u.user_created_at                                          AS user_created_at
