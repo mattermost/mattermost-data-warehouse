@@ -75,6 +75,46 @@ WITH data_errors AS (
     WHERE COALESCE(account.csm_lookup__c,'') =''
         AND account.type = 'Customer'
                    
+    UNION ALL 
+            
+    SELECT
+        'contact' AS object,
+        contact.sfid AS object_id,
+        'No Contact Email' AS error_short,
+        'No Contact Email/' || name AS error_long
+    FROM {{ source('orgm','contact')}}
+    WHERE
+        COALESCE(email,'') = ''
+                   
+    UNION ALL 
+                   
+    SELECT
+        'contact' AS object,
+        contact.sfid AS object_id,
+        'No Contact Email' AS error_short,
+        'No Contact Email/' || name AS error_long
+    FROM {{ source('orgm','contact')}}
+    WHERE email IN
+    ( SELECT email
+      FROM {{ source('orgm','contact')}}
+      WHERE
+        COALESCE(email,'') <> ''
+      GROUP BY 1
+      HAVING COUNT(*)>1
+    )
+                   
+    UNION ALL 
+            
+    SELECT
+        'lead' AS object,
+        lead.sfid AS object_id,
+        'No Email' AS error_short,
+        'No Lead Email/' || name AS error_long
+    FROM {{ source('orgm','lead')}}
+    WHERE
+      COALESCE(email,'') = '' AND
+      CONVERTEDDATE IS NULL
+                       
     UNION ALL                   
            
     SELECT
