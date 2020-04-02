@@ -47,7 +47,7 @@ WITH min_active              AS (
          FROM dates                                d
               LEFT JOIN {{ ref('user_events_by_date') }} e
                         ON d.user_id = e.user_id
-                            AND d.server_id = e.server_id
+                            AND COALESCE(d.server_id,'') = COALESCE(e.server_id, '')
                             AND d.date = e.date
               LEFT JOIN {{ ref('events_registry') }}     r
                         ON e.event_id = r.event_id
