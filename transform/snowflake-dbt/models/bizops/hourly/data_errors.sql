@@ -87,6 +87,23 @@ WITH data_errors AS (
         COALESCE(email,'') = ''
                    
     UNION ALL 
+                   
+    SELECT
+        'contact' AS object,
+        contact.sfid AS object_id,
+        'No Contact Email' AS error_short,
+        'No Contact Email/' || name AS error_long
+    FROM {{ source('orgm','contact')}}
+    WHERE email IN
+    ( SELECT email
+      FROM {{ source('orgm','contact')}}
+      WHERE
+        COALESCE(email,'') <> ''
+      GROUP BY 1
+      HAVING COUNT(*)>1
+    )
+                   
+    UNION ALL 
             
     SELECT
         'lead' AS object,
