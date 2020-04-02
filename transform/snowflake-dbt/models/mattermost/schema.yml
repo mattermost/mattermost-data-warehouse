@@ -33,4 +33,7 @@ models:
     description: Contains daily snapshot of all server-related fields and dimensions from staging server details tables per server.
   
   - name: user_fact
-    description: Contains the latest User data pertaining to user activity, events performed, nps submissions, server id, account sfid, license id, etc. 
+    description: Contains the latest User data pertaining to user activity, events performed, nps submissions, server id, account sfid, license id, etc.
+
+  - name: user_daily_details
+    description: Contains a daily snapshot of a users state and all time usage/activity up to that date including activity, events, nps, server/account/license details.
