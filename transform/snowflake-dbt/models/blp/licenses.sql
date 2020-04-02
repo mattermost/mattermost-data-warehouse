@@ -265,7 +265,7 @@ WITH license        AS (
           lw.date                                     AS date
         , lw.license_id                               AS license_id
         , lw.server_id                                AS server_id
-        , MAX(lw.customer_id)                         AS customer_id
+        , lw.customer_id                              AS customer_id
         , MAX(lw.company)                             AS company
         , MAX(lw.edition)                             AS edition
         , MAX(lw.trial)                               AS trial
@@ -310,7 +310,7 @@ WITH license        AS (
         , MAX(lw.has_trial_and_non_trial)             AS has_trial_and_non_trial
         , MAX(lw.server_expire_date_join)             AS server_expire_date_join
         FROM licenses_window lw
-        {{ dbt_utils.group_by(n=44) }}
+        {{ dbt_utils.group_by(n=4) }}
      )
 SELECT *
 FROM licenses
