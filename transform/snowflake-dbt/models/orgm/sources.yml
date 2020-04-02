@@ -49,3 +49,6 @@ sources:
 
       - name: territory__c
         description: "SFDC Territory"
+
+      - name: territory_mapping__c
+        description: "SFDC Territory Mapping"
