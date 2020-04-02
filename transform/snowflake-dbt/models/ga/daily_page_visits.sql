@@ -11,7 +11,8 @@ WITH daily_page_visits AS (
         end_date,
         pagepath,
         pagetitle,
-        sum(pageviews)
+        sum(uniquepageviews) as unqiuepageviews,
+        sum(pageviews) as pageviews
     FROM {{ source('ga_mattermost_com_pages_visits', 'report') }}
     GROUP BY 1,2,3,4,5
     UNION ALL
@@ -21,6 +22,7 @@ WITH daily_page_visits AS (
         end_date,
         pagepath,
         pagetitle,
+        sum(uniquepageviews),
         sum(pageviews)
     FROM {{ source('ga_developers_pages_visits', 'report') }}
     GROUP BY 1,2,3,4,5
@@ -31,6 +33,7 @@ WITH daily_page_visits AS (
         end_date,
         split_part(pagepath,'/@mattermost/s/handbook',2),
         pagetitle,
+        sum(uniquepageviews),
         sum(pageviews)
     FROM {{ source('ga_mattermost_handbook_pages_visits', 'report') }}
     GROUP BY 1,2,3,4,5
