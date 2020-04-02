@@ -176,7 +176,7 @@ WITH license        AS (
          {{ dbt_utils.group_by(n=43) }}
      ),
 
-     licenses as (
+     licenses_window as (
          SELECT
              ld.date
            , ld.license_id
@@ -259,6 +259,58 @@ WITH license        AS (
          WHERE ld.date > (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
+     ),
+     licenses as (
+       SELECT
+          lw.date                                     AS date
+        , lw.license_id                               AS license_id
+        , lw.server_id                                AS server_id
+        , MAX(lw.customer_id)                         AS customer_id
+        , MAX(lw.company)                             AS company
+        , MAX(lw.edition)                             AS edition
+        , MAX(lw.trial)                               AS trial
+        , MAX(lw.issued_date)                         AS issued_date
+        , MAX(lw.start_date)                          AS start_date
+        , MAX(lw.expire_date)                         AS expire_date
+        , MAX(lw.server_expire_date)                  AS server_expire_date
+        , MAX(lw.master_account_sfid)                 AS master_account_sfid
+        , MAX(lw.master_account_name)                 AS master_account_name
+        , MAX(lw.account_sfid)                        AS account_sfid
+        , MAX(lw.account_name)                        AS account_name
+        , MAX(lw.license_email)                       AS license_email
+        , MAX(lw.contact_sfid)                        AS contact_sfid
+        , MAX(lw.contact_email)                       AS contact_email
+        , MAX(lw.number)                              AS number
+        , MAX(lw.stripeid)                            AS stripeid
+        , MAX(lw.users)                               AS users
+        , MAX(lw.feature_cluster)                     AS feature_cluster
+        , MAX(lw.feature_compliance)                  AS feature_compliance
+        , MAX(lw.feature_custom_brand)                AS feature_custom_brand
+        , MAX(lw.feature_custom_permissions_schemes)  AS feature_custom_permissions_schemes
+        , MAX(lw.feature_data_retention)              AS feature_data_retention
+        , MAX(lw.feature_elastic_search)              AS feature_elastic_search
+        , MAX(lw.feature_email_notification_contents) AS feature_email_notification_contents
+        , MAX(lw.feature_future)                      AS feature_future
+        , MAX(lw.feature_google)                      AS feature_google
+        , MAX(lw.feature_guest_accounts)              AS feature_guest_accounts
+        , MAX(lw.feature_guest_accounts_permissions)  AS feature_guest_accounts_permissions
+        , MAX(lw.feature_id_loaded)                   AS feature_id_loaded
+        , MAX(lw.feature_ldap)                        AS feature_ldap
+        , MAX(lw.feature_ldap_groups)                 AS feature_ldap_groups
+        , MAX(lw.feature_lock_teammate_name_display)  AS feature_lock_teammate_name_display
+        , MAX(lw.feature_message_export)              AS feature_message_export
+        , MAX(lw.feature_metrics)                     AS feature_metrics
+        , MAX(lw.feature_mfa)                         AS feature_mfa
+        , MAX(lw.feature_mhpns)                       AS feature_mhpns
+        , MAX(lw.feature_office365)                   AS feature_office365
+        , MAX(lw.feature_password)                    AS feature_password
+        , MAX(lw.feature_saml)                        AS feature_saml
+        , MAX(lw.timestamp)                           AS timestamp
+        , MAX(lw.id)                                  AS id
+        , MAX(lw.has_trial_and_non_trial)             AS has_trial_and_non_trial
+        , MAX(lw.server_expire_date_join)             AS server_expire_date_join
+        FROM licenses_window lw
+        {{ dbt_utils.group_by(n=44) }}
      )
 SELECT *
 FROM licenses
