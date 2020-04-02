@@ -7,9 +7,9 @@
 WITH mobile_events       AS (
     SELECT
         m.timestamp::DATE                AS date
-      , m.user_id                        AS server_id
-      , m.user_actual_id                 AS user_id
-      , min(m.user_actual_role)          AS user_role
+      , TRIM(m.user_id)                  AS server_id
+      , TRIM(m.user_actual_id)           AS user_id
+      , MIN(m.user_actual_role)          AS user_role
       , CASE
           WHEN context_device_type = 'ios' THEN 'iPhone'            
           WHEN context_device_type = 'android' THEN 'Android'
@@ -32,7 +32,7 @@ WITH mobile_events       AS (
       , 'mobile'                         AS event_type
       , COUNT(*)                         AS num_events
     FROM {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}} m
-    WHERE user_actual_id IS NOT NULL
+    WHERE TRIM(user_actual_id) IS NOT NULL
     AND m.timestamp::DATE <= CURRENT_DATE - INTERVAL '1 DAY'
     {% if is_incremental() %}
 
@@ -44,8 +44,8 @@ WITH mobile_events       AS (
      events              AS (
          SELECT
              e.timestamp::DATE                                                                         AS date
-           , e.user_id                                                                                 AS server_id
-           , e.user_actual_id                                                                          AS user_id
+           , TRIM(e.user_id)                                                                           AS server_id
+           , TRIM(e.user_actual_id)                                                                    AS user_id
            , min(e.user_actual_role)                                                                   AS user_role
            , CASE
               WHEN context_user_agent LIKE '%iPhone%'    THEN 'iPhone'
@@ -100,7 +100,7 @@ WITH mobile_events       AS (
            , CASE WHEN LOWER(e.context_user_agent) LIKE '%electron%' THEN 'desktop' ELSE 'web_app' END AS event_type
            , COUNT(*)                                                                                  AS num_events
          FROM {{ source('mattermost2', 'event') }} e
-         WHERE user_actual_id IS NOT NULL
+         WHERE TRIM(user_actual_id) IS NOT NULL
          AND e.timestamp::DATE <= CURRENT_DATE - INTERVAL '1 DAY'
          {% if is_incremental() %}
 
