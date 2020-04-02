@@ -113,7 +113,7 @@ WITH data_errors AS (
     FROM {{ source('orgm','lead')}}
     WHERE
       COALESCE(email,'') = '' AND
-      CONVERTEDDATE IS NULL;
+      CONVERTEDDATE IS NULL
                        
     UNION ALL                   
            
