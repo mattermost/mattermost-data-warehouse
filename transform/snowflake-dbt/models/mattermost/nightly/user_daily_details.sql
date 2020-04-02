@@ -1,5 +1,5 @@
 {{config({
-    "materialized": 'table',
+    "materialized": 'incremental',
     "schema": "mattermost"
   })
 }}
@@ -106,7 +106,7 @@ WITH user_events AS (
      ),
      user_fact_grouped   AS (
          SELECT
-             COALESCE(e.date, d.date)                               AS date
+             COALESCE(e.date, n.date)                               AS date
            , COALESCE(e.user_id, n.user_id)                         AS user_id
            , COALESCE(n.user_created_at, e.first_mau_date)          AS user_created_at
            , COALESCE(e.server_id, n.server_id)                     AS server_id
