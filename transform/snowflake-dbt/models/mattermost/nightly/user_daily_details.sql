@@ -48,6 +48,7 @@ WITH user_events AS (
     FROM {{ source('util','dates') }} d
          JOIN {{ ref('user_events_by_date_agg') }}   e1
               ON e1.date <= d.date
+              AND d.date <= CURRENT_DATE - INTERVAL '1 DAY'
          LEFT JOIN (
         SELECT
             date
@@ -84,6 +85,7 @@ WITH user_events AS (
          FROM {{ source('util','dates') }} d
               JOIN {{ ref('nps_user_monthly_score') }} n1
                     ON n1.month <= date_trunc('month', d.date)
+                    AND d.date <= CURRENT_DATE - INTERVAL '1 DAY'
               LEFT JOIN (SELECT
                              month
                            , TRIM(user_id)                                                                                AS user_id
