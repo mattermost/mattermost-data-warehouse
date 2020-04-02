@@ -182,6 +182,6 @@ WITH user_events AS (
             , u.first_nps_feedback_date                                  AS first_nps_feedback_date
             , u.last_nps_feedback_date                                   AS last_nps_feedback_date
             , u.all_nps_feedback                                         AS all_nps_feedback
-  FROM user_fact_grouped)
+  FROM user_fact_grouped u)
 SELECT *
 FROM user_fact
