@@ -27,9 +27,9 @@ WITH min_active              AS (
          SELECT
              d.date
            , d.user_id
-           , d.server_id
-           , e.system_admin
-           , e.system_user
+           , MAX(d.server_id)                                                                  AS server_id 
+           , MAX(e.system_admin)                                                               AS system_admin
+           , MAX(e.system_user)                                                                AS system_user
            , coalesce(sum(e.total_events), 0)                                                  AS total_events
            , coalesce(sum(e.desktop_events), 0)                                                AS desktop_events
            , coalesce(sum(e.web_app_events), 0)                                                AS web_app_events
@@ -47,10 +47,11 @@ WITH min_active              AS (
          FROM dates                                d
               LEFT JOIN {{ ref('user_events_by_date') }} e
                         ON d.user_id = e.user_id
+                            AND d.server_id = e.server_id
                             AND d.date = e.date
               LEFT JOIN {{ ref('events_registry') }}     r
                         ON e.event_id = r.event_id
-         GROUP BY 1, 2, 3, 4, 5),
+         GROUP BY 1, 2),
 
      mau                     AS (
          SELECT
@@ -99,26 +100,67 @@ WITH min_active              AS (
          SELECT
              e1.date
            , e1.user_id
-           , e1.server_id
-           , e1.system_admin
-           , e1.system_user
-           , CASE WHEN e1.total_events > 0 THEN TRUE ELSE FALSE END   AS active
-           , e1.total_events
-           , e1.desktop_events
-           , e1.web_app_events
-           , e1.mobile_events
-           , e1.action_events
-           , e1.api_events
-           , e1.gfycat_events
-           , e1.performance_events
-           , e1.plugins_events
-           , e1.settings_events
-           , e1.signup_events
-           , e1.system_console_events
-           , e1.tutorial_events
-           , e1.ui_events
-           , m.mau_segment
-           , CASE WHEN m.mau_segment IN ('First Time MAU', 'Reengaged MAU', 'Current MAU') THEN TRUE
+           , MAX(e1.server_id)                                             AS server_id
+           , MAX(e1.system_admin)                                          AS system_admin
+           , MAX(e1.system_user)                                           AS system_user
+           , MAX(CASE WHEN e1.total_events > 0 THEN TRUE ELSE FALSE END)   AS active
+           , SUM(e1.total_events)                                          AS total_events
+           , SUM(e1.desktop_events)                                        AS desktop_events
+           , SUM(e1.web_app_events)                                        AS web_app_events
+           , SUM(e1.mobile_events)                                         AS mobile_events
+           , SUM(e1.action_events)                                         AS action_events
+           , SUM(e1.api_events)                                            AS api_events
+           , SUM(e1.gfycat_events)                                         AS gfycat_events
+           , SUM(e1.performance_events)                                    AS performance_events
+           , SUM(e1.plugins_events)                                        AS plugin_events
+           , SUM(e1.settings_events)                                       AS settings_events
+           , SUM(e1.signup_events)                                         AS signup_events
+           , SUM(e1.system_console_events)                                 AS system_console_events
+           , SUM(e1.tutorial_events)                                       AS tutorial_events
+           , SUM(e1.ui_events)                                             AS ui_events
+           , CASE WHEN MAX(CASE WHEN m.mau_segment = 'Current MAU' THEN 1
+                            WHEN m.mau_segment = 'Reengaged MAU' THEN 2
+                            WHEN m.mau_segment = 'First Time MAU' THEN 3
+                            WHEN m.mau_segment = 'Newly Disengaged' THEN 4
+                            ELSE 5 END) = 1 THEN 'Current MAU'
+                  WHEN MAX(CASE WHEN m.mau_segment = 'Current MAU' THEN 1
+                            WHEN m.mau_segment = 'Reengaged MAU' THEN 2
+                            WHEN m.mau_segment = 'First Time MAU' THEN 3
+                            WHEN m.mau_segment = 'Newly Disengaged' THEN 4
+                            ELSE 5 END) = 2 THEN 'Reengaged MAU'
+                  WHEN MAX(CASE WHEN m.mau_segment = 'Current MAU' THEN 1
+                            WHEN m.mau_segment = 'Reengaged MAU' THEN 2
+                            WHEN m.mau_segment = 'First Time MAU' THEN 3
+                            WHEN m.mau_segment = 'Newly Disengaged' THEN 4
+                            ELSE 5 END) = 3 THEN 'First Time MAU'
+                  WHEN MAX(CASE WHEN m.mau_segment = 'Current MAU' THEN 1
+                            WHEN m.mau_segment = 'Reengaged MAU' THEN 2
+                            WHEN m.mau_segment = 'First Time MAU' THEN 3
+                            WHEN m.mau_segment = 'Newly Disengaged' THEN 4
+                            ELSE 5 END) = 4 THEN 'Newly Disengaged'
+                  ELSE 'Disengaged' END                                AS mau_segment
+           , CASE WHEN 
+                CASE WHEN MAX(CASE WHEN m.mau_segment = 'Current MAU' THEN 1
+                                    WHEN m.mau_segment = 'Reengaged MAU' THEN 2
+                                    WHEN m.mau_segment = 'First Time MAU' THEN 3
+                                    WHEN m.mau_segment = 'Newly Disengaged' THEN 4
+                                    ELSE 5 END) = 1 THEN 'Current MAU'
+                        WHEN MAX(CASE WHEN m.mau_segment = 'Current MAU' THEN 1
+                                    WHEN m.mau_segment = 'Reengaged MAU' THEN 2
+                                    WHEN m.mau_segment = 'First Time MAU' THEN 3
+                                    WHEN m.mau_segment = 'Newly Disengaged' THEN 4
+                                    ELSE 5 END) = 2 THEN 'Reengaged MAU'
+                        WHEN MAX(CASE WHEN m.mau_segment = 'Current MAU' THEN 1
+                                    WHEN m.mau_segment = 'Reengaged MAU' THEN 2
+                                    WHEN m.mau_segment = 'First Time MAU' THEN 3
+                                    WHEN m.mau_segment = 'Newly Disengaged' THEN 4
+                                    ELSE 5 END) = 3 THEN 'First Time MAU'
+                        WHEN MAX(CASE WHEN m.mau_segment = 'Current MAU' THEN 1
+                                    WHEN m.mau_segment = 'Reengaged MAU' THEN 2
+                                    WHEN m.mau_segment = 'First Time MAU' THEN 3
+                                    WHEN m.mau_segment = 'Newly Disengaged' THEN 4
+                                    ELSE 5 END) = 4 THEN 'Newly Disengaged'
+                        ELSE 'Disengaged' END IN ('First Time MAU', 'Reengaged MAU', 'Current MAU') THEN TRUE
                   ELSE FALSE END                                       AS mau
            , MIN(m.min_active_date)                                         AS first_active_date
            , MAX(m.last_active_date)                                   AS last_active_date
@@ -139,7 +181,6 @@ WITH min_active              AS (
          AND e1.date > (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
-         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
-         , 21, 22)
+         GROUP BY 1, 2)
 SELECT *
 FROM user_events_by_date_agg
