@@ -100,6 +100,7 @@ WITH user_events AS (
                          FROM {{ ref('nps_user_monthly_score') }}
                          )            n2
                         ON n1.user_id = n2.user_id
+                        AND n2.month = DATE_TRUNC('month', d.date)
               LEFT JOIN {{ ref('server_fact') }} s
                         ON TRIM(n1.server_id) = TRIM(s.server_id)
          GROUP BY 1, 2
