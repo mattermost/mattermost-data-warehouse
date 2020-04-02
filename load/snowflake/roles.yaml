@@ -8,6 +8,9 @@ databases:
     - raw:
         shared: no
 
+    - dev:
+        shared: no
+
     - snowflake:
         shared: yes
 
@@ -39,23 +42,29 @@ roles:
                 read:
                     - raw
                     - analytics
+                    - dev
                 write:
                     - raw
                     - analytics
+                    - dev
             schemas:
                 read:
                     - raw.*
                     - analytics.*
+                    - dev.*
                 write:
                     - raw.*
                     - analytics.*
+                    - dev.*
             tables:
                 read:
                     - raw.*.*
                     - analytics.*.*
+                    - dev.*.*
                 write:
                     - raw.*.*
                     - analytics.*.*
+                    - dev.*.*
 
     ## Regular Roles
     - stitch:
@@ -150,23 +159,29 @@ roles:
                     - raw
                     - analytics
                     - snowflake
+                    - dev
                 write:
                     - raw
                     - analytics
+                    - dev
             schemas:
                 read:
                     - raw.*
                     - analytics.*
                     - snowflake.account_usage
+                    - dev.*
                 write:
                     - analytics.*
+                    - dev.*
             tables:
                 read:
                     - raw.*.*
                     - analytics.*.*
                     - snowflake.account_usage.*
+                    - dev.*.*
                 write:
                     - analytics.*.*
+                    - dev.*.*
 
     # Object Roles
 
