@@ -11,10 +11,10 @@ WITH daily_page_visits AS (
         end_date,
         pagepath,
         pagetitle,
-        pageviews,
-        uniquepageviews,
-        avgtimeonpage
+        sum(uniquepageviews) as unqiuepageviews,
+        sum(pageviews) as pageviews
     FROM {{ source('ga_mattermost_com_pages_visits', 'report') }}
+    GROUP BY 1,2,3,4,5
     UNION ALL
     SELECT 
         'developers.mattermost.com' AS site, 
@@ -22,9 +22,20 @@ WITH daily_page_visits AS (
         end_date,
         pagepath,
         pagetitle,
-        pageviews,
-        uniquepageviews,
-        avgtimeonpage
+        sum(uniquepageviews),
+        sum(pageviews)
     FROM {{ source('ga_developers_pages_visits', 'report') }}
+    GROUP BY 1,2,3,4,5
+    UNION ALL
+    SELECT 
+        'handbook.mattermost.com' AS site, 
+        start_date,
+        end_date,
+        split_part(pagepath,'/@mattermost/s/handbook',2),
+        pagetitle,
+        sum(uniquepageviews),
+        sum(pageviews)
+    FROM {{ source('ga_mattermost_handbook_pages_visits', 'report') }}
+    GROUP BY 1,2,3,4,5
 )
 SELECT * FROM daily_page_visits

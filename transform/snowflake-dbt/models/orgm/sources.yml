@@ -6,43 +6,46 @@ sources:
     schema: orgm
     loader: Stitch
     loaded_at_field: _sdc_batched_at
-    
+
     quoting:
       database: true
       schema: false
       identifier: false
 
     freshness:
-        warn_after: {count: 8, period: hour}
-        error_after: {count: 24, period: hour}
+      warn_after: { count: 8, period: hour }
+      error_after: { count: 24, period: hour }
 
-    tables: 
+    tables:
       - name: account
-        description: 'SFDC Account'
+        description: "SFDC Account"
 
       - name: campaign
-        description: 'SFDC Campaign'
+        description: "SFDC Campaign"
 
       - name: campaignmember
-        description: 'SFDC Campaign member'
-      
+        description: "SFDC Campaign member"
+
       - name: contact
-        description: 'SFDC Contact'
+        description: "SFDC Contact"
 
       - name: delete_history__c
-        description: 'History of deleted objects in SFDC'
+        description: "History of deleted objects in SFDC"
 
       - name: lead
-        description: 'SFDC Lead'
+        description: "SFDC Lead"
 
       - name: opportunity
-        description: 'SFDC Opportunity'
+        description: "SFDC Opportunity"
 
       - name: opportunitylineitem
-        description: 'SFDC Opportunity Line Item'
+        description: "SFDC Opportunity Line Item"
 
       - name: tasks_filtered
-        description: 'SFDC Tasks with Marketo removed'
+        description: "SFDC Tasks with Marketo removed"
 
       - name: user
-        description: 'SFDC User'
+        description: "SFDC User"
+
+      - name: territory__c
+        description: "SFDC Territory"
