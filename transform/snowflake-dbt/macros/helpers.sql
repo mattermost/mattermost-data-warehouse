@@ -22,7 +22,7 @@ select get_sys_var({{ var_name }})
 {%- endmacro %}
 
 {% macro post_audit_delete_hook(audit_table) %}
-    {% set orgm_tables = ['account', 'campaign', 'campaignmember', 'contact', 'lead', 'opportunity', 'opportunitylineitem'] %}
+    {% set orgm_tables = ['account', 'campaign', 'campaignmember', 'contact', 'lead', 'opportunity', 'opportunitylineitem', 'territory__c', 'territory_mapping__c'] %}
 
     {% for t in orgm_tables %}
         {{ delete_orgm_rows(audit_table, t) }}

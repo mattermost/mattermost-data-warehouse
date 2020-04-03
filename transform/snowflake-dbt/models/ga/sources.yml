@@ -32,3 +32,11 @@ sources:
     tables: 
       - name: report
         description: 'Page visits to Mattermost.com'
+
+  - name: ga_mattermost_handbook_pages_visits
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: ga_mattermost_handbook_pages_visits
+
+    tables: 
+      - name: report
+        description: 'Page visits to Mattermost Handbook'
