@@ -64,17 +64,17 @@ WITH min_nps                AS (
            , m.user_id
            , nps.user_role
            , nps.server_version
-           , MAX(nps.score)                                                                    AS score
-           , m.max_timestamp::DATE                                                             AS last_score_date
+           , MAX(nps.score)                                                                       AS score
+           , m.max_timestamp::DATE                                                                AS last_score_date
            , nps.license_id
            , nps.license_sku
            , CASE WHEN MAX(nps.score) < 7 THEN 'Detractor'
                   WHEN MAX(nps.score) < 9 THEN 'Passive'
-                  ELSE 'Promoter' END                                                          AS promoter_type
-           , to_timestamp(nps.user_create_at / 1000)::DATE                                     AS user_created_at
-           , to_timestamp(nps.server_install_date / 1000)::DATE                                AS server_install_date
-           , LISTAGG(DISTINCT feedback.feedback, '; ') WITHIN GROUP (ORDER BY feedback.timestamp DESC)  AS feedback
-           , MAX(feedback.timestamp::DATE)                                                     AS last_feedback_date                        
+                  ELSE 'Promoter' END                                                             AS promoter_type
+           , to_timestamp(nps.user_create_at / 1000)::DATE                                        AS user_created_at
+           , to_timestamp(nps.server_install_date / 1000)::DATE                                   AS server_install_date
+           , LISTAGG(DISTINCT feedback.feedback, '; ') WITHIN GROUP (ORDER BY feedback.feedback)  AS feedback
+           , MAX(feedback.timestamp::DATE)                                                        AS last_feedback_date                        
            , m.responses
            , m.promoter_responses
            , m.detractor_responses
