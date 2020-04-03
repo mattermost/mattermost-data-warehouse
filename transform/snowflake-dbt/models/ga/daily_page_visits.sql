@@ -11,7 +11,7 @@ WITH daily_page_visits AS (
         end_date,
         pagepath,
         pagetitle,
-        sum(uniquepageviews) as unqiuepageviews,
+        sum(uniquepageviews) as uniquepageviews,
         sum(pageviews) as pageviews
     FROM {{ source('ga_mattermost_com_pages_visits', 'report') }}
     GROUP BY 1,2,3,4,5
