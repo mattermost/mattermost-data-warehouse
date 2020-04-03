@@ -23,18 +23,24 @@ WITH user_events AS (
       , COUNT(CASE WHEN e1.mobile_events > 0 THEN e1.date ELSE NULL END)                AS mobile_active_days
       , COUNT(CASE WHEN e1.mau THEN e1.date ELSE NULL END)                              AS days_in_mau
       , COUNT(CASE WHEN e1.mau_segment = 'Reengaged MAU' THEN e1.date ELSE NULL END)    AS reengaged_count
-      , COUNT(CASE WHEN NOT e1.mau THEN e1.date ELSE NULL END)                          AS days_not_in_mau
+      , COUNT(CASE WHEN NOT e1.mau AND e1.events_alltime > 0 
+                THEN e1.date ELSE NULL END)                                             AS days_not_in_mau
       , COUNT(CASE WHEN e1.mau_segment = 'Newly Disengaged' THEN e1.date ELSE NULL END) AS disengaged_count
       , COUNT(CASE WHEN e1.active THEN e1.date ELSE NULL END)                           AS days_active
-      , COUNT(CASE WHEN NOT e1.active THEN e1.date ELSE NULL END)                       AS days_inactive
+      , COUNT(CASE WHEN NOT e1.active  AND e1.events_alltime > 0
+                 THEN e1.date ELSE NULL END)                                            AS days_inactive
       , MAX(e1.events_alltime)                                                          AS events_alltime
-      , ROUND(SUM(e1.total_events) / COUNT(e1.date), 2)                                 AS avg_events_per_day
+      , ROUND(SUM(e1.total_events) / 
+                COUNT(CASE WHEN e1.events_alltime > 0 THEN e1.date ELSE NULL END), 2)   AS avg_events_per_day
       , SUM(e1.web_app_events)                                                          AS webapp_events_alltime
-      , ROUND(SUM(e1.web_app_events) / COUNT(e1.date), 2)                               AS avg_webapp_events_per_day
+      , ROUND(SUM(e1.web_app_events) / 
+                COUNT(CASE WHEN e1.events_alltime > 0 THEN e1.date ELSE NULL END), 2)   AS avg_webapp_events_per_day
       , SUM(e1.desktop_events)                                                          AS desktop_events_alltime
-      , ROUND(SUM(e1.desktop_events) / COUNT(e1.date), 2)                               AS avg_desktop_events_per_day
+      , ROUND(SUM(e1.desktop_events) / 
+                COUNT(CASE WHEN e1.events_alltime > 0 THEN e1.date ELSE NULL END), 2)   AS avg_desktop_events_per_day
       , MAX(e1.mobile_events_alltime)                                                   AS mobile_events_alltime
-      , ROUND(SUM(e1.mobile_events) / COUNT(e1.date), 2)                                AS avg_mobile_events_per_day
+      , ROUND(SUM(e1.mobile_events) / 
+                COUNT(CASE WHEN e1.events_alltime > 0 THEN e1.date ELSE NULL END), 2)   AS avg_mobile_events_per_day
       , MIN(s.first_active_date)                                                        AS server_install_date
       , MAX(s.last_account_sfid)                                                        AS account_sfid
       , MAX(s.last_license_id1)                                                         AS license_id
@@ -85,7 +91,7 @@ WITH user_events AS (
                         ON TRIM(n1.server_id) = TRIM(s.server_id)
          GROUP BY 1
      ),
-     user_fact   AS (
+     user_fact_grouped   AS (
          SELECT
              COALESCE(e.user_id, n.user_id)                         AS user_id
            , COALESCE(n.user_created_at, e.first_mau_date)          AS user_created_at
@@ -132,6 +138,50 @@ WITH user_events AS (
               FULL OUTER JOIN user_nps n
                               ON e.user_id = n.user_id
          GROUP BY 1, 2, 3, 4, 5, 6
-     )
+     ),
+     user_fact AS (
+         SELECT
+              u.user_id                                                  AS user_id
+            , u.user_created_at                                          AS user_created_at
+            , u.server_id                                                AS server_id
+            , MIN(u.server_install_date) OVER (PARTITION BY u.server_id) AS server_install_date
+            , u.account_sfid                                             AS account_sfid
+            , u.license_id                                               AS license_id
+            , u.first_active_date                                        AS first_active_date
+            , u.last_active_date                                         AS last_active_date
+            , u.days_first_to_last_active                                AS days_first_to_last_active
+            , u.first_webapp_date                                        AS first_webapp_date
+            , u.last_webapp_date                                         AS last_webapp_date
+            , u.webapp_active_days                                       AS webapp_active_days
+            , u.first_desktop_date                                       AS first_desktop_date
+            , u.last_desktop_date                                        AS last_desktop_date
+            , u.desktop_active_days                                      AS desktop_active_days
+            , u.first_mobile_date                                        AS first_mobile_date
+            , u.last_mobile_date                                         AS last_mobile_date
+            , u.mobile_active_days                                       AS mobile_active_days
+            , u.days_in_mau                                              AS days_in_mau
+            , u.reengaged_count                                          AS reengaged_count
+            , u.days_not_in_mau                                          AS days_not_in_mau
+            , u.disengaged_count                                         AS disengaged_count
+            , u.days_active                                              AS days_active
+            , u.days_inactive                                            AS days_inactive
+            , u.events_alltime                                           AS events_alltime
+            , u.avg_events_per_day                                       AS avg_events_per_day
+            , u.webapp_events_alltime                                    AS webapp_events_alltime
+            , u.avg_webapp_events_per_day                                AS avg_webapp_events_per_day
+            , u.desktop_events_alltime                                   AS desktop_events_alltime
+            , u.avg_desktop_events_per_day                               AS avg_desktop_events_per_day
+            , u.mobile_events_alltime                                    AS mobile_events_alltime
+            , u.avg_mobile_events_per_day                                AS avg_mobile_events_per_day
+            , u.first_nps_date                                           AS first_nps_date
+            , u.first_nps_score                                          AS first_nps_score
+            , u.last_nps_date                                            AS last_nps_date
+            , u.last_nps_score                                           AS last_nps_score
+            , u.avg_nps_score                                            AS avg_nps_score
+            , u.nps_responses_alltime                                    AS nps_responses_alltime
+            , u.first_nps_feedback_date                                  AS first_nps_feedback_date
+            , u.last_nps_feedback_date                                   AS last_nps_feedback_date
+            , u.all_nps_feedback                                         AS all_nps_feedback
+  FROM user_fact_grouped u)
 SELECT *
 FROM user_fact
