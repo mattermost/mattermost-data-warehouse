@@ -5,63 +5,86 @@
 }}
 
 WITH user_events AS (
-    SELECT
-        d.date
-      , TRIM(e1.user_id)                                                                AS user_id
-      , MAX(CASE WHEN e2.user_id IS NOT NULL THEN TRIM(e1.server_id) ELSE NULL END)     AS server_id
-      , MIN(CASE WHEN e1.total_events > 0 THEN e1.date ELSE NULL END)                   AS first_mau_date
-      , MAX(CASE WHEN e1.total_events > 0 THEN e1.date ELSE NULL END)                   AS last_mau_date
-      , DATEDIFF(DAY, MIN(CASE WHEN e1.total_events > 0 THEN e1.date ELSE NULL END),
-                 MAX(CASE WHEN e1.total_events > 0 THEN e1.date ELSE NULL END))         AS days_first_to_last_mau
-      , MIN(CASE WHEN e1.web_app_events > 0 THEN e1.date ELSE NULL END)                 AS first_webapp_date
-      , MAX(CASE WHEN e1.web_app_events > 0 THEN e1.date ELSE NULL END)                 AS last_webapp_date
-      , COUNT(CASE WHEN e1.web_app_events > 0 THEN e1.date ELSE NULL END)               AS webapp_active_days
-      , MIN(CASE WHEN e1.desktop_events > 0 THEN e1.date ELSE NULL END)                 AS first_desktop_date
-      , MAX(CASE WHEN e1.desktop_events > 0 THEN e1.date ELSE NULL END)                 AS last_desktop_date
-      , COUNT(CASE WHEN e1.desktop_events > 0 THEN e1.date ELSE NULL END)               AS desktop_active_days
-      , MIN(CASE WHEN e1.mobile_events > 0 THEN e1.date ELSE NULL END)                  AS first_mobile_date
-      , MAX(CASE WHEN e1.mobile_events > 0 THEN e1.date ELSE NULL END)                  AS last_mobile_date
-      , COUNT(CASE WHEN e1.mobile_events > 0 THEN e1.date ELSE NULL END)                AS mobile_active_days
-      , COUNT(CASE WHEN e1.mau THEN e1.date ELSE NULL END)                              AS days_in_mau
-      , COUNT(CASE WHEN e1.mau_segment = 'Reengaged MAU' THEN e1.date ELSE NULL END)    AS reengaged_count
-      , COUNT(CASE WHEN NOT e1.mau AND e1.events_alltime > 0 
-                THEN e1.date ELSE NULL END)                                             AS days_not_in_mau
-      , COUNT(CASE WHEN e1.mau_segment = 'Newly Disengaged' THEN e1.date ELSE NULL END) AS disengaged_count
-      , COUNT(CASE WHEN e1.active THEN e1.date ELSE NULL END)                           AS days_active
-      , COUNT(CASE WHEN NOT e1.active  AND e1.events_alltime > 0
-                 THEN e1.date ELSE NULL END)                                            AS days_inactive
-      , MAX(e1.events_alltime)                                                          AS events_alltime
-      , ROUND(SUM(e1.total_events) / 
-                COUNT(CASE WHEN e1.events_alltime > 0 THEN e1.date ELSE NULL END), 2)   AS avg_events_per_day
-      , SUM(e1.web_app_events)                                                          AS webapp_events_alltime
-      , ROUND(SUM(e1.web_app_events) / 
-                COUNT(CASE WHEN e1.events_alltime > 0 THEN e1.date ELSE NULL END), 2)   AS avg_webapp_events_per_day
-      , SUM(e1.desktop_events)                                                          AS desktop_events_alltime
-      , ROUND(SUM(e1.desktop_events) / 
-                COUNT(CASE WHEN e1.events_alltime > 0 THEN e1.date ELSE NULL END), 2)   AS avg_desktop_events_per_day
-      , MAX(e1.mobile_events_alltime)                                                   AS mobile_events_alltime
-      , ROUND(SUM(e1.mobile_events) / 
-                COUNT(CASE WHEN e1.events_alltime > 0 THEN e1.date ELSE NULL END), 2)   AS avg_mobile_events_per_day
-      , MIN(s.first_active_date)                                                        AS server_install_date
-      , MAX(s.last_account_sfid)                                                        AS account_sfid
-      , MAX(s.last_license_id1)                                                         AS license_id
-    FROM {{ source('util','dates') }} d
-         JOIN {{ ref('user_events_by_date_agg') }}   e1
-              ON e1.date <= d.date
-              AND d.date <= CURRENT_DATE - INTERVAL '1 DAY'
-         LEFT JOIN (
-        SELECT
-            date
-          , TRIM(user_id)                                                                                     AS user_id
-          , MAX(CASE WHEN server_id IS NOT NULL THEN date ELSE NULL END) 
-              OVER (PARTITION BY user_id order by date rows bETWEEN UNBOUNDED PRECEDING and current row)     AS server_date
-        FROM {{ ref('user_events_by_date_agg') }}
-                  )                       e2
-                   ON e1.user_id = e2.user_id
-                       AND d.date = e2.date
-         LEFT JOIN {{ ref('server_fact') }} s
-                   ON TRIM(e1.server_id) = TRIM(s.server_id)
-    GROUP BY 1, 2
+  SELECT
+      e1.date
+    , TRIM(e1.user_id)                                                                                                   AS user_id
+    , MAX(CASE WHEN e1.server_id IS NOT NULL THEN TRIM(e1.server_id) ELSE NULL END)
+          OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS server_id
+    , MIN(CASE WHEN e1.total_events > 0 THEN e1.date ELSE NULL END)
+          OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)         AS first_mau_date
+    , MAX(CASE WHEN e1.total_events > 0 THEN e1.date ELSE NULL END)
+          OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)         AS last_mau_date
+    , MIN(CASE WHEN e1.web_app_events > 0 THEN e1.date ELSE NULL END)
+          OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)         AS first_webapp_date
+    , MAX(CASE WHEN e1.web_app_events > 0 THEN e1.date ELSE NULL END)
+          OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)         AS last_webapp_date
+    , COUNT(CASE WHEN e1.web_app_events > 0 THEN e1.date ELSE NULL END)
+            OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)       AS webapp_active_days
+    , MIN(CASE WHEN e1.desktop_events > 0 THEN e1.date ELSE NULL END)
+          OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)         AS first_desktop_date
+    , MAX(CASE WHEN e1.desktop_events > 0 THEN e1.date ELSE NULL END)
+          OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)         AS last_desktop_date
+    , COUNT(CASE WHEN e1.desktop_events > 0 THEN e1.date ELSE NULL END)
+            OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)       AS desktop_active_days
+    , MIN(CASE WHEN e1.mobile_events > 0 THEN e1.date ELSE NULL END)
+          OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)         AS first_mobile_date
+    , MAX(CASE WHEN e1.mobile_events > 0 THEN e1.date ELSE NULL END)
+          OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)         AS last_mobile_date
+    , COUNT(CASE WHEN e1.mobile_events > 0 THEN e1.date ELSE NULL END)
+            OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)       AS mobile_active_days
+    , COUNT(CASE WHEN e1.mau THEN e1.date ELSE NULL END)
+            OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)       AS days_in_mau
+    , COUNT(CASE WHEN e1.mau_segment = 'Reengaged MAU' THEN e1.date ELSE NULL END)
+            OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)       AS reengaged_count
+    , COUNT(CASE WHEN NOT e1.mau AND e1.events_alltime > 0
+                    THEN e1.date
+                ELSE NULL END)
+            OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)       AS days_not_in_mau
+    , COUNT(CASE WHEN e1.mau_segment = 'Newly Disengaged' THEN e1.date ELSE NULL END)
+            OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)       AS disengaged_count
+    , COUNT(CASE WHEN e1.active THEN e1.date ELSE NULL END)
+            OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)       AS days_active
+    , COUNT(CASE WHEN NOT e1.active AND e1.events_alltime > 0
+                    THEN e1.date
+                ELSE NULL END)
+            OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)       AS days_inactive
+    , MAX(e1.events_alltime)
+          OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)         AS events_alltime
+    , ROUND(SUM(e1.total_events)
+                OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) /
+            COUNT(CASE WHEN e1.events_alltime > 0 THEN e1.date ELSE NULL END)
+                  OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW),
+            2)                                                                                                           AS avg_events_per_day
+    , SUM(e1.web_app_events)
+          OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)         AS webapp_events_alltime
+    , ROUND(SUM(e1.web_app_events)
+                OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) /
+            COUNT(CASE WHEN e1.events_alltime > 0 THEN e1.date ELSE NULL END)
+                  OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW),
+            2)                                                                                                           AS avg_webapp_events_per_day
+    , SUM(e1.desktop_events)
+          OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)         AS desktop_events_alltime
+    , ROUND(SUM(e1.desktop_events)
+                OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) /
+            COUNT(CASE WHEN e1.events_alltime > 0 THEN e1.date ELSE NULL END)
+                  OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW),
+            2)                                                                                                           AS avg_desktop_events_per_day
+    , MAX(e1.mobile_events_alltime)
+          OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)         AS mobile_events_alltime
+    , ROUND(SUM(e1.mobile_events)
+                OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) /
+            COUNT(CASE WHEN e1.events_alltime > 0 THEN e1.date ELSE NULL END)
+                  OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW),
+            2)                                                                                                           AS avg_mobile_events_per_day
+    , MIN(s.first_active_date)
+          OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS server_install_date
+    , MAX(s.last_account_sfid)
+          OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS account_sfid
+    , MAX(s.last_license_id1)
+          OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS license_id
+  FROM events.user_events_by_date_agg   e1
+      LEFT JOIN mattermost.server_fact s
+                ON TRIM(e1.server_id) = TRIM(s.server_id)
 ),
      user_nps    AS (
          SELECT
