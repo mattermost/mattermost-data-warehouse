@@ -8,6 +8,8 @@ WITH upgrade         AS (
     SELECT
         date
       , server_id
+      , max(account_sfid) OVER (PARTITION BY server_id)          AS account_sfid
+      , license_id1                                              AS license_id
       , lag(version) OVER (PARTITION BY server_id ORDER BY date) AS prev_version
       , version                                                  AS current_version
       , edition                                                  AS current_edition
@@ -19,6 +21,8 @@ WITH upgrade         AS (
          SELECT
              date
            , server_id
+           , account_sfid
+           , license_id
            , substr(prev_version, 0, length(current_version)) AS prev_version
            , substr(current_version, 0, length(prev_version)) AS current_version
            , prev_edition
@@ -29,7 +33,7 @@ WITH upgrade         AS (
                          substr(current_version, 0, length(prev_version)))
              OR (current_edition = 'true' AND coalesce(prev_edition, 'true') <> current_edition))
          {% if is_incremental() %}
-         
+
          AND date > (SELECT MAX(date) FROM {{this}} )
 
          {% endif %}
