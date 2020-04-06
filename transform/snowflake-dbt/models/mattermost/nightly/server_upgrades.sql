@@ -4,7 +4,7 @@
   })
 }}
 
-WITH server_upgrades AS (
+WITH upgrade         AS (
     SELECT
         date
       , server_id
@@ -12,12 +12,16 @@ WITH server_upgrades AS (
       , version                                                  AS current_version
     FROM {{ ref('server_daily_details') }}
     WHERE NOT tracking_disabled
-                )
+                        ),
+     server_upgrades AS (
+         SELECT *
+         FROM upgrade
+         WHERE substr(current_version, 0, length(prev_version)) > substr(prev_version, 0, length(current_version))
+         {% if is_incremental() %}
+
+         AND date > (SELECT MAX(date) FROM {{this}})
+
+         {% endif %}
+     )
 SELECT *
-FROM server_upgrades
-WHERE substr(current_version, 0, length(prev_version)) > substr(prev_version, 0, length(current_version))
-{% if is_incremental %}
-
-AND date > (SELECT MAX(date) FROM {{this}})
-
-{% endif %}
+FROM server_upgrades;
