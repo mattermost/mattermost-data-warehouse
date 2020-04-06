@@ -24,4 +24,4 @@ WITH upgrade         AS (
          {% endif %}
      )
 SELECT *
-FROM server_upgrades;
+FROM server_upgrades
