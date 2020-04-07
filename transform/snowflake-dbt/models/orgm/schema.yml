@@ -1,0 +1,5 @@
+version: 2
+
+models:
+  - name: opportunity_ext
+    description: Additional fields at an opportunity level that do not exist on opportunity naitively.
