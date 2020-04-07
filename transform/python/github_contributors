@@ -1,0 +1,45 @@
+putting this here for now to not lose the code used in the manual data updates
+
+python main.py contributors --token [github_token] \
+    --org mattermost \
+    --repo desktop \
+    --repo mattermost-utilities \
+    --repo mmctl \
+    --repo mattermost-redux \
+    --repo mattermost-webapp \
+    --repo mattermost-server \
+    --repo mattermost-mobile \
+    --repo mattermost-load-test \
+    --repo mattermost-android-classic \
+    --repo mattermost-ios-classic \
+    --repo mattermost-push-proxy \
+    --repo docs \
+    --repo mattermost-api-reference \
+    --repo mattermost-developer-documentation \
+    --repo mattermost-hackathon-nov2019 \
+    --csv > /Users/rachelbradleyhaas/src/mattermost-data-warehouse/transform/snowflake-dbt/data/github_contributions.csv
+
+python main.py staff --token [github_token] \
+    --org mattermost \
+    --include ccbrown \
+    --include MusikPolice \
+    --include stephenkiers \
+    --include rgarmsen2295 \
+    --include yuya-oc \
+    --include DavidLu1997 \
+    --include thekiiingbob \
+    --include atti1a \
+    --include JeffSchering \
+    --include comharris \
+    --include james-mm \
+    --include doosp \
+    --include willstacey \
+    --include yangchen1 \
+    --include cvitter \
+    --include Matterchen \
+    --include rqtaylor \
+    --include greensteve \
+    --include JustinReynolds-MM \
+    --include dependabot \
+    --include GoldUniform \
+    --csv > /Users/rachelbradleyhaas/src/mattermost-data-warehouse/transform/snowflake-dbt/data/staff_github_usernames.csv
