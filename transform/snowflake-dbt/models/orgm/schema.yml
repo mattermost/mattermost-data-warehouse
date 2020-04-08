@@ -2,4 +2,7 @@ version: 2
 
 models:
   - name: opportunity_ext
-    description: Additional fields at an opportunity level that do not exist on opportunity naitively.
+    description: Additional fields at an Opportunity level that do not exist on Opportunity naitively.
+
+  - name: account_ext
+    description: Additional fields at an Account level that do not exist on Account naitively.
