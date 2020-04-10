@@ -9,3 +9,7 @@ generate-dbt-docs:
 data-image:
 	@echo "Attaching to data-image and mounting repo..."
 	@docker-compose run data_image bash
+
+dbt-bash:
+	@echo "Running bash with dbt..."
+	@docker-compose run dbt_image bash -c "dbt deps && /bin/bash"
