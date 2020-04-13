@@ -9,7 +9,7 @@ WITH nps_server_monthly_score AS (
     SELECT
         month
       , server_id
-      , {{ dbt_utils.surrogate_key('d.month', 'd.server_id') }} AS id
+      , {{ dbt_utils.surrogate_key('month', 'server_id') }} AS id
       , count(DISTINCT CASE WHEN score > 8 THEN user_id ELSE NULL END)                                        AS promoters
       , count(DISTINCT CASE WHEN score <= 6 THEN user_id ELSE NULL END)                                       AS detractors
       , count(DISTINCT
