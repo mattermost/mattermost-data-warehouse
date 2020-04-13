@@ -31,7 +31,7 @@ WITH license        AS (
            , MAX(to_timestamp(l._start / 1000)::DATE) AS start_date
            , MAX(to_timestamp(l.expire / 1000)::DATE) AS expire_date
            , MAX(l.users)      AS users
-           , max(l.timestamp)  AS max_timestamp
+           , MAX(l.timestamp)  AS max_timestamp
          FROM {{ source('util', 'dates') }} d
          JOIN {{ source('mattermost2','license') }} l
               ON l.timestamp::date <= d.date
