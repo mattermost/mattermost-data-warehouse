@@ -43,7 +43,7 @@ server_fact AS (
         AND server_details.last_active_date = server_daily_details.date
     LEFT JOIN {{ ref('nps_server_monthly_score') }} nps
         ON server_details.server_id = nps.server_id
-        AND nps.month = DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 DAY'))
+        AND nps.month = DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 DAY')
     {{ dbt_utils.group_by(n=18) }}
 )
 SELECT *
