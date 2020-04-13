@@ -30,12 +30,21 @@ server_fact AS (
         server_details.last_telemetry_active_date,
         server_details.max_active_user_count,
         server_details.last_active_user_date,
-        server_details.last_active_license_date
+        server_details.last_active_license_date,
+        nps.nps_users,
+        nps.nps_score,
+        nps.promoters,
+        nps.detractors,
+        nps.passives,
+        nps.avg_score                   AS avg_nps_user_score
     FROM server_details 
     JOIN {{ ref('server_daily_details') }}
         ON server_details.server_id = server_daily_details.server_id
         AND server_details.last_active_date = server_daily_details.date
-    {{ dbt_utils.group_by(n=12) }}
+    LEFT JOIN {{ ref('nps_server_monthly_score') }} nps
+        ON server_details.server_id = nps.server_id
+        AND nps.month = DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 DAY')
+    {{ dbt_utils.group_by(n=18) }}
 )
 SELECT *
 FROM server_fact
