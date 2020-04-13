@@ -35,7 +35,7 @@ WITH server_details AS (
     SELECT
         server_id
       , dau_total
-      , mobile_dau_total
+      , mobile_dau
       , mau_total
       , first_time_mau
       , reengaged_mau
@@ -68,7 +68,7 @@ WITH server_details AS (
       , server_details.max_active_user_count
       , server_details.last_active_user_date
       , sau.dau_total
-      , sau.mobile_dau_total
+      , sau.mobile_dau
       , sau.mau_total
       , sau.first_time_mau
       , sau.reengaged_mau
