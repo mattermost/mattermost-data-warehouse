@@ -17,7 +17,7 @@ WITH server_details AS (
                 WHEN license_id1 IS NOT NULL OR license_id2 IS NOT NULL THEN date
                                                                         ELSE NULL END) AS last_active_license_date
       , MIN(version) AS                                                                   first_server_version
-    FROM {{ ref('server_daily_details') } }
+    FROM {{ ref('server_daily_details') }}
     GROUP BY 1
     ), 
   server_upgrades AS (
