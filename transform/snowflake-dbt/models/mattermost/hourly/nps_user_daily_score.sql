@@ -57,7 +57,7 @@ WITH min_nps                AS (
          GROUP BY 1, 2, 3, 4
      ),
 
-     nps_user_monthly_score AS (
+     nps_user_daily_score AS (
          SELECT
              m.date
            , m.server_id
@@ -101,4 +101,4 @@ WITH min_nps                AS (
           GROUP BY 1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 15, 16, 17, 18, 19, 20, 21, 22, 23
      )
 SELECT *
-FROM nps_user_monthly_score
+FROM nps_user_daily_score
