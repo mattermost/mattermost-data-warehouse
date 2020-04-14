@@ -15,51 +15,51 @@ WITH min_nps                AS (
 
      dates                  AS (
          SELECT
-             DATE_TRUNC('month', d.date) AS month
+             d.date AS date
            , server_id
            , user_id
          FROM {{ source('util', 'dates') }}   d
               JOIN min_nps nps
                    ON d.date >= nps.min_nps_date
-                       AND date_trunc('month', d.date) <= date_trunc('month', current_date)
+                       AND d.date <= current_date
          GROUP BY 1, 2, 3
      ),
 
      max_date_by_month      AS (
          SELECT
-             d.month
+             d.date
            , d.server_id
            , d.user_id
-           , {{ dbt_utils.surrogate_key('d.month', 'd.server_id', 'd.user_id') }} AS id
+           , {{ dbt_utils.surrogate_key('d.date', 'd.server_id', 'd.user_id') }}  AS id
            , MAX(nps.timestamp)                                                   AS max_timestamp
-           , MAX(DATE_TRUNC('month', feedback.timestamp::DATE))                   AS max_feedback_month
+           , MAX(date_trunc('day', feedback.timestamp::DATE))                     AS max_feedback_date
            , COUNT(DISTINCT nps.id)                                               AS responses_alltime
            , COUNT(DISTINCT CASE WHEN nps.score > 8 then nps.id else null end)    AS promoter_responses_alltime
            , COUNT(DISTINCT CASE WHEN nps.score < 7 then nps.id else null end)    AS detractor_responses_alltime
-           , COUNT(DISTINCT CASE WHEN date_trunc('month', nps.timestamp::date) = d.month THEN nps.id
+           , COUNT(DISTINCT CASE WHEN date_trunc('day', nps.timestamp::date) = d.date THEN nps.id
                         ELSE NULL END)                                            AS responses
-           , COUNT(DISTINCT CASE WHEN date_trunc('month', nps.timestamp::date) = d.month 
+           , COUNT(DISTINCT CASE WHEN date_trunc('day', nps.timestamp::date) = d.date 
                         AND nps.score > 8 THEN nps.id ELSE NULL END)              AS promoter_responses
-           , COUNT(DISTINCT CASE WHEN date_trunc('month', nps.timestamp::date) = d.month 
+           , COUNT(DISTINCT CASE WHEN date_trunc('day', nps.timestamp::date) = d.date 
                         AND nps.score < 7 THEN nps.id ELSE NULL END)              AS detractor_responses
            , COUNT(DISTINCT feedback.id)                                          AS feedback_count_alltime
-           , COUNT(DISTINCT CASE WHEN DATE_TRUNC('month', feedback.timestamp) = d.month then feedback.id
+           , COUNT(DISTINCT CASE WHEN DATE_TRUNC('day', feedback.timestamp) = d.date then feedback.id
                         ELSE NULL END)                                            AS feedback_count
          FROM dates                                 d
               JOIN {{ source('mattermost_nps', 'nps_score') }}         nps
-                   ON d.month >= DATE_TRUNC('month', nps.timestamp::DATE)
+                   ON d.date >= nps.timestamp::DATE
                        AND d.server_id = nps.server_id
                        AND d.user_id = nps.user_actual_id
               LEFT JOIN {{ source('mattermost_nps', 'nps_feedback') }} feedback
-                        ON d.month >= DATE_TRUNC('month', feedback.timestamp::DATE)
+                        ON d.date >= feedback.timestamp::DATE
                             AND d.server_id = feedback.server_id
                             AND d.user_id = feedback.user_actual_id
          GROUP BY 1, 2, 3, 4
      ),
 
-     nps_user_monthly_score AS (
+     nps_user_daily_score AS (
          SELECT
-             m.month
+             m.date
            , m.server_id
            , m.user_id
            , nps.user_role
@@ -92,13 +92,13 @@ WITH min_nps                AS (
               LEFT JOIN {{ source('mattermost_nps', 'nps_feedback') }} feedback
                         ON m.server_id = feedback.server_id
                             AND m.user_id = feedback.user_actual_id
-                            AND m.max_feedback_month = DATE_TRUNC('month', feedback.timestamp::DATE)
+                            AND m.max_feedback_date = DATE_TRUNC('day', feedback.timestamp::DATE)
           {% if is_incremental() %}
 
-          WHERE m.month >= (SELECT MAX(month) FROM {{this}})
+          WHERE m.date >= (SELECT MAX(date) FROM {{this}})
 
           {% endif %}
           GROUP BY 1, 2, 3, 4, 5, 7, 8, 9, 11, 12, 15, 16, 17, 18, 19, 20, 21, 22, 23
      )
 SELECT *
-FROM nps_user_monthly_score
+FROM nps_user_daily_score
