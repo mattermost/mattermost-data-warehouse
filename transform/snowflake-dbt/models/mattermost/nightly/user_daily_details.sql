@@ -96,7 +96,7 @@ WITH user_events       AS (
          SELECT
              user_id
            , min(last_score_date) AS min_score_date
-         FROM {{ ref('nps_user_monthly_score') }}
+         FROM {{ ref('nps_user_daily_score') }}
          GROUP BY 1
      ),
      dates             AS (
@@ -142,9 +142,9 @@ WITH user_events       AS (
            , max(s.server_id)
                  OVER (PARTITION BY nps.user_id ORDER BY d.date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS account_sfid
          FROM dates                                  d
-              JOIN {{ ref('nps_user_monthly_score') }} nps
+              JOIN {{ ref('nps_user_daily_score') }} nps
                    ON d.user_id = nps.user_id
-                       AND date_trunc('month', d.date) = nps.month
+                       AND date_trunc('day', d.date) = nps.date
               LEFT JOIN {{ ref('server_fact') }}       s
                         ON TRIM(nps.server_id) = TRIM(s.server_id)
      ),
