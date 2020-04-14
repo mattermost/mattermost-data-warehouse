@@ -19,7 +19,7 @@ WITH account_health_facts AS (
         LEFT JOIN {{ source('orgm', 'opportunity') }}  ON opportunity.accountid = account.sfid AND iswon
         LEFT JOIN {{ source('orgm', 'opportunitylineitem') }} ON opportunitylineitem.opportunityid = opportunity.sfid
         LEFT JOIN {{ source('orgm', 'tasks_filtered') }} ON account.sfid = tasks_filtered.accountid
-        LEFT JOIN {{ source('zendesk_raw', 'organizations') }} ON organizations.id = account.zendesk__zendesk_organization_id__c
+        LEFT JOIN {{ source('zendesk_raw', 'organizations') }} ON organizations.external_id = account.sfid
         LEFT JOIN {{ source('zendesk_raw', 'tickets') }} ON tickets.organization_id = organizations.id AND tickets.created_at > current_date - INTERVAL '90 days'
         LEFT JOIN {{ source('orgm', 'opportunity') }} AS risk_opportuny ON risk_opportuny.accountid = account.sfid AND NOT risk_opportuny.isclosed AND risk_opportuny.renewal_risk_status__c IN ('At Risk','Early Warning')
     GROUP BY 1
