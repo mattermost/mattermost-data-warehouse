@@ -91,9 +91,9 @@ WITH server_details AS (
         JOIN {{ ref('server_daily_details') }}
             ON server_details.server_id = server_daily_details.server_id
             AND server_details.last_active_date = server_daily_details.date
-        LEFT JOIN {{ ref('nps_server_monthly_score') }} nps
+        LEFT JOIN {{ ref('nps_server_daily_score') }} nps
             ON server_details.server_id = nps.server_id
-            AND nps.month = DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 DAY')
+            AND nps.date = DATE_TRUNC('day', CURRENT_DATE - INTERVAL '1 DAY')
         LEFT JOIN server_upgrades upgrades
             ON server_details.server_id = upgrades.server_id
         LEFT JOIN server_active_users sau
