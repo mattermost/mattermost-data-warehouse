@@ -39,7 +39,7 @@ WITH zendesk_ticket_details AS (
     FROM {{ source('zendesk_raw', 'tickets') }}
     LEFT JOIN {{ source('zendesk_raw', 'ticket_metrics') }} ON tickets.id = ticket_metrics.ticket_id
     LEFT JOIN {{ source('zendesk_raw', 'organizations') }} ON tickets.organization_id = organizations.id
-    LEFT JOIN {{ source('orgm', 'account') }} ON organizations.external_id = account.sfid
+    LEFT JOIN {{ source('orgm', 'account') }} ON left(organizations.external_id,15) = left(account.sfid,15)
     LEFT JOIN {{ source('zendesk_raw', 'users') }} ON users.id = tickets.assignee_id
     LEFT JOIN {{ ref('custom_ticket_fields') }} ON tickets.id = custom_ticket_fields.ticket_id
     GROUP BY 1, 2, 3, 4, 5, 6, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
