@@ -124,7 +124,7 @@ WITH server_details AS (
             ON server_details.server_id = sau.server_id
         LEFT JOIN first_server_edition fse
             ON server_details.server_id = fse.server_id
-        LEFT JOIN licenses l
+        LEFT JOIN licenses
             ON server_details.server_id = licenses.server_id
         {{ dbt_utils.group_by(n=38) }}
     )
