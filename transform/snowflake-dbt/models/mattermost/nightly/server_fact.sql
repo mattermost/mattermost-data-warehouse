@@ -19,6 +19,7 @@ WITH server_details AS (
       , MIN(CASE WHEN license_id1 IS NOT NULL OR license_id2 IS NOT NULL THEN date
                                                                         ELSE NULL END) AS first_active_license_date
       , MIN(version) AS                                                                   first_server_version
+      , MIN(CASE WHEN edition IS NOT NULL THEN date ELSE NULL END)                     AS first_edition_date
     FROM {{ ref('server_daily_details') }}
     GROUP BY 1
     ), 
@@ -48,7 +49,7 @@ WITH server_details AS (
       FROM server_details sd
       JOIN {{ ref('server_daily_details') }} s
            ON sd.server_id = s.server_id
-           AND sd.first_telemetry_active_date = s.date
+           AND sd.first_edition_date = s.date
       GROUP BY 1, 2
     ),
   last_server_date AS (
