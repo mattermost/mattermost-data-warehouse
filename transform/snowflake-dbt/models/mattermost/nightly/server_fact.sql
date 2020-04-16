@@ -20,6 +20,7 @@ WITH server_details AS (
                                                                         ELSE NULL END) AS first_active_license_date
       , MIN(version) AS                                                                   first_server_version
       , MIN(CASE WHEN edition IS NOT NULL THEN date ELSE NULL END)                     AS first_edition_date
+      , MAX(CASE WHEN edition IS NOT NULL THEN date ELSE NULL END)                     AS last_edition_date
     FROM {{ ref('server_daily_details') }}
     GROUP BY 1
     ), 
@@ -45,12 +46,14 @@ WITH server_details AS (
     first_server_edition AS (
       SELECT
           s.server_id
-        , s.edition      AS first_server_edition
+        , MAX(CASE WHEN sd.first_edition_date = s.date THEN s.edition ELSE NULL END)      AS first_server_edition
+        , MAX(CASE WHEN sd.last_edition_date = s.date THEN s.edition ELSE NULL END)       AS edition
       FROM server_details sd
       JOIN {{ ref('server_daily_details') }} s
            ON sd.server_id = s.server_id
-           AND sd.first_edition_date = s.date
-      GROUP BY 1, 2
+           AND (sd.first_edition_date = s.date
+           OR sd.last_edition_date = s.date)
+      GROUP BY 1
     ),
   last_server_date AS (
     SELECT
@@ -87,7 +90,7 @@ WITH server_details AS (
         server_details.server_id
       , MAX(server_daily_details.version)                 AS version
       , MAX(server_details.first_server_version)          AS first_server_version
-      , MAX(server_daily_details.edition)                 AS server_edition
+      , MAX(fse.edition)                                  AS server_edition
       , MAX(fse.first_server_edition)                     AS first_server_edition
       , MAX(upgrades.version_upgrade_count)               AS version_upgrade_count
       , MAX(upgrades.edition_upgrade_count)               AS edition_upgrade_count
