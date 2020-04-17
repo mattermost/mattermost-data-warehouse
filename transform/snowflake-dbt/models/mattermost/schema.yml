@@ -39,7 +39,7 @@ models:
     description: Contains each instance a server upgraded from one version to a different, greater version.
   
   - name: nps_server_daily_score
-    description: Contains the monthly server NPS score for each server with 1 or more user NPS submission.
+    description: Contains the daily server NPS score for each server with 1 or more user NPS submission.
   
   - name: nps_user_daily_score
-    description: User NPS score snapshot at a monthly level. Retrieves the User's latest NPS score submission on or before the record month.
+    description: User NPS score snapshot at a daily level. Retrieves the User's latest NPS score submission on or before the record date.

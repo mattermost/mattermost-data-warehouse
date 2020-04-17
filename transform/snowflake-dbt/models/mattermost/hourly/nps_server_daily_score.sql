@@ -9,7 +9,7 @@ WITH nps_server_daily_score AS (
     SELECT
         date
       , server_id
-      , {{ dbt_utils.surrogate_key('date', 'server_id') }}                                                   AS id
+      , {{ dbt_utils.surrogate_key('date', 'server_id') }}                                                    AS id
       , MAX(server_version)                                                                                   AS server_version
       , MIN(server_install_date)                                                                              AS server_install_date
       , COUNT(DISTINCT CASE WHEN score > 8 THEN user_id ELSE NULL END)                                        AS promoters
