@@ -13,6 +13,7 @@ WITH post_events AS (
     , COUNT(DISTINCT user_id) AS post_users
   FROM {{ ref('user_events_by_date') }}
   WHERE event_name = 'api_posts_create'
+  GROUP BY 1, 2
 ),
 
 server_events_by_date AS (
