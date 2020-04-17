@@ -43,6 +43,3 @@ models:
   
   - name: nps_user_daily_score
     description: User NPS score snapshot at a daily level. Retrieves the User's latest NPS score submission on or before the record date.
-
-  - name: nps_version_daily_score
-    description: Version NPS score snapshot at a daily level. Retrieves the Server Version's latest NPS score submission on or before the record date.
