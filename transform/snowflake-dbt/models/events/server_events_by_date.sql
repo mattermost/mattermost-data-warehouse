@@ -51,8 +51,7 @@ server_events_by_date AS (
       , SUM(mobile_events_last_30_days)                                                             AS mobile_events_last_30_days
       , SUM(mobile_events_alltime)                                                                  AS mobile_events_alltime
       , COUNT(DISTINCT user_id)                                                                     AS users
-      , MAX(posts.posts)                                                                            AS posts
-      , MAX(posts.post_users)                                                                       AS posts_users
+      , MAX(posts.posts)                                                                            AS post_events
     FROM {{ ref('user_events_by_date_agg') }} events
     LEFT JOIN post_events posts
               ON events.server_id = posts.server_id
