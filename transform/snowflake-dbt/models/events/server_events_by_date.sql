@@ -5,7 +5,17 @@
   })
 }}
 
-WITH server_events_by_date AS (
+WITH post_events AS (
+  SELECT
+      date
+    , server_id
+    , SUM(total_events) AS posts
+    , COUNT(DISTINCT user_id) AS post_users
+  FROM {{ ref('user_events_by_date') }}
+  WHERE event_name = 'api_posts_create'
+),
+
+server_events_by_date AS (
     SELECT
         date
       , server_id
@@ -28,7 +38,7 @@ WITH server_events_by_date AS (
       , SUM(api_events)                                                                             AS api_events
       , SUM(gfycat_events)                                                                          AS gfycat_events
       , SUM(performance_events)                                                                     AS performance_events
-      , SUM(plugin_events)                                                                         AS plugins_events
+      , SUM(plugin_events)                                                                          AS plugins_events
       , SUM(settings_events)                                                                        AS settings_events
       , SUM(signup_events)                                                                          AS signup_events
       , SUM(system_console_events)                                                                  AS system_console_events
@@ -40,7 +50,12 @@ WITH server_events_by_date AS (
       , SUM(mobile_events_last_30_days)                                                             AS mobile_events_last_30_days
       , SUM(mobile_events_alltime)                                                                  AS mobile_events_alltime
       , COUNT(DISTINCT user_id)                                                                     AS users
-    FROM {{ ref('user_events_by_date_agg') }}
+      , MAX(posts.posts)                                                                            AS posts
+      , MAX(posts.post_users)                                                                       AS posts_users
+    FROM {{ ref('user_events_by_date_agg') }} events
+    LEFT JOIN post_events posts
+              ON events.server_id = posts.server_id
+              AND events.date = posts.date
     {% if is_incremental() %}
 
     WHERE date >= (SELECT MAX(date) FROM {{this}})
