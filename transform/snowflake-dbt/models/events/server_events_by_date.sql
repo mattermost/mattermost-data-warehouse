@@ -18,9 +18,9 @@ WITH post_events AS (
 
 server_events_by_date AS (
     SELECT
-        date
-      , server_id
-      , {{ dbt_utils.surrogate_key('date', 'server_id') }}                                          AS id
+        events.date
+      , events.server_id
+      , {{ dbt_utils.surrogate_key('events.date', 'events.server_id') }}                            AS id
       , MIN(first_active_date)                                                                      AS first_active_date
       , MAX(last_active_date)                                                                       AS last_active_date
       , COUNT(DISTINCT CASE WHEN active THEN user_id ELSE NULL END)                                 AS dau_total
@@ -58,7 +58,7 @@ server_events_by_date AS (
               AND events.date = posts.date
     {% if is_incremental() %}
 
-    WHERE date >= (SELECT MAX(date) FROM {{this}})
+    WHERE events.date >= (SELECT MAX(events.date) FROM {{this}})
 
     {% endif %}
     {{ dbt_utils.group_by(n=3) }}
