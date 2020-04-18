@@ -58,7 +58,7 @@ server_events_by_date AS (
               AND events.date = posts.date
     {% if is_incremental() %}
 
-    WHERE events.date >= (SELECT MAX(events.date) FROM {{this}})
+    WHERE events.date >= (SELECT MAX(date) FROM {{this}})
 
     {% endif %}
     {{ dbt_utils.group_by(n=3) }}
