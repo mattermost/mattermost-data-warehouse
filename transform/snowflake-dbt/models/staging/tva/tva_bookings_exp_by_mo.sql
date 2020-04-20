@@ -4,22 +4,15 @@
   })
 }}
 
-WITH bookings_exp AS (
+WITH actual_bookings_exp_by_mo AS (
     SELECT
-      opportunity.closedate,
-      opportunity.sfid AS opportunity_sfid,
-      opportunitylineitem.sfid AS opportunitylineitem_sfid,
-      opportunity.type AS opportunity_type,
-      opportunitylineitem.product_line_type__c AS product_line_type,
-      CASE WHEN end_date__c::date - start_date__c::date + 1 > 365 THEN opportunitylineitem.arr_contributed__c ELSE opportunitylineitem.totalprice END AS bookings
-    FROM {{ source('orgm', 'opportunity') }} AS opportunity
-    LEFT JOIN {{ source('orgm', 'opportunitylineitem') }} AS opportunitylineitem ON opportunity.sfid = opportunitylineitem.opportunityid
-    WHERE iswon AND opportunitylineitem.product_line_type__c = 'Expansion'
-), actual_bookings_exp_by_mo AS (
-    SELECT 
-        date_trunc('month', closedate)::date AS month,
-        sum(bookings) AS total_bookings
-    FROM bookings_exp
+        DATE_TRUNC('month', opportunity.closedate) AS month,
+        SUM(CASE WHEN opportunitylineitem.product_line_type__c = 'Expansion' AND opportunitylineitem.is_prorated_expansion__c != 'Leftover Expansion' THEN opportunitylineitem.totalprice ELSE NULL END) AS total_bookings
+    FROM {{ source('orgm','account') }}
+    LEFT JOIN {{ source('orgm','opportunity') }} ON account.sfid = opportunity.accountid
+    LEFT JOIN {{ ref('opportunity_ext') }} ON opportunity.sfid = opportunity_ext.opportunity_sfid
+    LEFT JOIN {{ source('orgm','opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
+    WHERE util.fiscal_year(closedate) =  util.get_sys_var('curr_fy') AND opportunity.iswon AND (opportunity_ext.sum_new_amount + opportunity_ext.sum_expansion_w_proration_amount  >= 5000)
     GROUP BY 1
 ), tva_bookings_exp_by_mo AS (
     SELECT
