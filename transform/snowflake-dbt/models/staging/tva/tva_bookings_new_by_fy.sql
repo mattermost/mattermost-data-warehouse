@@ -12,7 +12,8 @@ WITH tva_bookings_new_by_fy AS (
         max(period_last_day) AS period_last_day,
         sum(tva_bookings_new_by_mo.target) AS target,
         sum(tva_bookings_new_by_mo.actual) AS actual,
-        round(sum(tva_bookings_new_by_mo.actual)/sum(tva_bookings_new_by_mo.target),2) AS tva
+        round(sum(tva_bookings_new_by_mo.actual)/sum(tva_bookings_new_by_mo.target),2) AS tva,
+        sum(tva_bookings_new_by_mo.actual_oppt_less_than_5k) AS actual_oppt_less_than_5k
     FROM {{ ref('tva_bookings_new_by_mo') }}
     GROUP BY 1,2
 )
