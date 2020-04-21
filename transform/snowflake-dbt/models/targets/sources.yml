@@ -30,6 +30,9 @@ sources:
       - name: bookings_exp_by_mo
         description: 'Current Fiscal Year Targets for Expansion Bookings by Month'
 
+      - name: bookings_new_and_exp_by_mo
+        description: 'Current Fiscal Year Targets for New & Expansion Bookings by Month'
+
       - name: bookings_ren_by_qtr
         description: 'Current Fiscal Year Targets for Renewal Bookings by Quarter'
       

@@ -76,6 +76,17 @@ WITH data_errors AS (
         AND account.type = 'Customer'
                    
     UNION ALL 
+                   
+    SELECT
+        'account' AS object,
+        account.sfid AS object_id,
+        'US/CA no State' AS error_short,
+        billingcountrycode || ' no State' AS error_long
+    FROM {{ source('orgm','account')}}
+    WHERE billingcountrycode IN ('CA','US')
+        AND billingstatecode IS NULL
+    
+    UNION ALL               
             
     SELECT
         'contact' AS object,
