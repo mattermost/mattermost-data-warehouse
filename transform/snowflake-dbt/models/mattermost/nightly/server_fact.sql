@@ -48,6 +48,8 @@ WITH server_details AS (
           s.server_id
         , MAX(CASE WHEN sd.first_edition_date = s.date THEN s.edition ELSE NULL END)      AS first_server_edition
         , MAX(CASE WHEN sd.last_edition_date = s.date THEN s.edition ELSE NULL END)       AS edition
+        , MAX(sd.first_edition_date)                                                      AS first_edition_date
+        , MAX(sd.last_edition_date)                                                       AS last_edition_date
       FROM server_details sd
       JOIN {{ ref('server_daily_details') }} s
            ON sd.server_id = s.server_id
@@ -92,6 +94,10 @@ WITH server_details AS (
       , MAX(server_details.first_server_version)          AS first_server_version
       , MAX(fse.edition)                                  AS server_edition
       , MAX(fse.first_server_edition)                     AS first_server_edition
+      , MAX(server_details.first_telemetry_active_date)   AS first_telemetry_active_date
+      , MAX(server_details.last_telemetry_active_date)    AS last_telemetry_active_date
+      , MAX(fse.first_edition_date)                       AS first_mm2_telemetry_date
+      , MAX(fse.last_edition_date)                        AS last_mm2_telemetry_date
       , MAX(upgrades.version_upgrade_count)               AS version_upgrade_count
       , MAX(upgrades.edition_upgrade_count)               AS edition_upgrade_count
       , MAX(server_daily_details.account_sfid)            AS last_account_sfid
@@ -101,8 +107,6 @@ WITH server_details AS (
       , MAX(licenses.first_trial_license_date)            AS first_trial_license_date
       , MAX(server_details.first_active_date)             AS first_active_date
       , MAX(server_details.last_active_date)              AS last_active_date
-      , MAX(server_details.first_telemetry_active_date)   AS first_telemetry_active_date
-      , MAX(server_details.last_telemetry_active_date)    AS last_telemetry_active_date
       , MAX(server_details.max_active_user_count)         AS max_active_user_count
       , MAX(server_details.last_active_user_date)         AS last_telemetry_active_user_date
       , MAX(sau.last_event_date)                          AS last_event_active_user_date
