@@ -22,10 +22,7 @@ WITH security                AS (
       , sec.timestamp
       , COUNT(sec.location) over (partition by sec.id, sec.date, sec.hour, sec.active_user_count, sec.ip_address, sec.location) as location_count
     FROM {{ ref('security') }} sec
-         LEFT JOIN {{ ref('excludable_servers') }} es
-                   ON sec.id = es.server_id
-    WHERE es.server_id IS NULL
-      AND sec.dev_build = 0
+    WHERE sec.dev_build = 0
       AND sec.ran_tests = 0
       AND sec.version LIKE '_.%._._.%._'
       AND sec.ip_address <> '194.30.0.184'
