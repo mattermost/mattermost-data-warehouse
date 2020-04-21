@@ -1,0 +1,16 @@
+repo_name,category
+desktop,platform
+mattermost-utilities,platform
+mmctl,platform
+mattermost-redux,platform
+mattermost-webapp,platform
+mattermost-mobile,platform
+mattermost-load-test,platform
+mattermost-android-classic,platform
+mattermost-ios-classic,platform
+mattermost-push-proxy,platform
+docs,documentation
+mattermost-api-reference,documentation
+mattermost-hackathon-nov2019,platform
+mattermost-server,platform
+mattermost-developer-documentation,documentation
