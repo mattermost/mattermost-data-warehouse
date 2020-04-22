@@ -19,6 +19,8 @@ WITH nps_data                       AS (
       , server_install_date
       , responses_alltime
       , user_role
+      , MAX(feedback)               AS feedback
+      , MAX(last_feedback_date)     AS last_feedback_date
     FROM {{ ref('nps_user_daily_score') }}
     {{ dbt_utils.group_by(n=12) }}
                                        ),
@@ -59,6 +61,8 @@ WITH nps_data                       AS (
            , n2.user_created_at
            , n2.server_install_date
            , n2.responses_alltime
+           , n2.feedback
+           , n2.last_feedback_date
            , {{ dbt_utils.surrogate_key('n1.date', 'n2.user_id', 'n2.server_id', 'n2.server_version') }} AS id
          FROM nps_server_vesion n1
               JOIN nps_data     n2
@@ -71,7 +75,7 @@ WITH nps_data                       AS (
         WHERE n1.date >= (SELECT MAX(date) FROM {{this}})
 
         {% endif %}
-        {{ dbt_utils.group_by(n=14) }}
+        {{ dbt_utils.group_by(n=16) }}
      )
      SELECT *
      FROM nps_server_version_daily_score
