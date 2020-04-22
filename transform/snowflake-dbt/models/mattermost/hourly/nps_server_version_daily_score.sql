@@ -72,7 +72,7 @@ WITH nps_data                       AS (
                        AND n1.date >= n2.last_score_date
         {% if is_incremental() %}
 
-        WHERE n1.date >= (SELECT MAX(date) FROM {{this}})
+        WHERE n1.date > (SELECT MAX(date) FROM {{this}})
 
         {% endif %}
         {{ dbt_utils.group_by(n=16) }}
