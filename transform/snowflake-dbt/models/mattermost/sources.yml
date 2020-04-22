@@ -8,3 +8,6 @@ sources:
     tables: 
       - name: github_contributions
       - name: licenses
+
+      - name: version_release_dates
+        description: The server version and associated release date (i.e. GA date).
