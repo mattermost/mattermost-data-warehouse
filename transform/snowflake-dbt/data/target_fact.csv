@@ -4,24 +4,27 @@ id,name,name_by_period,slug,category,target_definition,ga,visibility,period,metr
 3,Expansion ARR,ARR Expansion by Mo,arr_expansion_by_mo,Finance,Expansion ARR contributed to ARR in the given period,true,mlt,mo,EoP
 4,Churn ARR,ARR Churn by Mo,arr_churn_by_mo,Finance,Churned ARR in the given period,true,mlt,mo,EoP
 5,TEDAS (7 Day Active),TEDAS (7 Day Active) by Mo,tedas_7day_by_mo,Product,Ending TEDAS (7 Day Active) of the given period,false,all,mo,EoP
-6,New Bookings,New Bookings by Mo,bookings_new_by_mo,Finance,New Bookings in the given preiod,true,mlt,mo,SoP
-7,Expansion Bookings,Expansion Bookings by Mo,bookings_exp_by_mo,Finance,Expansion Bookings in the given preiod,true,mlt,mo,SoP
+6,New Bookings,New Bookings by Mo,bookings_new_by_mo,Finance,New Bookings in the given period,true,mlt,mo,SoP
+7,Expansion Bookings,Expansion Bookings by Mo,bookings_exp_by_mo,Finance,Expansion Bookings in the given period,true,mlt,mo,SoP
 9,ARR,ARR by Qtr,arr_by_qtr,Finance,Ending ARR of the given period,true,mlt,qtr,EoP
 10,New ARR,ARR New by Qtr,arr_new_by_qtr,Finance,New ARR contributed to ARR in the given period,true,mlt,qtr,EoP
 11,Expansion ARR,ARR Expansion by Qtr,arr_expansion_by_qtr,Finance,Expansion ARR contributed to ARR in the given period,true,mlt,qtr,EoP
 12,Churn ARR,ARR Churn by Qtr,arr_churn_by_qtr,Finance,Churned ARR in the given period,true,mlt,qtr,EoP
 13,TEDAS (7 Day Active),TEDAS (7 Day Active) by Qtr,tedas_7day_by_qtr,Product,Ending TEDAS (7 Day Active) of the given period,false,all,qtr,EoP
-14,New Bookings,New Bookings by Qtr,bookings_new_by_qtr,Finance,New Bookings in the given preiod,true,mlt,qtr,SoP
-15,Expansion Bookings,Expansion Bookings by Qtr,bookings_exp_by_qtr,Finance,Expansion Bookings in the given preiod,true,mlt,qtr,SoP
-16,Renewal Bookings,Renewal Bookings by Qtr,bookings_ren_by_qtr,Finance,Renewal Bookings in the given preiod,true,mlt,qtr,SoP
+14,New Bookings,New Bookings by Qtr,bookings_new_by_qtr,Finance,New Bookings in the given period,true,mlt,qtr,SoP
+15,Expansion Bookings,Expansion Bookings by Qtr,bookings_exp_by_qtr,Finance,Expansion Bookings in the given period,true,mlt,qtr,SoP
+16,Renewal Bookings,Renewal Bookings by Qtr,bookings_ren_by_qtr,Finance,Renewal Bookings in the given period,true,mlt,qtr,SoP
 17,ARR,ARR by FY,arr_by_fy,Finance,Ending ARR of the given period,true,mlt,fy,EoP
 18,New ARR,ARR New by FY,arr_new_by_fy,Finance,New ARR contributed to ARR in the given period,true,mlt,fy,EoP
 19,Expansion ARR,ARR Expansion by FY,arr_expansion_by_fy,Finance,Expansion ARR contributed to ARR in the given period,true,mlt,fy,EoP
 20,Churn ARR,ARR Churn by FY,arr_churn_by_fy,Finance,Churned ARR in the given period,true,mlt,fy,EoP
 21,TEDAS (7 Day Active),TEDAS (7 Day Active) by FY,tedas_7day_by_fy,Product,Ending TEDAS (7 Day Active) of the given period,false,all,fy,EoP
-22,New Bookings,New Bookings by FY,bookings_new_by_fy,Finance,New Bookings in the given preiod,true,mlt,fy,SoP
-23,Expansion Bookings,Expansion Bookings by FY,bookings_exp_by_fy,Finance,Expansion Bookings in the given preiod,true,mlt,fy,SoP
-24,Renewal Bookings,Renewal Bookings by FY,bookings_ren_by_fy,Finance,Renewal Bookings in the given preiod,true,mlt,fy,SoP
+22,New Bookings,New Bookings by FY,bookings_new_by_fy,Finance,New Bookings in the given period,true,mlt,fy,SoP
+23,Expansion Bookings,Expansion Bookings by FY,bookings_exp_by_fy,Finance,Expansion Bookings in the given period,true,mlt,fy,SoP
+24,Renewal Bookings,Renewal Bookings by FY,bookings_ren_by_fy,Finance,Renewal Bookings in the given period,true,mlt,fy,SoP
 25,Downloads,Downloads by Mo,downloads_by_mo,Product,Downloads in the given period,true,all,mo,SoP
 26,Downloads,Downloads by Qtr,downloads_by_qtr,Product,Downloads in the given period,true,all,qtr,SoP
-27,Downloads,Downloads by FY,downloads_by_fy,Product,Downloads in the given period,true,all,qtr,SoP
+27,Downloads,Downloads by FY,downloads_by_fy,Product,Downloads in the given period,true,all,fy,SoP
+28,New and Expansion Bookings,New and Expansion Bookings by Mo,bookings_new_and_exp_by_mo,Finance,New and Expansion Bookings in the given period,true,mlt,mo,SoP
+29,New and Expansion Bookings,New and Expansion Bookings by Qtr,bookings_new_and_exp_by_qtr,Finance,New and Expansion Bookings in the given period,true,mlt,qtr,SoP
+30,New and Expansion Bookings,New and Expansion Bookings by FY,bookings_new_and_exp_by_fy,Finance,New and Expansion Bookings in the given period,true,mlt,fy,SoP
