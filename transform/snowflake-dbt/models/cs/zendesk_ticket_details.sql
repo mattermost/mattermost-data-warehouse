@@ -22,6 +22,9 @@ WITH zendesk_ticket_details AS (
         tickets.created_at,
         ticket_metrics.solved_at,
         tickets.status,
+        organizations.organization_fields:at_risk_customer as account_at_risk,
+        organizations.organization_fields:_oppts_at_risk_ as account_oppt_at_risk,
+        organizations.organization_fields:_oppts_early_warning_ as account_oppt_early_warning,
         ticket_metrics.agent_wait_time_in_minutes:business::int agent_wait_time_in_minutes_bus,
         ticket_metrics.agent_wait_time_in_minutes:calendar::int agent_wait_time_in_minutes_cal,
         ticket_metrics.first_resolution_time_in_minutes:business::int first_resolution_time_in_minutes_bus,
@@ -35,14 +38,16 @@ WITH zendesk_ticket_details AS (
         ticket_metrics.requester_wait_time_in_minutes:business::int requester_wait_time_in_minutes_bus,
         ticket_metrics.requester_wait_time_in_minutes:calendar::int requester_wait_time_in_minutes_cal,
         tickets.satisfaction_rating:score::varchar satisfaction_rating_score,
-        tickets.satisfaction_rating:reason::varchar satisfaction_rating_reason
+        tickets.satisfaction_rating:reason::varchar satisfaction_rating_reason,
+        max(ticket_comments.created_at) as last_comment_at
     FROM {{ source('zendesk_raw', 'tickets') }}
     LEFT JOIN {{ source('zendesk_raw', 'ticket_metrics') }} ON tickets.id = ticket_metrics.ticket_id
     LEFT JOIN {{ source('zendesk_raw', 'organizations') }} ON tickets.organization_id = organizations.id
     LEFT JOIN {{ source('orgm', 'account') }} ON left(organizations.external_id,15) = left(account.sfid,15)
     LEFT JOIN {{ source('zendesk_raw', 'users') }} ON users.id = tickets.assignee_id
     LEFT JOIN {{ ref('custom_ticket_fields') }} ON tickets.id = custom_ticket_fields.ticket_id
-    GROUP BY 1, 2, 3, 4, 5, 6, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
+    LEFT JOIN {{ source('zendesk_raw', 'ticket_comments') }} ON tickets.id = ticket_comments.ticket_id
+    GROUP BY 1, 2, 3, 4, 5, 6, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33
 )
 
 select * from zendesk_ticket_details
