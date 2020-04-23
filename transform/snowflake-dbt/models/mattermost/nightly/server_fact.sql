@@ -7,7 +7,7 @@
 WITH server_details AS (
     SELECT
         server_id
-      , MIN(date) AS                                                                      first_active_date
+      , MIN(CASE WHEN in_security OR in_mm2_server THEN date ELSE NULL END) AS            first_active_date
       , MAX(CASE WHEN in_security OR in_mm2_server THEN date ELSE NULL END) AS            last_active_date
       , MIN(CASE WHEN in_security THEN date ELSE NULL END) AS                             first_telemetry_active_date
       , MAX(CASE WHEN in_security THEN date ELSE NULL END) AS                             last_telemetry_active_date
