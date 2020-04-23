@@ -31,10 +31,10 @@ WITH nps_data                       AS (
              server_id
            , user_id
            , server_version
-           , MIN(last_score_date) AS min_version_nps_date
+           , last_score_date      AS min_version_nps_date
            , MAX(last_date)       AS last_date
          FROM nps_data
-         {{ dbt_utils.group_by(n=3) }}
+         {{ dbt_utils.group_by(n=4) }}
      ),
 
      nps_server_vesion              AS (
