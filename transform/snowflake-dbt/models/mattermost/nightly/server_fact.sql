@@ -21,6 +21,8 @@ WITH server_details AS (
       , MIN(version) AS                                                                   first_server_version
       , MIN(CASE WHEN edition IS NOT NULL THEN date ELSE NULL END)                     AS first_edition_date
       , MAX(CASE WHEN edition IS NOT NULL THEN date ELSE NULL END)                     AS last_edition_date
+      , MIN(CASE WHEN in_mm2_server THEN date ELSE NULL END)                           AS first_mm2_telemetry_date
+      , MAX(CASE WHEN in_mm2_server THEN date ELSE NULL END)                           AS last_mm2_telemetry_date
     FROM {{ ref('server_daily_details') }}
     GROUP BY 1
     ), 
@@ -96,8 +98,8 @@ WITH server_details AS (
       , MAX(fse.first_server_edition)                     AS first_server_edition
       , MAX(server_details.first_telemetry_active_date)   AS first_telemetry_active_date
       , MAX(server_details.last_telemetry_active_date)    AS last_telemetry_active_date
-      , MAX(fse.first_edition_date)                       AS first_mm2_telemetry_date
-      , MAX(fse.last_edition_date)                        AS last_mm2_telemetry_date
+      , MAX(server_details.first_mm2_telemetry_date)      AS first_mm2_telemetry_date
+      , MAX(server_details.last_mm2_telemetry_date)       AS last_mm2_telemetry_date
       , MAX(upgrades.version_upgrade_count)               AS version_upgrade_count
       , MAX(upgrades.edition_upgrade_count)               AS edition_upgrade_count
       , MAX(server_daily_details.account_sfid)            AS last_account_sfid
