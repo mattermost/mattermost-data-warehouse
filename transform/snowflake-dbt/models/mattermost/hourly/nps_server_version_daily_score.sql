@@ -21,6 +21,7 @@ WITH nps_data                       AS (
       , user_role
       , MAX(feedback)               AS feedback
       , MAX(last_feedback_date)     AS last_feedback_date
+      , MAX(date)                   AS last_date
     FROM {{ ref('nps_user_daily_score') }}
     {{ dbt_utils.group_by(n=12) }}
                                        ),
@@ -31,6 +32,7 @@ WITH nps_data                       AS (
            , user_id
            , server_version
            , MIN(last_score_date) AS min_version_nps_date
+           , MAX(last_date)       AS last_date
          FROM nps_data
          {{ dbt_utils.group_by(n=3) }}
      ),
@@ -45,7 +47,7 @@ WITH nps_data                       AS (
          FROM {{ source('util', 'dates') }}              d
               JOIN min_nps_by_version nps
                    ON d.date >= nps.min_version_nps_date
-                       AND d.date <= CURRENT_DATE
+                       AND d.date <= nps.last_date
      ),
      nps_server_version_daily_score AS (
          SELECT
