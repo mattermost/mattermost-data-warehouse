@@ -91,4 +91,6 @@ seeds:
       schema: tva
     account_industry_mapping:
       schema: util
+    version_release_dates:
+      schema: mattermost
 
