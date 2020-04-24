@@ -21,6 +21,7 @@ WITH nps_data                       AS (
       , user_role
       , MAX(feedback)               AS feedback
       , MAX(last_feedback_date)     AS last_feedback_date
+      , MAX(date)                   AS last_date
     FROM {{ ref('nps_user_daily_score') }}
     {{ dbt_utils.group_by(n=12) }}
                                        ),
@@ -30,9 +31,10 @@ WITH nps_data                       AS (
              server_id
            , user_id
            , server_version
-           , MIN(last_score_date) AS min_version_nps_date
+           , last_score_date      AS min_version_nps_date
+           , MAX(last_date)       AS last_date
          FROM nps_data
-         {{ dbt_utils.group_by(n=3) }}
+         {{ dbt_utils.group_by(n=4) }}
      ),
 
      nps_server_vesion              AS (
@@ -41,10 +43,11 @@ WITH nps_data                       AS (
            , nps.server_id
            , nps.user_id
            , nps.server_version
+           , {{ dbt_utils.surrogate_key('d.date', 'nps.user_id', 'nps.server_id', 'nps.server_version') }} AS id
          FROM {{ source('util', 'dates') }}              d
               JOIN min_nps_by_version nps
                    ON d.date >= nps.min_version_nps_date
-                       AND d.date <= CURRENT_DATE
+                       AND d.date <= nps.last_date
      ),
      nps_server_version_daily_score AS (
          SELECT
@@ -63,16 +66,17 @@ WITH nps_data                       AS (
            , n2.responses_alltime
            , n2.feedback
            , n2.last_feedback_date
-           , {{ dbt_utils.surrogate_key('n1.date', 'n2.user_id', 'n2.server_id', 'n2.server_version') }} AS id
+           , n1.id
          FROM nps_server_vesion n1
               JOIN nps_data     n2
                    ON n1.server_id = n2.server_id
                        AND n1.user_id = n2.user_id
                        AND n1.server_version = n2.server_version
                        AND n1.date >= n2.last_score_date
+                       AND n1.date <= n2.last_date
         {% if is_incremental() %}
 
-        WHERE n1.date > (SELECT MAX(date) FROM {{this}})
+        WHERE n1.date >= (SELECT MAX(date) FROM {{this}})
 
         {% endif %}
         {{ dbt_utils.group_by(n=16) }}
