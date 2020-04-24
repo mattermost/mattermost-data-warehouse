@@ -102,6 +102,8 @@ WITH server_details AS (
       , MAX(server_details.last_mm2_telemetry_date)       AS last_mm2_telemetry_date
       , MAX(upgrades.version_upgrade_count)               AS version_upgrade_count
       , MAX(upgrades.edition_upgrade_count)               AS edition_upgrade_count
+      , MAX(CASE WHEN oauth.enable_gitlab_oauth THEN true
+              ELSE FALSE END)                             AS gitlab_install
       , MAX(server_daily_details.account_sfid)            AS last_account_sfid
       , MAX(server_daily_details.license_id1)             AS last_license_id1
       , MAX(server_daily_details.license_id2)             AS last_license_id2
@@ -148,6 +150,9 @@ WITH server_details AS (
             ON server_details.server_id = fse.server_id
         LEFT JOIN licenses
             ON server_details.server_id = licenses.server_id
+        LEFT JOIN {{ ref('server_oauth_details') }} oauth
+            ON server_details.server_id = oauth.server_id
+            AND server_details.first_mm2_telemetry_date = oauth.date
         {{ dbt_utils.group_by(n=1) }}
     )
 SELECT *
