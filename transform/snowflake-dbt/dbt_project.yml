@@ -82,7 +82,7 @@ seeds:
     snowflake_contract_rates:
       schema: bizops
     contributor_map_data:
-      schema: staging
+      schema: mattermost
     github_contributions:
       schema: mattermost
     staff_github_usernames:
