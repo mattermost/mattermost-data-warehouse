@@ -37,5 +37,29 @@ WITH daily_page_visits AS (
         sum(pageviews)
     FROM {{ source('ga_mattermost_handbook_pages_visits', 'report') }}
     GROUP BY 1,2,3,4,5
+    UNION ALL
+    SELECT 
+        'docs.mattermost.com' AS site, 
+        start_date,
+        end_date,
+        pagepath,
+        pagetitle,
+        sum(uniquepageviews),
+        sum(pageviews)
+    FROM {{ source('ga_docs_pages_visits_sources', 'report') }}
+    GROUP BY 1,2,3,4,5
+    UNION ALL
+    SELECT 
+        'licensing.mattermost.com' AS site, 
+        start_date,
+        end_date,
+        pagepath,
+        pagetitle,
+        sum(uniquepageviews),
+        sum(pageviews)
+    FROM {{ source('ga_licensing_pages_visits', 'report') }}
+    GROUP BY 1,2,3,4,5
+
+    
 )
 SELECT * FROM daily_page_visits

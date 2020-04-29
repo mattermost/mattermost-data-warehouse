@@ -40,3 +40,19 @@ sources:
     tables: 
       - name: report
         description: 'Page visits to Mattermost Handbook'
+
+  - name: ga_licensing_pages_visits
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: ga_licensing_pages_visits
+
+    tables: 
+      - name: report
+        description: 'Page visits to Licensing'
+
+  - name: ga_docs_pages_visits_sources
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: ga_docs_pages_visits_sources
+
+    tables: 
+      - name: report
+        description: 'Page visits to Docs'
