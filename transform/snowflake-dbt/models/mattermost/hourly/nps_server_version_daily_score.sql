@@ -32,7 +32,6 @@ WITH nps_data                       AS (
            , user_id
            , server_version
            , last_score_date      AS min_version_nps_date
-           , MAX(last_date)       AS last_date
          FROM nps_data
          {{ dbt_utils.group_by(n=4) }}
      ),
@@ -47,7 +46,7 @@ WITH nps_data                       AS (
          FROM {{ source('util', 'dates') }}              d
               JOIN min_nps_by_version nps
                    ON d.date >= nps.min_version_nps_date
-                       AND d.date <= nps.last_date
+                       AND d.date <= CURRENT_DATE
      ),
      nps_server_version_daily_score AS (
          SELECT
@@ -73,7 +72,7 @@ WITH nps_data                       AS (
                        AND n1.user_id = n2.user_id
                        AND n1.server_version = n2.server_version
                        AND n1.date >= n2.last_score_date
-                       AND n1.date <= n2.last_date
+                       AND n1.date <= CURRENT_DATE
         {% if is_incremental() %}
 
         WHERE n1.date >= (SELECT MAX(date) FROM {{this}})
