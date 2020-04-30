@@ -23,6 +23,18 @@ WITH w_end_date AS
   FROM {{ source('orgm', 'opportunitylineitem') }}
   WHERE product_type__c='Recurring'
   GROUP BY 1
+), w_oppt_commit AS
+ ( SELECT
+        o.sfid as opportunity_sfid,
+        min(ofh.createddate) as first_commit_date,
+        max(ofh.createddate) as last_commit_date,
+        count(distinct(to_char(ofh.createddate,'YYYY-MM'))) as num_times_slipped
+   FROM {{ source('orgm', 'opportunityfieldhistory') }} ofh
+   LEFT JOIN {{ source('orgm', 'opportunityfieldhistory') }} o ON (ofh.opportunityid = o.sfid)
+   WHERE field = 'ForecastCategoryName'
+   AND newvalue = 'Commit'
+   AND o.e_purchase_date__c IS NULL
+   GROUP BY 1
 ), opportunity_ext AS (
    SELECT
         opportunity.sfid as opportunity_sfid,
@@ -33,6 +45,9 @@ WITH w_end_date AS
         min_start_date,
         max_start_date,
         num_diff_start_dates,
+        first_commit_date,
+        last_commit_date,
+        num_times_slipped,
         SUM(CASE WHEN opportunitylineitem.product_line_type__c = 'New' THEN opportunitylineitem.totalprice ELSE 0 END) AS sum_new_amount,
         SUM(CASE WHEN opportunitylineitem.product_line_type__c = 'Expansion' THEN opportunitylineitem.totalprice ELSE 0 END) AS sum_expansion_amount,
         SUM(CASE WHEN opportunitylineitem.product_line_type__c = 'Expansion' AND is_prorated_expansion__c IS NULL THEN totalprice WHEN is_prorated_expansion__c IS NOT NULL THEN 12 * totalprice/term_months__c ELSE 0 END) AS sum_expansion_w_proration_amount,
@@ -42,7 +57,8 @@ WITH w_end_date AS
     LEFT JOIN {{ source('orgm', 'opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
     LEFT JOIN w_end_date ON opportunity.sfid = w_end_date.opportunity_sfid
     LEFT JOIN w_start_date ON opportunity.sfid = w_start_date.opportunity_sfid
-    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8
+    LEFT JOIN w_oppt_commit ON opportunity.sfid = w_oppt_commit.opportunity_sfid
+    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
 )
 
  SELECT * FROM opportunity_ext
