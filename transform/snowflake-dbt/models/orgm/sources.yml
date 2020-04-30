@@ -38,6 +38,9 @@ sources:
       - name: opportunity
         description: "SFDC Opportunity"
 
+      - name: opportunityfieldhistory
+        description: "SFDC Opportunity Field History"
+
       - name: opportunitylineitem
         description: "SFDC Opportunity Line Item"
 
