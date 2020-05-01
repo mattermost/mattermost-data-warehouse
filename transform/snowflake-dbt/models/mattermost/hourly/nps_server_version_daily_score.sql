@@ -44,12 +44,13 @@ WITH nps_data                       AS (
            , nps.user_id
            , nps.server_version
            , nps.last_date
+           , min_version_nps_date
            , {{ dbt_utils.surrogate_key('d.date', 'nps.user_id', 'nps.server_id', 'nps.server_version') }} AS id
          FROM {{ source('util', 'dates') }}              d
               JOIN min_nps_by_version nps
                    ON d.date >= nps.min_version_nps_date
                        AND d.date <= nps.last_date
-         {{ dbt_utils.group_by(n=6) }}
+         {{ dbt_utils.group_by(n=7) }}
      ),
      nps_server_version_daily_score AS (
          SELECT
@@ -74,8 +75,8 @@ WITH nps_data                       AS (
                    ON n1.server_id = n2.server_id
                        AND n1.user_id = n2.user_id
                        AND n1.server_version = n2.server_version
+                       AND n1.min_version_nps_date = n2.last_score_date
                        AND n1.date >= n2.last_score_date
-                       AND n1.date <= n1.last_date
         {% if is_incremental() %}
 
         WHERE n1.date >= (SELECT MAX(date) FROM {{this}})
