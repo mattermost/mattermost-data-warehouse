@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: cs
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: cs
+
+    tables:
+      - name: account_available_renewals_by_qtr
+      - name: fy21_available_renewals
