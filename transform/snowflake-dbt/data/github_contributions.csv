@@ -6548,7 +6548,7 @@ PR,Merged At,Author,Repo
 5346,2020-04-22T21:33:57Z,nevyangelova,mattermost-webapp
 5347,2020-04-24T20:30:03Z,Nirei,mattermost-webapp
 5349,2020-04-20T07:12:48Z,fmunshi,mattermost-webapp
-5352,2020-05-04T14:53:16Z,hzeroo,mattermost-webapp
+5352,2020-05-04T14:53:16Z,hryuk,mattermost-webapp
 5353,2020-05-01T17:15:45Z,asaadmahmood,mattermost-webapp
 5355,2020-04-20T14:15:49Z,mattermost-build,mattermost-webapp
 5356,2020-04-21T19:54:32Z,crspeller,mattermost-webapp
@@ -6601,6 +6601,7 @@ PR,Merged At,Author,Repo
 5426,2020-05-05T10:51:03Z,pradeepmurugesan,mattermost-webapp
 5435,2020-05-04T18:21:48Z,mattermost-build,mattermost-webapp
 5442,2020-05-05T16:46:09Z,lieut-data,mattermost-webapp
+5443,2020-05-06T09:23:18Z,saturninoabril,mattermost-webapp
 1,2015-06-15T18:01:11Z,jwilander,mattermost-server
 2,2015-06-15T18:01:37Z,jwilander,mattermost-server
 3,2015-06-15T18:01:57Z,jwilander,mattermost-server
@@ -15179,6 +15180,8 @@ PR,Merged At,Author,Repo
 14457,2020-05-04T11:21:48Z,jupenur,mattermost-server
 14459,2020-05-05T08:19:26Z,grundleborg,mattermost-server
 14468,2020-05-05T16:43:12Z,cpanato,mattermost-server
+14469,2020-05-06T08:47:59Z,cpanato,mattermost-server
+14470,2020-05-06T07:36:28Z,cpanato,mattermost-server
 4,2016-10-12T20:13:53Z,thomchop,mattermost-mobile
 5,2016-10-12T20:45:54Z,jasonblais,mattermost-mobile
 7,2016-10-12T21:41:00Z,hmhealey,mattermost-mobile
@@ -18545,6 +18548,7 @@ PR,Merged At,Author,Repo
 4115,2020-04-02T18:55:12Z,mattermost-build,mattermost-mobile
 4120,2020-04-08T20:44:54Z,migbot,mattermost-mobile
 4121,2020-04-07T16:53:00Z,migbot,mattermost-mobile
+4122,2020-05-06T10:30:52Z,enahum,mattermost-mobile
 4123,2020-04-08T18:02:30Z,enahum,mattermost-mobile
 4124,2020-04-07T17:00:19Z,mattermost-build,mattermost-mobile
 4125,2020-04-08T15:08:59Z,migbot,mattermost-mobile
@@ -18657,6 +18661,8 @@ PR,Merged At,Author,Repo
 4264,2020-05-05T19:19:07Z,enahum,mattermost-mobile
 4266,2020-05-05T19:29:49Z,mattermost-build,mattermost-mobile
 4267,2020-05-05T22:56:59Z,enahum,mattermost-mobile
+4268,2020-05-05T23:15:39Z,mattermost-build,mattermost-mobile
+4269,2020-05-05T23:15:52Z,mattermost-build,mattermost-mobile
 1,2016-09-30T13:48:36Z,enahum,mattermost-load-test
 2,2016-09-30T19:53:52Z,it33,mattermost-load-test
 3,2016-10-01T01:41:03Z,csduarte,mattermost-load-test
@@ -21843,7 +21849,9 @@ PR,Merged At,Author,Repo
 3587,2020-05-01T16:43:15Z,amyblais,docs
 3588,2020-05-01T16:29:34Z,jasonblais,docs
 3590,2020-05-04T13:56:03Z,calebroseland,docs
+3591,2020-05-06T12:59:24Z,jasonblais,docs
 3593,2020-05-05T12:37:10Z,amyblais,docs
+3594,2020-05-06T13:42:21Z,amyblais,docs
 3595,2020-05-05T14:41:42Z,amyblais,docs
 1,2016-09-16T15:41:50Z,jwilander,mattermost-api-reference
 2,2016-09-16T19:55:11Z,coreyhulen,mattermost-api-reference
@@ -22759,6 +22767,7 @@ PR,Merged At,Author,Repo
 608,2020-04-23T19:09:39Z,asaadmahmood,mattermost-developer-documentation
 609,2020-04-27T12:53:15Z,agnivade,mattermost-developer-documentation
 610,2020-05-05T14:38:35Z,chuttam,mattermost-developer-documentation
+614,2020-05-06T08:57:02Z,jwilander,mattermost-developer-documentation
 1,2019-11-16T03:38:38Z,jasonblais,mattermost-hackathon-nov2019
 3,2019-11-25T17:12:05Z,allenlai18,mattermost-hackathon-nov2019
 4,2019-11-25T17:19:06Z,niklabh,mattermost-hackathon-nov2019
