@@ -129,11 +129,11 @@ WITH license        AS (
            , COALESCE(l.issuedat, ld.issued_date)                                                  AS issued_date
            , COALESCE(ld.start_date, l.issuedat)                                                   AS start_date
            , COALESCE(l.expiresat, ld.expire_date)                                                 AS expire_date
-           , lo.master_account_sfid
-           , lo.master_account_name
-           , lo.account_sfid
-           , lo.account_name
-           , l.email                                                                                AS license_email
+           , COALESCE(elm.account_sfid, lo.master_account_sfid)                                    AS master_account_sfid
+           , COALESCE(elm.name, lo.master_account_name)                                            AS master_account_name
+           , COALESCE(elm.account_sfid, lo.account_sfid)                                           AS account_sfid
+           , COALESCE(elm.name, lo.account_name)                                                   AS account_name
+           , l.email                                                                               AS license_email
            , lo.contact_sfid
            , lo.contact_email
            , l.number
@@ -169,6 +169,15 @@ WITH license        AS (
                         AND l.date = ld.date
               LEFT JOIN license_overview lo
                         ON l.licenseid = lo.licenseid
+              LEFT JOIN (
+                         SELECT 
+                            l.*
+                          , a.name
+                         FROM {{ ref('enterprise_license_fact') }} l
+                              LEFT JOIN {{ source('orgm', 'account') }} a
+                                        ON elm.account_sfid = a.sfid
+                        ) elm
+                        ON l.licenseid = elm.licenseid
          {% if is_incremental() %}
 
          WHERE l.date > (SELECT MAX(date) FROM {{this}})
