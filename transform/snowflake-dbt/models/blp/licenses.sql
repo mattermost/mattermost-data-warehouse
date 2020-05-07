@@ -175,7 +175,7 @@ WITH license        AS (
                           , a.name
                          FROM {{ ref('enterprise_license_mapping') }} l
                               LEFT JOIN {{ source('orgm', 'account') }} a
-                                        ON elm.account_sfid = a.sfid
+                                        ON l.account_sfid = a.sfid
                         ) elm
                         ON l.licenseid = elm.licenseid
          {% if is_incremental() %}
