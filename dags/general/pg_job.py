@@ -40,7 +40,7 @@ def get_container_operator(task_name, job_name):
 
 
 # Create the DAG
-dag = DAG("pg_job", default_args=default_args, schedule_interval="@hourly")
+dag = DAG("pg_job", default_args=default_args, schedule_interval="20-59/30 * * * *")
 
 tasks_filtered = get_container_operator("tasks-filtered", "tasks_filtered")
 account_arr = get_container_operator("account-arr", "account_arr")
