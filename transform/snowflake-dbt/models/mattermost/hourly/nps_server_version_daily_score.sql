@@ -75,7 +75,7 @@ WITH nps_data                       AS (
                    ON n1.server_id = n2.server_id
                        AND n1.user_id = n2.user_id
                        AND n1.server_version = n2.server_version
-                       AND n1.min_version_nps_date = n2.last_score_date
+                       AND n1.date <= n2.last_date
                        AND n1.date >= n2.last_score_date
         {% if is_incremental() %}
 
