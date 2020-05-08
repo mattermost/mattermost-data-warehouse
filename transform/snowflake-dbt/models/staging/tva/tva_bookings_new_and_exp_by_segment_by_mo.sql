@@ -25,7 +25,7 @@ WITH actual_bookings_new_and_exp_by_segment_by_mo AS (
         ROUND(COALESCE(actual_bookings_new_and_exp_by_segment_by_mo.actual,0)/bookings_new_and_exp_by_segment_by_mo.target,2) AS tva
     FROM {{ source('targets', 'bookings_new_and_exp_by_segment_by_mo') }}
     LEFT JOIN actual_bookings_new_and_exp_by_segment_by_mo 
-        ON bookings_new_and_exp_by_segment_by_mo.segment_emp_num = actual_bookings_new_and_exp_by_segment_by_mo.segment_emp_num
+        ON bookings_new_and_exp_by_segment_by_mo.segment = actual_bookings_new_and_exp_by_segment_by_mo.segment
             AND bookings_new_and_exp_by_segment_by_mo.month = actual_bookings_new_and_exp_by_segment_by_mo.month
 )
 
