@@ -61,4 +61,21 @@ models:
 
   - name: tva_downloads_by_fy
     description: Downloads by Fiscal Year Target vs Actuals for the Current Fiscal Year
-  
+
+  - name: tva_bookings_new_and_exp_by_fy
+
+  - name: tva_bookings_new_and_exp_by_mo
+
+  - name: tva_bookings_new_and_exp_by_qtr
+
+  - name: tva_bookings_new_and_exp_by_rep_by_fy
+
+  - name: tva_bookings_new_and_exp_by_rep_by_qtr
+
+  - name: tva_bookings_new_and_exp_by_rep_by_mo
+
+  - name: tva_bookings_new_and_exp_by_segment_by_fy
+
+  - name: tva_bookings_new_and_exp_by_segment_by_mo
+
+  - name: tva_bookings_new_and_exp_by_segment_by_qtr
