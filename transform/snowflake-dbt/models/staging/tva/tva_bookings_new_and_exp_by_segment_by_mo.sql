@@ -6,7 +6,7 @@
 
 WITH actual_bookings_new_and_exp_by_segment_by_mo AS (
     SELECT
-	    account.segment__c AS segment,
+	    account.territory_segment__c AS segment,
 	    DATE_TRUNC('month', opportunity.closedate) AS month,
 	    ROUND(SUM(CASE WHEN opportunitylineitem.product_line_type__c IN ('New','Expansion') THEN opportunitylineitem.totalprice ELSE NULL END),2) AS actual
     FROM {{ source('orgm','account') }}

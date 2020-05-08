@@ -6,7 +6,7 @@
 
 WITH actual_bookings_new_and_exp_by_rep_by_mo AS (
     SELECT
-	    rep.sfid AS rep_emp_num,
+	    rep.employeenumber AS rep_emp_num,
 	    DATE_TRUNC('month', opportunity.closedate) AS month,
 	    ROUND(SUM(CASE WHEN opportunitylineitem.product_line_type__c IN ('New','Expansion') THEN opportunitylineitem.totalprice ELSE NULL END),2) AS actual
     FROM {{ source('orgm','opportunity') }}
