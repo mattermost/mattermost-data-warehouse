@@ -28,9 +28,9 @@ id,name,name_by_period,slug,category,target_definition,ga,visibility,period,metr
 28,New and Expansion Bookings,New and Expansion Bookings by Mo,bookings_new_and_exp_by_mo,Finance,New and Expansion Bookings in the given period,true,mlt,mo,SoP
 29,New and Expansion Bookings,New and Expansion Bookings by Qtr,bookings_new_and_exp_by_qtr,Finance,New and Expansion Bookings in the given period,true,mlt,qtr,SoP
 30,New and Expansion Bookings,New and Expansion Bookings by FY,bookings_new_and_exp_by_fy,Finance,New and Expansion Bookings in the given period,true,mlt,fy,SoP
-31,New and Expansion Bookings by Rep,New and Expansion Bookings by Rep by Mo,bookings_new_and_exp_by_rep_by_mo,Finance,New and Expansion Bookings by a Rep in the given period,true,mlt,mo,SoP
-32,New and Expansion Bookings by Rep,New and Expansion Bookings by Rep by Qtr,bookings_new_and_exp_by_rep_by_qtr,Finance,New and Expansion Bookings by a Rep in the given period,true,mlt,qtr,SoP
-33,New and Expansion Bookings by Rep,New and Expansion Bookings by Rep by FY,bookings_new_and_exp_by_rep_by_fy,Finance,New and Expansion Bookings by a Rep in the given period,true,mlt,fy,SoP
-34,New and Expansion Bookings by Segment,New and Expansion Bookings by Segment by Mo,bookings_new_and_exp_by_segment_by_mo,Finance,New and Expansion Bookings by a Segment in the given period,true,mlt,mo,SoP
-35,New and Expansion Bookings by Segment,New and Expansion Bookings by Segment by Qtr,bookings_new_and_exp_by_segment_by_qtr,Finance,New and Expansion Bookings by a Segment in the given period,true,mlt,qtr,SoP
-36,New and Expansion Bookings by Segment,New and Expansion Bookings by Segment by FY,bookings_new_and_exp_by_segment_by_fy,Finance,New and Expansion Bookings by a Segment in the given period,true,mlt,fy,SoP
+31,New and Expansion Attainment by Rep,New and Expansion Bookings by Rep by Mo,attain_new_and_exp_by_rep_by_mo,Finance,New and Expansion Bookings by a Rep in the given period,true,mlt,mo,SoP
+32,New and Expansion Attainment by Rep,New and Expansion Bookings by Rep by Qtr,attain_new_and_exp_by_rep_by_qtr,Finance,New and Expansion Bookings by a Rep in the given period,true,mlt,qtr,SoP
+33,New and Expansion Attainment by Rep,New and Expansion Bookings by Rep by FY,attain_new_and_exp_by_rep_by_fy,Finance,New and Expansion Bookings by a Rep in the given period,true,mlt,fy,SoP
+34,New and Expansion Attainment by Segment,New and Expansion Bookings by Segment by Mo,attain_new_and_exp_by_segment_by_mo,Finance,New and Expansion Bookings by a Segment in the given period,true,mlt,mo,SoP
+35,New and Expansion Attainment by Segment,New and Expansion Bookings by Segment by Qtr,attain_new_and_exp_by_segment_by_qtr,Finance,New and Expansion Bookings by a Segment in the given period,true,mlt,qtr,SoP
+36,New and Expansion Attainment by Segment,New and Expansion Bookings by Segment by FY,attain_new_and_exp_by_segment_by_fy,Finance,New and Expansion Bookings by a Segment in the given period,true,mlt,fy,SoP
