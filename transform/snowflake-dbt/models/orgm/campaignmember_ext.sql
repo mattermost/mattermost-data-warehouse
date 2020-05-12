@@ -4,7 +4,7 @@
   })
 }}
 
-WITH w_cm_request_dates AS (
+WITH campaignmember_ext AS (
     SELECT
         campaignmember.sfid as campaignmember_sfid,
         COALESCE(contact.request_to_contact_us_date__c,lead.request_to_contact_us_date__c) AS contact_us_request_date,
@@ -17,4 +17,4 @@ WITH w_cm_request_dates AS (
 )
 
 SELECT *
-FROM w_cm_request_dates
+FROM campaignmember_ext
