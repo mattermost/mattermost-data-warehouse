@@ -14,8 +14,9 @@ WITH zendesk_ticket_details AS (
         users.name AS assignee_name,
         max(CASE WHEN custom_ticket_fields.ticket_field_id = 24889383 THEN custom_ticket_fields.field_value ELSE NULL END) AS enterprise_edition_version,
         max(CASE WHEN custom_ticket_fields.ticket_field_id = 24998963 THEN custom_ticket_fields.field_value ELSE NULL END) AS customer_type,
-        max(CASE WHEN custom_ticket_fields.ticket_field_id = 24998983 THEN custom_ticket_fields.field_value ELSE NULL END) AS e20_customer_level_tier,
         max(CASE WHEN custom_ticket_fields.ticket_field_id = 25430823 THEN custom_ticket_fields.field_value ELSE NULL END) AS category,
+        max(CASE WHEN custom_ticket_fields.ticket_field_id = 25430823 THEN custom_ticket_fields.field_value ELSE NULL END) AS tech_support_category,
+        max(CASE WHEN custom_ticket_fields.ticket_field_id = 360031056451 THEN custom_ticket_fields.field_value ELSE NULL END) AS sales_billings_support_category,
         CASE WHEN max(CASE WHEN custom_ticket_fields.ticket_field_id = 360029689292 THEN custom_ticket_fields.field_value ELSE NULL END) = 'true' THEN TRUE ELSE FALSE END AS pending_do_not_close,
         CASE WHEN tickets.tags LIKE '%premsupport%' THEN true ELSE false END AS premium_support,
         array_to_string(tickets.tags, ', ') AS tags,
@@ -23,6 +24,7 @@ WITH zendesk_ticket_details AS (
         ticket_metrics.solved_at,
         tickets.status,
         tickets.priority,
+        ticket_forms.name as form_name,
         coalesce(organizations.organization_fields:at_risk_customer,false)::boolean as account_at_risk,
         coalesce(organizations.organization_fields:_oppts_at_risk_::int,0) as account_oppt_at_risk,
         coalesce(organizations.organization_fields:_oppts_early_warning_::int,0) as account_oppt_early_warning,
@@ -48,7 +50,8 @@ WITH zendesk_ticket_details AS (
     LEFT JOIN {{ source('zendesk_raw', 'users') }} ON users.id = tickets.assignee_id
     LEFT JOIN {{ ref('custom_ticket_fields') }} ON tickets.id = custom_ticket_fields.ticket_id
     LEFT JOIN {{ source('zendesk_raw', 'ticket_comments') }} ON tickets.id = ticket_comments.ticket_id
-    GROUP BY 1, 2, 3, 4, 5, 6, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34
+    LEFT JOIN {{ source('zendesk_raw', 'ticket_forms') }} ON ticket_forms.id = tickets.ticket_form_id
+    GROUP BY 1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36
 )
 
 select * from zendesk_ticket_details
