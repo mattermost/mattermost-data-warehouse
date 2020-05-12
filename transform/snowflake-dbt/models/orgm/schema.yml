@@ -6,3 +6,6 @@ models:
 
   - name: account_ext
     description: Additional fields at an Account level that do not exist on Account naitively.
+
+  - name: campaignmember_ext
+    description: Additional fields at an Campaign Member level that do not exist on Campaign Member naitively.

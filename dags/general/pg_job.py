@@ -45,6 +45,8 @@ dag = DAG("pg_job", default_args=default_args, schedule_interval="20-59/30 * * *
 tasks_filtered = get_container_operator("tasks-filtered", "tasks_filtered")
 account_arr = get_container_operator("account-arr", "account_arr")
 account_type = get_container_operator("account-type", "account_type")
+account_segment = get_container_operator("account-segment", "account_segment")
+lead_account = get_container_operator("lead-account", "lead_account")
 opportunitylineitem_snapshot = get_container_operator(
     "opportunitylineitem-snapshot", "opportunitylineitem_snapshot"
 )
@@ -53,4 +55,4 @@ opportunity_snapshot = get_container_operator(
 )
 heroku_connect_retry = get_container_operator("heroku-connect-retry", "connect_retry")
 
-tasks_filtered >> account_arr >> account_type >> opportunity_snapshot >> opportunitylineitem_snapshot >> heroku_connect_retry
+tasks_filtered >> account_arr >> account_type >> account_segment >> lead_account >> opportunity_snapshot >> opportunitylineitem_snapshot >> heroku_connect_retry
