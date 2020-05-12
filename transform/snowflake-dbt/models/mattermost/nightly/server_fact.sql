@@ -48,7 +48,7 @@ WITH server_details AS (
     first_server_edition AS (
       SELECT
           s.server_id
-        , MAX(CASE WHEN sd.first_server_version_date = s.date THEN s.edition ELSE NULL END)      AS first_server_version
+        , MAX(CASE WHEN sd.first_server_version_date = s.date THEN s.version ELSE NULL END)      AS first_server_version
         , MAX(CASE WHEN sd.first_edition_date = s.date THEN s.edition ELSE NULL END)             AS first_server_edition
         , MAX(CASE WHEN sd.last_edition_date = s.date THEN s.edition ELSE NULL END)              AS edition
         , MAX(sd.first_edition_date)                                                             AS first_edition_date
