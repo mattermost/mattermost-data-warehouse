@@ -35,7 +35,7 @@ WITH license        AS (
          FROM {{ source('util', 'dates') }} d
          JOIN {{ source('mattermost2','license') }} l
               ON l.timestamp::date <= d.date
-              AND d.date <= CURRENT_DATE - INTERVAL '1 DAY'
+              AND d.date <= CURRENT_DATE
               AND d.date >= to_timestamp(l.issued / 1000)::DATE
          {{ dbt_utils.group_by(n=4) }}
      ),
@@ -54,7 +54,7 @@ WITH license        AS (
        FROM {{ source('util', 'dates') }} d
             JOIN license l
                  ON d.date >= l.issuedat
-                 AND d.date <= CASE WHEN CURRENT_DATE - interval '1 day' <= l.expiresat THEN CURRENT_DATE - interval '1 day' ELSE l.expiresat END
+                 AND d.date <= CASE WHEN CURRENT_DATE <= l.expiresat THEN CURRENT_DATE ELSE l.expiresat END
        {{ dbt_utils.group_by(n=9) }}
      ), 
 
@@ -180,7 +180,8 @@ WITH license        AS (
                         ON l.licenseid = elm.licenseid
          {% if is_incremental() %}
 
-         WHERE l.date > (SELECT MAX(date) FROM {{this}})
+         WHERE COALESCE(ld.timestamp, CURRENT_DATE - INTERVAL '1 DAY') > (SELECT MAX(timestamp) FROM {{this}})
+         OR l.date > (SELECT MAX(DATE) FROM {{this}})
 
          {% endif %}
          {{ dbt_utils.group_by(n=43) }}
@@ -267,6 +268,7 @@ WITH license        AS (
          {% if is_incremental() %}
 
          WHERE ld.date > (SELECT MAX(date) FROM {{this}})
+         OR ld.timestamp > (SELECT MAX(TIMESTAMP) FROM {{this}})
 
          {% endif %}
      ),
