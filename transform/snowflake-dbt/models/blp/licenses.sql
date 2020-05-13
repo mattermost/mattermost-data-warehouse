@@ -194,7 +194,7 @@ WITH license        AS (
            , ld.server_id
            , ld.customer_id
            , ld.company
-           , ld.edition
+           , MAX(ld.edition) OVER (PARTITION BY ld.license_id) AS edition
            , CASE WHEN REGEXP_SUBSTR(company, '[^a-zA-Z]TRIAL$') in ('-TRIAL', 'TRIAL', ' TRIAL') THEN TRUE 
                   WHEN DATEDIFF(day, ld.start_date, ld.expire_date) <= 35 THEN TRUE
                   ELSE FALSE END        AS trial
