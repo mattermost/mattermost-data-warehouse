@@ -244,6 +244,7 @@ WITH license        AS (
            , ld.feature_password
            , ld.feature_saml
            , ld.timestamp
+           , MIN(ld.timestamp) OVER (PARTITION BY ld.license_id) as license_activation_date
            , ld.id
            , CASE WHEN
                   COUNT(CASE WHEN REGEXP_SUBSTR(company, '[^a-zA-Z]TRIAL$') in ('-TRIAL', 'TRIAL', ' TRIAL') THEN ld.server_id
@@ -268,7 +269,7 @@ WITH license        AS (
          {% if is_incremental() %}
 
          WHERE ld.date > (SELECT MAX(date) FROM {{this}})
-         OR ld.timestamp > (SELECT MAX(TIMESTAMP) FROM {{this}})
+         OR COALESCE(ld.timestamp, CURRENT_DATE - INTERVAL '1 DAY') > (SELECT MAX(TIMESTAMP) FROM {{this}})
 
          {% endif %}
      ),
@@ -321,6 +322,7 @@ WITH license        AS (
         , MAX(lw.id)                                  AS id
         , MAX(lw.has_trial_and_non_trial)             AS has_trial_and_non_trial
         , MAX(lw.server_expire_date_join)             AS server_expire_date_join
+        , MAX(lw.license_activation_date)             AS license_activation_date
         FROM licenses_window lw
         {{ dbt_utils.group_by(n=4) }}
      )
