@@ -9,8 +9,8 @@ WITH enterprise_license_fact AS (
         enterprise_license_mapping.account_sfid,
         enterprise_license_mapping.licenseid,
         license_daily_details.start_date,
-        enterprise_license_mapping.expiresat::date as expiresat,
-        license_daily_details.last_license_telemetry_date,
+        enterprise_license_mapping.expiresat::date AS expiresat,
+        MAX(license_daily_details.last_license_telemetry_date) AS last_license_telemetry_date,
         MAX(COALESCE(license_daily_details.license_users,license_daily_details.customer_users))::int AS current_max_licensed_users,
         AVG(license_daily_details.license_server_dau)::int AS current_rolling_7day_avg_dau,
         AVG(license_daily_details.license_server_mau)::int AS current_rolling_7day_avg_mau,
@@ -33,7 +33,7 @@ WITH enterprise_license_fact AS (
         AND month_ago.date >= CURRENT_DATE - INTERVAL '38 days'
         AND month_ago.date < CURRENT_DATE - INTERVAL '30 days'
     WHERE enterprise_license_mapping.expiresat >= CURRENT_DATE
-    GROUP BY 1, 2, 3, 4, 5
+    GROUP BY 1, 2, 3, 4
 )
 
 SELECT * FROM enterprise_license_fact
