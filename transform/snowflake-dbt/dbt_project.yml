@@ -99,5 +99,9 @@ seeds:
       schema: sales
     commit_segment:
       schema: sales
+    github_reco_categorization:
+      schema: mattermost
+    github_contributions_all:
+      schema: mattermost
 
 
