@@ -14,7 +14,6 @@ SELECT
     stagename,
     forecastcategoryname, 
     expectedrevenue, 
-    amount, 
-    arr_contributed__c
+    amount
 FROM orgm.opportunity;
 
