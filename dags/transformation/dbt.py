@@ -62,7 +62,6 @@ user_agent = KubernetesPodOperator(
         SNOWFLAKE_USER,
         SNOWFLAKE_PASSWORD,
         SNOWFLAKE_ACCOUNT,
-        SNOWFLAKE_TRANSFORM_DATABASE,
         SNOWFLAKE_TRANSFORM_WAREHOUSE,
     ],
     env_vars={},
