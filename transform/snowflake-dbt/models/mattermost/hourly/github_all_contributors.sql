@@ -10,7 +10,7 @@ WITH github_all_contributors AS (
         MIN(merged_at) AS min_contribution, 
         MAX(merged_at) AS max_contribution,
         COUNT(*) AS total_contributions
-    FROM {{ source('mattermost', 'github_contributions_all') }}
+    FROM {{ source('staging', 'github_contributions_all') }}
     GROUP BY 1
 )
 

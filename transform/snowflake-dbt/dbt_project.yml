@@ -100,6 +100,6 @@ seeds:
     github_repo_categorization:
       schema: mattermost
     github_contributions_all:
-      schema: mattermost
+      schema: staging
 
 
