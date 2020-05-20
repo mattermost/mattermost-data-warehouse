@@ -6,7 +6,9 @@ sources:
     schema: mattermost
 
     tables: 
-      - name: github_contributions
+      - name: github_contributions_all
+      - name: github_repo_categorization
+      
       - name: licenses
 
       - name: version_release_dates
