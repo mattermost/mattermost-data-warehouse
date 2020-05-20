@@ -33,5 +33,6 @@ snowflake-sqlalchemy==1.1.10
 target-stitch==1.8.1
 tldextract
 toolz
+user-agents==2.1
 urllib3<1.25
 xenon==0.7
