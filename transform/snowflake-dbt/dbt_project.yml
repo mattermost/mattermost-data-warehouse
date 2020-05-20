@@ -83,8 +83,6 @@ seeds:
       schema: bizops
     contributor_map_data:
       schema: mattermost
-    github_contributions:
-      schema: mattermost
     staff_github_usernames:
       schema: employee
     target_fact:
@@ -99,5 +97,9 @@ seeds:
       schema: sales
     commit_segment:
       schema: sales
+    github_repo_categorization:
+      schema: mattermost
+    github_contributions_all:
+      schema: mattermost
 
 

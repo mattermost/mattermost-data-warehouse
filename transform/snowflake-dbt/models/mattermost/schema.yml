@@ -14,8 +14,13 @@ models:
   - name: contributor_employee_map_data
     description: Location data on contributors and employees
 
-  - name: github_contributors
-    description: Statistics on GitHub contributors
+  - name: github_community_contributions
+
+  - name: github_community_contributors
+
+  - name: github_all_contributions
+
+  - name: github_all_contributors
   
   - name: nps_data
     description: NPS scores and feedback

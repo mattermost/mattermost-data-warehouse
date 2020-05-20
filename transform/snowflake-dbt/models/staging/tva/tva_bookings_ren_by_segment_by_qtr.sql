@@ -6,7 +6,7 @@
 
 WITH actual_bookings_ren_by_segment_by_qtr AS (
     SELECT
-	    account.territory_segment__c AS segment,
+	    opportunity.territory_segment__c AS segment,
 	    util.fiscal_year(opportunity.closedate)|| '-' || util.fiscal_quarter(opportunity.closedate) AS qtr,
 	    ROUND(SUM(CASE WHEN opportunitylineitem.product_line_type__c = 'Ren' THEN opportunitylineitem.totalprice ELSE NULL END),2) AS actual
     FROM {{ source('orgm','account') }}
