@@ -59,8 +59,8 @@ user_agent = KubernetesPodOperator(
     task_id="user-agent",
     name="user-agent",
     secrets=[
-        SNOWFLAKE_TRANSFORM_USER,
-        SNOWFLAKE_TRANSFORM_PASSWORD,
+        SNOWFLAKE_USER,
+        SNOWFLAKE_PASSWORD,
         SNOWFLAKE_ACCOUNT,
         SNOWFLAKE_TRANSFORM_DATABASE,
         SNOWFLAKE_TRANSFORM_WAREHOUSE,
