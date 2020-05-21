@@ -6,8 +6,8 @@ sources:
     schema: web
 
   - name: mattermostcom
-  database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
-  schema: mattermostcom
+    database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
+    schema: mattermostcom
 
     tables:
       - name: pages
@@ -16,8 +16,8 @@ sources:
         description: 'User identifying information from users visiting WWW and Integrations Mattermost Web Properties.'
 
   - name: portal_prod
-  database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
-  schema: portal_prod
+    database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
+    schema: portal_prod
 
     tables:
       - name: pages
