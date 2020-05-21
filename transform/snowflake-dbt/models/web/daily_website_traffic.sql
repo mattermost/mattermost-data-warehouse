@@ -83,7 +83,7 @@ WITH daily_website_traffic AS (
       , context_app_namespace
       , context_app_version
       , context_ip
-      , context_library_namegit 
+      , context_library_name
       , context_library_version
       , context_locale
       , context_os_name
