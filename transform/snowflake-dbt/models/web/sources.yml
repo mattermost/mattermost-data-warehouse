@@ -4,3 +4,25 @@ sources:
   - name: web
     database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
     schema: web
+
+  - name: mattermostcom
+  database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
+  schema: mattermostcom
+
+    tables:
+      - name: pages
+        description: 'WWW and Integrations Mattermost Web Property User-Level Page Views.'
+      - name: identifies
+        description: 'User identifying information from users visiting WWW and Integrations Mattermost Web Properties.'
+
+  - name: portal_prod
+  database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
+  schema: portal_prod
+
+    tables:
+      - name: pages
+        description: 'Customer Web Portal Mattermost Web Property User-Level Page Views.'
+      - name: identifies
+        description: 'User identifying information from users visiting Customer Web Portal Mattermost Web Property.'
+      - name: subscription_purchased
+        description: 'Information pertaining to the user and purchased license (subscription_id) for users that successfully purchased a license via the Mattermost Customer Portal (customers.mattermost.com).'
