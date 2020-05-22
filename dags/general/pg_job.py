@@ -49,9 +49,6 @@ owner_segment_updates = get_container_operator(
     "owner-segment-updates", "owner_segment_updates"
 )
 lead_account = get_container_operator("lead-account", "lead_account")
-update_opportunitylineitem_amounts = get_container_operator(
-    "update-opportunitylineitem-amounts", "update_opportunitylineitem_amounts"
-)
 opportunitylineitem_snapshot = get_container_operator(
     "opportunitylineitem-snapshot", "opportunitylineitem_snapshot"
 )
