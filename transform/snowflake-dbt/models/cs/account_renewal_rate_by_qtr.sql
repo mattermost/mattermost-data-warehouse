@@ -12,9 +12,11 @@ WITH account_renewal_rate_by_qtr AS (
         sum(CASE WHEN opportunity.iswon THEN opportunitylineitem.totalprice ELSE 0 END) AS renewal_amount,
         sum(CASE WHEN opportunity.iswon OR NOT opportunity.isclosed THEN opportunity.probability/100.00 * opportunitylineitem.totalprice ELSE 0 END) AS forecasted_renewal_amount,
         least(available_renewals.available_renewals, sum(CASE WHEN opportunity.iswon THEN opportunitylineitem.totalprice ELSE 0 END)) AS gross_renewal_amount,
+        least(available_renewals.available_renewals, sum(CASE WHEN NOT opportunity.isclosed THEN opportunitylineitem.totalprice ELSE 0 END)) AS gross_open_renewal_total_amount,
         least(available_renewals.available_renewals, sum(CASE WHEN NOT opportunity.isclosed THEN opportunity.probability/100.00 * opportunitylineitem.totalprice ELSE 0 END)) AS gross_forecasted_renewal_total_amount,
         round(100*coalesce(least(available_renewals.available_renewals, sum(opportunitylineitem.totalprice))::float/available_renewals.available_renewals,0),2) AS account_renewal_rate_by_qtr,
-        round(100*coalesce(least(available_renewals.available_renewals, sum(CASE WHEN opportunity.iswon OR NOT opportunity.isclosed THEN opportunity.probability/100.00 * opportunitylineitem.totalprice ELSE 0 END))::float/available_renewals.available_renewals,0),2) AS account_forecast_renewal_rate_by_qtr
+        round(100*coalesce(least(available_renewals.available_renewals, sum(CASE WHEN opportunity.iswon OR NOT opportunity.isclosed THEN opportunity.probability/100.00 * opportunitylineitem.totalprice ELSE 0 END))::float/available_renewals.available_renewals,0),2) AS account_forecast_renewal_rate_by_qtr,
+        round(100*coalesce(least(available_renewals.available_renewals, sum(CASE WHEN opportunity.iswon OR NOT opportunity.isclosed THEN opportunitylineitem.totalprice ELSE 0 END))::float/available_renewals.available_renewals,0),2) AS account_max_renewal_rate_by_qtr
     FROM {{ source('cs','account_available_renewals_by_qtr') }} AS available_renewals
     LEFT JOIN {{ source('orgm','account') }} ON account.sfid = available_renewals.account_sfid
     LEFT JOIN {{ source('orgm','opportunity') }} ON opportunity.accountid = account.sfid
