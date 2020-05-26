@@ -1,6 +1,7 @@
 {{config({
     "materialized": 'incremental',
     "schema": "events"
+    "unique_key":'id'
   })
 }}
 
@@ -221,10 +222,16 @@ WITH mobile_events       AS (
            , sum(CASE WHEN e.event_type = 'mobile' THEN e.num_events ELSE 0 END)                      AS mobile_events
            , context_user_agent
            , max(max_timestamp)                                                                       AS max_timestamp
+           , {{ dbt_utils.surrogate_key('e.date', 'e.user_id', 'e.server_id') }}                      AS id
          FROM all_events                  e
               LEFT JOIN {{ ref('events_registry') }} r
                    ON e.event_name = r.event_name
-         GROUP BY 1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 18
+         {% if is_incremental() %}
+
+          WHERE max_timestamp > (SELECT MAX(max_timestamp) from {{this}})
+
+         {% endif %}
+         GROUP BY 1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 18, 20
      )
 SELECT *
 FROM user_events_by_date

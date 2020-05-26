@@ -1,5 +1,6 @@
 {{config({
     "materialized": 'incremental',
+    "unique_key": 'id'
     "schema": "events"
   })
 }}
@@ -44,7 +45,7 @@ WITH min_active              AS (
            , sum(CASE WHEN r.event_category = 'system_console' THEN e.total_events ELSE 0 END) AS system_console_events
            , sum(CASE WHEN r.event_category = 'tutorial' THEN e.total_events ELSE 0 END)       AS tutorial_events
            , sum(CASE WHEN r.event_category = 'ui' THEN e.total_events ELSE 0 END)             AS ui_events
-           , MAX(max_timestamp)                                                                AS max_timestamp
+           , MAX(max_timestamp)                                                               AS max_timestamp
          FROM dates                                d
               LEFT JOIN {{ ref('user_events_by_date') }} e
                         ON d.user_id = e.user_id
@@ -173,6 +174,7 @@ WITH min_active              AS (
            , MAX(m.mobile_events_alltime)                              AS mobile_events_alltime
            , MAX(m.max_mobile_events)                                  AS max_mobile_events
            , MAX(e1.max_timestamp)                                     AS max_timestamp
+           , {{ dbt_utils.surrogate_key('e1.date', 'e1.user_id') }}    AS id
          FROM events   e1
               JOIN mau m
                    ON e1.user_id = m.user_id
@@ -180,9 +182,12 @@ WITH min_active              AS (
          WHERE e1.date <= CURRENT_DATE
          {% if is_incremental() %}
 
-         AND e1.max_timestamp > (SELECT MAX(max_timestamp) FROM {{this}})
+         AND (e1.max_timestamp > (SELECT MAX(max_timestamp) FROM {{this}})
+         OR (e1.date > (SELECT MAX(DATE) FROM {{this}} ) 
+            and e1.max_timestamp is null)
+            )
 
          {% endif %}
-         GROUP BY 1, 2)
+         GROUP BY 1, 2, 33)
 SELECT *
 FROM user_events_by_date_agg
