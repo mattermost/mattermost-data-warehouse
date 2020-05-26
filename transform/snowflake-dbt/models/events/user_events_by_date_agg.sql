@@ -182,7 +182,7 @@ WITH min_active              AS (
          WHERE e1.date <= CURRENT_DATE
          {% if is_incremental() %}
 
-         AND (e1.max_timestamp > (SELECT MAX(max_timestamp) FROM {{this}})
+         AND (e1.date >= (SELECT MAX(date - interval '1 day') FROM {{this}})
          OR (e1.date > (SELECT MAX(DATE) FROM {{this}} ) 
             and e1.max_timestamp is null)
             )
