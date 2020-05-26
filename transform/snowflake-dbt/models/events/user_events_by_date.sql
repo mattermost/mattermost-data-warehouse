@@ -109,7 +109,7 @@ WITH mobile_events       AS (
                         AND e.user_actual_id = rudder.user_actual_id
                         AND e.user_id = rudder.user_id
                         AND e.type = rudder.type
-                        AND e.context_user_agent = rudder.context_user_agent
+                        AND e.context_user_agent = rudder.context_useragent
          WHERE rudder.user_actual_id IS NULL
          AND TRIM(e.user_actual_id) IS NOT NULL
          AND e.timestamp::DATE <= CURRENT_DATE
