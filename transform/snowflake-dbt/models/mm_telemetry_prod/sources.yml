@@ -1,11 +1,16 @@
 version: 2
 
 sources:
-  - name: mattermost2
+  - name: mm_telemetry_prod
     database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
-    schema: mattermost2
+    schema: mm_telemetry_prod
 
-    tables: 
+    tables:
+      - name: pages
+        description: 'The WWW and Integrations Mattermost Web Property User-Level Page Views.'
+      - name: identifies
+        description: 'User identifying information from users visiting WWW and Integrations Mattermost Web Properties.'
+
       - name: server
         description: 'Daily server data'
     
@@ -131,9 +136,6 @@ sources:
 
       - name: event
         description: Contains raw user-level event data as a single row per event.
-      
-      - name: event_mobile
-        description: Contains raw user-level, mobile event data as a single row per event.
 
       - name: tracks
         description: Contains raw user-level data from rudderstack track method.

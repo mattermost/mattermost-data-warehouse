@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: support_portal
+    database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
+    schema: support_portal
+
+    tables:
+      - name: pages
+        description: 'The Customer Support Web Portal Mattermost Web Property User-Level Page Views.'
