@@ -21,7 +21,7 @@ WITH events          AS (
     GROUP BY 1, 2
 ),
 
-WITH rudder_events          AS (
+rudder_events          AS (
     SELECT
         LOWER(type)                                                                   AS event_name
       , CASE WHEN lower(category) = 'actions' THEN 'action' ELSE lower(category) END  AS event_category
