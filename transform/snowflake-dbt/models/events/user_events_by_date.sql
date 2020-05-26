@@ -34,15 +34,16 @@ WITH mobile_events       AS (
       , COUNT(m.*)                                                                                AS num_events
       , ''                                                                                        AS context_user_agent
       , MAX(m.timestamp)                                                                          AS max_timestamp
+      , {{ dbt_utils.surrogate_key('m.date', 'm.user_id', 'm.server_id') }}                       AS id
     FROM {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}} m
     WHERE TRIM(user_actual_id) IS NOT NULL
     AND m.timestamp::DATE <= CURRENT_DATE 
     {% if is_incremental() %}
 
-      AND timestamp > (SELECT MAX(max_timestamp) from {{this}})
+      AND timestamp::date >= (SELECT MAX(date - interval '1 day') from {{this}})
 
     {% endif %}
-    GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12
+    GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 14
 ),
      events              AS (
          SELECT
@@ -104,6 +105,7 @@ WITH mobile_events       AS (
            , COUNT(e.*)                                                                                AS num_events
            , context_user_agent
            , MAX(e.timestamp)                                                                          AS max_timestamp
+           , {{ dbt_utils.surrogate_key('e.date', 'e.user_id', 'e.server_id') }}                       AS id
          FROM {{ source('mattermost2', 'event') }} e
               LEFT JOIN {{ source('mm_telemetry_prod', 'event') }} rudder
                         ON e.timestamp::date = rudder.timestamp::date
@@ -116,10 +118,10 @@ WITH mobile_events       AS (
          AND e.timestamp::DATE <= CURRENT_DATE
          {% if is_incremental() %}
 
-          AND e.timestamp > (SELECT MAX(max_timestamp) from {{this}})
+          AND e.timestamp::date >= (SELECT MAX(date - interval '1 day') from {{this}})
 
          {% endif %}
-         GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12
+         GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 14
      ),
 
           events              AS (
@@ -182,15 +184,16 @@ WITH mobile_events       AS (
            , COUNT(*)                                                                                  AS num_events
            , context_useragent                                                                         AS context_user_agent
            , MAX(e.timestamp)                                                                          AS max_timestamp
+           , {{ dbt_utils.surrogate_key('e.date', 'e.user_id', 'e.server_id') }}                       AS id
          FROM {{ source('mm_telemetry_prod', 'event') }} e
          WHERE TRIM(user_actual_id) IS NOT NULL
          AND e.timestamp::DATE <= CURRENT_DATE
          {% if is_incremental() %}
 
-          AND timestamp > (SELECT MAX(max_timestamp) from {{this}})
+          AND timestamp::date >= (SELECT MAX(date - interval '1 day') from {{this}})
 
          {% endif %}
-         GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12
+         GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 14
      ),
 
      all_events          AS (
@@ -228,7 +231,7 @@ WITH mobile_events       AS (
                    ON e.event_name = r.event_name
          {% if is_incremental() %}
 
-          WHERE max_timestamp > (SELECT MAX(max_timestamp) from {{this}})
+          WHERE date >= (SELECT MAX(date - interval '1 day') from {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 18, 20
