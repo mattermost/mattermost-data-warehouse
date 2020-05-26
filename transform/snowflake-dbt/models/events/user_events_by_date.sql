@@ -115,7 +115,7 @@ WITH mobile_events       AS (
          AND e.timestamp::DATE <= CURRENT_DATE
          {% if is_incremental() %}
 
-          AND timestamp > (SELECT MAX(max_timestamp) from {{this}})
+          AND e.timestamp > (SELECT MAX(max_timestamp) from {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12
