@@ -20,7 +20,7 @@ WITH min_active              AS (
          FROM {{ source('util', 'dates') }}      d
               JOIN min_active m
                    ON d.date >= m.min_active_date
-                       AND d.date <= current_date - interval '1 day'
+                       AND d.date <= current_date
          GROUP BY 1, 2, 3
      ),
      events                  AS (
@@ -44,6 +44,7 @@ WITH min_active              AS (
            , sum(CASE WHEN r.event_category = 'system_console' THEN e.total_events ELSE 0 END) AS system_console_events
            , sum(CASE WHEN r.event_category = 'tutorial' THEN e.total_events ELSE 0 END)       AS tutorial_events
            , sum(CASE WHEN r.event_category = 'ui' THEN e.total_events ELSE 0 END)             AS ui_events
+           , MAX(max_timestamp)                                                                AS max_timestamp
          FROM dates                                d
               LEFT JOIN {{ ref('user_events_by_date') }} e
                         ON d.user_id = e.user_id
@@ -171,14 +172,15 @@ WITH min_active              AS (
            , MAX(m.mobile_events_last_30_days)                         AS mobile_events_last_30_days
            , MAX(m.mobile_events_alltime)                              AS mobile_events_alltime
            , MAX(m.max_mobile_events)                                  AS max_mobile_events
+           , MAX(e1.max_timestamp)                                     AS max_timestamp
          FROM events   e1
               JOIN mau m
                    ON e1.user_id = m.user_id
                        AND e1.date = m.date
-         WHERE e1.date <= CURRENT_DATE - interval '1 day'
+         WHERE e1.date <= CURRENT_DATE
          {% if is_incremental() %}
 
-         AND e1.date > (SELECT MAX(date) FROM {{this}})
+         AND e1.max_timestamp > (SELECT MAX(max_timestamp) FROM {{this}})
 
          {% endif %}
          GROUP BY 1, 2)
