@@ -1,6 +1,6 @@
 {{config({
     "materialized": 'incremental',
-    "schema": "events"
+    "schema": "events",
     "unique_key":'id'
   })
 }}
