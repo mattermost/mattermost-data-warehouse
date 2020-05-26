@@ -34,7 +34,7 @@ WITH mobile_events       AS (
       , COUNT(m.*)                                                                                AS num_events
       , ''                                                                                        AS context_user_agent
       , MAX(m.timestamp)                                                                          AS max_timestamp
-      , {{ dbt_utils.surrogate_key('m.timestamp::date', 'm.user_actual_id', 'm.user_id') }}                       AS id
+      , {{ dbt_utils.surrogate_key('m.timestamp::date', 'm.user_actual_id', 'm.user_id', 'coalesce(''::string, ''::string)', 'lower(e.type)') }}                       AS id
     FROM {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}} m
     WHERE TRIM(user_actual_id) IS NOT NULL
     AND m.timestamp::DATE <= CURRENT_DATE 
@@ -105,7 +105,7 @@ WITH mobile_events       AS (
            , COUNT(e.*)                                                                                AS num_events
            , context_user_agent
            , MAX(e.timestamp)                                                                          AS max_timestamp
-           , {{ dbt_utils.surrogate_key('e.timestamp::date', 'e.user_actual_id', 'e.user_id') }}                       AS id
+           , {{ dbt_utils.surrogate_key('e.timestamp::date', 'e.user_actual_id', 'e.user_id', 'e.context_user_agent', 'lower(e.type)') }}                       AS id
          FROM {{ source('mattermost2', 'event') }} e
               LEFT JOIN {{ source('mm_telemetry_prod', 'event') }} rudder
                         ON e.timestamp::date = rudder.timestamp::date
@@ -184,7 +184,7 @@ WITH mobile_events       AS (
            , COUNT(*)                                                                                  AS num_events
            , context_useragent                                                                         AS context_user_agent
            , MAX(e.timestamp)                                                                          AS max_timestamp
-           , {{ dbt_utils.surrogate_key('e.timestamp::date', 'e.user_actual_id', 'e.user_id') }}                       AS id
+           , {{ dbt_utils.surrogate_key('e.timestamp::date', 'e.user_actual_id', 'e.user_id', 'e.context_useragent', 'lower(e.type)') }}                       AS id
          FROM {{ source('mm_telemetry_prod', 'event') }} e
          WHERE TRIM(user_actual_id) IS NOT NULL
          AND e.timestamp::DATE <= CURRENT_DATE
@@ -228,7 +228,7 @@ WITH mobile_events       AS (
            , sum(CASE WHEN e.event_type = 'mobile' THEN e.num_events ELSE 0 END)                      AS mobile_events
            , context_user_agent
            , max(max_timestamp)                                                                       AS max_timestamp
-           , {{ dbt_utils.surrogate_key('e.date', 'e.user_id', 'e.server_id') }}                      AS id
+           , {{ dbt_utils.surrogate_key('e.date', 'e.user_id', 'e.server_id', 'e.context_user_agent', 'e.event_name') }}                      AS id
          FROM all_events                  e
               LEFT JOIN {{ ref('events_registry') }} r
                    ON e.event_name = r.event_name
