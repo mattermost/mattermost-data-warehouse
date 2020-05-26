@@ -31,7 +31,7 @@ WITH mobile_events       AS (
       , LOWER(m.type)                                                                             AS event_name
       , 'mobile'                                                                                  AS event_type
       , COUNT(m.*)                                                                                AS num_events
-      , context_user_agent
+      , ''                                                                                        AS context_user_agent
       , MAX(m.timestamp)                                                                          AS max_timestamp
     FROM {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}} m
     WHERE TRIM(user_actual_id) IS NOT NULL
