@@ -6,11 +6,6 @@ sources:
     schema: mm_telemetry_prod
 
     tables:
-      - name: pages
-        description: 'The WWW and Integrations Mattermost Web Property User-Level Page Views.'
-      - name: identifies
-        description: 'User identifying information from users visiting WWW and Integrations Mattermost Web Properties.'
-
       - name: server
         description: 'Daily server data'
     
