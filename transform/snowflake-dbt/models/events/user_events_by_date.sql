@@ -35,7 +35,7 @@ WITH mobile_events       AS (
       , ''                                                                                        AS context_user_agent
       , MAX(m.timestamp)                                                                          AS max_timestamp
       , m.category
-      , {{ dbt_utils.surrogate_key('m.timestamp::date', 'm.user_actual_id', 'm.user_id', 'm.context_device_type', 'context_device_os', 'm.context_app_version', 'm.context_device_os', 'lower(m.type)', 'e.category') }}                       AS id
+      , {{ dbt_utils.surrogate_key('m.timestamp::date', 'm.user_actual_id', 'm.user_id', 'm.context_device_type', 'context_device_os', 'm.context_app_version', 'm.context_device_os', 'lower(m.type)', 'm.category') }}                       AS id
     FROM {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}} m
     WHERE TRIM(user_actual_id) IS NOT NULL
     AND m.timestamp::DATE <= CURRENT_DATE 
@@ -236,7 +236,7 @@ WITH mobile_events       AS (
          FROM all_events                  e
               LEFT JOIN {{ ref('events_registry') }} r
                    ON e.event_name = r.event_name
-                   AND e.category = r.category
+                   AND e.category = r.event_category
          {% if is_incremental() %}
 
           WHERE date >= (SELECT MAX(date - interval '1 day') from {{this}})
