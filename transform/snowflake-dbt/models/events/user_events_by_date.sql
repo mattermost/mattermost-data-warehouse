@@ -31,7 +31,7 @@ WITH mobile_events       AS (
           ELSE 'Unknown' END                                                                      AS os_version
       , LOWER(m.type)                                                                             AS event_name
       , 'mobile'                                                                                  AS event_type
-      , COUNT(m.*)                                                                                AS num_events
+      , COUNT(m.timestamp)                                                                                AS num_events
       , ''                                                                                        AS context_user_agent
       , MAX(m.timestamp)                                                                          AS max_timestamp
       , {{ dbt_utils.surrogate_key('m.timestamp::date', 'm.user_actual_id', 'm.user_id', 'm.context_device_type', 'context_device_os', 'm.context_app_version', 'lower(m.type)') }}                       AS id
@@ -102,7 +102,7 @@ WITH mobile_events       AS (
               END                                                                                      AS os_version
            , LOWER(e.type)                                                                             AS event_name
            , CASE WHEN LOWER(e.context_user_agent) LIKE '%electron%' THEN 'desktop' ELSE 'web_app' END AS event_type
-           , COUNT(e.*)                                                                                AS num_events
+           , COUNT(e.timestamp)                                                                                AS num_events
            , context_user_agent
            , MAX(e.timestamp)                                                                          AS max_timestamp
            , {{ dbt_utils.surrogate_key('e.timestamp::date', 'e.user_actual_id', 'e.user_id', 'e.context_user_agent', 'lower(e.type)') }}                       AS id
@@ -181,7 +181,7 @@ WITH mobile_events       AS (
               END                                                                                      AS os_version
            , LOWER(e.type)                                                                             AS event_name
            , CASE WHEN LOWER(e.context_useragent) LIKE '%electron%' THEN 'desktop' ELSE 'web_app' END AS event_type
-           , COUNT(*)                                                                                  AS num_events
+           , COUNT(e.timestamp)                                                                                  AS num_events
            , context_useragent                                                                         AS context_user_agent
            , MAX(e.timestamp)                                                                          AS max_timestamp
            , {{ dbt_utils.surrogate_key('e.timestamp::date', 'e.user_actual_id', 'e.user_id', 'e.context_useragent', 'lower(e.type)') }}                       AS id
