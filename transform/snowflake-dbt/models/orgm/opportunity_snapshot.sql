@@ -35,5 +35,8 @@ WITH opportunity_totals AS (
         renewal_amount
         FROM {{ source('orgm', 'opportunity') }}
         LEFT JOIN opportunity_totals ON opportunity.sfid = opportunity_totals.opportunityid
+        {% if is_incremental() %}
+        WHERE current_date > (SELECT MAX(date) FROM {{this}})
+        {% endif %}
 )
 SELECT * FROM opportunity_snapshot

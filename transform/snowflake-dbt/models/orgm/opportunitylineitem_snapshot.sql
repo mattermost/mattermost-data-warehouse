@@ -33,5 +33,8 @@ WITH opportunitylineitem_snapshot AS (
         leftover_expansion_amount__c,
         multi_amount__c
         FROM {{ source('orgm', 'opportunitylineitem') }}
+        {% if is_incremental() %}
+        WHERE current_date > (SELECT MAX(date) FROM {{this}})
+        {% endif %}
 )
 SELECT * FROM opportunitylineitem_snapshot
