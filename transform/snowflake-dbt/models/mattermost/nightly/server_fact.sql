@@ -11,8 +11,10 @@ WITH server_details AS (
       , MAX(CASE WHEN in_security OR in_mm2_server THEN date ELSE NULL END) AS            last_active_date
       , MIN(CASE WHEN in_security THEN date ELSE NULL END) AS                             first_telemetry_active_date
       , MAX(CASE WHEN in_security THEN date ELSE NULL END) AS                             last_telemetry_active_date
-      , MAX(active_user_count) AS                                                         max_active_user_count
-      , MAX(CASE WHEN active_user_count > 0 THEN date ELSE NULL END) AS                   last_active_user_date
+      , MAX(CASE WHEN coalesce(active_users_daily, active_users) > active_user_count 
+              THEN coalesce(active_users_daily, active_users)
+              ELSE active_user_count END) AS                                              max_active_user_count
+      , MAX(CASE WHEN active_user_count > 0 or coalesce(active_users_daily, active_users) > 0 THEN date ELSE NULL END) AS                   last_active_user_date
       , MAX(CASE
                 WHEN license_id1 IS NOT NULL OR license_id2 IS NOT NULL THEN date
                                                                         ELSE NULL END) AS last_active_license_date
@@ -23,7 +25,7 @@ WITH server_details AS (
       , MAX(CASE WHEN edition IS NOT NULL THEN date ELSE NULL END)                     AS last_edition_date
       , MIN(CASE WHEN in_mm2_server THEN date ELSE NULL END)                           AS first_mm2_telemetry_date
       , MAX(CASE WHEN in_mm2_server THEN date ELSE NULL END)                           AS last_mm2_telemetry_date
-    FROM {{ ref('server_daily_details') }}
+    FROM {{ ref('server_daily_details_ext') }}
     GROUP BY 1
     ), 
     licenses AS (
