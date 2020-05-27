@@ -15,7 +15,23 @@ WITH events          AS (
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        WHERE LOWER(type) NOT IN (SELECT event_name FROM {{ this }} GROUP BY 1)
+        WHERE timestamp >= (SELECT MAX(last_triggered) FROM {{ this }})
+
+    {% endif %}
+    GROUP BY 1, 2
+),
+
+rudder_events          AS (
+    SELECT
+        LOWER(type)                                                                   AS event_name
+      , CASE WHEN lower(category) = 'actions' THEN 'action' ELSE lower(category) END  AS event_category
+      , MIN(timestamp::date)                                                          AS date_added
+      , MAX(timestamp::date)                                                          AS last_triggered
+    FROM {{ source('mm_telemetry_prod', 'event')}}
+    {% if is_incremental() %}
+
+        -- this filter will only be applied on an incremental run
+        WHERE timestamp >= (SELECT MAX(last_triggered) FROM {{ this }})
 
     {% endif %}
     GROUP BY 1, 2
@@ -31,7 +47,7 @@ WITH events          AS (
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        WHERE LOWER(type) NOT IN (SELECT event_name FROM {{ this }} GROUP BY 1)
+        WHERE timestamp >= (SELECT MAX(last_triggered) FROM {{ this }})
 
     {% endif %}
     GROUP BY 1, 2
@@ -40,6 +56,9 @@ WITH events          AS (
     all_events       AS (
       SELECT *
       FROM events
+      UNION ALL
+      SELECT *
+      FROM rudder_events
       UNION ALL
       SELECT * 
       FROM mobile_events
@@ -56,6 +75,12 @@ WITH events          AS (
            , MIN(date_added)                                                              AS date_added
            , MAX(last_triggered)                                                          AS last_triggered
          FROM all_events
+    {% if is_incremental() %}
+
+        -- this filter will only be applied on an incremental run
+        WHERE last_triggered >= (SELECT MAX(last_triggered) FROM {{ this }})
+
+    {% endif %}
          GROUP BY 1, 2, 3, 4
      )
 SELECT *
