@@ -9,7 +9,7 @@ WITH mobile_events       AS (
     SELECT
         m.timestamp::DATE                                                                         AS date
       , TRIM(m.user_id)                                                                           AS server_id
-      , TRIM(m.user_actual_id)                                                                    AS user_id
+      , COALESCE(TRIM(m.user_actual_id), UUID_STRING())                                           AS user_id
       , MIN(m.user_actual_role)                                                                   AS user_role
       , CASE
           WHEN m.context_device_type = 'ios' THEN 'iPhone'            
@@ -49,7 +49,7 @@ WITH mobile_events       AS (
          SELECT
              e.timestamp::DATE                                                                         AS date
            , TRIM(e.user_id)                                                                           AS server_id
-           , TRIM(e.user_actual_id)                                                                    AS user_id
+           , COALESCE(TRIM(e.user_actual_id), UUID_STRING())                                           AS user_id
            , min(e.user_actual_role)                                                                   AS user_role
            , CASE
               WHEN e.context_user_agent LIKE '%iPhone%'    THEN 'iPhone'
@@ -130,7 +130,7 @@ WITH mobile_events       AS (
              e.timestamp::DATE                                                                         AS date
            , TRIM(e.user_id)                                                                           AS server_id
            , TRIM(e.user_actual_id)                                                                    AS user_id
-           , min(e.user_actual_role)                                                                   AS user_role
+           , COALESCE(TRIM(m.user_actual_id), UUID_STRING())                                           AS user_role
            , CASE
               WHEN context_useragent LIKE '%iPhone%'    THEN 'iPhone'
               WHEN context_useragent LIKE '%iPad%'      THEN 'iPad'
