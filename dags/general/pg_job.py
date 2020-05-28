@@ -52,12 +52,6 @@ lead_account = get_container_operator("lead-account", "lead_account")
 update_opportunitylineitem_amounts = get_container_operator(
     "update-opportunitylineitem-amounts", "update_opportunitylineitem_amounts"
 )
-opportunitylineitem_snapshot = get_container_operator(
-    "opportunitylineitem-snapshot", "opportunitylineitem_snapshot"
-)
-opportunity_snapshot = get_container_operator(
-    "opportunity-snapshot", "opportunity_snapshot"
-)
 heroku_connect_retry = get_container_operator("heroku-connect-retry", "connect_retry")
 
-tasks_filtered >> account_arr >> account_type >> owner_segment_updates >> lead_account >> update_opportunitylineitem_amounts >> opportunity_snapshot >> opportunitylineitem_snapshot >> heroku_connect_retry
+tasks_filtered >> account_arr >> account_type >> owner_segment_updates >> lead_account >> update_opportunitylineitem_amounts >> heroku_connect_retry
