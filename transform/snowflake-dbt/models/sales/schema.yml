@@ -1,0 +1,5 @@
+version: 2
+
+models:
+  - name: scrub_segment
+  - name: scrub_ww
