@@ -21,9 +21,8 @@ WITH opportunitylineitem_snapshot AS (
         discount,
         quantity,
         totalprice,
-        start_date__c,
-        end_date__c
-        arr_contributed__c,
+        start_date__c::date as start_date__c,
+        end_date__c::date as end_date__c,
         revenue_type__c,
         product_line_type__c,
         new_amount__c,
