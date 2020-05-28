@@ -9,7 +9,7 @@ WITH mobile_events       AS (
     SELECT
         m.timestamp::DATE                                                                         AS date
       , TRIM(m.user_id)                                                                           AS server_id
-      , TRIM(m.user_actual_id)                                                                    AS user_id
+      , COALESCE(TRIM(m.user_actual_id), UUID_STRING())                                           AS user_id
       , MIN(m.user_actual_role)                                                                   AS user_role
       , CASE
           WHEN m.context_device_type = 'ios' THEN 'iPhone'            
@@ -37,8 +37,7 @@ WITH mobile_events       AS (
       , m.category
       , {{ dbt_utils.surrogate_key('m.timestamp::date', 'm.user_actual_id', 'm.user_id', 'm.context_device_type', 'context_device_os', 'm.context_app_version', 'm.context_device_os', 'lower(m.type)', 'm.category') }}                       AS id
     FROM {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}} m
-    WHERE TRIM(user_actual_id) IS NOT NULL
-    AND m.timestamp::DATE <= CURRENT_DATE 
+    WHERE m.timestamp::DATE <= CURRENT_DATE 
     {% if is_incremental() %}
 
       AND timestamp::date >= (SELECT MAX(date - interval '1 day') from {{this}})
@@ -50,7 +49,7 @@ WITH mobile_events       AS (
          SELECT
              e.timestamp::DATE                                                                         AS date
            , TRIM(e.user_id)                                                                           AS server_id
-           , TRIM(e.user_actual_id)                                                                    AS user_id
+           , COALESCE(TRIM(e.user_actual_id), UUID_STRING())                                           AS user_id
            , min(e.user_actual_role)                                                                   AS user_role
            , CASE
               WHEN e.context_user_agent LIKE '%iPhone%'    THEN 'iPhone'
@@ -112,12 +111,11 @@ WITH mobile_events       AS (
               LEFT JOIN {{ source('mm_telemetry_prod', 'event') }} rudder
                         ON e.timestamp::date = rudder.timestamp::date
                         AND COALESCE(e.user_actual_id, '') = COALESCE(rudder.user_actual_id, '')
-                        AND e.user_id = rudder.user_id
+                        AND COALESCE(e.user_id, '') = COALESCE(rudder.user_id, '')
                         AND e.type = rudder.type
                         AND e.category = rudder.category
                         AND e.context_user_agent = rudder.context_useragent
          WHERE rudder.user_actual_id IS NULL
-         AND TRIM(e.user_actual_id) IS NOT NULL
          AND e.timestamp::DATE <= CURRENT_DATE
          {% if is_incremental() %}
 
@@ -131,7 +129,7 @@ WITH mobile_events       AS (
          SELECT
              e.timestamp::DATE                                                                         AS date
            , TRIM(e.user_id)                                                                           AS server_id
-           , TRIM(e.user_actual_id)                                                                    AS user_id
+           , COALESCE(TRIM(e.user_actual_id), UUID_STRING())                                           AS user_id
            , min(e.user_actual_role)                                                                   AS user_role
            , CASE
               WHEN context_useragent LIKE '%iPhone%'    THEN 'iPhone'
@@ -190,8 +188,7 @@ WITH mobile_events       AS (
            , e.category
            , {{ dbt_utils.surrogate_key('e.timestamp::date', 'e.user_actual_id', 'e.user_id', 'e.context_useragent', 'lower(e.type)', 'e.category') }}                       AS id
          FROM {{ source('mm_telemetry_prod', 'event') }} e
-         WHERE TRIM(user_actual_id) IS NOT NULL
-         AND e.timestamp::DATE <= CURRENT_DATE
+         WHERE e.timestamp::DATE <= CURRENT_DATE
          {% if is_incremental() %}
 
           AND timestamp::date >= (SELECT MAX(date - interval '1 day') from {{this}})
