@@ -16,7 +16,7 @@ WITH opportunity_totals AS (
 ), opportunity_snapshot AS (
     SELECT
         {{ dbt_utils.surrogate_key('current_date', 'sfid') }} AS id,
-        current_date AS date,
+        current_date AS snapshot_date,
         sfid,
         name, 
         ownerid,
@@ -37,7 +37,7 @@ WITH opportunity_totals AS (
         FROM {{ source('orgm', 'opportunity') }}
         LEFT JOIN opportunity_totals ON opportunity.sfid = opportunity_totals.opportunityid
         {% if is_incremental() %}
-        WHERE current_date >= (SELECT MAX(date) FROM {{this}})
+        WHERE current_date >= (SELECT MAX(snapshot_date) FROM {{this}})
         {% endif %}
 )
 SELECT * FROM opportunity_snapshot

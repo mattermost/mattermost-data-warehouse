@@ -9,7 +9,7 @@
 WITH opportunitylineitem_snapshot AS (
     SELECT
         {{ dbt_utils.surrogate_key('current_date', 'sfid') }} AS id,
-        current_date AS date,
+        current_date AS snapshot_date,
         sfid,
         name,
         opportunityid,
@@ -33,7 +33,7 @@ WITH opportunitylineitem_snapshot AS (
         multi_amount__c
         FROM {{ source('orgm', 'opportunitylineitem') }}
         {% if is_incremental() %}
-        WHERE current_date > (SELECT MAX(date) FROM {{this}})
+        WHERE current_date > (SELECT MAX(snapshot_date) FROM {{this}})
         {% endif %}
 )
 SELECT * FROM opportunitylineitem_snapshot
