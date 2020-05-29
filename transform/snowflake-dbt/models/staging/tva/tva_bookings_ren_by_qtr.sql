@@ -10,7 +10,7 @@ WITH actual_bookings_ren_by_qtr AS (
       ROUND(SUM(renewal_amount__c)) AS actual
     FROM {{ source('orgm', 'opportunity') }} AS opportunity
     LEFT JOIN {{ source('orgm', 'opportunitylineitem') }} AS opportunitylineitem ON opportunity.sfid = opportunitylineitem.opportunityid
-    WHERE iswon AND opportunitylineitem.product_line_type__c = 'Ren'
+    WHERE iswon
     GROUP BY 1
 ), tva_bookings_ren_by_qtr AS (
     SELECT

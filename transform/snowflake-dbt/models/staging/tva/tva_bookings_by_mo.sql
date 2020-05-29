@@ -18,8 +18,8 @@ WITH actual_bookings_by_mo AS (
         bookings_by_mo.month AS period_first_day,
         bookings_by_mo.month + interval '1 month' - interval '1 day' AS period_last_day,
         bookings_by_mo.target,
-        actual_bookings_by_mo.total_bookings AS actual,
-        round((actual_bookings_by_mo.total_bookings/bookings_by_mo.target),2) AS tva
+        actual_bookings_by_mo.actual AS actual,
+        round((actual_bookings_by_mo.actual/bookings_by_mo.target),2) AS tva
     FROM {{ source('targets', 'bookings_by_mo') }}
     LEFT JOIN actual_bookings_by_mo ON bookings_by_mo.month = actual_bookings_by_mo.month
 )
