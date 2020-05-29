@@ -34,6 +34,7 @@ WITH mobile_events       AS (
       , COUNT(m.timestamp)                                                                                AS num_events
       , ''                                                                                        AS context_user_agent
       , MAX(m.timestamp)                                                                          AS max_timestamp
+      , MIN(m.timestamp)                                                                          AS min_timestamp
       , m.category
       , {{ dbt_utils.surrogate_key('m.timestamp::date', 'm.user_actual_id', 'm.user_id', 'm.context_device_type', 'context_device_os', 'm.context_app_version', 'm.context_device_os', 'lower(m.type)', 'm.category') }}                       AS id
     FROM {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}} m
@@ -43,7 +44,7 @@ WITH mobile_events       AS (
       AND timestamp::date >= (SELECT MAX(date - interval '1 day') from {{this}})
 
     {% endif %}
-    GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 14, 15
+    GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 15, 16
 ),
      events              AS (
          SELECT
@@ -105,6 +106,7 @@ WITH mobile_events       AS (
            , COUNT(e.timestamp)                                                                                AS num_events
            , context_user_agent
            , MAX(e.timestamp)                                                                          AS max_timestamp
+           , MIN(e.timestamp)                                                                          AS min_timestamp
            , e.category
            , {{ dbt_utils.surrogate_key('e.timestamp::date', 'e.user_actual_id', 'e.user_id', 'e.context_user_agent', 'lower(e.type)', 'e.category') }}                       AS id
          FROM {{ source('mattermost2', 'event') }} e
@@ -122,7 +124,7 @@ WITH mobile_events       AS (
           AND e.timestamp::date >= (SELECT MAX(date - interval '1 day') from {{this}})
 
          {% endif %}
-         GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 14, 15
+         GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 15, 16
      ),
 
           events2              AS (
@@ -185,6 +187,7 @@ WITH mobile_events       AS (
            , COUNT(e.timestamp)                                                                                  AS num_events
            , context_useragent                                                                         AS context_user_agent
            , MAX(e.timestamp)                                                                          AS max_timestamp
+           , MIN(e.timestamp)                                                                          AS min_timestamp
            , e.category
            , {{ dbt_utils.surrogate_key('e.timestamp::date', 'e.user_actual_id', 'e.user_id', 'e.context_useragent', 'lower(e.type)', 'e.category') }}                       AS id
          FROM {{ source('mm_telemetry_prod', 'event') }} e
@@ -194,7 +197,7 @@ WITH mobile_events       AS (
           AND timestamp::date >= (SELECT MAX(date - interval '1 day') from {{this}})
 
          {% endif %}
-         GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 14, 15
+         GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 15, 16
      ),
 
      all_events          AS (
@@ -206,6 +209,13 @@ WITH mobile_events       AS (
          UNION ALL
          SELECT *
          FROM events2
+     ),
+
+     all_events_chronological AS (
+       SELECT *,
+            ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY min_timestamp) as chronological_sequence,
+            datediff(second, lag(min_timestamp) over (partition by user_id order by min_timestamp), min_timestamp) as seconds_after_prev_event
+       FROM all_events 
      ),
 
      user_events_by_date AS (
@@ -229,6 +239,9 @@ WITH mobile_events       AS (
            , sum(CASE WHEN e.event_type = 'mobile' THEN e.num_events ELSE 0 END)                      AS mobile_events
            , context_user_agent
            , max(max_timestamp)                                                                       AS max_timestamp
+           , min(min_timestamp)                                                                       AS min_timestamp
+           , min(chronological_sequence)                                                              AS chronological_sequence
+           , min(seconds_after_prev_event)                                                            AS seconds_after_prev_event
            , {{ dbt_utils.surrogate_key('e.date', 'e.user_id', 'e.server_id', 'e.context_user_agent', 'e.event_name', 'e.os', 'e.version', 'e.os_version', 'r.event_id') }}                      AS id
          FROM all_events                  e
               LEFT JOIN {{ ref('events_registry') }} r
@@ -239,7 +252,7 @@ WITH mobile_events       AS (
           WHERE date >= (SELECT MAX(date - interval '1 day') from {{this}})
 
          {% endif %}
-         GROUP BY 1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 18, 20
+         GROUP BY 1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 18, 23
      )
 SELECT *
 FROM user_events_by_date
