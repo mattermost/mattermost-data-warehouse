@@ -43,8 +43,8 @@ WITH ww_nn_amounts AS (
 ), scrub_ww AS (
     SELECT 
         tva_bookings_new_and_exp_by_qtr.qtr,
-        commit_ww.commit_netnew nn_forecast,
-        commit_ww.upside_netnew nn_upside,
+        commit_ww.commit_netnew AS nn_forecast,
+        commit_ww.upside_netnew AS nn_upside,
         tva_bookings_new_and_exp_by_qtr.target AS nn_target,
         tva_bookings_new_and_exp_by_qtr.actual AS nn_actual,
         tva_bookings_new_and_exp_by_qtr.tva AS nn_tva,
