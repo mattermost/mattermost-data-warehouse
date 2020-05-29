@@ -9,9 +9,9 @@ def update_chronological_sequence():
     query = f'''
     UPDATE ANALYTICS.EVENTS.USER_EVENTS_BY_DATE
     SET chronological_sequence = a.chronological_sequence,
-        seconds_from_prev_event = a.seconds_from_prev_event
+        seconds_after_prev_event = a.seconds_after_prev_event
     FROM (
-        SELECT *,
+        SELECT id,
             ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY min_timestamp) as chronological_sequence,
             datediff(second, lag(min_timestamp) over (partition by user_id order by min_timestamp), min_timestamp) as seconds_after_prev_event
         FROM ANALYTICS.EVENTS.USER_EVENTS_BY_DATE
