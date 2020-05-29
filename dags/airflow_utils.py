@@ -12,7 +12,7 @@ DBT_IMAGE = "docker.io/adovenmm/dbt-image:latest"
 PERMIFROST_IMAGE = "docker.io/adovenmm/permifrost-image:latest"
 PSQL_IMAGE = "docker.io/adovenmm/data-warehouse-psql:latest"
 
-mm_webhook_url = os.getenv("MATTERMOST_WEBHOOK_URL")
+mm_webhook_url = os.getenv('MATTERMOST_WEBHOOK_URL')
 
 
 def mm_failed_task(context):
