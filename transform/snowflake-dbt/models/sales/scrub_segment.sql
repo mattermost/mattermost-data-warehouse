@@ -10,10 +10,10 @@ WITH segment_nn_amounts AS (
         util.fiscal_year(opportunity.closedate)|| '-' || util.fiscal_quarter(opportunity.closedate) AS qtr,
         SUM(CASE WHEN NOT opportunity.status_wlo__c = 'Open' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) ELSE 0 END) AS nn_open_max,
         SUM(CASE WHEN NOT opportunity.status_wlo__c = 'Open' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) * probability ELSE 0 END) AS nn_open_weighted,
-        SUM(CASE WHEN forecastcategoryname = 'Commit' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) ELSE 0 END) AS nn_commit,
-        SUM(CASE WHEN forecastcategoryname = 'Best Case' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) ELSE 0 END) AS nn_best_case,
-        SUM(CASE WHEN forecastcategoryname = 'Pipeline' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) ELSE 0 END) AS nn_pipeline,
-        SUM(CASE WHEN forecastcategoryname = 'Omitted' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) ELSE 0 END) AS nn_omitted
+        SUM(CASE WHEN forecastcategoryname = 'Commit' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) ELSE 0 END) AS nn_commit_max,
+        SUM(CASE WHEN forecastcategoryname = 'Best Case' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) ELSE 0 END) AS nn_best_case_max,
+        SUM(CASE WHEN forecastcategoryname = 'Pipeline' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) ELSE 0 END) AS nn_pipeline_max,
+        SUM(CASE WHEN forecastcategoryname = 'Omitted' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) ELSE 0 END) AS nn_omitted_max
     FROM {{ source('orgm','opportunity') }}
     LEFT JOIN {{ source('orgm','opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
     WHERE util.fiscal_year(closedate) = util.get_sys_var('curr_fy')
@@ -24,11 +24,11 @@ WITH segment_nn_amounts AS (
         util.fiscal_year(opportunity.closedate)|| '-' || util.fiscal_quarter(opportunity.closedate) AS qtr,
         SUM(CASE WHEN NOT opportunity.status_wlo__c = 'Open' THEN renewal_amount__c ELSE 0 END) AS ren_open_max,
         SUM(CASE WHEN NOT opportunity.status_wlo__c = 'Open' THEN renewal_amount__c * probability ELSE 0 END) AS ren_open_weighted,
-        SUM(CASE WHEN forecastcategoryname = 'Commit' THEN renewal_amount__c ELSE 0 END) AS ren_commit,
-        SUM(CASE WHEN forecastcategoryname = 'Best Case' THEN renewal_amount__c ELSE 0 END) AS ren_best_case,
-        SUM(CASE WHEN forecastcategoryname = 'Pipeline' THEN renewal_amount__c ELSE 0 END) AS ren_pipeline,
-        SUM(CASE WHEN forecastcategoryname = 'Omitted' THEN renewal_amount__c ELSE 0 END) AS ren_omitted,
-        MAX(CASE WHEN forecastcategoryname = 'Omitted' THEN original_opportunity_amount__c ELSE 0 END) AS ren_omitted_orig_amount
+        SUM(CASE WHEN forecastcategoryname = 'Commit' THEN renewal_amount__c ELSE 0 END) AS ren_commit_max,
+        SUM(CASE WHEN forecastcategoryname = 'Best Case' THEN renewal_amount__c ELSE 0 END) AS ren_best_case_max,
+        SUM(CASE WHEN forecastcategoryname = 'Pipeline' THEN renewal_amount__c ELSE 0 END) AS ren_pipeline_max,
+        SUM(CASE WHEN forecastcategoryname = 'Omitted' THEN renewal_amount__c ELSE 0 END) AS ren_omitted_max,
+        MAX(CASE WHEN forecastcategoryname = 'Omitted' THEN original_opportunity_amount__c ELSE 0 END) AS ren_omitted_orig_amount_max
     FROM {{ source('orgm','opportunity') }}
     LEFT JOIN {{ source('orgm','opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
     WHERE util.fiscal_year(closedate) = util.get_sys_var('curr_fy')
@@ -47,32 +47,32 @@ WITH segment_nn_amounts AS (
     SELECT 
         REPLACE(REPLACE(tva_attain_new_and_exp_by_segment_by_qtr.target_slug,'attain_new_and_exp_by_segment_by_qtr_',''),'_','/') AS segment,
         tva_attain_new_and_exp_by_segment_by_qtr.qtr,
-        commit_segment.commit_netnew,
-        commit_segment.upside_netnew,
+        commit_segment.commit_netnew AS nn_commit,
+        commit_segment.upside_netnew AS nn_upside,
         tva_attain_new_and_exp_by_segment_by_qtr.target AS nn_target,
         tva_attain_new_and_exp_by_segment_by_qtr.actual AS nn_actual,
         tva_attain_new_and_exp_by_segment_by_qtr.tva AS nn_tva,
         nn_open_max,
         nn_open_weighted,
-        nn_commit,
-        nn_best_case,
-        nn_pipeline,
-        nn_omitted,
-        commit_segment.commit_renewal,
-        commit_segment.upside_renewal,
+        nn_commit_max,
+        nn_best_case_max,
+        nn_pipeline_max,
+        nn_omitted_max,
+        commit_segment.commit_renewal AS ren_commit,
+        commit_segment.upside_renewal AS ren_upside,
         tva_bookings_ren_by_segment_by_qtr.target AS ren_target,
         tva_bookings_ren_by_segment_by_qtr.actual AS ren_actual,
         tva_bookings_ren_by_segment_by_qtr.tva AS ren_tva,
         ren_open_max,
         ren_open_weighted,
-        ren_commit,
-        ren_best_case,
-        ren_pipeline,
-        ren_omitted,
-        ren_omitted_orig_amount,
-        available_renewals,
-        gross_renewal_amount,
-        renewal_rate
+        ren_commit_max,
+        ren_best_case_max,
+        ren_pipeline_max,
+        ren_omitted_max,
+        ren_omitted_orig_amount_max,
+        available_renewals AS ren_available,
+        gross_renewal_amount AS ren_gross_amount,
+        renewal_rate AS ren_rate
     FROM {{ ref('tva_attain_new_and_exp_by_segment_by_qtr') }}
     LEFT JOIN {{ ref('tva_bookings_ren_by_segment_by_qtr') }} 
         ON tva_attain_new_and_exp_by_segment_by_qtr.qtr = tva_bookings_ren_by_segment_by_qtr.qtr 
