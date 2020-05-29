@@ -8,7 +8,7 @@ WITH actual_attain_new_and_exp_by_rep_by_mo AS (
     SELECT
 	    rep.employeenumber AS rep_emp_num,
 	    DATE_TRUNC('month', opportunity.closedate) AS month,
-	    ROUND(SUM(CASE WHEN opportunitylineitem.product_line_type__c IN ('New','Expansion') THEN opportunitylineitem.totalprice ELSE NULL END),2) AS actual
+	    ROUND(SUM(new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c),2) AS actual
     FROM {{ source('orgm','opportunity') }}
         LEFT JOIN {{ source('orgm','opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
         LEFT JOIN {{ source('orgm','user') }} AS rep ON opportunity.ownerid = rep.sfid

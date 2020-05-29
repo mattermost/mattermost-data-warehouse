@@ -4,23 +4,13 @@
   })
 }}
 
-WITH bookings AS (
+WITH actual_bookings_by_mo AS (
     SELECT
-      opportunity.closedate,
-      opportunity.sfid AS opportunity_sfid,
-      opportunitylineitem.sfid AS opportunitylineitem_sfid,
-      opportunity.type AS opportunity_type,
-      opportunitylineitem.product_line_type__c AS product_line_type,
-      CASE WHEN end_date__c::date - start_date__c::date + 1 > 365 THEN opportunitylineitem.arr_contributed__c ELSE opportunitylineitem.totalprice END AS bookings
+      date_trunc('month', closedate)::date AS month,
+      ROUND(SUM(new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c + multi_amount__c),2) AS actual
     FROM {{ source('orgm', 'opportunity') }} AS opportunity
     LEFT JOIN {{ source('orgm', 'opportunitylineitem') }} AS opportunitylineitem ON opportunity.sfid = opportunitylineitem.opportunityid
     WHERE iswon
-), actual_bookings_by_mo AS (
-    SELECT 
-        date_trunc('month', closedate)::date AS month,
-        sum(bookings) AS total_bookings
-    FROM bookings
-    GROUP BY 1
 ), tva_bookings_by_mo AS (
     SELECT
         'bookings_by_mo' AS target_slug,
