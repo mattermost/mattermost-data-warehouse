@@ -11,6 +11,7 @@ WITH actual_bookings_by_mo AS (
     FROM {{ source('orgm', 'opportunity') }} AS opportunity
     LEFT JOIN {{ source('orgm', 'opportunitylineitem') }} AS opportunitylineitem ON opportunity.sfid = opportunitylineitem.opportunityid
     WHERE iswon
+    GROUP BY 1
 ), tva_bookings_by_mo AS (
     SELECT
         'bookings_by_mo' AS target_slug,
