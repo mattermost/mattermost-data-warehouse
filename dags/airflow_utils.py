@@ -46,7 +46,10 @@ def mm_failed_task(context):
         |-----|------|------|-----------|
         |{dag_name}|{task_name}|{log_link_markdown}|{execution_date_pretty}|"""
 
-    payload = {"username": "Airflow", "text": body}
+    payload = {
+        'username': 'Airflow',
+        'text': body
+    }
 
     os.system(
         f"""curl -i -X POST {mm_webhook_url} -H 'Content-Type: application/json' \
@@ -110,7 +113,7 @@ pod_env_vars = {
     "CI_PROJECT_DIR": "/analytics",
     "EXECUTION_DATE": "{{ next_execution_date }}",
     "SNOWFLAKE_LOAD_DATABASE": "RAW",
-    "SNOWFLAKE_TRANSFORM_DATABASE": "ANALYTICS",
+    "SNOWFLAKE_TRANSFORM_DATABASE": "ANALYTICS"
 }
 
 # Warehouse variable declaration
