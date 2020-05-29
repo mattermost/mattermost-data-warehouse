@@ -211,7 +211,7 @@ WITH mobile_events       AS (
          FROM events2
      ),
 
-     all_events_chronological (
+     all_events_chronological   AS (
          SELECT
              e.date
            , e.server_id
