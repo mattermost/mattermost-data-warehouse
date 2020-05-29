@@ -47,7 +47,7 @@ WITH segment_nn_amounts AS (
     SELECT 
         REPLACE(REPLACE(tva_attain_new_and_exp_by_segment_by_qtr.target_slug,'attain_new_and_exp_by_segment_by_qtr_',''),'_','/') AS segment,
         tva_attain_new_and_exp_by_segment_by_qtr.qtr,
-        commit_segment.commit_netnew AS nn_commit,
+        commit_segment.commit_netnew AS nn_forecast,
         commit_segment.upside_netnew AS nn_upside,
         tva_attain_new_and_exp_by_segment_by_qtr.target AS nn_target,
         tva_attain_new_and_exp_by_segment_by_qtr.actual AS nn_actual,
@@ -58,7 +58,7 @@ WITH segment_nn_amounts AS (
         nn_best_case_max,
         nn_pipeline_max,
         nn_omitted_max,
-        commit_segment.commit_renewal AS ren_commit,
+        commit_segment.commit_renewal AS ren_forecast,
         commit_segment.upside_renewal AS ren_upside,
         tva_bookings_ren_by_segment_by_qtr.target AS ren_target,
         tva_bookings_ren_by_segment_by_qtr.actual AS ren_actual,
