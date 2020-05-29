@@ -43,8 +43,8 @@ WITH ww_nn_amounts AS (
 ), scrub_ww AS (
     SELECT 
         tva_bookings_new_and_exp_by_qtr.qtr,
-        commit_ww.commit_netnew,
-        commit_ww.upside_netnew,
+        commit_ww.commit_netnew AS nn_forecast,
+        commit_ww.upside_netnew AS nn_upside,
         tva_bookings_new_and_exp_by_qtr.target AS nn_target,
         tva_bookings_new_and_exp_by_qtr.actual AS nn_actual,
         tva_bookings_new_and_exp_by_qtr.tva AS nn_tva,
@@ -54,7 +54,7 @@ WITH ww_nn_amounts AS (
         nn_best_case_max,
         nn_pipeline_max,
         nn_omitted_max,
-        commit_ww.commit_renewal AS ren_commit,
+        commit_ww.commit_renewal AS ren_forecast,
         commit_ww.upside_renewal AS ren_upside,
         tva_bookings_ren_by_qtr.target AS ren_target,
         tva_bookings_ren_by_qtr.actual AS ren_actual,
