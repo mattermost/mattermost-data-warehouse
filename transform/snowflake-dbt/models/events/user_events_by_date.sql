@@ -211,14 +211,7 @@ WITH mobile_events       AS (
          FROM events2
      ),
 
-     all_events_chronological AS (
-       SELECT *,
-            ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY min_timestamp) as chronological_sequence,
-            datediff(second, lag(min_timestamp) over (partition by user_id order by min_timestamp), min_timestamp) as seconds_after_prev_event
-       FROM all_events 
-     ),
-
-     user_events_by_date AS (
+     all_events_chronological (
          SELECT
              e.date
            , e.server_id
@@ -240,8 +233,6 @@ WITH mobile_events       AS (
            , context_user_agent
            , max(max_timestamp)                                                                       AS max_timestamp
            , min(min_timestamp)                                                                       AS min_timestamp
-           , min(chronological_sequence)                                                              AS chronological_sequence
-           , min(seconds_after_prev_event)                                                            AS seconds_after_prev_event
            , {{ dbt_utils.surrogate_key('e.date', 'e.user_id', 'e.server_id', 'e.context_user_agent', 'e.event_name', 'e.os', 'e.version', 'e.os_version', 'r.event_id') }}                      AS id
          FROM all_events                  e
               LEFT JOIN {{ ref('events_registry') }} r
@@ -252,7 +243,14 @@ WITH mobile_events       AS (
           WHERE date >= (SELECT MAX(date - interval '1 day') from {{this}})
 
          {% endif %}
-         GROUP BY 1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 18, 23
+         GROUP BY 1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 18, 21
+     ),
+
+     user_events_by_date AS  (
+       SELECT *,
+            ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY min_timestamp) as chronological_sequence,
+            datediff(second, lag(min_timestamp) over (partition by user_id order by min_timestamp), min_timestamp) as seconds_after_prev_event
+       FROM all_events_chronological
      )
 SELECT *
 FROM user_events_by_date
