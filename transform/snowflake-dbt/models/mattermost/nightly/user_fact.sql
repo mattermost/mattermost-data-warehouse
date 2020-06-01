@@ -21,12 +21,12 @@ WITH max_date  AS (
       , MAX(CASE WHEN chronological_sequence = 5 THEN EVENT_NAME else null end) AS fifth_event
       , MAX(CASE WHEN chronological_sequence = 6 THEN EVENT_NAME else null end) AS sixth_event
       , MAX(CASE WHEN chronological_sequence = 7 THEN EVENT_NAME else null end) AS seventh_event
-      , MAX(CASE WHEN chronological_sequence = 8 THEN EVENT_NAME else null end) AS eigth_event
+      , MAX(CASE WHEN chronological_sequence = 8 THEN EVENT_NAME else null end) AS eighth_event
       , MAX(CASE WHEN chronological_sequence = 9 THEN EVENT_NAME else null end) AS ninth_event
       , MAX(CASE WHEN chronological_sequence = 10 THEN EVENT_NAME else null end) AS tenth_event
       , MAX(user_role)                                                          AS user_role
       FROM {{ ref('user_events_by_date') }}
-      WHERE chronological_sequence BETWEEN 1 AND 5
+      WHERE chronological_sequence BETWEEN 1 AND 10
       GROUP BY 1
     ),
      user_fact AS (
@@ -45,7 +45,7 @@ WITH max_date  AS (
            , e.fifth_event
            , e.sixth_event
            , e.seventh_event
-           , e.eigth_event
+           , e.eighth_event
            , e.ninth_event
            , e.tenth_event
            , u.first_active_date
