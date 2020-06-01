@@ -19,6 +19,7 @@ WITH max_date  AS (
       , MAX(CASE WHEN chronological_sequence = 3 THEN EVENT_NAME else null end) AS third_event
       , MAX(CASE WHEN chronological_sequence = 4 THEN EVENT_NAME else null end) AS fourth_event
       , MAX(CASE WHEN chronological_sequence = 5 THEN EVENT_NAME else null end) AS fifth_event
+      , MAX(user_role)                                                          AS user_role
       FROM {{ ref('user_events_by_date') }}
       WHERE chronological_sequence BETWEEN 1 AND 5
       GROUP BY 1
@@ -26,6 +27,7 @@ WITH max_date  AS (
      user_fact AS (
          SELECT
              u.user_id
+           , e.user_role
            , u.user_created_at
            , u.server_id
            , u.server_install_date
@@ -77,7 +79,7 @@ WITH max_date  AS (
                        AND u.date = m.max_date
               JOIN user_events e
                    ON u.user_id = e.user_id
-         {{ dbt_utils.group_by(46)}}
+         {{ dbt_utils.group_by(47)}}
      )
 SELECT *
 FROM user_fact
