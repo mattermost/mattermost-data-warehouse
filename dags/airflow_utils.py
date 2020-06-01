@@ -24,7 +24,7 @@ def mm_failed_task(context):
         return
 
     # Set all of the contextual vars
-    base_url = "http://airflow.internal.mattermost.com/"
+    base_url = "https://airflow.internal.mattermost.com/"
     execution_date = context["ts"]
     dag_context = context["dag"]
     dag_name = dag_context.dag_id
@@ -51,12 +51,13 @@ def mm_failed_task(context):
         'text': body
     }
 
-    os.system(f"""curl -i -X POST {mm_webhook_url} -H 'Content-Type: application/json' \
+    os.system(
+        f"""curl -i -X POST {mm_webhook_url} -H 'Content-Type: application/json' \
         --data-binary @- <<'EOF'
             {json.dumps(payload)}
         EOF
-    """)
-
+    """
+    )
 
 
 def split_date_parts(day: date, partition: str) -> List[dict]:
@@ -91,6 +92,7 @@ def partitions(from_date: date, to_date: date, partition: str) -> List[dict]:
             parts.append({k: v for k, v in p.items()})
     return parts
 
+
 # Set the resources for the task pods
 pod_resources = Resources(request_memory="500Mi", request_cpu="500m")
 
@@ -101,7 +103,7 @@ pod_defaults = dict(
     in_cluster=True,
     is_delete_operator_pod=True,
     namespace=os.environ["NAMESPACE"],
-#    resources=pod_resources,
+    #    resources=pod_resources,
     cmds=["/bin/bash", "-c"],
 )
 

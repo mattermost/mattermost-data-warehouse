@@ -181,7 +181,7 @@ WITH min_active              AS (
               JOIN mau m
                    ON e1.user_id = m.user_id
                        AND e1.date = m.date
-         WHERE e1.date <= CURRENT_DATE - interval '1 day'
+         WHERE e1.date <= CURRENT_DATE
          {% if is_incremental() %}
 
          AND e1.date >= (SELECT MAX(date) FROM {{this}})
