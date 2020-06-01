@@ -12,7 +12,7 @@ WITH tva_attain_new_and_exp_by_rep_by_qtr AS (
         max(period_last_day) AS period_last_day,
         sum(tva_attain_new_and_exp_by_rep_by_mo.target) AS target,
         sum(tva_attain_new_and_exp_by_rep_by_mo.actual) AS actual,
-        round(sum(tva_attain_new_and_exp_by_rep_by_mo.actual)/sum(tva_attain_new_and_exp_by_rep_by_mo.target),2) AS tva
+        round(sum(tva_attain_new_and_exp_by_rep_by_mo.actual)/sum(tva_attain_new_and_exp_by_rep_by_mo.target),3) AS tva
     FROM {{ ref('tva_attain_new_and_exp_by_rep_by_mo') }}
     GROUP BY 1,2
 )

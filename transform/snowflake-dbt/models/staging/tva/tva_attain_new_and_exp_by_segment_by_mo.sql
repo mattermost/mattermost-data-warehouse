@@ -22,7 +22,7 @@ WITH actual_attain_new_and_exp_by_segment_by_mo AS (
         attain_new_and_exp_by_segment_by_mo.month + interval '1 month' - interval '1 day' AS period_last_day,
         attain_new_and_exp_by_segment_by_mo.target,
         COALESCE(actual_attain_new_and_exp_by_segment_by_mo.actual,0) AS actual,
-        ROUND(COALESCE(actual_attain_new_and_exp_by_segment_by_mo.actual,0)/attain_new_and_exp_by_segment_by_mo.target,2) AS tva
+        ROUND(COALESCE(actual_attain_new_and_exp_by_segment_by_mo.actual,0)/attain_new_and_exp_by_segment_by_mo.target,3) AS tva
     FROM {{ source('targets', 'attain_new_and_exp_by_segment_by_mo') }}
     LEFT JOIN actual_attain_new_and_exp_by_segment_by_mo 
         ON attain_new_and_exp_by_segment_by_mo.segment = actual_attain_new_and_exp_by_segment_by_mo.segment
