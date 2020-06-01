@@ -52,6 +52,8 @@ WITH min_active              AS (
                         ON d.user_id = e.user_id
                             AND COALESCE(d.server_id,'') = COALESCE(e.server_id, '')
                             AND d.date = e.date
+              LEFT JOIN {{ ref('events_registry') }}     r
+                        ON e.event_id = r.event_id
          GROUP BY 1, 2),
 
      mau                     AS (
