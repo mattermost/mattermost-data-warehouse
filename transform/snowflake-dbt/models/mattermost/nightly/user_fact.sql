@@ -21,7 +21,7 @@ WITH max_date  AS (
            , u.license_id
            , e.event_name AS first_event
            , e.event_type AS first_event_client
-           , e.user_context_agent AS first_event_user_agent
+           , e.context_user_agent AS first_event_user_agent
            , u.first_active_date
            , u.last_active_date
            , u.days_first_to_last_active
@@ -64,6 +64,7 @@ WITH max_date  AS (
               LEFT JOIN {{ ref('user_events_by_date') }} e
                    ON u.user_id = e.user_id
                    AND e.chronological_sequence = 1
+         {{ dbt_utils.group_by(43)}}
      )
 SELECT *
 FROM user_fact
