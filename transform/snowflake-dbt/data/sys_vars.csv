@@ -2,5 +2,5 @@ var_name,var_value,var_description
 curr_fy,2021,Current Fiscal Year
 curr_mo,2020-05,Current calendar month 
 curr_qtr,2021-Q2,Current Fiscal Quarter
-ytd_mo_begin,2020-02,YTD Mnth Begin
+ytd_mo_begin,2020-02,YTD Month Begin
 ytd_mo_end,2020-05,YTD Month End
