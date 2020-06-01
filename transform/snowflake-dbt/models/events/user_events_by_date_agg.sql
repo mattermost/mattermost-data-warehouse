@@ -10,7 +10,9 @@ WITH min_active              AS (
         user_id
       , server_id
       , min(date) AS min_active_date
+      , MAX(CASE WHEN length(user_id) < 36 then CURRENT_DATE - INTERVAL '1 DAY' ELSE DATE END) AS MAX_ACTIVE_DATE 
     FROM {{ ref('user_events_by_date') }}
+    WHERE length(user_id) < 36
     GROUP BY 1, 2),
 
      dates                   AS (
@@ -21,7 +23,7 @@ WITH min_active              AS (
          FROM {{ source('util', 'dates') }}      d
               JOIN min_active m
                    ON d.date >= m.min_active_date
-                       AND d.date <= current_date
+                       AND d.date <= m.max_active_date
          GROUP BY 1, 2, 3
      ),
      events                  AS (
@@ -182,7 +184,7 @@ WITH min_active              AS (
          WHERE e1.date <= CURRENT_DATE
          {% if is_incremental() %}
 
-         AND e1.date >= (SELECT MAX(date - interval '1 day') FROM {{this}})
+         AND e1.date >= (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 33)
