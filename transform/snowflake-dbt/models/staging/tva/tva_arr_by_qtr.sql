@@ -25,7 +25,7 @@ WITH actual_arr_by_qtr AS (
         arr_by_qtr.max_month + interval '1 month' - interval '1 day' AS period_last_day,
         arr_by_qtr.target,
         actual_arr_by_qtr.total_arr AS actual,
-        round((actual_arr_by_qtr.total_arr/arr_by_qtr.target),2) AS tva
+        round((actual_arr_by_qtr.total_arr/arr_by_qtr.target),3) AS tva
     FROM arr_by_qtr
     LEFT JOIN actual_arr_by_qtr ON arr_by_qtr.qtr = actual_arr_by_qtr.qtr
 )
