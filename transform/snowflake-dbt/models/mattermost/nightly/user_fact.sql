@@ -78,5 +78,6 @@ WITH max_date  AS (
               JOIN user_events e
                    ON u.user_id = e.user_id
          {{ dbt_utils.group_by(46)}}
+     )
 SELECT *
 FROM user_fact
