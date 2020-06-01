@@ -22,7 +22,7 @@ WITH actual_bookings_ren_by_segment_by_qtr AS (
         util.fiscal_quarter_end(bookings_ren_by_segment_by_qtr.qtr) AS  period_last_day,
         bookings_ren_by_segment_by_qtr.target,
         COALESCE(actual_bookings_ren_by_segment_by_qtr.actual,0) AS actual,
-        ROUND(COALESCE(actual_bookings_ren_by_segment_by_qtr.actual,0)/bookings_ren_by_segment_by_qtr.target,2) AS tva
+        ROUND(COALESCE(actual_bookings_ren_by_segment_by_qtr.actual,0)/bookings_ren_by_segment_by_qtr.target,3) AS tva
     FROM {{ source('targets', 'bookings_ren_by_segment_by_qtr') }}
     LEFT JOIN actual_bookings_ren_by_segment_by_qtr 
         ON bookings_ren_by_segment_by_qtr.segment = actual_bookings_ren_by_segment_by_qtr.segment
