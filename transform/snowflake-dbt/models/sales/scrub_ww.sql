@@ -36,7 +36,7 @@ WITH ww_nn_amounts AS (
         license_end_qtr AS qtr,
         SUM(available_renewals) AS available_renewals,
         SUM(gross_renewal_amount) AS gross_renewal_amount,
-        ROUND(100*SUM(gross_renewal_amount)/SUM(available_renewals),2) AS renewal_rate
+        ROUND(SUM(gross_renewal_amount)/SUM(available_renewals),3) AS renewal_rate
     FROM {{ ref('account_renewal_rate_by_qtr') }}
     LEFT JOIN {{ source('orgm','account') }} ON account_renewal_rate_by_qtr.account_sfid = account.sfid
     GROUP BY 1
