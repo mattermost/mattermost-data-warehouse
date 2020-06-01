@@ -64,7 +64,7 @@ WITH max_date  AS (
               LEFT JOIN {{ ref('user_events_by_date') }} e
                    ON u.user_id = e.user_id
                    AND e.chronological_sequence = 1
-         {{ dbt_utils.group_by(43)}}
+         {{ dbt_utils.group_by(44)}}
      )
 SELECT *
 FROM user_fact
