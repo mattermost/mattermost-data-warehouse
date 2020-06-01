@@ -16,7 +16,7 @@ def update_chronological_sequence():
             datediff(second, lag(min_timestamp) over (partition by user_id order by min_timestamp), min_timestamp) as seconds_after_prev_event
         FROM ANALYTICS.EVENTS.USER_EVENTS_BY_DATE
     ) a
-    WHERE user_events_by_date.max_timestamp::timestamp >= (CURRENT_TIME - interval '24 hours')::timestamp
+    WHERE user_events_by_date.max_timestamp::timestamp >= (CURRENT_TIME::timestamp - interval '24 hours')::timestamp
     AND a.id = user_events_by_date.id;
     '''
 
