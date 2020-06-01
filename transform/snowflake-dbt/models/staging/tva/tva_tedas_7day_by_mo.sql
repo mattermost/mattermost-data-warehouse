@@ -21,7 +21,7 @@ WITH actual_tedas_7day_by_mo AS (
         tedas_7day_by_mo.month + interval '1 month' - interval '1 day' AS period_last_day,
         tedas_7day_by_mo.target,
         actual_tedas_7day_by_mo.tedas_7day AS actual,
-        round((actual_tedas_7day_by_mo.tedas_7day/tedas_7day_by_mo.target),2) AS tva
+        round((actual_tedas_7day_by_mo.tedas_7day/tedas_7day_by_mo.target),3) AS tva
     FROM {{ source('targets', 'tedas_7day_by_mo') }}
     LEFT JOIN actual_tedas_7day_by_mo ON tedas_7day_by_mo.month = actual_tedas_7day_by_mo.month
 )

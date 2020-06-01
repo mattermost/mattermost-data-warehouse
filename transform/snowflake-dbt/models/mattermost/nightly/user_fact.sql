@@ -26,7 +26,7 @@ WITH max_date  AS (
       , MAX(CASE WHEN chronological_sequence = 10 THEN EVENT_NAME else null end) AS tenth_event
       , MAX(user_role)                                                          AS user_role
       FROM {{ ref('user_events_by_date') }}
-      WHERE chronological_sequence BETWEEN 1 AND 5
+      WHERE chronological_sequence BETWEEN 1 AND 10
       GROUP BY 1
     ),
      user_fact AS (

@@ -20,7 +20,7 @@ WITH actual_bookings_ren_by_qtr AS (
         util.fiscal_quarter_end(bookings_ren_by_qtr.qtr) AS  period_last_day,
         bookings_ren_by_qtr.target,
         actual_bookings_ren_by_qtr.actual,
-        round((actual_bookings_ren_by_qtr.actual/bookings_ren_by_qtr.target),2) AS tva
+        round((actual_bookings_ren_by_qtr.actual/bookings_ren_by_qtr.target),3) AS tva
     FROM {{ source('targets', 'bookings_ren_by_qtr') }}
     LEFT JOIN actual_bookings_ren_by_qtr ON bookings_ren_by_qtr.qtr = actual_bookings_ren_by_qtr.qtr
 )
