@@ -8,21 +8,19 @@
 WITH min_active              AS (
     SELECT
         user_id
-      , server_id
       , min(date) AS min_active_date
     FROM {{ ref('user_events_by_date') }}
-    GROUP BY 1, 2),
+    GROUP BY 1),
 
      dates                   AS (
          SELECT
              d.date
            , m.user_id
-           , m.server_id
          FROM {{ source('util', 'dates') }}      d
               JOIN min_active m
                    ON d.date >= m.min_active_date
-                       AND d.date <= current_date
-         GROUP BY 1, 2, 3
+                       AND d.date <= current_date - interval '1 day'
+         GROUP BY 1, 2
      ),
      events                  AS (
          SELECT
@@ -179,10 +177,9 @@ WITH min_active              AS (
               JOIN mau m
                    ON e1.user_id = m.user_id
                        AND e1.date = m.date
-         WHERE e1.date <= CURRENT_DATE
          {% if is_incremental() %}
 
-         AND e1.date >= (SELECT MAX(date - interval '1 day') FROM {{this}})
+         WHERE e1.date >= (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 33)
