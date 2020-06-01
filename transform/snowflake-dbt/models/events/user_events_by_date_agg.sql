@@ -8,19 +8,22 @@
 WITH min_active              AS (
     SELECT
         user_id
+      , server_id
       , min(date) AS min_active_date
+      , max(date + interval '1 day') AS max_active_date
     FROM {{ ref('user_events_by_date') }}
-    GROUP BY 1),
+    GROUP BY 1, 2),
 
      dates                   AS (
          SELECT
              d.date
            , m.user_id
+           , m.server_id
          FROM {{ source('util', 'dates') }}      d
               JOIN min_active m
                    ON d.date >= m.min_active_date
-                       AND d.date <= current_date - interval '1 day'
-         GROUP BY 1, 2
+                       AND d.date <= max_active_date
+         GROUP BY 1, 2, 3
      ),
      events                  AS (
          SELECT
@@ -45,11 +48,10 @@ WITH min_active              AS (
            , sum(CASE WHEN r.event_category = 'ui' THEN e.total_events ELSE 0 END)             AS ui_events
            , MAX(max_timestamp)                                                               AS max_timestamp
          FROM dates                                d
-              LEFT JOIN {{ ref('user_events_by_date') }} e
+              JOIN {{ ref('user_events_by_date') }} e
                         ON d.user_id = e.user_id
-                            AND COALESCE(d.server_id,'') = COALESCE(e.server_id, '')
                             AND d.date = e.date
-              LEFT JOIN {{ ref('events_registry') }}     r
+              JOIN {{ ref('events_registry') }}     r
                         ON e.event_id = r.event_id
          GROUP BY 1, 2),
 
@@ -177,9 +179,10 @@ WITH min_active              AS (
               JOIN mau m
                    ON e1.user_id = m.user_id
                        AND e1.date = m.date
+         WHERE e1.date <= CURRENT_DATE
          {% if is_incremental() %}
 
-         WHERE e1.date >= (SELECT MAX(date) FROM {{this}})
+         AND e1.date >= (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 33)
