@@ -25,7 +25,7 @@ WITH actual_arr_by_fy AS (
         arr_by_fy.max_month + interval '1 month' - interval '1 day' AS period_last_day,
         arr_by_fy.target,
         actual_arr_by_fy.total_arr AS actual,
-        round((actual_arr_by_fy.total_arr/arr_by_fy.target),2) AS tva
+        round((actual_arr_by_fy.total_arr/arr_by_fy.target),3) AS tva
     FROM arr_by_fy
     LEFT JOIN actual_arr_by_fy ON arr_by_fy.fy = actual_arr_by_fy.fy
 )
