@@ -233,7 +233,8 @@ WITH mobile_events       AS (
            , context_user_agent
            , max(max_timestamp)                                                                       AS max_timestamp
            , min(min_timestamp)                                                                       AS min_timestamp
-           , {{ dbt_utils.surrogate_key('e.date', 'e.user_id', 'e.server_id', 'e.context_user_agent', 'e.event_name', 'e.os', 'e.version', 'e.os_version', 'r.event_id') }}                      AS id
+           , {{ dbt_utils.surrogate_key('e.date', 'e.user_id', 'e.server_id', 'e.context_user_agent', 'e.event_name', 'e.os', 'e.version', 'e.os_version', 'r.event_id') }}                      AS id,
+           , CURRENT_TIMESTAMP::timestamp AS UPDATED_AT
          FROM all_events                  e
               LEFT JOIN {{ ref('events_registry') }} r
                    ON e.event_name = r.event_name
