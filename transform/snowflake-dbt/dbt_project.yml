@@ -51,7 +51,8 @@ models:
       tags: "cs"
 
     events:
-      tags: ["events", "nightly"]
+      nightly:
+        tags: ["events", "nightly"]
 
     finance:
       tags: "finance"

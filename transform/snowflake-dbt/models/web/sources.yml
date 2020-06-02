@@ -1,0 +1,6 @@
+version: 2
+
+sources:
+  - name: web
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: web

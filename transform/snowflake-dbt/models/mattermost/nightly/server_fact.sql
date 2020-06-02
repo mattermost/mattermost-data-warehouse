@@ -11,8 +11,10 @@ WITH server_details AS (
       , MAX(CASE WHEN in_security OR in_mm2_server THEN date ELSE NULL END) AS            last_active_date
       , MIN(CASE WHEN in_security THEN date ELSE NULL END) AS                             first_telemetry_active_date
       , MAX(CASE WHEN in_security THEN date ELSE NULL END) AS                             last_telemetry_active_date
-      , MAX(active_user_count) AS                                                         max_active_user_count
-      , MAX(CASE WHEN active_user_count > 0 THEN date ELSE NULL END) AS                   last_active_user_date
+      , MAX(CASE WHEN coalesce(active_users_daily, active_users) > active_user_count 
+              THEN coalesce(active_users_daily, active_users)
+              ELSE active_user_count END) AS                                              max_active_user_count
+      , MAX(CASE WHEN active_user_count > 0 or coalesce(active_users_daily, active_users) > 0 THEN date ELSE NULL END) AS                   last_active_user_date
       , MAX(CASE
                 WHEN license_id1 IS NOT NULL OR license_id2 IS NOT NULL THEN date
                                                                         ELSE NULL END) AS last_active_license_date
@@ -23,7 +25,13 @@ WITH server_details AS (
       , MAX(CASE WHEN edition IS NOT NULL THEN date ELSE NULL END)                     AS last_edition_date
       , MIN(CASE WHEN in_mm2_server THEN date ELSE NULL END)                           AS first_mm2_telemetry_date
       , MAX(CASE WHEN in_mm2_server THEN date ELSE NULL END)                           AS last_mm2_telemetry_date
-    FROM {{ ref('server_daily_details') }}
+      , MIN(CASE WHEN USER_COUNT > 100 THEN DATE ELSE NULL END)                        AS first_100reg_users_date
+      , MIN(CASE WHEN USER_COUNT > 500 THEN DATE ELSE NULL END)                        AS first_500reg_users_date
+      , MIN(CASE WHEN USER_COUNT > 1000 THEN DATE ELSE NULL END)                       AS first_1kreg_users_date
+      , MIN(CASE WHEN USER_COUNT > 2500 THEN DATE ELSE NULL END)                       AS first_2500reg_users_date
+      , MIN(CASE WHEN USER_COUNT > 5000 THEN DATE ELSE NULL END)                       AS first_5kreg_users_date
+      , MIN(CASE WHEN USER_COUNT > 10000 THEN DATE ELSE NULL END)                       AS first_10kreg_users_date
+    FROM {{ ref('server_daily_details_ext') }}
     GROUP BY 1
     ), 
     licenses AS (
@@ -136,6 +144,12 @@ WITH server_details AS (
       , MAX(nps.detractors)                               AS detractors
       , MAX(nps.passives)                                 AS passives
       , MAX(nps.avg_score)                                AS avg_nps_user_score
+      , MAX(server_details.first_100reg_users_date)       AS first_100reg_users_date
+      , MAX(server_details.first_500reg_users_date)       AS first_500reg_users_date
+      , MAX(server_details.first_1kreg_users_date)        AS first_1kreg_users_date
+      , MAX(server_details.first_2500reg_users_date)      AS first_2500reg_users_date
+      , MAX(server_details.first_5kreg_users_date)        AS first_5kreg_users_date
+      , MAX(server_details.first_10kreg_users_date)       AS first_10kreg_users_date
     FROM server_details
         JOIN {{ ref('server_daily_details') }}
             ON server_details.server_id = server_daily_details.server_id

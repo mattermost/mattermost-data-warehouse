@@ -91,6 +91,7 @@ WITH user_events       AS (
     FROM {{ ref('user_events_by_date_agg') }}   e1
          LEFT JOIN {{ ref('server_fact') }} s
                    ON TRIM(e1.server_id) = TRIM(s.server_id)
+    WHERE LENGTH(e1.user_id) < 36
                           ),
      min_nps_date      AS (
          SELECT

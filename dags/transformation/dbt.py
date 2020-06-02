@@ -95,6 +95,27 @@ dbt_run = KubernetesPodOperator(
     dag=dag,
 )
 
+update_sequence_cmd = f"""
+    {clone_and_setup_extraction_cmd} &&
+    python utils/update_chronological_sequence.py
+"""
+
+update_chronological_sequence = KubernetesPodOperator(
+    **pod_defaults,
+    image=DATA_IMAGE,
+    task_id="update-chronological-sequence",
+    name="update-chronological-sequence",
+    secrets=[
+        SNOWFLAKE_USER,
+        SNOWFLAKE_PASSWORD,
+        SNOWFLAKE_ACCOUNT,
+        SNOWFLAKE_TRANSFORM_WAREHOUSE,
+    ],
+    env_vars=env_vars,
+    arguments=[update_sequence_cmd],
+    dag=dag,
+)
+
 pg_import_cmd = f"""
     {clone_and_setup_extraction_cmd} &&
     python extract/pg_import/pg_import.py
@@ -123,4 +144,4 @@ pg_import = KubernetesPodOperator(
     dag=dag,
 )
 
-user_agent >> dbt_run >> pg_import
+user_agent >> dbt_run >> update_chronological_sequence >> pg_import

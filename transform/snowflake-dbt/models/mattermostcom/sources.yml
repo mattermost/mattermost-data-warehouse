@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: mattermostcom
+    database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
+    schema: mattermostcom
+
+    tables:
+      - name: pages
+        description: 'The Integrations & WWW Mattermost Web Property User-Level Page Views.'
+      - name: identifies
+        description: 'User identifying information from users visiting Integrations & WWW Mattermost Web Property.'
+      - name: Users
+        description: 'Information pertaining to the user and purchased license (subscription_id) for users that successfully purchased a license via the Mattermost Customer Portal (customers.mattermost.com).'
