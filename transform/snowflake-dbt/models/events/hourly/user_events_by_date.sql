@@ -35,7 +35,7 @@ WITH mobile_events       AS (
       , ''                                                                                        AS context_user_agent
       , MAX(m.timestamp)                                                                          AS max_timestamp
       , MIN(m.timestamp)                                                                          AS min_timestamp
-      , MAX(date_trunc('hour', m.uuid_ts))                                                        AS max_uuid_ts
+      , MAX(date_trunc('hour', m.uuid_ts) + interval '1 hour')                                                        AS max_uuid_ts
       , m.category
       , {{ dbt_utils.surrogate_key('m.timestamp::date', 'm.user_actual_id', 'm.user_id', 'm.context_device_type', 'context_device_os', 'm.context_app_version', 'm.context_device_os', 'lower(m.type)', 'm.category') }}                       AS id
     FROM {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}} m
@@ -108,7 +108,7 @@ WITH mobile_events       AS (
            , context_user_agent
            , MAX(e.timestamp)                                                                          AS max_timestamp
            , MIN(e.timestamp)                                                                          AS min_timestamp
-           , MAX(date_trunc('hour', e.uuid_ts))                                                        AS max_uuid_ts
+           , MAX(date_trunc('hour', e.uuid_ts) + interval '1 hour')                                                        AS max_uuid_ts
            , e.category
            , {{ dbt_utils.surrogate_key('e.timestamp::date', 'e.user_actual_id', 'e.user_id', 'e.context_user_agent', 'lower(e.type)', 'e.category') }}                       AS id
          FROM {{ source('mattermost2', 'event') }} e
