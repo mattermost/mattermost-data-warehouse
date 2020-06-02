@@ -24,6 +24,7 @@ WITH max_date  AS (
       , MAX(CASE WHEN chronological_sequence = 8 THEN EVENT_NAME else null end) AS eighth_event
       , MAX(CASE WHEN chronological_sequence = 9 THEN EVENT_NAME else null end) AS ninth_event
       , MAX(CASE WHEN chronological_sequence = 10 THEN EVENT_NAME else null end) AS tenth_event
+      , COUNT(DISTINCT ID)                                                       AS events_performed
       , MAX(user_role)                                                          AS user_role
       FROM {{ ref('user_events_by_date') }}
       WHERE chronological_sequence BETWEEN 1 AND 10
@@ -48,6 +49,7 @@ WITH max_date  AS (
            , e.eighth_event
            , e.ninth_event
            , e.tenth_event
+           , e.events_performed
            , u.first_active_date
            , u.last_active_date
            , u.days_first_to_last_active
@@ -89,7 +91,7 @@ WITH max_date  AS (
                        AND u.date = m.max_date
               JOIN user_events e
                    ON u.user_id = e.user_id
-         {{ dbt_utils.group_by(52)}}
+         {{ dbt_utils.group_by(53)}}
      )
 SELECT *
 FROM user_fact
