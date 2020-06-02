@@ -194,7 +194,7 @@ WITH mobile_events       AS (
          WHERE e.timestamp::DATE <= CURRENT_DATE
          {% if is_incremental() %}
 
-          AND timestamp::date >= (SELECT MAX(date - interval '1 day') from {{this}})
+          AND timestamp >= (SELECT MAX(max_timestamp) from {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 15, 16
