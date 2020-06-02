@@ -45,7 +45,7 @@ WITH mobile_events       AS (
       AND DATE_TRUNC('HOUR', UUID_TS) = (SELECT MAX(DATE_TRUNC('HOUR', UUID_TS)) from {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}})
 
     {% endif %}
-    GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 15, 16
+    GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
 ),
      events              AS (
          SELECT
@@ -126,7 +126,7 @@ WITH mobile_events       AS (
           AND DATE_TRUNC('HOUR', e.UUID_TS) = (SELECT MAX(DATE_TRUNC('HOUR', UUID_TS)) from {{ source('mattermost2', 'event')}})
 
          {% endif %}
-         GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 15, 16
+         GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
      ),
 
           events2              AS (
@@ -200,7 +200,7 @@ WITH mobile_events       AS (
           AND timestamp >= (SELECT MAX(max_timestamp) from {{this}})
 
          {% endif %}
-         GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 15, 16
+         GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
      ),
 
      all_events          AS (
