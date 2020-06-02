@@ -41,7 +41,7 @@ WITH mobile_events       AS (
     WHERE m.timestamp::DATE <= CURRENT_DATE 
     {% if is_incremental() %}
 
-      AND timestamp::date >= (SELECT MAX(date - interval '1 day') from {{this}})
+      AND DATE_TRUNC('HOUR', UUID_TS) = (SELECT MAX(DATE_TRUNC('HOUR', UUID_TS)) from {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}})
 
     {% endif %}
     GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 15, 16
@@ -121,7 +121,7 @@ WITH mobile_events       AS (
          AND e.timestamp::DATE <= CURRENT_DATE
          {% if is_incremental() %}
 
-          AND e.timestamp::date >= (SELECT MAX(date - interval '1 day') from {{this}})
+          AND DATE_TRUNC('HOUR', e.UUID_TS) = (SELECT MAX(DATE_TRUNC('HOUR', UUID_TS)) from {{ source('mattermost2', 'event')}})
 
          {% endif %}
          GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 15, 16
@@ -240,7 +240,7 @@ WITH mobile_events       AS (
                    AND e.category = r.event_category
          {% if is_incremental() %}
 
-          WHERE date >= (SELECT MAX(date - interval '1 day') from {{this}})
+          WHERE e.date >= (SELECT MAX(date - interval '1 day') from {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 18, 21
