@@ -19,7 +19,7 @@ WITH actual_arr_exp_by_mo AS (
         arr_exp_by_mo.month + interval '1 month' - interval '1 day' AS period_last_day,
         arr_exp_by_mo.target,
         actual_arr_exp_by_mo.total_arr AS actual,
-        round((actual_arr_exp_by_mo.total_arr/arr_exp_by_mo.target),2) AS tva
+        round((actual_arr_exp_by_mo.total_arr/arr_exp_by_mo.target),3) AS tva
     FROM {{ source('targets', 'arr_exp_by_mo') }}
     LEFT JOIN actual_arr_exp_by_mo ON arr_exp_by_mo.month = actual_arr_exp_by_mo.month
 )
