@@ -233,8 +233,7 @@ WITH mobile_events       AS (
            , context_user_agent
            , max(max_timestamp)                                                                       AS max_timestamp
            , min(min_timestamp)                                                                       AS min_timestamp
-           , {{ dbt_utils.surrogate_key('e.date', 'e.user_id', 'e.server_id', 'e.context_user_agent', 'e.event_name', 'e.os', 'e.version', 'e.os_version', 'r.event_id') }}                      AS id,
-           , CURRENT_TIMESTAMP::timestamp AS UPDATED_AT
+           , {{ dbt_utils.surrogate_key('e.date', 'e.user_id', 'e.server_id', 'e.context_user_agent', 'e.event_name', 'e.os', 'e.version', 'e.os_version', 'r.event_id') }}                      AS id
          FROM all_events                  e
               LEFT JOIN {{ ref('events_registry') }} r
                    ON e.event_name = r.event_name
@@ -250,7 +249,8 @@ WITH mobile_events       AS (
      user_events_by_date AS  (
        SELECT *,
             ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY min_timestamp) as chronological_sequence,
-            datediff(second, lag(min_timestamp) over (partition by user_id order by min_timestamp), min_timestamp) as seconds_after_prev_event
+            datediff(second, lag(min_timestamp) over (partition by user_id order by min_timestamp), min_timestamp) as seconds_after_prev_event,
+            CURRENT_TIMESTAMP::TIMESTAMP AS UPDATED_AT
        FROM all_events_chronological
      )
 SELECT *
