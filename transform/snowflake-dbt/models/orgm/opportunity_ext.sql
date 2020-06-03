@@ -47,11 +47,11 @@ WITH w_end_date AS (
       first_commit_date,
       last_commit_date,
       num_times_slipped,
-      SUM(CASE WHEN opportunitylineitem.product_line_type__c = 'New' THEN opportunitylineitem.totalprice ELSE 0 END) AS sum_new_amount,
-      SUM(CASE WHEN opportunitylineitem.product_line_type__c = 'Expansion' THEN opportunitylineitem.totalprice ELSE 0 END) AS sum_expansion_amount,
-      SUM(CASE WHEN opportunitylineitem.product_line_type__c = 'Expansion' AND is_prorated_expansion__c IS NULL THEN totalprice WHEN is_prorated_expansion__c IS NOT NULL THEN 12 * totalprice/term_months__c ELSE 0 END) AS sum_expansion_w_proration_amount,
-      SUM(CASE WHEN opportunitylineitem.product_line_type__c = 'Ren' THEN opportunitylineitem.totalprice ELSE 0 END) AS sum_renewal_amount,
-      SUM(CASE WHEN opportunitylineitem.product_line_type__c = 'Multi' THEN opportunitylineitem.totalprice ELSE 0 END) AS sum_multi_amount
+      SUM(new_amount__c) AS sum_new_amount,
+      SUM(expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) AS sum_expansion_amount,
+      SUM(expansion_amount__c + 365 * (coterm_expansion_amount__c + leftover_expansion_amount__c)/NULLIF((end_date__c::date - start_date__c::date + 1),0)) AS sum_expansion_w_proration_amount,
+      SUM(renewal_amount__c) AS sum_renewal_amount,
+      SUM(multi_amount__c) AS sum_multi_amount
   FROM {{ source('orgm', 'opportunity') }}
   LEFT JOIN {{ source('orgm', 'opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
   LEFT JOIN w_end_date ON opportunity.sfid = w_end_date.opportunity_sfid

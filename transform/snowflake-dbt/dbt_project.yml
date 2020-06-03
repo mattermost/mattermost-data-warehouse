@@ -51,7 +51,8 @@ models:
       tags: "cs"
 
     events:
-      tags: ["events", "nightly"]
+      nightly:
+        tags: ["events", "nightly"]
 
     finance:
       tags: "finance"
@@ -83,8 +84,6 @@ seeds:
       schema: bizops
     contributor_map_data:
       schema: mattermost
-    github_contributions:
-      schema: mattermost
     staff_github_usernames:
       schema: employee
     target_fact:
@@ -95,4 +94,13 @@ seeds:
       schema: mattermost
     financial_statements:
       schema: finance
+    commit_ww:
+      schema: sales
+    commit_segment:
+      schema: sales
+    github_repo_categorization:
+      schema: mattermost
+    github_contributions_all:
+      schema: staging
+
 

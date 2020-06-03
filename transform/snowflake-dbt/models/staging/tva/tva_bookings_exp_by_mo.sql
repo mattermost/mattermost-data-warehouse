@@ -7,8 +7,7 @@
 WITH actual_bookings_exp_by_mo AS (
     SELECT
         DATE_TRUNC('month', opportunity.closedate)::date AS month,
-        SUM(CASE WHEN opportunitylineitem.product_line_type__c = 'Expansion' AND COALESCE(opportunitylineitem.is_prorated_expansion__c,'') != 'Leftover Expansion' THEN opportunitylineitem.totalprice ELSE NULL END) AS total_bookings,
-        SUM(CASE WHEN opportunitylineitem.product_line_type__c = 'Expansion' AND COALESCE(opportunitylineitem.is_prorated_expansion__c,'') != 'Leftover Expansion' AND (opportunity_ext.sum_new_amount + opportunity_ext.sum_expansion_w_proration_amount < 5000) THEN opportunitylineitem.totalprice ELSE NULL END) AS total_oppt_less_than_5k
+        SUM(expansion_amount__c + coterm_expansion_amount__c) AS total_bookings
     FROM {{ source('orgm','account') }}
     LEFT JOIN {{ source('orgm','opportunity') }} ON account.sfid = opportunity.accountid
     LEFT JOIN {{ ref('opportunity_ext') }} ON opportunity.sfid = opportunity_ext.opportunity_sfid
@@ -23,8 +22,7 @@ WITH actual_bookings_exp_by_mo AS (
         bookings_exp_by_mo.month + interval '1 month' - interval '1 day' AS period_last_day,
         bookings_exp_by_mo.target,
         round(actual_bookings_exp_by_mo.total_bookings,2) AS actual,
-        round((actual_bookings_exp_by_mo.total_bookings/bookings_exp_by_mo.target),2) AS tva,
-        round(total_oppt_less_than_5k,2) AS actual_oppt_less_than_5k
+        round((actual_bookings_exp_by_mo.total_bookings/bookings_exp_by_mo.target),3) AS tva
     FROM {{ source('targets', 'bookings_exp_by_mo') }}
     LEFT JOIN actual_bookings_exp_by_mo ON bookings_exp_by_mo.month = actual_bookings_exp_by_mo.month
 )

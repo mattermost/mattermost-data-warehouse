@@ -40,17 +40,18 @@ def get_container_operator(task_name, job_name):
 
 
 # Create the DAG
-dag = DAG("pg_job", default_args=default_args, schedule_interval="@hourly")
+dag = DAG("pg_job", default_args=default_args, schedule_interval="20-59/30 * * * *")
 
 tasks_filtered = get_container_operator("tasks-filtered", "tasks_filtered")
 account_arr = get_container_operator("account-arr", "account_arr")
 account_type = get_container_operator("account-type", "account_type")
-opportunitylineitem_snapshot = get_container_operator(
-    "opportunitylineitem-snapshot", "opportunitylineitem_snapshot"
+owner_segment_updates = get_container_operator(
+    "owner-segment-updates", "owner_segment_updates"
 )
-opportunity_snapshot = get_container_operator(
-    "opportunity-snapshot", "opportunity_snapshot"
+lead_account = get_container_operator("lead-account", "lead_account")
+update_opportunitylineitem_amounts = get_container_operator(
+    "update-opportunitylineitem-amounts", "update_opportunitylineitem_amounts"
 )
 heroku_connect_retry = get_container_operator("heroku-connect-retry", "connect_retry")
 
-tasks_filtered >> account_arr >> account_type >> opportunity_snapshot >> opportunitylineitem_snapshot >> heroku_connect_retry
+tasks_filtered >> account_arr >> account_type >> owner_segment_updates >> lead_account >> update_opportunitylineitem_amounts >> heroku_connect_retry

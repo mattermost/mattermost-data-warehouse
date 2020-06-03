@@ -1,5 +1,6 @@
 import logging
 import sys
+import pandas as pd
 from time import time
 from typing import Any, Dict, List, Tuple
 
@@ -87,3 +88,19 @@ def execute_query(engine: Engine, query: str) -> List[Tuple[Any]]:
         connection.close()
         engine.dispose()
     return results
+
+
+def execute_dataframe(engine, query):
+    """ Takes a query as a string argument and executes it.
+        Results stored in dataframe if as_df = True. """
+    cur = engine.raw_connection().cursor()
+
+    try:
+        results = cur.execute(query)
+        df = pd.DataFrame.from_records(
+            iter(results), columns=[x[0] for x in cur.description]
+        )
+        return df
+    except Exception as e:
+        return print(f"Oh no! There was an error executing your query: {e}")
+    cur.close()
