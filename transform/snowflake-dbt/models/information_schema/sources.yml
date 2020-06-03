@@ -9,7 +9,6 @@ sources:
       - name: tables
         description: 'Contains list of all tables and accompanying details in the RAW Database.'
 
-sources:
   - name: information_schema_transform
     database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
     schema: information_schema
