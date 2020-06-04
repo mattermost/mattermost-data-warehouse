@@ -11,7 +11,7 @@ WITH zendesk_ticket_details AS (
         tickets.description,
         organizations.name AS organization_name,
         account.sfid AS account_sfid,
-        users.name AS assignee_name,
+        assignee.name AS assignee_name,
         max(CASE WHEN custom_ticket_fields.ticket_field_id = 24889383 THEN custom_ticket_fields.field_value ELSE NULL END) AS enterprise_edition_version,
         max(CASE WHEN custom_ticket_fields.ticket_field_id = 24998963 THEN custom_ticket_fields.field_value ELSE NULL END) AS customer_type,
         max(CASE WHEN custom_ticket_fields.ticket_field_id = 25430823 THEN custom_ticket_fields.field_value ELSE NULL END) AS category,
@@ -42,14 +42,17 @@ WITH zendesk_ticket_details AS (
         ticket_metrics.requester_wait_time_in_minutes:calendar::int requester_wait_time_in_minutes_cal,
         tickets.satisfaction_rating:score::varchar satisfaction_rating_score,
         tickets.satisfaction_rating:reason::varchar satisfaction_rating_reason,
-        max(ticket_comments.created_at) as last_comment_at
+        MAX(ticket_comments.created_at) AS last_comment_at,
+        MAX(CASE WHEN commentor.role IN ('agent','admin') THEN ticket_comments.created_at ELSE NULL END) AS last_non_enduser_comment_at,
+        MAX(CASE WHEN commentor.role = 'end-user' THEN ticket_comments.created_at ELSE NULL END) AS last_enduser_comment_at
     FROM {{ source('zendesk_raw', 'tickets') }}
     LEFT JOIN {{ source('zendesk_raw', 'ticket_metrics') }} ON tickets.id = ticket_metrics.ticket_id
     LEFT JOIN {{ source('zendesk_raw', 'organizations') }} ON tickets.organization_id = organizations.id
     LEFT JOIN {{ source('orgm', 'account') }} ON left(organizations.external_id,15) = left(account.sfid,15)
-    LEFT JOIN {{ source('zendesk_raw', 'users') }} ON users.id = tickets.assignee_id
+    LEFT JOIN {{ source('zendesk_raw', 'users') }} AS assignee ON assignee.id = tickets.assignee_id
     LEFT JOIN {{ ref('custom_ticket_fields') }} ON tickets.id = custom_ticket_fields.ticket_id
     LEFT JOIN {{ source('zendesk_raw', 'ticket_comments') }} ON tickets.id = ticket_comments.ticket_id
+    LEFT JOIN {{ source('zendesk_raw', 'users') }} AS commentor ON commentor.id = ticket_comments.author_id
     LEFT JOIN {{ source('zendesk_raw', 'ticket_forms') }} ON ticket_forms.id = tickets.ticket_form_id
     GROUP BY 1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36
 )
