@@ -16,9 +16,9 @@ def update_chronological_sequence():
             ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY min_timestamp) as chronological_sequence,
             datediff(second, lag(min_timestamp) over (partition by user_id order by min_timestamp), min_timestamp) as seconds_after_prev_event
         FROM ANALYTICS.EVENTS.USER_EVENTS_BY_DATE
-        WHERE user_id in (SELECT user_id from analytics.events.user_events_by_date where updated_at >= (SELECT MAX(UPDATED_AT) - interval '30 minutes' FROM analytics.events.user_events_by_date) GROUP BY 1)
+        WHERE length(user_id) < 36
     ) a
-    WHERE user_events_by_date.updated_at >= (SELECT MAX(UPDATED_AT) - interval '30 minutes' FROM analytics.events.user_events_by_date)
+    WHERE user_events_by_date.updated_at = (SELECT MAX(UPDATED_AT) FROM analytics.events.user_events_by_date)
     AND a.id = user_events_by_date.id;
     '''
 
