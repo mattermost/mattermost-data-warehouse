@@ -7,13 +7,13 @@
 
 WITH seed_file AS (
     SELECT *
-    FROM {{ ref('excludable_servers') }}
+    FROM {{ ref('excludable_servers_seed') }}
 ),
 
 license_exclusions AS (
     SELECT
-        s.server_id
-      , 'internal_license' AS reason
+        'internal_license' AS reason
+      , s.server_id
     FROM {{ ref('server_fact') }} s
     JOIN {{ ref('licenses') }} l
         ON s.server_id = l.server_id

@@ -76,7 +76,7 @@ seeds:
   mm_snowflake:
     sys_vars:
       schema: util
-    excludable_servers:
+    excludable_servers_seed:
       schema: staging
     world_cities:
       schema: util
