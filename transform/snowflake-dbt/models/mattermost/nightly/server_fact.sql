@@ -37,8 +37,8 @@ WITH server_details AS (
     licenses AS (
       SELECT 
           server_id
-        , MIN(CASE WHEN NOT TRIAL THEN date ELSE NULL END) AS first_paid_license_date
-        , MIN(CASE WHEN TRIAL THEN date ELSE NULL END)     AS first_trial_license_date
+        , MIN(CASE WHEN NOT TRIAL THEN issued_date ELSE NULL END) AS first_paid_license_date
+        , MIN(CASE WHEN TRIAL THEN issued ELSE NULL END)     AS first_trial_license_date
       FROM {{ ref('licenses') }}
       GROUP BY 1
     ),
