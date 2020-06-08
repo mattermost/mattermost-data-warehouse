@@ -41,6 +41,6 @@ SELECT *
 FROM excludable_servers
 {% if is_incremental() %}
 
-WHERE server_id NOT IN (SELECT server_id from {{THIS}})
+WHERE server_id NOT IN (SELECT server_id from {{ this }})
 
 {% endif %}
