@@ -77,7 +77,7 @@ seeds:
     sys_vars:
       schema: util
     excludable_servers:
-      schema: mattermost
+      schema: staging
     world_cities:
       schema: util
     snowflake_contract_rates:
