@@ -39,6 +39,10 @@ WITH server_details AS (
           server_id
         , MIN(CASE WHEN NOT TRIAL THEN issued_date ELSE NULL END) AS first_paid_license_date
         , MIN(CASE WHEN TRIAL THEN issued_date ELSE NULL END)     AS first_trial_license_date
+        , MAX(ACCOUNT_SFID) AS account_sfid
+        , MAX(ACCOUNT_NAME) AS account_name
+        , MAX(MASTER_ACCOUNT_SFID) AS master_account_sfid
+        , MAX(MASTER_ACCOUNT_NAME) AS master_account_name
       FROM {{ ref('licenses') }}
       GROUP BY 1
     ),
@@ -114,7 +118,10 @@ WITH server_details AS (
       , MAX(upgrades.edition_upgrade_count)               AS edition_upgrade_count
       , MAX(CASE WHEN oauth.enable_gitlab_oauth THEN true
               ELSE FALSE END)                             AS gitlab_install
-      , MAX(server_daily_details.account_sfid)            AS last_account_sfid
+      , MAX(licenses.account_sfid)                        AS account_sfid
+      , MAX(licenses.account_name)                        AS account_name
+      , MAX(licenses.master_account_sfid)                 AS master_account_sfid
+      , MAX(licenses.master_account_name)                 AS master_account_name
       , MAX(server_daily_details.license_id1)             AS last_license_id1
       , MAX(server_daily_details.license_id2)             AS last_license_id2
       , MAX(licenses.first_paid_license_date)             AS first_paid_license_date
