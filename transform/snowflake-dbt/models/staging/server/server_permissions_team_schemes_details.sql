@@ -33,7 +33,7 @@ WITH max_timestamp          AS (
            , MAX(team_count)                AS team_count
            , MAX(team_guest_permissions)    AS team_guest_permissions
            , MAX(team_user_permissions)     AS team_user_permissions
-           , {{ dbt_utils.surrogate_key('timestamp::date', 'p.user_id') }} AS id
+           , {{ dbt_utils.surrogate_key('timestamp::date', 'p.user_id', 'p.scheme_id') }} AS id
          FROM {{ source('mattermost2', 'permissions_team_schemes') }} p
               JOIN max_timestamp                       mt
                    ON p.user_id = mt.user_id
