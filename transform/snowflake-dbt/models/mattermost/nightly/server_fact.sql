@@ -160,8 +160,7 @@ WITH server_details AS (
     FROM server_details
         JOIN {{ ref('server_daily_details') }}
             ON server_details.server_id = server_daily_details.server_id
-            AND (server_details.last_active_date = server_daily_details.date
-            OR server_details.last_active_date - INTERVAL '1 DAY' = server_daily_details.date)
+            AND (server_details.last_active_date BETWEEN server_details.last_active_date - INTERVAL '2 DAYS' AND server_daily_details.date)
         LEFT JOIN {{ ref('nps_server_daily_score') }} nps
             ON server_details.server_id = nps.server_id
             AND nps.date = DATE_TRUNC('day', CURRENT_DATE - INTERVAL '1 DAY')
