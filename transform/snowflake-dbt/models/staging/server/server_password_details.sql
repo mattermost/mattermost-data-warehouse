@@ -1,6 +1,7 @@
 {{config({
     "materialized": "incremental",
-    "schema": "staging"
+    "schema": "staging",
+    "unique_key":'id'
   })
 }}
 
@@ -10,11 +11,11 @@ WITH max_timestamp       AS (
       , user_id
       , MAX(timestamp)  AS max_timestamp
     FROM {{ source('mattermost2', 'config_password') }}
-    WHERE timestamp::DATE <= CURRENT_DATE - INTERVAL '1 DAY'
+    WHERE timestamp::DATE <= CURRENT_DATE
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND timestamp::date > (SELECT MAX(date) FROM {{ this }})
+        AND timestamp::date >= (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
     GROUP BY 1, 2
@@ -28,6 +29,7 @@ WITH max_timestamp       AS (
            , MAX(symbol)                                 AS enable_symbol
            , MAX(number)                                 AS enable_number
            , MAX(minimum_length)                         AS password_minimum_length
+           , {{ dbt_utils.surrogate_key('timestamp::date', 'p.user_id') }} AS id
          FROM {{ source('mattermost2', 'config_password') }} p
               JOIN max_timestamp          mt
                    ON p.user_id = mt.user_id

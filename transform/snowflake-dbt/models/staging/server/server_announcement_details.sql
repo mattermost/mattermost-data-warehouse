@@ -1,6 +1,7 @@
 {{config({
     "materialized": "incremental",
-    "schema": "staging"
+    "schema": "staging",
+    "unique_key":'id'
   })
 }}
 
@@ -10,11 +11,11 @@ WITH max_timestamp               AS (
       , user_id
       , MAX(timestamp)  AS max_timestamp
     FROM {{ source('mattermost2', 'config_announcement') }}
-    WHERE timestamp::DATE <= CURRENT_DATE - INTERVAL '1 DAY'
+    WHERE timestamp::DATE <= CURRENT_DATE
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND timestamp::date > (SELECT MAX(date) FROM {{ this }})
+        AND timestamp::date >= (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
     GROUP BY 1, 2
@@ -27,6 +28,7 @@ WITH max_timestamp               AS (
            , MAX(enable_banner)               AS enable_banner
            , MAX(isdefault_banner_color)      AS isdefault_banner_color
            , MAX(isdefault_banner_text_color) AS isdefault_banner_text_color
+           , {{ dbt_utils.surrogate_key('timestamp::date', 'ca.user_id') }} AS id
          FROM {{ source('mattermost2', 'config_announcement') }} ca
               JOIN max_timestamp              mt
                    ON ca.user_id = mt.user_id

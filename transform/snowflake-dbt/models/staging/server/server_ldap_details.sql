@@ -1,6 +1,7 @@
 {{config({
     "materialized": "incremental",
-    "schema": "staging"
+    "schema": "staging",
+    "unique_key":'id'
   })
 }}
 
@@ -10,11 +11,11 @@ WITH max_timestamp       AS (
       , user_id
       , MAX(timestamp)  AS max_timestamp
     FROM {{ source('mattermost2', 'config_ldap') }}
-    WHERE timestamp::DATE <= CURRENT_DATE - INTERVAL '1 DAY'
+    WHERE timestamp::DATE <= CURRENT_DATE
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND timestamp::date > (SELECT MAX(date) FROM {{ this }})
+        AND timestamp::date >= (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
     GROUP BY 1, 2
@@ -49,6 +50,7 @@ WITH max_timestamp       AS (
            , MAX(segment_dedupe_id)                      AS segment_dedupe_id
            , MAX(skip_certificate_verification)          AS skip_certificate_verification
            , MAX(sync_interval_minutes)                  AS sync_interval_minutes
+           , {{ dbt_utils.surrogate_key('timestamp::date', 'l.user_id') }} AS id
          FROM {{ source('mattermost2', 'config_ldap') }} l
               JOIN max_timestamp      mt
                    ON l.user_id = mt.user_id

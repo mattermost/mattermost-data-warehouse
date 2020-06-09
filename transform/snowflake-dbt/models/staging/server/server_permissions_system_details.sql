@@ -1,6 +1,7 @@
 {{config({
     "materialized": "incremental",
-    "schema": "staging"
+    "schema": "staging",
+    "unique_key":'id'
   })
 }}
 
@@ -10,11 +11,11 @@ WITH max_timestamp          AS (
       , user_id
       , MAX(timestamp)  AS max_timestamp
     FROM {{ source('mattermost2', 'permissions_system_scheme') }}
-    WHERE timestamp::DATE <= CURRENT_DATE - INTERVAL '1 DAY'
+    WHERE timestamp::DATE <= CURRENT_DATE
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND timestamp::date > (SELECT MAX(date) FROM {{ this }})
+        AND timestamp::date >= (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
     GROUP BY 1, 2
@@ -31,6 +32,7 @@ WITH max_timestamp          AS (
            , MAX(team_admin_permissions)    AS team_admin_permissions
            , MAX(team_guest_permissions)    AS team_guest_permissions
            , MAX(team_user_permissions)     AS team_user_permissions
+           , {{ dbt_utils.surrogate_key('timestamp::date', 'p.user_id') }} AS id
          FROM {{ source('mattermost2', 'permissions_system_scheme') }} p
               JOIN max_timestamp                        mt
                    ON p.user_id = mt.user_id

@@ -1,6 +1,7 @@
 {{config({
     "materialized": "incremental",
-    "schema": "staging"
+    "schema": "staging",
+    "unique_key":'id'
   })
 }}
 
@@ -48,10 +49,10 @@ WITH license_daily_details as (
            , l.feature_office365
            , l.feature_password
            , l.feature_saml
-           , {{ dbt_utils.surrogate_key('l.date', 'l.license_id', 'l.customer_id')}} AS id
+           , {{ dbt_utils.surrogate_key('l.date', 'l.license_id', 'l.customer_id', 'l.server_id')}} AS id
            , MAX(l.timestamp)                                                        AS timestamp
          FROM {{ ref('licenses') }} l
-         WHERE l.date <= CURRENT_DATE - INTERVAL '1 day'
+         WHERE l.date <= CURRENT_DATE
          AND l.date <= l.server_expire_date_join
          AND l.date >= l.start_date
          AND CASE WHEN l.has_trial_and_non_trial AND NOT l.trial THEN TRUE
@@ -60,7 +61,7 @@ WITH license_daily_details as (
               ELSE FALSE END
          {% if is_incremental() %}
 
-         AND l.date > (SELECT MAX(date) FROM {{this}})
+         AND l.date >= (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
          {{ dbt_utils.group_by(n=43) }}
@@ -98,11 +99,12 @@ WITH license_daily_details as (
            , MAX(feature_saml)                        AS feature_saml
            , MAX(issued_date)                         AS issued_date
            , MAX(users)                               AS users
+           , {{ dbt_utils.surrogate_key('d.date', 'd.license_id', 'd.server_id')}} AS id
          FROM license_daily_details d
-         WHERE d.date <= CURRENT_DATE - INTERVAL '1 day'
+         WHERE d.date <= CURRENT_DATE
          {% if is_incremental() %}
          
-         AND d.date > (SELECT MAX(date) FROM {{this}})
+         AND d.date >= (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 3)

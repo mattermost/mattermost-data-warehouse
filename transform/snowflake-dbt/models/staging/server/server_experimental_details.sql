@@ -1,6 +1,7 @@
 {{config({
     "materialized": "incremental",
-    "schema": "staging"
+    "schema": "staging",
+    "unique_key":'id'
   })
 }}
 
@@ -10,11 +11,11 @@ WITH max_timestamp        AS (
       , user_id
       , MAX(timestamp)  AS max_timestamp
     FROM {{ source('mattermost2', 'config_experimental') }}
-    WHERE timestamp::DATE <= CURRENT_DATE - INTERVAL '1 DAY'
+    WHERE timestamp::DATE <= CURRENT_DATE
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND timestamp::date > (SELECT MAX(date) FROM {{ this }})
+        AND timestamp::date >= (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
     GROUP BY 1, 2
@@ -30,6 +31,7 @@ WITH max_timestamp        AS (
            , MAX(link_metadata_timeout_milliseconds) AS link_metadata_timeout_milliseconds
            , MAX(restrict_system_admin)              AS restrict_system_admin
            , MAX(use_new_saml_library)               AS use_new_saml_library
+           , {{ dbt_utils.surrogate_key('timestamp::date', 'e.user_id') }} AS id
          FROM {{ source('mattermost2', 'config_experimental') }} e
               JOIN max_timestamp              mt
                    ON e.user_id = mt.user_id

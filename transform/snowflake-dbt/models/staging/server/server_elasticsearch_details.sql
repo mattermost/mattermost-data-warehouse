@@ -1,6 +1,7 @@
 {{config({
     "materialized": "incremental",
-    "schema": "staging"
+    "schema": "staging",
+    "unique_key":'id'
   })
 }}
 
@@ -10,11 +11,11 @@ WITH max_timestamp                AS (
       , user_id
       , MAX(timestamp)  AS max_timestamp
     FROM {{ source('mattermost2', 'config_elasticsearch') }}
-    WHERE timestamp::DATE <= CURRENT_DATE - INTERVAL '1 DAY'
+    WHERE timestamp::DATE <= CURRENT_DATE
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND timestamp::date > (SELECT MAX(date) FROM {{ this }})
+        AND timestamp::date >= (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
     GROUP BY 1, 2
@@ -42,6 +43,7 @@ WITH max_timestamp                AS (
            , MAX(trace)                             AS trace
            , MAX(user_index_replicas)               AS user_index_replicas
            , MAX(user_index_shards)                 AS user_index_shards
+           , {{ dbt_utils.surrogate_key('timestamp::date', 'e.user_id') }} AS id
          FROM {{ source('mattermost2', 'config_elasticsearch') }} e
               JOIN max_timestamp               mt
                    ON e.user_id = mt.user_id
