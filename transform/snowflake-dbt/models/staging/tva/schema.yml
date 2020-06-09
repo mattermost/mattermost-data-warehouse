@@ -83,3 +83,7 @@ models:
   - name: tva_bookings_ren_by_segment_by_fy
 
   - name: tva_bookings_ren_by_segment_by_qtr
+
+  - name: tva_bookings_ren_by_rep_by_qtr
+
+  - name: tva_bookings_ren_by_rep_by_fy

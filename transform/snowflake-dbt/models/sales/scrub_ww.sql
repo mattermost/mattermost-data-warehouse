@@ -36,7 +36,9 @@ WITH ww_nn_amounts AS (
         license_end_qtr AS qtr,
         SUM(available_renewals) AS available_renewals,
         SUM(gross_renewal_amount) AS gross_renewal_amount,
-        ROUND(SUM(gross_renewal_amount)/SUM(available_renewals),3) AS renewal_rate
+        SUM(gross_renewal_amount_in_qtr) AS gross_renewal_amount_in_qtr,
+        ROUND(SUM(gross_renewal_amount)/SUM(available_renewals),3) AS renewal_rate,
+        ROUND(SUM(gross_renewal_amount_in_qtr)/SUM(available_renewals),3) AS renewal_rate_in_qtr
     FROM {{ ref('account_renewal_rate_by_qtr') }}
     LEFT JOIN {{ source('orgm','account') }} ON account_renewal_rate_by_qtr.account_sfid = account.sfid
     GROUP BY 1
@@ -68,14 +70,16 @@ WITH ww_nn_amounts AS (
         ren_omitted_orig_amount_max,
         available_renewals AS ren_available,
         gross_renewal_amount AS ren_gross_amount,
-        renewal_rate AS ren_rate
+        gross_renewal_amount_in_qtr AS ren_gross_in_qtr_amount,
+        renewal_rate AS ren_rate,
+        renewal_rate_in_qtr AS ren_rate_in_qtr
     FROM {{ ref('tva_bookings_new_and_exp_by_qtr') }}
     LEFT JOIN {{ ref('tva_bookings_ren_by_qtr') }} ON tva_bookings_new_and_exp_by_qtr.qtr = tva_bookings_ren_by_qtr.qtr 
     LEFT JOIN {{ source('sales','commit_ww') }} ON tva_bookings_new_and_exp_by_qtr.qtr = commit_ww.qtr 
     LEFT JOIN ww_nn_amounts ON ww_nn_amounts.qtr = tva_bookings_new_and_exp_by_qtr.qtr
     LEFT JOIN ww_ren_amounts ON ww_ren_amounts.qtr = tva_bookings_ren_by_qtr.qtr
     LEFT JOIN ww_available_renewals ON ww_available_renewals.qtr = tva_bookings_ren_by_qtr.qtr
-    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27
+    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29
 )
 
 SELECT * FROM scrub_ww
