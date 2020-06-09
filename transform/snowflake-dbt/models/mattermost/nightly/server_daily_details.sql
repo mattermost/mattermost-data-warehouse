@@ -1,6 +1,7 @@
 {{config({
     "materialized": 'incremental',
-    "schema": "mattermost"
+    "schema": "mattermost",
+    "unique_key":'id'
   })
 }}
 
@@ -61,6 +62,7 @@ dates as (
       , CASE WHEN s1.occurrences > 1 OR s2.occurrences > 1 THEN TRUE ELSE FALSE END      AS has_dupes
       , CASE WHEN coalesce(s1.ip_count, NULL) > 1 THEN TRUE ELSE FALSE END               AS has_multi_ips
       , coalesce(s2.timestamp, NULL)                                                     AS timestamp
+      , {{ dbt_utils.surrogate_key('d.date', 'd.server_id') }}                           AS id
     FROM dates d
          LEFT JOIN {{ ref('server_security_details') }}    s1
                          ON d.server_id = s1.server_id
@@ -71,7 +73,7 @@ dates as (
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        WHERE d.date > (SELECT MAX(date) FROM {{ this }})
+        WHERE d.date >= (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
     GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
