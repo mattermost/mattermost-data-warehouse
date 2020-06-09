@@ -46,8 +46,11 @@ version_exclusions AS (
         ON trim(sec.id) = sf.server_id
     LEFT JOIN license_exclusions le
         ON trim(sec.id) = le.server_id
+    LEFT JOIN {{ ref('server_fact') }} s
+        ON trim(sec.id) = s.server_id
     WHERE sf.server_id is NULL
     AND le.server_id is null
+    AND s.server_id is null
     AND (sec.dev_build = 1
       OR sec.ran_tests = 1
       OR sec.version NOT LIKE '_.%._._.%._'
