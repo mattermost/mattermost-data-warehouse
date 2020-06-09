@@ -1,6 +1,7 @@
 {{config({
     "materialized": 'incremental',
-    "schema": "staging"
+    "schema": "staging",
+    "unique_key":'id'
   })
 }}
 
@@ -28,11 +29,11 @@ WITH security                AS (
       AND sec.ip_address <> '194.30.0.184'
       AND sec.user_count >= sec.active_user_count
       AND NULLIF(sec.id, '') IS NOT NULL
-      AND sec.date <= CURRENT_DATE - INTERVAL '1 DAY'
+      AND sec.date <= CURRENT_DATE
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND date > (SELECT MAX(date) FROM {{ this }})
+        AND date >= (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
 ),
@@ -161,6 +162,7 @@ WITH security                AS (
            , MAX(license.contact_sfid)            AS license_contact_sfid
            , s.ip_count
            , s.occurrences
+           , {{ dbt_utils.surrogate_key('s.id', 's.date')}} AS id
          FROM server_details s
               LEFT JOIN license
                         ON s.id = license.server_id
@@ -170,7 +172,13 @@ WITH security                AS (
                                   WHEN NOT license.has_trial_and_non_trial AND license.trial THEN TRUE
                                   WHEN NOT license.has_trial_and_non_trial AND NOT license.trial THEN TRUE
                                   ELSE FALSE END
-         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 18, 19
+        {% if is_incremental() %}
+
+        -- this filter will only be applied on an incremental run
+        AND s.date >= (SELECT MAX(date) FROM {{ this }})
+
+         {% endif %}
+         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 18, 19, 20
      )
 SELECT *
 FROM server_security_details

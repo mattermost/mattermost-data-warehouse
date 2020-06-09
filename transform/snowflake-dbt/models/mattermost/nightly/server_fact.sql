@@ -37,8 +37,17 @@ WITH server_details AS (
     licenses AS (
       SELECT 
           server_id
-        , MIN(CASE WHEN NOT TRIAL THEN date ELSE NULL END) AS first_paid_license_date
-        , MIN(CASE WHEN TRIAL THEN date ELSE NULL END)     AS first_trial_license_date
+        , MIN(CASE WHEN NOT TRIAL THEN issued_date ELSE NULL END) AS first_paid_license_date
+        , MIN(CASE WHEN TRIAL THEN issued_date ELSE NULL END)     AS first_trial_license_date
+        , MAX(CASE WHEN NOT TRIAL THEN issued_date ELSE NULL END) AS last_paid_license_date
+        , MAX(CASE WHEN TRIAL THEN issued_date ELSE NULL END)     AS last_trial_license_date
+        , MAX(ACCOUNT_SFID) AS account_sfid
+        , MAX(ACCOUNT_NAME) AS account_name
+        , MAX(MASTER_ACCOUNT_SFID) AS master_account_sfid
+        , MAX(MASTER_ACCOUNT_NAME) AS master_account_name
+        , MAX(COMPANY)             AS company
+        , MAX(CASE WHEN NOT TRIAL THEN expire_date ELSE NULL END) AS paid_license_expire_date
+        , MAX(CASE WHEN TRIAL THEN expire_date ELSE NULL END) AS trial_license_expire_date
       FROM {{ ref('licenses') }}
       GROUP BY 1
     ),
@@ -114,11 +123,19 @@ WITH server_details AS (
       , MAX(upgrades.edition_upgrade_count)               AS edition_upgrade_count
       , MAX(CASE WHEN oauth.enable_gitlab_oauth THEN true
               ELSE FALSE END)                             AS gitlab_install
-      , MAX(server_daily_details.account_sfid)            AS last_account_sfid
-      , MAX(server_daily_details.license_id1)             AS last_license_id1
-      , MAX(server_daily_details.license_id2)             AS last_license_id2
+      , MAX(licenses.account_sfid)                        AS account_sfid
+      , MAX(licenses.account_name)                        AS account_name
+      , MAX(licenses.master_account_sfid)                 AS master_account_sfid
+      , MAX(licenses.master_account_name)                 AS master_account_name
+      , MAX(licenses.company)                             AS company
+      , MAX(s2.license_id1)                               AS last_license_id1
+      , MAX(S2.license_id2)                               AS last_license_id2
       , MAX(licenses.first_paid_license_date)             AS first_paid_license_date
+      , MAX(licenses.last_paid_license_date)              AS last_paid_license_date
+      , MAX(licenses.paid_license_expire_date)            AS paid_license_expire_date
       , MAX(licenses.first_trial_license_date)            AS first_trial_license_date
+      , MAX(licenses.last_trial_license_date)             AS last_trial_license_date
+      , MAX(licenses.trial_license_expire_date)           AS trial_license_expire_date
       , MAX(server_details.first_active_date)             AS first_active_date
       , MAX(server_details.last_active_date)              AS last_active_date
       , MAX(server_details.max_active_user_count)         AS max_active_user_count
@@ -153,8 +170,10 @@ WITH server_details AS (
     FROM server_details
         JOIN {{ ref('server_daily_details') }}
             ON server_details.server_id = server_daily_details.server_id
-            AND (server_details.last_active_date = server_daily_details.date
-            OR server_details.last_active_date - INTERVAL '1 DAY' = server_daily_details.date)
+            AND (server_details.last_active_date BETWEEN server_daily_details.date - INTERVAL '2 DAYS' AND server_daily_details.date)
+        LEFT JOIN {{ ref('server_daily_details') }} s2
+            ON server_details.server_id = s2.server_id
+            AND server_details.last_active_license_date = s2.date
         LEFT JOIN {{ ref('nps_server_daily_score') }} nps
             ON server_details.server_id = nps.server_id
             AND nps.date = DATE_TRUNC('day', CURRENT_DATE - INTERVAL '1 DAY')

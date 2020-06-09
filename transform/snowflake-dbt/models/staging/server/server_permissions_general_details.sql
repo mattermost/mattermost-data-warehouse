@@ -1,6 +1,7 @@
 {{config({
     "materialized": "incremental",
-    "schema": "staging"
+    "schema": "staging",
+    "unique_key":'id'
   })
 }}
 
@@ -11,11 +12,11 @@ WITH max_timestamp              AS (
       , MAX(timestamp)  AS max_timestamp
       , COUNT(user_id)  AS occurrences
     FROM {{ source('mattermost2', 'permissions_general') }}
-    WHERE timestamp::DATE <= CURRENT_DATE - INTERVAL '1 DAY'
+    WHERE timestamp::DATE <= CURRENT_DATE
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND timestamp::date > (SELECT MAX(date) FROM {{ this }})
+        AND timestamp::date >= (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
     GROUP BY 1, 2
@@ -26,6 +27,7 @@ WITH max_timestamp              AS (
            , p.user_id
            , MAX(phase_1_migration_complete) AS phase_1_migration_complete
            , MAX(phase_2_migration_complete) AS phase_2_migration_complete
+           , {{ dbt_utils.surrogate_key('timestamp::date', 'p.user_id') }} AS id
          FROM {{ source('mattermost2', 'permissions_general') }} p
               JOIN max_timestamp                  mt
                    ON p.user_id = mt.user_id
