@@ -19,6 +19,7 @@ def update_chronological_sequence():
         WHERE length(user_id) < 36
     ) a
     WHERE user_events_by_date.updated_at = (SELECT MAX(UPDATED_AT) - '1 HOUR' FROM analytics.events.user_events_by_date)
+
     AND a.id = user_events_by_date.id;
     '''
 
