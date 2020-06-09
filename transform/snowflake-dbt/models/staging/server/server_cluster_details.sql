@@ -30,7 +30,7 @@ WITH max_timestamp          AS (
            , MAX(network_interface)       AS network_interface
            , MAX(read_only_config)        AS read_only_config
            , MAX(use_experimental_gossip) AS use_experimental_gossip
-           , MAX(use_ip_address)          AS use_ip_address
+           , MAX(use_ip_address)          AS use_ip_address, {{ dbt_utils.surrogate_key('timestamp::date', 'cc.user_id') }} AS id
          FROM {{ source('mattermost2', 'config_cluster') }} cc
               JOIN max_timestamp         mt
                    ON cc.user_id = mt.user_id
