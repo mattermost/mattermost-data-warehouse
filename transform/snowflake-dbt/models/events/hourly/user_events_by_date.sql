@@ -35,14 +35,14 @@ WITH mobile_events       AS (
       , ''                                                                                        AS context_user_agent
       , MAX(m.timestamp)                                                                          AS max_timestamp
       , MIN(m.timestamp)                                                                          AS min_timestamp
-      , MAX(date_trunc('hour', m.uuid_ts) + interval '1 hour')                                                        AS max_uuid_ts
+      , MAX(date_trunc('hour', m.uuid_ts) + interval '1 hour')                                    AS max_uuid_ts
       , m.category
       , {{ dbt_utils.surrogate_key('m.timestamp::date', 'm.user_actual_id', 'm.user_id', 'm.context_device_type', 'context_device_os', 'm.context_app_version', 'm.context_device_os', 'lower(m.type)', 'm.category') }}                       AS id
     FROM {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}} m
     WHERE m.timestamp::DATE <= CURRENT_DATE 
     {% if is_incremental() %}
 
-      AND DATE_TRUNC('HOUR', UUID_TS) = (SELECT MAX(DATE_TRUNC('HOUR', UUID_TS)) from {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}})
+      AND DATE_TRUNC('HOUR', UUID_TS + interval '1 hour') >= (SELECT MAX(DATE_TRUNC('HOUR', UUID_TS)) from {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}})
 
     {% endif %}
     GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
@@ -123,7 +123,7 @@ WITH mobile_events       AS (
          AND e.timestamp::DATE <= CURRENT_DATE
          {% if is_incremental() %}
 
-          AND DATE_TRUNC('HOUR', e.UUID_TS) = (SELECT MAX(DATE_TRUNC('HOUR', UUID_TS)) from {{ source('mattermost2', 'event')}})
+          AND DATE_TRUNC('HOUR', e.UUID_TS + interval '1 hour') >= (SELECT MAX(DATE_TRUNC('HOUR', UUID_TS)) from {{ source('mattermost2', 'event')}})
 
          {% endif %}
          GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
