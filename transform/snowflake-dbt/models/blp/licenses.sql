@@ -272,7 +272,7 @@ WITH license        AS (
           {% if is_incremental() %}
 
          WHERE COALESCE(ld.timestamp, CURRENT_DATE - INTERVAL '1 DAY') > (SELECT MAX(timestamp) FROM {{this}})
-         OR l.date > (SELECT MAX(DATE) FROM {{this}})
+         OR ld.date > (SELECT MAX(DATE) FROM {{this}})
 
          {% endif %}
      ),
@@ -327,12 +327,6 @@ WITH license        AS (
         , MAX(lw.server_expire_date_join)             AS server_expire_date_join
         , MAX(lw.license_activation_date)             AS license_activation_date
         FROM licenses_window lw
-        {% if is_incremental() %}
-
-         WHERE ld.date > (SELECT MAX(date) FROM {{this}})
-         OR COALESCE(ld.timestamp, CURRENT_DATE - INTERVAL '1 DAY') > (SELECT MAX(TIMESTAMP) FROM {{this}})
-
-         {% endif %}
         {{ dbt_utils.group_by(n=4) }}
      )
 SELECT *
