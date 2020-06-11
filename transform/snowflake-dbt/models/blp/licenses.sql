@@ -165,7 +165,7 @@ WITH license        AS (
            , ld.feature_saml
            , ld.timestamp
            , {{ dbt_utils.surrogate_key('l.licenseid', 'l.customerid', 'l.date', 'ld.server_id') }} AS id
-           , l.license_activation_date
+           , ld.license_activation_date
          FROM date_ranges    l
               LEFT JOIN license_details ld
                         ON l.licenseid = ld.license_id
@@ -325,7 +325,7 @@ WITH license        AS (
         , MAX(lw.id)                                  AS id
         , MAX(lw.has_trial_and_non_trial)             AS has_trial_and_non_trial
         , MAX(lw.server_expire_date_join)             AS server_expire_date_join
-        , MIN(lw.license_activation_date)             AS license_activation_date
+        , MAX(lw.license_activation_date)             AS license_activation_date
         FROM licenses_window lw
         {% if is_incremental() %}
 
