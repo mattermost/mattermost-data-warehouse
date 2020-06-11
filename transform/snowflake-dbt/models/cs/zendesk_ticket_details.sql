@@ -43,8 +43,8 @@ WITH zendesk_ticket_details AS (
         tickets.satisfaction_rating:score::varchar satisfaction_rating_score,
         tickets.satisfaction_rating:reason::varchar satisfaction_rating_reason,
         MAX(ticket_comments.created_at) AS last_comment_at,
-        MAX(CASE WHEN commentor.role IN ('agent','admin') THEN ticket_comments.created_at ELSE NULL END) AS last_non_enduser_comment_at,
-        MAX(CASE WHEN commentor.role = 'end-user' THEN ticket_comments.created_at ELSE NULL END) AS last_enduser_comment_at
+        MAX(CASE WHEN commentor.role IN ('agent','admin') AND ticket_comments.public THEN ticket_comments.created_at ELSE NULL END) AS last_non_enduser_comment_at,
+        MAX(CASE WHEN commentor.role = 'end-user' AND ticket_comments.public THEN ticket_comments.created_at ELSE NULL END) AS last_enduser_comment_at
     FROM {{ source('zendesk_raw', 'tickets') }}
     LEFT JOIN {{ source('zendesk_raw', 'ticket_metrics') }} ON tickets.id = ticket_metrics.ticket_id
     LEFT JOIN {{ source('zendesk_raw', 'organizations') }} ON tickets.organization_id = organizations.id
