@@ -84,7 +84,7 @@ WITH user_events       AS (
               2)                                                                                                             AS avg_mobile_events_per_day
       , MIN(s.first_active_date)
             OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)   AS server_install_date
-      , MAX(s.last_account_sfid)
+      , MAX(s.account_sfid)
             OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)   AS account_sfid
       , MAX(s.last_license_id1)
             OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)   AS license_id

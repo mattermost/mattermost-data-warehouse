@@ -1,6 +1,7 @@
 {{config({
     "materialized": "incremental",
-    "schema": "staging"
+    "schema": "staging",
+    "unique_key":'id'
   })
 }}
 
@@ -11,7 +12,7 @@ WITH max_timestamp              AS (
       , MAX(server.timestamp)  AS max_timestamp
       , COUNT(server.user_id)  AS occurrences
     FROM {{ source('mattermost2', 'server') }}
-    WHERE server.timestamp::DATE <= CURRENT_DATE - INTERVAL '1 DAY'
+    WHERE server.timestamp::DATE <= CURRENT_DATE
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -92,6 +93,7 @@ WITH max_timestamp              AS (
                ELSE MIN(license.license_id) END   AS license_id2
            , MAX(license.license_email)           AS license_email
            , MAX(license.contact_sfid)            AS license_contact_sfid
+           , {{ dbt_utils.surrogate_key('s.timestamp::date', 's.user_id') }} AS id
          FROM {{ source('mattermost2', 'server') }} s
               JOIN max_timestamp mt
                    ON s.user_id = mt.user_id
@@ -104,7 +106,13 @@ WITH max_timestamp              AS (
                                   WHEN NOT license.has_trial_and_non_trial AND license.trial THEN TRUE
                                   WHEN NOT license.has_trial_and_non_trial AND NOT license.trial THEN TRUE
                                   ELSE FALSE END
-         GROUP BY 1, 2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+        {% if is_incremental() %}
+
+        -- this filter will only be applied on an incremental run
+        WHERE s.timestamp::date >= (SELECT MAX(date) FROM {{ this }})
+
+         {% endif %}
+         GROUP BY 1, 2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 22
      )
 SELECT *
 FROM server_server_details

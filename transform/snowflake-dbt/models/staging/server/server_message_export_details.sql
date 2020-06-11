@@ -1,6 +1,7 @@
 {{config({
     "materialized": "incremental",
-    "schema": "staging"
+    "schema": "staging",
+    "unique_key":'id'
   })
 }}
 
@@ -10,11 +11,11 @@ WITH max_timestamp       AS (
       , user_id
       , MAX(timestamp)  AS max_timestamp
     FROM {{ source('mattermost2', 'config_message_export') }}
-    WHERE timestamp::DATE <= CURRENT_DATE - INTERVAL '1 DAY'
+    WHERE timestamp::DATE <= CURRENT_DATE
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND timestamp::date > (SELECT MAX(date) FROM {{ this }})
+        AND timestamp::date >= (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
     GROUP BY 1, 2
@@ -31,6 +32,7 @@ WITH max_timestamp       AS (
            , MAX(is_default_global_relay_email_address) AS is_default_global_relay_email_address
            , MAX(is_default_global_relay_smtp_password) AS is_default_global_relay_smtp_password
            , MAX(is_default_global_relay_smtp_username) AS is_default_global_relay_smtp_username
+           , {{ dbt_utils.surrogate_key('timestamp::date', 'm.user_id') }} AS id
          FROM {{ source('mattermost2', 'config_message_export') }} m
               JOIN max_timestamp                mt
                    ON m.user_id = mt.user_id

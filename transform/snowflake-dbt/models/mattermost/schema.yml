@@ -51,3 +51,6 @@ models:
 
   - name: nps_server_version_daily_score
     description: Contains a daily snapshot of each User's lastest NPS score for each server version. Needed to trend cumulative scores by server version (per request of Eric Sethna).
+
+  - name: excludable_servers
+    description: List of all identifiable excludable servers (mattermost-owned and/or test/development servers)

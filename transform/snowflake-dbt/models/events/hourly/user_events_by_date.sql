@@ -35,16 +35,17 @@ WITH mobile_events       AS (
       , ''                                                                                        AS context_user_agent
       , MAX(m.timestamp)                                                                          AS max_timestamp
       , MIN(m.timestamp)                                                                          AS min_timestamp
+      , MAX(date_trunc('hour', m.uuid_ts) + interval '1 hour')                                    AS max_uuid_ts
       , m.category
       , {{ dbt_utils.surrogate_key('m.timestamp::date', 'm.user_actual_id', 'm.user_id', 'm.context_device_type', 'context_device_os', 'm.context_app_version', 'm.context_device_os', 'lower(m.type)', 'm.category') }}                       AS id
     FROM {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}} m
     WHERE m.timestamp::DATE <= CURRENT_DATE 
     {% if is_incremental() %}
 
-      AND timestamp::date >= (SELECT MAX(date - interval '1 day') from {{this}})
+      AND DATE_TRUNC('HOUR', UUID_TS + interval '1 hour') >= (SELECT MAX(DATE_TRUNC('HOUR', UUID_TS)) from {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}})
 
     {% endif %}
-    GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 15, 16
+    GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
 ),
      events              AS (
          SELECT
@@ -107,6 +108,7 @@ WITH mobile_events       AS (
            , context_user_agent
            , MAX(e.timestamp)                                                                          AS max_timestamp
            , MIN(e.timestamp)                                                                          AS min_timestamp
+           , MAX(date_trunc('hour', e.uuid_ts) + interval '1 hour')                                                        AS max_uuid_ts
            , e.category
            , {{ dbt_utils.surrogate_key('e.timestamp::date', 'e.user_actual_id', 'e.user_id', 'e.context_user_agent', 'lower(e.type)', 'e.category') }}                       AS id
          FROM {{ source('mattermost2', 'event') }} e
@@ -121,10 +123,10 @@ WITH mobile_events       AS (
          AND e.timestamp::DATE <= CURRENT_DATE
          {% if is_incremental() %}
 
-          AND e.timestamp::date >= (SELECT MAX(date - interval '1 day') from {{this}})
+          AND DATE_TRUNC('HOUR', e.UUID_TS + interval '1 hour') >= (SELECT MAX(DATE_TRUNC('HOUR', UUID_TS)) from {{ source('mattermost2', 'event')}})
 
          {% endif %}
-         GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 15, 16
+         GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
      ),
 
           events2              AS (
@@ -188,6 +190,7 @@ WITH mobile_events       AS (
            , context_useragent                                                                         AS context_user_agent
            , MAX(e.timestamp)                                                                          AS max_timestamp
            , MIN(e.timestamp)                                                                          AS min_timestamp
+           , MAX(NULL::TIMESTAMP)                                                                       AS max_uuid_ts
            , e.category
            , {{ dbt_utils.surrogate_key('e.timestamp::date', 'e.user_actual_id', 'e.user_id', 'e.context_useragent', 'lower(e.type)', 'e.category') }}                       AS id
          FROM {{ source('mm_telemetry_prod', 'event') }} e
@@ -197,7 +200,7 @@ WITH mobile_events       AS (
           AND timestamp >= (SELECT MAX(max_timestamp) from {{this}})
 
          {% endif %}
-         GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 15, 16
+         GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
      ),
 
      all_events          AS (
@@ -240,7 +243,7 @@ WITH mobile_events       AS (
                    AND e.category = r.event_category
          {% if is_incremental() %}
 
-          WHERE date >= (SELECT MAX(date - interval '1 day') from {{this}})
+          WHERE coalesce(e.max_uuid_ts, e.max_timestamp) >= (SELECT MAX(max_timestamp) from {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 18, 21
