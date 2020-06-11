@@ -272,7 +272,7 @@ WITH license        AS (
           {% if is_incremental() %}
 
          WHERE COALESCE(ld.timestamp, CURRENT_DATE - INTERVAL '1 DAY') > (SELECT MAX(timestamp) FROM {{this}})
-         OR l.date > (SELECT MAX(DATE) FROM {{this}})
+         OR ld.date > (SELECT MAX(DATE) FROM {{this}})
 
          {% endif %}
      ),
