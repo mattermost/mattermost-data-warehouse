@@ -327,6 +327,7 @@ WITH license        AS (
         , MAX(lw.server_expire_date_join)             AS server_expire_date_join
         , MAX(lw.license_activation_date)             AS license_activation_date
         FROM licenses_window lw
+        {{ dbt_utils.group_by(n=4) }}
      )
 SELECT *
 FROM licenses
