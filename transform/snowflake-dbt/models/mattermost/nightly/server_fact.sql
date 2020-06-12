@@ -82,6 +82,12 @@ WITH server_details AS (
     SELECT
         server_id
       , MAX(CASE WHEN total_events > 0 THEN date ELSE NULL END) AS last_event_date
+      , SUM(signup_events) AS signup_events_alltime
+      , SUM(signup_email_events) AS signup_email_events_alltime
+      , SUM(post_events)         AS post_events_alltime
+      , SUM(admin_events)        AS admin_events_alltime
+      , SUM(tutorial_events)     AS tutorial_events_alltime
+      , SUM(invite_members_events) AS invite_members_events_alltime
     FROM {{ ref('server_events_by_date') }}
     GROUP BY 1
   ),
@@ -167,6 +173,12 @@ WITH server_details AS (
       , MAX(server_details.first_2500reg_users_date)      AS first_2500reg_users_date
       , MAX(server_details.first_5kreg_users_date)        AS first_5kreg_users_date
       , MAX(server_details.first_10kreg_users_date)       AS first_10kreg_users_date
+      , MAX(lsd.post_events_alltime)                      AS posts_events_alltime
+      , MAX(lsd.invite_members_events_alltime)            AS invite_members_alltime
+      , MAX(lsd.signup_events_alltime)                    AS signup_events_alltime
+      , MAX(lsd.signup_email_events_alltime)              AS signup_email_events_alltime
+      , MAX(lsd.tutorial_events_alltime)                  AS tutorial_events_alltime
+      , MAX(lsd.admin_events_alltime)                     AS admin_events_alltime
     FROM server_details
         JOIN {{ ref('server_daily_details') }}
             ON server_details.server_id = server_daily_details.server_id
@@ -188,6 +200,8 @@ WITH server_details AS (
         LEFT JOIN {{ ref('server_oauth_details') }} oauth
             ON server_details.server_id = oauth.server_id
             AND server_details.first_mm2_telemetry_date = oauth.date
+        LEFT JOIN last_server_date lsd
+            ON server_details.server_id = lsd.server_Id
         {{ dbt_utils.group_by(n=1) }}
     )
 SELECT *
