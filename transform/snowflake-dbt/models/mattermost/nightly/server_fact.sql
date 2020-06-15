@@ -88,6 +88,7 @@ WITH server_details AS (
       , SUM(admin_events)        AS admin_events_alltime
       , SUM(tutorial_events)     AS tutorial_events_alltime
       , SUM(invite_members_events) AS invite_members_events_alltime
+      , MAX(dau_total)           AS max_active_users
     FROM {{ ref('server_events_by_date') }}
     GROUP BY 1
   ),
@@ -144,7 +145,11 @@ WITH server_details AS (
       , MAX(licenses.trial_license_expire_date)           AS trial_license_expire_date
       , MAX(server_details.first_active_date)             AS first_active_date
       , MAX(server_details.last_active_date)              AS last_active_date
-      , MAX(server_details.max_active_user_count)         AS max_active_user_count
+      , CASE WHEN COALESCE(MAX(lsd.max_active_users),0) >= 
+          COALESCE(MAX(server_details.max_active_user_count),0)
+          THEN COALESCE(MAX(lsd.max_active_users),0) 
+          ELSE COALESCE(MAX(server_details.max_active_user_count),0)
+          END                                             AS max_active_user_count
       , MAX(server_details.last_active_user_date)         AS last_telemetry_active_user_date
       , MAX(sau.last_event_date)                          AS last_event_active_user_date
       , MAX(sau.dau_total)                                AS dau_total
