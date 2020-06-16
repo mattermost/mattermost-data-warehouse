@@ -1,7 +1,8 @@
 {{config({
     "materialized": 'incremental',
     "schema": "events",
-    "unique_key":'id'
+    "unique_key":'id',
+    "database":"DEV"
   })
 }}
 
@@ -22,7 +23,7 @@ WITH mobile_events       AS (
           ELSE 'Other'
           END                                                                                     AS os
       , CASE
-          WHEN m.context_device_type = 'ios' THEN context_app_version::VARCHAR
+          WHEN m.context_device_type = 'ios' THEN m.context_app_version::VARCHAR
           WHEN m.context_device_type = 'android' THEN m.context_app_version::VARCHAR
           ELSE 'Other'
           END                                                                                     AS version
@@ -40,12 +41,10 @@ WITH mobile_events       AS (
       , {{ dbt_utils.surrogate_key('m.timestamp::date', 'm.user_actual_id', 'm.user_id', 'm.context_device_type', 'context_device_os', 'm.context_app_version', 'm.context_device_os', 'lower(m.type)', 'm.category') }}                       AS id
     FROM {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}} m
           LEFT JOIN {{ ref('mobile_events') }} rudder
-                                  ON e.timestamp::date = rudder.timestamp::date
-                                  AND COALESCE(trim(e.user_actual_id), '') = COALESCE(trim(rudder.user_actual_id), '')
-                                  AND COALESCE(e.user_id, '') = COALESCE(rudder.user_id, '')
-                                  AND e.type = rudder.type
-                                  AND e.category = rudder.category
-                                  AND e.context_user_agent = rudder.context_useragent
+                                  ON m.timestamp::date = rudder.timestamp::date
+                                  AND COALESCE(trim(m.user_actual_id), '') = COALESCE(trim(rudder.user_actual_id), '')
+                                  AND m.type = rudder.type
+                                  AND m.category = rudder.category
                                   AND rudder.user_actual_id is not null
     WHERE m.timestamp::DATE <= CURRENT_DATE
     AND rudder.user_actual_id IS NULL
@@ -79,17 +78,17 @@ mobile_events2       AS (
           ELSE 'Other'
           END                                                                                     AS version
       , CASE
-          WHEN m.context_device_os IS NOT NULL THEN m.context_device_os::varchar
+          WHEN m.context_os_version IS NOT NULL THEN m.context_os_version::varchar
           ELSE 'Unknown' END                                                                      AS os_version
       , LOWER(m.type)                                                                             AS event_name
       , 'mobile'                                                                                  AS event_type
-      , COUNT(m.timestamp)                                                                                AS num_events
-      , ''                                                                                        AS context_user_agent
+      , COUNT(m.timestamp)                                                                        AS num_events
+      , m.context_useragent                                                                       AS context_user_agent
       , MAX(m.timestamp)                                                                          AS max_timestamp
       , MIN(m.timestamp)                                                                          AS min_timestamp
       , MAX(NULL::TIMESTAMP)                                    AS max_uuid_ts
       , m.category
-      , {{ dbt_utils.surrogate_key('m.timestamp::date', 'm.user_actual_id', 'm.user_id', 'm.context_device_type', 'context_device_os', 'm.context_app_version', 'm.context_device_os', 'lower(m.type)', 'm.category') }}                       AS id
+      , {{ dbt_utils.surrogate_key('m.timestamp::date', 'm.user_actual_id', 'm.user_id', 'm.context_useragent', 'lower(m.type)', 'm.category') }}                       AS id
     FROM {{ ref('mobile_events') }} m
     WHERE m.timestamp::DATE <= CURRENT_DATE
     {% if is_incremental() %}
