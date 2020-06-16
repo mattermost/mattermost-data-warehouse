@@ -89,6 +89,8 @@ WITH server_details AS (
       , SUM(tutorial_events)     AS tutorial_events_alltime
       , SUM(invite_members_events) AS invite_members_events_alltime
       , MAX(dau_total)           AS max_active_users
+      , COUNT(DISTINCT CASE WHEN total_events > 0 THEN date ELSE NULL END) AS days_active
+      , COUNT(DISTINCT CASE WHEN COALESCE(total_events,0) = 0 THEN date ELSE NULL END) AS days_inactive
     FROM {{ ref('server_events_by_date') }}
     GROUP BY 1
   ),
@@ -184,6 +186,8 @@ WITH server_details AS (
       , MAX(lsd.signup_email_events_alltime)              AS signup_email_events_alltime
       , MAX(lsd.tutorial_events_alltime)                  AS tutorial_events_alltime
       , MAX(lsd.admin_events_alltime)                     AS admin_events_alltime
+      , MAX(lsd.days_active)                              AS days_active
+      , MAX(lsd.days_inactive)                            AS days_inactive
     FROM server_details
         JOIN {{ ref('server_daily_details') }}
             ON server_details.server_id = server_daily_details.server_id

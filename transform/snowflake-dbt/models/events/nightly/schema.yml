@@ -15,3 +15,6 @@ models:
 
   - name: server_events_by_date
     description: Contains an aggregated version of user_events_by_date at the server level.
+
+  - name: mobile_events
+    description: The union of all mobile event telemetry tables being sent by rudderstack. Format for incoming telemetry is 1 table per event. Needed to union all of them together to create an aggregated table containing all mobile events for user_events_by_date data model.

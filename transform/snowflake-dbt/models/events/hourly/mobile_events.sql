@@ -1,6 +1,7 @@
 {{config({
     "materialized": "incremental",
-    "schema": "bizops"
+    "schema": "events",
+    "tags":"hourly"
   })
 }}
 
