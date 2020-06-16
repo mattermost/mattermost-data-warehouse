@@ -39,11 +39,63 @@ WITH mobile_events       AS (
       , m.category
       , {{ dbt_utils.surrogate_key('m.timestamp::date', 'm.user_actual_id', 'm.user_id', 'm.context_device_type', 'context_device_os', 'm.context_app_version', 'm.context_device_os', 'lower(m.type)', 'm.category') }}                       AS id
     FROM {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}} m
-    WHERE m.timestamp::DATE <= CURRENT_DATE 
+          LEFT JOIN {{ ref('mobile_events') }} rudder
+                                  ON e.timestamp::date = rudder.timestamp::date
+                                  AND COALESCE(trim(e.user_actual_id), '') = COALESCE(trim(rudder.user_actual_id), '')
+                                  AND COALESCE(e.user_id, '') = COALESCE(rudder.user_id, '')
+                                  AND e.type = rudder.type
+                                  AND e.category = rudder.category
+                                  AND e.context_user_agent = rudder.context_useragent
+                                  AND rudder.user_actual_id is not null
+    WHERE m.timestamp::DATE <= CURRENT_DATE
+    AND rudder.user_actual_id IS NULL
     {% if is_incremental() %}
 
       AND DATE_TRUNC('HOUR', UUID_TS + interval '1 hour') >= (SELECT MAX(DATE_TRUNC('HOUR', UUID_TS)) from {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}})
 
+    {% endif %}
+    GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
+),
+
+mobile_events2       AS (
+    SELECT
+        m.timestamp::DATE                                                                         AS date
+      , TRIM(m.user_id)                                                                           AS server_id
+      , COALESCE(TRIM(m.user_actual_id), UUID_STRING())                                           AS user_id
+      , MIN(m.user_actual_role)                                                                   AS user_role
+      , CASE
+          WHEN m.context_device_type = 'ios' THEN 'iPhone'            
+          WHEN m.context_device_type = 'android' THEN 'Android'
+          ELSE 'Other'
+          END                                                                                     AS browser
+      , CASE
+          WHEN m.context_device_type = 'ios'    THEN 'iPhone'
+          WHEN m.context_device_type = 'android'     THEN 'Android'
+          ELSE 'Other'
+          END                                                                                     AS os
+      , CASE
+          WHEN m.context_device_type = 'ios' THEN context_app_version::VARCHAR
+          WHEN m.context_device_type = 'android' THEN m.context_app_version::VARCHAR
+          ELSE 'Other'
+          END                                                                                     AS version
+      , CASE
+          WHEN m.context_device_os IS NOT NULL THEN m.context_device_os::varchar
+          ELSE 'Unknown' END                                                                      AS os_version
+      , LOWER(m.type)                                                                             AS event_name
+      , 'mobile'                                                                                  AS event_type
+      , COUNT(m.timestamp)                                                                                AS num_events
+      , ''                                                                                        AS context_user_agent
+      , MAX(m.timestamp)                                                                          AS max_timestamp
+      , MIN(m.timestamp)                                                                          AS min_timestamp
+      , MAX(NULL::TIMESTAMP)                                    AS max_uuid_ts
+      , m.category
+      , {{ dbt_utils.surrogate_key('m.timestamp::date', 'm.user_actual_id', 'm.user_id', 'm.context_device_type', 'context_device_os', 'm.context_app_version', 'm.context_device_os', 'lower(m.type)', 'm.category') }}                       AS id
+    FROM {{ ref('mobile_events') }} m
+    WHERE m.timestamp::DATE <= CURRENT_DATE
+    {% if is_incremental() %}
+
+      AND timestamp >= (SELECT MAX(max_timestamp) from {{this}})
+    
     {% endif %}
     GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
 ),
@@ -206,6 +258,9 @@ WITH mobile_events       AS (
      all_events          AS (
          SELECT *
          FROM mobile_events
+         UNION ALL
+         SELECT *
+         FROM mobile_events2
          UNION ALL
          SELECT *
          FROM events
