@@ -296,7 +296,7 @@ mobile_events2       AS (
                    AND e.category = r.event_category
          {% if is_incremental() %}
 
-          WHERE coalesce(e.max_uuid_ts, e.max_timestamp) >= (SELECT MAX(max_timestamp) from {{this}})
+          WHERE coalesce(e.max_uuid_ts + interval '24 hours', e.max_timestamp) >= (SELECT MAX(max_timestamp) from {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 18, 21
