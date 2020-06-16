@@ -49,7 +49,7 @@ WITH mobile_events       AS (
     AND rudder.user_actual_id IS NULL
     {% if is_incremental() %}
 
-      AND DATE_TRUNC('HOUR', UUID_TS + interval '1 hour') >= (SELECT MAX(DATE_TRUNC('HOUR', UUID_TS)) from {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}})
+      AND DATE_TRUNC('HOUR', m.UUID_TS + interval '1 hour') >= (SELECT MAX(DATE_TRUNC('HOUR', UUID_TS)) from {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}})
 
     {% endif %}
     GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
