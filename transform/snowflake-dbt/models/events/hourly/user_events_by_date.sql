@@ -49,7 +49,7 @@ WITH mobile_events       AS (
     AND rudder.user_actual_id IS NULL
     {% if is_incremental() %}
 
-      AND DATE_TRUNC('HOUR', m.UUID_TS + interval '1 hour') >= (SELECT MAX(max_timestamp - interval '24 hours') from {{this}})
+      AND DATE_TRUNC('HOUR', m.UUID_TS) >= (SELECT MAX(max_timestamp - interval '25 hours') from {{this}})
 
     {% endif %}
     GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
@@ -173,7 +173,7 @@ mobile_events2       AS (
          AND e.timestamp::DATE <= CURRENT_DATE
          {% if is_incremental() %}
 
-          AND DATE_TRUNC('HOUR', e.UUID_TS + interval '1 hour') >= (SELECT MAX(max_timestamp - interval '24 hours') from {{this}})
+          AND DATE_TRUNC('HOUR', e.UUID_TS) >= (SELECT MAX(max_timestamp - interval '25 hours') from {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
