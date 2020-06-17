@@ -39,14 +39,7 @@ WITH mobile_events       AS (
       , m.category
       , {{ dbt_utils.surrogate_key('m.timestamp::date', 'm.user_actual_id', 'm.user_id', 'm.context_device_type', 'context_device_os', 'm.context_app_version', 'm.context_device_os', 'lower(m.type)', 'm.category') }}                       AS id
     FROM {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}} m
-          LEFT JOIN {{ ref('mobile_events') }} rudder
-                                  ON m.timestamp::date = rudder.timestamp::date
-                                  AND COALESCE(trim(m.user_actual_id), '') = COALESCE(trim(rudder.user_actual_id), '')
-                                  AND m.type = rudder.type
-                                  AND m.category = rudder.category
-                                  AND rudder.user_actual_id is not null
     WHERE m.timestamp::DATE <= CURRENT_DATE
-    AND rudder.user_actual_id IS NULL
     {% if is_incremental() %}
 
       AND DATE_TRUNC('HOUR', m.UUID_TS) >= (SELECT MAX(max_timestamp - interval '25 hours') from {{this}})
