@@ -5,18 +5,52 @@
   })
 }}
 
-WITH max_timestamp              AS (
+WITH server_details AS (
+  SELECT
+    COALESCE(s2.anonymous_id, s1.user_id)                            AS annonymous_id
+  , COALESCE(s2.channel, ''::VARCHAR)                                AS channel
+  , COALESCE(s2.context_ip, ''::VARCHAR)                             AS context_ip
+  , COALESCE(s2.context_library_name, s1.context_library_name)       AS context_library_name
+  , COALESCE(s2.context_library_version, s1.context_library_version) AS context_library_version
+  , COALESCE(s2.database_type, s1.database_type)                     AS database_type
+  , COALESCE(s2.database_version, s1.database_version)               AS database_version
+  , COALESCE(s2.edition, s1.edition)                                 AS edition
+  , COALESCE(s2.event, s1.event)                                     AS event
+  , COALESCE(s2.event_text, s1.event_text)                           AS event_text
+  , COALESCE(s2.id, s1.id)                                           AS id
+  , COALESCE(s2.operating_system, s1.operating_system)               AS operating_system
+  , COALESCE(s2.system_admins, s1.system_admins)                     AS system_admins
+  , COALESCE(s2.timestamp, s1.timestamp)                             AS timestamp
+  , COALESCE(s2.user_id, s1.user_id)                                 AS user_id
+  , COALESCE(s2.uuid_ts, s1.uuid_ts)                                 AS uuid_ts
+  , COALESCE(s2.version, s1.version)                                 AS version
+  , COALESCE(s2.original_timestamp::varchar, 
+             s1.original_timestamp::varchar)                         AS original_timestamp
+  , COALESCE(s2.sent_at, s1.sent_at)                                 AS sent_at
+  , COALESCE(s2.received_at, s1.received_at)                         AS received_at
+FROM {{ source('mattermost2', 'server') }}                       s1
+     FULL OUTER JOIN {{ source('mm_telemetry_prod', 'server') }} s2
+                     ON s1.user_id = s2.user_id
+                         AND s1.timestamp::DATE = s2.timestamp::DATE
+{% if is_incremental() %}
+
+WHERE COALESCE(s2.original_timestamp::varchar, 
+               s1.original_timestamp::varchar) >= (SELECT MAX(DATE) FROM {{this}})
+
+{% endif %}
+),
+max_timestamp              AS (
     SELECT
-        server.timestamp::DATE AS date
-      , server.user_id
-      , MAX(server.timestamp)  AS max_timestamp
-      , COUNT(server.user_id)  AS occurrences
-    FROM {{ source('mattermost2', 'server') }}
-    WHERE server.timestamp::DATE <= CURRENT_DATE
+        s1.timestamp::DATE         AS date
+      , s1.user_id                 AS user_id
+      , MAX(s1.timestamp)          AS max_timestamp
+      , COUNT(s1.user_id)          AS occurrences
+    FROM server_details s1
+    WHERE s1.timestamp::DATE <= CURRENT_DATE
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND server.timestamp::DATE > (SELECT MAX(date) FROM {{ this }})
+        AND s1.timestamp::DATE > (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
     GROUP BY 1, 2
@@ -94,7 +128,9 @@ WITH max_timestamp              AS (
            , MAX(license.license_email)           AS license_email
            , MAX(license.contact_sfid)            AS license_contact_sfid
            , {{ dbt_utils.surrogate_key('s.timestamp::date', 's.user_id') }} AS id
-         FROM {{ source('mattermost2', 'server') }} s
+           , s.context_ip                         AS context_ip
+           , s.database_version                   AS database_version
+         FROM server_details s
               JOIN max_timestamp mt
                    ON s.user_id = mt.user_id
                        AND s.timestamp = mt.max_timestamp
@@ -112,7 +148,7 @@ WITH max_timestamp              AS (
         WHERE s.timestamp::date >= (SELECT MAX(date) FROM {{ this }})
 
          {% endif %}
-         GROUP BY 1, 2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 22
+         GROUP BY 1, 2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 22, 23, 24
      )
 SELECT *
 FROM server_server_details

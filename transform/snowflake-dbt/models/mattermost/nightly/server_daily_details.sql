@@ -7,7 +7,7 @@
 
 WITH servers as (
   SELECT 
-      coalesce(s1.server_id, s2.server_id)                 AS server_id
+      coalesce(s2.server_id, s1.server_id)                 AS server_id
     , CASE WHEN MIN(COALESCE(s1.date, s2.date)) <= MIN(COALESCE(s2.date, s1.date)) 
             THEN MIN(COALESCE(s1.date, s2.date)) 
               ELSE MIN(COALESCE(s2.date, s1.date)) END     AS min_date
@@ -40,22 +40,22 @@ dates as (
     SELECT
         d.date                                                                           AS date
       , d.server_id                                                                      AS server_id
-      , coalesce(s1.ip_address, NULL)                                                    AS ip_address
+      , coalesce(s2.context_ip, s1.ip_address)                                           AS ip_address
       , coalesce(s1.location, NULL)                                                      AS location
-      , coalesce(s1.version, s2.version)                                                 AS version
+      , coalesce(s2.version, s1.version)                                                 AS version
       , coalesce(s2.context_library_version, NULL)                                       AS context_library_version
       , coalesce(s2.edition, NULL)                                                       AS edition
       , coalesce(s1.active_user_count, NULL)                                             AS active_user_count
       , coalesce(s1.user_count, NULL)                                                    AS user_count
       , coalesce(s2.system_admins, NULL)                                                 AS system_admins
-      , coalesce(s1.os_type, s2.operating_system)                                        AS operating_system
-      , coalesce(s1.db_type, s2.database_type)                                           AS database_type
-      , coalesce(s1.master_account_sfid, s2.master_account_sfid)                         AS master_account_sfid
-      , coalesce(s1.account_sfid, s2.account_sfid)                                       AS account_sfid
-      , coalesce(s1.license_id1, s2.license_id1)                                         AS license_id1
-      , coalesce(s1.license_id2, s2.license_id2)                                         AS license_id2
-      , coalesce(s1.license_email, s2.license_email)                                     AS license_email
-      , coalesce(s1.license_contact_sfid, s2.license_contact_sfid)                       AS license_contact_sfid
+      , coalesce(s2.operating_system, s1.os_type)                                        AS operating_system
+      , coalesce(s2.database_type, s1.db_type)                                           AS database_type
+      , coalesce(s2.master_account_sfid, s1.master_account_sfid)                         AS master_account_sfid
+      , coalesce(s2.account_sfid, s1.account_sfid)                                       AS account_sfid
+      , coalesce(s2.license_id1, s1.license_id1)                                         AS license_id1
+      , coalesce(s2.license_id2, s1.license_id2)                                         AS license_id2
+      , coalesce(s2.license_email, s1.license_email)                                     AS license_email
+      , coalesce(s2.license_contact_sfid, s1.license_contact_sfid)                       AS license_contact_sfid
       , CASE WHEN s1.server_id IS NOT NULL THEN TRUE ELSE FALSE END                      AS in_security
       , CASE WHEN s2.server_id IS NOT NULL THEN TRUE ELSE FALSE END                      AS in_mm2_server
       , CASE WHEN s1.server_id IS NULL AND s2.server_id IS NULL THEN TRUE ELSE FALSE END AS tracking_disabled
@@ -63,6 +63,7 @@ dates as (
       , CASE WHEN coalesce(s1.ip_count, NULL) > 1 THEN TRUE ELSE FALSE END               AS has_multi_ips
       , coalesce(s2.timestamp, NULL)                                                     AS timestamp
       , {{ dbt_utils.surrogate_key('d.date', 'd.server_id') }}                           AS id
+      , COALESCE(s2.database_version, NULL)                                              AS database_version
     FROM dates d
          LEFT JOIN {{ ref('server_security_details') }}    s1
                          ON d.server_id = s1.server_id
@@ -77,7 +78,7 @@ dates as (
 
     {% endif %}
     GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
-    , 22, 23, 24
+    , 22, 23, 24, 25, 26
     )
 SELECT *
 FROM server_daily_details
