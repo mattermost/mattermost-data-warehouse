@@ -9,7 +9,7 @@ WITH mobile_events       AS (
     SELECT
         m.timestamp::DATE                                                                         AS date
       , TRIM(m.user_id)                                                                           AS server_id
-      , COALESCE(TRIM(m.user_actual_id), UUID_STRING())                                           AS user_id
+      , COALESCE(TRIM(m.user_actual_id), NULL)                                                    AS user_id
       , MIN(m.user_actual_role)                                                                   AS user_role
       , CASE
           WHEN m.context_device_type = 'ios' THEN 'iPhone'            
@@ -52,7 +52,7 @@ mobile_events2       AS (
     SELECT
         m.timestamp::DATE                                                                         AS date
       , TRIM(m.user_id)                                                                           AS server_id
-      , COALESCE(TRIM(m.user_actual_id), UUID_STRING())                                           AS user_id
+      , COALESCE(TRIM(m.user_actual_id), NULL)                                                    AS user_id
       , MIN(m.user_actual_role)                                                                   AS user_role
       , CASE
           WHEN m.context_device_type = 'ios' THEN 'iPhone'            
@@ -94,7 +94,7 @@ mobile_events2       AS (
          SELECT
              e.timestamp::DATE                                                                         AS date
            , TRIM(e.user_id)                                                                           AS server_id
-           , COALESCE(TRIM(e.user_actual_id), UUID_STRING())                                           AS user_id
+           , COALESCE(TRIM(e.user_actual_id), NULL)                                                    AS user_id
            , min(e.user_actual_role)                                                                   AS user_role
            , CASE
               WHEN e.context_user_agent LIKE '%iPhone%'    THEN 'iPhone'
@@ -176,7 +176,7 @@ mobile_events2       AS (
          SELECT
              e.timestamp::DATE                                                                         AS date
            , TRIM(e.user_id)                                                                           AS server_id
-           , COALESCE(TRIM(e.user_actual_id), UUID_STRING())                                           AS user_id
+           , COALESCE(TRIM(e.user_actual_id), NULL)                                                    AS user_id
            , min(e.user_actual_role)                                                                   AS user_role
            , CASE
               WHEN context_useragent LIKE '%iPhone%'    THEN 'iPhone'
