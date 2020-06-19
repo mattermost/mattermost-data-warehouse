@@ -115,7 +115,7 @@ max_timestamp              AS (
            , s.sent_at
            , s.received_at
            , s.timestamp
-           , s.original_timestamp
+           , s.timestamp                          AS original_timestamp
            , mt.occurrences
            , MAX(license.master_account_sfid)     AS master_account_sfid
            , MAX(license.account_sfid)            AS account_sfid
