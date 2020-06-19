@@ -24,8 +24,6 @@ WITH server_details AS (
   , COALESCE(s2.user_id, s1.user_id)                                 AS user_id
   , COALESCE(s2.uuid_ts, s1.uuid_ts)                                 AS uuid_ts
   , COALESCE(s2.version, s1.version)                                 AS version
-  , COALESCE(s2.original_timestamp::varchar, 
-             s1.original_timestamp::varchar)                         AS original_timestamp
   , COALESCE(s2.sent_at, s1.sent_at)                                 AS sent_at
   , COALESCE(s2.received_at, s1.received_at)                         AS received_at
 FROM {{ source('mattermost2', 'server') }}                       s1
@@ -34,8 +32,7 @@ FROM {{ source('mattermost2', 'server') }}                       s1
                          AND s1.timestamp::DATE = s2.timestamp::DATE
 {% if is_incremental() %}
 
-WHERE COALESCE(s2.original_timestamp::varchar, 
-               s1.original_timestamp::varchar) >= (SELECT MAX(DATE) FROM {{this}})
+WHERE COALESCE(s2.timestamp, s1.timestamp) >= (SELECT MAX(DATE) FROM {{this}})
 
 {% endif %}
 ),
