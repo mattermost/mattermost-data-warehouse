@@ -1,7 +1,6 @@
 BEGIN;
 
 INSERT INTO staging.tasks_filtered (priority,completeddatetime,accountid,calldurationinseconds,subject,lastmodifieddate,ownerid,isdeleted,systemmodstamp,ishighpriority,lastmodifiedbyid,status,tasksubtype,createddate,isclosed,calltype,calldisposition,createdbyid,type,description,callobject,activitydate,dwh_external_id__c,sfid,sub_type__c,updated_at)
-)
 SELECT
     priority
     ,completeddatetime
