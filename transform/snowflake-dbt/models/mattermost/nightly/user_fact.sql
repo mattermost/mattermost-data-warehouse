@@ -49,7 +49,7 @@ WITH max_date  AS (
            , u.user_created_at
            , u.server_id
            , fs.first_server_id
-           , u.server_count
+           , m.server_count
            , u.server_install_date
            , u.account_sfid
            , u.license_id
@@ -107,7 +107,7 @@ WITH max_date  AS (
                    ON u.user_id = e.user_id
               JOIN first_server fs
                    ON u.user_id = fs.user_id
-         {{ dbt_utils.group_by(53)}}
+         {{ dbt_utils.group_by(55)}}
      )
 SELECT *
 FROM user_fact
