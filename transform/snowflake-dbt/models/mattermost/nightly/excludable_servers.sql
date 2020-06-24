@@ -73,7 +73,7 @@ ip_exclusions AS (
         FROM {{ ref('server_daily_details')}}    s
             JOIN license_exclusions e
                 ON trim(s.server_id) = e.server_id
-        WHERE s.ip_address IS NOT NULL
+        WHERE nullif(s.ip_address, '') IS NOT NULL
         GROUP BY 1, 2) e
         ON s.ip_address = e.ip_address
     LEFT JOIN seed_file sf
