@@ -32,7 +32,7 @@ FROM {{ source('mattermost2', 'server') }}                       s1
                          AND s1.timestamp::DATE = s2.timestamp::DATE
 {% if is_incremental() %}
 
-WHERE COALESCE(s2.timestamp, s1.timestamp) >= (SELECT MAX(DATE) FROM {{this}})
+WHERE COALESCE(s2.timestamp::date, s1.timestamp::date) >= (SELECT MAX(DATE) FROM {{this}})
 
 {% endif %}
 ),

@@ -12,12 +12,7 @@ WITH events          AS (
       , MIN(timestamp::date)                                                          AS date_added
       , MAX(timestamp::date)                                                          AS last_triggered
     FROM {{ source('mattermost2', 'event')}}
-    {% if is_incremental() %}
-
-        -- this filter will only be applied on an incremental run
-        WHERE timestamp >= (SELECT MAX(last_triggered) FROM {{ this }})
-
-    {% endif %}
+    WHERE timestamp::date <= CURRENT_DATE
     GROUP BY 1, 2
 ),
 
@@ -28,12 +23,7 @@ rudder_events          AS (
       , MIN(timestamp::date)                                                          AS date_added
       , MAX(timestamp::date)                                                          AS last_triggered
     FROM {{ source('mm_telemetry_prod', 'event')}}
-    {% if is_incremental() %}
-
-        -- this filter will only be applied on an incremental run
-        WHERE timestamp >= (SELECT MAX(last_triggered) FROM {{ this }})
-
-    {% endif %}
+    WHERE timestamp::date <= CURRENT_DATE
     GROUP BY 1, 2
 ),
 
@@ -44,12 +34,18 @@ rudder_events          AS (
       , MIN(timestamp::date)                                                          AS date_added
       , MAX(timestamp::date)                                                          AS last_triggered
     FROM {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}}
-    {% if is_incremental() %}
+    WHERE timestamp::date <= CURRENT_DATE
+    GROUP BY 1, 2
+    ),
 
-        -- this filter will only be applied on an incremental run
-        WHERE timestamp >= (SELECT MAX(last_triggered) FROM {{ this }})
-
-    {% endif %}
+    mobile_events2    AS (
+      SELECT
+        LOWER(type)                                                                   AS event_name
+      , CASE WHEN lower(category) = 'actions' THEN 'action' ELSE lower(category) END  AS event_category
+      , MIN(timestamp::date)                                                          AS date_added
+      , MAX(timestamp::date)                                                          AS last_triggered
+    FROM {{ ref('mobile_events') }} m
+    WHERE timestamp::date <= CURRENT_DATE
     GROUP BY 1, 2
     ),
 
@@ -62,6 +58,9 @@ rudder_events          AS (
       UNION ALL
       SELECT * 
       FROM mobile_events
+      UNION ALL
+      SELECT *
+      FROM mobile_events2
     ),
 
      events_registry AS (
