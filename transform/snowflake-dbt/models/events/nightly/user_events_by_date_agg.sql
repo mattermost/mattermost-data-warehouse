@@ -14,6 +14,7 @@ WITH min_active              AS (
             THEN CURRENT_DATE - INTERVAL '1 DAY' ELSE
             MAX(DATE) END AS MAX_ACTIVE_DATE 
     FROM {{ ref('user_events_by_date') }}
+    WHERE LENGTH(USER_ID) < 36
     GROUP BY 1, 2),
 
      dates                   AS (
