@@ -296,10 +296,52 @@ mobile_events2       AS (
      ),
 
      user_events_by_date AS  (
-       SELECT *,
-            ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY min_timestamp) as chronological_sequence,
-            datediff(second, lag(min_timestamp) over (partition by user_id order by min_timestamp), min_timestamp) as seconds_after_prev_event,
-            CURRENT_TIMESTAMP::TIMESTAMP AS UPDATED_AT
+       SELECT 
+          DATE
+        , CASE WHEN SERVER_ID IS NULL THEN 
+            MAX(SERVER_ID) OVER (PARTITION BY DATE, USER_ID ORDER BY MIN_TIMESTAMP ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+            ELSE SERVER_ID END                                                                                    AS SERVER_ID
+        , CASE WHEN USER_ID IS NULL THEN 
+            COALESCE(MAX(USER_ID) OVER (PARTITION BY DATE, SERVER_ID, CONTEXT_USER_AGENT ORDER BY MIN_TIMESTAMP ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING), UUID_STRING())
+            ELSE USER_ID END                                                                                      AS USER_ID
+        , EVENT_TYPE
+        , CASE WHEN USER_ROLE IS NULL THEN
+            MAX(USER_ROLE) OVER (PARTITION BY USER_ID ORDER BY MIN_TIMESTAMP ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+            ELSE USER_ROLE END                                                                                    AS USER_ROLE
+        , CASE WHEN USER_ROLE IS NULL THEN
+            CASE WHEN SPLIT_PART(MAX(USER_ROLE) OVER (PARTITION BY USER_ID ORDER BY MIN_TIMESTAMP ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING), ',', 1) = 'system_admin'
+              THEN TRUE ELSE FALSE END
+            ELSE SYSTEM_ADMIN END                                                                                 AS SYSTEM_ADMIN                              
+        , CASE WHEN USER_ROLE IS NULL THEN
+            CASE WHEN SPLIT_PART(MAX(USER_ROLE) OVER (PARTITION BY USER_ID ORDER BY MIN_TIMESTAMP ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING), ',', 1) = 'system_user'
+              THEN TRUE ELSE FALSE END
+            ELSE SYSTEM_USER END                                                                                  AS SYSTEM_USER
+        , OS
+        , BROWSER
+        , BROWSER_VERSION
+        , OS_VERSION
+        , EVENT_ID
+        , EVENT_NAME
+        , TOTAL_EVENTS
+        , DESKTOP_EVENTS
+        , WEB_APP_EVENTS
+        , MOBILE_EVENTS
+        , CONTEXT_USER_AGENT
+        , MAX_TIMESTAMP
+        , MIN_TIMESTAMP
+        , {{ dbt_utils.surrogate_key('DATE', 
+                                    'CASE WHEN USER_ID IS NULL THEN 
+                                        COALESCE(MAX(USER_ID) OVER (PARTITION BY DATE, SERVER_ID ORDER BY MIN_TIMESTAMP ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING), UUID_STRING())
+                                        ELSE USER_ID END',
+                                    'CASE WHEN SERVER_ID IS NULL THEN 
+                                        MAX(SERVER_ID) OVER (PARTITION BY DATE, USER_ID ORDER BY MIN_TIMESTAMP ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+                                        ELSE SERVER_ID END',
+                                    'CONTEXT_USER_AGENT', 
+                                    'EVENT_NAME', 'OS', 'BROWSER_VERSION', 'OS_VERSION', 'EVENT_ID', 
+                                    'MIN_TIMESTAMP', 'MAX_TIMESTAMP') }}                                         AS ID
+        , ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY min_timestamp)                                        AS chronological_sequence
+        , datediff(second, lag(min_timestamp) over (partition by user_id order by min_timestamp), min_timestamp) AS seconds_after_prev_event
+        , CURRENT_TIMESTAMP::TIMESTAMP AS UPDATED_AT
        FROM all_events_chronological
      )
 SELECT *
