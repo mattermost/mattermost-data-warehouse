@@ -165,8 +165,9 @@ select get_sys_var({{ var_name }})
                 {%- endfor %}
 
             from {{ relation }}
+            WHERE timestamp::date <= CURRENT_DATE
             {% if is_incremental() %}
-                where timestamp > (select max(timestamp) from {{ this }} )
+                AND timestamp > (select max(timestamp) from {{ this }} )
             {% endif %}
         )
 
