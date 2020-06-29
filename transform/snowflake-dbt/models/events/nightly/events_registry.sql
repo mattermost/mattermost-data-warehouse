@@ -40,7 +40,7 @@ rudder_events          AS (
 
     mobile_events2    AS (
       SELECT
-        LOWER(type)                                                                   AS event_name
+        COALESCE(LOWER(type), LOWER(event))                                           AS event_name
       , CASE WHEN lower(category) = 'actions' THEN 'action' ELSE lower(category) END  AS event_category
       , MIN(timestamp::date)                                                          AS date_added
       , MAX(timestamp::date)                                                          AS last_triggered
