@@ -72,7 +72,7 @@ mobile_events2       AS (
       , CASE
           WHEN m.context_os_version IS NOT NULL THEN m.context_os_version::varchar
           ELSE 'Unknown' END                                                                      AS os_version
-      , LOWER(m.type)                                                                             AS event_name
+      , COALESCE(LOWER(m.type), LOWER(m.event))                                                   AS event_name
       , 'mobile'                                                                                  AS event_type
       , COUNT(m.timestamp)                                                                        AS num_events
       , m.context_useragent                                                                       AS context_user_agent
