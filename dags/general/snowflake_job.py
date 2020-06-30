@@ -36,7 +36,7 @@ default_args = {
 }
 
 # Create the DAG
-dag = DAG("snowflake_job", default_args=default_args, schedule_interval="None")
+dag = DAG("snowflake_job", default_args=default_args, schedule_interval="*/5 * * * *")
 
 
 def get_container_operator(task_name, job_name, schema):
