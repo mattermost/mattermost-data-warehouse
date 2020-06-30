@@ -18,6 +18,7 @@ from dags.kube_secrets import (
     SNOWFLAKE_TRANSFORM_ROLE,
     SNOWFLAKE_TRANSFORM_SCHEMA,
     SNOWFLAKE_TRANSFORM_WAREHOUSE,
+    SNOWFLAKE_TRANSFORM_DATABASE,
 )
 
 # Load the env vars into a dict and set Secrets
@@ -59,15 +60,13 @@ def get_container_operator(task_name, job_name, schema):
             SNOWFLAKE_TRANSFORM_ROLE,
             SNOWFLAKE_TRANSFORM_WAREHOUSE,
             SNOWFLAKE_TRANSFORM_SCHEMA,
+            SNOWFLAKE_TRANSFORM_DATABASE,
         ],
         arguments=[cmd],
         dag=dag,
     )
 
 
-test = get_container_operator("tester", "test", "staging")
 scrub_updates = get_container_operator(
     "scrub-updates", "data_action_scrub_update", "sales"
 )
-
-test >> scrub_updates
