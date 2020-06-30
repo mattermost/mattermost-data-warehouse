@@ -69,4 +69,4 @@ scrub_updates = get_container_operator(
     "scrub-updates", "data_action_scrub_update", "sales"
 )
 
-test << scrub_updates
+test >> scrub_updates
