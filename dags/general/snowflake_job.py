@@ -65,3 +65,8 @@ def get_container_operator(task_name, job_name, schema):
 
 
 test = get_container_operator("tester", "test", "staging")
+scrub_updates = get_container_operator(
+    "scrub-updates", "data_action_scrub_update", "sales"
+)
+
+test << scrub_updates
