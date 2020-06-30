@@ -7,7 +7,7 @@
 
 WITH security                AS (
     SELECT
-        sec.id
+        sec.server_id as id
       , sec.date
       , sec.hour
       , sec.grouping
@@ -28,7 +28,7 @@ WITH security                AS (
       AND sec.version LIKE '_.%._._.%._'
       AND sec.ip_address <> '194.30.0.184'
       AND sec.user_count >= sec.active_user_count
-      AND NULLIF(sec.id, '') IS NOT NULL
+      AND NULLIF(sec.server_id, '') IS NOT NULL
       AND sec.date <= CURRENT_DATE
     {% if is_incremental() %}
 
