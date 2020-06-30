@@ -13,6 +13,7 @@ from dags.airflow_utils import (
 )
 from dags.kube_secrets import (
     SNOWFLAKE_ACCOUNT,
+    SNOWFLAKE_USER,
     SNOWFLAKE_PASSWORD,
     SNOWFLAKE_TRANSFORM_ROLE,
     SNOWFLAKE_TRANSFORM_SCHEMA,
