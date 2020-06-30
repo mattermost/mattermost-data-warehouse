@@ -30,9 +30,10 @@ FROM {{ source('mattermost2', 'server') }}                       s1
      FULL OUTER JOIN {{ source('mm_telemetry_prod', 'server') }} s2
                      ON s1.user_id = s2.user_id
                          AND s1.timestamp::DATE = s2.timestamp::DATE
+WHERE COALESCE(s2.timestamp::date, s1.timestamp::date) <= CURRENT_DATE
 {% if is_incremental() %}
 
-WHERE COALESCE(s2.timestamp::date, s1.timestamp::date) >= (SELECT MAX(DATE) FROM {{this}})
+AND COALESCE(s2.timestamp::date, s1.timestamp::date) >= (SELECT MAX(DATE) FROM {{this}})
 
 {% endif %}
 ),
