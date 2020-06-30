@@ -8,9 +8,10 @@ from extract.utils import snowflake_engine_factory, execute_query
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("queries_file", nargs="?", type=argparse.FileType("r"),
-                    default=sys.stdin)
-parser.add_argument("role", help="The role to run the queries for")
+parser.add_argument("sql_file", help="The SQL file to run on Snowflake")
+parser.add_argument(
+    "role", default="TRANSFORMER", help="The role to run the queries for"
+)
 parser.add_argument("schema", help="Default schema to use for queries")
 
 
@@ -19,6 +20,8 @@ if __name__ == "__main__":
 
     engine = snowflake_engine_factory(os.environ.copy(), args.role, args.schema)
 
-    for line in args.queries_file:
-       line = line.rstrip("\n")
-       execute_query(engine, line)
+    with open(f"transform/sql/snowflake/{args.sql_file}.sql") as f:
+        content = f.read()
+        queries = content.split(";")
+        with engine.begin() as conn:
+            [conn.execute(query) for query in queries]
