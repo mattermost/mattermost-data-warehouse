@@ -32,6 +32,7 @@ WITH server_details AS (
       , MIN(CASE WHEN USER_COUNT > 5000 THEN DATE ELSE NULL END)                       AS first_5kreg_users_date
       , MIN(CASE WHEN USER_COUNT > 10000 THEN DATE ELSE NULL END)                       AS first_10kreg_users_date
     FROM {{ ref('server_daily_details_ext') }}
+    WHERE DATE <= CURRENT_DATE - INTERVAL '1 DAY'
     GROUP BY 1
     ), 
     licenses AS (
