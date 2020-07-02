@@ -60,16 +60,16 @@ WITH max_timestamp       AS (
            , MAX(version_welcome_bot)            AS version_welcome_bot
            , MAX(version_zoom)                   AS version_zoom
            , {{ dbt_utils.surrogate_key('timestamp::date', 'p.user_id') }} AS id
-           , MAX(enable_confluence)              AS enable_confluence
-           , MAX(enable_jitsi)                   AS enable_jitsi
-           , MAX(enable_mscalendar)              AS enable_mscalendar
-           , MAX(enable_todo)                    AS enable_todo
-           , MAX(enable_skype4business)          AS enable_skyp4business
+           , MAX(p.enable_confluence)              AS enable_confluence
+           , MAX(p.enable_jitsi)                   AS enable_jitsi
+           , MAX(p.enable_mscalendar)              AS enable_mscalendar
+           , MAX(p.enable_todo)                    AS enable_todo
+           , MAX(p.enable_skype4business)          AS enable_skype4business
          FROM {{ source('mattermost2', 'config_plugin') }} p
               JOIN max_timestamp        mt
                    ON p.user_id = mt.user_id
                        AND mt.max_timestamp = p.timestamp
-         GROUP BY 1, 2
+         GROUP BY 1, 2, 38
      )
 SELECT *
 FROM server_plugin_details
