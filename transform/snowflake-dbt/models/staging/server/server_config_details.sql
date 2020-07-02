@@ -455,6 +455,11 @@ SELECT
   , {{ dbt_utils.surrogate_key('s.date', 's.server_id') }} AS id
   , ssql.data_source_replicas
   , ssql.data_source_search_replicas
+  , splugin.enable_confluence
+  , splugin.enable_jitsi
+  , splugin.enable_mscalendar
+  , splugin.enable_todo
+  , splugin.enable_skype4business
 FROM {{ ref('server_daily_details') }}                      s
     LEFT JOIN {{ ref('server_activity_details') }}            sactivity
     ON s.server_id = sactivity.server_id AND s.date = sactivity.date

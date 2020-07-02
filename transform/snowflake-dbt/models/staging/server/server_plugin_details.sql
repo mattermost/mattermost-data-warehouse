@@ -60,6 +60,11 @@ WITH max_timestamp       AS (
            , MAX(version_welcome_bot)            AS version_welcome_bot
            , MAX(version_zoom)                   AS version_zoom
            , {{ dbt_utils.surrogate_key('timestamp::date', 'p.user_id') }} AS id
+           , MAX(enable_confluence)              AS enable_confluence
+           , MAX(enable_jitsi)                   AS enable_jitsi
+           , MAX(enable_mscalendar)              AS enable_mscalendar
+           , MAX(enable_todo)                    AS enable_todo
+           , MAX(enable_skype4business)          AS enable_skyp4business
          FROM {{ source('mattermost2', 'config_plugin') }} p
               JOIN max_timestamp        mt
                    ON p.user_id = mt.user_id
