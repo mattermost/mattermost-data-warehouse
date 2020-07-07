@@ -109,7 +109,7 @@ max_timestamp              AS (
            , MAX(s.version)                       AS version
            , MAX(s.context_library_version)       AS context_library_version
            , s.edition
-           , s.system_admins
+           , MAX(s.system_admins)                 AS system_admins
            , s.operating_system
            , s.database_type
            , s.event
@@ -128,7 +128,7 @@ max_timestamp              AS (
            , MAX(license.contact_sfid)            AS license_contact_sfid
            , {{ dbt_utils.surrogate_key('s.timestamp::date', 's.user_id') }} AS id
            , s.context_ip                         AS context_ip
-           , s.database_version                   AS database_version
+           , MAX(s.database_version)              AS database_version
          FROM server_details s
               JOIN max_timestamp mt
                    ON s.user_id = mt.user_id
@@ -147,7 +147,7 @@ max_timestamp              AS (
         WHERE s.timestamp::date >= (SELECT MAX(DATE-interval '1 day') FROM {{ this }})
 
          {% endif %}
-         GROUP BY 1, 2, 5, 6, 7, 8, 9, 10, 13, 14, 15, 22, 23, 24
+         GROUP BY 1, 2, 5, 7, 8, 9, 10, 13, 14, 15, 22, 23
      )
 SELECT *
 FROM server_server_details
