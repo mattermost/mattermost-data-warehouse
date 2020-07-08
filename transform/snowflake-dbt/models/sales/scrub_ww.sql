@@ -1,7 +1,6 @@
 {{config({
     "materialized": 'table',
-    "schema": "sales",
-    "database": "DEV"
+    "schema": "sales"
   })
 }}
 
