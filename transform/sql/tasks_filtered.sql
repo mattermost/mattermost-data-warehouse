@@ -1,6 +1,6 @@
 BEGIN;
 
-INSERT INTO staging.tasks_filtered
+INSERT INTO staging.tasks_filtered (priority,completeddatetime,accountid,calldurationinseconds,subject,lastmodifieddate,ownerid,isdeleted,systemmodstamp,ishighpriority,lastmodifiedbyid,status,tasksubtype,createddate,isclosed,calltype,calldisposition,createdbyid,type,description,callobject,activitydate,dwh_external_id__c,sfid,sub_type__c,updated_at)
 SELECT
     priority
     ,completeddatetime
@@ -26,6 +26,7 @@ SELECT
     ,activitydate
     ,dwh_external_id__c
     ,sfid
+    ,sub_type__c
     ,now()
 FROM orgm.task
 WHERE task.createdbyid != '0051R00000GnvhhQAB' --Marketo Mattermost
@@ -56,6 +57,7 @@ SET priority = task.priority,
     activitydate = task.activitydate,
     dwh_external_id__c = task.dwh_external_id__c,
     sfid = task.sfid,
+    sub_type__c = task.sub_type__c,
     updated_at = now()
 FROM orgm.task
 WHERE tasks_filtered.systemmodstamp != task.systemmodstamp AND tasks_filtered.sfid = task.sfid;
