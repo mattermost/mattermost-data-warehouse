@@ -35,6 +35,7 @@ WITH server_details AS (
       , MIN(CASE WHEN USER_COUNT > 2500 THEN DATE ELSE NULL END)                       AS first_2500reg_users_date
       , MIN(CASE WHEN USER_COUNT > 5000 THEN DATE ELSE NULL END)                       AS first_5kreg_users_date
       , MIN(CASE WHEN USER_COUNT > 10000 THEN DATE ELSE NULL END)                       AS first_10kreg_users_date
+      , MAX(POSTS)                                                                     AS max_posts
     FROM {{ ref('server_daily_details_ext') }}
     WHERE DATE <= CURRENT_DATE - INTERVAL '1 DAY'
     GROUP BY 1
@@ -195,6 +196,7 @@ WITH server_details AS (
       , MAX(lsd.admin_events_alltime)                     AS admin_events_alltime
       , MAX(lsd.days_active)                              AS days_active
       , MAX(lsd.days_inactive)                            AS days_inactive
+      , MAX(server_details.max_posts)                     AS max_posts
     FROM server_details
         JOIN {{ ref('server_daily_details') }}
             ON server_details.server_id = server_daily_details.server_id
