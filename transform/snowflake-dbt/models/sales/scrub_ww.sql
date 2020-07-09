@@ -37,7 +37,7 @@ WITH ww_nn_amounts AS (
     FROM {{ source('orgm','opportunity') }}
     LEFT JOIN {{ source('orgm','opportunity') }} AS original_opportunity ON (coalesce(opportunity.original_opportunity__c, opportunity.original_opportunity_id__c)) = original_opportunity.sfid
     LEFT JOIN {{ source('orgm','opportunitylineitem') }} AS original_opportunitylineitem ON original_opportunity.sfid = original_opportunitylineitem.opportunityid
-    WHERE util.fiscal_year(opportunity.closedate) = util.get_sys_var('curr_fy')
+    WHERE util.fiscal_year(opportunity.closedate) = util.get_sys_var('curr_fy') AND opportunity.type = 'Renewal'
     GROUP BY 1
 ), ww_available_renewals AS (
     SELECT
