@@ -14,6 +14,10 @@ WITH server_details AS (
       , MAX(CASE WHEN coalesce(active_users_daily, active_users) > active_user_count 
               THEN coalesce(active_users_daily, active_users)
               ELSE active_user_count END) AS                                              max_active_user_count
+      , MAX(CASE WHEN COALESCE(registered_users,0) > COALESCE(user_count, 0)
+            THEN COALESCE(registered_users,0) 
+            ELSE COALESCE(user_count,0) END)                                          AS  max_registered_users
+      , MAX(coalesce(registered_deactivated_users, 0))                                AS  max_registered_deactivated_users
       , MAX(CASE WHEN active_user_count > 0 or coalesce(active_users_daily, active_users) > 0 THEN date ELSE NULL END) AS                   last_active_user_date
       , MAX(CASE
                 WHEN license_id1 IS NOT NULL OR license_id2 IS NOT NULL THEN date
@@ -31,6 +35,7 @@ WITH server_details AS (
       , MIN(CASE WHEN USER_COUNT > 2500 THEN DATE ELSE NULL END)                       AS first_2500reg_users_date
       , MIN(CASE WHEN USER_COUNT > 5000 THEN DATE ELSE NULL END)                       AS first_5kreg_users_date
       , MIN(CASE WHEN USER_COUNT > 10000 THEN DATE ELSE NULL END)                       AS first_10kreg_users_date
+      , MAX(POSTS)                                                                     AS max_posts
     FROM {{ ref('server_daily_details_ext') }}
     WHERE DATE <= CURRENT_DATE - INTERVAL '1 DAY'
     GROUP BY 1
@@ -153,6 +158,8 @@ WITH server_details AS (
           THEN COALESCE(MAX(lsd.max_active_users),0) 
           ELSE COALESCE(MAX(server_details.max_active_user_count),0)
           END                                             AS max_active_user_count
+      , MAX(server_details.max_registered_users)          AS max_registered_users
+      , MAX(max_registered_deactivated_users)             AS max_registered_deactivated_users
       , MAX(server_details.last_active_user_date)         AS last_telemetry_active_user_date
       , MAX(sau.last_event_date)                          AS last_event_active_user_date
       , MAX(sau.dau_total)                                AS dau_total
@@ -189,6 +196,7 @@ WITH server_details AS (
       , MAX(lsd.admin_events_alltime)                     AS admin_events_alltime
       , MAX(lsd.days_active)                              AS days_active
       , MAX(lsd.days_inactive)                            AS days_inactive
+      , MAX(server_details.max_posts)                     AS max_posts
     FROM server_details
         JOIN {{ ref('server_daily_details') }}
             ON server_details.server_id = server_daily_details.server_id
