@@ -94,7 +94,7 @@ seeds:
       schema: mattermost
     financial_statements:
       schema: finance
-    financial_statement_2:
+    financial_model:
       schema: finance
     commit_ww:
       schema: sales
