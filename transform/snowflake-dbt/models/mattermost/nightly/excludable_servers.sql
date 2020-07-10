@@ -1,7 +1,7 @@
 {{config({
-    "materialized": 'incremental',
+    "materialized": 'table',
     "schema": "mattermost",
-    "unique_key":'server_id'
+    "unique_key":'server_id',
   })
 }}
 
@@ -60,6 +60,34 @@ version_exclusions AS (
     GROUP BY 1, 2
 ),
 
+ip_exclusions AS (
+    SELECT 
+        'restricted_ip_range'
+       , s.server_id
+    FROM {{ ref('server_daily_details') }} s
+    JOIN (
+        SELECT
+          ip_address
+        , e.reason
+        , count(DISTINCT s.server_id) AS COUNT
+        FROM {{ ref('server_daily_details')}}    s
+            JOIN license_exclusions e
+                ON trim(s.server_id) = e.server_id
+        WHERE nullif(s.ip_address, '') IS NOT NULL
+        GROUP BY 1, 2) e
+        ON s.ip_address = e.ip_address
+    LEFT JOIN seed_file sf
+        ON trim(s.server_id) = trim(sf.server_id)
+    LEFT JOIN version_exclusions ve
+        ON trim(s.server_id) = trim(ve.server_id)
+    LEFT JOIN license_exclusions le
+        ON trim(s.server_id) = trim(le.server_id)
+    WHERE sf.server_id is null
+    AND ve.server_id is NULL
+    AND le.server_id is NULL
+    GROUP BY 1, 2
+),
+
 excludable_servers AS (
     SELECT *
     FROM seed_file
@@ -69,11 +97,9 @@ excludable_servers AS (
     UNION ALL
     SELECT *
     FROM version_exclusions
+    UNION ALL
+    SELECT *
+    FROM ip_exclusions
 )
 SELECT *
 FROM excludable_servers
-{% if is_incremental() %}
-
-WHERE server_id NOT IN (SELECT server_id from {{ this }} GROUP BY 1)
-
-{% endif %}

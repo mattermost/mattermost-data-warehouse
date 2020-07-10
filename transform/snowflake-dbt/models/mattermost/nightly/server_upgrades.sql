@@ -23,15 +23,15 @@ WITH upgrade         AS (
            , server_id
            , account_sfid
            , license_id
-           , substr(prev_version, 0, length(current_version)) AS prev_version
-           , substr(current_version, 0, length(prev_version)) AS current_version
+           , regexp_substr(prev_version, '^[0-9]{1,2}.[0-9]{1,2}.[0-9]{1,2}') AS prev_version
+           , regexp_substr(current_version, '^[0-9]{1,2}.[0-9]{1,2}.[0-9]{1,2}') AS current_version
            , prev_edition
            , current_edition
          FROM upgrade
-         WHERE (substr(current_version, 0, length(prev_version)) >
-                coalesce(substr(prev_version, 0, length(current_version)),
-                         substr(current_version, 0, length(prev_version)))
-             OR (current_edition = 'true' AND coalesce(prev_edition, 'true') <> current_edition))
+         WHERE (regexp_substr(current_version, '^[0-9]{1,2}.[0-9]{1,2}.[0-9]{1,2}') >
+                coalesce(regexp_substr(prev_version, '^[0-9]{1,2}.[0-9]{1,2}.[0-9]{1,2}'),
+                         regexp_substr(current_version, '^[0-9]{1,2}.[0-9]{1,2}.[0-9]{1,2}'))
+             OR (current_edition = 'true' AND coalesce(prev_edition, 'true') = 'false'))
          {% if is_incremental() %}
 
          AND date > (SELECT MAX(date) FROM {{this}} )

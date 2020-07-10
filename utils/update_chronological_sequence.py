@@ -17,6 +17,7 @@ def update_chronological_sequence():
             datediff(second, lag(min_timestamp) over (partition by user_id order by min_timestamp), min_timestamp) as seconds_after_prev_event
         FROM ANALYTICS.EVENTS.USER_EVENTS_BY_DATE
         WHERE length(user_id) < 36
+        AND user_id IS NOT NULL
     ) a
     WHERE user_events_by_date.updated_at::timestamp = (SELECT MAX(UPDATED_AT)::timestamp FROM analytics.events.user_events_by_date)
     AND a.id = user_events_by_date.id;

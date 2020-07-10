@@ -9,7 +9,50 @@ WITH mobile_events       AS (
     SELECT
         m.timestamp::DATE                                                                         AS date
       , TRIM(m.user_id)                                                                           AS server_id
-      , COALESCE(TRIM(m.user_actual_id), UUID_STRING())                                           AS user_id
+      , COALESCE(TRIM(m.user_actual_id), NULL)                                                    AS user_id
+      , MIN(m.user_actual_role)                                                                   AS user_role
+      , CASE
+          WHEN m.context_device_type = 'ios' THEN 'iPhone'            
+          WHEN m.context_device_type = 'android' THEN 'Android'
+          ELSE 'Other'
+          END                                                                                     AS browser
+      , CASE
+          WHEN m.context_device_type = 'ios'    THEN 'iPhone'
+          WHEN m.context_device_type = 'android'     THEN 'Android'
+          ELSE 'Other'
+          END                                                                                     AS os
+      , CASE
+          WHEN m.context_device_type = 'ios' THEN m.context_app_version::VARCHAR
+          WHEN m.context_device_type = 'android' THEN m.context_app_version::VARCHAR
+          ELSE 'Other'
+          END                                                                                     AS version
+      , CASE
+          WHEN m.context_device_os IS NOT NULL THEN m.context_device_os::varchar
+          ELSE 'Unknown' END                                                                      AS os_version
+      , LOWER(m.type)                                                                             AS event_name
+      , 'mobile'                                                                                  AS event_type
+      , COUNT(m.timestamp)                                                                                AS num_events
+      , ''                                                                                        AS context_user_agent
+      , MAX(m.timestamp)                                                                          AS max_timestamp
+      , MIN(m.timestamp)                                                                          AS min_timestamp
+      , MAX(date_trunc('hour', m.uuid_ts) + interval '1 hour')                                    AS max_uuid_ts
+      , m.category
+      , {{ dbt_utils.surrogate_key('m.timestamp::date', 'm.user_actual_id', 'm.user_id', 'm.context_device_type', 'context_device_os', 'm.context_app_version', 'm.context_device_os', 'lower(m.type)', 'm.category') }}                       AS id
+    FROM {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}} m
+    WHERE m.timestamp::DATE <= CURRENT_DATE
+    {% if is_incremental() %}
+
+      AND DATE_TRUNC('HOUR', m.UUID_TS) >= (SELECT MAX(max_timestamp - interval '25 hours') from {{this}})
+
+    {% endif %}
+    GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
+),
+
+mobile_events2       AS (
+    SELECT
+        m.timestamp::DATE                                                                         AS date
+      , TRIM(m.user_id)                                                                           AS server_id
+      , COALESCE(TRIM(m.user_actual_id), NULL)                                                    AS user_id
       , MIN(m.user_actual_role)                                                                   AS user_role
       , CASE
           WHEN m.context_device_type = 'ios' THEN 'iPhone'            
@@ -27,23 +70,23 @@ WITH mobile_events       AS (
           ELSE 'Other'
           END                                                                                     AS version
       , CASE
-          WHEN m.context_device_os IS NOT NULL THEN m.context_device_os::varchar
+          WHEN m.context_os_version IS NOT NULL THEN m.context_os_version::varchar
           ELSE 'Unknown' END                                                                      AS os_version
-      , LOWER(m.type)                                                                             AS event_name
+      , COALESCE(LOWER(m.type), LOWER(m.event))                                                   AS event_name
       , 'mobile'                                                                                  AS event_type
-      , COUNT(m.timestamp)                                                                                AS num_events
-      , ''                                                                                        AS context_user_agent
+      , COUNT(m.timestamp)                                                                        AS num_events
+      , m.context_useragent                                                                       AS context_user_agent
       , MAX(m.timestamp)                                                                          AS max_timestamp
       , MIN(m.timestamp)                                                                          AS min_timestamp
-      , MAX(date_trunc('hour', m.uuid_ts) + interval '1 hour')                                    AS max_uuid_ts
+      , MAX(NULL::TIMESTAMP)                                    AS max_uuid_ts
       , m.category
-      , {{ dbt_utils.surrogate_key('m.timestamp::date', 'm.user_actual_id', 'm.user_id', 'm.context_device_type', 'context_device_os', 'm.context_app_version', 'm.context_device_os', 'lower(m.type)', 'm.category') }}                       AS id
-    FROM {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}} m
-    WHERE m.timestamp::DATE <= CURRENT_DATE 
+      , {{ dbt_utils.surrogate_key('m.timestamp::date', 'm.user_actual_id', 'm.user_id', 'm.context_useragent', 'lower(m.type)', 'm.category') }}                       AS id
+    FROM {{ ref('mobile_events') }} m
+    WHERE m.timestamp::DATE <= CURRENT_DATE
     {% if is_incremental() %}
 
-      AND DATE_TRUNC('HOUR', UUID_TS + interval '1 hour') >= (SELECT MAX(DATE_TRUNC('HOUR', UUID_TS)) from {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}})
-
+      AND timestamp >= (SELECT MAX(max_timestamp) from {{this}})
+    
     {% endif %}
     GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
 ),
@@ -51,7 +94,7 @@ WITH mobile_events       AS (
          SELECT
              e.timestamp::DATE                                                                         AS date
            , TRIM(e.user_id)                                                                           AS server_id
-           , COALESCE(TRIM(e.user_actual_id), UUID_STRING())                                           AS user_id
+           , COALESCE(TRIM(e.user_actual_id), NULL)                                                    AS user_id
            , min(e.user_actual_role)                                                                   AS user_role
            , CASE
               WHEN e.context_user_agent LIKE '%iPhone%'    THEN 'iPhone'
@@ -123,7 +166,7 @@ WITH mobile_events       AS (
          AND e.timestamp::DATE <= CURRENT_DATE
          {% if is_incremental() %}
 
-          AND DATE_TRUNC('HOUR', e.UUID_TS + interval '1 hour') >= (SELECT MAX(DATE_TRUNC('HOUR', UUID_TS)) from {{ source('mattermost2', 'event')}})
+          AND DATE_TRUNC('HOUR', e.UUID_TS) >= (SELECT MAX(max_timestamp - interval '25 hours') from {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
@@ -133,7 +176,7 @@ WITH mobile_events       AS (
          SELECT
              e.timestamp::DATE                                                                         AS date
            , TRIM(e.user_id)                                                                           AS server_id
-           , COALESCE(TRIM(e.user_actual_id), UUID_STRING())                                           AS user_id
+           , COALESCE(TRIM(e.user_actual_id), NULL)                                                    AS user_id
            , min(e.user_actual_role)                                                                   AS user_role
            , CASE
               WHEN context_useragent LIKE '%iPhone%'    THEN 'iPhone'
@@ -208,6 +251,9 @@ WITH mobile_events       AS (
          FROM mobile_events
          UNION ALL
          SELECT *
+         FROM mobile_events2
+         UNION ALL
+         SELECT *
          FROM events
          UNION ALL
          SELECT *
@@ -243,17 +289,59 @@ WITH mobile_events       AS (
                    AND e.category = r.event_category
          {% if is_incremental() %}
 
-          WHERE coalesce(e.max_uuid_ts, e.max_timestamp) >= (SELECT MAX(max_timestamp) from {{this}})
+          WHERE coalesce(e.max_uuid_ts + interval '24 hours', e.max_timestamp) >= (SELECT MAX(max_timestamp) from {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 18, 21
      ),
 
      user_events_by_date AS  (
-       SELECT *,
-            ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY min_timestamp) as chronological_sequence,
-            datediff(second, lag(min_timestamp) over (partition by user_id order by min_timestamp), min_timestamp) as seconds_after_prev_event,
-            CURRENT_TIMESTAMP::TIMESTAMP AS UPDATED_AT
+       SELECT 
+          DATE
+        , CASE WHEN SERVER_ID IS NULL THEN 
+            MAX(SERVER_ID) OVER (PARTITION BY DATE, USER_ID ORDER BY MIN_TIMESTAMP ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+            ELSE SERVER_ID END                                                                                    AS SERVER_ID
+        , CASE WHEN USER_ID IS NULL THEN 
+            COALESCE(MAX(USER_ID) OVER (PARTITION BY DATE, SERVER_ID, CONTEXT_USER_AGENT ORDER BY MIN_TIMESTAMP ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING), NULL)
+            ELSE USER_ID END                                                                                      AS USER_ID
+        , EVENT_TYPE
+        , CASE WHEN USER_ROLE IS NULL THEN
+            MAX(USER_ROLE) OVER (PARTITION BY USER_ID ORDER BY MIN_TIMESTAMP ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+            ELSE USER_ROLE END                                                                                    AS USER_ROLE
+        , CASE WHEN USER_ROLE IS NULL THEN
+            CASE WHEN SPLIT_PART(MAX(USER_ROLE) OVER (PARTITION BY USER_ID ORDER BY MIN_TIMESTAMP ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING), ',', 1) = 'system_admin'
+              THEN TRUE ELSE FALSE END
+            ELSE SYSTEM_ADMIN END                                                                                 AS SYSTEM_ADMIN                              
+        , CASE WHEN USER_ROLE IS NULL THEN
+            CASE WHEN SPLIT_PART(MAX(USER_ROLE) OVER (PARTITION BY USER_ID ORDER BY MIN_TIMESTAMP ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING), ',', 1) = 'system_user'
+              THEN TRUE ELSE FALSE END
+            ELSE SYSTEM_USER END                                                                                  AS SYSTEM_USER
+        , OS
+        , BROWSER
+        , BROWSER_VERSION
+        , OS_VERSION
+        , EVENT_ID
+        , EVENT_NAME
+        , TOTAL_EVENTS
+        , DESKTOP_EVENTS
+        , WEB_APP_EVENTS
+        , MOBILE_EVENTS
+        , CONTEXT_USER_AGENT
+        , MAX_TIMESTAMP
+        , MIN_TIMESTAMP
+        , {{ dbt_utils.surrogate_key('DATE', 
+                                    'CASE WHEN USER_ID IS NULL THEN 
+                                        COALESCE(MAX(USER_ID) OVER (PARTITION BY DATE, SERVER_ID ORDER BY MIN_TIMESTAMP ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING), UUID_STRING())
+                                        ELSE USER_ID END',
+                                    'CASE WHEN SERVER_ID IS NULL THEN 
+                                        MAX(SERVER_ID) OVER (PARTITION BY DATE, USER_ID ORDER BY MIN_TIMESTAMP ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+                                        ELSE SERVER_ID END',
+                                    'CONTEXT_USER_AGENT', 
+                                    'EVENT_NAME', 'OS', 'BROWSER_VERSION', 'OS_VERSION', 'EVENT_ID', 
+                                    'MIN_TIMESTAMP', 'MAX_TIMESTAMP') }}                                         AS ID
+        , ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY min_timestamp)                                        AS chronological_sequence
+        , datediff(second, lag(min_timestamp) over (partition by user_id order by min_timestamp), min_timestamp) AS seconds_after_prev_event
+        , CURRENT_TIMESTAMP::TIMESTAMP AS UPDATED_AT
        FROM all_events_chronological
      )
 SELECT *

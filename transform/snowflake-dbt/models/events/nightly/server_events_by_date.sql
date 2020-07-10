@@ -7,12 +7,19 @@
 
 WITH post_events AS (
   SELECT
-      date
-    , server_id
-    , SUM(total_events) AS posts
-    , COUNT(DISTINCT user_id) AS post_users
-  FROM {{ ref('user_events_by_date') }}
-  WHERE event_name = 'api_posts_create'
+      e.date
+    , e.server_id
+    , SUM(CASE WHEN e.event_name IN ('api_posts_create') THEN total_events ELSE NULL END) AS posts
+    , SUM(CASE WHEN e.event_name in ('api_teams_invite_members') THEN total_events ELSE NULL END) AS invite_members
+    , SUM(CASE WHEN er.event_category IN ('signup') THEN total_events ELSE NULL END) AS signup_events
+    , SUM(CASE WHEN er.event_category IN ('signup_email') THEN total_events ELSE NULL END) AS signup_email_events
+    , SUM(CASE WHEN er.event_category IN ('admin') THEN total_events ELSE NULL END) AS admin_events
+    , SUM(CASE WHEN er.event_category IN ('tutorial') THEN total_events ELSE NULL END) AS tutorial_events
+  FROM {{ ref('user_events_by_date') }} e
+  JOIN {{ ref('events_registry')}} er
+      ON e.event_id = er.event_id
+  WHERE e.event_name IN ('api_posts_create', 'api_teams_invite_members')
+  OR er.event_category IN ('signup', 'signup_email', 'admin', 'tutorial')
   GROUP BY 1, 2
 ),
 
@@ -37,13 +44,15 @@ server_events_by_date AS (
       , SUM(mobile_events)                                                                          AS mobile_events
       , SUM(action_events)                                                                          AS action_events
       , SUM(api_events)                                                                             AS api_events
+      , MAX(posts.admin_events)                                                                     AS admin_events
       , SUM(gfycat_events)                                                                          AS gfycat_events
       , SUM(performance_events)                                                                     AS performance_events
       , SUM(plugin_events)                                                                          AS plugins_events
       , SUM(settings_events)                                                                        AS settings_events
-      , SUM(signup_events)                                                                          AS signup_events
+      , COALESCE(MAX(posts.signup_events), SUM(events.signup_events))                                      AS signup_events
+      , MAX(posts.signup_email_events)                                                              AS signup_email_events
       , SUM(system_console_events)                                                                  AS system_console_events
-      , SUM(tutorial_events)                                                                        AS tutorial_events
+      , COALESCE(MAX(posts.tutorial_events), SUM(events.tutorial_events))                                  AS tutorial_events
       , SUM(ui_events)                                                                              AS ui_events
       , SUM(events_last_30_days)                                                                    AS events_last_30_days
       , SUM(events_last_31_days)                                                                    AS events_last_31_days
@@ -52,6 +61,7 @@ server_events_by_date AS (
       , SUM(mobile_events_alltime)                                                                  AS mobile_events_alltime
       , COUNT(DISTINCT user_id)                                                                     AS users
       , MAX(posts.posts)                                                                            AS post_events
+      , MAX(posts.invite_members)                                                                   AS invite_members_events
     FROM {{ ref('user_events_by_date_agg') }} events
     LEFT JOIN post_events posts
               ON events.server_id = posts.server_id
