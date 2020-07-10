@@ -20,7 +20,9 @@ def update_chronological_sequence():
         AND user_id IS NOT NULL
     ) a
     WHERE user_events_by_date.updated_at::timestamp = (SELECT MAX(UPDATED_AT)::timestamp FROM analytics.events.user_events_by_date)
-    AND a.id = user_events_by_date.id;
+    AND a.id = user_events_by_date.id
+    AND length(user_events_by_date.user_id) < 36
+    AND user_events_by_date.user_id IS NOT NULL;
     '''
 
     execute_query(engine, query)
