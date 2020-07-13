@@ -61,7 +61,7 @@ WITH account_health_facts AS (
             WHEN account_health_facts.days_since_last_task < 30 THEN (1 - .00)
        END
        * 25 AS task_health_score,
-       CASE WHEN reference THEN 25 ELSE 0 END AS reference_bonus_score,
+       CASE WHEN reference THEN 15 ELSE 0 END AS reference_bonus_score,
        risk_override_score AS risk_override_score,
        LEAST(round(tenure_health_score + license_end_date_health_score + ticket_health_score + task_health_score + reference_bonus_score,0),100) AS health_score_no_override,
        LEAST(round(coalesce(risk_override_score,tenure_health_score + license_end_date_health_score + ticket_health_score + task_health_score + reference_bonus_score),0),100) AS health_score_w_override
