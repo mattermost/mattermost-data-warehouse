@@ -64,3 +64,6 @@ sources:
 
       - name: opportunitycontactrole
         description: "SFDC Opportunity Contact Role"
+
+      - name: customer_reference__c
+        description: "SFDC Customer Reference"
