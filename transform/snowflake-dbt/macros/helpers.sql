@@ -56,21 +56,33 @@ select get_sys_var({{ var_name }})
     alter warehouse {{warehouse}} suspend
 {% endmacro %}
 
-{% macro get_rudder_track_tables(schema, database=target.database) %}
-
+{% macro get_rudder_track_tables(schema, database=target.database, table_exclusions=table_exclusions, table_inclusions=table_inclusions) %}
+    {% for scheme in schema %}
     select distinct
         table_schema as "table_schema", table_name as "table_name"
     from {{database}}.information_schema.tables
-    where table_schema ilike '{{ schema }}'
-    and table_name not in ('TRACKS', 'USERS', 'SCREENS', 'IDENTIFIES', 'PAGES', 'RUDDER_DISCARDS')
+    where table_name not in ('TRACKS', 'USERS', 'SCREENS', 'IDENTIFIES', 'PAGES', 'RUDDER_DISCARDS')
+    and table_schema ilike '{{ scheme }}'
+    {%- if table_exclusions -%}
+
+     and lower(table_name) not in ({{ table_exclusions}})
+     
+    {%- endif -%}
+    {%- if table_inclusions -%}
+
+     and lower(table_name) in ({{ table_inclusions}})
+     
+    {%- endif -%}
+    {% if not loop.last %} UNION ALL {% endif %}
+    {% endfor %}
 
 {% endmacro %}
 
-{% macro get_rudder_relations(schema, database=target.database) %}
+{% macro get_rudder_relations(schema, database=target.database, table_exclusions="", table_inclusions="") %}
 
     {%- call statement('get_tables', fetch_result=True) %}
 
-      {{ get_rudder_track_tables(schema, database) }}
+      {{ get_rudder_track_tables(schema, database, table_exclusions=table_exclusions, table_inclusions=table_inclusions) }}
 
     {%- endcall -%}
 
