@@ -1,5 +1,5 @@
 {{config({
-    "materialized": "table",
+    "materialized": "incremental",
     "schema": "qa",
     "tags":"hourly"
   })
