@@ -68,6 +68,9 @@ models:
       server:
         tags: ["server", "nightly"]
 
+    qa:
+      tags: "qa"
+
 seeds:
   enabled: true
   schema: targets
