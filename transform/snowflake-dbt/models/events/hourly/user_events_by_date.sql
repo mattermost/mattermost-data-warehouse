@@ -282,7 +282,6 @@ mobile_events2       AS (
            , context_user_agent
            , max(max_timestamp)                                                                       AS max_timestamp
            , min(min_timestamp)                                                                       AS min_timestamp
-           , {{ dbt_utils.surrogate_key('e.date', 'e.user_id', 'e.server_id', 'e.context_user_agent', 'e.event_name', 'e.os', 'e.version', 'e.os_version', 'r.event_id') }}                      AS id
          FROM all_events                  e
               LEFT JOIN {{ ref('events_registry') }} r
                    ON e.event_name = r.event_name
@@ -292,7 +291,7 @@ mobile_events2       AS (
           WHERE coalesce(e.max_uuid_ts + interval '24 hours', e.max_timestamp) >= (SELECT MAX(max_timestamp) from {{this}})
 
          {% endif %}
-         GROUP BY 1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 18, 21
+         GROUP BY 1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 18
      ),
 
      user_events_by_date AS  (
@@ -343,6 +342,11 @@ mobile_events2       AS (
         , datediff(second, lag(min_timestamp) over (partition by user_id order by min_timestamp), min_timestamp) AS seconds_after_prev_event
         , CURRENT_TIMESTAMP::TIMESTAMP AS UPDATED_AT
        FROM all_events_chronological
+          {% if is_incremental() %}
+
+          WHERE max_timestamp >= (SELECT MAX(max_timestamp) from {{this}})
+
+         {% endif %}
      )
 SELECT *
 FROM user_events_by_date
