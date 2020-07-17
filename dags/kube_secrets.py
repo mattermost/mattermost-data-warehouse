@@ -89,3 +89,6 @@ PG_IMPORT_BUCKET = Secret("env", "PG_IMPORT_BUCKET", "airflow", "PG_IMPORT_BUCKE
 
 # SSH Key
 SSH_KEY = Secret("env", "SSH_KEY", "airflow", "SSH_KEY")
+
+# Pipelinewise secrets
+PIPELINEWISE_SECRETS = Secret("volume", "/app/wrk", "pipelinewise-secrets")
