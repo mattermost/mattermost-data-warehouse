@@ -9,6 +9,8 @@ WITH renewal_rate_by_renewal_opportunity AS (
         account.sfid  AS accountid,
 	    opportunity.sfid  AS opportunityid,
 	    available_renewals_by_opportunity.renewal_qtr,
+        available_renewals_by_opportunity.renewal_license_start - interval '1 day' AS renewal_date,
+        available_renewals_by_opportunity.renewal_license_start,
 	    available_renewals_by_opportunity.available_renewal,
 	    SUM(CASE WHEN status_wlo__c = 'Won' THEN renewal_amount__c ELSE 0 END) AS won_renewal_net_total,
         SUM(CASE WHEN status_wlo__c = 'Open' THEN renewal_amount__c ELSE 0 END) AS open_renewal_net_total,
@@ -22,7 +24,7 @@ WITH renewal_rate_by_renewal_opportunity AS (
     LEFT JOIN {{ source('orgm','account') }} ON account.sfid = available_renewals_by_opportunity.accountid
     LEFT JOIN {{ source('orgm','opportunity') }} ON opportunity.sfid = available_renewals_by_opportunity.renewal_opportunityid
     LEFT JOIN {{ source('orgm','opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
-    GROUP BY 1, 2, 3, 4
+    GROUP BY 1, 2, 3, 4, 5, 6
 )
 
 SELECT * FROM renewal_rate_by_renewal_opportunity
