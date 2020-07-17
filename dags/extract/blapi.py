@@ -41,13 +41,14 @@ volume_mount = VolumeMount(
     read_only=False,
 )
 
+del pod_defaults["cmds"]
+
 blapi = KubernetesPodOperator(
     **pod_defaults,
     image=PIPELINEWISE_IMAGE,
     task_id="blapi-import",
     name="blapi-import",
     secrets=[PIPELINEWISE_SECRETS,],
-    cmds=["pipelinewise"],
     arguments=["run_tap", "--tap", "blapi", "--target", "snowflake"],
     volumes=[volume],
     volume_mounts=[volume_mount],
