@@ -94,10 +94,6 @@ seeds:
       schema: mattermost
     financial_statements:
       schema: finance
-    commit_ww:
-      schema: sales
-    commit_segment:
-      schema: sales
     github_repo_categorization:
       schema: mattermost
     github_contributions_all:
