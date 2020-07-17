@@ -10,9 +10,11 @@ WITH min_active              AS (
         user_id
       , server_id
       , min(date) AS min_active_date
-      , MAX(CASE WHEN length(user_id) < 36 then CURRENT_DATE - INTERVAL '1 DAY' ELSE DATE END) AS MAX_ACTIVE_DATE 
+      , CASE WHEN USER_ID IS NOT NULL AND MAX(DATE) < CURRENT_DATE - INTERVAL '1 DAY'
+            THEN CURRENT_DATE - INTERVAL '1 DAY' ELSE
+            MAX(DATE) END AS MAX_ACTIVE_DATE 
     FROM {{ ref('user_events_by_date') }}
-    WHERE length(user_id) < 36
+    WHERE LENGTH(USER_ID) < 36
     GROUP BY 1, 2),
 
      dates                   AS (
@@ -30,7 +32,7 @@ WITH min_active              AS (
          SELECT
              d.date
            , d.user_id
-           , MAX(d.server_id)                                                                  AS server_id 
+           , d.server_id                                                                       AS server_id 
            , MAX(e.system_admin)                                                               AS system_admin
            , MAX(e.system_user)                                                                AS system_user
            , coalesce(sum(e.total_events), 0)                                                  AS total_events
@@ -55,14 +57,15 @@ WITH min_active              AS (
                             AND d.date = e.date
               LEFT JOIN {{ ref('events_registry') }}     r
                         ON e.event_id = r.event_id
-         GROUP BY 1, 2),
+         GROUP BY 1, 2, 3),
 
      mau                     AS (
          SELECT
              e1.user_id
            , e1.date
-           , m.min_active_date
-           , CASE WHEN m.min_active_date = e1.date AND e1.total_events > 0 THEN 'First Time MAU'
+           , e1.server_id
+           , MIN(m.min_active_date) OVER (PARTITION BY e1.user_id)                                              AS min_active_date
+           , CASE WHEN MIN(m.min_active_date) OVER (PARTITION BY e1.user_id) = e1.date AND e1.total_events > 0 THEN 'First Time MAU'
                   WHEN SUM(e1.total_events)
                            OVER (PARTITION BY e1.user_id ORDER BY e1.date ROWS BETWEEN 30 PRECEDING AND 1 PRECEDING) = 0
                       AND e1.total_events > 0                              THEN 'Reengaged MAU'
@@ -99,12 +102,14 @@ WITH min_active              AS (
          FROM events          e1
               JOIN min_active m
                    ON e1.user_id = m.user_id
+                   AND COALESCE(e1.server_id, '') = COALESCE(m.server_id, '')
+         WHERE e1.date <= CURRENT_DATE - INTERVAL '1 DAY'
      ),
      user_events_by_date_agg AS (
          SELECT
              e1.date
            , e1.user_id
-           , MAX(e1.server_id)                                             AS server_id
+           , e1.server_id                                                  AS server_id
            , MAX(e1.system_admin)                                          AS system_admin
            , MAX(e1.system_user)                                           AS system_user
            , MAX(CASE WHEN e1.total_events > 0 THEN TRUE ELSE FALSE END)   AS active
@@ -166,7 +171,7 @@ WITH min_active              AS (
                                     ELSE 5 END) = 4 THEN 'Newly Disengaged'
                         ELSE 'Disengaged' END IN ('First Time MAU', 'Reengaged MAU', 'Current MAU') THEN TRUE
                   ELSE FALSE END                                       AS mau
-           , MIN(m.min_active_date)                                         AS first_active_date
+           , MIN(m.min_active_date)                                    AS first_active_date
            , MAX(m.last_active_date)                                   AS last_active_date
            , MAX(m.events_last_30_days)                                AS events_last_30_days
            , MAX(m.events_last_31_days)                                AS events_last_31_days
@@ -176,17 +181,18 @@ WITH min_active              AS (
            , MAX(m.mobile_events_alltime)                              AS mobile_events_alltime
            , MAX(m.max_mobile_events)                                  AS max_mobile_events
            , MAX(e1.max_timestamp)                                     AS max_timestamp
-           , {{ dbt_utils.surrogate_key('e1.date', 'e1.user_id') }}    AS id
+           , {{ dbt_utils.surrogate_key('e1.date', 'e1.user_id', 'e1.server_id') }}    AS id
          FROM events   e1
               JOIN mau m
                    ON e1.user_id = m.user_id
                        AND e1.date = m.date
-         WHERE e1.date <= CURRENT_DATE
+                       AND coalesce(e1.server_id, '') = coalesce(m.server_id, '')
+         WHERE e1.date <= CURRENT_DATE - interval '1 day'
          {% if is_incremental() %}
 
          AND e1.date >= (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
-         GROUP BY 1, 2, 33)
+         GROUP BY 1, 2, 3, 33)
 SELECT *
 FROM user_events_by_date_agg

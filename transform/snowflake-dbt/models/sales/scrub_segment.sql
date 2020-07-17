@@ -27,11 +27,20 @@ WITH segment_nn_amounts AS (
         SUM(CASE WHEN forecastcategoryname = 'Commit' THEN renewal_amount__c ELSE 0 END) AS ren_commit_max,
         SUM(CASE WHEN forecastcategoryname = 'Best Case' THEN renewal_amount__c ELSE 0 END) AS ren_best_case_max,
         SUM(CASE WHEN forecastcategoryname = 'Pipeline' THEN renewal_amount__c ELSE 0 END) AS ren_pipeline_max,
-        SUM(CASE WHEN forecastcategoryname = 'Omitted' THEN renewal_amount__c ELSE 0 END) AS ren_omitted_max,
-        MAX(CASE WHEN forecastcategoryname = 'Omitted' THEN original_opportunity_amount__c ELSE 0 END) AS ren_omitted_orig_amount_max
+        SUM(CASE WHEN forecastcategoryname = 'Omitted' THEN renewal_amount__c ELSE 0 END) AS ren_omitted_max
     FROM {{ source('orgm','opportunity') }}
     LEFT JOIN {{ source('orgm','opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
     WHERE util.fiscal_year(closedate) = util.get_sys_var('curr_fy')
+    GROUP BY 1, 2
+), segment_ren_prev_amounts AS (
+    SELECT 
+        opportunity.territory_segment__c,
+        util.fiscal_year(opportunity.closedate)|| '-' || util.fiscal_quarter(opportunity.closedate) AS qtr,
+        SUM(CASE WHEN opportunity.forecastcategoryname = 'Omitted' AND original_opportunity.status_wlo__c = 'Won' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c + renewal_amount__c) ELSE 0 END) AS ren_omitted_orig_amount_max
+    FROM {{ source('orgm','opportunity') }}
+    LEFT JOIN {{ source('orgm','opportunity') }} AS original_opportunity ON (coalesce(opportunity.original_opportunity__c, opportunity.original_opportunity_id__c)) = original_opportunity.sfid
+    LEFT JOIN {{ source('orgm','opportunitylineitem') }} AS original_opportunitylineitem ON original_opportunity.sfid = original_opportunitylineitem.opportunityid
+    WHERE util.fiscal_year(opportunity.closedate) = util.get_sys_var('curr_fy') AND opportunity.type = 'Renewal'
     GROUP BY 1, 2
 ), segment_available_renewals AS (
     SELECT
@@ -86,6 +95,7 @@ WITH segment_nn_amounts AS (
             AND REPLACE(REPLACE(tva_attain_new_and_exp_by_segment_by_qtr.target_slug,'attain_new_and_exp_by_segment_by_qtr_',''),'_','/') = commit_segment.segment
     LEFT JOIN segment_nn_amounts ON segment_nn_amounts.qtr = tva_attain_new_and_exp_by_segment_by_qtr.qtr AND segment_nn_amounts.territory_segment__c = REPLACE(tva_attain_new_and_exp_by_segment_by_qtr.target_slug,'attain_new_and_exp_by_segment_by_qtr_','')
     LEFT JOIN segment_ren_amounts ON segment_ren_amounts.qtr = tva_bookings_ren_by_segment_by_qtr.qtr AND segment_ren_amounts.territory_segment__c = REPLACE(tva_bookings_ren_by_segment_by_qtr.target_slug,'bookings_ren_by_segment_by_qtr_','')
+    LEFT JOIN segment_ren_prev_amounts ON segment_ren_prev_amounts.qtr = tva_bookings_ren_by_segment_by_qtr.qtr AND segment_ren_prev_amounts.territory_segment__c = REPLACE(tva_bookings_ren_by_segment_by_qtr.target_slug,'bookings_ren_by_segment_by_qtr_','')
     LEFT JOIN segment_available_renewals ON segment_available_renewals.qtr = tva_bookings_ren_by_segment_by_qtr.qtr AND segment_ren_amounts.territory_segment__c = segment_available_renewals.territory_segment__c
     GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
 )

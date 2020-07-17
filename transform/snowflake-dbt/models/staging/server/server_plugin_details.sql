@@ -1,6 +1,7 @@
 {{config({
     "materialized": "incremental",
-    "schema": "staging"
+    "schema": "staging",
+    "unique_key":'id'
   })
 }}
 
@@ -10,11 +11,11 @@ WITH max_timestamp       AS (
       , user_id
       , MAX(timestamp)  AS max_timestamp
     FROM {{ source('mattermost2', 'config_plugin') }}
-    WHERE timestamp::DATE <= CURRENT_DATE - INTERVAL '1 DAY'
+    WHERE timestamp::DATE <= CURRENT_DATE
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND timestamp::date > (SELECT MAX(date) FROM {{ this }})
+        AND timestamp::date >= (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
     GROUP BY 1, 2
@@ -58,11 +59,17 @@ WITH max_timestamp       AS (
            , MAX(version_webex)                  AS version_webex
            , MAX(version_welcome_bot)            AS version_welcome_bot
            , MAX(version_zoom)                   AS version_zoom
+           , {{ dbt_utils.surrogate_key('timestamp::date', 'p.user_id') }} AS id
+           , MAX(p.enable_confluence)              AS enable_confluence
+           , MAX(p.enable_jitsi)                   AS enable_jitsi
+           , MAX(p.enable_mscalendar)              AS enable_mscalendar
+           , MAX(p.enable_todo)                    AS enable_todo
+           , MAX(p.enable_skype4business)          AS enable_skype4business
          FROM {{ source('mattermost2', 'config_plugin') }} p
               JOIN max_timestamp        mt
                    ON p.user_id = mt.user_id
                        AND mt.max_timestamp = p.timestamp
-         GROUP BY 1, 2
+         GROUP BY 1, 2, 38
      )
 SELECT *
 FROM server_plugin_details

@@ -1,6 +1,7 @@
 {{config({
     "materialized": "incremental",
-    "schema": "staging"
+    "schema": "staging",
+    "unique_key":'id'
   })
 }}
 
@@ -10,11 +11,11 @@ WITH max_timestamp       AS (
       , user_id
       , MAX(timestamp)  AS max_timestamp
     FROM {{ source('mattermost2', 'config_rate') }}
-    WHERE timestamp::DATE <= CURRENT_DATE - INTERVAL '1 DAY'
+    WHERE timestamp::DATE <= CURRENT_DATE
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND timestamp::date > (SELECT MAX(date) FROM {{ this }})
+        AND timestamp::date >= (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
     GROUP BY 1, 2
@@ -30,6 +31,7 @@ WITH max_timestamp       AS (
            , MAX(per_sec)                  AS per_sec
            , MAX(vary_by_remote_address)   AS vary_by_remote_address
            , MAX(vary_by_user)             AS vary_by_user
+           , {{ dbt_utils.surrogate_key('timestamp::date', 'r.user_id') }} AS id
          FROM {{ source('mattermost2', 'config_rate') }} r
               JOIN max_timestamp      mt
                    ON r.user_id = mt.user_id

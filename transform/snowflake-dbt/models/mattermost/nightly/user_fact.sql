@@ -8,6 +8,8 @@ WITH max_date  AS (
     SELECT
         user_id
       , MAX(date) AS max_date
+      , MIN(date) AS min_date
+      , COUNT(DISTINCT server_id) AS server_count
     FROM {{ ref('user_daily_details') }}
     GROUP BY 1
                   ),
@@ -30,12 +32,24 @@ WITH max_date  AS (
       WHERE chronological_sequence BETWEEN 1 AND 10
       GROUP BY 1
     ),
+    first_server AS (
+      SELECT
+          u.user_id
+        , u.server_id as first_server_id
+      FROM {{ ref('user_daily_details') }} u
+      JOIN max_date m
+           ON u.user_id = m.user_id
+           AND u.date = m.min_date
+      GROUP BY 1, 2
+    ),
      user_fact AS (
          SELECT
              u.user_id
            , e.user_role
            , u.user_created_at
            , u.server_id
+           , fs.first_server_id
+           , m.server_count
            , u.server_install_date
            , u.account_sfid
            , u.license_id
@@ -91,7 +105,9 @@ WITH max_date  AS (
                        AND u.date = m.max_date
               JOIN user_events e
                    ON u.user_id = e.user_id
-         {{ dbt_utils.group_by(53)}}
+              JOIN first_server fs
+                   ON u.user_id = fs.user_id
+         {{ dbt_utils.group_by(55)}}
      )
 SELECT *
 FROM user_fact

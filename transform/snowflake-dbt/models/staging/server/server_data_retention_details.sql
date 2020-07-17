@@ -1,6 +1,7 @@
 {{config({
     "materialized": "incremental",
-    "schema": "staging"
+    "schema": "staging",
+    "unique_key":'id'
   })
 }}
 
@@ -10,11 +11,11 @@ WITH max_timestamp                 AS (
       , user_id
       , MAX(timestamp)  AS max_timestamp
     FROM {{ source('mattermost2', 'config_data_retention') }}
-    WHERE timestamp::DATE <= CURRENT_DATE - INTERVAL '1 DAY'
+    WHERE timestamp::DATE <= CURRENT_DATE
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND timestamp::date > (SELECT MAX(date) FROM {{ this }})
+        AND timestamp::date >= (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
     GROUP BY 1, 2
@@ -27,6 +28,7 @@ WITH max_timestamp                 AS (
            , MAX(file_retention_days)     AS file_retention_days
            , MAX(enable_message_deletion) AS enable_message_deletion
            , MAX(enable_file_deletion)    AS enable_file_deletion
+           , {{ dbt_utils.surrogate_key('timestamp::date', 'dr.user_id') }} AS id
          FROM {{ source('mattermost2', 'config_data_retention') }} dr
               JOIN max_timestamp                mt
                    ON dr.user_id = mt.user_id

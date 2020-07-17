@@ -55,3 +55,15 @@ sources:
 
       - name: territory_mapping__c
         description: "SFDC Territory Mapping"
+
+      - name: billing_entity__c
+        description: "SFDC Billing Entity"
+
+      - name: product2
+        description: "SFDC Product"
+
+      - name: opportunitycontactrole
+        description: "SFDC Opportunity Contact Role"
+
+      - name: customer_reference__c
+        description: "SFDC Customer Reference"

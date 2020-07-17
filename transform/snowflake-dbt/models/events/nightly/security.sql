@@ -1,12 +1,13 @@
 {{config({
-    "materialized": "table",
-    "schema": "events"
+    "materialized": "incremental",
+    "schema": "events",
+    "unique_key": "id"
   })
 }}
 
 WITH security AS (
     SELECT
-        substring(regexp_substr(cs_uri_query, '(^|&)id=([^&]*)'), 5, 100) AS id,
+        substring(regexp_substr(cs_uri_query, '(^|&)id=([^&]*)'), 5, 100) AS server_id,
         logdate::date AS date,
         substring(logtime, 1, 2)::integer AS hour,
         CASE WHEN substring(logtime, 1, 2)::integer >= 12 THEN 'B' ELSE 'A' END AS grouping,
@@ -38,10 +39,29 @@ WITH security AS (
             WHEN substring(regexp_substr(cs_uri_query, '(^|&)ut=([^&]*)'), 5, 100) = '1' THEN true
             ELSE false
         END AS ran_tests,
-        (logdate || ' ' || logtime)::TIMESTAMP                            AS timestamp 
+        (logdate || ' ' || logtime)::TIMESTAMP                            AS timestamp,
+        {{ dbt_utils.surrogate_key('logdate::date', 'logtime', 'cip', 'substring(regexp_substr(cs_uri_query, \'(^|&)id=([^&]*)\'), 5, 100)',
+        'COALESCE(CASE
+                WHEN split_part(regexp_substr(cs_uri_query, \'[^a]uc=[0-9]{1,10}\'),\'=\',2) = \'\' THEN NULL
+                ELSE split_part(regexp_substr(cs_uri_query, \'[^a]uc=[0-9]{1,10}\'),\'=\',2)::int
+            END, 0)', 
+            'COALESCE(CASE 
+                WHEN split_part(regexp_substr(cs_uri_query, \'auc=[0-9]{1,10}\'), \'=\', 2) = \'\' THEN NULL 
+                ELSE split_part(regexp_substr(cs_uri_query, \'auc=[0-9]{1,10}\'), \'=\', 2)::INT
+            END, 0)',
+            'COALESCE(CASE
+                WHEN split_part(regexp_substr(cs_uri_query, \'tc=[0-9]{1,10}\'),\'=\',2) = \'\' THEN NULL
+                ELSE split_part(regexp_substr(cs_uri_query, \'tc=[0-9]{1,10}\'),\'=\',2)::int
+            END, 0)')}} as id
     FROM {{ source('diagnostics', 'log_entries') }}
     WHERE uri = '/security'
-    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
+    AND logdate::date <= CURRENT_DATE
+    {% if is_incremental() %}
+
+    AND logdate::date >= (SELECT MAX(DATE) FROM {{this}})
+
+    {% endif %}
+    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
 )
 
 SELECT * FROM security

@@ -1,6 +1,7 @@
 {{config({
     "materialized": "incremental",
-    "schema": "staging"
+    "schema": "staging",
+    "unique_key":'id'
   })
 }}
 
@@ -10,11 +11,11 @@ WITH max_timestamp       AS (
       , user_id
       , MAX(timestamp)  AS max_timestamp
     FROM {{ source('mattermost2', 'config_team') }}
-    WHERE timestamp::DATE <= CURRENT_DATE - INTERVAL '1 DAY'
+    WHERE timestamp::DATE <= CURRENT_DATE
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND timestamp::date > (SELECT MAX(date) FROM {{ this }})
+        AND timestamp::date >= (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
     GROUP BY 1, 2
@@ -55,6 +56,7 @@ WITH max_timestamp       AS (
            , MAX(restrict_team_invite)                      AS restrict_team_invite
            , MAX(teammate_name_display)                     AS teammate_name_display
            , MAX(view_archived_channels)                    AS view_archived_channels
+           , {{ dbt_utils.surrogate_key('timestamp::date', 't.user_id') }} AS id
          FROM {{ source('mattermost2', 'config_team') }} t
               JOIN max_timestamp      mt
                    ON t.user_id = mt.user_id
