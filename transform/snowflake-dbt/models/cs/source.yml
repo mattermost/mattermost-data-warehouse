@@ -7,4 +7,5 @@ sources:
 
     tables:
       - name: account_available_renewals_by_qtr
+      - name: available_renewals_by_opportunity
       - name: fy21_available_renewals
