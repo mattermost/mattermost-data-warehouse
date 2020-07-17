@@ -43,7 +43,7 @@ volume_mount = VolumeMount(
 
 blapi = KubernetesPodOperator(
     **pod_defaults,
-    image=DATA_IMAGE,
+    image=PIPELINEWISE_IMAGE,
     task_id="blapi-import",
     name="blapi-import",
     secrets=[PIPELINEWISE_SECRETS,],
