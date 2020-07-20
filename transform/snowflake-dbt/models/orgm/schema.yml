@@ -3,6 +3,11 @@ version: 2
 models:
   - name: opportunity_ext
     description: Additional fields at an Opportunity level that do not exist on Opportunity naitively.
+    columns:
+      - name: opportunity_sfid
+        tests:
+          - not_null
+          - unique
   - name: opportunity_snapshot
     description: Daily snapshot of OrgM Opportunities.
   - name: opportunitylineitem_snapshot
@@ -16,8 +21,3 @@ models:
           - unique
   - name: campaignmember_ext
     description: Additional fields at an Campaign Member level that do not exist on Campaign Member naitively.
-    columns:
-      - name: opportunity_sfid
-        tests:
-          - not_null
-          - unique
