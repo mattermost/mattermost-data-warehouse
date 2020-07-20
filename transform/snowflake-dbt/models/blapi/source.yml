@@ -1,0 +1,32 @@
+version: 2
+
+sources:
+  - name: blapi
+    database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
+    schema: blapi
+
+    tables:
+      - name: addons
+      - name: addons_version
+      - name: addresses
+      - name: addresses_version
+      - name: credit_cards
+      - name: credit_cards_version
+      - name: customers
+      - name: customers_version
+      - name: features
+      - name: features_version
+      - name: payment_methods
+      - name: payments
+      - name: payments_version
+      - name: product_addons
+      - name: product_addons_version
+      - name: product_features
+      - name: product_features_version
+      - name: products
+      - name: products_version
+      - name: subscription_addons
+      - name: subscription_addons_version
+      - name: subscriptions
+      - name: subscriptions_version
+      - name: trial_requests

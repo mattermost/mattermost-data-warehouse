@@ -1,0 +1,17 @@
+version: 2
+
+models:
+    - name: addons_version
+    - name: addresses_version
+    - name: credit_cards_version
+    - name: customers_version
+    - name: features_version
+    - name: payment_methods
+    - name: payments_version
+    - name: product_addons_version
+    - name: product_features_version
+    - name: products_version
+    - name: subscription_addons_version
+    - name: subscriptions_version
+    - name: trial_requests
+  
