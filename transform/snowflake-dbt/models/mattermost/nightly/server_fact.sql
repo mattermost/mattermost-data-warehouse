@@ -203,9 +203,9 @@ WITH server_details AS (
       , MAX(lsd.days_inactive)                            AS days_inactive
       , MAX(server_details.max_posts)                     AS max_posts
     FROM server_details
-        JOIN {{ ref('server_daily_details') }}
+        LEFT JOIN {{ ref('server_daily_details') }}
             ON server_details.server_id = server_daily_details.server_id
-            AND (server_details.last_active_date BETWEEN server_daily_details.date - INTERVAL '2 DAYS' AND server_daily_details.date)
+            AND (server_details.last_active_date = server_daily_details.date)
         LEFT JOIN {{ ref('server_daily_details') }} s2
             ON server_details.server_id = s2.server_id
             AND server_details.last_active_license_date = s2.date
