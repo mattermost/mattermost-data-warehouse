@@ -121,9 +121,11 @@ max_timestamp              AS (
            , mt.occurrences
            , MAX(license.master_account_sfid)     AS master_account_sfid
            , MAX(license.account_sfid)            AS account_sfid
-           , MAX(license.license_id)              AS license_id1
-           , CASE WHEN MAX(license.license_id) = MIN(license.license_id) THEN MIN(NULL)
-               ELSE MIN(license.license_id) END   AS license_id2
+           , MAX(CASE WHEN license.has_trial_and_non_trial AND NOT license.trial THEN license.license_id
+                 WHEN NOT license.has_trial_and_non_trial THEN license.license_id
+                 ELSE NULL END)              AS license_id1
+           , MAX(CASE WHEN license.has_trial_and_non_trial AND license.trial THEN license.license_id
+                 ELSE NULL END)              AS license_id2
            , MAX(license.license_email)           AS license_email
            , MAX(license.contact_sfid)            AS license_contact_sfid
            , {{ dbt_utils.surrogate_key('s.timestamp::date', 's.user_id') }} AS id
@@ -137,10 +139,6 @@ max_timestamp              AS (
                         ON s.user_id = license.server_id
                             AND s.timestamp::date >= license.issued_date
                             AND s.timestamp::date <= license.expire_date
-                            AND CASE WHEN license.has_trial_and_non_trial AND NOT license.trial THEN TRUE
-                                  WHEN NOT license.has_trial_and_non_trial AND license.trial THEN TRUE
-                                  WHEN NOT license.has_trial_and_non_trial AND NOT license.trial THEN TRUE
-                                  ELSE FALSE END
         {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
