@@ -19,7 +19,7 @@ WITH trial_requests AS (
       trial_requests.license_issued_at,
       trial_requests.receive_emails_accepted,
       trial_requests.terms_accepted,
-      COALESCE(contact.sfid,lead.sfid),
+      COALESCE(contact.sfid,lead.sfid) AS sfid,
       contact.sfid IS NOT NULL AS is_contact,
       lead.sfid IS NOT NULL AS is_lead
     FROM {{ source('blapi', 'trial_requests') }}
