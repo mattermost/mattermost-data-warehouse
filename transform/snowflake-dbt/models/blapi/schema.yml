@@ -1,0 +1,5 @@
+version: 2
+
+models:
+  - name: trial_requests
+    description: Trial Requests from blapi
