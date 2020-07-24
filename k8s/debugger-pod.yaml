@@ -1,0 +1,16 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: volume-debugger
+spec:
+  volumes:
+    - name: volume-to-debug
+      persistentVolumeClaim:
+        claimName: pipelinewise-pv-claim
+  containers:
+    - name: debugger
+      image: busybox
+      command: ["sleep", "3600"]
+      volumeMounts:
+        - mountPath: "/data"
+          name: volume-to-debug

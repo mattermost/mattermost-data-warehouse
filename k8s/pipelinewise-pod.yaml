@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pipelinewise
+spec:
+  containers:
+    - name: pipelinewise
+      image: docker.io/adovenmm/pipelinewise:latest
+      args: ["sync_tables", "--tap", "blapi", "--target", "snowflake"]
+      volumeMounts:
+        - name: secrets
+          mountPath: "/app/wrk"
+          readOnly: true
+        - name: pipelinewise-volume
+          mountPath: "/app/.pipelinewise"
+  volumes:
+    - name: secrets
+      secret:
+        secretName: pipelinewise-secrets
+    - name: pipelinewise-volume
+      persistentVolumeClaim:
+        claimName: pipelinewise-pv-claim

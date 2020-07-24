@@ -6,5 +6,4 @@ sources:
     schema: cs
 
     tables:
-      - name: account_available_renewals_by_qtr
-      - name: fy21_available_renewals
+      - name: available_renewals_by_opportunity
