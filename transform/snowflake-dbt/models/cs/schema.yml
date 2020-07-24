@@ -13,4 +13,4 @@ models:
       - name: ticket_id
         tests:
           - not_null
-  - name: account_renewal_rate_by_qtr
+  - name: renewal_rate_by_renewal_opportunity
