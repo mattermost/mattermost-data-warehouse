@@ -43,8 +43,7 @@ def get_twitter_mentions():
     '''
 
     try:
-        cur.execute(query)
-        results = cur.fetchall()
+        results = execute_query(engine, query)
     except Exception as e:
         print(f'''Oh no! There was an error executing your query: {e}''')
 
