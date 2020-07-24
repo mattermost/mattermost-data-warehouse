@@ -64,3 +64,9 @@ sources:
 
       - name: opportunitycontactrole
         description: "SFDC Opportunity Contact Role"
+
+      - name: customer_reference__c
+        description: "SFDC Customer Reference"
+
+      - name: netsuite_conn__netsuite_financial__c
+        description: "Netsuite Data in SFDC"

@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: blapi
+    database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
+    schema: blapi
+
+    tables:
+      - name: trial_requests
