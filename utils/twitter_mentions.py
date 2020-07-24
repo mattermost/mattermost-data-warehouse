@@ -28,7 +28,6 @@ def get_twitter_mentions():
     # Create database connection and cursor
     engine = snowflake_engine_factory(os.environ, "TRANSFORMER", "util")
     connection = engine.connect()
-    cur = connection.cursor()
 
     # Create empty dataframe with required columns
     db_tweets = pd.DataFrame(columns = ['username', 'text', 'full_name', 'user_url', 'url', 'retweet_text', 'original_tweet_date', 'retweeted_status', 'retweet_count', 'created_at', 'location', 
