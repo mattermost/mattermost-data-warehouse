@@ -98,4 +98,3 @@ TWITTER_ACCESS_SECRET = Secret("env", "TWITTER_ACCESS_SECRET", "airflow", "TWITT
 
 # Pipelinewise secrets
 PIPELINEWISE_SECRETS = Secret("volume", "/app/wrk", "pipelinewise-secrets")
-

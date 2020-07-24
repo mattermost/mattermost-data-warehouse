@@ -142,4 +142,4 @@ dbt_run = KubernetesPodOperator(
     dag=dag,
 )
 
-dbt_seed_nightly >> update_twitter_cmd >> dbt_run
+dbt_seed_nightly >> update_twitter >> dbt_run
