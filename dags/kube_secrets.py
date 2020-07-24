@@ -91,10 +91,18 @@ PG_IMPORT_BUCKET = Secret("env", "PG_IMPORT_BUCKET", "airflow", "PG_IMPORT_BUCKE
 SSH_KEY = Secret("env", "SSH_KEY", "airflow", "SSH_KEY")
 
 # Twitter Keys
-TWITTER_CONSUMER_KEY = Secret("env", "TWITTER_CONSUMER_KEY", "airflow", "TWITTER_CONSUMER_KEY") 
-TWITTER_CONSUMER_SECRET = Secret("env", "TWITTER_CONSUMER_SECRET", "airflow", "TWITTER_CONSUMER_KEY") 
-TWITTER_ACCESS_KEY = Secret("env", "TWITTER_ACCESS_KEY", "airflow", "TWITTER_ACCESS_KEY") 
-TWITTER_ACCESS_SECRET = Secret("env", "TWITTER_ACCESS_SECRET", "airflow", "TWITTER_ACCESS_SECRET")
+TWITTER_CONSUMER_KEY = Secret(
+    "env", "TWITTER_CONSUMER_KEY", "airflow", "TWITTER_CONSUMER_KEY"
+)
+TWITTER_CONSUMER_SECRET = Secret(
+    "env", "TWITTER_CONSUMER_SECRET", "airflow", "TWITTER_CONSUMER_SECRET"
+)
+TWITTER_ACCESS_KEY = Secret(
+    "env", "TWITTER_ACCESS_KEY", "airflow", "TWITTER_ACCESS_KEY"
+)
+TWITTER_ACCESS_SECRET = Secret(
+    "env", "TWITTER_ACCESS_SECRET", "airflow", "TWITTER_ACCESS_SECRET"
+)
 
 # Pipelinewise secrets
 PIPELINEWISE_SECRETS = Secret("volume", "/app/wrk", "pipelinewise-secrets")
