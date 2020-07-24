@@ -46,7 +46,7 @@ WITH ww_nn_amounts AS (
         SUM(CASE WHEN opportunity.status_wlo__c = 'Won' AND renewal_rate_by_renewal_opportunity.renewal_date < opportunity.closedate AND util.fiscal_year(renewal_rate_by_renewal_opportunity.renewal_date)|| '-' || util.fiscal_quarter(renewal_rate_by_renewal_opportunity.renewal_date) != util.fiscal_year(opportunity.closedate)|| '-' || util.fiscal_quarter(opportunity.closedate) THEN renewal_rate_by_renewal_opportunity.available_renewal ELSE 0 END) AS available_renewals_won_late,
         SUM(CASE WHEN opportunity.status_wlo__c = 'Won' AND renewal_rate_by_renewal_opportunity.renewal_date > opportunity.closedate AND util.fiscal_year(renewal_rate_by_renewal_opportunity.renewal_date)|| '-' || util.fiscal_quarter(renewal_rate_by_renewal_opportunity.renewal_date) != util.fiscal_year(opportunity.closedate)|| '-' || util.fiscal_quarter(opportunity.closedate) THEN renewal_rate_by_renewal_opportunity.available_renewal ELSE 0 END) AS available_renewals_won_early,
         SUM(CASE WHEN opportunity.status_wlo__c = 'Open' AND util.fiscal_year(renewal_rate_by_renewal_opportunity.renewal_date)|| '-' || util.fiscal_quarter(renewal_rate_by_renewal_opportunity.renewal_date) = util.fiscal_year(opportunity.closedate)|| '-' || util.fiscal_quarter(opportunity.closedate) THEN renewal_rate_by_renewal_opportunity.available_renewal ELSE 0 END) AS available_renewals_open_in_qtr
-    FROM {{ source('cs','renewal_rate_by_renewal_opportunity') }}
+    FROM {{ ref('renewal_rate_by_renewal_opportunity') }}
     LEFT JOIN {{ source('orgm','opportunity') }} ON opportunity.sfid = renewal_rate_by_renewal_opportunity.opportunityid
     GROUP BY 1
 ), scrub_ww AS (
