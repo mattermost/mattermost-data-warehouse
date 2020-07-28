@@ -1,7 +1,12 @@
 BEGIN;
 
 UPDATE orgm.account
-SET type = 'Customer (Attrited)'
+SET type = 'Customer (Attrited)',
+    seats_active_mau__c = NULL,
+    seats_licensed__c = NULL,
+    seats_active_override__c = FALSE,
+    seats_active_latest__c = NULL,
+    latest_telemetry_date__c = NULL
 FROM (
     SELECT account.sfid, COALESCE(account.arr_current__c,0) AS account_arr, SUM(COALESCE(child.arr_current__c,0)) AS child_arr
     FROM orgm.account
