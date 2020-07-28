@@ -14,7 +14,7 @@ FROM (
         SUM(COALESCE(child.seats_licensed__c,0)) AS child_seats 
     FROM orgm.account
     LEFT JOIN orgm.account AS child ON child.parentid = account.sfid
-    GROUP BY 1, 2
+    GROUP BY 1, 2, 4
 ) as account_arr_details
 WHERE account.sfid = account_arr_details.sfid
     AND account_arr_details.account_arr = 0
@@ -34,7 +34,7 @@ FROM (
         SUM(COALESCE(child.seats_licensed__c,0)) AS child_seats
     FROM orgm.account
     LEFT JOIN orgm.account AS child ON child.parentid = account.sfid
-    GROUP BY 1, 2
+    GROUP BY 1, 2, 4
 ) AS account_arr_details
 WHERE account.sfid = account_arr_details.sfid
     AND (account_arr_details.account_arr != 0 OR account_arr_details.child_arr != 0 
