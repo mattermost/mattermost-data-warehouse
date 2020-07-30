@@ -169,15 +169,24 @@ select get_sys_var({{ var_name }})
                 cast({{ dbt_utils.string_literal(relation) }} as {{ dbt_utils.type_string() }}) as {{ source_column_name }},
                 {% for col_name in ordered_column_names -%}
 
-                    {%- set col = column_superset[col_name] %}
-                    {%- set col_type = column_override.get(col.column, col.data_type) %}
-                    {%- set col_name = adapter.quote(col_name) if col_name in relation_columns[relation] else 'null' %}
-                    cast({{ col_name }} as {{ col_type }}) as {{ col.quoted }} {% if not loop.last %},{% endif -%}
+                    {%- set col = column_superset[col_name] -%}
+                    {%- set col_type = column_override.get(col.column, col.data_type) -%}
+                    {%- set col_name = adapter.quote(col_name) if col_name in relation_columns[relation] else 'null' -%}
+                    
+                        {%- if col.quoted[-10:-1] == 'TIMESTAMP' and col.quoted[1:3] == 'NPS' -%}
 
-                {%- endfor %}
+                        cast({{ relation }}.ORIGINAL_TIMESTAMP as DATE) as {{ col.quoted }}
+
+                        {%- else -%}
+                        cast({{ col_name }} as {{ col_type }}) as {{ col.quoted }}
+
+                        {%- endif -%}
+                        {%- if not loop.last -%},{%- endif -%}
+
+                {%- endfor -%}
 
             from {{ relation }}
-            WHERE timestamp::date <= CURRENT_DATE
+            WHERE original_timestamp::date <= CURRENT_DATE
             {% if is_incremental() %}
                 AND timestamp > (select max(timestamp) from {{ this }} )
             {% endif %}
