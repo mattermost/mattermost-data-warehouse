@@ -42,7 +42,7 @@ WITH mobile_events       AS (
     WHERE m.timestamp::DATE <= CURRENT_DATE
     {% if is_incremental() %}
 
-      AND DATE_TRUNC('HOUR', m.UUID_TS) >= (SELECT MAX(max_timestamp - interval '25 hours') from {{this}})
+      AND DATE_TRUNC('HOUR', m.timestamp) >= (SELECT MAX(max_timestamp - interval '25 hours') from {{this}})
 
     {% endif %}
     GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
@@ -65,7 +65,7 @@ mobile_events2       AS (
           ELSE 'Other'
           END                                                                                     AS os
       , CASE
-          WHEN m.context_device_type = 'ios' THEN context_app_version::VARCHAR
+          WHEN m.context_device_type = 'ios' THEN context_app_build::VARCHAR
           WHEN m.context_device_type = 'android' THEN m.context_app_version::VARCHAR
           ELSE 'Other'
           END                                                                                     AS version
@@ -166,7 +166,7 @@ mobile_events2       AS (
          AND e.timestamp::DATE <= CURRENT_DATE
          {% if is_incremental() %}
 
-          AND DATE_TRUNC('HOUR', e.UUID_TS) >= (SELECT MAX(max_timestamp - interval '25 hours') from {{this}})
+          AND DATE_TRUNC('HOUR', e.timestamp) >= (SELECT MAX(max_timestamp - interval '25 hours') from {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
@@ -342,11 +342,6 @@ mobile_events2       AS (
         , datediff(second, lag(min_timestamp) over (partition by user_id order by min_timestamp), min_timestamp) AS seconds_after_prev_event
         , CURRENT_TIMESTAMP::TIMESTAMP AS UPDATED_AT
        FROM all_events_chronological
-          {% if is_incremental() %}
-
-          WHERE max_timestamp >= (SELECT MAX(max_timestamp) from {{this}})
-
-         {% endif %}
      )
 SELECT *
 FROM user_events_by_date
