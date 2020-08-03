@@ -108,4 +108,4 @@ WHERE commit_ww.qtr = recent_updates.qtr;
 
 UPDATE zapier_data_actions.data
 SET dwh_processed_at = current_timestamp()
-WHERE dwh_processed_at IS NULL;
+WHERE dwh_processed_at IS NULL AND table_name IN ('scrub_ww','scrub_segment');
