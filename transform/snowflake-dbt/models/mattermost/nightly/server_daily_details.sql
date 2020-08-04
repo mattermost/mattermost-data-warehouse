@@ -58,29 +58,29 @@ dates as (
       , coalesce(s1.user_count, NULL)                                                    AS user_count
       , coalesce(s2.system_admins, NULL)                                                 AS system_admins
       , CASE WHEN coalesce(s2.operating_system, s1.os_type) IS NULL THEN 
-          MAX(coalesce(s2.operating_system, s1.os_type)) OVER (PARTITION BY d.server_id ORDER BY d.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+          LAST_VALUE(coalesce(s2.operating_system, s1.os_type) IGNORE NULLS) OVER (PARTITION BY d.server_id ORDER BY d.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
           ELSE coalesce(s2.operating_system, s1.os_type) END                             AS operating_system
       , CASE WHEN coalesce(s2.database_type, s1.db_type) IS NULL THEN 
-          MAX(coalesce(s2.database_type, s1.db_type)) OVER (PARTITION BY d.server_id ORDER BY d.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+          LAST_VALUE(coalesce(s2.database_type, s1.db_type) IGNORE NULLS) OVER (PARTITION BY d.server_id ORDER BY d.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
           ELSE coalesce(s2.database_type, s1.db_type) END                                AS database_type
       , CASE WHEN coalesce(s2.master_account_sfid, s1.master_account_sfid) IS NULL THEN 
-          MAX(coalesce(s2.master_account_sfid, s1.master_account_sfid)) OVER (PARTITION BY d.server_id ORDER BY d.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+          LAST_VALUE(coalesce(s2.master_account_sfid, s1.master_account_sfid) IGNORE NULLS) OVER (PARTITION BY d.server_id ORDER BY d.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
           ELSE coalesce(s2.master_account_sfid, s1.master_account_sfid) END              AS master_account_sfid
       , CASE WHEN coalesce(s2.account_sfid, s1.account_sfid) IS NULL THEN 
-          MAX(coalesce(s2.master_account_sfid, s1.master_account_sfid)) OVER (PARTITION BY d.server_id ORDER BY d.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+          LAST_VALUE(coalesce(s2.master_account_sfid, s1.master_account_sfid) IGNORE NULLS) OVER (PARTITION BY d.server_id ORDER BY d.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
           ELSE coalesce(s2.master_account_sfid, s1.master_account_sfid) END              AS account_sfid
       , CASE WHEN coalesce(s2.license_id1, s1.license_id1) IS NULL THEN 
-          MAX(coalesce(s2.master_account_sfid, s1.master_account_sfid)) OVER (PARTITION BY d.server_id ORDER BY d.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
-          ELSE coalesce(s2.master_account_sfid, s1.master_account_sfid) END              AS license_id1
+          LAST_VALUE(coalesce(s2.license_id1, s1.license_id1) IGNORE NULLS) OVER (PARTITION BY d.server_id ORDER BY d.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+          ELSE coalesce(s2.license_id1, s1.license_id1) END              AS license_id1
       , CASE WHEN coalesce(s2.license_id2, s1.license_id2) IS NULL THEN 
-          MAX(coalesce(s2.master_account_sfid, s1.master_account_sfid)) OVER (PARTITION BY d.server_id ORDER BY d.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
-          ELSE coalesce(s2.master_account_sfid, s1.master_account_sfid) END              AS license_id2
+          LAST_VALUE(coalesce(s2.license_id2, s1.license_id2) IGNORE NULLS) OVER (PARTITION BY d.server_id ORDER BY d.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+          ELSE coalesce(s2.license_id2, s1.license_id2) END              AS license_id2
       , CASE WHEN coalesce(s2.license_email, s1.license_email) IS NULL THEN 
-          MAX(coalesce(s2.master_account_sfid, s1.master_account_sfid)) OVER (PARTITION BY d.server_id ORDER BY d.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
-          ELSE coalesce(s2.master_account_sfid, s1.master_account_sfid) END              AS license_email
+          LAST_VALUE(coalesce(s2.license_email, s1.license_email) IGNORE NULLS) OVER (PARTITION BY d.server_id ORDER BY d.date ROWS BETWEEN UNBOUNDED PRECEDING  AND CURRENT ROW)
+          ELSE coalesce(s2.license_email, s1.license_email) END              AS license_email
       , CASE WHEN coalesce(s2.license_contact_sfid, s1.license_contact_sfid) IS NULL THEN 
-          MAX(coalesce(s2.master_account_sfid, s1.master_account_sfid)) OVER (PARTITION BY d.server_id ORDER BY d.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
-          ELSE coalesce(s2.master_account_sfid, s1.master_account_sfid) END              AS license_contact_sfid
+          LAST_VALUE(coalesce(s2.license_contact_sfid, s1.license_contact_sfid) IGNORE NULLS) OVER (PARTITION BY d.server_id ORDER BY d.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+          ELSE coalesce(s2.license_contact_sfid, s1.license_contact_sfid) END              AS license_contact_sfid
       , CASE WHEN s1.server_id IS NOT NULL THEN TRUE ELSE FALSE END                      AS in_security
       , CASE WHEN s2.server_id IS NOT NULL THEN TRUE ELSE FALSE END                      AS in_mm2_server
       , CASE WHEN s1.server_id IS NULL AND s2.server_id IS NULL THEN TRUE ELSE FALSE END AS tracking_disabled

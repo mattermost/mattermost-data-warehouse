@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 from dags.airflow_utils import (
+    DATA_IMAGE,
     DBT_IMAGE,
     dbt_install_deps_and_seed_cmd,
     dbt_install_deps_cmd,
@@ -25,6 +26,10 @@ from dags.kube_secrets import (
     PG_IMPORT_BUCKET,
     HEROKU_POSTGRESQL_URL,
     SSH_KEY,
+    TWITTER_ACCESS_KEY,
+    TWITTER_ACCESS_SECRET,
+    TWITTER_CONSUMER_KEY,
+    TWITTER_CONSUMER_SECRET
 )
 
 # Load the env vars into a dict and set Secrets
@@ -92,6 +97,31 @@ dbt_seed_nightly = KubernetesPodOperator(
     dag=dag,
 )
 
+update_twitter_cmd = f"""
+    {clone_and_setup_extraction_cmd} &&
+    python utils/twitter_mentions.py
+"""
+
+update_twitter = KubernetesPodOperator(
+    **pod_defaults,
+    image=DATA_IMAGE,
+    task_id="update-twitter",
+    name="update-twitter",
+    secrets=[
+        SNOWFLAKE_USER,
+        SNOWFLAKE_PASSWORD,
+        SNOWFLAKE_ACCOUNT,
+        SNOWFLAKE_TRANSFORM_WAREHOUSE,
+        TWITTER_ACCESS_KEY,
+        TWITTER_ACCESS_SECRET,
+        TWITTER_CONSUMER_KEY,
+        TWITTER_CONSUMER_SECRET
+    ],
+    env_vars=env_vars,
+    arguments=[update_twitter_cmd],
+    dag=dag,
+)
+
 
 dbt_run = KubernetesPodOperator(
     **pod_defaults,
@@ -112,4 +142,4 @@ dbt_run = KubernetesPodOperator(
     dag=dag,
 )
 
-dbt_seed_nightly >> dbt_run
+dbt_seed_nightly >> update_twitter >> dbt_run

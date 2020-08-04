@@ -1,0 +1,14 @@
+version: 2
+
+models:
+  - name: plugins_telemetry
+    description: Security data from diagnostics log entries
+  
+  - name: events_web_desktop_telemetry
+    description: Contains id, name, category, and description of all user events currently being logged by Telemetry-Enabled Mattermost servers.
+
+  - name: events_mobile_telemetry
+    description: Contains event uuid, user id, user role, event name, event category, and count of events performed each day.
+
+  - name: server_telemetry
+    description: Contains an aggregated version of user_events by date w/ MAU and DAU-specific dimensions.
