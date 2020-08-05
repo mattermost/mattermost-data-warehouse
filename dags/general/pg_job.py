@@ -51,6 +51,10 @@ lead_account = get_container_operator("lead-account", "lead_account")
 update_opportunitylineitem_amounts = get_container_operator(
     "update-opportunitylineitem-amounts", "update_opportunitylineitem_amounts"
 )
+
+pg_update_opportunity_time_in_stage = get_container_operator(
+    "pg-update-opportunity-time-in-stage", "pg_update_opportunity_time_in_stage"
+)
 heroku_connect_retry = get_container_operator("heroku-connect-retry", "connect_retry")
 
-tasks_filtered >> account_type >> owner_segment_updates >> lead_account >> update_opportunitylineitem_amounts >> heroku_connect_retry
+tasks_filtered >> account_type >> owner_segment_updates >> lead_account >> update_opportunitylineitem_amounts >> pg_update_opportunity_time_in_stage >> heroku_connect_retry
