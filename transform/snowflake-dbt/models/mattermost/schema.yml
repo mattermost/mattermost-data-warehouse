@@ -14,14 +14,16 @@ models:
   - name: contributor_employee_map_data
     description: Location data on contributors and employees
 
-  - name: github_contributors
-    description: Statistics on GitHub contributors
+  - name: github_community_contributions
+
+  - name: github_community_contributors
+
+  - name: github_all_contributions
+
+  - name: github_all_contributors
   
   - name: nps_data
     description: NPS scores and feedback
-  
-  - name: nps_user_monthly_score
-    description: User NPS score snapshot at a monthly level. Retrieves the User's latest NPS score submission on or before the record month.
 
   - name: server_fact
     description: Production server attributes including the server's first active date (telemetry-enabled), last active date (telemetry-enabled), the all-time max active users logged on the server, and the last date the server logged active users.
@@ -40,3 +42,15 @@ models:
 
   - name: server_upgrades
     description: Contains each instance a server upgraded from one version to a different, greater version.
+  
+  - name: nps_server_daily_score
+    description: Contains the daily server NPS score for each server with 1 or more user NPS submission.
+  
+  - name: nps_user_daily_score
+    description: User NPS score snapshot at a daily level. Retrieves the User's latest NPS score submission on or before the record date.
+
+  - name: nps_server_version_daily_score
+    description: Contains a daily snapshot of each User's lastest NPS score for each server version. Needed to trend cumulative scores by server version (per request of Eric Sethna).
+
+  - name: excludable_servers
+    description: List of all identifiable excludable servers (mattermost-owned and/or test/development servers)

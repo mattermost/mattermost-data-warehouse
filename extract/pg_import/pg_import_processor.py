@@ -68,7 +68,7 @@ class PgImporter(object):
         file_name = f"{self.source_table}.csv"
 
         with self.sf_engine.begin() as conn:
-            conn.execute(f"COPY INTO @{sf_unload_stage}/{file_name} from {self.source_schema}.{self.source_table} overwrite=true single=true;")
+            conn.execute(f"COPY INTO @{sf_unload_stage}/{file_name} from {self.source_schema}.{self.source_table} overwrite=true single=true max_file_size=4900000000;")
 
         return file_name
 

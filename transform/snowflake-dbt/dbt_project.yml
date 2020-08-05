@@ -51,7 +51,8 @@ models:
       tags: "cs"
 
     events:
-      tags: ["events", "nightly"]
+      nightly:
+        tags: ["events", "nightly"]
 
     finance:
       tags: "finance"
@@ -67,23 +68,28 @@ models:
       server:
         tags: ["server", "nightly"]
 
+    qa:
+      tags: "qa"
+
 seeds:
   enabled: true
   schema: targets
   quote_columns: False
 
   mm_snowflake:
+    p2p_forum_activity:
+      schema: mattermost
+    community_program_members:
+      schema: mattermost
     sys_vars:
       schema: util
-    excludable_servers:
-      schema: mattermost
+    excludable_servers_seed:
+      schema: staging
     world_cities:
       schema: util
     snowflake_contract_rates:
       schema: bizops
     contributor_map_data:
-      schema: staging
-    github_contributions:
       schema: mattermost
     staff_github_usernames:
       schema: employee
@@ -91,4 +97,15 @@ seeds:
       schema: tva
     account_industry_mapping:
       schema: util
+    version_release_dates:
+      schema: mattermost
+    financial_statements:
+      schema: finance
+    financial_model:
+      schema: finance
+    github_repo_categorization:
+      schema: mattermost
+    github_contributions_all:
+      schema: staging
+
 

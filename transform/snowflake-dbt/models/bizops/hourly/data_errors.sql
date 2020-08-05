@@ -76,6 +76,17 @@ WITH data_errors AS (
         AND account.type = 'Customer'
                    
     UNION ALL 
+                   
+    SELECT
+        'account' AS object,
+        account.sfid AS object_id,
+        'US/CA no State' AS error_short,
+        billingcountrycode || ' no State' AS error_long
+    FROM {{ source('orgm','account')}}
+    WHERE billingcountrycode IN ('CA','US')
+        AND billingstatecode IS NULL
+    
+    UNION ALL               
             
     SELECT
         'contact' AS object,
@@ -115,7 +126,18 @@ WITH data_errors AS (
       COALESCE(email,'') = '' AND
       CONVERTEDDATE IS NULL
                        
-    UNION ALL                   
+    UNION ALL  
+    SELECT
+        'lead' AS object,
+        lead.sfid as object_id,
+        'Dupe Lead and Contact' AS error_short,
+        'Dupe Lead and Contact/' || lead.email AS error_long
+    FROM {{ source('orgm','lead')}}
+    LEFT JOIN {{ source('orgm','contact')}} ON (lead.email = contact.email)
+    WHERE lead.converteddate IS NULL
+    AND contact.sfid IS NOT NULL
+                        
+    UNION ALL  
            
     SELECT
         'opportunity' AS object,

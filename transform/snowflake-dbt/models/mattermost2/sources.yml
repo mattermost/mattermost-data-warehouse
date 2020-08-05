@@ -134,3 +134,21 @@ sources:
       
       - name: event_mobile
         description: Contains raw user-level, mobile event data as a single row per event.
+
+      - name: tracks
+        description: Contains raw user-level data from rudderstack track method.
+
+      - name: identifies
+        description: Contains raw user-level data from rudderstack identifies method.
+
+      - name: pages
+        description: Contains raw user-level data from rudderstack pages method.
+
+      - name: _groups
+        description: Contains raw server-level group data as a single row per server per timestamp.
+
+      - name: channel_moderation
+        description: Contains raw server-level channel data as a single row per server per timestamp.
+
+      - name: elasticsearch
+        description: Contains raw server-level ElasticSearch data as a single row per server per timestamp.

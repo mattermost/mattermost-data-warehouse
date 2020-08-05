@@ -31,11 +31,12 @@ WITH license        AS (
            , MAX(to_timestamp(l._start / 1000)::DATE) AS start_date
            , MAX(to_timestamp(l.expire / 1000)::DATE) AS expire_date
            , MAX(l.users)      AS users
-           , max(l.timestamp)  AS max_timestamp
+           , MAX(l.timestamp)  AS max_timestamp
+           , MIN(l.timestamp)  AS license_activation_date
          FROM {{ source('util', 'dates') }} d
          JOIN {{ source('mattermost2','license') }} l
               ON l.timestamp::date <= d.date
-              AND d.date <= CURRENT_DATE - INTERVAL '1 DAY'
+              AND d.date <= CURRENT_DATE
               AND d.date >= to_timestamp(l.issued / 1000)::DATE
          {{ dbt_utils.group_by(n=4) }}
      ),
@@ -54,7 +55,7 @@ WITH license        AS (
        FROM {{ source('util', 'dates') }} d
             JOIN license l
                  ON d.date >= l.issuedat
-                 AND d.date <= CASE WHEN CURRENT_DATE - interval '1 day' <= l.expiresat THEN CURRENT_DATE - interval '1 day' ELSE l.expiresat END
+                 AND d.date <= CASE WHEN CURRENT_DATE <= l.expiresat THEN CURRENT_DATE ELSE l.expiresat END
        {{ dbt_utils.group_by(n=9) }}
      ), 
 
@@ -92,6 +93,7 @@ WITH license        AS (
            , MAX(l.feature_password)                                                 AS feature_password
            , MAX(l.feature_saml)                                                     AS feature_saml
            , MAX(m.max_timestamp)                                                    AS timestamp
+           , MIN(m.license_activation_date)                                          AS license_activation_date
          FROM max_date           m
               JOIN {{ source('mattermost2' , 'license') }} l
                    ON l.license_id = m.license_id
@@ -129,11 +131,11 @@ WITH license        AS (
            , COALESCE(l.issuedat, ld.issued_date)                                                  AS issued_date
            , COALESCE(ld.start_date, l.issuedat)                                                   AS start_date
            , COALESCE(l.expiresat, ld.expire_date)                                                 AS expire_date
-           , lo.master_account_sfid
-           , lo.master_account_name
-           , lo.account_sfid
-           , lo.account_name
-           , l.email                                                                                AS license_email
+           , COALESCE(elm.account_sfid, lo.master_account_sfid)                                    AS master_account_sfid
+           , COALESCE(elm.name, lo.master_account_name)                                            AS master_account_name
+           , COALESCE(elm.account_sfid, lo.account_sfid)                                           AS account_sfid
+           , COALESCE(elm.name, lo.account_name)                                                   AS account_name
+           , l.email                                                                               AS license_email
            , lo.contact_sfid
            , lo.contact_email
            , l.number
@@ -163,18 +165,28 @@ WITH license        AS (
            , ld.feature_saml
            , ld.timestamp
            , {{ dbt_utils.surrogate_key('l.licenseid', 'l.customerid', 'l.date', 'ld.server_id') }} AS id
+           , ld.license_activation_date
          FROM date_ranges    l
               LEFT JOIN license_details ld
                         ON l.licenseid = ld.license_id
                         AND l.date = ld.date
               LEFT JOIN license_overview lo
                         ON l.licenseid = lo.licenseid
+              LEFT JOIN (
+                         SELECT 
+                            l.*
+                          , a.name
+                         FROM {{ ref('enterprise_license_mapping') }} l
+                              LEFT JOIN {{ source('orgm', 'account') }} a
+                                        ON l.account_sfid = a.sfid
+                        ) elm
+                        ON l.licenseid = elm.licenseid
          {% if is_incremental() %}
 
-         WHERE l.date > (SELECT MAX(date) FROM {{this}})
+         WHERE l.date > (SELECT MAX(DATE) FROM {{this}})
 
          {% endif %}
-         {{ dbt_utils.group_by(n=43) }}
+         {{ dbt_utils.group_by(n=44) }}
      ),
 
      licenses_window as (
@@ -184,7 +196,7 @@ WITH license        AS (
            , ld.server_id
            , ld.customer_id
            , ld.company
-           , ld.edition
+           , MAX(ld.edition) OVER (PARTITION BY ld.license_id) AS edition
            , CASE WHEN REGEXP_SUBSTR(company, '[^a-zA-Z]TRIAL$') in ('-TRIAL', 'TRIAL', ' TRIAL') THEN TRUE 
                   WHEN DATEDIFF(day, ld.start_date, ld.expire_date) <= 35 THEN TRUE
                   ELSE FALSE END        AS trial
@@ -234,6 +246,7 @@ WITH license        AS (
            , ld.feature_password
            , ld.feature_saml
            , ld.timestamp
+           , ld.license_activation_date
            , ld.id
            , CASE WHEN
                   COUNT(CASE WHEN REGEXP_SUBSTR(company, '[^a-zA-Z]TRIAL$') in ('-TRIAL', 'TRIAL', ' TRIAL') THEN ld.server_id
@@ -255,9 +268,9 @@ WITH license        AS (
              ELSE
                  ld.expire_date END     AS server_expire_date_join
          FROM license_details_all ld
-         {% if is_incremental() %}
+          {% if is_incremental() %}
 
-         WHERE ld.date > (SELECT MAX(date) FROM {{this}})
+         WHERE ld.date > (SELECT MAX(DATE) FROM {{this}})
 
          {% endif %}
      ),
@@ -310,6 +323,7 @@ WITH license        AS (
         , MAX(lw.id)                                  AS id
         , MAX(lw.has_trial_and_non_trial)             AS has_trial_and_non_trial
         , MAX(lw.server_expire_date_join)             AS server_expire_date_join
+        , MAX(lw.license_activation_date)             AS license_activation_date
         FROM licenses_window lw
         {{ dbt_utils.group_by(n=4) }}
      )

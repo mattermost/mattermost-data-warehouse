@@ -1,12 +1,8 @@
 from airflow.contrib.kubernetes.secret import Secret
 
 # AWS
-AWS_ACCOUNT_ID = Secret(
-    "env", "AWS_ACCOUNT_ID", "airflow", "AWS_ACCOUNT_ID"
-)
-AWS_ACCESS_KEY_ID = Secret(
-    "env", "AWS_ACCESS_KEY_ID", "airflow", "AWS_ACCESS_KEY_ID"
-)
+AWS_ACCOUNT_ID = Secret("env", "AWS_ACCOUNT_ID", "airflow", "AWS_ACCOUNT_ID")
+AWS_ACCESS_KEY_ID = Secret("env", "AWS_ACCESS_KEY_ID", "airflow", "AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = Secret(
     "env", "AWS_SECRET_ACCESS_KEY", "airflow", "AWS_SECRET_ACCESS_KEY"
 )
@@ -41,6 +37,9 @@ SNOWFLAKE_TRANSFORM_USER = Secret(
 SNOWFLAKE_TRANSFORM_WAREHOUSE = Secret(
     "env", "SNOWFLAKE_TRANSFORM_WAREHOUSE", "airflow", "SNOWFLAKE_TRANSFORM_WAREHOUSE"
 )
+SNOWFLAKE_TRANSFORM_DATABASE = Secret(
+    "env", "SNOWFLAKE_TRANSFORM_DATABASE", "airflow", "SNOWFLAKE_TRANSFORM_DATABASE"
+)
 SNOWFLAKE_USER = Secret("env", "SNOWFLAKE_USER", "airflow", "SNOWFLAKE_USER")
 SNOWFLAKE_ACCOUNT = Secret("env", "SNOWFLAKE_ACCOUNT", "airflow", "SNOWFLAKE_ACCOUNT")
 SNOWFLAKE_PASSWORD = Secret(
@@ -48,7 +47,8 @@ SNOWFLAKE_PASSWORD = Secret(
 )
 
 # MM
-MATTERMOST_WEBHOOK_URL = Secret("env", "MATTERMOST_WEBHOOK_URL", "airflow", "MATTERMOST_WEBHOOK_URL"
+MATTERMOST_WEBHOOK_URL = Secret(
+    "env", "MATTERMOST_WEBHOOK_URL", "airflow", "MATTERMOST_WEBHOOK_URL"
 )
 
 # Permission Bot
@@ -79,19 +79,30 @@ DIAGNOSTIC_LOCATION_ONE = Secret(
 DIAGNOSTIC_LOCATION_TWO = Secret(
     "env", "DIAGNOSTIC_LOCATION_TWO", "airflow", "DIAGNOSTIC_LOCATION_TWO"
 )
-RELEASE_LOCATION = Secret(
-    "env", "RELEASE_LOCATION", "airflow", "RELEASE_LOCATION"
-)
+RELEASE_LOCATION = Secret("env", "RELEASE_LOCATION", "airflow", "RELEASE_LOCATION")
 
 # Heroku
 HEROKU_POSTGRESQL_URL = Secret(
     "env", "HEROKU_POSTGRESQL_URL", "airflow", "HEROKU_POSTGRESQL_URL"
 )
-PG_IMPORT_BUCKET = Secret(
-    "env", "PG_IMPORT_BUCKET", "airflow", "PG_IMPORT_BUCKET"
-)
+PG_IMPORT_BUCKET = Secret("env", "PG_IMPORT_BUCKET", "airflow", "PG_IMPORT_BUCKET")
 
 # SSH Key
-SSH_KEY = Secret(
-    "env", "SSH_KEY", "airflow", "SSH_KEY"
+SSH_KEY = Secret("env", "SSH_KEY", "airflow", "SSH_KEY")
+
+# Twitter Keys
+TWITTER_CONSUMER_KEY = Secret(
+    "env", "TWITTER_CONSUMER_KEY", "airflow", "TWITTER_CONSUMER_KEY"
 )
+TWITTER_CONSUMER_SECRET = Secret(
+    "env", "TWITTER_CONSUMER_SECRET", "airflow", "TWITTER_CONSUMER_SECRET"
+)
+TWITTER_ACCESS_KEY = Secret(
+    "env", "TWITTER_ACCESS_KEY", "airflow", "TWITTER_ACCESS_KEY"
+)
+TWITTER_ACCESS_SECRET = Secret(
+    "env", "TWITTER_ACCESS_SECRET", "airflow", "TWITTER_ACCESS_SECRET"
+)
+
+# Pipelinewise secrets
+PIPELINEWISE_SECRETS = Secret("volume", "/app/wrk", "pipelinewise-secrets")

@@ -13,3 +13,7 @@ models:
   
   - name: license_daily_details
     description: Contatins a daily snapshot of licenses to trend licenses and configurations over time.
+
+  - name: enterprise_license_mapping
+
+  - name: enterprise_license_fact

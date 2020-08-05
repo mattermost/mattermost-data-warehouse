@@ -58,45 +58,46 @@ WITH user_events       AS (
             OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)           AS events_alltime
       , ROUND(SUM(e1.total_events)
                   OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) /
-              COUNT(CASE WHEN e1.events_alltime > 0 THEN e1.date ELSE NULL END)
-                    OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW),
+              NULLIF(COUNT(CASE WHEN e1.events_alltime > 0 THEN e1.date ELSE NULL END)
+                    OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW), 0),
               2)                                                                                                             AS avg_events_per_day
       , SUM(e1.web_app_events)
             OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)           AS webapp_events_alltime
       , ROUND(SUM(e1.web_app_events)
                   OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) /
-              COUNT(CASE WHEN e1.events_alltime > 0 THEN e1.date ELSE NULL END)
-                    OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW),
+              NULLIF(COUNT(CASE WHEN e1.events_alltime > 0 THEN e1.date ELSE NULL END)
+                    OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW),0),
               2)                                                                                                             AS avg_webapp_events_per_day
       , SUM(e1.desktop_events)
             OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)           AS desktop_events_alltime
       , ROUND(SUM(e1.desktop_events)
                   OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) /
-              COUNT(CASE WHEN e1.events_alltime > 0 THEN e1.date ELSE NULL END)
-                    OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW),
+              NULLIF(COUNT(CASE WHEN e1.events_alltime > 0 THEN e1.date ELSE NULL END)
+                    OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW),0),
               2)                                                                                                             AS avg_desktop_events_per_day
       , MAX(e1.mobile_events_alltime)
             OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)           AS mobile_events_alltime
       , ROUND(SUM(e1.mobile_events)
                   OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) /
-              COUNT(CASE WHEN e1.events_alltime > 0 THEN e1.date ELSE NULL END)
-                    OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW),
+              NULLIF(COUNT(CASE WHEN e1.events_alltime > 0 THEN e1.date ELSE NULL END)
+                    OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW), 0),
               2)                                                                                                             AS avg_mobile_events_per_day
       , MIN(s.first_active_date)
             OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)   AS server_install_date
-      , MAX(s.last_account_sfid)
+      , MAX(s.account_sfid)
             OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)   AS account_sfid
       , MAX(s.last_license_id1)
             OVER (PARTITION BY TRIM(e1.user_id) ORDER BY e1.date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)   AS license_id
     FROM {{ ref('user_events_by_date_agg') }}   e1
          LEFT JOIN {{ ref('server_fact') }} s
                    ON TRIM(e1.server_id) = TRIM(s.server_id)
+    WHERE LENGTH(e1.user_id) < 36
                           ),
      min_nps_date      AS (
          SELECT
              user_id
            , min(last_score_date) AS min_score_date
-         FROM {{ ref('nps_user_monthly_score') }}
+         FROM {{ ref('nps_user_daily_score') }}
          GROUP BY 1
      ),
      dates             AS (
@@ -142,9 +143,9 @@ WITH user_events       AS (
            , max(s.server_id)
                  OVER (PARTITION BY nps.user_id ORDER BY d.date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS account_sfid
          FROM dates                                  d
-              JOIN {{ ref('nps_user_monthly_score') }} nps
+              JOIN {{ ref('nps_user_daily_score') }} nps
                    ON d.user_id = nps.user_id
-                       AND date_trunc('month', d.date) = nps.month
+                       AND date_trunc('day', d.date) = nps.date
               LEFT JOIN {{ ref('server_fact') }}       s
                         ON TRIM(nps.server_id) = TRIM(s.server_id)
      ),

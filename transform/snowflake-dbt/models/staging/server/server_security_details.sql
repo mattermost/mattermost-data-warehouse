@@ -1,12 +1,13 @@
 {{config({
     "materialized": 'incremental',
-    "schema": "staging"
+    "schema": "staging",
+    "unique_key":'id'
   })
 }}
 
 WITH security                AS (
     SELECT
-        sec.id
+        sec.server_id as id
       , sec.date
       , sec.hour
       , sec.grouping
@@ -22,20 +23,17 @@ WITH security                AS (
       , sec.timestamp
       , COUNT(sec.location) over (partition by sec.id, sec.date, sec.hour, sec.active_user_count, sec.ip_address, sec.location) as location_count
     FROM {{ ref('security') }} sec
-         LEFT JOIN {{ ref('excludable_servers') }} es
-                   ON sec.id = es.server_id
-    WHERE es.server_id IS NULL
-      AND sec.dev_build = 0
+    WHERE sec.dev_build = 0
       AND sec.ran_tests = 0
       AND sec.version LIKE '_.%._._.%._'
       AND sec.ip_address <> '194.30.0.184'
       AND sec.user_count >= sec.active_user_count
-      AND NULLIF(sec.id, '') IS NOT NULL
-      AND sec.date <= CURRENT_DATE - INTERVAL '1 DAY'
+      AND NULLIF(sec.server_id, '') IS NOT NULL
+      AND sec.date <= CURRENT_DATE
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND date > (SELECT MAX(date) FROM {{ this }})
+        AND date >= (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
 ),
@@ -157,23 +155,28 @@ WITH security                AS (
            , s.os_type
            , MAX(license.master_account_sfid)     AS master_account_sfid
            , MAX(license.account_sfid)            AS account_sfid
-           , MAX(license.license_id)              AS license_id1
-           , CASE WHEN MAX(license.license_id) = MIN(license.license_id) THEN MIN(NULL)
-               ELSE MIN(license.license_id) END   AS license_id2
+           , MAX(CASE WHEN license.has_trial_and_non_trial AND NOT license.trial THEN license.license_id
+                 WHEN NOT license.has_trial_and_non_trial THEN license.license_id
+                 ELSE NULL END)              AS license_id1
+           , MAX(CASE WHEN license.has_trial_and_non_trial AND license.trial THEN license.license_id
+                 ELSE NULL END)              AS license_id2
            , MAX(license.license_email)           AS license_email
            , MAX(license.contact_sfid)            AS license_contact_sfid
            , s.ip_count
            , s.occurrences
+           , {{ dbt_utils.surrogate_key('s.id', 's.date')}} AS id
          FROM server_details s
               LEFT JOIN license
                         ON s.id = license.server_id
                             AND s.date >= license.issued_date
                             AND s.date <= license.expire_date
-                            AND CASE WHEN license.has_trial_and_non_trial AND NOT license.trial THEN TRUE
-                                  WHEN NOT license.has_trial_and_non_trial AND license.trial THEN TRUE
-                                  WHEN NOT license.has_trial_and_non_trial AND NOT license.trial THEN TRUE
-                                  ELSE FALSE END
-         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 18, 19
+        {% if is_incremental() %}
+
+        -- this filter will only be applied on an incremental run
+        AND s.date >= (SELECT MAX(date) FROM {{ this }})
+
+         {% endif %}
+         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 18, 19, 20
      )
 SELECT *
 FROM server_security_details
