@@ -186,9 +186,9 @@ select get_sys_var({{ var_name }})
                 {%- endfor -%}
 
             from {{ relation }}
-            {%- if relation == '\"RAW\".MM_PLUGIN_DEV.NPS_NPS_FEEDBACK' -%}
+            {%- if relation == '"RAW".MM_PLUGIN_DEV.NPS_NPS_FEEDBACK' -%}
             WHERE original_timestamp::date <= CURRENT_DATE
-            {%- elif relation == '\"RAW\".MM_PLUGIN_DEV.NPS_NPS_SCORE' -%} 
+            {%- elif relation == '"RAW".MM_PLUGIN_DEV.NPS_NPS_SCORE' -%} 
             WHERE original_timestamp::date <= CURRENT_DATE
             {% else %}
             WHERE timestamp::date <= CURRENT_DATE
