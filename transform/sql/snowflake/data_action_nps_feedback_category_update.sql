@@ -1,24 +1,27 @@
 MERGE INTO analytics.mattermost.nps_feedback_classification
     USING (
-        SELECT date,
-            id,
-            user_id,
-            server_id,
-            field,
-            new_value as category
+        SELECT 
+            date
+          , id
+          , user_id
+          , server_id
+          , field
+          , new_value as category
         FROM (
-                SELECT ROW_NUMBER()OVER (PARTITION BY PARSE_JSON(other_params):date, PARSE_JSON(other_params):id, field ORDER BY triggered_at DESC) AS row_num,
-                        PARSE_JSON(other_params):user_id::varchar AS user_id,
-                        PARSE_JSON(other_params):server_id::varchar AS server_id,
-                        PARSE_JSON(other_params):date::date AS date,
-                        PARSE_JSON(other_params):id::varchar AS id,
-                        field,
-                        new_value
+                SELECT 
+                    ROW_NUMBER() OVER 
+                        (PARTITION BY PARSE_JSON(other_params):date, PARSE_JSON(other_params):id, field ORDER BY triggered_at DESC) AS row_num
+                  , PARSE_JSON(other_params):user_id::varchar AS user_id
+                  , PARSE_JSON(other_params):server_id::varchar AS server_id
+                  , PARSE_JSON(other_params):date::date AS date
+                  , PARSE_JSON(other_params):id::varchar AS id
+                  , field
+                  , new_value
                 FROM zapier_data_actions.data
                 WHERE table_name = 'nps_feedback_classification' AND field IN ('category') AND dwh_processed_at IS NULL
             )
         WHERE row_num = 1
-        GROUP BY 1, 2
+        GROUP BY 1, 2, 3, 4, 5, 6
     ) AS recent_updates
     ON nps_feedback_classification.id = recent_updates.id
 WHEN MATCHED THEN UPDATE
