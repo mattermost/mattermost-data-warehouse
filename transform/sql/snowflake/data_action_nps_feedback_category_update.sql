@@ -1,4 +1,4 @@
-MERGE INTO mattermost.nps_feedback_classification
+MERGE INTO analytics.mattermost.nps_feedback_classification
     USING (
         SELECT date,
             id,
@@ -8,7 +8,7 @@ MERGE INTO mattermost.nps_feedback_classification
             new_value as category
         FROM (
                 SELECT ROW_NUMBER()OVER (PARTITION BY PARSE_JSON(other_params):date, PARSE_JSON(other_params):id, field ORDER BY triggered_at DESC) AS row_num,
-                        PARSE_JSON(other_params): user_id::varchar AS user_id,
+                        PARSE_JSON(other_params):user_id::varchar AS user_id,
                         PARSE_JSON(other_params):server_id::varchar AS server_id,
                         PARSE_JSON(other_params):date::date AS date,
                         PARSE_JSON(other_params):id::varchar AS id,
@@ -22,7 +22,7 @@ MERGE INTO mattermost.nps_feedback_classification
     ) AS recent_updates
     ON nps_feedback_classification.id = recent_updates.id
 WHEN MATCHED THEN UPDATE
-    SET MERGE nps_feedback_classification.category = recent_updates.category
+    SET nps_feedback_classification.category = recent_updates.category
 WHEN NOT MATCHED THEN
     INSERT(date, server_id, user_id, id, category) values (recent_updates.date, recent_updates.server_id, recent_updates.user_id, recent_updates.id, recent_updates.category);
 
