@@ -30,7 +30,7 @@ MERGE INTO analytics.mattermost.nps_feedback_classification
 WHEN MATCHED THEN UPDATE
     SET nps_feedback_classification.category = recent_updates.category
 WHEN NOT MATCHED THEN
-    INSERT(date, server_id, user_id, feedback, category) values (recent_updates.last_feedback_date, recent_updates.server_id, recent_updates.user_id, recent_updates.feedback, recent_updates.category);
+    INSERT(last_feedback_date, server_id, user_id, feedback, category) values (recent_updates.last_feedback_date, recent_updates.server_id, recent_updates.user_id, recent_updates.feedback, recent_updates.category);
 
 UPDATE zapier_data_actions.data
 SET dwh_processed_at = current_timestamp()
