@@ -77,6 +77,10 @@ seeds:
   quote_columns: False
 
   mm_snowflake:
+    p2p_forum_activity:
+      schema: mattermost
+    community_program_members:
+      schema: mattermost
     sys_vars:
       schema: util
     excludable_servers_seed:
