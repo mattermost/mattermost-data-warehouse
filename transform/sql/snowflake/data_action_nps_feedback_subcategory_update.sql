@@ -10,7 +10,7 @@ MERGE INTO analytics.mattermost.nps_feedback_classification
         FROM (
                 SELECT 
                     ROW_NUMBER() OVER 
-                        (PARTITION BY PARSE_JSON(other_params):last_feedback_date, PARSE_JSON(other_params):user_id, PARSE_JSON(other_params):server_id, PARSE_JSON(other_params):feedback, field ORDER BY triggered_at DESC) AS row_num
+                        (PARTITION BY PARSE_JSON(other_params):last_feedback_date, PARSE_JSON(other_params):user_id, PARSE_JSON(other_params):server_id, PARSE_JSON(other_params):feedback::varchar, field ORDER BY triggered_at DESC) AS row_num
                   , PARSE_JSON(other_params):user_id::varchar AS user_id
                   , PARSE_JSON(other_params):server_id::varchar AS server_id
                   , PARSE_JSON(other_params):last_feedback_date::date AS last_feedback_date
