@@ -20,6 +20,8 @@ WITH download_stats         AS (
             WHEN abs(bytessent - avg(bytessent) OVER (PARTITION BY uri)) >
                  stddev(bytessent) OVER (PARTITION BY uri) * 1 THEN TRUE
             ELSE FALSE END                                      AS one_std_from_mean
+      , MIN((logdate::DATE || ' ' || logtime)::timestamp) 
+            OVER (PARTITION BY cip)                             AS first_install_datetime
     FROM {{ source('releases', 'log_entries') }} log_entries
     WHERE (regexp_like(uri, '^\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*') OR
            regexp_like(log_entries.uri, '^\/desktop\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*'))
@@ -93,6 +95,7 @@ WITH download_stats         AS (
            , o.diff                                                                                AS bytessent_diff_from_uri_mean
            , o.std                                                                                 AS bytessent_std_from_uri_mean
            , o.avg                                                                                 AS bytessent_uri_avg
+           , o.first_install_datetime::timestamp                                                   AS first_install_datetime
          FROM {{ source('releases', 'log_entries') }} log_entries
               JOIN download_stats o
                    ON log_entries.logdate::DATE = o.logdate::DATE
@@ -112,7 +115,7 @@ WITH download_stats         AS (
 
           {% endif %}
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
-                , 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34
+                , 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35
      )
 
 SELECT *
