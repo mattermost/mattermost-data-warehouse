@@ -51,6 +51,14 @@ WITH w_end_date AS (
       AND opportunity.type  IN ('Account Expansion', 'New Subscription')
       AND contact.first_mql_date__c IS NOT NULL
     GROUP BY 1
+), opportunity_fc_amounts AS (
+    SELECT 
+        opportunity.sfid as opportunity_sfid,
+        SUM(CASE WHEN forecastcategoryname = 'Commit' THEN amount ELSE 0 END) AS amount_in_commit,
+        SUM(CASE WHEN forecastcategoryname = 'Best Case' THEN amount ELSE 0 END) AS amount_in_best_case,
+        SUM(CASE WHEN forecastcategoryname = 'Pipeline' THEN amount ELSE 0 END) AS amount_in_pipeline
+    FROM {{ source('orgm','opportunity') }}
+    GROUP BY 1
 ), opportunity_ext AS (
   SELECT
       opportunity.sfid as opportunity_sfid,
@@ -65,6 +73,9 @@ WITH w_end_date AS (
       last_commit_date,
       num_times_slipped,
       marketing_generated,
+      amount_in_commit,
+      amount_in_best_case,
+      amount_in_pipeline,
       COALESCE(paid, FALSE) AS paid,
       SUM(new_amount__c) AS sum_new_amount,
       SUM(expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) AS sum_expansion_amount,
@@ -78,7 +89,8 @@ WITH w_end_date AS (
   LEFT JOIN w_oppt_commit ON opportunity.sfid = w_oppt_commit.opportunity_sfid
   LEFT JOIN opportunity_netsuite ON opportunity.sfid = opportunity_netsuite.opportunity_sfid
   LEFT JOIN opportunity_marketing ON opportunity.sfid = opportunity_marketing.opportunity_sfid
-  GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+  LEFT JOIN opportunity_fc_amounts ON opportunity.sfid = opportunity_fc_amounts.opportunity_sfid
+  GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
 )
 
  SELECT * FROM opportunity_ext
