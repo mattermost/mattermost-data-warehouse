@@ -27,7 +27,7 @@ UPDATE analytics.mattermost.nps_feedback_classification
                                       'Search UX','System Administration','Team Management','Themes','Translations',
                                       'UI/UX Polish','Update UX') 
                     THEN 'UX Feedback'
-                 ELSE NULL END AS category
+                 ELSE category END AS category
         FROM analytics.mattermost.nps_feedback_classification
         GROUP BY 1, 2, 3, 4, 5
     ) AS recent_updates
