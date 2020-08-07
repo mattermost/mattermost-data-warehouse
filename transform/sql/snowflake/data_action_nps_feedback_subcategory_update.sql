@@ -6,6 +6,7 @@ MERGE INTO analytics.mattermost.nps_feedback_classification
           , server_id
           , field
           , new_value as subcategory
+          , CURRENT_TIMESTAMP as categorized_at
         FROM (
                 SELECT 
                     ROW_NUMBER() OVER 
@@ -27,7 +28,7 @@ MERGE INTO analytics.mattermost.nps_feedback_classification
 WHEN MATCHED THEN UPDATE
     SET nps_feedback_classification.subcategory = recent_updates.subcategory
 WHEN NOT MATCHED THEN
-    INSERT(last_feedback_date, server_id, user_id, subcategory) values (recent_updates.last_feedback_date, recent_updates.server_id, recent_updates.user_id, recent_updates.subcategory);
+    INSERT(last_feedback_date, server_id, user_id, subcategory, categorized_at) values (recent_updates.last_feedback_date, recent_updates.server_id, recent_updates.user_id, recent_updates.subcategory, recent_updates.categorized_at);
 
 UPDATE zapier_data_actions.data
 SET dwh_processed_at = current_timestamp()
