@@ -7,8 +7,8 @@
 WITH ww_nn_amounts AS (
     SELECT 
         util.fiscal_year(opportunity.closedate)|| '-' || util.fiscal_quarter(opportunity.closedate) AS qtr,
-        SUM(CASE WHEN NOT opportunity.status_wlo__c = 'Open' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c) ELSE 0 END) AS nn_open_max,
-        SUM(CASE WHEN NOT opportunity.status_wlo__c = 'Open' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c) * probability * .01 ELSE 0 END) AS nn_open_weighted,
+        SUM(CASE WHEN opportunity.status_wlo__c = 'Open' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c) ELSE 0 END) AS nn_open_max,
+        SUM(CASE WHEN opportunity.status_wlo__c = 'Open' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c) * probability * .01 ELSE 0 END) AS nn_open_weighted,
         SUM(CASE WHEN forecastcategoryname = 'Commit' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c) ELSE 0 END) AS nn_commit_max,
         SUM(CASE WHEN forecastcategoryname = 'Best Case' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c) ELSE 0 END) AS nn_best_case_max,
         SUM(CASE WHEN forecastcategoryname = 'Pipeline' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c) ELSE 0 END) AS nn_pipeline_max,
