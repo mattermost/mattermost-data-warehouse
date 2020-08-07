@@ -19,7 +19,7 @@ MERGE INTO analytics.mattermost.nps_feedback_classification
                 WHERE table_name = 'nps_feedback_classification' AND field IN ('subcategory') AND dwh_processed_at IS NULL
             )
         WHERE row_num = 1
-        GROUP BY 1, 2, 3, 4, 5, 6
+        GROUP BY 1, 2, 3, 4, 5
     ) AS recent_updates
     ON nps_feedback_classification.last_feedback_date = recent_updates.last_feedback_date
         AND nps_feedback_classification.user_id = recent_updates.user_id
