@@ -37,20 +37,11 @@ WITH w_end_date AS (
 ), opportunity_paid_netsuite AS (
     SELECT 
       netsuite_financial.netsuite_conn__opportunity__c AS opportunity_sfid,
-      netsuite_conn__type__c || ' ' || netsuite_conn__status__c AS paid_category,
+      netsuite_conn__type__c AS paid_type,
       netsuite_conn__transaction_date__c AS paid_date,
       TRUE AS paid
     FROM {{ source('orgm', 'netsuite_conn__netsuite_financial__c') }} AS netsuite_financial
-    WHERE (netsuite_conn__type__c = 'Cash Sale' AND netsuite_conn__status__c = 'Deposited') OR (netsuite_conn__type__c = 'Invoice' AND netsuite_conn__status__c = 'Paid In Full')
-    GROUP BY 1, 2, 3, 4
-), opportunity_deposited_netsuite AS (
-    SELECT 
-      netsuite_financial.netsuite_conn__opportunity__c AS opportunity_sfid,
-      netsuite_conn__type__c || ' ' || netsuite_conn__status__c AS deposited_category,
-      netsuite_conn__transaction_date__c AS deposited_date,
-      TRUE AS deposited
-    FROM {{ source('orgm', 'netsuite_conn__netsuite_financial__c') }} AS netsuite_financial
-    WHERE (netsuite_conn__type__c = 'Cash Sale' AND netsuite_conn__status__c = 'Deposited') OR (netsuite_conn__type__c = 'Customer Payment' AND netsuite_conn__status__c = 'Deposited')
+    WHERE (netsuite_conn__type__c = 'Cash Sale' AND netsuite_conn__status__c = 'Deposited') OR (netsuite_conn__type__c = 'Customer Payment' AND netsuite_conn__status__c IN ('Deposited','Not Deposited'))
     GROUP BY 1, 2, 3, 4
 ), opportunity_marketing AS (
     SELECT 
@@ -89,11 +80,8 @@ WITH w_end_date AS (
       amount_in_best_case,
       amount_in_pipeline,
       COALESCE(paid, FALSE) AS paid,
-      paid_category,
+      paid_type,
       paid_date,
-      COALESCE(deposited, FALSE) AS deposited,
-      deposited_category,
-      deposited_date,
       SUM(new_amount__c) AS sum_new_amount,
       SUM(expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) AS sum_expansion_amount,
       SUM(expansion_amount__c + 365 * (coterm_expansion_amount__c + leftover_expansion_amount__c)/NULLIF((end_date__c::date - start_date__c::date + 1),0)) AS sum_expansion_w_proration_amount,
@@ -105,10 +93,9 @@ WITH w_end_date AS (
   LEFT JOIN w_start_date ON opportunity.sfid = w_start_date.opportunity_sfid
   LEFT JOIN w_oppt_commit ON opportunity.sfid = w_oppt_commit.opportunity_sfid
   LEFT JOIN opportunity_paid_netsuite ON opportunity.sfid = opportunity_paid_netsuite.opportunity_sfid
-  LEFT JOIN opportunity_deposited_netsuite ON opportunity.sfid = opportunity_deposited_netsuite.opportunity_sfid
   LEFT JOIN opportunity_marketing ON opportunity.sfid = opportunity_marketing.opportunity_sfid
   LEFT JOIN opportunity_fc_amounts ON opportunity.sfid = opportunity_fc_amounts.opportunity_sfid
-  GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
+  GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
 )
 
  SELECT * FROM opportunity_ext
