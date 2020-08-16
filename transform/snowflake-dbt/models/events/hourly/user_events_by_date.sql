@@ -85,7 +85,7 @@ mobile_events2       AS (
     WHERE m.timestamp::DATE <= CURRENT_DATE
     {% if is_incremental() %}
 
-      AND timestamp >= (SELECT MAX(max_timestamp) from {{this}})
+      AND m.timestamp >= (SELECT MAX(max_timestamp) from {{this}})
     
     {% endif %}
     GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
@@ -288,7 +288,7 @@ mobile_events2       AS (
                    AND e.category = r.event_category
          {% if is_incremental() %}
 
-          WHERE coalesce(e.max_uuid_ts + interval '24 hours', e.max_timestamp) >= (SELECT MAX(max_timestamp) from {{this}})
+          WHERE e.max_timestamp >= (SELECT MAX(max_timestamp - interval '25 hours') from {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 18
