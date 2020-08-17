@@ -5,7 +5,7 @@
   })
 }}
 
-WITH max_timestamp       AS (
+WITH max_segment_timestamp       AS (
     SELECT
         timestamp::DATE AS date
       , user_id
@@ -20,25 +20,64 @@ WITH max_timestamp       AS (
     {% endif %}
     GROUP BY 1, 2
 ),
+
+max_rudder_timestamp       AS (
+    SELECT
+        timestamp::DATE AS date
+      , user_id
+      , MAX(r.timestamp)  AS max_timestamp
+    FROM {{ source('mm_telemetry_prod', 'config_support') }} r
+    WHERE timestamp::DATE <= CURRENT_DATE
+    {% if is_incremental() %}
+
+        -- this filter will only be applied on an incremental run
+        AND timestamp::date >= (SELECT MAX(date) FROM {{ this }})
+
+    {% endif %}
+    GROUP BY 1, 2
+),
+
      server_support_details AS (
          SELECT
-             timestamp::DATE                                   AS date
-           , s.user_id                                         AS server_id
-           , MAX(custom_service_terms_enabled)                 AS custom_service_terms_enabled
-           , MAX(custom_terms_of_service_enabled)              AS custom_terms_of_service_enabled
-           , MAX(custom_terms_of_service_re_acceptance_period) AS custom_terms_of_service_re_acceptance_period
-           , MAX(isdefault_about_link)                         AS isdefault_about_link
-           , MAX(isdefault_help_link)                          AS isdefault_help_link
-           , MAX(isdefault_privacy_policy_link)                AS isdefault_privacy_policy_link
-           , MAX(isdefault_report_a_problem_link)              AS isdefault_report_a_problem_link
-           , MAX(isdefault_support_email)                      AS isdefault_support_email
-           , MAX(isdefault_terms_of_service_link)              AS isdefault_terms_of_service_link
-           , MAX(segment_dedupe_id)                            AS segment_dedupe_id
-           , {{ dbt_utils.surrogate_key('timestamp::date', 's.user_id') }} AS id
-         FROM {{ source('mattermost2', 'config_support') }} s
-              JOIN max_timestamp         mt
+             COALESCE(s.timestamp::DATE, r.timestamp::DATE)                 AS date
+           , COALESCE(s.user_id, r.user_id)                                 AS server_id
+           , MAX(s.custom_service_terms_enabled)                            AS custom_service_terms_enabled
+           , MAX(COALESCE(s.custom_terms_of_service_enabled, 
+                          r.custom_terms_of_service_enabled, 
+                          s.custom_service_terms_enabled))                  AS custom_terms_of_service_enabled
+           , MAX(COALESCE(s.custom_terms_of_service_re_acceptance_period, 
+                          r.custom_terms_of_service_re_acceptance_period))  AS custom_terms_of_service_re_acceptance_period
+           , MAX(COALESCE(s.isdefault_about_link, 
+                          r.isdefault_about_link))                          AS isdefault_about_link
+           , MAX(COALESCE(s.isdefault_help_link, r.isdefault_help_link))    AS isdefault_help_link
+           , MAX(COALESCE(s.isdefault_privacy_policy_link, 
+                          r.isdefault_privacy_policy_link))                 AS isdefault_privacy_policy_link
+           , MAX(COALESCE(s.isdefault_report_a_problem_link, 
+                          r.isdefault_report_a_problem_link))               AS isdefault_report_a_problem_link
+           , MAX(COALESCE(s.isdefault_support_email, 
+                          r.isdefault_support_email))                       AS isdefault_support_email
+           , MAX(COALESCE(s.isdefault_terms_of_service_link, 
+                          r.isdefault_terms_of_service_link))               AS isdefault_terms_of_service_link
+           , MAX(s.segment_dedupe_id)                              AS segment_dedupe_id
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::DATE)', 'COALESCE(s.user_id, r.user_id)') }} AS id
+           , MAX(r.enable_ask_community_link)                               AS enable_ask_community_link
+         FROM (
+                SELECT s.*
+                FROM {{ source('mattermost2', 'config_support') }} s
+                JOIN max_segment_timestamp         mt
                    ON s.user_id = mt.user_id
                        AND mt.max_timestamp = s.timestamp
+              ) s
+         FULL OUTER JOIN 
+              (
+                SELECT r.*
+                FROM {{ source('mm_telemetry_prod', 'config_support') }} r
+                JOIN max_rudder_timestamp         mt
+                   ON r.user_id = mt.user_id
+                       AND mt.max_timestamp = r.timestamp
+              ) r
+         ON s.user_id = r.user_id
+         AND s.timestamp::date = r.timestamp::date
          GROUP BY 1, 2
      )
 SELECT *
