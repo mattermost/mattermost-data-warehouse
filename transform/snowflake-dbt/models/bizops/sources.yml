@@ -16,3 +16,11 @@ sources:
     tables:
       - name: snowflake_contract_rates
         description: 'Snowflake contract rates'
+
+  - name: information_schema
+    database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
+    schema: information_schema
+
+    tables:
+      - name: columns
+        description: 'All columns in RAW Snowflake Warehouse.'
