@@ -38,7 +38,7 @@ SELECT
                     , n1.user_id
                     , CASE
                           WHEN REGEXP_SUBSTR(LOWER(n1.feedback),
-                                             '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)oaut(h|h2|hs|hentication)(^|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL
+                                             '(^| |\\.|\;|,|:|\n|\t|\-|\"|\/)oaut(h|h2|hs|hentication)(^|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL
                               THEN 'Account Authorization'
                           WHEN REGEXP_SUBSTR(LOWER(n1.feedback),
                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)password(s|^|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL
