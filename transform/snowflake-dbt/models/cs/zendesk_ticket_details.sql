@@ -45,7 +45,9 @@ WITH zendesk_ticket_details AS (
         MAX(ticket_comments.created_at) AS last_comment_at,
         MAX(CASE WHEN commentor.role IN ('agent','admin') AND ticket_comments.public THEN ticket_comments.created_at ELSE NULL END) AS last_non_enduser_comment_at,
         MAX(CASE WHEN commentor.role = 'end-user' AND ticket_comments.public THEN ticket_comments.created_at ELSE NULL END) AS last_enduser_comment_at,
-        requester.name AS requester_name
+        requester.name AS requester_name,
+        submitter.name AS submitter_name,
+        submitter.email AS submitter_email
     FROM {{ source('zendesk_raw', 'tickets') }}
     LEFT JOIN {{ source('zendesk_raw', 'ticket_metrics') }} ON tickets.id = ticket_metrics.ticket_id
     LEFT JOIN {{ source('zendesk_raw', 'organizations') }} ON tickets.organization_id = organizations.id
@@ -55,8 +57,9 @@ WITH zendesk_ticket_details AS (
     LEFT JOIN {{ source('zendesk_raw', 'ticket_comments') }} ON tickets.id = ticket_comments.ticket_id
     LEFT JOIN {{ source('zendesk_raw', 'users') }} AS commentor ON commentor.id = ticket_comments.author_id
     LEFT JOIN {{ source('zendesk_raw', 'users') }} AS requester ON requester.id = tickets.requester_id
+    LEFT JOIN {{ source('zendesk_raw', 'users') }} AS submitter ON submitter.id = tickets.submitter_id
     LEFT JOIN {{ source('zendesk_raw', 'ticket_forms') }} ON ticket_forms.id = tickets.ticket_form_id
-    GROUP BY 1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 40
+    GROUP BY 1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 40, 41, 42
 )
 
 select * from zendesk_ticket_details

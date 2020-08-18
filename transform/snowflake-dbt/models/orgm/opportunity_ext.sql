@@ -34,12 +34,15 @@ WITH w_end_date AS (
   AND ofh.newvalue = 'Commit'
   AND o.e_purchase_date__c IS NULL
   GROUP BY 1
-), opportunity_netsuite AS (
+), opportunity_paid_netsuite AS (
     SELECT 
       netsuite_financial.netsuite_conn__opportunity__c AS opportunity_sfid,
-      BOOLOR_AGG((netsuite_conn__type__c = 'Cash Sale' AND netsuite_conn__status__c = 'Deposited') OR (netsuite_conn__type__c = 'Invoice' AND netsuite_conn__status__c = 'Paid In Full')) AS paid
+      netsuite_conn__type__c AS paid_type,
+      netsuite_conn__transaction_date__c AS paid_date,
+      TRUE AS paid
     FROM {{ source('orgm', 'netsuite_conn__netsuite_financial__c') }} AS netsuite_financial
-    GROUP BY 1
+    WHERE (netsuite_conn__type__c = 'Cash Sale' AND netsuite_conn__status__c = 'Deposited') OR (netsuite_conn__type__c = 'Customer Payment' AND netsuite_conn__status__c IN ('Deposited','Not Deposited'))
+    GROUP BY 1, 2, 3, 4
 ), opportunity_marketing AS (
     SELECT 
       opportunity.sfid AS opportunity_sfid,
@@ -50,6 +53,14 @@ WITH w_end_date AS (
     WHERE contact.first_mql_date__c < opportunity.createddate
       AND opportunity.type  IN ('Account Expansion', 'New Subscription')
       AND contact.first_mql_date__c IS NOT NULL
+    GROUP BY 1
+), opportunity_fc_amounts AS (
+    SELECT 
+        opportunity.sfid as opportunity_sfid,
+        SUM(CASE WHEN forecastcategoryname = 'Commit' THEN amount ELSE 0 END) AS amount_in_commit,
+        SUM(CASE WHEN forecastcategoryname = 'Best Case' THEN amount ELSE 0 END) AS amount_in_best_case,
+        SUM(CASE WHEN forecastcategoryname = 'Pipeline' THEN amount ELSE 0 END) AS amount_in_pipeline
+    FROM {{ source('orgm','opportunity') }}
     GROUP BY 1
 ), opportunity_ext AS (
   SELECT
@@ -65,7 +76,12 @@ WITH w_end_date AS (
       last_commit_date,
       num_times_slipped,
       marketing_generated,
+      amount_in_commit,
+      amount_in_best_case,
+      amount_in_pipeline,
       COALESCE(paid, FALSE) AS paid,
+      paid_type,
+      paid_date,
       SUM(new_amount__c) AS sum_new_amount,
       SUM(expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) AS sum_expansion_amount,
       SUM(expansion_amount__c + 365 * (coterm_expansion_amount__c + leftover_expansion_amount__c)/NULLIF((end_date__c::date - start_date__c::date + 1),0)) AS sum_expansion_w_proration_amount,
@@ -76,9 +92,10 @@ WITH w_end_date AS (
   LEFT JOIN w_end_date ON opportunity.sfid = w_end_date.opportunity_sfid
   LEFT JOIN w_start_date ON opportunity.sfid = w_start_date.opportunity_sfid
   LEFT JOIN w_oppt_commit ON opportunity.sfid = w_oppt_commit.opportunity_sfid
-  LEFT JOIN opportunity_netsuite ON opportunity.sfid = opportunity_netsuite.opportunity_sfid
+  LEFT JOIN opportunity_paid_netsuite ON opportunity.sfid = opportunity_paid_netsuite.opportunity_sfid
   LEFT JOIN opportunity_marketing ON opportunity.sfid = opportunity_marketing.opportunity_sfid
-  GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
+  LEFT JOIN opportunity_fc_amounts ON opportunity.sfid = opportunity_fc_amounts.opportunity_sfid
+  GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
 )
 
  SELECT * FROM opportunity_ext

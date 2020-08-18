@@ -16,8 +16,8 @@ INSERT INTO analytics.mattermost.nps_feedback_classification(last_feedback_date,
                   , PARSE_JSON(other_params):last_feedback_date::date AS last_feedback_date
                   , field
                   , new_value
-                  , triggered_by
                   , triggered_at
+                  , triggered_by
                 FROM zapier_data_actions.data
                 WHERE table_name = 'nps_feedback_classification' AND field IN ('subcategory') AND dwh_processed_at IS NULL
             )
