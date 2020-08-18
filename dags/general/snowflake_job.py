@@ -71,7 +71,7 @@ scrub_updates = get_container_operator(
     "scrub-updates", "data_action_scrub_update", "sales"
 )
 
-automated-nps-feedback-category-update = get_container_operator(
+automated_nps_feedback_category_update = get_container_operator(
     "automated-nps-feedback-category-update", "automated_nps_feedback_category_update", "mattermost"
 )
 
