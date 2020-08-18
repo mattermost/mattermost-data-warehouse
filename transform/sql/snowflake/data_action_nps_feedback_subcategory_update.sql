@@ -1,12 +1,12 @@
-MERGE INTO analytics.mattermost.nps_feedback_classification
-    USING (
+INSERT INTO analytics.mattermost.nps_feedback_classification(last_feedback_date, server_id, user_id, subcategory, categorized_at, categorized_by, manually_categorized)
         SELECT 
             last_feedback_date
-          , user_id
           , server_id
-          , field
+          , user_id
           , new_value as subcategory
-          , CURRENT_TIMESTAMP as categorized_at
+          , triggered_at as categorized_at
+          , triggered_by as categorized_by
+          , TRUE as manually_categorized
         FROM (
                 SELECT 
                     ROW_NUMBER() OVER 
@@ -16,19 +16,14 @@ MERGE INTO analytics.mattermost.nps_feedback_classification
                   , PARSE_JSON(other_params):last_feedback_date::date AS last_feedback_date
                   , field
                   , new_value
+                  , triggered_by
+                  , triggered_at
                 FROM zapier_data_actions.data
                 WHERE table_name = 'nps_feedback_classification' AND field IN ('subcategory') AND dwh_processed_at IS NULL
             )
         WHERE row_num = 1
-        GROUP BY 1, 2, 3, 4, 5
-    ) AS recent_updates
-    ON nps_feedback_classification.last_feedback_date = recent_updates.last_feedback_date
-        AND nps_feedback_classification.user_id = recent_updates.user_id
-        AND nps_feedback_classification.server_id = recent_updates.server_id
-WHEN MATCHED THEN UPDATE
-    SET nps_feedback_classification.subcategory = recent_updates.subcategory
-WHEN NOT MATCHED THEN
-    INSERT(last_feedback_date, server_id, user_id, subcategory, categorized_at) values (recent_updates.last_feedback_date, recent_updates.server_id, recent_updates.user_id, recent_updates.subcategory, recent_updates.categorized_at);
+        GROUP BY 1, 2, 3, 4, 5, 6, 7
+    ;
 
 UPDATE zapier_data_actions.data
 SET dwh_processed_at = current_timestamp()
