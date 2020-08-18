@@ -70,3 +70,17 @@ def get_container_operator(task_name, job_name, schema):
 scrub_updates = get_container_operator(
     "scrub-updates", "data_action_scrub_update", "sales"
 )
+
+automated_nps_feedback_category_update = get_container_operator(
+    "automated-nps-feedback-category-update", "automated_nps_feedback_category_update", "mattermost"
+)
+
+nps_category_updates = get_container_operator(
+    "nps-category-updates", "data_action_nps_feedback_category_update", "mattermost"
+)
+
+nps_subcategory_updates = get_container_operator(
+    "nps-subcategory-updates", "data_action_nps_feedback_subcategory_update", "mattermost"
+)
+
+scrub_updates >> automated_nps_feedback_category_update >> nps_subcategory_updates >> nps_category_updates

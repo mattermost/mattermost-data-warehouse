@@ -22,6 +22,7 @@ if __name__ == "__main__":
 
     with open(f"transform/sql/snowflake/{args.sql_file}.sql") as f:
         content = f.read()
+        content = content.replace("\;", "SEMICOLONTEMPFIX")
         queries = content.split(";")
         with engine.begin() as conn:
-            [conn.execute(query) for query in queries]
+            [conn.execute(query.replace("SEMICOLONTEMPFIX", ";")) for query in queries]

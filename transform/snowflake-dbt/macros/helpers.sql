@@ -186,8 +186,14 @@ select get_sys_var({{ var_name }})
                 {%- endfor -%}
 
             from {{ relation }}
-            WHERE original_timestamp::date <= CURRENT_DATE
-            {% if is_incremental() %}
+            {% if adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
+             WHERE original_timestamp::date <= CURRENT_DATE
+            {% else %}
+             WHERE timestamp::date <= CURRENT_DATE
+            {% endif %}
+            {% if is_incremental() and adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
+                AND original_timestamp > (select max(original_timestamp) from {{ this }} )
+            {% elif is_incremental() %}
                 AND timestamp > (select max(timestamp) from {{ this }} )
             {% endif %}
         )
