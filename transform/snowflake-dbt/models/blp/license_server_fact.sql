@@ -27,7 +27,8 @@ WHERE server_id IS NOT NULL
 GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
 )
 
-SELECT *
+SELECT *,
+       ROW_NUMBER() OVER (PARTITION BY server_id ORDER BY trial DESC, license_activation_date desc) AS license_priority_rank
 FROM license_server_fact
 {% if is_incremental() %}
 

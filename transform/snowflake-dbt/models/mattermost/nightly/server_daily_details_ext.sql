@@ -491,6 +491,7 @@ WITH server_daily_details_ext AS (
       , sc.version_todo
       , sc.version_memes
       , sc.enable_ask_community_link
+      , sc.guest_accounts
     FROM {{ ref('server_daily_details') }}         s
          LEFT JOIN {{ ref('server_config_details') }} sc
                    ON s.server_id = sc.server_id
@@ -523,7 +524,7 @@ WITH server_daily_details_ext AS (
              421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440,
              441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460,
              461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480,
-             481, 482, 483, 484
+             481, 482, 483, 484, 485
 )
 
 SELECT *
