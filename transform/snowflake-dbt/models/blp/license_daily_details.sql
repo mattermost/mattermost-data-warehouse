@@ -72,6 +72,7 @@ WITH license_daily_details_all as (
            , SUM(NULLIF(a.public_channels, 0))                                              AS public_channels
            , SUM(NULLIF(a.public_channels_deleted, 0))                                      AS public_channels_deleted
            , SUM(NULLIF(a.bot_accounts, 0))                                                 AS bot_accounts
+           , SUM(NULLIF(a.guest_accounts, 0))                                               AS guest_accounts
            , MAX(regexp_substr(s.version,'^[0-9]{1,2}[.]{1}[0-9]{1,2}[.]{1}[0-9]{1,2}'))    AS server_version
          FROM {{ ref('licenses') }} l
          LEFT JOIN (
