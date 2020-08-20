@@ -45,6 +45,7 @@ WITH max_timestamp               AS (
            , MAX(teams)                        AS teams
            , MAX(used_apiv3)                   AS used_apiv3
            , {{ dbt_utils.surrogate_key('a.timestamp::date', 'a.user_id') }} AS id
+           , MAX(guest_accounts)               AS guest_accounts
          FROM {{ source('mattermost2', 'activity') }} a
               JOIN max_timestamp       mt
                    ON a.user_id = mt.user_id

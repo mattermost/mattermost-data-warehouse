@@ -1,6 +1,6 @@
 {{config({
-    "materialized": 'table',
-    "schema": "mattermost"
+    'materialized': 'table',
+    'schema': 'mattermost'
   })
 }}
 
@@ -125,7 +125,7 @@ WITH server_details AS (
          AND s1.date = s2.last_event_date
         {{ dbt_utils.group_by(n=15) }}
     ), 
-  server_fact AS (
+  server_fact_prep AS (
     SELECT
         server_details.server_id
       , MAX(server_daily_details.version)                 AS version
@@ -226,6 +226,81 @@ WITH server_details AS (
         LEFT JOIN last_server_date lsd
             ON server_details.server_id = lsd.server_Id
         {{ dbt_utils.group_by(n=1) }}
+    ),
+
+    server_fact AS (
+      SELECT 
+          server_id
+        , version
+        , first_server_version
+        , server_edition
+        , first_server_edition
+        , first_telemetry_active_date
+        , last_telemetry_active_date
+        , first_mm2_telemetry_date
+        , last_mm2_telemetry_date
+        , version_upgrade_count
+        , edition_upgrade_count
+        , gitlab_install
+        , account_sfid
+        , account_name
+        , master_account_sfid
+        , master_account_name
+        , company
+        , last_license_id1
+        , last_license_id2
+        , first_paid_license_date
+        , last_paid_license_date
+        , paid_license_expire_date
+        , first_trial_license_date
+        , last_trial_license_date
+        , trial_license_expire_date
+        , first_active_date
+        , last_active_date
+        , max_active_user_count
+        , max_mau
+        , max_registered_users
+        , max_registered_deactivated_users
+        , last_telemetry_active_user_date
+        , last_event_active_user_date
+        , dau_total
+        , mobile_dau
+        , mau_total
+        , first_time_mau
+        , reengaged_mau
+        , current_mau
+        , total_events
+        , desktop_events
+        , web_app_events
+        , mobile_events
+        , events_alltime
+        , mobile_events_alltime
+        , users
+        , last_active_license_date
+        , nps_users
+        , nps_score
+        , promoters
+        , detractors
+        , passives
+        , avg_nps_user_score
+        , first_100reg_users_date
+        , first_500reg_users_date
+        , first_1kreg_users_date
+        , first_2500reg_users_date
+        , first_5kreg_users_date
+        , first_10kreg_users_date
+        , posts_events_alltime
+        , invite_members_alltime
+        , signup_events_alltime
+        , signup_email_events_alltime
+        , tutorial_events_alltime
+        , admin_events_alltime
+        , days_active
+        , days_inactive
+        , max_posts
+        , MIN(first_active_date) OVER (PARTITION BY COALESCE(ACCOUNT_SFID, LOWER(COMPANY), SERVER_ID)) AS customer_first_active_date
+        , MIN(first_paid_license_date) OVER (PARTITION BY COALESCE(ACCOUNT_SFID, LOWER(COMPANY), SERVER_ID)) AS customer_first_paid_license_date
+      FROM server_fact_prep
     )
 SELECT *
 FROM server_fact
