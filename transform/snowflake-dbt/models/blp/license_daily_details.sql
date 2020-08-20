@@ -121,6 +121,9 @@ WITH license_daily_details_all as (
                                 THEN a.bot_accounts
                                     ELSE 0 END)                                  AS bot_accounts
                       , MAX(CASE WHEN a.timestamp::DATE = l.date
+                                THEN a.guest_accounts
+                                    ELSE 0 END)                                  AS guest_accounts
+                      , MAX(CASE WHEN a.timestamp::DATE = l.date
                                 THEN a.context_library_version 
                                     ELSE NULL END)                                  AS server_version
                       , MAX(a.timestamp::date)                                   AS timestamp
@@ -237,6 +240,8 @@ WITH license_daily_details_all as (
                              (PARTITION BY ld.date, ld.company, ld.trial 
                               ORDER BY CASE WHEN ld.users IS NOT NULL THEN ld.expire_date 
                               ELSE ld.start_date END desc NULLS LAST, ld.users desc NULLS LAST, ld.last_telemetry_date desc NULLS LAST, ld.edition desc NULLS LAST)   AS customer_rank
+          , ld.guest_accounts                                                                         AS license_guest_accounts
+          , MAX(ld.guest_accounts) OVER (PARTITION BY ld.date, ld.customer_id)                        AS customer_guest_accounts
         FROM license_daily_details_all ld
      )
      SELECT *
