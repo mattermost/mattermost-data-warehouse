@@ -17,3 +17,6 @@ models:
   - name: enterprise_license_mapping
 
   - name: enterprise_license_fact
+
+  - name: license_server_fact
+    description: Contains a single row per server per license for every time a license has appeared in the server's telemetry.
