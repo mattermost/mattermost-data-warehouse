@@ -72,6 +72,7 @@ WITH license_daily_details_all as (
            , SUM(NULLIF(a.public_channels, 0))                                              AS public_channels
            , SUM(NULLIF(a.public_channels_deleted, 0))                                      AS public_channels_deleted
            , SUM(NULLIF(a.bot_accounts, 0))                                                 AS bot_accounts
+           , SUM(NULLIF(a.guest_accounts, 0))                                               AS guest_accounts
            , MAX(regexp_substr(s.version,'^[0-9]{1,2}[.]{1}[0-9]{1,2}[.]{1}[0-9]{1,2}'))    AS server_version
          FROM {{ ref('licenses') }} l
          LEFT JOIN (
@@ -120,6 +121,9 @@ WITH license_daily_details_all as (
                       , MAX(CASE WHEN a.timestamp::DATE = l.date
                                 THEN a.bot_accounts
                                     ELSE 0 END)                                  AS bot_accounts
+                      , MAX(CASE WHEN a.timestamp::DATE = l.date
+                                THEN a.guest_accounts
+                                    ELSE 0 END)                                  AS guest_accounts
                       , MAX(CASE WHEN a.timestamp::DATE = l.date
                                 THEN a.context_library_version 
                                     ELSE NULL END)                                  AS server_version
@@ -237,6 +241,8 @@ WITH license_daily_details_all as (
                              (PARTITION BY ld.date, ld.company, ld.trial 
                               ORDER BY CASE WHEN ld.users IS NOT NULL THEN ld.expire_date 
                               ELSE ld.start_date END desc NULLS LAST, ld.users desc NULLS LAST, ld.last_telemetry_date desc NULLS LAST, ld.edition desc NULLS LAST)   AS customer_rank
+          , ld.guest_accounts                                                                         AS license_guest_accounts
+          , MAX(ld.guest_accounts) OVER (PARTITION BY ld.date, ld.customer_id)                        AS customer_guest_accounts
         FROM license_daily_details_all ld
      )
      SELECT *
