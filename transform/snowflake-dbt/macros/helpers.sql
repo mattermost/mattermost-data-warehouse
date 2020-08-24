@@ -192,9 +192,9 @@ select get_sys_var({{ var_name }})
              WHERE timestamp::date <= CURRENT_DATE
             {% endif %}
             {% if is_incremental() and adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
-                AND original_timestamp > (select max(original_timestamp) from {{ this }} )
+                AND original_timestamp::date >= (select max(original_timestamp::date) from {{ this }} )
             {% elif is_incremental() %}
-                AND timestamp > (select max(timestamp) from {{ this }} )
+                AND timestamp::date >= (select max(timestamp::date) from {{ this }} )
             {% endif %}
         )
 
