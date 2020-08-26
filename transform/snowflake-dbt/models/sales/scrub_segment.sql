@@ -40,6 +40,9 @@ WITH segment_nn_amounts AS (
         SUM(CASE WHEN opportunity.status_wlo__c = 'Won' THEN renewal_rate_by_renewal_opportunity.won_renewal_gross_total ELSE 0 END) AS available_renewals_won,
         SUM(CASE WHEN opportunity.status_wlo__c = 'Open' THEN renewal_rate_by_renewal_opportunity.open_renewal_gross_total ELSE 0 END) AS available_renewals_open,
         SUM(CASE WHEN opportunity.status_wlo__c = 'Lost' THEN renewal_rate_by_renewal_opportunity.lost_renewal_gross_total ELSE 0 END) AS available_renewals_lost,
+        SUM(CASE WHEN opportunity.status_wlo__c = 'Won' AND renewal_date < current_date THEN renewal_rate_by_renewal_opportunity.won_renewal_gross_total ELSE 0 END) AS available_renewals_won_qtd,
+        SUM(CASE WHEN opportunity.status_wlo__c = 'Open' AND renewal_date < current_date THEN renewal_rate_by_renewal_opportunity.open_renewal_gross_total ELSE 0 END) AS available_renewals_open_past_due_qtd,
+        SUM(CASE WHEN opportunity.status_wlo__c = 'Lost' AND renewal_date < current_date THEN renewal_rate_by_renewal_opportunity.lost_renewal_gross_total ELSE 0 END) AS available_renewals_lost_qtd,
         SUM(CASE WHEN opportunity.status_wlo__c = 'Won' THEN renewal_rate_by_renewal_opportunity.won_renewal_gross_total ELSE 0 END) / SUM(renewal_rate_by_renewal_opportunity.available_renewal) AS available_renewals_won_perc,
         SUM(CASE WHEN opportunity.status_wlo__c = 'Open' THEN renewal_rate_by_renewal_opportunity.open_renewal_gross_total ELSE 0 END) / SUM(renewal_rate_by_renewal_opportunity.available_renewal) AS available_renewals_open_perc,
         SUM(CASE WHEN opportunity.status_wlo__c = 'Lost' THEN renewal_rate_by_renewal_opportunity.lost_renewal_gross_total ELSE 0 END) / SUM(renewal_rate_by_renewal_opportunity.available_renewal) AS available_renewals_lost_perc,
@@ -90,7 +93,10 @@ WITH segment_nn_amounts AS (
         available_renewals_won_in_qtr AS ren_available_renewals_won_in_qtr,
         available_renewals_won_early AS ren_available_renewals_won_early,
         available_renewals_won_late AS ren_available_renewals_won_late,
-        available_renewals_open_in_qtr AS ren_available_renewals_open_in_qtr
+        available_renewals_open_in_qtr AS ren_available_renewals_open_in_qtr,
+        available_renewals_won_qtd AS ren_available_renewals_won_qtd,
+        available_renewals_open_past_due_qtd AS ren_available_renewals_open_past_due_qtd,
+        available_renewals_lost_qtd AS ren_available_renewals_lost_qtd
     FROM {{ ref('tva_attain_new_and_exp_by_segment_by_qtr') }}
     LEFT JOIN {{ ref('tva_bookings_ren_by_segment_by_qtr') }} 
         ON tva_attain_new_and_exp_by_segment_by_qtr.qtr = tva_bookings_ren_by_segment_by_qtr.qtr 
@@ -101,7 +107,7 @@ WITH segment_nn_amounts AS (
     LEFT JOIN segment_nn_amounts ON segment_nn_amounts.qtr = tva_attain_new_and_exp_by_segment_by_qtr.qtr AND segment_nn_amounts.territory_segment__c = REPLACE(tva_attain_new_and_exp_by_segment_by_qtr.target_slug,'attain_new_and_exp_by_segment_by_qtr_','')
     LEFT JOIN segment_ren_amounts ON segment_ren_amounts.qtr = tva_bookings_ren_by_segment_by_qtr.qtr AND segment_ren_amounts.territory_segment__c = REPLACE(tva_bookings_ren_by_segment_by_qtr.target_slug,'bookings_ren_by_segment_by_qtr_','')
     LEFT JOIN segment_available_renewals ON segment_available_renewals.qtr = tva_bookings_ren_by_segment_by_qtr.qtr AND segment_ren_amounts.territory_segment__c = segment_available_renewals.territory_segment__c
-    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37
+    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40
 )
 
 SELECT * FROM scrub_segment

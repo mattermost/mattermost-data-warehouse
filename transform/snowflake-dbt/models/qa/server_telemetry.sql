@@ -1,7 +1,8 @@
 {{config({
     "materialized": "table",
     "schema": "qa",
-    "tags":"hourly"
+    "tags":"hourly",
+    "unique_key":"id"
   })
 }}
 
