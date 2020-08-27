@@ -34,19 +34,16 @@ WITH upgrade         AS (
            , prev_edition
            , current_edition
          FROM upgrade
-         WHERE (CASE WHEN regexp_substr(regexp_substr(current_version,'[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') IS NULL THEN
-                    regexp_substr(current_version, '^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}') 
-                  ELSE regexp_substr(regexp_substr(current_version,'[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') 
-                END >
-                coalesce(CASE WHEN regexp_substr(regexp_substr(prev_version,'[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') IS NULL THEN
-                                regexp_substr(prev_version, '^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}') 
-                              ELSE regexp_substr(regexp_substr(prev_version,'[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') 
-                          END,
-                         CASE WHEN regexp_substr(regexp_substr(current_version,'[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') IS NULL THEN
-                                regexp_substr(current_version, '^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}') 
-                              ELSE regexp_substr(regexp_substr(current_version,'[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') 
-                          END)
-             OR (current_edition = 'true' AND coalesce(prev_edition, 'true') = 'false'))
+         WHERE (
+              (CASE WHEN SPLIT_PART(current_version, '.', 1)::FLOAT > SPLIT_PART(COALESCE(prev_version, current_version), '.', 1)::float THEN TRUE
+                WHEN SPLIT_PART(current_version, '.', 1)::FLOAT = SPLIT_PART(COALESCE(prev_version, current_version), '.', 1)::float
+                  AND SPLIT_PART(current_version, '.', 2)::FLOAT > SPLIT_PART(COALESCE(prev_version, current_version), '.', 2)::float THEN TRUE
+                WHEN SPLIT_PART(current_version, '.', 1)::FLOAT = SPLIT_PART(COALESCE(prev_version, current_version), '.', 1)::float
+                  AND SPLIT_PART(current_version, '.', 2)::FLOAT = SPLIT_PART(COALESCE(prev_version, current_version), '.', 2)::float
+                  AND SPLIT_PART(current_version, '.', 3)::FLOAT > SPLIT_PART(COALESCE(prev_version, current_version), '.', 3)::float THEN TRUE
+                ELSE FALSE END)
+             OR (current_edition = 'true' AND coalesce(prev_edition, 'true') = 'false')
+             )
          {% if is_incremental() %}
 
          AND date > (SELECT MAX(date) FROM {{this}} )
