@@ -5,7 +5,7 @@ UPDATE orgm.opportunitylineitem
         coterm_expansion_amount__c = oli_totals.total_coterm_amount,
         leftover_expansion_amount__c = oli_totals.total_leftover_amount,
         multi_amount__c = oli_totals.total_multi_amount,
-        ren_multi_amount__c = oli_totals.ren_total_multi_amount,
+        ren_multi_amount__c = oli_totals.ren_total_multi_amount
 FROM (
         SELECT
             opportunitylineitem.sfid as oli_sfid,
