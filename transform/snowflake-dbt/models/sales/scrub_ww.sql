@@ -34,6 +34,7 @@ WITH ww_nn_amounts AS (
     SELECT
         util.fiscal_year(renewal_rate_by_renewal_opportunity.renewal_date)|| '-' || util.fiscal_quarter(renewal_rate_by_renewal_opportunity.renewal_date) AS qtr,
         SUM(renewal_rate_by_renewal_opportunity.available_renewal) AS available_renewals,
+        SUM(CASE WHEN renewal_date < current_date THEN renewal_rate_by_renewal_opportunity.available_renewal ELSE 0 END) AS available_renewals_qtd,
         SUM(CASE WHEN opportunity.status_wlo__c = 'Won' THEN renewal_rate_by_renewal_opportunity.won_renewal_gross_total ELSE 0 END) AS available_renewals_won,
         SUM(CASE WHEN opportunity.status_wlo__c = 'Open' THEN renewal_rate_by_renewal_opportunity.open_renewal_gross_total ELSE 0 END) AS available_renewals_open,
         SUM(CASE WHEN opportunity.status_wlo__c = 'Lost' THEN renewal_rate_by_renewal_opportunity.lost_renewal_gross_total ELSE 0 END) AS available_renewals_lost,
@@ -78,6 +79,7 @@ WITH ww_nn_amounts AS (
         ren_pipeline_max,
         ren_omitted_max,
         available_renewals AS ren_available,
+        available_renewals_qtd AS ren_available_renewals_qtd,
         available_renewals_won AS ren_available_renewals_won,
         available_renewals_open AS ren_available_renewals_open,
         available_renewals_lost AS ren_available_renewals_lost,
@@ -99,7 +101,7 @@ WITH ww_nn_amounts AS (
     LEFT JOIN ww_nn_amounts ON ww_nn_amounts.qtr = tva_bookings_new_and_exp_by_qtr.qtr
     LEFT JOIN ww_ren_amounts ON ww_ren_amounts.qtr = tva_bookings_ren_by_qtr.qtr
     LEFT JOIN ww_available_renewals ON ww_available_renewals.qtr = tva_bookings_ren_by_qtr.qtr
-    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39
+    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40
 )
 
 SELECT * FROM scrub_ww
