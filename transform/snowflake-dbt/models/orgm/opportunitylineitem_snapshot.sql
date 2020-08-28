@@ -31,7 +31,7 @@ WITH opportunitylineitem_snapshot AS (
         coterm_expansion_amount__c,
         leftover_expansion_amount__c,
         multi_amount__c,
-        ren_multi_amount__c
+        renewal_multi_amount__c
         FROM {{ source('orgm', 'opportunitylineitem') }}
         {% if is_incremental() %}
         WHERE current_date > (SELECT MAX(snapshot_date) FROM {{this}})
