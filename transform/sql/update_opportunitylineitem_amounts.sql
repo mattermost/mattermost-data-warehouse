@@ -5,7 +5,7 @@ UPDATE orgm.opportunitylineitem
         coterm_expansion_amount__c = oli_totals.total_coterm_amount,
         leftover_expansion_amount__c = oli_totals.total_leftover_amount,
         multi_amount__c = oli_totals.total_multi_amount,
-        ren_multi_amount__c = oli_totals.ren_total_multi_amount
+        renewal_multi_amount__c = oli_totals.total_ren_multi_amount
 FROM (
         SELECT
             opportunitylineitem.sfid as oli_sfid,
@@ -19,5 +19,5 @@ FROM (
         FROM orgm.opportunitylineitem
     ) as oli_totals
 WHERE oli_totals.oli_sfid = opportunitylineitem.sfid AND opportunitylineitem.product_line_type__c != 'Self-Service' AND NOT opportunitylineitem.amount_manual_override__c
-    AND (new_amount__c, renewal_amount__c, expansion_amount__c, coterm_expansion_amount__c, leftover_expansion_amount__c, multi_amount__c, ren_multi_amount__c) IS DISTINCT FROM
+    AND (new_amount__c, renewal_amount__c, expansion_amount__c, coterm_expansion_amount__c, leftover_expansion_amount__c, multi_amount__c, renewal_multi_amount__c) IS DISTINCT FROM
         (oli_totals.total_new_amount, oli_totals.total_renewal_amount, oli_totals.total_expansion_amount, oli_totals.total_coterm_amount, oli_totals.total_leftover_amount, oli_totals.total_multi_amount, oli_totals.total_ren_multi_amount);
