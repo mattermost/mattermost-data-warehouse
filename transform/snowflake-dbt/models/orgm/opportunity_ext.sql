@@ -87,7 +87,7 @@ WITH w_end_date AS (
       SUM(expansion_amount__c + 365 * (coterm_expansion_amount__c + leftover_expansion_amount__c)/NULLIF((end_date__c::date - start_date__c::date + 1),0)) AS sum_expansion_w_proration_amount,
       SUM(renewal_amount__c) AS sum_renewal_amount,
       SUM(multi_amount__c) AS sum_multi_amount,
-      SUM(ren_multi_amount__c) AS sum_ren_multi_amount
+      SUM(renewal_multi_amount__c) AS sum_renewal_multi_amount
   FROM {{ source('orgm', 'opportunity') }}
   LEFT JOIN {{ source('orgm', 'opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
   LEFT JOIN w_end_date ON opportunity.sfid = w_end_date.opportunity_sfid
