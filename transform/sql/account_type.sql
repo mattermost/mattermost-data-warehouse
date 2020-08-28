@@ -24,7 +24,6 @@ WHERE account.sfid = account_arr_details.sfid
     AND account_arr_details.child_seats = 0
     AND type = 'Customer';
 
-
 UPDATE orgm.account
 SET type = 'Customer'
 FROM (
