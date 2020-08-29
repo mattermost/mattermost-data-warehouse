@@ -10,3 +10,7 @@ sources:
         description: 'Date utility table'
       - name: world_cities
         description: 'City information (Latitude/Longitude)'
+      - name: stop_words
+        description: List of all/most stop words in the english language.
+      - name: public_domains
+        description: List of all/most public web/email domains.
