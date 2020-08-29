@@ -7,7 +7,7 @@
 WITH actual_bookings_by_mo AS (
     SELECT
       date_trunc('month', closedate)::date AS month,
-      ROUND(SUM(new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c + multi_amount__c),2) AS actual
+      ROUND(SUM(new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c + multi_amount__c + renewal_multi_amount__c),2) AS actual
     FROM {{ source('orgm', 'opportunity') }} AS opportunity
     LEFT JOIN {{ source('orgm', 'opportunitylineitem') }} AS opportunitylineitem ON opportunity.sfid = opportunitylineitem.opportunityid
     WHERE iswon
