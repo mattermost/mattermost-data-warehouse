@@ -68,7 +68,7 @@ select get_sys_var({{ var_name }})
      and lower(table_name) not in ({{ table_exclusions}})
      
     {%- endif -%}
-    {%- if table_inclusions -%}
+    {%- if table_inclusions and scheme != 'portal_test' -%}
 
      and lower(table_name) in ({{ table_inclusions}})
      
