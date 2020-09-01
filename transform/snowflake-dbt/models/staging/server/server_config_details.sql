@@ -474,6 +474,8 @@ SELECT
   , ssupport.enable_ask_community_link
   , sactivity.guest_accounts
   , scluster.enable_experimental_gossip_encryption
+  , splugin.version_jitsi
+  , splugin.version_skype4business
 FROM {{ ref('server_daily_details') }}                      s
     LEFT JOIN {{ ref('server_activity_details') }}            sactivity
     ON s.server_id = sactivity.server_id AND s.date = sactivity.date
@@ -528,7 +530,7 @@ FROM {{ ref('server_daily_details') }}                      s
     LEFT JOIN {{ ref('server_permissions_general_details') }} spermissions
     ON s.server_id = spermissions.user_id AND s.date = spermissions.date
     LEFT JOIN {{ ref('server_permissions_system_details') }}  sspermissions
-    ON s.server_id = sspermissions.user_id AND s.date = sspermissions.date
+    ON s.server_id = sspermissions.server_id AND s.date = sspermissions.date
     LEFT JOIN {{ ref('server_plugin_details') }}              splugin
     ON s.server_id = splugin.server_id AND s.date = splugin.date
     LEFT JOIN {{ ref('server_plugins_details') }}             splugins
@@ -581,7 +583,7 @@ GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 
  401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 
  421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 
  441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453, 454, 455, 456, 457, 458, 459, 460,
- 461, 462, 463, 464, 465, 466, 467
+ 461, 462, 463, 464, 465, 466, 467, 468, 469
 )
 SELECT *
 FROM server_config_details
