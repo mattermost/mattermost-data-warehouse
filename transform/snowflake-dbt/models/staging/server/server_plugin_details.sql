@@ -92,6 +92,8 @@ max_rudder_timestamp       AS (
            , MAX(p.VERSION_COMMATTERMOSTPLUGININCIDENTRESPONSE) as version_incident_response
            , MAX(p.VERSION_COMMATTERMOSTPLUGINTODO) as version_todo
            , MAX(p.VERSION_MEMES) as version_memes
+           , MAX(p.VERSION_JITSI) as version_jitsi
+           , MAX(p.VERSION_SKYPE4BUSINESS) as version_skype4business
          FROM 
             (
               SELECT s.*

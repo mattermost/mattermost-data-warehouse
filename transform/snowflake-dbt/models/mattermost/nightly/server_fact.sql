@@ -85,6 +85,14 @@ WITH server_details AS (
            OR sd.first_server_version_date = s.date)
       GROUP BY 1
     ),
+    api_request_trial_events AS (
+      SELECT
+          server_id
+        , sum(total_events) as api_request_trial_events_alltime
+      FROM {{ ref('user_events_by_date') }}
+      WHERE event_name = 'api_request_trial_license'
+      GROUP BY 1
+    ),
   last_server_date AS (
     SELECT
         server_id
@@ -202,6 +210,7 @@ WITH server_details AS (
       , MAX(lsd.days_active)                              AS days_active
       , MAX(lsd.days_inactive)                            AS days_inactive
       , MAX(server_details.max_posts)                     AS max_posts
+      , MAX(api.api_request_trial_events_alltime)         AS api_request_trial_events_alltime
     FROM server_details
         LEFT JOIN {{ ref('server_daily_details') }}
             ON server_details.server_id = server_daily_details.server_id
@@ -225,6 +234,8 @@ WITH server_details AS (
             AND server_details.first_mm2_telemetry_date = oauth.date
         LEFT JOIN last_server_date lsd
             ON server_details.server_id = lsd.server_Id
+        LEFT JOIN api_request_trial_events api
+            ON server_details.server_id = api.server_id
         {{ dbt_utils.group_by(n=1) }}
     ),
 
@@ -300,6 +311,7 @@ WITH server_details AS (
         , max_posts
         , MIN(first_active_date) OVER (PARTITION BY COALESCE(ACCOUNT_SFID, LOWER(COMPANY), SERVER_ID)) AS customer_first_active_date
         , MIN(first_paid_license_date) OVER (PARTITION BY COALESCE(ACCOUNT_SFID, LOWER(COMPANY), SERVER_ID)) AS customer_first_paid_license_date
+        , api_request_trial_events_alltime
       FROM server_fact_prep
     )
 SELECT *
