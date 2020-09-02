@@ -44,7 +44,7 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(r.data_source_replicas, s.data_source_replicas))                   AS data_source_replicas
            , MAX(COALESCE(r.data_source_search_replicas, s.data_source_search_replicas))            AS data_source_search_replicas
            , MAX(COALESCE(r.driver_name, s.driver_name))                            AS driver_name
-           , MAX(COALESCE(r.enable_public_channels_materialization, NULL )) AS enable_public_channels_materialization
+           , MAX(COALESCE(s.enable_public_channels_materialization, NULL )) AS enable_public_channels_materialization
            , MAX(COALESCE(r.max_idle_conns, s.max_idle_conns))                         AS max_idle_conns
            , MAX(COALESCE(r.max_open_conns, s.max_open_conns))                         AS max_open_conns
            , MAX(COALESCE(r.query_timeout, s.query_timeout))                          AS query_timeout

@@ -40,13 +40,13 @@ max_rudder_timestamp       AS (
          SELECT
              COALESCE(r.timestamp::DATE, s.timestamp::date)                        AS date
            , COALESCE(r.user_id, s.user_id)                                        AS server_id
-           , MAX(COALESCE(r.enable_rate_limiter)      AS enable_rate_limiter
-           , MAX(COALESCE(r.isdefault_vary_by_header) AS isdefault_vary_by_header
-           , MAX(COALESCE(r.max_burst)                AS max_burst
-           , MAX(COALESCE(r.memory_store_size)        AS memory_store_size
-           , MAX(COALESCE(r.per_sec)                  AS per_sec
-           , MAX(COALESCE(r.vary_by_remote_address)   AS vary_by_remote_address
-           , MAX(COALESCE(r.vary_by_user)             AS vary_by_user
+           , MAX(COALESCE(r.enable_rate_limiter, s.enable_rate_limiter))      AS enable_rate_limiter
+           , MAX(COALESCE(r.isdefault_vary_by_header, s.isdefault_vary_by_header)) AS isdefault_vary_by_header
+           , MAX(COALESCE(r.max_burst, s.max_burst))                AS max_burst
+           , MAX(COALESCE(r.memory_store_size, s.memory_store_size))        AS memory_store_size
+           , MAX(COALESCE(r.per_sec, s.per_sec))                  AS per_sec
+           , MAX(COALESCE(r.vary_by_remote_address, s.vary_by_remote_address))   AS vary_by_remote_address
+           , MAX(COALESCE(r.vary_by_user, s.vary_by_user))             AS vary_by_user
            , {{ dbt_utils.surrogate_key('COALESCE(r.timestamp::DATE, s.timestamp::date)', 'COALESCE(r.user_id, s.user_id)') }} AS id
          FROM 
             (
