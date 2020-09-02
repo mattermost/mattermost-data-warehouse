@@ -517,7 +517,7 @@ WITH server_daily_details_ext AS (
     WHERE s.date >= (SELECT MAX(date) FROM {{this}})
 
     {% endif %}
-    GROUP BY {{ dbt_utils.group_by(n=503) }}
+    {{ dbt_utils.group_by(n=503) }}
 )
 
 SELECT *

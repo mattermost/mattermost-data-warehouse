@@ -578,7 +578,7 @@ WHERE s.date <= CURRENT_DATE
 AND s.date >= (SELECT MAX(date) FROM {{this}})
 
 {% endif %}
-GROUP BY {{ dbt_utils.group_by(n=482)}}
+{{ dbt_utils.group_by(n=482)}}
 )
 SELECT *
 FROM server_config_details
