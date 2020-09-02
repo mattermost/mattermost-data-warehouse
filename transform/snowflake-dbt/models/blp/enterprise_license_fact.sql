@@ -24,7 +24,8 @@ WITH enterprise_license_fact AS (
         MAX(month_ago.license_server_dau)::int AS month_ago_max_license_server_dau,
         MAX(month_ago.license_server_mau)::int AS month_ago_max_license_server_mau,
         ROUND(AVG(month_ago.servers),1) as month_ago_avg_servers,
-        MAX(month_ago.servers)::int as month_ago_max_servers
+        MAX(month_ago.servers)::int as month_ago_max_servers,
+        MAX(license_daily_details.license_server_version) as current_license_server_version
     FROM {{ ref('licenses') }}
     LEFT JOIN {{ ref('license_daily_details') }} ON licenses.license_id = license_daily_details.license_id
         AND license_daily_details.date >= CURRENT_DATE - INTERVAL '8 days'
