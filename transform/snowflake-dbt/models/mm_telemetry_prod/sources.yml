@@ -113,6 +113,12 @@ sources:
        
       - name: config_webrtc
         description: The raw Server WebRTC configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_audit
+        description: The raw Server Audit configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_bleve
+        description: The raw Server Bleve configuration data sent to Mattermost by Telemetry-Enabled Servers.
       
       - name: plugins
         description: Contains the raw plugin configurations of a server at a given point in time. Represented by integer counts. No plugin names or details provided.
