@@ -541,7 +541,7 @@ FROM {{ ref('server_daily_details') }}                      s
     LEFT JOIN {{ ref('server_password_details') }}            spassword
     ON s.server_id = spassword.server_id AND s.date = spassword.date
     LEFT JOIN {{ ref('server_permissions_general_details') }} spermissions
-    ON s.server_id = spermissions.user_id AND s.date = spermissions.date
+    ON s.server_id = spermissions.server_id AND s.date = spermissions.date
     LEFT JOIN {{ ref('server_permissions_system_details') }}  sspermissions
     ON s.server_id = sspermissions.server_id AND s.date = sspermissions.date
     LEFT JOIN {{ ref('server_plugin_details') }}              splugin
