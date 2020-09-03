@@ -115,6 +115,8 @@ SELECT
                                                                     , license_id))
                       , MAX(account_sfid) OVER (PARTITION BY COALESCE(contact_sfid
                                                                     , license_id))
+                      , MAX(account_sfid) OVER (PARTITION BY COALESCE(contact_sfid
+                                                                    , license_id))
                       , MAX(account_sfid) OVER (PARTITION BY COALESCE(CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT IN 
                                                                           (SELECT DOMAIN_NAME FROM {{ source('util', 'public_domains')}} GROUP BY 1) 
                                                                           THEN SPLIT_PART(lower(license_email), '@', 2)
@@ -184,6 +186,8 @@ SELECT
                                                                , license_id))
                 , MAX(account_sfid) OVER (PARTITION BY COALESCE(contact_sfid
                                                                , license_id))
+                , MAX(account_sfid) OVER (PARTITION BY COALESCE(contact_sfid
+                                                               , license_id))
                 , MAX(account_sfid) OVER (PARTITION BY COALESCE(CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT IN 
                                                                           (SELECT DOMAIN_NAME FROM {{ source('util', 'public_domains')}} GROUP BY 1) 
                                                                     THEN SPLIT_PART(lower(license_email), '@', 2)
@@ -195,6 +199,8 @@ SELECT
                 , MAX(account_name) OVER (PARTITION BY COALESCE(customer_id
                                                                , license_id))
                 , MAX(account_name) OVER (PARTITION BY COALESCE(lower(company)
+                                                               , license_id))
+                , MAX(account_name) OVER (PARTITION BY COALESCE(contact_sfid
                                                                , license_id))
                 , MAX(account_name) OVER (PARTITION BY COALESCE(contact_sfid
                                                                , license_id))
