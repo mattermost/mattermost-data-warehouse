@@ -22,7 +22,6 @@ WITH account_customer_journey_fannout AS (
 	    FIRST_VALUE(opportunity.how_did_you_hear_about_mattermost__c IGNORE NULLS) OVER (PARTITION BY account.sfid ORDER BY closedate desc) AS how_did_you_hear_about_mattermost
     FROM {{ source('orgm', 'account') }}
     LEFT JOIN {{ source('orgm', 'opportunity') }} ON account.sfid = opportunity.accountid
-    GROUP BY 1
 ), account_customer_journey AS (
     SELECT *
     FROM account_customer_journey_fannout
