@@ -10,7 +10,8 @@ WITH orgm_account_telemetry AS (
         account_sfid,
         MAX(enterprise_license_fact.last_license_telemetry_date) AS last_telemetry_date,
         SUM(COALESCE(enterprise_license_fact.current_max_license_server_dau,0)) AS dau,
-        SUM(COALESCE(enterprise_license_fact.current_max_license_server_mau,0)) AS mau
+        SUM(COALESCE(enterprise_license_fact.current_max_license_server_mau,0)) AS mau,
+        MAX(enterprise_license_fact.current_license_server_version) AS server_version
     FROM blp.enterprise_license_fact
     LEFT JOIN orgm.account ON account.sfid = enterprise_license_fact.account_sfid
     WHERE enterprise_license_fact.last_license_telemetry_date IS NOT NULL
