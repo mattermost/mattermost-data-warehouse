@@ -489,6 +489,9 @@ SELECT
   , sbleve.ENABLE_AUTOCOMPLETE AS enable_autocomplete_bleve
   , sbleve.ENABLE_INDEXING AS enable_indexing_bleve
   , sbleve.ENABLE_SEARCHING AS enable_searching_bleve
+  , saudit.warn_metric_number_of_active_users_200 AS warn_metric_number_of_active_users_200_audit
+  , saudit.warn_metric_number_of_active_users_400 AS warn_metric_number_of_active_users_400_audit
+  , saudit.warn_metric_number_of_active_users_500 AS warn_metric_number_of_active_users_500_audit
 FROM {{ ref('server_daily_details') }}                      s
     LEFT JOIN {{ ref('server_activity_details') }}            sactivity
     ON s.server_id = sactivity.server_id AND s.date = sactivity.date
@@ -572,13 +575,15 @@ FROM {{ ref('server_daily_details') }}                      s
     ON s.server_id = saudit.server_id AND s.date = saudit.date
     LEFT JOIN {{ ref('server_bleve_details') }}              sbleve
     ON s.server_id = sbleve.server_id AND s.date = sbleve.date
+    LEFT JOIN {{ ref('server_warn_metrics_details') }}       swarn
+    ON s.server_id = swarn.server_id AND s.date = swarn.date
 WHERE s.date <= CURRENT_DATE
 {% if is_incremental() %}
 
 AND s.date >= (SELECT MAX(date) FROM {{this}})
 
 {% endif %}
-{{ dbt_utils.group_by(n=482)}}
+{{ dbt_utils.group_by(n=485)}}
 )
 SELECT *
 FROM server_config_details
