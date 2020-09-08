@@ -489,9 +489,9 @@ SELECT
   , sbleve.ENABLE_AUTOCOMPLETE AS enable_autocomplete_bleve
   , sbleve.ENABLE_INDEXING AS enable_indexing_bleve
   , sbleve.ENABLE_SEARCHING AS enable_searching_bleve
-  , saudit.warn_metric_number_of_active_users_200 AS warn_metric_number_of_active_users_200_audit
-  , saudit.warn_metric_number_of_active_users_400 AS warn_metric_number_of_active_users_400_audit
-  , saudit.warn_metric_number_of_active_users_500 AS warn_metric_number_of_active_users_500_audit
+  , swarn.warn_metric_number_of_active_users_200 AS warn_metric_number_of_active_users_200
+  , swarn.warn_metric_number_of_active_users_400 AS warn_metric_number_of_active_users_400
+  , swarn.warn_metric_number_of_active_users_500 AS warn_metric_number_of_active_users_500
 FROM {{ ref('server_daily_details') }}                      s
     LEFT JOIN {{ ref('server_activity_details') }}            sactivity
     ON s.server_id = sactivity.server_id AND s.date = sactivity.date
