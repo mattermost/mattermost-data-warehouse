@@ -10,7 +10,7 @@ WITH max_segment_timestamp        AS (
         timestamp::DATE AS date
       , user_id
       , MAX(timestamp)  AS max_timestamp
-    FROM {{ source('mattermost2', 'config_metrics') }}
+    FROM {{ source('mattermost2', 'config_audit') }}
     WHERE timestamp::DATE <= CURRENT_DATE
     {% if is_incremental() %}
 
@@ -26,7 +26,7 @@ max_rudder_timestamp       AS (
         timestamp::DATE AS date
       , user_id
       , MAX(r.timestamp)  AS max_timestamp
-    FROM {{ source('mm_telemetry_prod', 'config_metrics') }} r
+    FROM {{ source('mm_telemetry_prod', 'config_audit') }} r
     WHERE timestamp::DATE <= CURRENT_DATE
     {% if is_incremental() %}
 
@@ -36,17 +36,24 @@ max_rudder_timestamp       AS (
     {% endif %}
     GROUP BY 1, 2
 ),
-     server_metrics_details AS (
+     server_audit_details AS (
          SELECT
-             COALESCE(s.timestamp::DATE, r.timestamp::date)                        AS date
-           , COALESCE(s.user_id, r.user_id)                                        AS server_id
-           , MAX(COALESCE(s.block_profile_rate, r.block_profile_rate)) AS block_profile_rate
-           , MAX(COALESCE(s.enable, r.enable))             AS enable_metrics
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
+             COALESCE(r.timestamp::DATE, s.timestamp::date)                        AS date
+           , COALESCE(r.user_id, s.user_id)                                        AS server_id
+            , MAX(COALESCE(r.FILE_COMPRESS, s.FILE_COMPRESS)) AS FILE_COMPRESS
+            , MAX(COALESCE(r.FILE_ENABLED, s.FILE_ENABLED)) AS FILE_ENABLED
+            , MAX(COALESCE(r.FILE_MAX_AGE_DAYS, s.FILE_MAX_AGE_DAYS)) AS FILE_MAX_AGE_DAYS
+            , MAX(COALESCE(r.FILE_MAX_BACKUPS, s.FILE_MAX_BACKUPS)) AS FILE_MAX_BACKUPS
+            , MAX(COALESCE(r.FILE_MAX_QUEUE_SIZE, s.FILE_MAX_QUEUE_SIZE)) AS FILE_MAX_QUEUE_SIZE
+            , MAX(COALESCE(r.FILE_MAX_SIZE_MB, s.FILE_MAX_SIZE_MB)) AS FILE_MAX_SIZE_MB
+            , MAX(COALESCE(r.SYSLOG_ENABLED, s.SYSLOG_ENABLED)) AS SYSLOG_ENABLED
+            , MAX(COALESCE(r.SYSLOG_INSECURE, s.SYSLOG_INSECURE)) AS SYSLOG_INSECURE
+            , MAX(COALESCE(r.SYSLOG_MAX_QUEUE_SIZE, s.SYSLOG_MAX_QUEUE_SIZE)) AS SYSLOG_MAX_QUEUE_SIZE
+           , {{ dbt_utils.surrogate_key('COALESCE(r.timestamp::DATE, s.timestamp::date)', 'COALESCE(r.user_id, s.user_id)') }} AS id
          FROM 
             (
               SELECT s.*
-              FROM {{ source('mattermost2', 'config_metrics') }} s
+              FROM {{ source('mattermost2', 'config_audit') }} s
               JOIN max_segment_timestamp        mt
                    ON s.user_id = mt.user_id
                        AND mt.max_timestamp = s.timestamp
@@ -54,7 +61,7 @@ max_rudder_timestamp       AS (
           FULL OUTER JOIN
             (
               SELECT r.*
-              FROM {{ source('mm_telemetry_prod', 'config_metrics') }} r
+              FROM {{ source('mm_telemetry_prod', 'config_audit') }} r
               JOIN max_rudder_timestamp mt
                   ON r.user_id = mt.user_id
                     AND mt.max_timestamp = r.timestamp
@@ -64,4 +71,4 @@ max_rudder_timestamp       AS (
          GROUP BY 1, 2
      )
 SELECT *
-FROM server_metrics_details
+FROM server_audit_details
