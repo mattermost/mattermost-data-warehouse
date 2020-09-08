@@ -155,3 +155,6 @@ sources:
 
       - name: elasticsearch
         description: Contains raw server-level ElasticSearch data as a single row per server per timestamp.
+
+      - name: warn_metrics
+        description: Contains raw server-level warn metrics data as a single row per server per timestamp. Warn metrics are banner notifications when servers are reaching registered user thresholds.
