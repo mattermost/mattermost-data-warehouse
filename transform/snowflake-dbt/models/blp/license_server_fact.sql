@@ -109,8 +109,8 @@ SELECT
       , license_id
       , COALESCE(
                 COALESCE(account_sfid
-                      , MAX(account_sfid) OVER (PARTITION BY COALESCE(server_id
-                                                                    , license_id))
+                      , FIRST_VALUE(account_sfid IGNORE NULLS) OVER (PARTITION BY COALESCE(server_id
+                                                                    , license_id) ORDER BY last_active_date desc)
                       , MAX(account_sfid) OVER (PARTITION BY COALESCE(customer_id
                                                                     , license_id))
                       , MAX(account_sfid) OVER (PARTITION BY COALESCE(lower(company)
@@ -126,8 +126,8 @@ SELECT
       )                                                                               AS customer_id
       , COALESCE(
                  COALESCE(account_name
-                        , MAX(account_name) OVER (PARTITION BY COALESCE(server_id
-                                                                      , license_id))
+                        , FIRST_VALUE(account_name IGNORE NULLS) OVER (PARTITION BY COALESCE(server_id
+                                                                      , license_id) ORDER BY last_active_date desc)
                         , MAX(account_name) OVER (PARTITION BY COALESCE(customer_id
                                                                       , license_id))
                         , MAX(account_name) OVER (PARTITION BY COALESCE(lower(company)
@@ -140,8 +140,8 @@ SELECT
                                                                           ELSE contact_sfid END
                                                                         , license_id)))
                 , COALESCE(company
-                        , MAX(company) OVER (PARTITION BY COALESCE(server_id
-                                                                  , license_id))
+                        , FIRST_VALUE(company IGNORE NULLS) OVER (PARTITION BY COALESCE(server_id
+                                                                  , license_id) ORDER BY last_active_date desc)
                         , MAX(company) OVER (PARTITION BY COALESCE(customer_id
                                                                   , license_id))
                         , MAX(company) OVER (PARTITION BY COALESCE(account_sfid
@@ -155,8 +155,8 @@ SELECT
                                                                   , license_id)))
       )                                                                                     AS customer_name
       , COALESCE(company
-                , MAX(company) OVER (PARTITION BY COALESCE(server_id
-                                                          , license_id))
+                , FIRST_VALUE(company IGNORE NULLS) OVER (PARTITION BY COALESCE(server_id
+                                                          , license_id) ORDER BY last_active_date desc)
                 , MAX(company) OVER (PARTITION BY COALESCE(customer_id
                                                           , license_id))
                 , MAX(company) OVER (PARTITION BY COALESCE(account_sfid
@@ -178,8 +178,8 @@ SELECT
       , COALESCE(contact_sfid
                 , MAX(contact_sfid) OVER (PARTITION BY license_email)) as contact_sfid
       , COALESCE(account_sfid
-                , MAX(account_sfid) OVER (PARTITION BY COALESCE(server_id
-                                                               , license_id))
+                , FIRST_VALUE(account_sfid IGNORE NULLS) OVER (PARTITION BY COALESCE(server_id
+                                                               , license_id) ORDER BY last_active_date desc)
                 , MAX(account_sfid) OVER (PARTITION BY COALESCE(customer_id
                                                                , license_id))
                 , MAX(account_sfid) OVER (PARTITION BY COALESCE(lower(company)
@@ -192,8 +192,8 @@ SELECT
                                                                   ELSE contact_sfid END
                                                                 , license_id))) AS account_sfid
     , COALESCE(account_name
-                , MAX(account_name) OVER (PARTITION BY COALESCE(server_id
-                                                               , license_id))
+                , FIRST_VALUE(account_name IGNORE NULLS) OVER (PARTITION BY COALESCE(server_id
+                                                               , license_id)  ORDER BY last_active_date desc)
                 , MAX(account_name) OVER (PARTITION BY COALESCE(customer_id
                                                                , license_id))
                 , MAX(account_name) OVER (PARTITION BY COALESCE(lower(company)
