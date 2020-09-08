@@ -12,19 +12,21 @@ with account_mapping as (
     , a.name as account_name
     , elm.licenseid as license_id
     , elm.opportunity_sfid
+    , elm.company
   FROM (
         SELECT
-            COALESCE(elm.account_sfid, lo.account_sfid) AS account_sfid
+            COALESCE(elm.account_sfid, lo.account_sfid)         AS account_sfid
           , COALESCE(elm.opportunity_sfid, lo.opportunity_sfid) AS opportunity_sfid
           , COALESCE(trim(elm.licenseid), trim(lo.licenseid))   AS licenseid
+          , COALESCE(trim(elm.company), trim(lo.company))       AS company
         FROM {{ ref('enterprise_license_mapping') }} elm
         FULL OUTER JOIN {{ ref('license_overview') }} lo
           ON trim(elm.licenseid) = trim(lo.licenseid)
-        GROUP BY 1, 2, 3
+        GROUP BY 1, 2, 3, 4
       ) elm
   LEFT JOIN {{ source('orgm', 'account') }} a
       ON elm.account_sfid = a.sfid
-  GROUP BY 1, 2, 3, 4
+  GROUP BY 1, 2, 3, 4, 5
 ), 
 
 licensed_servers as (
@@ -32,14 +34,14 @@ SELECT
     {{ dbt_utils.surrogate_key('l.server_id', 'l.license_id') }} as id
   , l.server_id
   , l.license_id
-  , MAX(COALESCE(l.company, s.company)) AS company
+  , MAX(trim(COALESCE(am.company, l.company, s.company))) AS company
   , MAX(l.edition) AS edition
   , MAX(l.users)   AS users
   , l.trial
   , l.issued_date
   , l.start_date
   , l.expire_date
-  , MAX(l.license_email) AS license_email
+  , MAX(trim(lower(l.license_email))) AS license_email
   , MAX(l.contact_sfid) AS contact_sfid
   , MAX(COALESCE(am.account_sfid, l.account_sfid, s.account_sfid)) AS account_sfid
   , MAX(COALESCE(am.account_name, l.account_name, s.account_name)) AS account_name
@@ -64,14 +66,14 @@ nonactivated_licenses as (
     {{ dbt_utils.surrogate_key('l.server_id', 'l.license_id') }} as id
   , l.server_id
   , l.license_id
-  , MAX(l.company) AS company
+  , MAX(trim(coalesce(am.company, l.company))) AS company
   , MAX(l.edition) AS edition
   , MAX(l.users)   AS users
   , l.trial
   , l.issued_date
   , l.start_date
   , l.expire_date
-  , MAX(l.license_email) AS license_email
+  , MAX(trim(lower(l.license_email))) AS license_email
   , MAX(l.contact_sfid) AS contact_sfid
   , MAX(COALESCE(am.account_sfid, l.account_sfid)) AS account_sfid
   , MAX(COALESCE(am.account_name, l.account_name)) AS account_name
@@ -112,8 +114,6 @@ SELECT
                       , MAX(account_sfid) OVER (PARTITION BY COALESCE(customer_id
                                                                     , license_id))
                       , MAX(account_sfid) OVER (PARTITION BY COALESCE(lower(company)
-                                                                    , license_id))
-                      , MAX(account_sfid) OVER (PARTITION BY COALESCE(contact_sfid
                                                                     , license_id))
                       , MAX(account_sfid) OVER (PARTITION BY COALESCE(contact_sfid
                                                                     , license_id))
@@ -186,8 +186,6 @@ SELECT
                                                                , license_id))
                 , MAX(account_sfid) OVER (PARTITION BY COALESCE(contact_sfid
                                                                , license_id))
-                , MAX(account_sfid) OVER (PARTITION BY COALESCE(contact_sfid
-                                                               , license_id))
                 , MAX(account_sfid) OVER (PARTITION BY COALESCE(CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT IN 
                                                                           (SELECT DOMAIN_NAME FROM {{ source('util', 'public_domains')}} GROUP BY 1) 
                                                                     THEN SPLIT_PART(lower(license_email), '@', 2)
@@ -199,8 +197,6 @@ SELECT
                 , MAX(account_name) OVER (PARTITION BY COALESCE(customer_id
                                                                , license_id))
                 , MAX(account_name) OVER (PARTITION BY COALESCE(lower(company)
-                                                               , license_id))
-                , MAX(account_name) OVER (PARTITION BY COALESCE(contact_sfid
                                                                , license_id))
                 , MAX(account_name) OVER (PARTITION BY COALESCE(contact_sfid
                                                                , license_id))
