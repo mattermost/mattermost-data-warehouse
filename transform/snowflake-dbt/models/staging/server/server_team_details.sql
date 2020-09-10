@@ -92,7 +92,7 @@ max_rudder_timestamp       AS (
             ) r
             ON s.timestamp::date = r.timestamp::date
             AND s.user_id = r.user_id
-         GROUP BY 1, 2, 36
+         GROUP BY 1, 2, 35, 36
      )
 SELECT *
 FROM server_team_details
