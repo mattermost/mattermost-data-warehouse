@@ -84,7 +84,7 @@ WITH license        AS (
          SELECT
              COALESCE(r.timestamp::date, s.timestamp::date)                            AS date
            , COALESCE(r.license_id, s.license_id)                                    AS license_id
-           , COALESCE(r.server_id, s.server_id)                                                             AS server_id
+           , COALESCE(r.user_id, s.user_id)                                                             AS server_id
            , MAX(COALESCE(r.customer_id, s.customer_id))                                                      AS customer_id
            , MAX(COALESCE(r.edition, s.edition))                                                          AS edition
            , MAX(COALESCE(r.issued_date, s.issued_date))                                                      AS issued_date
@@ -119,7 +119,7 @@ WITH license        AS (
            , MAX(COALESCE(r.FEATURE_CLOUD, NULL)) AS feature_cloud
            , MAX(COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)) AS installation_id
          FROM (
-              SELECT r.*
+              SELECT l.*, m.issued_date, m.start_date, m.expire_date, m.license_activation_date, m.max_timestamp
               FROM max_segment_date           m
               JOIN {{ source('mattermost2' , 'license') }} l
                    ON l.license_id = m.license_id
@@ -129,7 +129,7 @@ WITH license        AS (
               ) s
           FULL OUTER JOIN
               (
-                SELECT l.*
+                SELECT l.*, m.issued_date, m.start_date, m.expire_date, m.license_activation_date, m.max_timestamp
                 FROM max_rudder_date  m
                 JOIN {{ source('mm_telemetry_prod', 'license') }} l
                   ON  l.license_id = m.license_id
