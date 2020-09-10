@@ -69,7 +69,7 @@ max_rudder_timestamp            AS (
             ) r
             ON s.timestamp::date = r.timestamp::date
             AND s.user_id = r.user_id
-         GROUP BY 1, 2, 12
+         GROUP BY 1, 2, 11, 12
      )
 SELECT *
 FROM server_channel_moderation_details
