@@ -45,7 +45,7 @@ max_rudder_timestamp                AS (
            , MAX(COALESCE(s.enable, r.enable))                                 AS enable_guest_accounts
            , MAX(COALESCE(s.enforce_multifactor_authentication, r.enforce_multifactor_authentication))     AS enforce_multifactor_authentication
            , MAX(COALESCE(s.isdefault_restrict_creation_to_domains, r.isdefault_restrict_creation_to_domains)) AS isdefault_restrict_creation_to_domains           
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)', 'COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)') }} AS id
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
            FROM 
             (

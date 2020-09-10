@@ -61,7 +61,7 @@ max_rudder_timestamp            AS (
            , MAX(COALESCE(s.slash_commands, r.slash_commands))               AS slash_commands
            , MAX(COALESCE(s.teams, r.teams))                        AS teams
            , MAX(COALESCE(s.used_apiv3, NULL ))                   AS used_apiv3
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)', 'COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)') }} AS id
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
            , MAX(COALESCE(s.guest_accounts, r.guest_accounts))               AS guest_accounts
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
            FROM 

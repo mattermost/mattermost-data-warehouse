@@ -48,7 +48,7 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(s.link_metadata_timeout_milliseconds, r.link_metadata_timeout_milliseconds)) AS link_metadata_timeout_milliseconds
            , MAX(COALESCE(s.restrict_system_admin, r.restrict_system_admin))              AS restrict_system_admin
            , MAX(COALESCE(s.use_new_saml_library, r.use_new_saml_library))               AS use_new_saml_library           
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)', 'COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)') }} AS id
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
            , MAX(COALESCE(r.cloud_billing, NULL))               AS cloud_billing   
          FROM 

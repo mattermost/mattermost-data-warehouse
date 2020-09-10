@@ -72,7 +72,7 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(r.restrict_team_invite, s.restrict_team_invite))                      AS restrict_team_invite
            , MAX(COALESCE(r.teammate_name_display, s.teammate_name_display))                     AS teammate_name_display
            , MAX(COALESCE(s.view_archived_channels, NULL ))                    AS view_archived_channels           
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)', 'COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)') }} AS id
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
          FROM 
             (
