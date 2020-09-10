@@ -508,6 +508,9 @@ WITH server_daily_details_ext AS (
       , sc.enable_autocomplete_bleve
       , sc.enable_indexing_bleve
       , sc.enable_searching_bleve
+      , sc.warn_metric_number_of_active_users_200
+      , sc.warn_metric_number_of_active_users_400
+      , sc.warn_metric_number_of_active_users_500
     FROM {{ ref('server_daily_details') }}         s
          LEFT JOIN {{ ref('server_config_details') }} sc
                    ON s.server_id = sc.server_id
@@ -517,7 +520,7 @@ WITH server_daily_details_ext AS (
     WHERE s.date >= (SELECT MAX(date) FROM {{this}})
 
     {% endif %}
-    {{ dbt_utils.group_by(n=501) }}
+    {{ dbt_utils.group_by(n=504) }}
 )
 
 SELECT *
