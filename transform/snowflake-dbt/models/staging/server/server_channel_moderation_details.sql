@@ -54,7 +54,7 @@ max_rudder_timestamp            AS (
          FROM 
             (
               SELECT s.*
-              FROM {{ source('mattermost2', 'config_theme') }} s
+              FROM {{ source('mattermost2', 'channel_moderation') }} s
               JOIN max_segment_timestamp        mt
                    ON s.user_id = mt.user_id
                        AND mt.max_timestamp = s.timestamp
@@ -62,7 +62,7 @@ max_rudder_timestamp            AS (
           FULL OUTER JOIN
             (
               SELECT r.*
-              FROM {{ source('mm_telemetry_prod', 'config_theme') }} r
+              FROM {{ source('mm_telemetry_prod', 'channel_moderation') }} r
               JOIN max_rudder_timestamp mt
                   ON r.user_id = mt.user_id
                     AND mt.max_timestamp = r.timestamp
