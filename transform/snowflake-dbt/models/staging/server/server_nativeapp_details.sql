@@ -42,8 +42,9 @@ max_rudder_timestamp       AS (
            , COALESCE(r.user_id, s.user_id)                                        AS server_id
            , MAX(COALESCE(r.isdefault_android_app_download_link, s.isdefault_android_app_download_link)) AS isdefault_android_app_download_link
            , MAX(COALESCE(r.isdefault_app_download_link, s.isdefault_app_download_link))         AS isdefault_app_download_link
-           , MAX(COALESCE(r.isdefault_iosapp_download_link, s.isdefault_iosapp_download_link))      AS isdefault_iosapp_download_link
-           , {{ dbt_utils.surrogate_key('COALESCE(r.timestamp::DATE, s.timestamp::date)', 'COALESCE(r.user_id, s.user_id)') }} AS id
+           , MAX(COALESCE(r.isdefault_iosapp_download_link, s.isdefault_iosapp_download_link))      AS isdefault_iosapp_download_link           
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
+           , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
          FROM 
             (
               SELECT s.*
@@ -62,7 +63,7 @@ max_rudder_timestamp       AS (
             ) r
             ON s.timestamp::date = r.timestamp::date
             AND s.user_id = r.user_id
-         GROUP BY 1, 2
+         GROUP BY 1, 2, 6, 7
      )
 SELECT *
 FROM server_nativeapp_details

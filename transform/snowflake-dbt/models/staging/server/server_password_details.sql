@@ -44,8 +44,9 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(r.uppercase, s.uppercase))                              AS enable_uppercase
            , MAX(COALESCE(r.symbol, s.symbol))                                 AS enable_symbol
            , MAX(COALESCE(r.number, s.number))                                 AS enable_number
-           , MAX(COALESCE(r.minimum_length, s.minimum_length))                         AS password_minimum_length
-           , {{ dbt_utils.surrogate_key('COALESCE(r.timestamp::DATE, s.timestamp::date)', 'COALESCE(r.user_id, s.user_id)') }} AS id
+           , MAX(COALESCE(r.minimum_length, s.minimum_length))                         AS password_minimum_length           
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
+           , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
          FROM 
             (
               SELECT s.*
@@ -64,7 +65,7 @@ max_rudder_timestamp       AS (
             ) r
             ON s.timestamp::date = r.timestamp::date
             AND s.user_id = r.user_id
-         GROUP BY 1, 2
+         GROUP BY 1, 2, 8, 9
      )
 SELECT *
 FROM server_password_details

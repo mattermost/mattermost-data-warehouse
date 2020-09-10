@@ -64,8 +64,9 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(r.isdefault_signature_algorithm, s.isdefault_signature_algorithm))       AS isdefault_signature_algorithm
            , MAX(COALESCE(r.isdefault_username_attribute, s.isdefault_username_attribute))        AS isdefault_username_attribute
            , MAX(COALESCE(r.sign_request, s.sign_request))                        AS sign_request
-           , MAX(COALESCE(r.verify, s.verify))                              AS verify_saml
-           , {{ dbt_utils.surrogate_key('COALESCE(r.timestamp::DATE, s.timestamp::date)', 'COALESCE(r.user_id, s.user_id)') }} AS id
+           , MAX(COALESCE(r.verify, s.verify))                              AS verify_saml           
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
+           , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
          FROM 
             (
               SELECT s.*
@@ -84,7 +85,7 @@ max_rudder_timestamp       AS (
             ) r
             ON s.timestamp::date = r.timestamp::date
             AND s.user_id = r.user_id
-         GROUP BY 1, 2
+         GROUP BY 1, 2, 28, 29
      )
 SELECT *
 FROM server_saml_details

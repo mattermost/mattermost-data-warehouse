@@ -63,6 +63,7 @@ max_rudder_timestamp            AS (
            , MAX(COALESCE(s.used_apiv3, NULL ))                   AS used_apiv3
            , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
            , MAX(COALESCE(s.guest_accounts, r.guest_accounts))               AS guest_accounts
+           , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
            FROM 
             (
               SELECT s.*
@@ -81,7 +82,7 @@ max_rudder_timestamp            AS (
             ) r
             ON s.timestamp::date = r.timestamp::date
             AND s.user_id = r.user_id
-         GROUP BY 1, 2
+         GROUP BY 1, 2, 23, 25
          )
 SELECT *
 FROM server_activity_details

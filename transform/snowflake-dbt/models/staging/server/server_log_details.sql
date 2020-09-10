@@ -49,8 +49,9 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(s.file_json, r.file_json))                AS file_json
            , MAX(COALESCE(s.file_level, r.file_level))               AS file_level
            , MAX(COALESCE(s.isdefault_file_format, NULL))    AS isdefault_file_format
-           , MAX(COALESCE(s.isdefault_file_location, r.isdefault_file_location))  AS isdefault_file_location
+           , MAX(COALESCE(s.isdefault_file_location, r.isdefault_file_location))  AS isdefault_file_location           
            , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
+           , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
          FROM 
             (
               SELECT s.*
@@ -69,7 +70,7 @@ max_rudder_timestamp       AS (
             ) r
             ON s.timestamp::date = r.timestamp::date
             AND s.user_id = r.user_id
-         GROUP BY 1, 2
+         GROUP BY 1, 2, 12, 13
      )
 SELECT *
 FROM server_log_details
