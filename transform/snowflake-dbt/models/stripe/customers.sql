@@ -4,7 +4,7 @@
   })
 }}
 
-WITH stripe_customers AS (
+WITH customers AS (
     SELECT 
         customers.account_balance
         ,customers.created
@@ -22,7 +22,7 @@ WITH stripe_customers AS (
         ,customers.updated
         ,customers.cards
         ,customers.currency
-    FROM {{ source('stripe','customers') }}
+    FROM {{ source('stripe_raw','customers') }}
 )
 
-select * from stripe_customers
+select * from customers

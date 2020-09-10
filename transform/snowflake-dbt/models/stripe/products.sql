@@ -4,7 +4,7 @@
   })
 }}
 
-WITH stripe_products AS (
+WITH products AS (
     SELECT 
         products.active
         ,products.attributes
@@ -22,7 +22,7 @@ WITH stripe_products AS (
         ,products.updated
         ,products.unit_label
         ,products.description
-    FROM {{ source('stripe','products') }}
+    FROM {{ source('stripe_raw','products') }}
 )
 
-select * from stripe_products
+select * from products
