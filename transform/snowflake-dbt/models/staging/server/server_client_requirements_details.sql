@@ -59,7 +59,8 @@ max_rudder_timestamp               AS (
            , MAX(COALESCE(s.enable_only_admin_integrations, NULL))       AS enable_only_admin_integrations
            , MAX(COALESCE(s.ios_latest_version, r.ios_latest_version))                   AS ios_latest_version
            , MAX(COALESCE(s.ios_min_version, r.ios_min_version))                      AS ios_min_version
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)', 'COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)') }} AS id
+           , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
            FROM 
             (
               SELECT s.*
@@ -78,7 +79,7 @@ max_rudder_timestamp               AS (
             ) r
             ON s.timestamp::date = r.timestamp::date
             AND s.user_id = r.user_id
-         GROUP BY 1, 2
+         GROUP BY 1, 2, 22, 23
      )
 SELECT *
 FROM server_client_requirements_details

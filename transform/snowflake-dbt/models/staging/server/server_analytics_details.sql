@@ -42,7 +42,8 @@ max_rudder_timestamp            AS (
              COALESCE(s.timestamp::DATE, r.timestamp::date)              AS date
            , COALESCE(s.user_id, r.user_id)                              AS server_id
            , MAX(COALESCE(s.isdefault_max_users_for_statistics, r.isdefault_max_users_for_statistics)) AS isdefault_max_users_for_statistics
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)', 'COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)') }} AS id
+           , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
            FROM 
             (
               SELECT s.*
@@ -61,7 +62,7 @@ max_rudder_timestamp            AS (
             ) r
             ON s.timestamp::date = r.timestamp::date
             AND s.user_id = r.user_id
-         GROUP BY 1, 2
+         GROUP BY 1, 2, 4, 5
      )
 SELECT *
 FROM server_analytics_details

@@ -117,8 +117,9 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(r.tls_strict_transport, s.tls_strict_transport))                                    AS tls_strict_transport
            , MAX(COALESCE(r.uses_letsencrypt, s.uses_letsencrypt))                                        AS uses_letsencrypt
            , MAX(COALESCE(r.websocket_url, s.websocket_url))                                           AS websocket_url
-           , MAX(COALESCE(r.web_server_mode, s.web_server_mode))                                         AS web_server_mode
-           , {{ dbt_utils.surrogate_key('COALESCE(r.timestamp::DATE, s.timestamp::date)', 'COALESCE(r.user_id, s.user_id)') }} AS id
+           , MAX(COALESCE(r.web_server_mode, s.web_server_mode))                                         AS web_server_mode           
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)', 'COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)') }} AS id
+           , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
          FROM 
             (
               SELECT s.*
@@ -137,7 +138,7 @@ max_rudder_timestamp       AS (
             ) r
             ON s.timestamp::date = r.timestamp::date
             AND s.user_id = r.user_id
-         GROUP BY 1, 2
+         GROUP BY 1, 2, 81, 82
      )
 SELECT *
 FROM server_service_details

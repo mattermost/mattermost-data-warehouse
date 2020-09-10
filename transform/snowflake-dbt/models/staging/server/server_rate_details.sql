@@ -46,8 +46,9 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(r.memory_store_size, s.memory_store_size))        AS memory_store_size
            , MAX(COALESCE(r.per_sec, s.per_sec))                  AS per_sec
            , MAX(COALESCE(r.vary_by_remote_address, s.vary_by_remote_address))   AS vary_by_remote_address
-           , MAX(COALESCE(r.vary_by_user, s.vary_by_user))             AS vary_by_user
-           , {{ dbt_utils.surrogate_key('COALESCE(r.timestamp::DATE, s.timestamp::date)', 'COALESCE(r.user_id, s.user_id)') }} AS id
+           , MAX(COALESCE(r.vary_by_user, s.vary_by_user))             AS vary_by_user           
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)', 'COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)') }} AS id
+           , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
          FROM 
             (
               SELECT s.*
@@ -66,7 +67,7 @@ max_rudder_timestamp       AS (
             ) r
             ON s.timestamp::date = r.timestamp::date
             AND s.user_id = r.user_id
-         GROUP BY 1, 2
+         GROUP BY 1, 2, 10, 11
      )
 SELECT *
 FROM server_rate_details

@@ -511,6 +511,19 @@ WITH server_daily_details_ext AS (
       , sc.warn_metric_number_of_active_users_200
       , sc.warn_metric_number_of_active_users_400
       , sc.warn_metric_number_of_active_users_500
+      , sc.advanced_logging_config_audit
+      , sc.cloud_billing
+      , sc.advanced_logging_config_notifications
+      , sc.feature_advanced_logging
+      , sc.feature_cloud
+      , sc.channel_scheme_count
+      , sc.create_post_guest_disabled_count
+      , sc.create_post_user_disabled_count
+      , sc.manage_members_user_disabled_count
+      , sc.post_reactions_guest_disabled_count
+      , sc.post_reactions_user_disabled_count
+      , sc.use_channel_mentions_guest_disabled_count
+      , sc.use_channel_mentions_user_disabled_count
     FROM {{ ref('server_daily_details') }}         s
          LEFT JOIN {{ ref('server_config_details') }} sc
                    ON s.server_id = sc.server_id
@@ -520,7 +533,7 @@ WITH server_daily_details_ext AS (
     WHERE s.date >= (SELECT MAX(date) FROM {{this}})
 
     {% endif %}
-    {{ dbt_utils.group_by(n=504) }}
+    {{ dbt_utils.group_by(n=517) }}
 )
 
 SELECT *

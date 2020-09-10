@@ -211,6 +211,7 @@ WITH server_details AS (
       , MAX(lsd.days_inactive)                            AS days_inactive
       , MAX(server_details.max_posts)                     AS max_posts
       , MAX(api.api_request_trial_events_alltime)         AS api_request_trial_events_alltime
+      , MAX(server_daily_details.installation_id)         AS installation_id
     FROM server_details
         LEFT JOIN {{ ref('server_daily_details') }}
             ON server_details.server_id = server_daily_details.server_id

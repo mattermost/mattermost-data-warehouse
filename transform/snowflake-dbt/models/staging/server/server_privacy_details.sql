@@ -41,8 +41,9 @@ max_rudder_timestamp       AS (
              COALESCE(r.timestamp::DATE, s.timestamp::date)                        AS date
            , COALESCE(r.user_id, s.user_id)                                        AS server_id
            , MAX(COALESCE(r.show_email_address, s.show_email_address)) AS show_email_address
-           , MAX(COALESCE(r.show_full_name, s.show_full_name))     AS show_full_name
-           , {{ dbt_utils.surrogate_key('COALESCE(r.timestamp::DATE, s.timestamp::date)', 'COALESCE(r.user_id, s.user_id)') }} AS id
+           , MAX(COALESCE(r.show_full_name, s.show_full_name))     AS show_full_name           
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)', 'COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)') }} AS id
+           , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
          FROM 
             (
               SELECT s.*
@@ -61,7 +62,7 @@ max_rudder_timestamp       AS (
             ) r
             ON s.timestamp::date = r.timestamp::date
             AND s.user_id = r.user_id
-         GROUP BY 1, 2
+         GROUP BY 1, 2, 5, 6
      )
 SELECT *
 FROM server_privacy_details

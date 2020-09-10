@@ -45,7 +45,8 @@ max_rudder_timestamp                 AS (
            , MAX(COALESCE(s.file_retention_days, r.file_retention_days))     AS file_retention_days
            , MAX(COALESCE(s.enable_message_deletion, r.enable_message_deletion)) AS enable_message_deletion
            , MAX(COALESCE(s.enable_file_deletion, r.enable_file_deletion))    AS enable_file_deletion
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)', 'COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)') }} AS id
+           , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
            FROM 
             (
               SELECT s.*
@@ -64,7 +65,7 @@ max_rudder_timestamp                 AS (
             ) r
             ON s.timestamp::date = r.timestamp::date
             AND s.user_id = r.user_id
-         GROUP BY 1, 2
+         GROUP BY 1, 2, 7, 8
      )
 SELECT *
 FROM server_data_retention_details

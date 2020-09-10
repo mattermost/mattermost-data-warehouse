@@ -42,8 +42,9 @@ max_rudder_timestamp                 AS (
              COALESCE(s.timestamp::DATE, r.timestamp::date)              AS date
            , COALESCE(s.user_id, r.user_id)                              AS server_id
            , MAX(COALESCE(s.experimental_timezone, r.experimental_timezone))         AS experimental_timezone
-           , MAX(COALESCE(s.isdefault_custom_url_schemes, r.isdefault_custom_url_schemes))  AS isdefault_custom_url_schemes
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
+           , MAX(COALESCE(s.isdefault_custom_url_schemes, r.isdefault_custom_url_schemes))  AS isdefault_custom_url_schemes           
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)', 'COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)') }} AS id
+           , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
            FROM 
             (
               SELECT s.*
@@ -62,7 +63,7 @@ max_rudder_timestamp                 AS (
             ) r
             ON s.timestamp::date = r.timestamp::date
             AND s.user_id = r.user_id
-         GROUP BY 1, 2
+         GROUP BY 1, 2, 5, 6
      )
 SELECT *
 FROM server_display_details
