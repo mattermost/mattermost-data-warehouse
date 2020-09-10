@@ -46,8 +46,10 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(r.enable_file, s.enable_file))             AS enable_file
            , MAX(COALESCE(r.file_json, s.file_json))               AS file_json
            , MAX(COALESCE(r.file_level, s.file_level))              AS file_level
-           , MAX(COALESCE(r.isdefault_file_location, s.isdefault_file_location)) AS isdefault_file_location
-           , {{ dbt_utils.surrogate_key('COALESCE(r.timestamp::DATE, s.timestamp::date)', 'COALESCE(r.user_id, s.user_id)') }} AS id
+           , MAX(COALESCE(r.isdefault_file_location, s.isdefault_file_location)) AS isdefault_file_location           
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)', 'COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)') }} AS id
+           , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
+           , MAX(COALESCE(r.advanced_logging_config, NULL)) AS advanced_logging_config   
          FROM 
             (
               SELECT s.*
@@ -66,7 +68,7 @@ max_rudder_timestamp       AS (
             ) r
             ON s.timestamp::date = r.timestamp::date
             AND s.user_id = r.user_id
-         GROUP BY 1, 2
+         GROUP BY 1, 2, 11
      )
 SELECT *
 FROM server_notifications_log_details

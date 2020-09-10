@@ -44,7 +44,8 @@ max_rudder_timestamp       AS (
             , MAX(COALESCE(r.ENABLE_AUTOCOMPLETE, s.ENABLE_AUTOCOMPLETE)) AS ENABLE_AUTOCOMPLETE
             , MAX(COALESCE(r.ENABLE_INDEXING, s.ENABLE_INDEXING)) AS ENABLE_INDEXING
             , MAX(COALESCE(r.ENABLE_SEARCHING, s.ENABLE_SEARCHING)) AS ENABLE_SEARCHING
-            , {{ dbt_utils.surrogate_key('COALESCE(r.timestamp::DATE, s.timestamp::date)', 'COALESCE(r.user_id, s.user_id)') }} AS id
+            , {{ dbt_utils.surrogate_key('COALESCE(r.timestamp::DATE, s.timestamp::date)', 'COALESCE(r.user_id, s.user_id)', 'COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)') }} AS id
+            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
          FROM 
             (
               SELECT s.*
@@ -63,7 +64,7 @@ max_rudder_timestamp       AS (
             ) r
             ON s.timestamp::date = r.timestamp::date
             AND s.user_id = r.user_id
-         GROUP BY 1, 2
+         GROUP BY 1, 2, 8
      )
 SELECT *
 FROM server_bleve_details

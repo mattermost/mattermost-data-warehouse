@@ -26,6 +26,7 @@ WITH server_details AS (
   , COALESCE(s2.version, s1.version)                                 AS version
   , MAX(COALESCE(s2.sent_at, s1.sent_at))                            AS sent_at
   , MAX(COALESCE(s2.received_at, s1.received_at))                    AS received_at
+  , COALESCE(s2.CONTEXT_TRAITS_INSTALLATIONID, NULL)                 AS installation_id
 FROM {{ source('mattermost2', 'server') }}                       s1
      FULL OUTER JOIN {{ source('mm_telemetry_prod', 'server') }} s2
                      ON s1.user_id = s2.user_id
@@ -36,7 +37,7 @@ WHERE COALESCE(s2.timestamp::date, s1.timestamp::date) <= CURRENT_DATE
 AND COALESCE(s2.timestamp::date, s1.timestamp::date) >= (SELECT MAX(DATE-interval '1 day') FROM {{this}})
 
 {% endif %}
-GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17
+GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 20
 ),
 max_timestamp              AS (
     SELECT
@@ -131,6 +132,7 @@ max_timestamp              AS (
            , {{ dbt_utils.surrogate_key('s.timestamp::date', 's.user_id') }} AS id
            , s.context_ip                         AS context_ip
            , MAX(s.database_version)              AS database_version
+           , s.installation_id                    AS installation_id
          FROM server_details s
               JOIN max_timestamp mt
                    ON s.user_id = mt.user_id
@@ -145,7 +147,7 @@ max_timestamp              AS (
         WHERE s.timestamp::date >= (SELECT MAX(DATE-interval '1 day') FROM {{ this }})
 
          {% endif %}
-         GROUP BY 1, 2, 5, 7, 8, 9, 10, 13, 14, 15, 22, 23
+         GROUP BY 1, 2, 5, 7, 8, 9, 10, 13, 14, 15, 22, 23, 25
      )
 SELECT *
 FROM server_server_details

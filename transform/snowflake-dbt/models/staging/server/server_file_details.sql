@@ -58,8 +58,9 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(s.profile_height, NULL))          AS profile_height
            , MAX(COALESCE(s.profile_width, NULL))           AS profile_width
            , MAX(COALESCE(s.thumbnail_height, NULL))        AS thumbnail_height
-           , MAX(COALESCE(s.thumbnail_width, NULL))         AS thumbnail_width
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
+           , MAX(COALESCE(s.thumbnail_width, NULL))         AS thumbnail_width           
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)', 'COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)') }} AS id
+           , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
            FROM 
             (
               SELECT s.*
@@ -78,7 +79,7 @@ max_rudder_timestamp       AS (
             ) r
             ON s.timestamp::date = r.timestamp::date
             AND s.user_id = r.user_id
-         GROUP BY 1, 2
+         GROUP BY 1, 2, 22
      )
 SELECT *
 FROM server_file_details

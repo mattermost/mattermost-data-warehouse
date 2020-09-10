@@ -50,6 +50,7 @@ max_rudder_timestamp          AS (
            , MAX(COALESCE(s.use_ip_address, r.use_ip_address))          AS use_ip_address
            , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
            , MAX(COALESCE(r.enable_experimental_gossip_encryption, NULL)) AS enable_experimental_gossip_encryption
+           , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
            FROM 
             (
               SELECT s.*
@@ -68,7 +69,7 @@ max_rudder_timestamp          AS (
             ) r
             ON s.timestamp::date = r.timestamp::date
             AND s.user_id = r.user_id
-         GROUP BY 1, 2
+         GROUP BY 1, 2, 12
      )
 SELECT *
 FROM server_cluster_details
