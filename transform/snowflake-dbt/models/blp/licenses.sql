@@ -84,7 +84,11 @@ WITH license        AS (
          SELECT
              COALESCE(r.timestamp::date, s.timestamp::date)                            AS date
            , COALESCE(r.license_id, s.license_id)                                    AS license_id
+<<<<<<< HEAD
            , COALESCE(r.user_id, s.user_id)                                                             AS server_id
+=======
+           , COALESCE(r.server_id, s.server_id)                                                             AS server_id
+>>>>>>> c159a438431c9940bd2f34a906bec64a4f6d3ed7
            , MAX(COALESCE(r.customer_id, s.customer_id))                                                      AS customer_id
            , MAX(COALESCE(r.edition, s.edition))                                                          AS edition
            , MAX(COALESCE(r.issued_date, s.issued_date))                                                      AS issued_date
