@@ -48,8 +48,9 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(r.max_idle_conns, s.max_idle_conns))                         AS max_idle_conns
            , MAX(COALESCE(r.max_open_conns, s.max_open_conns))                         AS max_open_conns
            , MAX(COALESCE(r.query_timeout, s.query_timeout))                          AS query_timeout
-           , MAX(COALESCE(r.trace, s.trace))                                  AS trace
-           , {{ dbt_utils.surrogate_key('COALESCE(r.timestamp::DATE, s.timestamp::date)', 'COALESCE(r.user_id, s.user_id)') }} AS id
+           , MAX(COALESCE(r.trace, s.trace))                                  AS trace           
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)', 'COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)') }} AS id
+           , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
          FROM 
             (
               SELECT s.*
@@ -68,7 +69,7 @@ max_rudder_timestamp       AS (
             ) r
             ON s.timestamp::date = r.timestamp::date
             AND s.user_id = r.user_id
-         GROUP BY 1, 2
+         GROUP BY 1, 2, 13
      )
 SELECT *
 FROM server_sql_details

@@ -492,6 +492,19 @@ SELECT
   , swarn.warn_metric_number_of_active_users_200 AS warn_metric_number_of_active_users_200
   , swarn.warn_metric_number_of_active_users_400 AS warn_metric_number_of_active_users_400
   , swarn.warn_metric_number_of_active_users_500 AS warn_metric_number_of_active_users_500
+  , saudit.advanced_logging_config               AS advanced_logging_config_audit
+  , sexperimental.cloud_billing                  AS cloud_billing
+  , snotifications.advanced_logging_config       AS advanced_logging_config_notifications
+  , slicense.feature_advanced_logging            AS feature_advanced_logging
+  , slicense.feature_cloud                       AS feature_cloud
+  , schannel.channel_scheme_count
+  , schannel.create_post_guest_disabled_count
+  , schannel.create_post_user_disabled_count
+  , schannel.manage_members_user_disabled_count
+  , schannel.post_reactions_guest_disabled_count
+  , schannel.post_reactions_user_disabled_count
+  , schannel.use_channel_mentions_guest_disabled_count
+  , schannel.use_channel_mentions_user_disabled_count
 FROM {{ ref('server_daily_details') }}                      s
     LEFT JOIN {{ ref('server_activity_details') }}            sactivity
     ON s.server_id = sactivity.server_id AND s.date = sactivity.date
@@ -577,13 +590,15 @@ FROM {{ ref('server_daily_details') }}                      s
     ON s.server_id = sbleve.server_id AND s.date = sbleve.date
     LEFT JOIN {{ ref('server_warn_metrics_details') }}       swarn
     ON s.server_id = swarn.server_id AND s.date = swarn.date
+    LEFT JOIN {{ ref('server_channel_moderation_details') }}       schannel
+    ON s.server_id = schannel.server_id AND s.date = schannel.date
 WHERE s.date <= CURRENT_DATE
 {% if is_incremental() %}
 
 AND s.date >= (SELECT MAX(date) FROM {{this}})
 
 {% endif %}
-{{ dbt_utils.group_by(n=485)}}
+{{ dbt_utils.group_by(n=498)}}
 )
 SELECT *
 FROM server_config_details

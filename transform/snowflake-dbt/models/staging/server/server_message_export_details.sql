@@ -47,8 +47,9 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(s.global_relay_customer_type, r.global_relay_customer_type))            AS global_relay_customer_type
            , MAX(COALESCE(s.is_default_global_relay_email_address, r.is_default_global_relay_email_address)) AS is_default_global_relay_email_address
            , MAX(COALESCE(s.is_default_global_relay_smtp_password, r.is_default_global_relay_smtp_password)) AS is_default_global_relay_smtp_password
-           , MAX(COALESCE(s.is_default_global_relay_smtp_username, r.is_default_global_relay_smtp_username)) AS is_default_global_relay_smtp_username
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
+           , MAX(COALESCE(s.is_default_global_relay_smtp_username, r.is_default_global_relay_smtp_username)) AS is_default_global_relay_smtp_username           
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)', 'COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)') }} AS id
+           , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
          FROM 
             (
               SELECT s.*
@@ -67,7 +68,7 @@ max_rudder_timestamp       AS (
             ) r
             ON s.timestamp::date = r.timestamp::date
             AND s.user_id = r.user_id
-         GROUP BY 1, 2
+         GROUP BY 1, 2, 12
      )
 SELECT *
 FROM server_message_export_details
