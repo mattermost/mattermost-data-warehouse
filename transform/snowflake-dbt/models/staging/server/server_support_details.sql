@@ -79,7 +79,7 @@ max_rudder_timestamp       AS (
               ) r
          ON s.user_id = r.user_id
          AND s.timestamp::date = r.timestamp::date
-         GROUP BY 1, 2, 21, 23
+         GROUP BY 1, 2, 13, 15
      )
 SELECT *
 FROM server_support_details
