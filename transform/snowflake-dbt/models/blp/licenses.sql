@@ -136,7 +136,11 @@ WITH license        AS (
                        AND l.user_id = m.server_id
                        AND l.customer_id = m.customer_id
                        AND l.timestamp = m.max_timestamp
-              )
+              ) r
+          ON s.license_id = r.license_id
+          AND s.user_id = r.user_id
+          AND s.timestamp::date = r.timestamp::date
+          AND s.customer_id = r.customer_id
          {{ dbt_utils.group_by(n=3) }}
      ),
 
