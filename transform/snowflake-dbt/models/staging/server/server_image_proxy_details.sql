@@ -44,7 +44,7 @@ max_rudder_timestamp                AS (
            , MAX(COALESCE(s.image_proxy_type, r.image_proxy_type))                     AS image_proxy_type
            , MAX(COALESCE(s.isdefault_remote_image_proxy_options, r.isdefault_remote_image_proxy_options)) AS isdefault_remote_image_proxy_options
            , MAX(COALESCE(s.isdefault_remote_image_proxy_url, r.isdefault_remote_image_proxy_url))     AS isdefault_remote_image_proxy_url           
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)', 'COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)') }} AS id
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
            FROM 
             (

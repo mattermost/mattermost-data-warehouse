@@ -43,7 +43,7 @@ max_rudder_timestamp          AS (
            , COALESCE(s.user_id, r.user_id)                              AS server_id
            , MAX(COALESCE(s.enable, r.enable))       AS enable_compliance
            , MAX(COALESCE(s.enable_daily, r.enable_daily)) AS enable_compliance_daily
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)', 'COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)') }} AS id
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
            FROM 
             (

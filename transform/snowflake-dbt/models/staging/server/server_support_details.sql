@@ -59,7 +59,7 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(s.isdefault_terms_of_service_link, 
                           r.isdefault_terms_of_service_link))               AS isdefault_terms_of_service_link
            , MAX(s.segment_dedupe_id)                              AS segment_dedupe_id
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)', 'COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)') }} AS id
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
            , MAX(r.enable_ask_community_link)                               AS enable_ask_community_link           
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
          FROM (

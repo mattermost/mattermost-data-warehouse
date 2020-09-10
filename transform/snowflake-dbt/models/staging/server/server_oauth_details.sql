@@ -43,7 +43,7 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(r.enable_office365, s.enable_office365))                       AS enable_office365_oauth
            , MAX(COALESCE(r.enable_google, s.enable_google))                          AS enable_google_oauth
            , MAX(COALESCE(r.enable_gitlab, s.enable_gitlab))                          AS enable_gitlab_oauth           
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)', 'COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)') }} AS id
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
          FROM 
             (
