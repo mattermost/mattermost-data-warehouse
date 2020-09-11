@@ -9,7 +9,6 @@ WITH products AS (
         products.active
         ,products.attributes
         ,products.created
-        ,products.deactivate_on
         ,products.id
         ,products.images
         ,products.livemode
@@ -17,11 +16,9 @@ WITH products AS (
         ,products.metadata:"cws-sku-name"::varchar as cws_sku_name
         ,products.metadata:"cws-allowable-addons"::varchar as cws_allowable_addons
         ,products.name
-        ,products.shippable
         ,products.type
         ,products.updated
         ,products.unit_label
-        ,products.description
     FROM {{ source('stripe_raw','products') }}
 )
 
