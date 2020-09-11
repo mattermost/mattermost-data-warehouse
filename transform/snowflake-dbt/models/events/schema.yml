@@ -21,3 +21,18 @@ models:
 
   - name: incident_response_events
     description: The union of all incident response event telemetry tables being sent by rudderstack. Format for incoming telemetry is 1 table per event. Needed to union all of them together to create an aggregated table containing all incident response events.
+
+  - name: portal_events
+    description: The union of all portal events, including subscriptions purchased and stripe card errors. Format for incoming telemetry is 1 table per event. Needed to union all of them together to create an aggregated table containing all events for user_events_by_date data model.
+
+  - name: rudder_webapp_events
+    description: The union of all webapp events to union with mobile and portal for timestamp-level composite of all user events.
+
+  - name: segment_webapp_events
+    description: The union of all segment webapp events (omitting those captured by rudder i.e. servers on newer versions).
+  
+  - name: segment_mobile_events
+    description: The union of all segment mobile events (omitting those captured by rudder i.e. server on newer versions).
+
+  - name: user_events_telemetry
+    description: The union of all webapp, mobile, and portal events sent via Rudderstack (server versions >= 5.19).
