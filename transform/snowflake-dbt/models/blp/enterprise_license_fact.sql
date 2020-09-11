@@ -8,8 +8,8 @@ WITH enterprise_license_fact AS (
     SELECT 
         licenses.account_sfid,
         licenses.license_id as licenseid,
-        license_daily_details.start_date,
-        licenses.server_expire_date_join::date AS expiresat,
+        MIN(license_daily_details.start_date) AS start_date,
+        MAX(licenses.server_expire_date_join::date) AS expiresat,
         MAX(license_daily_details.last_license_telemetry_date) AS last_license_telemetry_date,
         MAX(COALESCE(license_daily_details.license_users,license_daily_details.customer_users))::int AS current_max_licensed_users,
         AVG(license_daily_details.license_server_dau)::int AS current_rolling_7day_avg_dau,
@@ -35,7 +35,7 @@ WITH enterprise_license_fact AS (
         AND month_ago.date < CURRENT_DATE - INTERVAL '30 days'
     LEFT JOIN {{ source('orgm','account') }} ON account.sfid = licenses.account_sfid
     WHERE licenses.server_expire_date_join >= CURRENT_DATE AND NOT licenses.trial AND (account.arr_current__c > 0 or seats_licensed__c > 0)
-    GROUP BY 1, 2, 3, 4
+    GROUP BY 1, 2
 )
 
 SELECT * FROM enterprise_license_fact
