@@ -42,7 +42,7 @@ WITH mobile_events       AS (
     WHERE m.timestamp::DATE <= CURRENT_DATE
     {% if is_incremental() %}
 
-      AND DATE_TRUNC('HOUR', m.timestamp) >= (SELECT MAX(max_timestamp - interval '25 hours') from {{this}})
+      AND m.timestamp >= (SELECT MAX(date_trunc('hour', max_timestamp) - interval '12 hours') from {{this}})
 
     {% endif %}
     GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
@@ -155,18 +155,18 @@ mobile_events2       AS (
            , e.category
            , {{ dbt_utils.surrogate_key('e.timestamp::date', 'e.user_actual_id', 'e.user_id', 'e.context_user_agent', 'lower(e.type)', 'e.category') }}                       AS id
          FROM {{ source('mattermost2', 'event') }} e
-              LEFT JOIN {{ source('mm_telemetry_prod', 'event') }} rudder
-                        ON e.timestamp::date = rudder.timestamp::date
-                        AND COALESCE(e.user_actual_id, '') = COALESCE(rudder.user_actual_id, '')
-                        AND COALESCE(e.user_id, '') = COALESCE(rudder.user_id, '')
-                        AND e.type = rudder.type
-                        AND e.category = rudder.category
-                        AND e.context_user_agent = rudder.context_useragent
-         WHERE rudder.user_actual_id IS NULL
+              LEFT JOIN (
+                          SELECT user_id, MIN(TIMESTAMP::DATE) AS MIN_DATE
+                          FROM {{ source('mm_telemetry_prod', 'event') }}
+                          GROUP BY 1
+                        ) rudder
+                        ON e.timestamp::date >= rudder.MIN_DATE
+                        AND e.user_id = rudder.user_id
+         WHERE rudder.user_id IS NULL
          AND e.timestamp::DATE <= CURRENT_DATE
          {% if is_incremental() %}
 
-          AND DATE_TRUNC('HOUR', e.timestamp) >= (SELECT MAX(max_timestamp - interval '25 hours') from {{this}})
+          AND e.timestamp >= (SELECT MAX(date_trunc('hour', max_timestamp) - interval '12 hours') from {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
@@ -288,7 +288,7 @@ mobile_events2       AS (
                    AND e.category = r.event_category
          {% if is_incremental() %}
 
-          WHERE e.max_timestamp >= (SELECT MAX(max_timestamp - interval '25 hours') from {{this}})
+          WHERE e.max_timestamp >= (SELECT MAX(min_timestamp) from {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 18
