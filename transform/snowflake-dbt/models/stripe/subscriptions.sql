@@ -4,7 +4,7 @@
   })
 }}
 
-WITH stripe_subscriptions AS (
+WITH subscriptions AS (
     SELECT 
         subscriptions.billing
         ,subscriptions.billing_cycle_anchor
@@ -43,7 +43,7 @@ WITH stripe_subscriptions AS (
         ,subscriptions."START"
         ,subscriptions.status
         ,subscriptions.updated
-    FROM {{ source('stripe','subscriptions') }}
+    FROM {{ source('stripe_raw','subscriptions') }}
 )
 
-select * from stripe_subscriptions
+select * from subscriptions

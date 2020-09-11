@@ -1,10 +1,10 @@
 version: 2
 
 models:
-  - name: stripe_subscriptions
-  - name: stripe_customers
-  - name: stripe_subscription_items
-  - name: stripe_products
-  - name: stripe_invoices
-  - name: stripe_invoice_line_items
-  - name: stripe_charges
+  - name: subscriptions
+  - name: customers
+  - name: subscription_items
+  - name: products
+  - name: invoices
+  - name: invoice_line_items
+  - name: charges
