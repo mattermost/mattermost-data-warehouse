@@ -4,7 +4,7 @@
   })
 }}
 
-WITH stripe_invoice_line_items AS (
+WITH invoice_line_items AS (
     SELECT 
         invoice_line_items.amount
         ,invoice_line_items.currency
@@ -39,7 +39,7 @@ WITH stripe_invoice_line_items AS (
         ,invoice_line_items.subscription_item
         ,invoice_line_items.type
         ,invoice_line_items.invoice_item
-    FROM {{ source('stripe','invoice_line_items') }}
+    FROM {{ source('stripe_raw','invoice_line_items') }}
 )
 
-select * from stripe_invoice_line_items
+select * from invoice_line_items

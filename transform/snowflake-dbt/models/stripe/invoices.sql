@@ -4,7 +4,7 @@
   })
 }}
 
-WITH stripe_invoices AS (
+WITH invoices AS (
     SELECT 
         invoices.amount_due
         ,invoices.amount_paid
@@ -39,7 +39,7 @@ WITH stripe_invoices AS (
         ,invoices.total
         ,invoices.updated
         ,invoices.webhooks_delivered_at
-    FROM {{ source('stripe','invoices') }}
+    FROM {{ source('stripe_raw','invoices') }}
 )
 
-select * from stripe_invoices
+select * from invoices
