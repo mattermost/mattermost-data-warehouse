@@ -166,7 +166,7 @@ select get_sys_var({{ var_name }})
         (
             select
 
-                cast({{ dbt_utils.string_literal(relation) }} as {{ dbt_utils.type_string() }}) as {{ source_column_name }},
+                cast({{ dbt_utils.string_literal(relation) }} as {{ dbt_utils.type_string() }}) as {{ source_column_name if ('_DBT_SOURCE_RELATION' not in column_superset) else '_DBT_SOURCE_RELATION2'}},
                 {% for col_name in ordered_column_names -%}
 
                     {%- set col = column_superset[col_name] -%}

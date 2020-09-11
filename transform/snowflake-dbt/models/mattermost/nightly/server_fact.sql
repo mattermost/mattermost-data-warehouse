@@ -313,6 +313,7 @@ WITH server_details AS (
         , MIN(first_active_date) OVER (PARTITION BY COALESCE(ACCOUNT_SFID, LOWER(COMPANY), SERVER_ID)) AS customer_first_active_date
         , MIN(first_paid_license_date) OVER (PARTITION BY COALESCE(ACCOUNT_SFID, LOWER(COMPANY), SERVER_ID)) AS customer_first_paid_license_date
         , api_request_trial_events_alltime
+        , installation_id
       FROM server_fact_prep
     )
 SELECT *
