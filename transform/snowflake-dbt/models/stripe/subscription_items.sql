@@ -4,7 +4,7 @@
   })
 }}
 
-WITH stripe_subscription_items AS (
+WITH subscription_items AS (
     SELECT 
         subscription_items.created
         ,subscription_items.id
@@ -30,7 +30,7 @@ WITH stripe_subscription_items AS (
         ,subscription_items.plan:"usage_type"::varchar as plan_usage_type
         ,subscription_items.quantity
         ,subscription_items.subscription
-    FROM {{ source('stripe','subscription_items') }}
+    FROM {{ source('stripe_raw','subscription_items') }}
 )
 
-select * from stripe_subscription_items
+select * from subscription_items
