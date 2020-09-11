@@ -1,7 +1,8 @@
 {{config({
     "materialized": 'incremental',
     "schema": "events",
-    "unique_key":'id'
+    "unique_key":'id',
+    "tag":"nightly"
   })
 }}
 
@@ -39,10 +40,10 @@ WITH mobile_events       AS (
       , m.category
       , {{ dbt_utils.surrogate_key('m.timestamp::date', 'm.user_actual_id', 'm.user_id', 'm.context_device_type', 'context_device_os', 'm.context_app_version', 'm.context_device_os', 'lower(m.type)', 'm.category') }}                       AS id
     FROM {{ source('mattermost_rn_mobile_release_builds_v2', 'event')}} m
-    WHERE m.timestamp::DATE <= CURRENT_DATE
+    WHERE m.timestamp::DATE < CURRENT_DATE
     {% if is_incremental() %}
 
-      AND DATE_TRUNC('HOUR', m.timestamp) >= (SELECT MAX(max_timestamp - interval '25 hours') from {{this}})
+      AND m.timestamp > (SELECT MAX(max_timestamp) from {{this}})
 
     {% endif %}
     GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
@@ -82,10 +83,10 @@ mobile_events2       AS (
       , m.category
       , {{ dbt_utils.surrogate_key('m.timestamp::date', 'm.user_actual_id', 'm.user_id', 'm.context_useragent', 'lower(m.type)', 'm.category') }}                       AS id
     FROM {{ ref('mobile_events') }} m
-    WHERE m.timestamp::DATE <= CURRENT_DATE
+    WHERE m.timestamp::DATE < CURRENT_DATE
     {% if is_incremental() %}
 
-      AND m.timestamp >= (SELECT MAX(max_timestamp) from {{this}})
+      AND m.timestamp > (SELECT MAX(max_timestamp) from {{this}})
     
     {% endif %}
     GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
@@ -155,18 +156,18 @@ mobile_events2       AS (
            , e.category
            , {{ dbt_utils.surrogate_key('e.timestamp::date', 'e.user_actual_id', 'e.user_id', 'e.context_user_agent', 'lower(e.type)', 'e.category') }}                       AS id
          FROM {{ source('mattermost2', 'event') }} e
-              LEFT JOIN {{ source('mm_telemetry_prod', 'event') }} rudder
-                        ON e.timestamp::date = rudder.timestamp::date
-                        AND COALESCE(e.user_actual_id, '') = COALESCE(rudder.user_actual_id, '')
-                        AND COALESCE(e.user_id, '') = COALESCE(rudder.user_id, '')
-                        AND e.type = rudder.type
-                        AND e.category = rudder.category
-                        AND e.context_user_agent = rudder.context_useragent
-         WHERE rudder.user_actual_id IS NULL
-         AND e.timestamp::DATE <= CURRENT_DATE
+              LEFT JOIN (
+                          SELECT user_id, MIN(TIMESTAMP::DATE) AS MIN_DATE
+                          FROM {{ source('mm_telemetry_prod', 'event') }}
+                          GROUP BY 1
+                        ) rudder
+                        ON e.timestamp::date >= rudder.MIN_DATE
+                        AND e.user_id = rudder.user_id
+         WHERE rudder.user_id IS NULL
+         AND e.timestamp::DATE < CURRENT_DATE
          {% if is_incremental() %}
 
-          AND DATE_TRUNC('HOUR', e.timestamp) >= (SELECT MAX(max_timestamp - interval '25 hours') from {{this}})
+          AND e.timestamp > (SELECT MAX(max_timestamp) from {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
@@ -237,10 +238,10 @@ mobile_events2       AS (
            , e.category
            , {{ dbt_utils.surrogate_key('e.timestamp::date', 'e.user_actual_id', 'e.user_id', 'e.context_useragent', 'lower(e.type)', 'e.category') }}                       AS id
          FROM {{ source('mm_telemetry_prod', 'event') }} e
-         WHERE e.timestamp::DATE <= CURRENT_DATE
+         WHERE e.timestamp::DATE < CURRENT_DATE
          {% if is_incremental() %}
 
-          AND timestamp >= (SELECT MAX(max_timestamp) from {{this}})
+          AND timestamp > (SELECT MAX(max_timestamp) from {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
@@ -288,7 +289,7 @@ mobile_events2       AS (
                    AND e.category = r.event_category
          {% if is_incremental() %}
 
-          WHERE e.max_timestamp >= (SELECT MAX(max_timestamp - interval '25 hours') from {{this}})
+          WHERE e.max_timestamp > (SELECT MAX(max_timestamp) from {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 18
@@ -338,9 +339,9 @@ mobile_events2       AS (
                                     'CONTEXT_USER_AGENT', 
                                     'EVENT_NAME', 'OS', 'BROWSER_VERSION', 'OS_VERSION', 'EVENT_ID', 
                                     'MIN_TIMESTAMP', 'MAX_TIMESTAMP') }}                                         AS ID
-        , ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY min_timestamp)                                        AS chronological_sequence
-        , datediff(second, lag(min_timestamp) over (partition by user_id order by min_timestamp), min_timestamp) AS seconds_after_prev_event
-        , CURRENT_TIMESTAMP::TIMESTAMP AS UPDATED_AT
+        , NULL                                        AS chronological_sequence
+        , NULL AS seconds_after_prev_event
+        , NULL AS UPDATED_AT
        FROM all_events_chronological
      )
 SELECT *
