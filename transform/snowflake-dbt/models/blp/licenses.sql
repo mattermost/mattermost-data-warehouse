@@ -205,7 +205,7 @@ WITH license        AS (
            , ld.feature_password
            , ld.feature_saml
            , ld.timestamp
-           , {{ dbt_utils.surrogate_key('l.licenseid', 'l.customerid', 'l.date', 'ld.server_id', 'ld.installation_id') }} AS id
+           , {{ dbt_utils.surrogate_key('l.licenseid', 'l.customerid', 'l.date') }} AS id
            , ld.license_activation_date
            , ld.installation_id
            , ld.feature_advanced_logging
@@ -227,7 +227,7 @@ WITH license        AS (
                         ON l.licenseid = elm.licenseid
          {% if is_incremental() %}
 
-         WHERE l.date > (SELECT MAX(DATE) FROM {{this}})
+         WHERE l.date >= (SELECT MAX(DATE) FROM {{this}})
 
          {% endif %}
          {{ dbt_utils.group_by(n=47) }}
@@ -317,7 +317,7 @@ WITH license        AS (
          FROM license_details_all ld
           {% if is_incremental() %}
 
-         WHERE ld.date > (SELECT MAX(DATE) FROM {{this}})
+         WHERE ld.date >= (SELECT MAX(DATE) FROM {{this}})
 
          {% endif %}
      ),
