@@ -4,7 +4,7 @@
   })
 }}
 
-WITH stripe_charges AS (
+WITH charges AS (
     SELECT 
         charges.amount
         ,charges.amount_refunded
@@ -67,7 +67,7 @@ WITH stripe_charges AS (
         ,charges.invoice
         ,charges.description
         ,charges.receipt_number
-    FROM {{ source('stripe','charges') }}
+    FROM {{ source('stripe_raw','charges') }}
 )
 
-select * from stripe_charges
+select * from charges

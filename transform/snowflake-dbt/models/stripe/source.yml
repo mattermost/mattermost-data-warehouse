@@ -1,9 +1,9 @@
 version: 2
 
 sources:
-  - name: stripe
+  - name: stripe_raw
     database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
-    schema: stripe
+    schema: stripe_raw
 
     tables:
       - name: subscriptions

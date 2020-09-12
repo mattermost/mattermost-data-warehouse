@@ -4,7 +4,7 @@
   })
 }}
 
-WITH stripe_customers AS (
+WITH customers AS (
     SELECT 
         customers.account_balance
         ,customers.created
@@ -16,13 +16,12 @@ WITH stripe_customers AS (
         ,customers.livemode
         ,customers.metadata:"contactfirstname"::varchar as contactfirstname
         ,customers.metadata:"contactlastname"::varchar as contactlastname
-        ,customers.metadata:"cws-blapi-customer"::varchar as cws_blapi_customer
         ,customers.metadata:"cws-customer"::varchar as cws_customer
         ,customers.sources
         ,customers.updated
         ,customers.cards
         ,customers.currency
-    FROM {{ source('stripe','customers') }}
+    FROM {{ source('stripe_raw','customers') }}
 )
 
-select * from stripe_customers
+select * from customers
