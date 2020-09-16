@@ -193,6 +193,8 @@ select get_sys_var({{ var_name }})
             {% endif %}
             {% if is_incremental() and adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
                 AND original_timestamp > (select max(original_timestamp) from {{ this }} WHERE _DBT_SOURCE_RELATION = {{ ["'", relation, "'"]|join }})
+            {% elif is_incremental() and this.table == 'user_events_telemetry' %}
+                AND timestamp > (select max(timestamp) from {{ this }}  WHERE _DBT_SOURCE_RELATION2 = {{ ["'", relation, "'"]|join }})
             {% elif is_incremental() %}
                 AND timestamp > (select max(timestamp) from {{ this }}  WHERE _DBT_SOURCE_RELATION = {{ ["'", relation, "'"]|join }})
             {% endif %}
