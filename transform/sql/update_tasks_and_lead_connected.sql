@@ -10,7 +10,7 @@ WHERE subject LIKE '[Outreach] [Email] [In] %'
     AND outreach_auto_reply_status__c IS NULL;
 
 UPDATE orgm.lead
-SET status = 'Connected'
+SET lead_status_minor__c = 'Connected'
 FROM (
          SELECT whoid
          FROM orgm.task
