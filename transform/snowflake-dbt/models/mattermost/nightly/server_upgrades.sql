@@ -1,6 +1,7 @@
 {{config({
     "materialized": 'incremental',
-    "schema": "mattermost"
+    "schema": "mattermost",
+    "unique_key": "id"
   })
 }}
 
@@ -33,6 +34,7 @@ WITH upgrade         AS (
                 END  AS current_version
            , prev_edition
            , current_edition
+           , {{ dbt_utils.surrogate_key('date', 'server_id') }} as id
          FROM upgrade
          WHERE (
               (CASE WHEN SPLIT_PART(current_version, '.', 1)::FLOAT > SPLIT_PART(COALESCE(prev_version, current_version), '.', 1)::float THEN TRUE
@@ -44,9 +46,10 @@ WITH upgrade         AS (
                 ELSE FALSE END)
              OR (current_edition = 'true' AND coalesce(prev_edition, 'true') = 'false')
              )
+         AND date <= CURRENT_DATE
          {% if is_incremental() %}
 
-         AND date > (SELECT MAX(date) FROM {{this}} )
+         AND date >= (SELECT MAX(date) FROM {{this}} )
 
          {% endif %}
      )
