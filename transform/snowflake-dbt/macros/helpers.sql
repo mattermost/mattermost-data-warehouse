@@ -187,9 +187,9 @@ select get_sys_var({{ var_name }})
 
             from {{ relation }}
             {% if adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
-             WHERE original_timestamp <= CURRENT_TIME
+             WHERE original_timestamp <= CURRENT_TIMESTAMP
             {% else %}
-             WHERE timestamp <= CURRENT_TIME
+             WHERE timestamp <= CURRENT_TIMESTAMP
             {% endif %}
             {% if is_incremental() and adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
                 AND original_timestamp > (select max(original_timestamp) from {{ this }} WHERE _DBT_SOURCE_RELATION = {{ ["'", relation, "'"]|join }})
