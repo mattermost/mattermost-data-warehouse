@@ -95,6 +95,30 @@ dbt_run = KubernetesPodOperator(
     dag=dag,
 )
 
+dbt_run_union_cmd = f"""
+    {dbt_install_deps_cmd} &&
+    dbt run --profiles-dir profile --models tag:union
+"""
+
+dbt_run_union = KubernetesPodOperator(
+    **pod_defaults,
+    image=DBT_IMAGE,
+    task_id="dbt-run-union",
+    name="dbt-run-union",
+    secrets=[
+        SNOWFLAKE_ACCOUNT,
+        SNOWFLAKE_USER,
+        SNOWFLAKE_PASSWORD,
+        SNOWFLAKE_TRANSFORM_ROLE,
+        SNOWFLAKE_TRANSFORM_WAREHOUSE,
+        SNOWFLAKE_TRANSFORM_SCHEMA,
+        SSH_KEY,
+    ],
+    env_vars=env_vars,
+    arguments=[dbt_run_union_cmd],
+    dag=dag,
+)
+
 # update_sequence_cmd = f"""
 #     {clone_and_setup_extraction_cmd} &&
 #     python utils/update_chronological_sequence.py
@@ -145,4 +169,4 @@ pg_import = KubernetesPodOperator(
 )
 
 # update_chronological_sequence >> 
-user_agent >> dbt_run >> pg_import
+user_agent >> dbt_run >> dbt_run_union >> pg_import
