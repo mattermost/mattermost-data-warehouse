@@ -36,3 +36,6 @@ models:
 
   - name: user_events_telemetry
     description: The union of all webapp, mobile, and portal events sent via Rudderstack (server versions >= 5.19).
+
+  - name: plugin_events
+    description: The union of all plugin telemetry relations capturing plugin telemetry on the Mattermost platform.
