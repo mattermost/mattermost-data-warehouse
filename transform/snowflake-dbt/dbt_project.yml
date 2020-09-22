@@ -97,6 +97,8 @@ seeds:
       schema: tva
     account_industry_mapping:
       schema: util
+    auto_reply_ooo_phrases:
+      schema: util
     version_release_dates:
       schema: mattermost
     financial_statements:
