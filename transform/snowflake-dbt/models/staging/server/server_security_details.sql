@@ -26,7 +26,7 @@ WITH security                AS (
     FROM {{ ref('security') }} sec
     WHERE sec.dev_build = 0
       AND sec.ran_tests = 0
-      AND regexp_substr(sec.version, '^[0-9]{1,2}.{1}.[0-9]{1,2}.{1}[0-9]{1,2}') is not null
+      AND regexp_substr(sec.version, '^[0-9]{1,2}.{1}[0-9]{1,2}.{1}[0-9]{1,2}') is not null
       AND sec.ip_address <> '194.30.0.184'
       AND sec.user_count >= sec.active_user_count
       AND NULLIF(sec.server_id, '') IS NOT NULL
