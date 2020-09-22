@@ -53,13 +53,22 @@ WITH security AS (
             'COALESCE(CASE
                 WHEN split_part(regexp_substr(cs_uri_query, \'tc=[0-9]{1,10}\'),\'=\',2) = \'\' THEN NULL
                 ELSE split_part(regexp_substr(cs_uri_query, \'tc=[0-9]{1,10}\'),\'=\',2)::int
-            END, 0)')}} as id
+            END, 0)', 'substring(regexp_substr(cs_uri_query, \'(^|&)b=([^&]*)\'), 4, 100)',
+            'CASE
+                    WHEN position(regexp_substr(cs_uri_query, \'(^|&)b=([^&]*)\'), \'_BUILD_NUMBER_\') > 1 THEN true
+                    ELSE false
+                END', 'substring(regexp_substr(cs_uri_query, \'(^|&)db=([^&]*)\'), 5, 100)', 
+                'substring(regexp_substr(cs_uri_query, \'(^|&)os=([^&]*)\'), 5, 100)',
+                'CASE
+            WHEN substring(regexp_substr(cs_uri_query, \'(^|&)ut=([^&]*)\'), 5, 100) = \'1\' THEN true
+            ELSE false
+        END')}} as id
     FROM {{ source('diagnostics', 'log_entries') }}
     WHERE uri = '/security'
     AND logdate::date <= CURRENT_DATE
     {% if is_incremental() %}
 
-    AND logdate::date >= (SELECT MAX(DATE) FROM {{this}})
+    AND (logdate || ' ' || logtime)::TIMESTAMP >= (SELECT MAX(TIMESTAMP) FROM {{this}})
 
     {% endif %}
     GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
