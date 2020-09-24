@@ -73,7 +73,7 @@ user_agent = KubernetesPodOperator(
 # dbt-run
 dbt_run_cmd = f"""
     {dbt_install_deps_cmd} &&
-    dbt run --profiles-dir profile --exclude tag:nightly
+    dbt run --profiles-dir profile --exclude tag:nightly tag:union
 """
 
 dbt_run = KubernetesPodOperator(
