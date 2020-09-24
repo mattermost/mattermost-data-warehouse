@@ -97,7 +97,7 @@ dbt_run = KubernetesPodOperator(
 
 dbt_run_union_cmd = f"""
     {dbt_install_deps_cmd} &&
-    dbt run --profiles-dir profile --models tag:union
+    SNOWFLAKE_TRANSFORM_WAREHOUSE=transform_l dbt run --profiles-dir profile --models tag:union
 """
 
 dbt_run_union = KubernetesPodOperator(
