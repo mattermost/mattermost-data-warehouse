@@ -2,8 +2,7 @@
     "materialized": 'incremental',
     "schema": "mattermost",
     "unique_key":'id',
-    "tags":'hourly',
-    "database":"DEV"
+    "tags":'hourly'
   })
 }}
 

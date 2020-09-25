@@ -186,17 +186,34 @@ select get_sys_var({{ var_name }})
                 {%- endfor -%}
 
             from {{ relation }}
-            {% if adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
-             WHERE original_timestamp <= CURRENT_TIMESTAMP
+            {% if is_incremental() and this.table == 'user_events_telemetry' %}
+            LEFT JOIN 
+                (
+                 SELECT 
+                    id as join_id
+                 FROM {{ this }}
+                 WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}
+                 GROUP BY 1
+                ) a
+                ON {{ relation }}.id = a.join_id
+            WHERE timestamp <= CURRENT_TIMESTAMP
+            AND (a.join_id is null)
             {% else %}
-             WHERE timestamp <= CURRENT_TIMESTAMP
-            {% endif %}
-            {% if is_incremental() and adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
-                AND original_timestamp > (select max(original_timestamp) from {{ this }} WHERE _DBT_SOURCE_RELATION = {{ ["'", relation, "'"]|join }})
-            {% elif is_incremental() and this.table == 'user_events_telemetry' %}
-                AND timestamp > (select max(timestamp) from {{ this }}  WHERE _DBT_SOURCE_RELATION2 = {{ ["'", relation, "'"]|join }})
-            {% elif is_incremental() %}
-                AND timestamp > (select max(timestamp) from {{ this }}  WHERE _DBT_SOURCE_RELATION = {{ ["'", relation, "'"]|join }})
+            LEFT JOIN 
+                (
+                 SELECT 
+                    id as join_id
+                 FROM {{ this }}
+                 WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
+                 GROUP BY 1
+                ) a
+                ON {{ relation }}.id = a.join_id
+                {% if adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
+                WHERE original_timestamp <= CURRENT_TIMESTAMP
+                {% else %}
+                WHERE timestamp <= CURRENT_TIMESTAMP
+                {% endif %}
+            AND (a.join_id is null)
             {% endif %}
         )
 
