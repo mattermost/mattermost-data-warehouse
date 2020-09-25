@@ -36,10 +36,9 @@ AND segment.timestamp::date >= '2019-02-01'
 
 LEFT JOIN 
         (
-          SELECT ID AS JOIN_KEY
+          SELECT DISTINCT ID AS JOIN_KEY
           FROM {{ this }}
           WHERE timestamp::date >= (SELECT MAX(timestamp::date) FROM {{ this }}) - INTERVAL '2 DAYS'
-          GROUP BY 1
         ) a
   ON s.id = a.JOIN_KEY
 WHERE s.timestamp::date >= (SELECT MAX(timestamp::date) FROM {{ this }}) - INTERVAL '2 DAYS'

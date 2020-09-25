@@ -11,10 +11,9 @@ FROM {{ source('mm_telemetry_prod', 'event') }} e
 
 LEFT JOIN 
         (
-          SELECT ID AS JOIN_KEY
+          SELECT DISTINCT ID AS JOIN_KEY
           FROM {{ this }}
           WHERE TIMESTAMP::DATE >= (SELECT MAX(timestamp::date) FROM {{ this }}) - INTERVAL '2 DAYS'
-          GROUP BY 1
         ) a
   ON e.id = a.JOIN_KEY
 WHERE e.timestamp::date >= (SELECT MAX(timestamp::date) FROM {{ this }}) - INTERVAL '2 DAYS'
