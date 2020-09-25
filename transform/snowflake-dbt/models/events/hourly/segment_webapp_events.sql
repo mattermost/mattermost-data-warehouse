@@ -5,6 +5,8 @@
   })
 }}
 
+SELECT s.*
+FROM (
 SELECT
     segment.*
 FROM {{ source('mattermost2', 'event') }} segment
@@ -15,10 +17,25 @@ FROM {{ source('mattermost2', 'event') }} segment
               ) rudder
         ON segment.user_id = rudder.user_id AND segment.timestamp::DATE >= rudder.MIN_DATE
 WHERE rudder.user_id is NULL
-AND segment.timestamp::date <= CURRENT_DATE
+AND segment.timestamp::date <= CURRENT_TIMESTAMP
 AND segment.timestamp::date >= '2019-02-01'
+) s
 {% if is_incremental() %}
 
-AND segment.timestamp > (SELECT MAX(timestamp) FROM {{this}})
+LEFT JOIN 
+        (
+          SELECT ID AS JOIN_KEY
+          FROM {{ this }}
+          WHERE timestamp::date >= CURRENT_DATE - INTERVAL '2 DAYS'
+          GROUP BY 1
+        ) a
+  ON s.id = a.JOIN_KEY
+WHERE s.timestamp::date >= CURRENT_DATE - INTERVAL '2 DAYS'
+AND s.timestamp <= CURRENT_TIMESTAMP
+AND a.JOIN_KEY IS NULL
+
+{% else %}
+
+s.timestamp <= CURRENT_TIMESTAMP
 
 {% endif %}

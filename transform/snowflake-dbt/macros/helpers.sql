@@ -193,10 +193,14 @@ select get_sys_var({{ var_name }})
                     id as join_id
                  FROM {{ this }}
                  WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}
+                 AND timestamp::date >= 
+                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}) - INTERVAL '2 DAYS'
                  GROUP BY 1
                 ) a
                 ON {{ relation }}.id = a.join_id
-            WHERE timestamp <= CURRENT_TIMESTAMP
+            WHERE timestamp::date >= 
+                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}) - INTERVAL '2 DAYS'
+            AND timestamp <= CURRENT_TIMESTAMP
             AND (a.join_id is null)
             {% else %}
             LEFT JOIN 
@@ -205,13 +209,18 @@ select get_sys_var({{ var_name }})
                     id as join_id
                  FROM {{ this }}
                  WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
+                 AND timestamp::date >= 
+                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '2 DAYS'
                  GROUP BY 1
                 ) a
                 ON {{ relation }}.id = a.join_id
                 {% if adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
                 WHERE original_timestamp <= CURRENT_TIMESTAMP
+                AND original_timestamp::date >= (SELECT MAX(ORIGINAL_TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '2 DAYS'
                 {% else %}
-                WHERE timestamp <= CURRENT_TIMESTAMP
+                WHERE timestamp::date >= 
+                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '2 DAYS'
+                AND timestamp <= CURRENT_TIMESTAMP
                 {% endif %}
             AND (a.join_id is null)
             {% endif %}
