@@ -14,7 +14,7 @@ WITH account_health_facts AS (
         (least(max(end_date__c)::date, current_date) - min(start_date__c)::date) / 365 AS tenure_in_yrs,
         count(distinct tickets.ID) AS count_tickets_prev_90,
         current_date - max(tasks_filtered.createddate)::date AS days_since_last_task,
-        min(CASE WHEN risk_opportuny.renewal_risk_status__c = 'At Risk' THEN 20 WHEN risk_opportuny.renewal_risk_status__c = 'Early Warning' THEN 50 ELSE NULL END) AS risk_override_score,
+        min(CASE WHEN risk.status__c = 'At Risk' THEN 20 WHEN risk.status__c IN ('Early Warning','Delayed') THEN 50 ELSE NULL END) AS risk_override_score,
         CASE WHEN max(customer_reference.status__c) IS NOT NULL THEN TRUE ELSE FALSE END AS reference
     FROM {{ source('orgm', 'account') }}
         LEFT JOIN {{ source('orgm', 'opportunity') }}  ON opportunity.accountid = account.sfid AND iswon
@@ -22,7 +22,7 @@ WITH account_health_facts AS (
         LEFT JOIN {{ source('orgm', 'tasks_filtered') }} ON account.sfid = tasks_filtered.accountid
         LEFT JOIN {{ source('zendesk_raw', 'organizations') }} ON left(organizations.external_id,15) = left(account.sfid,15)
         LEFT JOIN {{ source('zendesk_raw', 'tickets') }} ON tickets.organization_id = organizations.id AND tickets.created_at > current_date - INTERVAL '90 days'
-        LEFT JOIN {{ source('orgm', 'opportunity') }} AS risk_opportuny ON risk_opportuny.accountid = account.sfid AND NOT risk_opportuny.isclosed AND risk_opportuny.renewal_risk_status__c IN ('At Risk','Early Warning')
+        LEFT JOIN {{ source('orgm', 'customer_risk__c') }} AS risk ON risk.account__c = account.sfid AND risk.status__c IN ('At Risk','Early Warning','Delayed')
         LEFT JOIN {{ source('orgm', 'customer_reference__c') }} AS customer_reference ON customer_reference.account__c = account.sfid AND customer_reference.status__c = 'Completed'
     GROUP BY 1
 ), account_health_score AS (

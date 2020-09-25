@@ -70,3 +70,6 @@ sources:
 
       - name: netsuite_conn__netsuite_financial__c
         description: "Netsuite Data in SFDC"
+
+      - name: customer_risk__c
+        description: "SFDC Customer Risk"
