@@ -41,6 +41,31 @@ WITH server_details AS (
     WHERE DATE <= CURRENT_DATE - INTERVAL '1 DAY'
     GROUP BY 1
     ), 
+
+    server_activity as (
+      SELECT 
+        user_id
+        , max(registered_users) as registered_users
+        , max(registered_deactivated_users) as registered_deactivated_users
+        , max(posts) as posts
+        , max(direct_message_channels) as direct_message_channels
+        , max(public_channels - public_channels_deleted) as public_channels
+        , max(private_channels - private_channels_deleted) as private_channels
+        , max(slash_commands) as slash_commands
+        , max(teams) AS teams
+        , MAX(posts_previous_day) as posts_previous_day
+        , MAX(bot_posts_previous_day) as bot_posts_previous_day
+        , max(active_users_daily) as active_users
+        , max(active_users_monthly) as monthly_active_users
+        , max(bot_accounts) as bot_accounts
+        , max(guest_accounts) as guest_accounts
+        , max(incoming_webhooks) as incoming_webhooks
+        , max(outgoing_webhooks) as outgoing_webhooks
+      FROM {{ source('mm_telemetry_prod', 'activity') }} s1
+      JOIN (select user_id as server_id, max(timestamp) as max_time from {{ source('mm_telemetry_prod', 'activity') }} group by 1) s2
+        ON s1.user_id = s2.server_id AND s1.timestamp = s2.max_time
+      GROUP BY 1
+    ),
     licenses AS (
       SELECT 
           server_id
@@ -171,8 +196,6 @@ WITH server_details AS (
       , MAX(CASE WHEN COALESCE(max_monthly_active_users, 0) >= 
             COALESCE(max_mau,0) THEN max_monthly_active_users
             ELSE max_mau end)                             AS max_mau
-      , MAX(server_details.max_registered_users)          AS max_registered_users
-      , MAX(max_registered_deactivated_users)             AS max_registered_deactivated_users
       , MAX(server_details.last_active_user_date)         AS last_telemetry_active_user_date
       , MAX(sau.last_event_date)                          AS last_event_active_user_date
       , MAX(sau.dau_total)                                AS dau_total
@@ -209,13 +232,28 @@ WITH server_details AS (
       , MAX(lsd.admin_events_alltime)                     AS admin_events_alltime
       , MAX(lsd.days_active)                              AS days_active
       , MAX(lsd.days_inactive)                            AS days_inactive
-      , MAX(server_details.max_posts)                     AS max_posts
       , MAX(api.api_request_trial_events_alltime)         AS api_request_trial_events_alltime
       , MAX(server_daily_details.installation_id)         AS installation_id
+      , max(registered_users) as registered_users
+        , max(server_activity.registered_deactivated_users) as registered_deactivated_users
+        , max(server_activity.posts) as posts
+        , max(server_activity.direct_message_channels) as direct_message_channels
+        , max(server_activity.public_channels) as public_channels
+        , max(server_activity.private_channels) as private_channels
+        , max(server_activity.slash_commands) as slash_commands
+        , max(server_activity.teams) AS teams
+        , MAX(server_activity.posts_previous_day) as posts_previous_day
+        , MAX(server_activity.bot_posts_previous_day) as bot_posts_previous_day
+        , max(server_activity.active_users) as active_users
+        , max(server_activity.monthly_active_users) as monthly_active_users
+        , max(server_activity.bot_accounts) as bot_accounts
+        , max(server_activity.guest_accounts) as guest_accounts
+        , max(server_activity.incoming_webhooks) as incoming_webhooks
+        , max(server_activity.outgoing_webhooks) as outgoing_webhooks
     FROM server_details
         LEFT JOIN {{ ref('server_daily_details') }}
             ON server_details.server_id = server_daily_details.server_id
-            AND (server_details.last_active_date = server_daily_details.date)
+            AND (server_daily_details.date >= server_details.last_active_date)
         LEFT JOIN {{ ref('server_daily_details') }} s2
             ON server_details.server_id = s2.server_id
             AND server_details.last_active_license_date = s2.date
@@ -237,83 +275,16 @@ WITH server_details AS (
             ON server_details.server_id = lsd.server_Id
         LEFT JOIN api_request_trial_events api
             ON server_details.server_id = api.server_id
+        LEFT JOIN server_activity
+            ON server_details.server_id = server_activity.user_id
         {{ dbt_utils.group_by(n=1) }}
     ),
 
     server_fact AS (
       SELECT 
-          server_id
-        , version
-        , first_server_version
-        , server_edition
-        , first_server_edition
-        , first_telemetry_active_date
-        , last_telemetry_active_date
-        , first_mm2_telemetry_date
-        , last_mm2_telemetry_date
-        , version_upgrade_count
-        , edition_upgrade_count
-        , gitlab_install
-        , account_sfid
-        , account_name
-        , master_account_sfid
-        , master_account_name
-        , company
-        , last_license_id1
-        , last_license_id2
-        , first_paid_license_date
-        , last_paid_license_date
-        , paid_license_expire_date
-        , first_trial_license_date
-        , last_trial_license_date
-        , trial_license_expire_date
-        , first_active_date
-        , last_active_date
-        , max_active_user_count
-        , max_mau
-        , max_registered_users
-        , max_registered_deactivated_users
-        , last_telemetry_active_user_date
-        , last_event_active_user_date
-        , dau_total
-        , mobile_dau
-        , mau_total
-        , first_time_mau
-        , reengaged_mau
-        , current_mau
-        , total_events
-        , desktop_events
-        , web_app_events
-        , mobile_events
-        , events_alltime
-        , mobile_events_alltime
-        , users
-        , last_active_license_date
-        , nps_users
-        , nps_score
-        , promoters
-        , detractors
-        , passives
-        , avg_nps_user_score
-        , first_100reg_users_date
-        , first_500reg_users_date
-        , first_1kreg_users_date
-        , first_2500reg_users_date
-        , first_5kreg_users_date
-        , first_10kreg_users_date
-        , posts_events_alltime
-        , invite_members_alltime
-        , signup_events_alltime
-        , signup_email_events_alltime
-        , tutorial_events_alltime
-        , admin_events_alltime
-        , days_active
-        , days_inactive
-        , max_posts
+          *
         , MIN(first_active_date) OVER (PARTITION BY COALESCE(ACCOUNT_SFID, LOWER(COMPANY), SERVER_ID)) AS customer_first_active_date
         , MIN(first_paid_license_date) OVER (PARTITION BY COALESCE(ACCOUNT_SFID, LOWER(COMPANY), SERVER_ID)) AS customer_first_paid_license_date
-        , api_request_trial_events_alltime
-        , installation_id
       FROM server_fact_prep
     )
 SELECT *
