@@ -5,13 +5,26 @@
   })
 }}
 
-SELECT *
-FROM {{ source('mm_telemetry_prod', 'event') }}
-WHERE timestamp <= CURRENT_TIMESTAMP
--- Date rudder started sending telemetry
-AND timestamp::date >= '2020-05-14'
+SELECT e.*
+FROM {{ source('mm_telemetry_prod', 'event') }} e
 {% if is_incremental() %}
 
-AND timestamp::date > (SELECT MAX(timestamp) FROM {{this}})
+LEFT JOIN 
+        (
+          SELECT ID AS JOIN_KEY
+          FROM {{ this }}
+          WHERE TIMESTAMP::DATE >= (SELECT MAX(timestamp::date) FROM {{ this }}) - INTERVAL '2 DAYS'
+          GROUP BY 1
+        ) a
+  ON e.id = a.JOIN_KEY
+WHERE e.timestamp::date >= (SELECT MAX(timestamp::date) FROM {{ this }}) - INTERVAL '2 DAYS'
+AND e.timestamp <= CURRENT_TIMESTAMP
+AND a.JOIN_KEY IS NULL
+-- Date rudder started sending telemetry
+AND timestamp::date >= '2020-05-14'
 
+{% else %}
+WHERE e.timestamp <= CURRENT_TIMESTAMP
 {% endif %}
+
+
