@@ -194,12 +194,12 @@ select get_sys_var({{ var_name }})
                  FROM {{ this }}
                  WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}
                  AND timestamp::date >= 
-                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}) - INTERVAL '2 DAYS'
+                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
                  GROUP BY 1
                 ) a
                 ON {{ relation }}.id = a.join_id
             WHERE timestamp::date >= 
-                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}) - INTERVAL '2 DAYS'
+                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
             AND timestamp <= CURRENT_TIMESTAMP
             AND (a.join_id is null)
             {% else %}
@@ -210,7 +210,7 @@ select get_sys_var({{ var_name }})
                  FROM {{ this }}
                  WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
                  AND timestamp::date >= 
-                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '2 DAYS'
+                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
                  GROUP BY 1
                 ) a
                 ON {{ relation }}.id = a.join_id
@@ -219,7 +219,7 @@ select get_sys_var({{ var_name }})
                 AND original_timestamp::date >= (SELECT MAX(ORIGINAL_TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '2 DAYS'
                 {% else %}
                 WHERE timestamp::date >= 
-                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '2 DAYS'
+                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
                 AND timestamp <= CURRENT_TIMESTAMP
                 {% endif %}
             AND (a.join_id is null)
