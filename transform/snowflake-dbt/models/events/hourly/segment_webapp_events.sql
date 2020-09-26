@@ -19,7 +19,7 @@ FROM {{ source('mattermost2', 'event') }} segment
 {% if is_incremental() %}
 
 WHERE rudder.user_id is NULL
-AND segment.timestamp::date >= (SELECT MAX(timestamp::date) FROM {{ this }}) - INTERVAL '2 DAYS'
+AND segment.timestamp::date >= (SELECT MAX(timestamp::date) FROM {{ this }}) - INTERVAL '1 DAYS'
 AND segment.timestamp::date <= CURRENT_TIMESTAMP
 AND segment.timestamp::date >= '2019-02-01'
 ) s
@@ -38,10 +38,10 @@ LEFT JOIN
         (
           SELECT DISTINCT ID AS JOIN_KEY
           FROM {{ this }}
-          WHERE timestamp::date >= (SELECT MAX(timestamp::date) FROM {{ this }}) - INTERVAL '2 DAYS'
+          WHERE timestamp::date >= (SELECT MAX(timestamp::date) FROM {{ this }}) - INTERVAL '1 DAYS'
         ) a
   ON s.id = a.JOIN_KEY
-WHERE s.timestamp::date >= (SELECT MAX(timestamp::date) FROM {{ this }}) - INTERVAL '2 DAYS'
+WHERE s.timestamp::date >= (SELECT MAX(timestamp::date) FROM {{ this }}) - INTERVAL '1 DAYS'
 AND s.timestamp <= CURRENT_TIMESTAMP
 AND a.JOIN_KEY IS NULL
 

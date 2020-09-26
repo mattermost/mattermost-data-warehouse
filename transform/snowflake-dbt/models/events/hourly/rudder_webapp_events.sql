@@ -13,10 +13,10 @@ LEFT JOIN
         (
           SELECT DISTINCT ID AS JOIN_KEY
           FROM {{ this }}
-          WHERE TIMESTAMP::DATE >= (SELECT MAX(timestamp::date) FROM {{ this }}) - INTERVAL '2 DAYS'
+          WHERE TIMESTAMP::DATE >= (SELECT MAX(timestamp::date) FROM {{ this }}) - INTERVAL '1 DAYS'
         ) a
   ON e.id = a.JOIN_KEY
-WHERE e.timestamp::date >= (SELECT MAX(timestamp::date) FROM {{ this }}) - INTERVAL '2 DAYS'
+WHERE e.timestamp::date >= (SELECT MAX(timestamp::date) FROM {{ this }}) - INTERVAL '1 DAYS'
 AND e.timestamp <= CURRENT_TIMESTAMP
 AND a.JOIN_KEY IS NULL
 -- Date rudder started sending telemetry
