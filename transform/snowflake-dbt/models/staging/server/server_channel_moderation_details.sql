@@ -49,7 +49,7 @@ max_rudder_timestamp            AS (
            , MAX(COALESCE(r.post_reactions_user_disabled_count, s.post_reactions_user_disabled_count)) AS post_reactions_user_disabled_count
            , MAX(COALESCE(r.use_channel_mentions_guest_disabled_count, s.use_channel_mentions_guest_disabled_count)) AS use_channel_mentions_guest_disabled_count
            , MAX(COALESCE(r.use_channel_mentions_user_disabled_count, s.use_channel_mentions_user_disabled_count)) AS use_channel_mentions_user_disabled_count
-           , {{ dbt_utils.surrogate_key('COALESCE(r.timestamp::DATE, s.timestamp::date)', 'COALESCE(r.user_id, s.user_id)', 'COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)') }} AS id
+           , {{ dbt_utils.surrogate_key('COALESCE(r.timestamp::DATE, s.timestamp::date)', 'COALESCE(r.user_id, s.user_id)') }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                       AS installation_id
          FROM 
             (
