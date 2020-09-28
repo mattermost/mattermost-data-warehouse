@@ -103,8 +103,8 @@ dbt_run_preunion_cmd = f"""
 dbt_run_preunion = KubernetesPodOperator(
     **pod_defaults,
     image=DBT_IMAGE,
-    task_id="dbt-run-union",
-    name="dbt-run-union",
+    task_id="dbt-run-preunion",
+    name="dbt-run-preunion",
     secrets=[
         SNOWFLAKE_ACCOUNT,
         SNOWFLAKE_USER,
@@ -193,4 +193,4 @@ pg_import = KubernetesPodOperator(
 )
 
 # update_chronological_sequence >> 
-user_agent >> dbt_run >> dbt_run_union >> pg_import
+user_agent >> dbt_run >> dbt_run_preunion >> dbt_run_union >> pg_import
