@@ -73,7 +73,7 @@ user_agent = KubernetesPodOperator(
 # dbt-run
 dbt_run_cmd = f"""
     {dbt_install_deps_cmd} &&
-    dbt run --profiles-dir profile --exclude tag:nightly tag:union
+    dbt run --profiles-dir profile --exclude tag:nightly tag:union tag:preunion
 """
 
 dbt_run = KubernetesPodOperator(
@@ -92,6 +92,30 @@ dbt_run = KubernetesPodOperator(
     ],
     env_vars=env_vars,
     arguments=[dbt_run_cmd],
+    dag=dag,
+)
+
+dbt_run_preunion_cmd = f"""
+    {dbt_install_deps_cmd} &&
+    SNOWFLAKE_TRANSFORM_WAREHOUSE=transform_l dbt run --profiles-dir profile --models tag:preunion
+"""
+
+dbt_run_preunion = KubernetesPodOperator(
+    **pod_defaults,
+    image=DBT_IMAGE,
+    task_id="dbt-run-union",
+    name="dbt-run-union",
+    secrets=[
+        SNOWFLAKE_ACCOUNT,
+        SNOWFLAKE_USER,
+        SNOWFLAKE_PASSWORD,
+        SNOWFLAKE_TRANSFORM_ROLE,
+        SNOWFLAKE_TRANSFORM_WAREHOUSE,
+        SNOWFLAKE_TRANSFORM_SCHEMA,
+        SSH_KEY,
+    ],
+    env_vars=env_vars,
+    arguments=[dbt_run_preunion_cmd],
     dag=dag,
 )
 
