@@ -1,7 +1,6 @@
 {{config({
     "materialized": 'table',
-    "schema": "mattermost",
-    "unique_key":'server_id',
+    "schema": "mattermost"
   })
 }}
 
@@ -60,22 +59,6 @@ version_exclusions AS (
     GROUP BY 1, 2
 ),
 
-cloud_servers AS (
-    SELECT 
-        s.server_id
-     ,  'Version Format'
-     FROM {{ ref('server_fact') }} s
-     LEFT JOIN seed_file sf
-        ON trim(s.server_id) = trim(sf.server_id)
-     LEFT JOIN version_exclusions ve
-        ON trim(s.server_id) = trim(ve.server_id)
-     LEFT JOIN license_exclusions le
-        ON trim(s.server_id) = trim(le.server_id)
-     WHERE regexp_substr(s.first_server_version, '[0-9]{1,2}.{1}[0-9]{1,2}.{1}[0-9]{1,2}$') IS NULL
-     AND s.installation_id is NULL
-     GROUP BY 1, 2
-),
-
 ip_exclusions AS (
     SELECT 
         'restricted_ip_range'
@@ -98,13 +81,32 @@ ip_exclusions AS (
         ON trim(s.server_id) = trim(ve.server_id)
     LEFT JOIN license_exclusions le
         ON trim(s.server_id) = trim(le.server_id)
-    LEFT JOIN cloud_servers cs
-        ON trim(s.server_id) = trim(cs.server_id)
     WHERE sf.server_id is NULL
     AND ve.server_id is NULL
     AND le.server_id is NULL
-    AND cs.server_id is NULL
     GROUP BY 1, 2
+),
+
+cloud_servers AS (
+    SELECT 
+        'Version Format' as reason
+      , s.server_id
+     FROM {{ ref('server_fact') }} s
+    LEFT JOIN seed_file sf
+        ON trim(s.server_id) = trim(sf.server_id)
+    LEFT JOIN version_exclusions ve
+        ON trim(s.server_id) = trim(ve.server_id)
+    LEFT JOIN license_exclusions le
+        ON trim(s.server_id) = trim(le.server_id)
+    LEFT JOIN ip_exclusions ip
+        ON trim(s.server_id) = trim(ip.server_id)
+     WHERE regexp_substr(s.first_server_version, '[0-9]{1,2}.{1}[0-9]{1,2}.{1}[0-9]{1,2}$') IS NULL
+     AND s.installation_id is NULL
+     AND sf.server_id is NULL
+    AND ve.server_id is NULL
+    AND le.server_id is NULL
+    AND ip.server_id is NULL
+     GROUP BY 1, 2
 ),
 
 excludable_servers AS (
