@@ -24,7 +24,6 @@ license_exclusions AS (
                             'Mattermost Developers',
                             'Mattermost SA - INTERNAL',
                             'Mattermost  Inc.',
-                            'Mattermost Cloud',
                             'Mattermost'
                             )
     LEFT JOIN seed_file sf
@@ -54,10 +53,27 @@ version_exclusions AS (
     AND (sec.dev_build = 1
       OR sec.ran_tests = 1
       OR sec.version NOT LIKE '_.%._._.%._'
+      OR regexp_substr(sec.version, '[0-9]{1,2}.{1}[0-9]{1,2}.{1}[0-9]{1,2}$') IS NULL
       OR sec.ip_address = '194.30.0.184'
       OR sec.user_count < sec.active_user_count)
       AND sec.date <= CURRENT_DATE - INTERVAL '1 DAY'
     GROUP BY 1, 2
+),
+
+cloud_servers AS (
+    SELECT 
+        s.server_id
+     ,  'Version Format'
+     FROM {{ ref('server_fact') }} s
+     LEFT JOIN seed_file sf
+        ON trim(s.server_id) = trim(sf.server_id)
+     LEFT JOIN version_exclusions ve
+        ON trim(s.server_id) = trim(ve.server_id)
+     LEFT JOIN license_exclusions le
+        ON trim(s.server_id) = trim(le.server_id)
+     WHERE regexp_substr(s.first_server_version, '[0-9]{1,2}.{1}[0-9]{1,2}.{1}[0-9]{1,2}$') IS NULL
+     AND s.installation_id is NULL
+     GROUP BY 1, 2
 ),
 
 ip_exclusions AS (
@@ -82,9 +98,12 @@ ip_exclusions AS (
         ON trim(s.server_id) = trim(ve.server_id)
     LEFT JOIN license_exclusions le
         ON trim(s.server_id) = trim(le.server_id)
-    WHERE sf.server_id is null
+    LEFT JOIN cloud_servers cs
+        ON trim(s.server_id) = trim(cs.server_id)
+    WHERE sf.server_id is NULL
     AND ve.server_id is NULL
     AND le.server_id is NULL
+    AND cs.server_id is NULL
     GROUP BY 1, 2
 ),
 
@@ -100,6 +119,9 @@ excludable_servers AS (
     UNION ALL
     SELECT *
     FROM ip_exclusions
+    UNION ALL
+    SELECT *
+    FROM cloud_servers
 )
 SELECT *
 FROM excludable_servers
