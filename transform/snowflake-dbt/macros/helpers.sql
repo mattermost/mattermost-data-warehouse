@@ -202,7 +202,7 @@ select get_sys_var({{ var_name }})
                      (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
             AND timestamp <= CURRENT_TIMESTAMP
             AND (a.join_id is null)
-            {% elif is_incremental() this.table == 'mobile_events' %}
+            {% elif is_incremental() and this.table == 'mobile_events' %}
             LEFT JOIN 
                 (
                  SELECT 
