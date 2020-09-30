@@ -215,6 +215,11 @@ select get_sys_var({{ var_name }})
                  GROUP BY 1
                 ) a
                 ON {{ relation }}.id = a.join_id
+                WHERE timestamp::date >= 
+                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
+                AND timestamp <= CURRENT_TIMESTAMP
+                AND coalesce(type, event) NOT IN ('api_profiles_get_in_channel', 'api_profiles_get_by_usernames', 'api_profiles_get_by_ids', 'application_backgrounded', 'application_opened')
+                AND (a.join_id is null)
             {% elif is_incremental() and adapter.quote(relation)[7:28] != 'MM_PLUGIN_DEV.NPS_NPS' %}
             LEFT JOIN 
                 (
@@ -227,6 +232,10 @@ select get_sys_var({{ var_name }})
                  GROUP BY 1
                 ) a
                 ON {{ relation }}.id = a.join_id
+                WHERE timestamp::date >= 
+                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
+                AND timestamp <= CURRENT_TIMESTAMP
+                AND (a.join_id is null)
             {% elif is_incremental() and adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
             LEFT JOIN 
                 (
@@ -239,27 +248,9 @@ select get_sys_var({{ var_name }})
                  GROUP BY 1
                 ) a
                 ON {{ relation }}.id = a.join_id
-                {% if adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
                 WHERE original_timestamp <= CURRENT_TIMESTAMP
                 AND original_timestamp::date >= (SELECT MAX(ORIGINAL_TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
                 AND (a.join_id is null)
-                {% elif this.table == 'portal_events' %}
-                WHERE timestamp::date >= 
-                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
-                AND timestamp <= CURRENT_TIMESTAMP
-                AND (a.join_id is null)
-                {% elif this.table == 'mobile_events' %}
-                WHERE timestamp::date >= 
-                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
-                AND timestamp <= CURRENT_TIMESTAMP
-                AND coalesce(type, event) NOT IN ('api_profiles_get_in_channel', 'api_profiles_get_by_usernames', 'api_profiles_get_by_ids', 'application_backgrounded', 'application_opened')
-                AND (a.join_id is null)
-                {% else %}
-                WHERE timestamp::date >= 
-                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
-                AND timestamp <= CURRENT_TIMESTAMP
-                AND (a.join_id is null)
-                {% endif %}
             {% endif %}
         )
 
