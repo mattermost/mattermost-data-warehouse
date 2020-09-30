@@ -202,7 +202,7 @@ select get_sys_var({{ var_name }})
                      (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
             AND timestamp <= CURRENT_TIMESTAMP
             AND (a.join_id is null)
-            {% else %}
+            {% elif is_incremental() this.table == 'mobile_events' %}
             LEFT JOIN 
                 (
                  SELECT 
@@ -211,6 +211,31 @@ select get_sys_var({{ var_name }})
                  WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
                  AND timestamp::date >= 
                      (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
+                 AND coalesce(type, event) NOT IN ('api_profiles_get_in_channel', 'api_profiles_get_by_usernames', 'api_profiles_get_by_ids', 'application_backgrounded', 'application_opened')
+                 GROUP BY 1
+                ) a
+                ON {{ relation }}.id = a.join_id
+            {% elif is_incremental() and adapter.quote(relation)[7:28] != 'MM_PLUGIN_DEV.NPS_NPS' %}
+            LEFT JOIN 
+                (
+                 SELECT 
+                    id as join_id
+                 FROM {{ this }}
+                 WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
+                 AND timestamp::date >= 
+                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
+                 GROUP BY 1
+                ) a
+                ON {{ relation }}.id = a.join_id
+            {% elif is_incremental() and adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
+            LEFT JOIN 
+                (
+                 SELECT 
+                    id as join_id
+                 FROM {{ this }}
+                 WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
+                 AND original_timestamp::date >= 
+                     (SELECT MAX(ORIGINAL_TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
                  GROUP BY 1
                 ) a
                 ON {{ relation }}.id = a.join_id
