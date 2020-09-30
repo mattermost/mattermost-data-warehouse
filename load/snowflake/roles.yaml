@@ -97,6 +97,7 @@ roles:
         warehouses:
             - reporting_s
             - reporting_m
+            - transform_l
         privileges:
             databases:
                 read:
@@ -114,6 +115,7 @@ roles:
         warehouses:
             - reporting_s
             - reporting_m
+            - transform_l
         privileges:
             databases:
                 read:
