@@ -118,6 +118,13 @@ WITH server_details AS (
       WHERE event_name = 'api_request_trial_license'
       GROUP BY 1
     ),
+    installation_id AS (
+      SELECT 
+          DISTINCT server_id
+        , installation_id
+      FROM {{ ref('server_daily_details') }}
+      WHERE installation_id is not NULL
+    ),
   last_server_date AS (
     SELECT
         server_id
@@ -233,7 +240,7 @@ WITH server_details AS (
       , MAX(lsd.days_active)                              AS days_active
       , MAX(lsd.days_inactive)                            AS days_inactive
       , MAX(api.api_request_trial_events_alltime)         AS api_request_trial_events_alltime
-      , MAX(server_daily_details.installation_id)         AS installation_id
+      , MAX(id.installation_id)         AS installation_id
       , max(registered_users) as registered_users
         , max(server_activity.registered_deactivated_users) as registered_deactivated_users
         , max(server_activity.posts) as posts
@@ -254,6 +261,8 @@ WITH server_details AS (
         LEFT JOIN {{ ref('server_daily_details') }}
             ON server_details.server_id = server_daily_details.server_id
             AND (server_daily_details.date >= server_details.last_active_date)
+        LEFT JOIN installation_id id
+            ON server_details.server_id = id.server_id
         LEFT JOIN {{ ref('server_daily_details') }} s2
             ON server_details.server_id = s2.server_id
             AND server_details.last_active_license_date = s2.date
