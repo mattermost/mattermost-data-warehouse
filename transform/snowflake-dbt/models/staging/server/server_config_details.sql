@@ -592,10 +592,9 @@ FROM {{ ref('server_daily_details') }}                      s
     ON s.server_id = swarn.server_id AND s.date = swarn.date
     LEFT JOIN {{ ref('server_channel_moderation_details') }}       schannel
     ON s.server_id = schannel.server_id AND s.date = schannel.date
-WHERE s.date <= CURRENT_DATE
 {% if is_incremental() %}
 
-AND s.date >= (SELECT MAX(date) FROM {{this}})
+WHERE s.date >= (SELECT MAX(date) FROM {{this}})
 
 {% endif %}
 {{ dbt_utils.group_by(n=498)}}
