@@ -44,26 +44,38 @@ WITH server_details AS (
 
     server_activity as (
       SELECT 
-        user_id
-        , max(registered_users) as registered_users
-        , max(registered_deactivated_users) as registered_deactivated_users
-        , max(posts) as posts
-        , max(direct_message_channels) as direct_message_channels
-        , max(public_channels - public_channels_deleted) as public_channels
-        , max(private_channels - private_channels_deleted) as private_channels
-        , max(slash_commands) as slash_commands
-        , max(teams) AS teams
-        , MAX(posts_previous_day) as posts_previous_day
-        , MAX(bot_posts_previous_day) as bot_posts_previous_day
-        , max(active_users_daily) as active_users
-        , max(active_users_monthly) as monthly_active_users
-        , max(bot_accounts) as bot_accounts
-        , max(guest_accounts) as guest_accounts
-        , max(incoming_webhooks) as incoming_webhooks
-        , max(outgoing_webhooks) as outgoing_webhooks
-      FROM {{ source('mm_telemetry_prod', 'activity') }} s1
-      JOIN (select user_id as server_id, max(timestamp) as max_time from {{ source('mm_telemetry_prod', 'activity') }} group by 1) s2
-        ON s1.user_id = s2.server_id AND s1.timestamp = s2.max_time
+        COALESCE(r.user_id, s.user_id) as user_id
+        , max(COALESCE(r.registered_users, s.registered_users)) as registered_users
+        , max(COALESCE(r.registered_deactivated_users, s.registered_deactivated_users)) as registered_deactivated_users
+        , max(COALESCE(r.posts, s.posts)) as posts
+        , max(COALESCE(r.direct_message_channels, s.direct_message_channels)) as direct_message_channels
+        , max(COALESCE(r.public_channels - r.public_channels_deleted, s.public_channels - s.public_channels_deleted)) as public_channels
+        , max(COALESCE(r.private_channels - r.private_channels_deleted, s.private_channels - s.private_channels_deleted)) as private_channels
+        , max(COALESCE(r.slash_commands, s.slash_commands)) as slash_commands
+        , max(COALESCE(r.teams, s.teams)) AS teams
+        , MAX(COALESCE(r.posts_previous_day, s.posts_previous_day)) as posts_previous_day
+        , MAX(COALESCE(r.bot_posts_previous_day, s.bot_posts_previous_day)) as bot_posts_previous_day
+        , max(COALESCE(r.active_users_daily, s.active_users, s.active_users_daily)) as active_users
+        , max(COALESCE(r.active_users_monthly, s.active_users_monthly)) as monthly_active_users
+        , max(COALESCE(r.bot_accounts, s.bot_accounts)) as bot_accounts
+        , max(COALESCE(r.guest_accounts, s.guest_accounts)) as guest_accounts
+        , max(COALESCE(r.incoming_webhooks, s.incoming_webhooks)) as incoming_webhooks
+        , max(COALESCE(r.outgoing_webhooks, s.outgoing_webhooks)) as outgoing_webhooks
+      FROM (
+            SELECT * 
+            FROM {{ source('mm_telemetry_prod', 'activity') }} s1
+            JOIN (select user_id as server_id, max(timestamp) as max_time from {{ source('mm_telemetry_prod', 'activity') }} group by 1) s2
+            ON s1.user_id = s2.server_id AND s1.timestamp = s2.max_time
+          ) r
+      FULL OUTER JOIN
+          (
+            SELECT * 
+            FROM {{ source('mattermost2', 'activity') }} s1
+            JOIN (select user_id as server_id, max(timestamp) as max_time from {{ source('mattermost2', 'activity') }} group by 1) s2
+            ON s1.user_id = s2.server_id AND s1.timestamp = s2.max_time
+          ) s
+        ON r.user_id = s.user_id and r.timestamp::date = s.timestamp::date
+      
       GROUP BY 1
     ),
     licenses AS (
