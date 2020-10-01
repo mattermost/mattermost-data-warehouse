@@ -2,7 +2,7 @@
     "materialized": "incremental",
     "schema": "staging",
     "unique_key":'id',
-    "tags":'hourly'
+    "tags":'nightly'
   })
 }}
 
@@ -51,7 +51,7 @@ max_timestamp              AS (
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND s1.timestamp::DATE >= (SELECT MAX(DATE - INTERVAL '1 DAY') FROM {{ this }})
+        AND s1.timestamp::DATE >= (SELECT MAX(DATE) FROM {{ this }})
 
     {% endif %}
     GROUP BY 1, 2
@@ -145,7 +145,7 @@ max_timestamp              AS (
         {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        WHERE s.timestamp::date >= (SELECT MAX(DATE-interval '1 day') FROM {{ this }})
+        WHERE s.timestamp::date >= (SELECT MAX(DATE) FROM {{ this }})
 
          {% endif %}
          GROUP BY 1, 2, 5, 7, 8, 9, 10, 13, 14, 15, 22, 23, 25
