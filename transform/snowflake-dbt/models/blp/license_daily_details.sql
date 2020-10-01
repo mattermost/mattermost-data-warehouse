@@ -16,13 +16,13 @@ WITH license_daily_details_all as (
            , l.issued_date
            , l.start_date
            , l.server_expire_date                                                AS expire_date
-           , l.master_account_sfid
-           , l.master_account_name
-           , l.account_sfid
-           , l.account_name
-           , l.license_email
-           , l.contact_sfid
-           , l.contact_email
+           , COALESCE(lsf.account_sfid , l.master_account_sfid) AS master_account_sfid
+           , COALESCE(lsf.account_name , l.master_account_name) AS master_account_name
+           , COALESCE(lsf.account_sfid , l.account_sfid) AS account_sfid
+           , COALESCE(lsf.account_name , l.account_name) AS account_name
+           , COALESCE(lsf.license_email, l.license_email) AS license_email
+           , COALESCE(lsf.contact_sfid, l.contact_sfid) AS contact_sfid
+           , COALESCE(lsf.license_email, l.contact_email) AS contact_email
            , l.number
            , l.stripeid
            , MAX(l.edition)                                                                 AS edition
@@ -143,6 +143,9 @@ WITH license_daily_details_all as (
          LEFT JOIN {{ ref('server_daily_details') }} s
                    ON l.date = s.date
                    AND l.server_id = s.server_id
+        LEFT JOIN {{ ref('license_server_fact') }} lsf
+                    ON l.license_id = lsf.license_id
+                    AND COALESCE(l.server_id, 'none') = coalesce(lsf.server_id, 'none')
          WHERE l.date <= CURRENT_DATE - INTERVAL '1 day'
          AND l.date <= l.server_expire_date
          AND l.date >= l.issued_date
@@ -164,10 +167,10 @@ WITH license_daily_details_all as (
           , MIN(ld.issued_date) OVER (PARTITION BY ld.date, ld.customer_id, ld.license_id)         AS issued_date
           , MIN(ld.start_date) OVER (PARTITION BY ld.date, ld.customer_id, ld.license_id)          AS start_date
           , MAX(ld.expire_date) OVER (PARTITION BY ld.date, ld.customer_id, ld.license_id)         AS expire_date
-          , MAX(ld.master_account_sfid) OVER (PARTITION BY ld.date, ld.company) AS master_account_sfid
-          , MAX(ld.master_account_name) OVER (PARTITION BY ld.date, ld.company) AS master_account_name
-          , MAX(ld.account_sfid) OVER (PARTITION BY ld.date, ld.company)        AS account_sfid
-          , MAX(ld.account_name) OVER (PARTITION BY ld.date, ld.company)        AS account_name
+          , ld.master_account_sfid
+          , ld.master_account_name
+          , ld.account_sfid
+          , ld.account_name
           , ld.license_email
           , ld.contact_sfid
           , ld.contact_email
