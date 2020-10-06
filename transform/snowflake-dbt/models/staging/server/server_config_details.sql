@@ -505,6 +505,8 @@ SELECT
   , schannel.post_reactions_user_disabled_count
   , schannel.use_channel_mentions_guest_disabled_count
   , schannel.use_channel_mentions_user_disabled_count
+  , sservice.experimental_channel_sidebar_organization
+  , sservice.experimental_data_prefetch
 FROM {{ ref('server_daily_details') }}                      s
     LEFT JOIN {{ ref('server_activity_details') }}            sactivity
     ON s.server_id = sactivity.server_id AND s.date = sactivity.date
@@ -597,7 +599,7 @@ FROM {{ ref('server_daily_details') }}                      s
 WHERE s.date >= (SELECT MAX(date) FROM {{this}})
 
 {% endif %}
-{{ dbt_utils.group_by(n=498)}}
+{{ dbt_utils.group_by(n=500)}}
 )
 SELECT *
 FROM server_config_details
