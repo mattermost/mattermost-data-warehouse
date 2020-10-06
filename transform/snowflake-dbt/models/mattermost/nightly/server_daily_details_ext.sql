@@ -526,6 +526,7 @@ WITH server_daily_details_ext AS (
       , sc.use_channel_mentions_user_disabled_count
       , sc.experimental_channel_sidebar_organization
       , sc.experimental_data_prefetch
+      , sc.extend_session_length_with_activity
     FROM {{ ref('server_daily_details') }}         s
          LEFT JOIN {{ ref('server_config_details') }} sc
                    ON s.server_id = sc.server_id
@@ -535,7 +536,7 @@ WITH server_daily_details_ext AS (
     WHERE s.date >= (SELECT MAX(date) FROM {{this}})
 
     {% endif %}
-    {{ dbt_utils.group_by(n=519) }}
+    {{ dbt_utils.group_by(n=520) }}
 )
 
 SELECT *
