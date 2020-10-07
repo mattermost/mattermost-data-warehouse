@@ -120,6 +120,9 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(r.web_server_mode, s.web_server_mode))                                         AS web_server_mode           
            , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
+           , MAX(COALESCE(r.experimental_channel_sidebar_organization, s.experimental_channel_sidebar_organization)) AS experimental_channel_sidebar_organization
+           , MAX(COALESCE(r.experimental_data_prefetch, NULL)) AS experimental_data_prefetch
+           , MAX(COALESCE(r.extend_session_length_with_activity, s.extend_session_length_with_activity)) AS extend_session_length_with_activity
          FROM 
             (
               SELECT s.*
