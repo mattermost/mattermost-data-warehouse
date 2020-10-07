@@ -38,7 +38,7 @@ WITH todays_lead_status_updates AS (
     FROM {{ source('orgm', 'lead') }}
     WHERE discovery_call_booked__c::date > current_date - interval '1 days'
     UNION ALL
-    SELECT lead.sfid AS lead_sfid, 'SCL' AS status, 'discoveryy Call Booked' AS micro_status, discovery_call_completed__c::date AS date 
+    SELECT lead.sfid AS lead_sfid, 'SCL' AS status, 'Discovery Call Booked' AS micro_status, discovery_call_completed__c::date AS date 
     FROM {{ source('orgm', 'lead') }}
     WHERE discovery_call_completed__c::date > current_date - interval '1 days'
     UNION ALL
