@@ -21,3 +21,5 @@ models:
           - unique
   - name: campaignmember_ext
     description: Additional fields at an Campaign Member level that do not exist on Campaign Member naitively.
+  - name: lead_status_hist
+    description: History on lead status & minor
