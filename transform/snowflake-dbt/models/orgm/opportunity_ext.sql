@@ -49,10 +49,11 @@ WITH w_end_date AS (
       BOOLOR_AGG(TRUE) AS marketing_generated
     FROM {{ source('orgm', 'opportunity') }}
     LEFT JOIN {{ source('orgm', 'opportunitycontactrole') }} ON opportunity.sfid = opportunitycontactrole.opportunityid
-    LEFT JOIN {{ source('orgm', 'contact') }}  AS contact ON opportunitycontactrole.contactid = contact.sfid
-    WHERE contact.first_mql_date__c < opportunity.createddate
+    LEFT JOIN {{ source('orgm', 'contact') }} AS contact ON opportunitycontactrole.contactid = contact.sfid
+    LEFT JOIN {{ source('orgm', 'lead') }} AS lead ON lead.convertedcontactid = contact.sfid
+    WHERE least(coalesce(contact.first_mql_date__c,current_timestamp()), coalesce(lead.first_mql_date__c,current_timestamp())) < opportunity.createddate
       AND opportunity.type  IN ('Account Expansion', 'New Subscription')
-      AND contact.first_mql_date__c IS NOT NULL
+      AND coalesce(contact.first_mql_date__c, lead.first_mql_date__c) IS NOT NULL
     GROUP BY 1
 ), opportunity_fc_amounts AS (
     SELECT 
