@@ -1,0 +1,19 @@
+version: 2
+
+sources:
+  - name: stripe_raw
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: stripe_raw
+
+    tables:
+      - name: subscriptions
+      - name: customers
+      - name: balance_transactions
+      - name: subscription_items
+      - name: products
+      - name: payouts
+      - name: invoices
+      - name: invoice_line_items
+      - name: invoice_items
+      - name: charges
+      - name: payout_transactions

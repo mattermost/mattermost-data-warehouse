@@ -55,6 +55,16 @@ update_opportunitylineitem_amounts = get_container_operator(
 pg_update_opportunity_time_in_stage = get_container_operator(
     "pg-update-opportunity-time-in-stage", "pg_update_opportunity_time_in_stage"
 )
+
+update_tasks_and_lead_connected = get_container_operator(
+    "update-tasks-and-lead-connected", "update_tasks_and_lead_connected"
+)
+
+update_unsequenced_outreach_leads = get_container_operator(
+    "update-unsequenced-outreach-leads", "update_unsequenced_outreach_leads"
+)
+
+
 heroku_connect_retry = get_container_operator("heroku-connect-retry", "connect_retry")
 
-tasks_filtered >> account_type >> owner_segment_updates >> lead_account >> update_opportunitylineitem_amounts >> pg_update_opportunity_time_in_stage >> heroku_connect_retry
+tasks_filtered >> account_type >> owner_segment_updates >> lead_account >> update_tasks_and_lead_connected >> update_unsequenced_outreach_leads >> update_opportunitylineitem_amounts >> pg_update_opportunity_time_in_stage >> heroku_connect_retry

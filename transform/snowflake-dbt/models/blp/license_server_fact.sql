@@ -6,22 +6,46 @@
   })
 }}
 
-with licensed_servers as (
+with account_mapping as (
+  SELECT 
+      elm.account_sfid
+    , a.name as account_name
+    , elm.licenseid as license_id
+    , elm.opportunity_sfid
+    , elm.company
+  FROM (
+        SELECT
+            COALESCE(elm.account_sfid, lo.account_sfid)         AS account_sfid
+          , COALESCE(elm.opportunity_sfid, lo.opportunity_sfid) AS opportunity_sfid
+          , COALESCE(trim(elm.licenseid), trim(lo.licenseid))   AS licenseid
+          , COALESCE(trim(elm.company), trim(lo.company))       AS company
+        FROM {{ ref('enterprise_license_mapping') }} elm
+        FULL OUTER JOIN {{ ref('license_overview') }} lo
+          ON trim(elm.licenseid) = trim(lo.licenseid)
+        GROUP BY 1, 2, 3, 4
+      ) elm
+  LEFT JOIN {{ source('orgm', 'account') }} a
+      ON elm.account_sfid = a.sfid
+  GROUP BY 1, 2, 3, 4, 5
+), 
+
+licensed_servers as (
 SELECT
     {{ dbt_utils.surrogate_key('l.server_id', 'l.license_id') }} as id
   , l.server_id
   , l.license_id
-  , MAX(COALESCE(l.company, s.company)) AS company
+  , MAX(trim(COALESCE(am.company, l.company, s.company))) AS company
   , MAX(l.edition) AS edition
   , MAX(l.users)   AS users
   , l.trial
   , l.issued_date
   , l.start_date
   , l.expire_date
-  , MAX(l.license_email) AS license_email
+  , MAX(trim(lower(l.license_email))) AS license_email
   , MAX(l.contact_sfid) AS contact_sfid
-  , MAX(COALESCE(l.account_sfid, s.account_sfid)) AS account_sfid
-  , MAX(COALESCE(l.account_name, s.account_name)) AS account_name
+  , MAX(COALESCE(am.account_sfid, l.account_sfid, s.account_sfid)) AS account_sfid
+  , MAX(COALESCE(am.account_name, l.account_name, s.account_name)) AS account_name
+  , MAX(am.opportunity_sfid) AS opportunity_sfid
   , l.stripeid
   , l.customer_id
   , l.number
@@ -31,124 +55,10 @@ SELECT
 FROM {{ ref('licenses') }} l
 LEFT JOIN {{ ref('server_fact') }} s
   ON l.server_id = s.server_id
+LEFT JOIN account_mapping am
+  ON l.license_id = am.license_id
 WHERE l.server_id IS NOT NULL
-GROUP BY 1, 2, 3, 7, 8, 9, 10, 15, 16, 17
-),
-
-licensed_window AS (
-  SELECT
-    id
-  , server_id
-  , license_id
-  , COALESCE(company
-            , MAX(company) OVER (PARTITION BY COALESCE(server_id
-                                                      , customer_id
-                                                      , account_sfid
-                                                      , contact_sfid
-                                                      , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                          THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                        ELSE contact_sfid END
-                                                      , license_id))
-            , MAX(company) OVER (PARTITION BY COALESCE(customer_id
-                                                      , account_sfid
-                                                      , contact_sfid
-                                                      , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                          THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                        ELSE contact_sfid END
-                                                      , license_id))
-            , MAX(company) OVER (PARTITION BY COALESCE(account_sfid
-                                                      , contact_sfid
-                                                      , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                          THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                        ELSE contact_sfid END
-                                                      , license_id))
-            , MAX(company) OVER (PARTITION BY COALESCE(contact_sfid
-                                                      , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                          THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                        ELSE contact_sfid END
-                                                      , license_id))
-            , MAX(company) OVER (PARTITION BY COALESCE(CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                          THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                        ELSE contact_sfid END
-                                                      , license_id))) as company
-  , edition
-  , users
-  , trial
-  , issued_date
-  , start_date
-  , expire_date
-  , license_email
-  , COALESCE(contact_sfid
-            , MAX(contact_sfid) OVER (PARTITION BY license_email)) as contact_sfid
-  , COALESCE(account_sfid
-            , MAX(account_sfid) OVER (PARTITION BY COALESCE(server_id
-                                                            , customer_id
-                                                            , contact_sfid
-                                                            , company
-                                                            , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                              ELSE contact_sfid END
-                                                            , license_id))
-            , MAX(account_sfid) OVER (PARTITION BY COALESCE(customer_id
-                                                            , contact_sfid
-                                                            , company
-                                                            , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                              ELSE contact_sfid END
-                                                            , license_id))
-            , MAX(account_sfid) OVER (PARTITION BY COALESCE(contact_sfid
-                                                            , company
-                                                            , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                              ELSE contact_sfid END
-                                                            , license_id))
-            , MAX(account_sfid) OVER (PARTITION BY COALESCE(company
-                                                            , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                              ELSE contact_sfid END
-                                                            , license_id))
-            , MAX(account_sfid) OVER (PARTITION BY COALESCE(CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                              ELSE contact_sfid END
-                                                            , license_id))) AS account_sfid
-  , COALESCE(account_name
-            , MAX(account_name) OVER (PARTITION BY COALESCE(server_id
-                                                            , customer_id
-                                                            , contact_sfid
-                                                            , company
-                                                            , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                              ELSE contact_sfid END
-                                                            , license_id))
-            , MAX(account_name) OVER (PARTITION BY COALESCE(customer_id
-                                                            , contact_sfid
-                                                            , company
-                                                            , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                              ELSE contact_sfid END
-                                                            , license_id))
-            , MAX(account_name) OVER (PARTITION BY COALESCE(contact_sfid
-                                                            , company
-                                                            , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                              ELSE contact_sfid END
-                                                            , license_id))
-            , MAX(account_name) OVER (PARTITION BY COALESCE(company
-                                                            , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                              ELSE contact_sfid END
-                                                            , license_id))
-            , MAX(account_name) OVER (PARTITION BY COALESCE(CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                              ELSE contact_sfid END
-                                                            , license_id))) AS account_name
-  , stripeid
-  , customer_id
-  , number
-  , license_activation_date
-  , last_active_date
-  , server_activation_date
-  FROM licensed_servers
+GROUP BY 1, 2, 3, 7, 8, 9, 10, 16, 17, 18
 ),
 
 nonactivated_licenses as (
@@ -156,17 +66,18 @@ nonactivated_licenses as (
     {{ dbt_utils.surrogate_key('l.server_id', 'l.license_id') }} as id
   , l.server_id
   , l.license_id
-  , MAX(l.company) AS company
+  , MAX(trim(coalesce(am.company, l.company))) AS company
   , MAX(l.edition) AS edition
   , MAX(l.users)   AS users
   , l.trial
   , l.issued_date
   , l.start_date
   , l.expire_date
-  , MAX(l.license_email) AS license_email
+  , MAX(trim(lower(l.license_email))) AS license_email
   , MAX(l.contact_sfid) AS contact_sfid
-  , MAX(l.account_sfid) AS account_sfid
-  , MAX(l.account_name) AS account_name
+  , MAX(COALESCE(am.account_sfid, l.account_sfid)) AS account_sfid
+  , MAX(COALESCE(am.account_name, l.account_name)) AS account_name
+  , MAX(am.opportunity_sfid) AS opportunity_sfid
   , l.stripeid
   , l.customer_id
   , l.number
@@ -176,168 +87,84 @@ nonactivated_licenses as (
   FROM {{ ref('licenses') }} l
   LEFT JOIN licensed_servers s
     ON l.license_id = s.license_id
+  LEFT JOIN account_mapping am
+    ON l.license_id = am.license_id       
   WHERE s.license_id is null
-  GROUP BY 1, 2, 3, 7, 8, 9, 10, 15, 16, 17
-),
-
-nonactivated_license_window as (
-  SELECT
-    id
-  , server_id
-  , license_id
-  , COALESCE(company
-            , MAX(company) OVER (PARTITION BY COALESCE(server_id
-                                                      , customer_id
-                                                      , account_sfid
-                                                      , contact_sfid
-                                                      , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                          THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                        ELSE contact_sfid END
-                                                      , license_id))
-            , MAX(company) OVER (PARTITION BY COALESCE(customer_id
-                                                      , account_sfid
-                                                      , contact_sfid
-                                                      , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                          THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                        ELSE contact_sfid END
-                                                      , license_id))
-            , MAX(company) OVER (PARTITION BY COALESCE(account_sfid
-                                                      , contact_sfid
-                                                      , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                          THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                        ELSE contact_sfid END
-                                                      , license_id))
-            , MAX(company) OVER (PARTITION BY COALESCE(contact_sfid
-                                                      , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                          THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                        ELSE contact_sfid END
-                                                      , license_id))
-            , MAX(company) OVER (PARTITION BY COALESCE(CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                          THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                        ELSE contact_sfid END
-                                                      , license_id))) as company
-  , edition
-  , users
-  , trial
-  , issued_date
-  , start_date
-  , expire_date
-  , license_email
-  , COALESCE(contact_sfid
-            , MAX(contact_sfid) OVER (PARTITION BY license_email)) as contact_sfid
-  , COALESCE(account_sfid
-            , MAX(account_sfid) OVER (PARTITION BY COALESCE(server_id
-                                                            , customer_id
-                                                            , contact_sfid
-                                                            , company
-                                                            , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                              ELSE contact_sfid END
-                                                            , license_id))
-            , MAX(account_sfid) OVER (PARTITION BY COALESCE(customer_id
-                                                            , contact_sfid
-                                                            , company
-                                                            , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                              ELSE contact_sfid END
-                                                            , license_id))
-            , MAX(account_sfid) OVER (PARTITION BY COALESCE(contact_sfid
-                                                            , company
-                                                            , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                              ELSE contact_sfid END
-                                                            , license_id))
-            , MAX(account_sfid) OVER (PARTITION BY COALESCE(company
-                                                            , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                              ELSE contact_sfid END
-                                                            , license_id))
-            , MAX(account_sfid) OVER (PARTITION BY COALESCE(CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                              ELSE contact_sfid END
-                                                            , license_id))) AS account_sfid
-, COALESCE(account_name
-            , MAX(account_name) OVER (PARTITION BY COALESCE(server_id
-                                                            , customer_id
-                                                            , contact_sfid
-                                                            , company
-                                                            , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                              ELSE contact_sfid END
-                                                            , license_id))
-            , MAX(account_name) OVER (PARTITION BY COALESCE(customer_id
-                                                            , contact_sfid
-                                                            , company
-                                                            , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                              ELSE contact_sfid END
-                                                            , license_id))
-            , MAX(account_name) OVER (PARTITION BY COALESCE(contact_sfid
-                                                            , company
-                                                            , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                              ELSE contact_sfid END
-                                                            , license_id))
-            , MAX(account_name) OVER (PARTITION BY COALESCE(company
-                                                            , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                              ELSE contact_sfid END
-                                                            , license_id))
-            , MAX(account_name) OVER (PARTITION BY COALESCE(CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                              ELSE contact_sfid END
-                                                            , license_id))) AS account_name
-  , stripeid
-  , customer_id
-  , number
-  , license_activation_date
-  , last_active_date
-  , server_activation_date
-  FROM nonactivated_licenses
+  GROUP BY 1, 2, 3, 7, 8, 9, 10, 16, 17, 18
 ),
 
 license_server_fact as (
   SELECT *
-  FROM licensed_window
+  FROM licensed_servers
   
   UNION ALL
 
   SELECT *
-  FROM nonactivated_license_window
+  FROM nonactivated_licenses
 )
 
 SELECT 
         id
       , server_id
       , license_id
+      , COALESCE(
+                COALESCE(account_sfid
+                      , FIRST_VALUE(account_sfid IGNORE NULLS) OVER (PARTITION BY COALESCE(server_id
+                                                                    , license_id) ORDER BY last_active_date desc)
+                      , MAX(account_sfid) OVER (PARTITION BY COALESCE(customer_id
+                                                                    , license_id))
+                      , MAX(account_sfid) OVER (PARTITION BY COALESCE(lower(company)
+                                                                    , license_id))
+                      , MAX(account_sfid) OVER (PARTITION BY COALESCE(contact_sfid
+                                                                    , license_id))
+                      , MAX(account_sfid) OVER (PARTITION BY COALESCE(CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT IN 
+                                                                          (SELECT DOMAIN_NAME FROM {{ source('util', 'public_domains')}} GROUP BY 1) 
+                                                                          THEN SPLIT_PART(lower(license_email), '@', 2)
+                                                                        ELSE contact_sfid END
+                                                                      , license_id)))
+              , customer_id
+      )                                                                               AS customer_id
+      , COALESCE(
+                 COALESCE(account_name
+                        , FIRST_VALUE(account_name IGNORE NULLS) OVER (PARTITION BY COALESCE(server_id
+                                                                      , license_id) ORDER BY last_active_date desc)
+                        , MAX(account_name) OVER (PARTITION BY COALESCE(customer_id
+                                                                      , license_id))
+                        , MAX(account_name) OVER (PARTITION BY COALESCE(lower(company)
+                                                                       , license_id))
+                        , MAX(account_name) OVER (PARTITION BY COALESCE(contact_sfid
+                                                                      , license_id))
+                        , MAX(account_name) OVER (PARTITION BY COALESCE(CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT IN 
+                                                                          (SELECT DOMAIN_NAME FROM {{ source('util', 'public_domains')}} GROUP BY 1) 
+                                                                            THEN SPLIT_PART(lower(license_email), '@', 2)
+                                                                          ELSE contact_sfid END
+                                                                        , license_id)))
+                , COALESCE(company
+                        , FIRST_VALUE(company IGNORE NULLS) OVER (PARTITION BY COALESCE(server_id
+                                                                  , license_id) ORDER BY last_active_date desc)
+                        , MAX(company) OVER (PARTITION BY COALESCE(customer_id
+                                                                  , license_id))
+                        , MAX(company) OVER (PARTITION BY COALESCE(account_sfid
+                                                                  , license_id))
+                        , MAX(company) OVER (PARTITION BY COALESCE(contact_sfid
+                                                                  , license_id))
+                        , MAX(company) OVER (PARTITION BY COALESCE(CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT IN 
+                                                                          (SELECT DOMAIN_NAME FROM {{ source('util', 'public_domains')}} GROUP BY 1) 
+                                                                      THEN SPLIT_PART(lower(license_email), '@', 2)
+                                                                    ELSE contact_sfid END
+                                                                  , license_id)))
+      )                                                                                     AS customer_name
       , COALESCE(company
-                , MAX(company) OVER (PARTITION BY COALESCE(server_id
-                                                          , customer_id
-                                                          , account_sfid
-                                                          , contact_sfid
-                                                          , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                              THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                            ELSE contact_sfid END
-                                                          , license_id))
+                , FIRST_VALUE(company IGNORE NULLS) OVER (PARTITION BY COALESCE(server_id
+                                                          , license_id) ORDER BY last_active_date desc)
                 , MAX(company) OVER (PARTITION BY COALESCE(customer_id
-                                                          , account_sfid
-                                                          , contact_sfid
-                                                          , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                              THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                            ELSE contact_sfid END
                                                           , license_id))
                 , MAX(company) OVER (PARTITION BY COALESCE(account_sfid
-                                                          , contact_sfid
-                                                          , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                              THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                            ELSE contact_sfid END
                                                           , license_id))
                 , MAX(company) OVER (PARTITION BY COALESCE(contact_sfid
-                                                          , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                              THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                            ELSE contact_sfid END
                                                           , license_id))
-                , MAX(company) OVER (PARTITION BY COALESCE(CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
+                , MAX(company) OVER (PARTITION BY COALESCE(CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT IN 
+                                                                          (SELECT DOMAIN_NAME FROM {{ source('util', 'public_domains')}} GROUP BY 1) 
                                                               THEN SPLIT_PART(lower(license_email), '@', 2)
                                                             ELSE contact_sfid END
                                                           , license_id))) as company
@@ -351,69 +178,36 @@ SELECT
       , COALESCE(contact_sfid
                 , MAX(contact_sfid) OVER (PARTITION BY license_email)) as contact_sfid
       , COALESCE(account_sfid
-                , MAX(account_sfid) OVER (PARTITION BY COALESCE(server_id
-                                                               , customer_id
-                                                               , contact_sfid
-                                                               , company
-                                                               , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                    THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                                  ELSE contact_sfid END
-                                                                , license_id))
+                , FIRST_VALUE(account_sfid IGNORE NULLS) OVER (PARTITION BY COALESCE(server_id
+                                                               , license_id) ORDER BY last_active_date desc)
                 , MAX(account_sfid) OVER (PARTITION BY COALESCE(customer_id
-                                                               , contact_sfid
-                                                               , company
-                                                               , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                    THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                                  ELSE contact_sfid END
-                                                                , license_id))
+                                                               , license_id))
+                , MAX(account_sfid) OVER (PARTITION BY COALESCE(lower(company)
+                                                               , license_id))
                 , MAX(account_sfid) OVER (PARTITION BY COALESCE(contact_sfid
-                                                               , company
-                                                               , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                    THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                                  ELSE contact_sfid END
-                                                                , license_id))
-                , MAX(account_sfid) OVER (PARTITION BY COALESCE(company
-                                                               , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                    THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                                  ELSE contact_sfid END
-                                                                , license_id))
-                , MAX(account_sfid) OVER (PARTITION BY COALESCE(CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
+                                                               , license_id))
+                , MAX(account_sfid) OVER (PARTITION BY COALESCE(CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT IN 
+                                                                          (SELECT DOMAIN_NAME FROM {{ source('util', 'public_domains')}} GROUP BY 1) 
                                                                     THEN SPLIT_PART(lower(license_email), '@', 2)
                                                                   ELSE contact_sfid END
                                                                 , license_id))) AS account_sfid
     , COALESCE(account_name
-                , MAX(account_name) OVER (PARTITION BY COALESCE(server_id
-                                                               , customer_id
-                                                               , contact_sfid
-                                                               , company
-                                                               , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                    THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                                  ELSE contact_sfid END
-                                                                , license_id))
+                , FIRST_VALUE(account_name IGNORE NULLS) OVER (PARTITION BY COALESCE(server_id
+                                                               , license_id)  ORDER BY last_active_date desc)
                 , MAX(account_name) OVER (PARTITION BY COALESCE(customer_id
-                                                               , contact_sfid
-                                                               , company
-                                                               , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                    THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                                  ELSE contact_sfid END
-                                                                , license_id))
+                                                               , license_id))
+                , MAX(account_name) OVER (PARTITION BY COALESCE(lower(company)
+                                                               , license_id))
                 , MAX(account_name) OVER (PARTITION BY COALESCE(contact_sfid
-                                                               , company
-                                                               , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                    THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                                  ELSE contact_sfid END
-                                                                , license_id))
-                , MAX(account_name) OVER (PARTITION BY COALESCE(company
-                                                               , CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
-                                                                    THEN SPLIT_PART(lower(license_email), '@', 2)
-                                                                  ELSE contact_sfid END
-                                                                , license_id))
-                , MAX(account_name) OVER (PARTITION BY COALESCE(CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT LIKE '%mattermost%' 
+                                                               , license_id))
+                , MAX(account_name) OVER (PARTITION BY COALESCE(CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT IN 
+                                                                          (SELECT DOMAIN_NAME FROM {{ source('util', 'public_domains')}} GROUP BY 1) 
                                                                     THEN SPLIT_PART(lower(license_email), '@', 2)
                                                                   ELSE contact_sfid END
                                                                 , license_id))) AS account_name
+      , opportunity_sfid
       , stripeid
-      , customer_id
+      , customer_id   AS license_customer_id
       , number
       , license_activation_date
       , last_active_date

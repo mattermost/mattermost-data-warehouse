@@ -1,0 +1,10 @@
+version: 2
+
+models:
+  - name: subscriptions
+  - name: customers
+  - name: subscription_items
+  - name: products
+  - name: invoices
+  - name: invoice_line_items
+  - name: charges

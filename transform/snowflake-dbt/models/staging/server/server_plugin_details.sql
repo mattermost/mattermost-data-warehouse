@@ -75,7 +75,7 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(s.version_webex, p.version_webex, p.VERSION_COMMATTERMOSTWEBEX))                  AS version_webex
            , MAX(COALESCE(s.version_welcome_bot, p.version_welcome_bot, p.VERSION_COMMATTERMOSTWELCOMEBOT))            AS version_welcome_bot
            , MAX(COALESCE(s.version_zoom, p.version_zoom))                   AS version_zoom
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, p.timestamp::DATE)', 'COALESCE(s.user_id, p.user_id)') }} AS id
+           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, p.timestamp::date)', 'COALESCE(s.user_id, p.user_id)', 'COALESCE(p.CONTEXT_TRAITS_INSTALLATIONID, NULL)') }} AS id
            , MAX(COALESCE(s.enable_confluence, p.enable_confluence, p.ENABLE_COMMATTERMOSTCONFLUENCE))              AS enable_confluence
            , MAX(COALESCE(s.enable_jitsi, p.enable_jitsi))                   AS enable_jitsi
            , MAX(COALESCE(s.enable_mscalendar, p.enable_mscalendar, p.ENABLE_COMMATTERMOSTMSCALENDAR))              AS enable_mscalendar
@@ -92,6 +92,9 @@ max_rudder_timestamp       AS (
            , MAX(p.VERSION_COMMATTERMOSTPLUGININCIDENTRESPONSE) as version_incident_response
            , MAX(p.VERSION_COMMATTERMOSTPLUGINTODO) as version_todo
            , MAX(p.VERSION_MEMES) as version_memes
+           , MAX(p.VERSION_JITSI) as version_jitsi
+           , MAX(p.VERSION_SKYPE4BUSINESS) as version_skype4business
+           , COALESCE(p.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
          FROM 
             (
               SELECT s.*
@@ -110,7 +113,7 @@ max_rudder_timestamp       AS (
             ) p
             ON s.timestamp::date = p.timestamp::date
             AND s.user_id = p.user_id
-         GROUP BY 1, 2, 38
+         GROUP BY 1, 2, 38, 57
      )
 SELECT *
 FROM server_plugin_details

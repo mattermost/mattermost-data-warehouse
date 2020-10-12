@@ -68,7 +68,7 @@ select get_sys_var({{ var_name }})
      and lower(table_name) not in ({{ table_exclusions}})
      
     {%- endif -%}
-    {%- if table_inclusions -%}
+    {%- if table_inclusions and scheme != 'portal_test' -%}
 
      and lower(table_name) in ({{ table_inclusions}})
      
@@ -166,7 +166,7 @@ select get_sys_var({{ var_name }})
         (
             select
 
-                cast({{ dbt_utils.string_literal(relation) }} as {{ dbt_utils.type_string() }}) as {{ source_column_name }},
+                cast({{ dbt_utils.string_literal(relation) }} as {{ dbt_utils.type_string() }}) as {{ source_column_name if ('_DBT_SOURCE_RELATION' not in column_superset) else '_DBT_SOURCE_RELATION2'}},
                 {% for col_name in ordered_column_names -%}
 
                     {%- set col = column_superset[col_name] -%}
@@ -186,15 +186,71 @@ select get_sys_var({{ var_name }})
                 {%- endfor -%}
 
             from {{ relation }}
-            {% if adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
-             WHERE original_timestamp::date <= CURRENT_DATE
-            {% else %}
-             WHERE timestamp::date <= CURRENT_DATE
-            {% endif %}
-            {% if is_incremental() and adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
-                AND original_timestamp::date >= (select max(original_timestamp::date) from {{ this }} )
-            {% elif is_incremental() %}
-                AND timestamp::date >= (select max(timestamp::date) from {{ this }} )
+            {% if is_incremental() and this.table == 'user_events_telemetry' %}
+            LEFT JOIN 
+                (
+                 SELECT 
+                    id as join_id
+                 FROM {{ this }}
+                 WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}
+                 AND timestamp::date >= 
+                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
+                 GROUP BY 1
+                ) a
+                ON {{ relation }}.id = a.join_id
+            WHERE timestamp::date >= 
+                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
+            AND timestamp <= CURRENT_TIMESTAMP
+            AND (a.join_id is null)
+            {% elif is_incremental() and this.table == 'mobile_events' %}
+            LEFT JOIN 
+                (
+                 SELECT 
+                    id as join_id
+                 FROM {{ this }}
+                 WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
+                 AND timestamp::date >= 
+                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
+                 AND coalesce(type, event) NOT IN ('api_profiles_get_in_channel', 'api_profiles_get_by_usernames', 'api_profiles_get_by_ids', 'application_backgrounded', 'application_opened')
+                 GROUP BY 1
+                ) a
+                ON {{ relation }}.id = a.join_id
+                WHERE timestamp::date >= 
+                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
+                AND timestamp <= CURRENT_TIMESTAMP
+                AND coalesce(type, event) NOT IN ('api_profiles_get_in_channel', 'api_profiles_get_by_usernames', 'api_profiles_get_by_ids', 'application_backgrounded', 'application_opened')
+                AND (a.join_id is null)
+            {% elif is_incremental() and adapter.quote(relation)[7:28] != 'MM_PLUGIN_DEV.NPS_NPS' %}
+            LEFT JOIN 
+                (
+                 SELECT 
+                    id as join_id
+                 FROM {{ this }}
+                 WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
+                 AND timestamp::date >= 
+                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
+                 GROUP BY 1
+                ) a
+                ON {{ relation }}.id = a.join_id
+                WHERE timestamp::date >= 
+                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
+                AND timestamp <= CURRENT_TIMESTAMP
+                AND (a.join_id is null)
+            {% elif is_incremental() and adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
+            LEFT JOIN 
+                (
+                 SELECT 
+                    id as join_id
+                 FROM {{ this }}
+                 WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
+                 AND original_timestamp::date >= 
+                     (SELECT MAX(ORIGINAL_TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
+                 GROUP BY 1
+                ) a
+                ON {{ relation }}.id = a.join_id
+                WHERE original_timestamp <= CURRENT_TIMESTAMP
+                AND original_timestamp::date >= (SELECT MAX(ORIGINAL_TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
+                AND (a.join_id is null)
             {% endif %}
         )
 
