@@ -230,6 +230,7 @@ SELECT
       , license_activation_date
       , last_active_date
       , server_activation_date
+      , ROW_NUMBER() OVER (PARTITION BY license_id ORDER BY LAST_ACTIVE_DATE NULLS LAST) AS LICENSE_RANK
        , ROW_NUMBER() OVER (PARTITION BY coalesce(server_id, license_id) ORDER BY last_active_date desc NULLS LAST) AS license_priority_rank
        , CASE WHEN COALESCE((lead(start_date, 4) OVER (PARTITION BY COALESCE(server_id, license_id) ORDER BY issued_date))::DATE, expire_date::DATE + INTERVAL '1 DAY') <= expire_date 
             THEN (lead(start_date, 4) OVER (PARTITION BY COALESCE(server_id, license_id) ORDER BY issued_date))::DATE - interval '1 day'
@@ -322,6 +323,8 @@ SELECT
         OVER (PARTITION BY customer_id, trial) AS teams
    , SUM(CASE WHEN activity.date >= CURRENT_DATE - INTERVAL '7 DAYS' AND LICENSE_PRIORITY_RANK = 1 THEN activity.guest_accounts ELSE NULL END) 
         OVER (PARTITION BY customer_id, trial) AS guest_accounts
+   , SUM(CASE WHEN LICENSE_PRIORITY_RANK = 1 AND LICENSE_RETIRED_DATE >= CURRENT_DATE AND LICENSE_RANK = 1 THEN l.users ELSE NULL END)
+        OVER (PARTITION BY customer_id, trial) AS customer_license_users
 FROM license_server_fact l
 LEFT JOIN server_activity activity
     ON l.server_id = activity.server_id
