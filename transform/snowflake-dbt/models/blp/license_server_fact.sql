@@ -232,14 +232,14 @@ SELECT
       , server_activation_date
       , ROW_NUMBER() OVER (PARTITION BY license_id ORDER BY LAST_ACTIVE_DATE NULLS LAST) AS LICENSE_RANK
        , ROW_NUMBER() OVER (PARTITION BY coalesce(server_id, license_id) ORDER BY last_active_date desc NULLS LAST) AS license_priority_rank
-       , CASE WHEN COALESCE((lead(start_date, 4) OVER (PARTITION BY COALESCE(server_id, license_id) ORDER BY issued_date))::DATE, expire_date::DATE + INTERVAL '1 DAY') <= expire_date 
-            THEN (lead(start_date, 4) OVER (PARTITION BY COALESCE(server_id, license_id) ORDER BY issued_date))::DATE - interval '1 day'
-          WHEN COALESCE((lead(start_date, 3) OVER (PARTITION BY COALESCE(server_id, license_id) ORDER BY issued_date))::DATE, expire_date::DATE + INTERVAL '1 DAY') <= expire_date 
-            THEN (lead(start_date, 3) OVER (PARTITION BY COALESCE(server_id, license_id) ORDER BY issued_date))::DATE - interval '1 day'
-          WHEN COALESCE((lead(start_date, 2) OVER (PARTITION BY COALESCE(server_id, license_id) ORDER BY issued_date))::DATE, expire_date::DATE + INTERVAL '1 DAY') <= expire_date 
-            THEN (lead(start_date, 2) OVER (PARTITION BY COALESCE(server_id, license_id) ORDER BY issued_date))::DATE - interval '1 day'
-          WHEN COALESCE((lead(start_date, 1) OVER (PARTITION BY COALESCE(server_id, license_id) ORDER BY issued_date))::DATE, expire_date::DATE + INTERVAL '1 DAY') <= expire_date
-            THEN (lead(start_date, 1) OVER (PARTITION BY COALESCE(server_id, license_id) ORDER BY issued_date))::DATE - interval '1 day'
+       , CASE WHEN COALESCE((lead(start_date, 4) OVER (PARTITION BY COALESCE(server_id, license_id) ORDER BY start_date, issued_date))::DATE, expire_date::DATE + INTERVAL '1 DAY') <= expire_date 
+            THEN (lead(start_date, 4) OVER (PARTITION BY COALESCE(server_id, license_id) ORDER BY start_date, issued_date))::DATE - interval '1 day'
+          WHEN COALESCE((lead(start_date, 3) OVER (PARTITION BY COALESCE(server_id, license_id) ORDER BY start_date, issued_date))::DATE, expire_date::DATE + INTERVAL '1 DAY') <= expire_date 
+            THEN (lead(start_date, 3) OVER (PARTITION BY COALESCE(server_id, license_id) ORDER BY start_date, issued_date))::DATE - interval '1 day'
+          WHEN COALESCE((lead(start_date, 2) OVER (PARTITION BY COALESCE(server_id, license_id) ORDER BY start_date, issued_date))::DATE, expire_date::DATE + INTERVAL '1 DAY') <= expire_date 
+            THEN (lead(start_date, 2) OVER (PARTITION BY COALESCE(server_id, license_id) ORDER BY start_date, issued_date))::DATE - interval '1 day'
+          WHEN COALESCE((lead(start_date, 1) OVER (PARTITION BY COALESCE(server_id, license_id) ORDER BY start_date, issued_date))::DATE, expire_date::DATE + INTERVAL '1 DAY') <= expire_date
+            THEN (lead(start_date, 1) OVER (PARTITION BY COALESCE(server_id, license_id) ORDER BY start_date, issued_date))::DATE - interval '1 day'
           ELSE expire_date END as license_retired_date
 FROM license_union
 {% if is_incremental() %}
@@ -262,7 +262,10 @@ SELECT
    , l.company                 
    , l.edition                 
    , l.users                   
-   , l.trial                   
+   , CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END AS TRIAL                     
    , l.issued_date             
    , l.start_date              
    , l.expire_date             
@@ -280,51 +283,114 @@ SELECT
    , l.license_priority_rank   
    , l.license_retired_date
    , activity.date as last_server_telemetry
-   , MAX(CASE WHEN license_priority_rank = 1 then activity.date else null end) OVER (PARTITION BY customer_id, trial) AS last_telemetry_date   
+   , MAX(CASE WHEN license_priority_rank = 1 then activity.date else null end) OVER (PARTITION BY customer_id, CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END) AS last_telemetry_date   
    , SUM(COALESCE(CASE WHEN activity.date >= CURRENT_DATE - INTERVAL '7 DAYS' AND LICENSE_PRIORITY_RANK = 1  
                     THEN activity.active_users 
                     ELSE NULL END, 
                   CASE WHEN activity.date >= CURRENT_DATE - INTERVAL '7 DAYS' AND LICENSE_PRIORITY_RANK = 1  
                     THEN activity.active_users_daily
-                    ELSE NULL END)) OVER (PARTITION BY customer_id, trial) AS active_users
+                    ELSE NULL END)) OVER (PARTITION BY customer_id, CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END) AS active_users
    , SUM(CASE WHEN activity.date >= CURRENT_DATE - INTERVAL '7 DAYS' AND LICENSE_PRIORITY_RANK = 1 THEN activity.active_users_monthly ELSE NULL END) 
-        OVER (PARTITION BY customer_id, trial) AS monthly_active_users
+        OVER (PARTITION BY customer_id, CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END) AS monthly_active_users
    , SUM(CASE WHEN activity.date >= CURRENT_DATE - INTERVAL '7 DAYS' AND LICENSE_PRIORITY_RANK = 1 THEN activity.bot_accounts ELSE NULL END) 
-        OVER (PARTITION BY customer_id, trial) AS bot_accounts
+        OVER (PARTITION BY customer_id, CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END) AS bot_accounts
    , SUM(CASE WHEN activity.date >= CURRENT_DATE - INTERVAL '7 DAYS' AND LICENSE_PRIORITY_RANK = 1 THEN activity.bot_posts_previous_day ELSE NULL END) 
-        OVER (PARTITION BY customer_id, trial) AS bot_posts_previous_day
+        OVER (PARTITION BY customer_id, CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END) AS bot_posts_previous_day
    , SUM(CASE WHEN activity.date >= CURRENT_DATE - INTERVAL '7 DAYS'AND LICENSE_PRIORITY_RANK = 1 THEN activity.direct_message_channels ELSE NULL END) 
-        OVER (PARTITION BY customer_id, trial) AS direct_message_channels
+        OVER (PARTITION BY customer_id, CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END) AS direct_message_channels
    , SUM(CASE WHEN activity.date >= CURRENT_DATE - INTERVAL '7 DAYS' AND LICENSE_PRIORITY_RANK = 1 THEN activity.incoming_webhooks ELSE NULL END) 
-        OVER (PARTITION BY customer_id, trial) AS incoming_webhooks
+        OVER (PARTITION BY customer_id, CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END) AS incoming_webhooks
    , SUM(CASE WHEN activity.date >= CURRENT_DATE - INTERVAL '7 DAYS' AND LICENSE_PRIORITY_RANK = 1 THEN activity.outgoing_webhooks ELSE NULL END) 
-        OVER (PARTITION BY customer_id, trial) AS outgoing_webhooks
+        OVER (PARTITION BY customer_id, CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END) AS outgoing_webhooks
    , SUM(CASE WHEN LICENSE_PRIORITY_RANK = 1 THEN activity.posts ELSE NULL END) 
-        OVER (PARTITION BY customer_id, trial) AS posts
+        OVER (PARTITION BY customer_id, CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END) AS posts
    , SUM(CASE WHEN activity.date >= CURRENT_DATE - INTERVAL '7 DAYS' AND LICENSE_PRIORITY_RANK = 1 THEN activity.posts_previous_day ELSE NULL END) 
-        OVER (PARTITION BY customer_id, trial) AS posts_previous_day
+        OVER (PARTITION BY customer_id, CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END) AS posts_previous_day
    , SUM(CASE WHEN activity.date >= CURRENT_DATE - INTERVAL '7 DAYS' AND LICENSE_PRIORITY_RANK = 1 THEN activity.private_channels ELSE NULL END) 
-        OVER (PARTITION BY customer_id, trial) AS private_channels
+        OVER (PARTITION BY customer_id, CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END) AS private_channels
    , SUM(CASE WHEN activity.date >= CURRENT_DATE - INTERVAL '7 DAYS' AND LICENSE_PRIORITY_RANK = 1 THEN activity.private_channels_deleted ELSE NULL END) 
-        OVER (PARTITION BY customer_id, trial) AS private_channels_deleted
+        OVER (PARTITION BY customer_id, CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END) AS private_channels_deleted
    , SUM(CASE WHEN activity.date >= CURRENT_DATE - INTERVAL '7 DAYS' AND LICENSE_PRIORITY_RANK = 1 THEN activity.public_channels ELSE NULL END) 
-        OVER (PARTITION BY customer_id, trial) AS public_channels
+        OVER (PARTITION BY customer_id, CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END) AS public_channels
    , SUM(CASE WHEN activity.date >= CURRENT_DATE - INTERVAL '7 DAYS' AND LICENSE_PRIORITY_RANK = 1 THEN activity.public_channels_deleted ELSE NULL END) 
-        OVER (PARTITION BY customer_id, trial) AS public_channels_deleted
+        OVER (PARTITION BY customer_id, CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END) AS public_channels_deleted
    , SUM(CASE WHEN activity.date >= CURRENT_DATE - INTERVAL '7 DAYS' AND LICENSE_PRIORITY_RANK = 1  THEN activity.registered_deactivated_users ELSE NULL END) 
-        OVER (PARTITION BY customer_id, trial) AS registered_deactivated_users
+        OVER (PARTITION BY customer_id, CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END) AS registered_deactivated_users
    , SUM(CASE WHEN activity.date >= CURRENT_DATE - INTERVAL '7 DAYS' AND LICENSE_PRIORITY_RANK = 1  THEN activity.registered_inactive_users ELSE NULL END) 
-        OVER (PARTITION BY customer_id, trial) AS registered_inactive_users
+        OVER (PARTITION BY customer_id, CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END) AS registered_inactive_users
    , SUM(CASE WHEN activity.date >= CURRENT_DATE - INTERVAL '7 DAYS' AND LICENSE_PRIORITY_RANK = 1 THEN activity.registered_users ELSE NULL END) 
-        OVER (PARTITION BY customer_id, trial) AS registered_users
+        OVER (PARTITION BY customer_id, CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END) AS registered_users
    , SUM(CASE WHEN activity.date >= CURRENT_DATE - INTERVAL '7 DAYS' AND LICENSE_PRIORITY_RANK = 1 THEN activity.slash_commands ELSE NULL END) 
-        OVER (PARTITION BY customer_id, trial) AS slash_commands
+        OVER (PARTITION BY customer_id, CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END) AS slash_commands
    , SUM(CASE WHEN activity.date >= CURRENT_DATE - INTERVAL '7 DAYS' AND LICENSE_PRIORITY_RANK = 1 THEN activity.teams ELSE NULL END) 
-        OVER (PARTITION BY customer_id, trial) AS teams
+        OVER (PARTITION BY customer_id, CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END) AS teams
    , SUM(CASE WHEN activity.date >= CURRENT_DATE - INTERVAL '7 DAYS' AND LICENSE_PRIORITY_RANK = 1 THEN activity.guest_accounts ELSE NULL END) 
-        OVER (PARTITION BY customer_id, trial) AS guest_accounts
+        OVER (PARTITION BY customer_id, CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END) AS guest_accounts
    , SUM(CASE WHEN LICENSE_PRIORITY_RANK = 1 AND LICENSE_RETIRED_DATE >= CURRENT_DATE AND LICENSE_RANK = 1 THEN l.users ELSE NULL END)
-        OVER (PARTITION BY customer_id, trial) AS customer_license_users
+        OVER (PARTITION BY customer_id, CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END) AS customer_license_users
 FROM license_server_fact l
 LEFT JOIN server_activity activity
     ON l.server_id = activity.server_id
