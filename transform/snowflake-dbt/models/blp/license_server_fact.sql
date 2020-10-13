@@ -261,7 +261,7 @@ SELECT
    , l.customer_name           
    , l.company                 
    , l.edition                 
-   , l.users                   
+   , l.users              
    , CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
             OR DATEDIFF('DAY', start_date, expire_date) < 120 
           THEN TRUE 
