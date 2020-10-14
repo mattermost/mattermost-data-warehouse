@@ -26,7 +26,11 @@ WITH todays_lead_status_updates AS (
         AND (discovery_call_booked__c::date != most_recent_scl_date__c::date OR discovery_call_booked__c IS NULL)
         AND (discovery_call_completed__c::date != most_recent_scl_date__c::date OR discovery_call_completed__c IS NULL)
     UNION ALL
-    SELECT lead.sfid AS lead_sfid, 'SCL' AS status, 'Outreach' AS micro_status, outreach__c::date AS date
+    SELECT lead.sfid AS lead_sfid, 'SCL' AS status, 'Outreach (Automation)' AS micro_status, outreach__c::date AS date
+    FROM {{ source('orgm', 'lead') }}
+    WHERE outreach__c::date > current_date - interval '1 days'
+    UNION ALL
+    SELECT lead.sfid AS lead_sfid, 'SCL' AS status, 'Outreach (Sales Manual)' AS micro_status, outreach__c::date AS date
     FROM {{ source('orgm', 'lead') }}
     WHERE outreach__c::date > current_date - interval '1 days'
     UNION ALL

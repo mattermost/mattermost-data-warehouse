@@ -20,7 +20,7 @@ FROM (
 WHERE lead.sfid = task_limited.whoid
   AND lead.actively_being_sequenced__c
   AND lead.status = 'SCL'
-  AND lead.lead_status_minor__c = 'Outreach';
+  AND lead.lead_status_minor__c = 'Outreach (Automattion)';
 
 UPDATE orgm.task
 SET outreach_auto_reply_status__c = 'Not Auto-reply'
