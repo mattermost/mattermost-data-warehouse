@@ -58,6 +58,7 @@ LEFT JOIN {{ ref('server_fact') }} s
 LEFT JOIN account_mapping am
   ON l.license_id = am.license_id
 WHERE l.server_id IS NOT NULL
+AND l.license_id <> '16tfkttgktgdmb5m8xakqncx3c'
 GROUP BY 1, 2, 3, 7, 8, 9, 10, 16, 17, 18
 ),
 
@@ -90,6 +91,7 @@ nonactivated_licenses as (
   LEFT JOIN account_mapping am
     ON l.license_id = am.license_id       
   WHERE s.license_id is null
+  AND l.license_id <> '16tfkttgktgdmb5m8xakqncx3c'
   GROUP BY 1, 2, 3, 7, 8, 9, 10, 16, 17, 18
 ),
 
