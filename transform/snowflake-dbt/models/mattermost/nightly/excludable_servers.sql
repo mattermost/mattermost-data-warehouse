@@ -101,7 +101,6 @@ cloud_servers AS (
     LEFT JOIN ip_exclusions ip
         ON trim(s.server_id) = trim(ip.server_id)
      WHERE regexp_substr(s.first_server_version, '[0-9]{1,2}.{1}[0-9]{1,2}.{1}[0-9]{1,2}$') IS NULL
-     AND s.installation_id is NULL
      AND sf.server_id is NULL
     AND ve.server_id is NULL
     AND le.server_id is NULL
