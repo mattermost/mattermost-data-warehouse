@@ -1,6 +1,8 @@
 {{config({
-    "materialized": 'table',
-    "schema": "stripe"
+    "materialized": 'incremental',
+    "schema": "stripe",
+    "unique_key":"id",
+    "tags":"hourly"
   })
 }}
 
@@ -22,6 +24,11 @@ WITH customers AS (
         ,customers.cards
         ,customers.currency
     FROM {{ source('stripe_raw','customers') }}
+    {% if is_incremental() %}
+
+    WHERE customers.created::date >= (SELECT MAX(created::date) FROM {{ this }} )
+
+    {% endif %}
 )
 
 select * from customers

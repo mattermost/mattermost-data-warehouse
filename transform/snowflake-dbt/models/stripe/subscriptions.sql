@@ -1,6 +1,8 @@
 {{config({
-    "materialized": 'table',
-    "schema": "stripe"
+    "materialized": 'incremental',
+    "schema": "stripe",
+    "unique_key":"id",
+    "tags":"hourly"
   })
 }}
 
@@ -23,6 +25,11 @@ WITH subscriptions AS (
         ,subscriptions.status
         ,subscriptions.updated
     FROM {{ source('stripe_raw','subscriptions') }}
+    {% if is_incremental() %}
+
+    WHERE subscriptions.created::date >= (SELECT MAX(created::date) FROM {{ this }})
+
+    {% endif %}
 )
 
 select * from subscriptions
