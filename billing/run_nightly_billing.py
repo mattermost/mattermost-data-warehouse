@@ -33,7 +33,7 @@ def __main__():
         query = select(subscriptions).where(
             and_(
                 subscriptions.c.deleted_at == None,
-                subscriptions.c.cloud_installation_id == None,
+                subscriptions.c.cloud_installation_id != None,
             )
         )
 
