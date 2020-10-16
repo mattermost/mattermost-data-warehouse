@@ -40,7 +40,7 @@ def __main__():
         errors = []
 
         for sub in conn.execute(query):
-            url = f"{blapi_url}/api/v1/customer/{sub["customer_id"]}/subscriptions/{sub["id"]}/invoice/build"
+            url = f"{blapi_url}/api/v1/customer/{sub['customer_id']}/subscriptions/{sub['id']}/invoice/build"
             resp = requests.post(url, data=data, headers=header)
             if resp.status_code != requests.codes.ok:
                 message = f"Error building invoice for subscription {sub["id"]} with dates {start_date}-{end_date}"
