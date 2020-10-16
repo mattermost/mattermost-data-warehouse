@@ -7,3 +7,31 @@ sources:
 
     tables:
       - name: trial_requests
+      - name: addons
+      - name: addons_version
+      - name: addresses
+      - name: addresses_version
+      - name: credit_cards
+      - name: credit_cards_version
+      - name: customers
+      - name: customers_version
+      - name: features
+      - name: features_version
+      - name: invoices
+      - name: invoices_version
+      - name: payment_methods
+      - name: payments
+      - name: payments_version
+      - name: product_addons
+      - name: product_addons_version
+      - name: product_features
+      - name: product_features_version
+      - name: products
+      - name: products_version
+      - name: purchase_fact
+      - name: subscription_addons
+      - name: subscription_addons_version
+      - name: subscriptions
+      - name: subscriptions_version
+      - name: usage_events
+      - name: usage_events_version
