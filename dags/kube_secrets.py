@@ -7,6 +7,15 @@ AWS_SECRET_ACCESS_KEY = Secret(
     "env", "AWS_SECRET_ACCESS_KEY", "airflow", "AWS_SECRET_ACCESS_KEY"
 )
 
+
+# blapi
+BLAPI_DATABASE_URL = Secret(
+    "env", "BLAPI_DATABASE_URL", "airflow", "BLAPI_DATABASE_URL"
+)
+BLAPI_TOKEN = Secret("env", "BLAPI_TOKEN", "airflow", "BLAPI_TOKEN")
+BLAPI_URL = Secret("env", "BLAPI_URL", "airflow", "BLAPI_URL")
+
+
 # Snowflake Load
 SNOWFLAKE_LOAD_DATABASE = Secret(
     "env", "SNOWFLAKE_LOAD_DATABASE", "airflow", "SNOWFLAKE_LOAD_DATABASE"
