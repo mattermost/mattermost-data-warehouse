@@ -7,7 +7,9 @@
 }}
 
 with cloud_pageview_events AS (
-SELECT p.*
+SELECT 
+    p.*, 
+    p.name as type
 FROM {{ source('mm_telemetry_prod', 'pages') }} p
 {% if is_incremental() %}
 LEFT JOIN 
