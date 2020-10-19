@@ -9,22 +9,25 @@ from sqlalchemy.sql import select, and_
 import requests
 
 
-def get_beginning_of_month(self, datetime: datetime) -> date:
-    beginning_of_month = datetime.date()
-    beginning_of_month.replace(day=1)
-    return beginning_of_month
+def get_beginning_of_month(dt):
+    return datetime(dt.year, dt.month, 1)
 
 
 def __main__():
     blapi_token = os.getenv("BLAPI_TOKEN")
     blapi_url = os.getenv("BLAPI_URL")
-    header = {"Authorization": f"Bearer {base64.b64encode(blapi_token)}"}
+    header = {
+        "Authorization": f"Bearer {base64.b64encode(str.encode(blapi_token)).decode()}"
+    }
 
     engine = create_engine(os.getenv("BLAPI_DATABASE_URL"))
     with engine.connect() as conn:
         start_date = get_beginning_of_month(datetime.now())
-        end_date = start_date + relativedelta(months=1)
-        payload = {"start_date": start_date, "end_date": end_date}
+        end_date = start_date + relativedelta(days=1)
+        payload = {
+            "start_date": start_date.isoformat(),
+            "end_date": end_date.isoformat(),
+        }
 
         subscriptions = Table(
             "subscriptions", MetaData(), autoload=True, autoload_with=conn
@@ -39,12 +42,18 @@ def __main__():
 
         errors = []
 
-        logging.error(blapi_url)
-
         for sub in conn.execute(query):
+            retries = 0
             url = f"{blapi_url}/api/v1/customer/{sub['customer_id']}/subscriptions/{sub['id']}/invoice/build"
-            resp = requests.post(url, data=data, headers=header)
-            print(f"{resp.status_code} {url}")
+
+            while retries < 5:
+                try:
+                    retries += 1
+                    resp = requests.post(url, data=payload, headers=header)
+                    break
+                except requests.exceptions.ConnectionError:
+                    pass
+
             if resp.status_code != requests.codes.ok:
                 message = f"Error building invoice for subscription {sub['id']} with dates {start_date}-{end_date}"
                 logging.error(message)
