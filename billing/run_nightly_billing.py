@@ -33,7 +33,7 @@ def main():
             "subscriptions", MetaData(), autoload=True, autoload_with=conn
         )
 
-        query = select(subscriptions).where(
+        query = select(["*"]).where(
             and_(
                 subscriptions.c.deleted_at == None,
                 subscriptions.c.cloud_installation_id != None,
