@@ -9,6 +9,7 @@
 with cloud_pageview_events AS (
 SELECT p.*
 FROM {{ source('mm_telemetry_prod', 'pages') }} p
+{% if is_incremental() %}
 LEFT JOIN 
         (
           SELECT DISTINCT ID AS JOIN_KEY
@@ -17,6 +18,7 @@ LEFT JOIN
           AND name != 'ApplicationLoaded'
         ) a
   ON p.id = a.JOIN_KEY
+{% endif %}
 WHERE name != 'ApplicationLoaded'
 {% if is_incremental() %}
 

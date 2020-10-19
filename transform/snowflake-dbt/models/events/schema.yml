@@ -39,3 +39,6 @@ models:
 
   - name: plugin_events
     description: The union of all plugin telemetry relations capturing plugin telemetry on the Mattermost platform.
+
+  - name: cloud_pageview_events
+    description: The specific pageview events instrumented to capture the cloud signup/onboarding workflows.
