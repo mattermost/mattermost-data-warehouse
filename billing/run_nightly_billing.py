@@ -13,7 +13,7 @@ def get_beginning_of_month(dt):
     return datetime(dt.year, dt.month, 1)
 
 
-def __main__():
+def main():
     blapi_token = os.getenv("BLAPI_TOKEN")
     blapi_url = os.getenv("BLAPI_URL")
     header = {
@@ -62,3 +62,6 @@ def __main__():
         if errors:
             raise Exception(errors.join("\n"))
 
+
+if __name__ == "__main__":
+    main()
