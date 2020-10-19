@@ -188,9 +188,9 @@ select get_sys_var({{ var_name }})
 
             from {{ relation }}
             {% if is_incremental() and this.table == 'user_events_telemetry' %}
-                {% if adapter.quote(relation)[19:39] == 'CLOUD_PAGEVIEW_EVENTS' %}
+                -- {% if adapter.quote(relation)[20:41] == 'CLOUD_PAGEVIEW_EVENTS' %}
 
-                {% else %}
+                -- {% else %}
                 LEFT JOIN 
                     (
                     SELECT 
@@ -206,7 +206,7 @@ select get_sys_var({{ var_name }})
                         (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
                 AND timestamp <= CURRENT_TIMESTAMP
                 AND (a.join_id is null)
-                {% endif %}
+                -- {% endif %}
             {% elif is_incremental() and this.table == 'mobile_events' %}
             LEFT JOIN 
                 (
