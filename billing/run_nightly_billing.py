@@ -16,9 +16,7 @@ def get_beginning_of_month(dt):
 def main():
     blapi_token = os.getenv("BLAPI_TOKEN")
     blapi_url = os.getenv("BLAPI_URL")
-    header = {
-        "Authorization": f"Bearer {base64.b64encode(str.encode(blapi_token)).decode()}"
-    }
+    header = {"Authorization": f"Bearer {blapi_token}"}
 
     engine = create_engine(os.getenv("BLAPI_DATABASE_URL"))
     with engine.connect() as conn:
