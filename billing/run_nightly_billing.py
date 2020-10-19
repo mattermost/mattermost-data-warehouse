@@ -49,7 +49,7 @@ def main():
             while retries < 5:
                 try:
                     retries += 1
-                    resp = requests.post(url, data=payload, headers=header)
+                    resp = requests.post(url, json=payload, headers=header)
                     break
                 except requests.exceptions.ConnectionError:
                     pass
