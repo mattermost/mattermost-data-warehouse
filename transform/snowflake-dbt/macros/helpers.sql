@@ -162,6 +162,7 @@ select get_sys_var({{ var_name }})
     {%- set ordered_column_names = column_superset.keys() -%}
 
     {%- for relation in relations %}
+        {%- set quoted_relation = ["'", relation, "'"]|join -%}
 
         (
             select
@@ -187,21 +188,25 @@ select get_sys_var({{ var_name }})
 
             from {{ relation }}
             {% if is_incremental() and this.table == 'user_events_telemetry' %}
-            LEFT JOIN 
-                (
-                 SELECT 
-                    id as join_id
-                 FROM {{ this }}
-                 WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}
-                 AND timestamp::date >= 
-                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
-                 GROUP BY 1
-                ) a
-                ON {{ relation }}.id = a.join_id
-            WHERE timestamp::date >= 
-                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
-            AND timestamp <= CURRENT_TIMESTAMP
-            AND (a.join_id is null)
+                -- {% if adapter.quote(relation)[20:41] == 'CLOUD_PAGEVIEW_EVENTS' %}
+
+                -- {% else %}
+                LEFT JOIN 
+                    (
+                    SELECT 
+                        id as join_id
+                    FROM {{ this }}
+                    WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}
+                    AND timestamp::date >= 
+                        (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
+                    GROUP BY 1
+                    ) a
+                    ON {{ relation }}.id = a.join_id
+                WHERE timestamp::date >= 
+                        (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
+                AND timestamp <= CURRENT_TIMESTAMP
+                AND (a.join_id is null)
+                -- {% endif %}
             {% elif is_incremental() and this.table == 'mobile_events' %}
             LEFT JOIN 
                 (
