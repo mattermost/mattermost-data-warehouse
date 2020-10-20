@@ -1,6 +1,8 @@
 {{config({
-    "materialized": "table",
-    "schema": "blapi"
+    "materialized": "incremental",
+    "schema": "blapi",
+    "unique_key":"license_id"
+
   })
 }}
 
@@ -25,5 +27,10 @@ WITH trial_requests AS (
     FROM {{ source('blapi', 'trial_requests') }}
     LEFT JOIN {{ source('orgm', 'lead') }} ON trial_requests.email = lead.email
     LEFT JOIN {{ source('orgm', 'contact') }} ON trial_requests.email = contact.email
+    {% if is_incremental() %}
+
+    WHERE issued_at::date >= (SELECT MAX(issued_at::date) FROM {{this}})
+
+    {% endif %}
 )
 SELECT * FROM trial_requests
