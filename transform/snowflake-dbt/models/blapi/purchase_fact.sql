@@ -1,15 +1,14 @@
 {{config({
     "materialized": "table",
-    "schema": "blp",
+    "schema": "blapi",
     "unique_key":"id",
-    "tags":["nightly","blapi"],
-    "database":"DEV"
+    "tags":["hourly","blapi"]
   })
 }}
 
 WITH purchase_fact AS (
     SELECT pf.*
-         , s.metadata:"cws-installation"::varchar as installation_id
+         , s.cloud_installation_id as installation_id
     FROM {{ source('blapi', 'purchase_fact') }} pf
     LEFT JOIN {{ source('blapi', 'subscriptions') }} s
         ON pf.subscription_id = s.id

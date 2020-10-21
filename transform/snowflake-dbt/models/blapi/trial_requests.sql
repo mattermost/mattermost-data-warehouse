@@ -2,8 +2,7 @@
     "materialized": "incremental",
     "schema": "blapi",
     "unique_key":"license_id",
-    "tags":["nightly","blapi"],
-    "database":"DEV"
+    "tags":["hourly","blapi"]
   })
 }}
 
@@ -30,7 +29,7 @@ WITH trial_requests AS (
     LEFT JOIN {{ source('orgm', 'contact') }} ON trial_requests.email = contact.email
     {% if is_incremental() %}
 
-    WHERE issued_at::date >= (SELECT MAX(issued_at::date) FROM {{this}})
+    WHERE license_issued_at >= (SELECT MAX(license_issued_at) FROM {{this}})
 
     {% endif %}
 )

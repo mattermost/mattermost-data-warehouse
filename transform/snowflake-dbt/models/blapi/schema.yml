@@ -9,11 +9,11 @@ models:
     description: Contains contact us requests (from blapi).
   - name: credit_cards
     description: Contains all credit cards provided by customers (from blapi).
-  - name: customers
+  - name: customers_blapi
     description: Contains all customers and their specific attributes (from blapi).
   - name: features
     description: Contains all features provided by various skus (from blapi).
-  - name: invoices
+  - name: invoices_blapi
     description: Contains all Mattermost Cloud customer invoices (from blapi). Includes additional forecasted invoice total to provide current month forecasts.
   - name: payment_methods
     description: Contains all payment methods provided by Mattermost customers (from blapi).
@@ -21,7 +21,7 @@ models:
     description: Contains all payments received by Mattermost customers (from blapi).
   - name: purchase_fact
     description: Contains all self-serve customer purchase details (via the Customer Web Portal) for Mattermost's on-prem & cloud offerings (from blapi).
-  - name: subscriptions
+  - name: subscriptions_blapi
     description: Contains all Mattermost subscriptions purchased via the Customer Web Portal for Mattermost's on-prem & cloud offerings (from blapi).
   - name: usage_events
     description: Contains a snapshot of cloud customer usage each day, as well as captures registered user deltas as the customer expands and contracts. Supports cloud invoicings ability to identify the max users associated with cloud installations each day.

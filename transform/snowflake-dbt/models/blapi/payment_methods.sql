@@ -1,9 +1,8 @@
 {{config({
     "materialized": "table",
-    "schema": "blp",
+    "schema": "blapi",
     "unique_key":"id",
-    "tags":["nightly","blapi"],
-    "database":"DEV"
+    "tags":["hourly","blapi"]
   })
 }}
 

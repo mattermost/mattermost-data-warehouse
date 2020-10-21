@@ -1,9 +1,9 @@
 {{config({
-    "materialized": "incremental",
-    "schema": "blp",
+    "materialized": "table",
+    "schema": "blapi",
     "unique_key":"id",
-    "tags":["nightly","blapi"],
-    "database":"DEV"
+    "alias":"invoices",
+    "tags":["hourly","blapi"]
   })
 }}
 
@@ -31,7 +31,7 @@ WITH forecasted_invoice AS (
 
 invoices AS (
     SELECT
-        *
+        i.*
       , COALESCE(
              -- RETRIEVE INVOICE SUBTOTAL FOR MONTH-TO-DATE USAGE BASED ON AVAILABLE FIELDS IN INVOICES TABLE
             ((i.total_user_months - i.free_user_months) * 10
@@ -45,16 +45,16 @@ invoices AS (
             + CASE WHEN fi.max_users_previous_day > 10 THEN ((fi.max_users_previous_day * 10/ DATEDIFF(DAY, DATE_TRUNC('MONTH', CURRENT_DATE), LAST_DAY(CURRENT_DATE, MONTH) + INTERVAL '1 DAY'))
                 * datediff(DAY, CURRENT_DATE, LAST_DAY(current_date, MONTH) + INTERVAL '1 DAY'))
                 ELSE 0 END, i.total
-                ) AS forecasted_invoice_total
+                ) AS forecasted_total
     FROM {{ source('blapi', 'invoices') }} i
     LEFT JOIN forecasted_invoice fi
         ON i.subscription_id = fi.subscription_id
         AND i.start_date::date = DATE_TRUNC('month', fi.max_date)
-    {% if is_incremental() %}
+    -- {% if is_incremental() %}
 
-    WHERE i.invoice_build_date >= (SELECT MAX(invoice_build_date) FROM {{ this }})
+    -- WHERE i.invoice_build_date >= (SELECT MAX(invoice_build_date) FROM {{ this }})
 
-    {% endif %}
+    -- {% endif %}
 )
 
 SELECT

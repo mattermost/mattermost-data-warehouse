@@ -1,9 +1,8 @@
 {{config({
     "materialized": "incremental",
-    "schema": "blp",
+    "schema": "blapi",
     "unique_key":"id",
-    "tags":["nightly","blapi"],
-    "database":"DEV"
+    "tags":["hourly","blapi"]
   })
 }}
 
@@ -12,7 +11,7 @@ WITH contact_us_requests AS (
     FROM {{ source('blapi', 'contact_us_requests') }}
     {% if is_incremental() %}
 
-    WHERE created_at::date >= (SELECT MAX(created_at::date) FROM {{this}})
+    WHERE created_at >= (SELECT MAX(created_at) FROM {{this}})
 
     {% endif %}
 )

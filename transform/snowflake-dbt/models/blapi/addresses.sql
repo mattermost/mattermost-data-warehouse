@@ -1,9 +1,8 @@
 {{config({
-    "materialized": "incremental",
-    "schema": "blp",
+    "materialized": "table",
+    "schema": "blapi",
     "unique_key":"id",
-    "tags":["nightly","blapi"],
-    "database":"DEV"
+    "tags":["hourly","blapi"]
   })
 }}
 
@@ -11,3 +10,6 @@ WITH addresses AS (
     SELECT *
     FROM {{ source('blapi', 'addresses') }}
 )
+
+SELECT *
+FROM addresses

@@ -1,9 +1,8 @@
 {{config({
     "materialized": "incremental",
-    "schema": "blp",
+    "schema": "blapi",
     "unique_key":"id",
-    "tags":["nightly","blapi"],
-    "database":"DEV"
+    "tags":["hourly","blapi"]
   })
 }}
 
@@ -12,7 +11,7 @@ WITH features AS (
     FROM {{ source('blapi', 'features') }}
     {% if is_incremental() %}
 
-    WHERE created_at::date > (SELECT MAX(created_at::date) FROM {{this}})
+    WHERE updated_at > (SELECT MAX(updated_at) FROM {{this}})
 
     {% endif %}
 )

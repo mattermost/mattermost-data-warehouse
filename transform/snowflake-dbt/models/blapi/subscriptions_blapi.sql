@@ -1,9 +1,9 @@
 {{config({
     "materialized": "incremental",
-    "schema": "blp",
+    "schema": "blapi",
     "unique_key":"id",
-    "tags":["nightly","blapi"],
-    "database":"DEV"
+    "alias":"subscriptions",
+    "tags":["hourly","blapi"]
   })
 }}
 
@@ -31,8 +31,8 @@ WITH runrate AS (
 
 subscriptions AS (
     SELECT 
-        *
-      , (rr.max_active_users * 10) AS runrate
+        s.*
+      , (rr.max_users_previous_day * 10) AS runrate
     FROM {{ source('blapi', 'subscriptions') }} s
     LEFT JOIN runrate rr
         ON s.id = rr.subscription_id

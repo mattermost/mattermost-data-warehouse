@@ -1,9 +1,9 @@
 {{config({
     "materialized": "incremental",
-    "schema": "blp",
+    "schema": "blapi",
     "unique_key":"id",
-    "tags":["nightly","blapi"],
-    "database":"DEV"
+    "alias":"customers",
+    "tags":["hourly","blapi"]
   })
 }}
 
@@ -12,7 +12,7 @@ WITH customers AS (
     FROM {{ source('blapi', 'customers') }}
     {% if is_incremental() %}
 
-
+    WHERE updated_at >= (SELECT MAX(updated_at) FROM {{this}})
 
     {% endif %}
 )
