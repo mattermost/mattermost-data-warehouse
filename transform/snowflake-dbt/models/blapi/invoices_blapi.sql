@@ -11,6 +11,7 @@ WITH forecasted_invoice AS (
     SELECT 
         u1.subscription_id
       , u2.max_date
+      , u2.usage_start
       , MAX(u1.active_users) AS max_users_previous_day
     FROM {{ source('blapi', 'usage_events') }} u1
     JOIN 
@@ -21,31 +22,32 @@ WITH forecasted_invoice AS (
             WHEN MAX(timestamp::date) = CURRENT_DATE - INTERVAL '1 DAY' THEN MAX(TIMESTAMP::DATE) 
             WHEN MAX(timestamp::date) > CURRENT_DATE THEN MAX(CURRENT_DATE - INTERVAL '1 DAY') 
             ELSE NULL END AS max_date
+        , MIN(timestamp::date) AS usage_start
         FROM {{ source('blapi', 'usage_events') }}
         GROUP BY 1
     ) u2
         ON u1.subscription_id = u2.subscription_id
         AND u1.timestamp::date = u2.max_date
-    GROUP BY 1, 2
+    GROUP BY 1, 2, 3
 ),
 
 invoices AS (
     SELECT
         i.*
-      , COALESCE(
+      , ROUND(COALESCE(
              -- RETRIEVE INVOICE SUBTOTAL FOR MONTH-TO-DATE USAGE BASED ON AVAILABLE FIELDS IN INVOICES TABLE
             ((i.total_user_months - i.free_user_months) * 10
                 -- DIVIDE BY NUMBER OF DAYS IN MONTH
                 / DATEDIFF(DAY, DATE_TRUNC('MONTH', CURRENT_DATE), LAST_DAY(CURRENT_DATE, MONTH) + INTERVAL '1 DAY'))
                 -- MULTIPLY BY NUMBER OF COMPLETE DAYS IN MONTH
-                *DATEDIFF(DAY, DATE_TRUNC('MONTH', CURRENT_DATE), CURRENT_DATE) 
+                *DATEDIFF(DAY, fi.usage_start, CURRENT_DATE) 
 
              -- CALCULATE REMAINING MONTHS FORECASTED INVOICE USING LAST COMPLETE DAYS MAX ACTIVE USER COUNT RECORDED IN THE USAGE_EVENTS RELATION
                 -- Only calculate forecasted remaining month invoice if last usage > 10 users else 0  
             + CASE WHEN fi.max_users_previous_day > 10 THEN ((fi.max_users_previous_day * 10/ DATEDIFF(DAY, DATE_TRUNC('MONTH', CURRENT_DATE), LAST_DAY(CURRENT_DATE, MONTH) + INTERVAL '1 DAY'))
                 * datediff(DAY, CURRENT_DATE, LAST_DAY(current_date, MONTH) + INTERVAL '1 DAY'))
                 ELSE 0 END, i.total
-                ) AS forecasted_total
+                ), 2) AS forecasted_total
     FROM {{ source('blapi', 'invoices') }} i
     LEFT JOIN forecasted_invoice fi
         ON i.subscription_id = fi.subscription_id
