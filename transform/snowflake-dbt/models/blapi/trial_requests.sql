@@ -1,8 +1,9 @@
 {{config({
     "materialized": "incremental",
     "schema": "blapi",
-    "unique_key":"license_id"
-
+    "unique_key":"license_id",
+    "tags":["nightly","blapi"],
+    "database":"DEV"
   })
 }}
 

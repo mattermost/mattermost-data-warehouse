@@ -2,7 +2,8 @@
     "materialized": "incremental",
     "schema": "blp",
     "unique_key":"id",
-    "tags":"nightly"
+    "tags":["nightly","blapi"],
+    "database":"DEV"
   })
 }}
 
