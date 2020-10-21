@@ -32,7 +32,9 @@ WITH runrate AS (
 subscriptions AS (
     SELECT 
         s.*
-      , (rr.max_users_previous_day * 10) AS runrate
+      , CASE WHEN s.cloud_installation_id IS NOT NULL
+            THEN CASE WHEN rr.max_users_previous_day > 10 THEN (rr.max_users_previous_day * 10) ELSE 0 END
+            ELSE NULL END AS runrate
     FROM {{ source('blapi', 'subscriptions') }} s
     LEFT JOIN runrate rr
         ON s.id = rr.subscription_id
