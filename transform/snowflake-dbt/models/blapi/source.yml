@@ -35,3 +35,4 @@ sources:
       - name: subscriptions_version
       - name: usage_events
       - name: usage_events_version
+      - name: contact_us_requests
