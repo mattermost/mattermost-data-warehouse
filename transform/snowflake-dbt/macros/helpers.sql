@@ -188,7 +188,7 @@ select get_sys_var({{ var_name }})
 
             from {{ relation }}
             {% if is_incremental() and this.table == 'user_events_telemetry' %}
-                -- {% if adapter.quote(relation)[20:41] == 'CLOUD_PAGEVIEW_EVENTS' %}
+                -- {% if adapter.quote(relation)[20:48] == 'CLOUD_PORTAL_PAGEVIEW_EVENTS' %}
 
                 -- {% else %}
                 LEFT JOIN 
