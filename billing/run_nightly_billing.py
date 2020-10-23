@@ -58,7 +58,7 @@ def main():
                 errors.append(message)
 
         if errors:
-            raise Exception(errors.join("\n"))
+            raise Exception("\n".join(errors))
 
 
 if __name__ == "__main__":
