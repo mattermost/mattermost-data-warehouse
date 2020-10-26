@@ -137,6 +137,7 @@ WITH server_details AS (
         , installation_type
       FROM {{ ref('server_daily_details') }}
       WHERE installation_id is not NULL
+      OR installation_type is not null
     ),
   last_server_date AS (
     SELECT
