@@ -71,7 +71,7 @@ WITH todays_lead_status_updates AS (
                             FROM {{this}} 
                             WHERE lead_sfid = todays_lead_status_updates.lead_sfid
                                 AND status = todays_lead_status_updates.status
-                                AND micro_status = todays_lead_status_updates.micro_status
+                                AND coalesce(micro_status,'') = coalesce(todays_lead_status_updates.micro_status,'')
                                 AND date = todays_lead_status_updates.date
                         )
     {% endif %}
