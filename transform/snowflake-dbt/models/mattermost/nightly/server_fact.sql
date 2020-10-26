@@ -134,6 +134,7 @@ WITH server_details AS (
       SELECT 
           DISTINCT server_id
         , installation_id
+        , installation_type
       FROM {{ ref('server_daily_details') }}
       WHERE installation_id is not NULL
     ),
@@ -246,6 +247,7 @@ WITH server_details AS (
       , MAX(lsd.days_inactive)                            AS days_inactive
       , MAX(api.api_request_trial_events_alltime)         AS api_request_trial_events_alltime
       , MAX(id.installation_id)         AS installation_id
+      , MAX(id.installation_type)       AS installation_type
       , max(registered_users) as registered_users
         , max(server_activity.registered_deactivated_users) as registered_deactivated_users
         , max(server_activity.posts) as posts
