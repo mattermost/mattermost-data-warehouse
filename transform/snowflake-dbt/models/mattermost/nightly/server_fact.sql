@@ -139,19 +139,17 @@ WITH server_details AS (
     ),
   last_server_date AS (
     SELECT
-        server_id
-      , MAX(CASE WHEN total_events > 0 THEN date ELSE NULL END) AS last_event_date
-      , SUM(signup_events) AS signup_events_alltime
-      , SUM(signup_email_events) AS signup_email_events_alltime
-      , SUM(post_events)         AS post_events_alltime
-      , SUM(admin_events)        AS admin_events_alltime
-      , SUM(tutorial_events)     AS tutorial_events_alltime
-      , SUM(invite_members_events) AS invite_members_events_alltime
-      , MAX(dau_total)           AS max_active_users
-      , MAX(MAU_TOTAL)           AS max_mau
-      , COUNT(DISTINCT CASE WHEN total_events > 0 THEN date ELSE NULL END) AS days_active
-      , COUNT(DISTINCT CASE WHEN COALESCE(total_events,0) = 0 THEN date ELSE NULL END) AS days_inactive
-    FROM {{ ref('server_events_by_date') }}
+        COALESCE(user_id, context_server, context_traits_server) AS server_id
+      , MAX(TIMESTAMP::DATE) AS last_event_date
+      , COUNT(CASE WHEN category = 'signup' THEN id ELSE NULL END) AS signup_events_alltime
+      , COUNT(CASE WHEN category = 'signup_email' THEN id ELSE NULL END) AS signup_email_events_alltime
+      , COUNT(CASE WHEN COALESCE(type, event) = 'api_posts_create' THEN id ELSE NULL END)         AS post_events_alltime
+      , COUNT(CASE WHEN category = 'admin' THEN id ELSE NULL END)        AS admin_events_alltime
+      , COUNT(CASE WHEN category = 'tutorial' THEN id ELSE NULL END)     AS tutorial_events_alltime
+      , COUNT(CASE WHEN COALESCE(type, event) IN ('click_invite_members','click_copy_invite_link','api_teams_invite_members') THEN id ELSE NULL END) AS invite_members_events_alltime
+      , COUNT(DISTINCT timestamp::DATE) AS days_active
+      , DATEDIFF(DAY, MIN(TIMESTAMP::DATE), CURRENT_DATE) - COUNT(DISTINCT TIMESTAMP::DATE) AS days_inactive
+    FROM {{ ref('user_events_telemetry') }}
     GROUP BY 1
   ),
   server_active_users AS (
@@ -207,14 +205,9 @@ WITH server_details AS (
       , MAX(licenses.trial_license_expire_date)           AS trial_license_expire_date
       , MAX(server_details.first_active_date)             AS first_active_date
       , MAX(server_details.last_active_date)              AS last_active_date
-      , CASE WHEN COALESCE(MAX(lsd.max_active_users),0) >= 
-          COALESCE(MAX(server_details.max_active_user_count),0)
-          THEN COALESCE(MAX(lsd.max_active_users),0) 
-          ELSE COALESCE(MAX(server_details.max_active_user_count),0)
-          END                                             AS max_active_user_count
-      , MAX(CASE WHEN COALESCE(max_monthly_active_users, 0) >= 
-            COALESCE(max_mau,0) THEN max_monthly_active_users
-            ELSE max_mau end)                             AS max_mau
+      , COALESCE(MAX(server_details.max_active_user_count),0)
+                                                          AS max_active_user_count
+      , MAX(COALESCE(max_monthly_active_users, 0))                             AS max_mau
       , MAX(server_details.last_active_user_date)         AS last_telemetry_active_user_date
       , MAX(sau.last_event_date)                          AS last_event_active_user_date
       , MAX(sau.dau_total)                                AS dau_total
