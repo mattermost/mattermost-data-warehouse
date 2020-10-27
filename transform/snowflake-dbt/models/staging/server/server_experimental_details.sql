@@ -50,7 +50,9 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(s.use_new_saml_library, r.use_new_saml_library))               AS use_new_saml_library           
            , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
-           , MAX(COALESCE(r.cloud_billing, NULL))               AS cloud_billing   
+           , MAX(COALESCE(r.cloud_billing, NULL))               AS cloud_billing
+           , MAX(COALESCE(r.enable_shared_channels, NULL))        AS enable_shared_channels
+           , MAX(COALESCE(r.cloud_user_limit, NULL))        AS cloud_user_limit 
          FROM 
             (
               SELECT s.*

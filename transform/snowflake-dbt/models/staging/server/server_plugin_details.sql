@@ -95,6 +95,8 @@ max_rudder_timestamp       AS (
            , MAX(p.VERSION_JITSI) as version_jitsi
            , MAX(p.VERSION_SKYPE4BUSINESS) as version_skype4business
            , COALESCE(p.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
+           , MAX(COALESCE(p.enable_mattermostprofanityfilter, NULL))        AS enable_mattermostprofanityfilter
+           , MAX(COALESCE(p.version_mattermostprofanityfilter, NULL))        AS version_mattermostprofanityfilter
          FROM 
             (
               SELECT s.*

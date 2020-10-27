@@ -28,6 +28,13 @@ WITH max_rudder_timestamp       AS (
            , MAX(COALESCE(r.WARN_METRIC_NUMBER_OF_ACTIVE_USERS_400, NULL)) AS WARN_METRIC_NUMBER_OF_ACTIVE_USERS_400
            , MAX(COALESCE(r.WARN_METRIC_NUMBER_OF_ACTIVE_USERS_500, NULL)) AS WARN_METRIC_NUMBER_OF_ACTIVE_USERS_500
            , {{ dbt_utils.surrogate_key('COALESCE(r.timestamp::DATE, NULL)', 'COALESCE(r.user_id, NULL)') }} AS id
+           , MAX(COALESCE(r.warn_metric_email_domain, NULL))        AS warn_metric_email_domain
+           , MAX(COALESCE(r.warn_metric_mfa, NULL))        AS warn_metric_mfa
+           , MAX(COALESCE(r.warn_metric_number_of_teams_5, NULL))        AS warn_metric_number_of_teams_5
+           , MAX(COALESCE(r.warn_metric_number_of_active_users_100, NULL))        AS warn_metric_number_of_active_users_100
+           , MAX(COALESCE(r.warn_metric_number_of_active_users_300, NULL))        AS warn_metric_number_of_active_users_300
+           , MAX(COALESCE(r.warn_metric_number_of_channels_50, NULL))        AS warn_metric_number_of_channels_50
+           , MAX(COALESCE(r.warn_metric_number_of_posts_2m, NULL))        AS warn_metric_number_of_posts_2m
          FROM 
             (
               SELECT r.*

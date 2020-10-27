@@ -123,6 +123,8 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(r.experimental_channel_sidebar_organization, s.experimental_channel_sidebar_organization)) AS experimental_channel_sidebar_organization
            , MAX(COALESCE(r.experimental_data_prefetch, NULL)) AS experimental_data_prefetch
            , MAX(COALESCE(r.extend_session_length_with_activity, s.extend_session_length_with_activity)) AS extend_session_length_with_activity
+           , MAX(COALESCE(r.enable_api_channel_deletion, NULL))        AS enable_api_channel_deletion
+           , MAX(COALESCE(r.enable_api_user_deletion, NULL))        AS enable_api_user_deletion
          FROM 
             (
               SELECT s.*
