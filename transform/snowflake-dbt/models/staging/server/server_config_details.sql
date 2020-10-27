@@ -517,6 +517,24 @@ SELECT
   , sspermissions.system_manager_permissions_modified
   , sspermissions.system_manager_permissions
   , sspermissions.system_manager_count
+  , sservice.enable_api_channel_deletion
+  , sservice.enable_api_user_deletion
+  , sldap.isnotempty_private_key
+  , sldap.isnotempty_public_certificate
+  , sexperimental.enable_shared_channels
+  , sexperimental.cloud_user_limit
+  , swarn.warn_metric_email_domain
+  , swarn.warn_metric_mfa
+  , swarn.warn_metric_number_of_teams_5
+  , splugin.enable_mattermostprofanityfilter
+  , splugin.version_mattermostprofanityfilter
+  , swarn.warn_metric_number_of_active_users_100
+  , swarn.warn_metric_number_of_active_users_300
+  , swarn.warn_metric_number_of_channels_50
+  , swarn.warn_metric_number_of_posts_2m
+  , sannouncement.admin_notices_enabled
+  , sannouncement.user_notices_enabled  
+  , smessage.download_export_results
 FROM {{ ref('server_daily_details') }}                      s
     LEFT JOIN {{ ref('server_activity_details') }}            sactivity
     ON s.server_id = sactivity.server_id AND s.date = sactivity.date
@@ -609,7 +627,7 @@ FROM {{ ref('server_daily_details') }}                      s
 WHERE s.date >= (SELECT MAX(date) FROM {{this}})
 
 {% endif %}
-{{ dbt_utils.group_by(n=510)}}
+{{ dbt_utils.group_by(n=528)}}
 )
 SELECT *
 FROM server_config_details

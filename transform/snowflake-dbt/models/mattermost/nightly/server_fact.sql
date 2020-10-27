@@ -133,8 +133,8 @@ WITH server_details AS (
     installation_id AS (
       SELECT 
           server_id
-        , MAX(installation_id)
-        , MAX(installation_type)
+        , MAX(installation_id) AS installation_id
+        , MAX(installation_type) AS installation_type
       FROM {{ ref('server_daily_details') }}
       WHERE installation_id is not NULL
       OR installation_type is not null
