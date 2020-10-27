@@ -52,11 +52,11 @@ invoices AS (
     LEFT JOIN forecasted_invoice fi
         ON i.subscription_id = fi.subscription_id
         AND i.start_date::date = DATE_TRUNC('month', fi.max_date)
-    -- {% if is_incremental() %}
+    {% if is_incremental() %}
 
-    -- WHERE i.invoice_build_date >= (SELECT MAX(invoice_build_date) FROM {{ this }})
+    WHERE i.invoice_build_date >= (SELECT MAX(invoice_build_date) FROM {{ this }})
 
-    -- {% endif %}
+    {% endif %}
 )
 
 SELECT
