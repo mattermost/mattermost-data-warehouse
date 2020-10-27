@@ -132,12 +132,13 @@ WITH server_details AS (
     ),
     installation_id AS (
       SELECT 
-          DISTINCT server_id
-        , installation_id
-        , installation_type
+          server_id
+        , MAX(installation_id)
+        , MAX(installation_type)
       FROM {{ ref('server_daily_details') }}
       WHERE installation_id is not NULL
       OR installation_type is not null
+      GROUP BY 1
     ),
   last_server_date AS (
     SELECT
