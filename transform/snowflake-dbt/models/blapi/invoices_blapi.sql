@@ -54,7 +54,7 @@ invoices AS (
         AND i.start_date::date = DATE_TRUNC('month', fi.max_date)
     {% if is_incremental() %}
 
-    WHERE i.invoice_build_date >= (SELECT MAX(invoice_build_date) FROM {{ this }})
+    WHERE i.invoice_build_date > (SELECT MAX(invoice_build_date) FROM {{ this }})
 
     {% endif %}
 )
