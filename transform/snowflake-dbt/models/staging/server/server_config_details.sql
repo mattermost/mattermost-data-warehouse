@@ -508,6 +508,15 @@ SELECT
   , sservice.experimental_channel_sidebar_organization
   , sservice.experimental_data_prefetch
   , sservice.extend_session_length_with_activity
+  , sspermissions.system_user_manager_permissions_modified
+  , sspermissions.system_user_manager_permissions
+  , sspermissions.system_user_manager_count
+  , sspermissions.system_read_only_admin_permissions_modified
+  , sspermissions.system_read_only_admin_permissions
+  , sspermissions.system_read_only_admin_count
+  , sspermissions.system_manager_permissions_modified
+  , sspermissions.system_manager_permissions
+  , sspermissions.system_manager_count
 FROM {{ ref('server_daily_details') }}                      s
     LEFT JOIN {{ ref('server_activity_details') }}            sactivity
     ON s.server_id = sactivity.server_id AND s.date = sactivity.date
@@ -600,7 +609,7 @@ FROM {{ ref('server_daily_details') }}                      s
 WHERE s.date >= (SELECT MAX(date) FROM {{this}})
 
 {% endif %}
-{{ dbt_utils.group_by(n=501)}}
+{{ dbt_utils.group_by(n=510)}}
 )
 SELECT *
 FROM server_config_details

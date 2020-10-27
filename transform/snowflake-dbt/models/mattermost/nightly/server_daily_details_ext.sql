@@ -527,6 +527,15 @@ WITH server_daily_details_ext AS (
       , sc.experimental_channel_sidebar_organization
       , sc.experimental_data_prefetch
       , sc.extend_session_length_with_activity
+      , sc.system_user_manager_permissions_modified
+      , sc.system_user_manager_permissions
+      , sc.system_user_manager_count
+      , sc.system_read_only_admin_permissions_modified
+      , sc.system_read_only_admin_permissions
+      , sc.system_read_only_admin_count
+      , sc.system_manager_permissions_modified
+      , sc.system_manager_permissions
+      , sc.system_manager_count
     FROM {{ ref('server_daily_details') }}         s
          LEFT JOIN {{ ref('server_config_details') }} sc
                    ON s.server_id = sc.server_id
@@ -536,7 +545,7 @@ WITH server_daily_details_ext AS (
     WHERE s.date >= (SELECT MAX(date) FROM {{this}})
 
     {% endif %}
-    {{ dbt_utils.group_by(n=520) }}
+    {{ dbt_utils.group_by(n=529) }}
 )
 
 SELECT *
