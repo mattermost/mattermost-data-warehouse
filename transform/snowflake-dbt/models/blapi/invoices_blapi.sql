@@ -1,5 +1,5 @@
 {{config({
-    "materialized": "table",
+    "materialized": "incremental",
     "schema": "blapi",
     "unique_key":"id",
     "alias":"invoices",
