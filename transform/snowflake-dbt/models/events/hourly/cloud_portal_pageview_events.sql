@@ -8,8 +8,7 @@
 
 with cloud_portal_pageview_events AS (
 SELECT 
-      p.COLUMN_NAME
-    , p.ANONYMOUS_ID
+      p.ANONYMOUS_ID
     , p.CHANNEL
     , p.CONTEXT_APP_BUILD
     , p.CONTEXT_APP_NAME
