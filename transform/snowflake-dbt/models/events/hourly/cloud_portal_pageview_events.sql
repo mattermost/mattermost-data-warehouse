@@ -8,39 +8,39 @@
 
 with cloud_portal_pageview_events AS (
 SELECT 
-    p.COLUMN_NAME,
-    p.ANONYMOUS_ID,
-    p.CHANNEL,
-    p.CONTEXT_APP_BUILD,
-    p.CONTEXT_APP_NAME,
-    p.CONTEXT_APP_NAMESPACE,
-    p.CONTEXT_APP_VERSION,
-    p.CONTEXT_IP,
-    p.CONTEXT_LIBRARY_NAME,
-    p.CONTEXT_LIBRARY_VERSION,
-    p.CONTEXT_LOCALE,
-    p.CONTEXT_OS_NAME,
-    p.CONTEXT_OS_VERSION,
-    p.CONTEXT_PAGE_PATH,
-    p.CONTEXT_PAGE_REFERRER,
-    p.CONTEXT_PAGE_SEARCH,
-    p.CONTEXT_PAGE_TITLE,
-    p.CONTEXT_PAGE_URL,
-    p.CONTEXT_SCREEN_DENSITY,
-    p.CONTEXT_USERAGENT,
-    p.ID,
-    p.NAME,
-    p.ORIGINAL_TIMESTAMP,
-    p.PATH,
-    p.RECEIVED_AT,
-    p.REFERRER,
-    p.SEARCH,
-    p.SENT_AT,
-    p.TIMESTAMP,
-    p.TITLE,
-    p.URL,
-    p.USER_ID,
-    p.UUID_TS,
+      p.COLUMN_NAME
+    , p.ANONYMOUS_ID
+    , p.CHANNEL
+    , p.CONTEXT_APP_BUILD
+    , p.CONTEXT_APP_NAME
+    , p.CONTEXT_APP_NAMESPACE
+    , p.CONTEXT_APP_VERSION
+    , p.CONTEXT_IP
+    , p.CONTEXT_LIBRARY_NAME
+    , p.CONTEXT_LIBRARY_VERSION
+    , p.CONTEXT_LOCALE
+    , p.CONTEXT_OS_NAME
+    , p.CONTEXT_OS_VERSION
+    , p.CONTEXT_PAGE_PATH
+    , p.CONTEXT_PAGE_REFERRER
+    , p.CONTEXT_PAGE_SEARCH
+    , p.CONTEXT_PAGE_TITLE
+    , p.CONTEXT_PAGE_URL
+    , p.CONTEXT_SCREEN_DENSITY
+    , p.CONTEXT_USERAGENT
+    , p.ID
+    , p.NAME
+    , p.ORIGINAL_TIMESTAMP
+    , p.PATH
+    , p.RECEIVED_AT
+    , p.REFERRER
+    , p.SEARCH
+    , p.SENT_AT
+    , p.TIMESTAMP
+    , p.TITLE
+    , p.URL
+    , p.USER_ID
+    , p.UUID_TS
     , CASE WHEN split_part(path, '/', 3) = 'signup' THEN 'pageview_getting_started'
         WHEN split_part(path, '/', 3) = 'verify-email' THEN 'pageview_verify_email' 
         WHEN split_part(path, '/', 3) = 'company-name' THEN 'pageview_company_name'
