@@ -12,3 +12,6 @@ models:
 
   - name: server_telemetry
     description: Contains an aggregated version of user_events by date w/ MAU and DAU-specific dimensions.
+  
+  - name: incident_response_telemetry
+    description: Contains all dev test data for incident response management plugin data.
