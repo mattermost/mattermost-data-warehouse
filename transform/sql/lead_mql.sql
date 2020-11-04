@@ -21,7 +21,10 @@ from (
                             lead.cleaned_up_website__c like '%.edu' OR
                             lower(lead.company) like '%education%' OR
                             lower(lead.company) like '%school%' OR
-                            lower(lead.company) like '%university%'
+                            lower(lead.company) like '%university%' OR
+                            lower(lead.industry_text__c) like '%academic%' OR
+                            lower(lead.industry_text__c) like '%public sector%' OR
+                            lower(lead.industry_text__c) like '%education%'
                         )
                 )
         ) and lead.status IN ('MCL','MEL','Recycle')
