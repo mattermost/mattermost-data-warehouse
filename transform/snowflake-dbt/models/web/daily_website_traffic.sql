@@ -1,7 +1,8 @@
 {{config({
     "materialized": 'incremental',
     "unique_key": 'id',
-    "schema": "web"
+    "schema": "web",
+    "tags":"preunion"
   })
 }}
 
