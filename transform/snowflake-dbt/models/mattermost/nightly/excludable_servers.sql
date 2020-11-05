@@ -111,7 +111,9 @@ cloud_servers AS (
      WHERE (regexp_substr(s.first_server_version, '[0-9]{1,2}.{1}[0-9]{1,2}.{1}[0-9]{1,2}$') IS NULL
      OR (lower(SPLIT_PART(coalesce(c.email, 'test@test.com'), '@', 2)) IN ('mattermost.com', 'adamcgross.com', 'hulen.com')
         AND coalesce(c.email, 'test@test.com') != 'jason@mattermost.com')
-     OR lower(coalesce(c.email, 'test@test.com')) IN ('ericsteven1992@gmail.com', 'eric.nelson720@gmail.com'))
+     OR lower(coalesce(c.email, 'test@test.com')) IN ('ericsteven1992@gmail.com', 'eric.nelson720@gmail.com')
+     OR sb.cws_installation is null)
+     AND s.installation_id IS NOT NULL
      AND sf.server_id is NULL
     AND ve.server_id is NULL
     AND le.server_id is NULL
