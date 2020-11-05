@@ -36,7 +36,7 @@ FROM {{ source('mattermost2', 'server') }}                       s1
 WHERE COALESCE(s2.timestamp::date, s1.timestamp::date) <= CURRENT_DATE
 {% if is_incremental() %}
 
-AND COALESCE(s2.timestamp::date, s1.timestamp::date) >= (SELECT MAX(DATE-interval '1 day') FROM {{this}})
+AND COALESCE(s2.timestamp::date, s1.timestamp::date) >= (SELECT MAX(DATE) FROM {{this}})
 
 {% endif %}
 GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 20, 21
