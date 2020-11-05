@@ -9,10 +9,6 @@
 WITH server_details AS (
     SELECT
         server_id
-      , MIN(CASE WHEN in_security OR in_mm2_server THEN date ELSE NULL END) AS            first_active_date
-      , MAX(CASE WHEN in_security OR in_mm2_server THEN date ELSE NULL END) AS            last_active_date
-      , MIN(CASE WHEN in_security THEN date ELSE NULL END) AS                             first_telemetry_active_date
-      , MAX(CASE WHEN in_security THEN date ELSE NULL END) AS                             last_telemetry_active_date
       , MAX(CASE WHEN coalesce(active_users_daily, active_users) > active_user_count 
               THEN coalesce(active_users_daily, active_users)
               ELSE active_user_count END) AS                                              max_active_user_count
@@ -22,16 +18,9 @@ WITH server_details AS (
             ELSE COALESCE(user_count,0) END)                                          AS  max_registered_users
       , MAX(coalesce(registered_deactivated_users, 0))                                AS  max_registered_deactivated_users
       , MAX(CASE WHEN active_user_count > 0 or coalesce(active_users_daily, active_users) > 0 THEN date ELSE NULL END) AS                   last_active_user_date
-      , MAX(CASE
-                WHEN license_id1 IS NOT NULL OR license_id2 IS NOT NULL THEN date
-                                                                        ELSE NULL END) AS last_active_license_date
-      , MIN(CASE WHEN license_id1 IS NOT NULL OR license_id2 IS NOT NULL THEN date
-                                                                        ELSE NULL END) AS first_active_license_date
       , MIN(CASE WHEN version IS NOT NULL THEN date ELSE NULL END) AS                     first_server_version_date
       , MIN(CASE WHEN edition IS NOT NULL THEN date ELSE NULL END)                     AS first_edition_date
       , MAX(CASE WHEN edition IS NOT NULL THEN date ELSE NULL END)                     AS last_edition_date
-      , MIN(CASE WHEN in_mm2_server THEN date ELSE NULL END)                           AS first_mm2_telemetry_date
-      , MAX(CASE WHEN in_mm2_server THEN date ELSE NULL END)                           AS last_mm2_telemetry_date
       , MIN(CASE WHEN USER_COUNT > 100 THEN DATE ELSE NULL END)                        AS first_100reg_users_date
       , MIN(CASE WHEN USER_COUNT > 500 THEN DATE ELSE NULL END)                        AS first_500reg_users_date
       , MIN(CASE WHEN USER_COUNT > 1000 THEN DATE ELSE NULL END)                       AS first_1kreg_users_date
@@ -133,16 +122,6 @@ WITH server_details AS (
       WHERE event_name = 'api_request_trial_license'
       GROUP BY 1
     ),
-    installation_id AS (
-      SELECT 
-          server_id
-        , MAX(installation_id) AS installation_id
-        , MAX(installation_type) AS installation_type
-      FROM {{ ref('server_daily_details') }}
-      WHERE installation_id is not NULL
-      OR installation_type is not null
-      GROUP BY 1
-    ),
   last_server_date AS (
     SELECT
         COALESCE(user_id, context_server, context_traits_server) AS server_id
@@ -183,15 +162,15 @@ WITH server_details AS (
     ), 
   server_fact_prep AS (
     SELECT
-        server_details.server_id
+        sdd.server_id
       , MAX(server_daily_details.version)                 AS version
       , MAX(fse.first_server_version)          AS first_server_version
       , MAX(fse.edition)                                  AS server_edition
       , MAX(fse.first_server_edition)                     AS first_server_edition
-      , MAX(server_details.first_telemetry_active_date)   AS first_telemetry_active_date
-      , MAX(server_details.last_telemetry_active_date)    AS last_telemetry_active_date
-      , MAX(server_details.first_mm2_telemetry_date)      AS first_mm2_telemetry_date
-      , MAX(server_details.last_mm2_telemetry_date)       AS last_mm2_telemetry_date
+      , MAX(sdd.first_telemetry_active_date)   AS first_telemetry_active_date
+      , MAX(sdd.last_telemetry_active_date)    AS last_telemetry_active_date
+      , MAX(sdd.first_mm2_telemetry_date)      AS first_mm2_telemetry_date
+      , MAX(sdd.last_mm2_telemetry_date)       AS last_mm2_telemetry_date
       , MAX(upgrades.version_upgrade_count)               AS version_upgrade_count
       , MAX(upgrades.edition_upgrade_count)               AS edition_upgrade_count
       , MAX(CASE WHEN oauth.enable_gitlab_oauth THEN true
@@ -209,12 +188,12 @@ WITH server_details AS (
       , MAX(licenses.first_trial_license_date)            AS first_trial_license_date
       , MAX(licenses.last_trial_license_date)             AS last_trial_license_date
       , MAX(licenses.trial_license_expire_date)           AS trial_license_expire_date
-      , MAX(server_details.first_active_date)             AS first_active_date
-      , MAX(server_details.last_active_date)              AS last_active_date
+      , MAX(sdd.first_active_date)             AS first_active_date
+      , MAX(sdd.last_active_date)              AS last_active_date
       , COALESCE(MAX(server_details.max_active_user_count),0)
                                                           AS max_active_user_count
       , MAX(COALESCE(max_monthly_active_users, 0))                             AS max_mau
-      , MAX(server_details.last_active_user_date)         AS last_telemetry_active_user_date
+      , MAX(lsd.last_event_date)         AS last_telemetry_active_user_date
       , MAX(sau.last_event_date)                          AS last_event_active_user_date
       , MAX(sau.dau_total)                                AS dau_total
       , MAX(sau.mobile_dau)                               AS mobile_dau
@@ -229,7 +208,7 @@ WITH server_details AS (
       , MAX(sau.events_alltime)                           AS events_alltime
       , MAX(sau.mobile_events_alltime)                    AS mobile_events_alltime
       , MAX(sau.users)                                    AS users
-      , MAX(server_details.last_active_license_date)      AS last_active_license_date
+      , MAX(sdd.last_active_license_date)      AS last_active_license_date
       , MAX(nps.nps_users)                                AS nps_users
       , MAX(nps.nps_score)                                AS nps_score
       , MAX(nps.promoters)                                AS promoters
@@ -251,8 +230,8 @@ WITH server_details AS (
       , MAX(lsd.days_active)                              AS days_active
       , MAX(lsd.days_inactive)                            AS days_inactive
       , MAX(api.api_request_trial_events_alltime)         AS api_request_trial_events_alltime
-      , MAX(id.installation_id)         AS installation_id
-      , MAX(id.installation_type)       AS installation_type
+      , MAX(sdd.installation_id)         AS installation_id
+      , MAX(sdd.installation_type)       AS installation_type
       , max(registered_users) as registered_users
         , max(server_activity.registered_deactivated_users) as registered_deactivated_users
         , max(server_activity.posts) as posts
@@ -269,37 +248,54 @@ WITH server_details AS (
         , max(server_activity.guest_accounts) as guest_accounts
         , max(server_activity.incoming_webhooks) as incoming_webhooks
         , max(server_activity.outgoing_webhooks) as outgoing_webhooks
-    FROM server_details
+    FROM (
+            SELECT 
+              server_id
+            , MIN(CASE WHEN in_security OR in_mm2_server THEN date ELSE NULL END) AS            first_active_date
+            , MAX(CASE WHEN in_security OR in_mm2_server THEN date ELSE NULL END) AS            last_active_date
+            , MIN(CASE WHEN in_security THEN date ELSE NULL END) AS                             first_telemetry_active_date
+            , MAX(CASE WHEN in_security THEN date ELSE NULL END) AS                             last_telemetry_active_date
+            , MAX(installation_id) AS installation_id
+            , MAX(installation_type) AS installation_type
+            , MAX(CASE
+                WHEN license_id1 IS NOT NULL OR license_id2 IS NOT NULL THEN date
+                                                                        ELSE NULL END) AS last_active_license_date
+            , MIN(CASE WHEN license_id1 IS NOT NULL OR license_id2 IS NOT NULL THEN date
+                                                                        ELSE NULL END) AS first_active_license_date
+            , MIN(CASE WHEN in_mm2_server THEN date ELSE NULL END)                           AS first_mm2_telemetry_date
+            , MAX(CASE WHEN in_mm2_server THEN date ELSE NULL END)                           AS last_mm2_telemetry_date
+            FROM {{ ref('server_daily_details') }}
+            GROUP BY 1
+          ) sdd
+        LEFT JOIN server_details
         LEFT JOIN {{ ref('server_daily_details') }}
-            ON server_details.server_id = server_daily_details.server_id
-            AND (server_daily_details.date >= server_details.last_active_date)
-        LEFT JOIN installation_id id
-            ON server_details.server_id = id.server_id
+            ON sdd.server_id = server_daily_details.server_id
+            AND (server_daily_details.date >= sdd.last_active_date)
         LEFT JOIN {{ ref('server_daily_details') }} s2
-            ON server_details.server_id = s2.server_id
-            AND server_details.last_active_license_date = s2.date
+            ON sdd.server_id = s2.server_id
+            AND sdd.last_active_license_date = s2.date
         LEFT JOIN {{ ref('nps_server_daily_score') }} nps
-            ON server_details.server_id = nps.server_id
+            ON sdd.server_id = nps.server_id
             AND nps.date = DATE_TRUNC('day', CURRENT_DATE - INTERVAL '1 DAY')
         LEFT JOIN server_upgrades upgrades
-            ON server_details.server_id = upgrades.server_id
+            ON sdd.server_id = upgrades.server_id
         LEFT JOIN server_active_users sau
-            ON server_details.server_id = sau.server_id
+            ON sdd.server_id = sau.server_id
         LEFT JOIN first_server_edition fse
-            ON server_details.server_id = fse.server_id
+            ON sdd.server_id = fse.server_id
         LEFT JOIN licenses
-            ON server_details.server_id = licenses.server_id
+            ON sdd.server_id = licenses.server_id
         LEFT JOIN {{ ref('server_oauth_details') }} oauth
-            ON server_details.server_id = oauth.server_id
-            AND server_details.first_mm2_telemetry_date = oauth.date
+            ON sdd.server_id = oauth.server_id
+            AND sdd.first_mm2_telemetry_date = oauth.date
         LEFT JOIN last_server_date lsd
-            ON server_details.server_id = lsd.server_Id
+            ON sdd.server_id = lsd.server_Id
         LEFT JOIN api_request_trial_events api
-            ON server_details.server_id = api.server_id
+            ON sdd.server_id = api.server_id
         LEFT JOIN server_activity
-            ON server_details.server_id = server_activity.user_id
+            ON sdd.server_id = server_activity.user_id
         {% if is_incremental() %}
-          WHERE COALESCE(server_activity.max_timestamp, server_details.last_active_date) >= (SELECT MAX(last_active_date) FROM {{this}})
+          WHERE sdd.last_active_date >= (SELECT MAX(last_active_date) FROM {{this}})
         {% endif %}
         {{ dbt_utils.group_by(n=1) }}
     ),
