@@ -268,6 +268,7 @@ WITH server_details AS (
             GROUP BY 1
           ) sdd
         LEFT JOIN server_details
+          ON sdd.server_id = server_details.server_id
         LEFT JOIN {{ ref('server_daily_details') }}
             ON sdd.server_id = server_daily_details.server_id
             AND (server_daily_details.date >= sdd.last_active_date)
