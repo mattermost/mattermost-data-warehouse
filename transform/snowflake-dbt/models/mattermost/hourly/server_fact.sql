@@ -1,7 +1,8 @@
 {{config({
-    'materialized': 'table',
+    'materialized': 'incremental',
     'schema': 'mattermost',
-    'tags':'hourly'
+    'tags':'hourly',
+    'unique_key':'server_id'
   })
 }}
 
@@ -62,6 +63,7 @@ WITH server_details AS (
         , max(COALESCE(r.guest_accounts, s.guest_accounts)) as guest_accounts
         , max(COALESCE(r.incoming_webhooks, s.incoming_webhooks)) as incoming_webhooks
         , max(COALESCE(r.outgoing_webhooks, s.outgoing_webhooks)) as outgoing_webhooks
+        , max(COALESCE(r.max_time, s.max_time)) AS max_timestamp
       FROM (
             SELECT * 
             FROM {{ source('mm_telemetry_prod', 'activity') }} s1
@@ -296,6 +298,9 @@ WITH server_details AS (
             ON server_details.server_id = api.server_id
         LEFT JOIN server_activity
             ON server_details.server_id = server_activity.user_id
+        {% if is_incremental() %}
+          WHERE COALESCE(server_activity.max_timestamp, server_details.last_active_date) >= (SELECT MAX(last_active_date) FROM {{this}})
+        {% endif %}
         {{ dbt_utils.group_by(n=1) }}
     ),
 
