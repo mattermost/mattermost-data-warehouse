@@ -1,7 +1,7 @@
 {{config({
     'materialized': 'incremental',
     'schema': 'mattermost',
-    'tags':'hourly',
+    'tags':'preunion',
     'unique_key':'server_id'
   })
 }}
