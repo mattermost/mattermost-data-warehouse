@@ -108,7 +108,9 @@ cloud_servers AS (
         ON trim(s.server_id) = trim(le.server_id)
     LEFT JOIN ip_exclusions ip
         ON trim(s.server_id) = trim(ip.server_id)
-     WHERE (regexp_substr(s.first_server_version, '[0-9]{1,2}.{1}[0-9]{1,2}.{1}[0-9]{1,2}$') IS NULL
+     WHERE ((regexp_substr(s.first_server_version, '[0-9]{1,2}.{1}[0-9]{1,2}.{1}[0-9]{1,2}$') IS NULL
+            OR 
+            regexp_substr(s.first_server_version, '[0-9]{1,2}.{1}[0-9]{1,2}.{1}[0-9]{1,2}.{1}.cloud[/-]ga') IS NULL)
      OR (lower(SPLIT_PART(coalesce(c.email, 'test@test.com'), '@', 2)) IN ('mattermost.com', 'adamcgross.com', 'hulen.com')
         AND coalesce(c.email, 'test@test.com') != 'jason@mattermost.com')
      OR lower(coalesce(c.email, 'test@test.com')) IN ('ericsteven1992@gmail.com', 'eric.nelson720@gmail.com')
