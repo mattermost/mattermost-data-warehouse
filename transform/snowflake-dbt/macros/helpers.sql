@@ -61,8 +61,10 @@ select get_sys_var({{ var_name }})
     select distinct
         table_schema as "table_schema", table_name as "table_name"
     from {{database}}.information_schema.tables
-    where table_name not in ('TRACKS', 'USERS', 'SCREENS', 'IDENTIFIES', 'PAGES', 'RUDDER_DISCARDS')
-    and table_schema ilike '{{ scheme }}'
+    WHERE table_schema ilike '{{ scheme }}'
+        {% if table_inclusions != "'pages'" %}
+        AND table_name not in ('TRACKS', 'USERS', 'SCREENS', 'IDENTIFIES', 'PAGES', 'RUDDER_DISCARDS')
+        {% endif %}
     {%- if table_exclusions -%}
 
      and lower(table_name) not in ({{ table_exclusions}})

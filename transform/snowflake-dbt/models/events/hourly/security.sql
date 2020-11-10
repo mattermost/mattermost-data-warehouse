@@ -2,7 +2,7 @@
     "materialized": "incremental",
     "schema": "events",
     "unique_key": "id",
-    "tags":"hourly"
+    "tags":"preunion"
   })
 }}
 
