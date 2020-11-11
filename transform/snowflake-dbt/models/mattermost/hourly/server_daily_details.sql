@@ -2,7 +2,7 @@
     "materialized": 'incremental',
     "schema": "mattermost",
     "unique_key":'id',
-    "tags":'nightly'
+    "tags":'preunion'
   })
 }}
 
@@ -93,6 +93,7 @@ dates as (
           MAX(COALESCE(s2.database_version, NULL)) OVER (PARTITION BY d.server_id ORDER BY d.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
           ELSE COALESCE(s2.database_version, NULL) END                                   AS database_version
       , s2.installation_id
+      , s2.installation_type
     FROM dates d
          LEFT JOIN {{ ref('server_security_details') }}    s1
                          ON d.server_id = s1.server_id
@@ -111,7 +112,7 @@ dates as (
 
     {% endif %}
     GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
-     , 22, 23, 24, 25, 26, 27
+     , 22, 23, 24, 25, 26, 27, 28
     )
 SELECT *
 FROM server_daily_details

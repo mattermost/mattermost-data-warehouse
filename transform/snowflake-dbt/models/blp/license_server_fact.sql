@@ -141,7 +141,7 @@ max_sku AS (
 
 cloud_subscriptions AS (
   SELECT 
-      {{ dbt_utils.surrogate_key('sf.server_id', 
+      {{ dbt_utils.surrogate_key('s.cws_installation', 
          'COALESCE(sf.server_id, server.user_id)')}}               AS id
     , COALESCE(sf.server_id, server.user_id)                       AS server_id
     , s.cws_installation                                           AS license_id

@@ -8,7 +8,7 @@
 
 with cloud_portal_pageview_events AS (
 SELECT 
-    p.*
+    {{ dbt_utils.star(from=source('portal_prod', 'pages'), except=["CATEGORY"]) }}
     , CASE WHEN split_part(path, '/', 3) = 'signup' THEN 'pageview_getting_started'
         WHEN split_part(path, '/', 3) = 'verify-email' THEN 'pageview_verify_email' 
         WHEN split_part(path, '/', 3) = 'company-name' THEN 'pageview_company_name'

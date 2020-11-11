@@ -527,6 +527,33 @@ WITH server_daily_details_ext AS (
       , sc.experimental_channel_sidebar_organization
       , sc.experimental_data_prefetch
       , sc.extend_session_length_with_activity
+      , sc.system_user_manager_permissions_modified
+      , sc.system_user_manager_permissions
+      , sc.system_user_manager_count
+      , sc.system_read_only_admin_permissions_modified
+      , sc.system_read_only_admin_permissions
+      , sc.system_read_only_admin_count
+      , sc.system_manager_permissions_modified
+      , sc.system_manager_permissions
+      , sc.system_manager_count
+      , sc.enable_api_channel_deletion
+      , sc.enable_api_user_deletion
+      , sc.isnotempty_private_key
+      , sc.isnotempty_public_certificate
+      , sc.enable_shared_channels
+      , sc.cloud_user_limit
+      , sc.warn_metric_email_domain
+      , sc.warn_metric_mfa
+      , sc.warn_metric_number_of_teams_5
+      , sc.enable_mattermostprofanityfilter
+      , sc.version_mattermostprofanityfilter
+      , sc.warn_metric_number_of_active_users_100
+      , sc.warn_metric_number_of_active_users_300
+      , sc.warn_metric_number_of_channels_50
+      , sc.warn_metric_number_of_posts_2m
+      , sc.admin_notices_enabled
+      , sc.user_notices_enabled
+      , sc.download_export_results
     FROM {{ ref('server_daily_details') }}         s
          LEFT JOIN {{ ref('server_config_details') }} sc
                    ON s.server_id = sc.server_id
@@ -536,7 +563,7 @@ WITH server_daily_details_ext AS (
     WHERE s.date >= (SELECT MAX(date) FROM {{this}})
 
     {% endif %}
-    {{ dbt_utils.group_by(n=520) }}
+    {{ dbt_utils.group_by(n=547) }}
 )
 
 SELECT *

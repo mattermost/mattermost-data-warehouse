@@ -7,12 +7,12 @@
 WITH ww_nn_amounts AS (
     SELECT 
         util.fiscal_year(opportunity.closedate)|| '-' || util.fiscal_quarter(opportunity.closedate) AS qtr,
-        SUM(CASE WHEN opportunity.status_wlo__c = 'Open' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c) ELSE 0 END) AS nn_open_max,
-        SUM(CASE WHEN opportunity.status_wlo__c = 'Open' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c) * probability * .01 ELSE 0 END) AS nn_open_weighted,
-        SUM(CASE WHEN forecastcategoryname = 'Commit' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c) ELSE 0 END) AS nn_commit_max,
-        SUM(CASE WHEN forecastcategoryname = 'Best Case' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c) ELSE 0 END) AS nn_best_case_max,
-        SUM(CASE WHEN forecastcategoryname = 'Pipeline' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c) ELSE 0 END) AS nn_pipeline_max,
-        SUM(CASE WHEN forecastcategoryname = 'Omitted' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c) ELSE 0 END) AS nn_omitted_max
+        SUM(CASE WHEN opportunity.status_wlo__c = 'Open' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) ELSE 0 END) AS nn_open_max,
+        SUM(CASE WHEN opportunity.status_wlo__c = 'Open' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) * probability * .01 ELSE 0 END) AS nn_open_weighted,
+        SUM(CASE WHEN forecastcategoryname = 'Commit' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) ELSE 0 END) AS nn_commit_max,
+        SUM(CASE WHEN forecastcategoryname = 'Best Case' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) ELSE 0 END) AS nn_best_case_max,
+        SUM(CASE WHEN forecastcategoryname = 'Pipeline' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) ELSE 0 END) AS nn_pipeline_max,
+        SUM(CASE WHEN forecastcategoryname = 'Omitted' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) ELSE 0 END) AS nn_omitted_max
     FROM {{ source('orgm','opportunity') }}
     LEFT JOIN {{ source('orgm','opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
     WHERE util.fiscal_year(closedate) = util.get_sys_var('curr_fy')
@@ -56,12 +56,12 @@ WITH ww_nn_amounts AS (
     GROUP BY 1
 ), scrub_ww AS (
     SELECT 
-        tva_bookings_new_and_exp_by_qtr.qtr,
+        tva_attain_new_and_exp_by_qtr.qtr,
         commit_ww.commit_netnew AS nn_forecast,
         commit_ww.upside_netnew AS nn_upside,
-        tva_bookings_new_and_exp_by_qtr.target AS nn_target,
-        tva_bookings_new_and_exp_by_qtr.actual AS nn_actual,
-        tva_bookings_new_and_exp_by_qtr.tva AS nn_tva,
+        tva_attain_new_and_exp_by_qtr.target AS nn_target,
+        tva_attain_new_and_exp_by_qtr.actual AS nn_actual,
+        tva_attain_new_and_exp_by_qtr.tva AS nn_tva,
         nn_open_max,
         nn_open_weighted,
         nn_commit_max,
@@ -97,10 +97,10 @@ WITH ww_nn_amounts AS (
         available_renewals_won_in_qtr_and_qtd AS ren_available_renewals_won_in_qtr_and_qtd,
         available_renewals_open_past_due_qtd AS ren_available_renewals_open_past_due_qtd,
         available_renewals_lost_qtd AS ren_available_renewals_lost_qtd
-    FROM {{ ref('tva_bookings_new_and_exp_by_qtr') }}
-    LEFT JOIN {{ ref('tva_bookings_ren_by_qtr') }} ON tva_bookings_new_and_exp_by_qtr.qtr = tva_bookings_ren_by_qtr.qtr 
-    LEFT JOIN {{ source('sales','commit_ww') }} ON tva_bookings_new_and_exp_by_qtr.qtr = commit_ww.qtr 
-    LEFT JOIN ww_nn_amounts ON ww_nn_amounts.qtr = tva_bookings_new_and_exp_by_qtr.qtr
+    FROM {{ ref('tva_attain_new_and_exp_by_qtr') }}
+    LEFT JOIN {{ ref('tva_bookings_ren_by_qtr') }} ON tva_attain_new_and_exp_by_qtr.qtr = tva_bookings_ren_by_qtr.qtr 
+    LEFT JOIN {{ source('sales','commit_ww') }} ON tva_bookings_ren_by_qtr.qtr = commit_ww.qtr 
+    LEFT JOIN ww_nn_amounts ON ww_nn_amounts.qtr = tva_bookings_ren_by_qtr.qtr
     LEFT JOIN ww_ren_amounts ON ww_ren_amounts.qtr = tva_bookings_ren_by_qtr.qtr
     LEFT JOIN ww_available_renewals ON ww_available_renewals.qtr = tva_bookings_ren_by_qtr.qtr
     GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41

@@ -47,6 +47,9 @@ max_rudder_timestamp               AS (
            , MAX(COALESCE(s.isdefault_banner_text_color, r.isdefault_banner_text_color)) AS isdefault_banner_text_color
            , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
+           , MAX(COALESCE(r.admin_notices_enabled, NULL))        AS admin_notices_enabled
+           , MAX(COALESCE(r.user_notices_enabled, NULL))        AS user_notices_enabled
+
            FROM 
             (
               SELECT s.*

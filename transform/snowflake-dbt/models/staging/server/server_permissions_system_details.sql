@@ -49,7 +49,17 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(r.team_guest_permissions, s.team_guest_permissions))    AS team_guest_permissions
            , MAX(COALESCE(r.team_user_permissions, s.team_user_permissions))     AS team_user_permissions           
            , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
-           , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
+           , MAX(COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL))                   AS installation_id
+            , MAX(COALESCE(r.system_user_manager_permissions_modified, NULL))            AS system_user_manager_permissions_modified
+            , MAX(COALESCE(r.system_user_manager_permissions, NULL))            AS system_user_manager_permissions
+            , MAX(COALESCE(r.system_user_manager_count, NULL))            AS system_user_manager_count
+            , MAX(COALESCE(r.system_read_only_admin_permissions_modified, NULL))            AS system_read_only_admin_permissions_modified
+            , MAX(COALESCE(r.system_read_only_admin_permissions, NULL))            AS system_read_only_admin_permissions
+            , MAX(COALESCE(r.system_read_only_admin_count, NULL))            AS system_read_only_admin_count
+            , MAX(COALESCE(r.system_manager_permissions_modified, NULL))            AS system_manager_permissions_modified
+            , MAX(COALESCE(r.system_manager_permissions, NULL))            AS system_manager_permissions
+            , MAX(COALESCE(r.system_manager_count, NULL))            AS system_manager_count
+
          FROM 
             (
               SELECT s.*
@@ -68,7 +78,7 @@ max_rudder_timestamp       AS (
             ) r
             ON s.timestamp::date = r.timestamp::date
             AND s.user_id = r.user_id
-         GROUP BY 1, 2, 11, 12
+         GROUP BY 1, 2, 11
          )
 SELECT *
 FROM server_permissions_system_details

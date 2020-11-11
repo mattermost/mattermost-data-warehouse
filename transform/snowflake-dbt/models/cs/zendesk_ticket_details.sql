@@ -16,6 +16,7 @@ WITH zendesk_ticket_details AS (
         max(CASE WHEN custom_ticket_fields.ticket_field_id = 24998963 THEN custom_ticket_fields.field_value ELSE NULL END) AS customer_type,
         max(CASE WHEN custom_ticket_fields.ticket_field_id = 25430823 THEN custom_ticket_fields.field_value ELSE NULL END) AS category,
         max(CASE WHEN custom_ticket_fields.ticket_field_id = 25430823 THEN custom_ticket_fields.field_value ELSE NULL END) AS tech_support_category,
+        max(CASE WHEN custom_ticket_fields.ticket_field_id = 360036694171 THEN custom_ticket_fields.field_value ELSE NULL END) AS business_impact,
         max(CASE WHEN custom_ticket_fields.ticket_field_id = 360031056451 THEN custom_ticket_fields.field_value ELSE NULL END) AS sales_billings_support_category,
         CASE WHEN max(CASE WHEN custom_ticket_fields.ticket_field_id = 360029689292 THEN custom_ticket_fields.field_value ELSE NULL END) = 'true' THEN TRUE ELSE FALSE END AS pending_do_not_close,
         CASE WHEN tickets.tags LIKE '%premsupport%' THEN true ELSE false END AS premium_support,
@@ -59,7 +60,7 @@ WITH zendesk_ticket_details AS (
     LEFT JOIN {{ source('zendesk_raw', 'users') }} AS requester ON requester.id = tickets.requester_id
     LEFT JOIN {{ source('zendesk_raw', 'users') }} AS submitter ON submitter.id = tickets.submitter_id
     LEFT JOIN {{ source('zendesk_raw', 'ticket_forms') }} ON ticket_forms.id = tickets.ticket_form_id
-    GROUP BY 1, 2, 3, 4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 40, 41, 42
+    GROUP BY 1, 2, 3, 4, 5, 6, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 41, 42, 43
 )
 
 select * from zendesk_ticket_details

@@ -20,8 +20,9 @@ def main():
 
     engine = create_engine(os.getenv("BLAPI_DATABASE_URL"))
     with engine.connect() as conn:
-        start_date = get_beginning_of_month(datetime.now())
-        end_date = start_date + relativedelta(days=1)
+        now = datetime.now()
+        end_date = datetime(now.year, now.month, now.day)
+        start_date = end_date + relativedelta(days=-1)
         payload = {
             "start_date": start_date.isoformat(),
             "end_date": end_date.isoformat(),
@@ -58,7 +59,7 @@ def main():
                 errors.append(message)
 
         if errors:
-            raise Exception(errors.join("\n"))
+            raise Exception("\n".join(errors))
 
 
 if __name__ == "__main__":
