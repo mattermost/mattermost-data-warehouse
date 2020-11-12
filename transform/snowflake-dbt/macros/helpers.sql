@@ -216,6 +216,7 @@ select get_sys_var({{ var_name }})
                     id as join_id
                  FROM {{ this }}
                  WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
+                 AND timestamp <= CURRENT_TIMESTAMP
                  AND timestamp::date >= 
                      (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
                  AND coalesce(type, event) NOT IN ('api_profiles_get_in_channel', 'api_profiles_get_by_usernames', 'api_profiles_get_by_ids', 'application_backgrounded', 'application_opened')
