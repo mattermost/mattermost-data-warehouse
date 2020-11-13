@@ -97,6 +97,10 @@ max_rudder_timestamp       AS (
            , COALESCE(p.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
            , MAX(COALESCE(p.enable_mattermostprofanityfilter, NULL))        AS enable_mattermostprofanityfilter
            , MAX(COALESCE(p.version_mattermostprofanityfilter, NULL))        AS version_mattermostprofanityfilter
+           , MAX(COALESCE(p.enable_comgithubmatterpollmatterpoll, NULL))        AS enable_comgithubmatterpollmatterpoll
+           , MAX(COALESCE(p.version_comgithubmatterpollmatterpoll, NULL))        AS version_comgithubmatterpollmatterpoll
+           , MAX(COALESCE(p.enable_commattermostpluginincidentmanagement, NULL))        AS enable_commattermostpluginincidentmanagement
+           , MAX(COALESCE(p.version_commattermostpluginincidentmanagement, NULL))        AS version_commattermostpluginincidentmanagement
          FROM 
             (
               SELECT s.*
