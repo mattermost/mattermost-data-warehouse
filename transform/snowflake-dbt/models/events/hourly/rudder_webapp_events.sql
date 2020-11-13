@@ -13,7 +13,8 @@ LEFT JOIN
         (
           SELECT DISTINCT ID AS JOIN_KEY
           FROM {{ this }}
-          WHERE TIMESTAMP::DATE >= (SELECT MAX(timestamp::date) FROM {{ this }}) - INTERVAL '1 DAYS'
+          WHERE TIMESTAMP::DATE >= (SELECT MAX(timestamp::date) FROM {{ this }} WHERE timestamp <= CURRENT_TIMESTAMP) - INTERVAL '1 DAYS'
+          AND timestamp <= CURRENT_TIMESTAMP
           AND COALESCE(type, event) NOT IN ('api_profiles_get_by_ids', 'api_profiles_get_by_usernames','api_profiles_get_in_channel', 'application_backgrounded', 'application_opened')
         ) a
   ON e.id = a.JOIN_KEY

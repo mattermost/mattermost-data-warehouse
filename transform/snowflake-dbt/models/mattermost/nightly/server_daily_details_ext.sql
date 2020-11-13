@@ -554,6 +554,10 @@ WITH server_daily_details_ext AS (
       , sc.admin_notices_enabled
       , sc.user_notices_enabled
       , sc.download_export_results
+      , sc.enable_comgithubmatterpollmatterpoll
+      , sc.version_comgithubmatterpollmatterpoll
+      , sc.enable_commattermostpluginincidentmanagement
+      , sc.version_commattermostpluginincidentmanagement
     FROM {{ ref('server_daily_details') }}         s
          LEFT JOIN {{ ref('server_config_details') }} sc
                    ON s.server_id = sc.server_id
@@ -563,7 +567,7 @@ WITH server_daily_details_ext AS (
     WHERE s.date >= (SELECT MAX(date) FROM {{this}})
 
     {% endif %}
-    {{ dbt_utils.group_by(n=547) }}
+    {{ dbt_utils.group_by(n=551) }}
 )
 
 SELECT *
