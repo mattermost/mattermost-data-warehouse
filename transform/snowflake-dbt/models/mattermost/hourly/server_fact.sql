@@ -268,6 +268,8 @@ WITH sdd AS (
         , max(server_activity.guest_accounts) as guest_accounts
         , max(server_activity.incoming_webhooks) as incoming_webhooks
         , max(server_activity.outgoing_webhooks) as outgoing_webhooks
+        , MAX(server_details.max_registered_users) as max_registered_users
+        , MAX(server_details.max_registered_deactivated_users) as max_registered_deactivated_users
     FROM sdd
         LEFT JOIN server_details
           ON sdd.server_id = server_details.server_id
