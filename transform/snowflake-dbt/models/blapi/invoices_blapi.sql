@@ -47,7 +47,7 @@ invoices AS (
             + CASE WHEN fi.max_users_previous_day > 10 THEN ((fi.max_users_previous_day * 10/ DATEDIFF(DAY, DATE_TRUNC('MONTH', CURRENT_DATE), LAST_DAY(CURRENT_DATE, MONTH) + INTERVAL '1 DAY'))
                 * datediff(DAY, CURRENT_DATE, LAST_DAY(current_date, MONTH) + INTERVAL '1 DAY'))
                 ELSE 0 END, i.total
-                ), 2) AS forecasted_total
+                ) - i.discounts_total, 2) AS forecasted_total
     FROM {{ source('blapi', 'invoices') }} i
     LEFT JOIN forecasted_invoice fi
         ON i.subscription_id = fi.subscription_id
