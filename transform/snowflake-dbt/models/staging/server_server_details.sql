@@ -52,7 +52,7 @@ max_timestamp              AS (
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND s1.timestamp::DATE >= (SELECT MAX(DATE) FROM {{ this }})
+        AND s1.timestamp::DATE >= (SELECT MAX(DATE) FROM {{ this }}) - interval '1 day'
 
     {% endif %}
     GROUP BY 1, 2
