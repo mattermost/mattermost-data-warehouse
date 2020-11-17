@@ -535,6 +535,10 @@ SELECT
   , sannouncement.admin_notices_enabled
   , sannouncement.user_notices_enabled  
   , smessage.download_export_results
+  , splugin.enable_comgithubmatterpollmatterpoll
+  , splugin.version_comgithubmatterpollmatterpoll
+  , splugin.enable_commattermostpluginincidentmanagement
+  , splugin.version_commattermostpluginincidentmanagement
 FROM {{ ref('server_daily_details') }}                      s
     LEFT JOIN {{ ref('server_activity_details') }}            sactivity
     ON s.server_id = sactivity.server_id AND s.date = sactivity.date
@@ -627,7 +631,7 @@ FROM {{ ref('server_daily_details') }}                      s
 WHERE s.date >= (SELECT MAX(date) FROM {{this}})
 
 {% endif %}
-{{ dbt_utils.group_by(n=528)}}
+{{ dbt_utils.group_by(n=532)}}
 )
 SELECT *
 FROM server_config_details

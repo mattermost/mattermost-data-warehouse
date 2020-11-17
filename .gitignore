@@ -79,6 +79,10 @@ target/
 # Jupyter Notebook
 .ipynb_checkpoints
 
+# .vscode
+.vscode/
+Snowflake_Prod.session.sql
+
 # IPython
 profile_default/
 ipython_config.py
