@@ -55,6 +55,7 @@ invoices AS (
     {% if is_incremental() %}
 
     WHERE i.invoice_build_date > (SELECT MAX(invoice_build_date) FROM {{ this }})
+    OR i.updated_at > (SELECT MAX(updated_at) FROM {{ this }})
 
     {% endif %}
 )
