@@ -36,12 +36,14 @@ invoices AS (
         i.*
       , ROUND(
              -- RETRIEVE INVOICE SUBTOTAL FOR MONTH-TO-DATE USAGE BASED ON AVAILABLE FIELDS IN INVOICES TABLE
-            ((total/100.0) 
+            ((CASE WHEN total/100.0 = 0 THEN i.discounts_total/100.0 ELSE total/100.0 END) 
              -- CALCULATE REMAINING MONTHS FORECASTED INVOICE USING LAST COMPLETE DAYS MAX ACTIVE USER COUNT RECORDED IN THE USAGE_EVENTS RELATION
                 -- Only calculate forecasted remaining month invoice if last usage > 10 users else 0  
-            + (CASE WHEN fi.max_users_previous_day > 10 THEN ((fi.max_users_previous_day * 10/ DATEDIFF(DAY, DATE_TRUNC('MONTH', CURRENT_DATE), LAST_DAY(CURRENT_DATE, MONTH) + INTERVAL '1 DAY'))
-                * datediff(DAY, CURRENT_DATE, LAST_DAY(current_date, MONTH) + INTERVAL '1 DAY'))
-                ELSE 0 END
+            + (CASE WHEN i.discounts_total > 0 AND i.total = 0 THEN 0
+                    ELSE CASE WHEN fi.max_users_previous_day > 10 THEN ((fi.max_users_previous_day * 10/ DATEDIFF(DAY, DATE_TRUNC('MONTH', CURRENT_DATE), LAST_DAY(CURRENT_DATE, MONTH) + INTERVAL '1 DAY'))
+                            * datediff(DAY, CURRENT_DATE, LAST_DAY(current_date, MONTH) + INTERVAL '1 DAY'))
+                            ELSE 0 END 
+                END
                 )::float) - (i.discounts_total/100.0)::float, 2) AS forecasted_total
     FROM {{ source('blapi', 'invoices') }} i
     LEFT JOIN forecasted_invoice fi
