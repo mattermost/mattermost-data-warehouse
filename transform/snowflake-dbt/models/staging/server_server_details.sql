@@ -61,49 +61,48 @@ max_timestamp              AS (
          SELECT
              l.license_id
            , l.server_id
-           , l.customer_id
-           , l.company
-           , l.edition
-           , l.issued_date
-           , l.start_date
-           , l.server_expire_date_join   AS expire_date
-           , l.master_account_sfid
-           , l.master_account_name
-           , l.account_sfid
-           , l.account_name
-           , l.license_email
-           , l.contact_sfid
-           , l.contact_email
-           , l.number
-           , l.stripeid
-           , l.users
-           , l.feature_cluster
-           , l.feature_compliance
-           , l.feature_custom_brand
-           , l.feature_custom_permissions_schemes
-           , l.feature_data_retention
-           , l.feature_elastic_search
-           , l.feature_email_notification_contents
-           , l.feature_future
-           , l.feature_google
-           , l.feature_guest_accounts
-           , l.feature_guest_accounts_permissions
-           , l.feature_id_loaded
-           , l.feature_ldap
-           , l.feature_ldap_groups
-           , l.feature_lock_teammate_name_display
-           , l.feature_message_export
-           , l.feature_metrics           
-           , l.feature_mfa
-           , l.feature_mhpns
-           , l.feature_office365
-           , l.feature_password
-           , l.feature_saml
-           , l.has_trial_and_non_trial
-           , l.trial
+           , MAX(l.customer_id) AS customer_id
+           , MAX(l.company) AS company 
+           , MAX(l.edition) AS edition
+           , MAX(l.issued_date) AS issued_date
+           , MAX(l.start_date) AS start_date
+           , MAX(l.server_expire_date_join)   AS expire_date
+           , MAX(l.master_account_sfid) AS master_account_sfid
+           , MAX(l.master_account_name) AS master_account_name
+           , MAX(l.account_sfid) AS account_sfid
+           , MAX(l.account_name) AS account_name
+           , MAX(l.license_email) AS license_email
+           , MAX(l.contact_sfid) AS contact_sfid
+           , MAX(l.contact_email) AS contact_email
+           , MAX(l.number) AS number
+           , MAX(l.stripeid) AS stripeid
+           , MAX(l.users) AS users
+           , MAX(l.feature_cluster) AS feature_cluster
+           , MAX(l.feature_compliance) AS feature_compliance
+           , MAX(l.feature_custom_brand)  AS feature_custom_brand
+           , MAX(l.feature_custom_permissions_schemes)  AS feature_custom_permissions_schemes
+           , MAX(l.feature_data_retention) AS feature_data_retention
+           , MAX(l.feature_elastic_search) AS feature_elastic_search
+           , MAX(l.feature_email_notification_contents) AS feature_email_notification_contents
+           , MAX(l.feature_future) AS feature_future
+           , MAX(l.feature_google) AS feature_google
+           , MAX(l.feature_guest_accounts) AS feature_guest_accounts 
+           , MAX(l.feature_guest_accounts_permissions) AS feature_guest_accounts_permissions
+           , MAX(l.feature_id_loaded) AS feature_id_loaded
+           , MAX(l.feature_ldap) AS feature_ldap
+           , MAX(l.feature_ldap_groups) AS feature_ldap_groups
+           , MAX(l.feature_lock_teammate_name_display) AS feature_lock_teammate_name_display
+           , MAX(l.feature_message_export) AS feature_message_export
+           , MAX(l.feature_metrics)            AS feature_metrics
+           , MAX(l.feature_mfa) AS feature_mfa
+           , MAX(l.feature_mhpns) AS feature_mhpns
+           , MAX(l.feature_office365) AS feature_office365
+           , MAX(l.feature_password) AS feature_password
+           , MAX(l.feature_saml) AS feature_saml
+           , MAX(l.has_trial_and_non_trial) AS has_trial_and_non_trial 
+           , MAX(l.trial) AS trial
          FROM {{ ref('licenses') }} l
-         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
-         , 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42
+         GROUP BY 1, 2
      ),
      server_server_details AS (
          SELECT
