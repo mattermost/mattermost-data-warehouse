@@ -34,20 +34,17 @@ WITH forecasted_invoice AS (
 invoices AS (
     SELECT
         i.*
-      , ROUND(COALESCE(
+      , ROUND(
              -- RETRIEVE INVOICE SUBTOTAL FOR MONTH-TO-DATE USAGE BASED ON AVAILABLE FIELDS IN INVOICES TABLE
-            ((i.total_user_months - i.free_user_months) * 10
-                -- DIVIDE BY NUMBER OF DAYS IN MONTH
-                / DATEDIFF(DAY, DATE_TRUNC('MONTH', CURRENT_DATE), LAST_DAY(CURRENT_DATE, MONTH) + INTERVAL '1 DAY'))
-                -- MULTIPLY BY NUMBER OF COMPLETE DAYS IN MONTH
-                *DATEDIFF(DAY, fi.usage_start, CURRENT_DATE) 
-
+            ((CASE WHEN total/100.0 = 0 THEN i.discounts_total/100.0 ELSE total/100.0 END) 
              -- CALCULATE REMAINING MONTHS FORECASTED INVOICE USING LAST COMPLETE DAYS MAX ACTIVE USER COUNT RECORDED IN THE USAGE_EVENTS RELATION
                 -- Only calculate forecasted remaining month invoice if last usage > 10 users else 0  
-            + CASE WHEN fi.max_users_previous_day > 10 THEN ((fi.max_users_previous_day * 10/ DATEDIFF(DAY, DATE_TRUNC('MONTH', CURRENT_DATE), LAST_DAY(CURRENT_DATE, MONTH) + INTERVAL '1 DAY'))
-                * datediff(DAY, CURRENT_DATE, LAST_DAY(current_date, MONTH) + INTERVAL '1 DAY'))
-                ELSE 0 END, i.total
-                ), 2) AS forecasted_total
+            + (CASE WHEN i.discounts_total > 0 AND i.total = 0 THEN 0
+                    ELSE CASE WHEN fi.max_users_previous_day > 10 THEN ((fi.max_users_previous_day * 10/ DATEDIFF(DAY, DATE_TRUNC('MONTH', CURRENT_DATE), LAST_DAY(CURRENT_DATE, MONTH) + INTERVAL '1 DAY'))
+                            * datediff(DAY, CURRENT_DATE, LAST_DAY(current_date, MONTH) + INTERVAL '1 DAY'))
+                            ELSE 0 END 
+                END
+                )::float) - (i.discounts_total/100.0)::float, 2) AS forecasted_total
     FROM {{ source('blapi', 'invoices') }} i
     LEFT JOIN forecasted_invoice fi
         ON i.subscription_id = fi.subscription_id
@@ -55,6 +52,7 @@ invoices AS (
     {% if is_incremental() %}
 
     WHERE i.invoice_build_date > (SELECT MAX(invoice_build_date) FROM {{ this }})
+    OR i.updated_at > (SELECT MAX(updated_at) FROM {{ this }})
 
     {% endif %}
 )
