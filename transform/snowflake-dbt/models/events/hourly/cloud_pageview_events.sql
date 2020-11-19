@@ -1,7 +1,7 @@
 {{config({
     "materialized": "incremental",
     "schema": "events",
-    "tags":"preunion"
+    "tags":"hourly"
   })
 }}
 
