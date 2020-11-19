@@ -16,6 +16,7 @@ WITH sdd AS (
             , MAX(installation_id) AS installation_id
             , MAX(installation_type) AS installation_type
             , MIN(CASE WHEN version IS NOT NULL THEN date ELSE NULL END) AS                     first_server_version_date
+            , MAX(CASE WHEN version IS NOT NULL THEN DATE ELSE NULL END) AS                     last_server_version_date
             , MIN(CASE WHEN edition IS NOT NULL THEN date ELSE NULL END)                     AS first_edition_date
             , MAX(CASE WHEN edition IS NOT NULL THEN date ELSE NULL END)                     AS last_edition_date
             , MAX(CASE
@@ -32,23 +33,23 @@ WITH sdd AS (
     server_details AS (
     SELECT
         server_id
-      , MAX(CASE WHEN coalesce(active_users_daily, active_users) > active_user_count 
-              THEN coalesce(active_users_daily, active_users)
-              ELSE active_user_count END) AS                                              max_active_user_count
-      , MAX(active_users_monthly) AS                                                      max_monthly_active_users
-      , MAX(CASE WHEN COALESCE(registered_users,0) > COALESCE(user_count, 0)
-            THEN COALESCE(registered_users,0) 
-            ELSE COALESCE(user_count,0) END)                                          AS  max_registered_users
-      , MAX(coalesce(registered_deactivated_users, 0))                                AS  max_registered_deactivated_users
-      , MAX(CASE WHEN active_user_count > 0 or coalesce(active_users_daily, active_users) > 0 THEN date ELSE NULL END) AS                   last_active_user_date
-      , MIN(CASE WHEN USER_COUNT > 100 THEN DATE ELSE NULL END)                        AS first_100reg_users_date
-      , MIN(CASE WHEN USER_COUNT > 500 THEN DATE ELSE NULL END)                        AS first_500reg_users_date
-      , MIN(CASE WHEN USER_COUNT > 1000 THEN DATE ELSE NULL END)                       AS first_1kreg_users_date
-      , MIN(CASE WHEN USER_COUNT > 2500 THEN DATE ELSE NULL END)                       AS first_2500reg_users_date
-      , MIN(CASE WHEN USER_COUNT > 5000 THEN DATE ELSE NULL END)                       AS first_5kreg_users_date
-      , MIN(CASE WHEN USER_COUNT > 10000 THEN DATE ELSE NULL END)                       AS first_10kreg_users_date
-      , MAX(POSTS)                                                                     AS max_posts
-    FROM {{ ref('server_daily_details_ext') }}
+      , MAX(CASE WHEN coalesce(sdde.active_users_daily, sdde.active_users) > sdde.active_user_count 
+              THEN coalesce(sdde.active_users_daily, sdde.active_users)
+              ELSE sdde.active_user_count END) AS                                              max_active_user_count
+      , MAX(sdde.active_users_monthly) AS                                                      max_monthly_active_users
+      , MAX(CASE WHEN COALESCE(sdde.registered_users,0) > COALESCE(user_count, 0)
+            THEN COALESCE(sdde.registered_users,0) 
+            ELSE COALESCE(sdde.user_count,0) END)                                          AS  max_registered_users
+      , MAX(coalesce(sdde.registered_deactivated_users, 0))                                AS  max_registered_deactivated_users
+      , MAX(CASE WHEN sdde.active_user_count > 0 or coalesce(sdde.active_users_daily, sdde.active_users) > 0 THEN date ELSE NULL END) AS                   last_active_user_date
+      , MIN(CASE WHEN sdde.USER_COUNT > 100 THEN DATE ELSE NULL END)                        AS first_100reg_users_date
+      , MIN(CASE WHEN sdde.USER_COUNT > 500 THEN DATE ELSE NULL END)                        AS first_500reg_users_date
+      , MIN(CASE WHEN sdde.USER_COUNT > 1000 THEN DATE ELSE NULL END)                       AS first_1kreg_users_date
+      , MIN(CASE WHEN sdde.USER_COUNT > 2500 THEN DATE ELSE NULL END)                       AS first_2500reg_users_date
+      , MIN(CASE WHEN sdde.USER_COUNT > 5000 THEN DATE ELSE NULL END)                       AS first_5kreg_users_date
+      , MIN(CASE WHEN sdde.USER_COUNT > 10000 THEN DATE ELSE NULL END)                       AS first_10kreg_users_date
+      , MAX(sdde.POSTS)                                                                     AS max_posts
+    FROM {{ ref('server_daily_details_ext') }} sdde
     WHERE DATE <= CURRENT_DATE - INTERVAL '1 DAY'
     GROUP BY 1
     ), 
@@ -122,24 +123,24 @@ WITH sdd AS (
       SELECT
           s.server_id
         , MAX(CASE WHEN sd.first_server_version_date = s.date THEN s.version ELSE NULL END)      AS first_server_version
+        , MAX(CASE WHEN sd.last_server_version_date = s.date THEN s.version ELSE NULL END)       AS version
         , MAX(CASE WHEN sd.first_edition_date = s.date THEN s.edition ELSE NULL END)             AS first_server_edition
         , MAX(CASE WHEN sd.last_edition_date = s.date THEN s.edition ELSE NULL END)              AS edition
         , MAX(sd.first_edition_date)                                                             AS first_edition_date
         , MAX(sd.last_edition_date)                                                              AS last_edition_date
+        , MAX(CASE WHEN sd.last_active_license_date = s.date THEN license_id1 ELSE NULL END)     AS last_license_id1
+        , MAX(CASE WHEN sd.last_active_license_date = s.date THEN license_id2 ELSE NULL END)     AS last_license_id2
       FROM sdd sd
-      JOIN {{ ref('server_daily_details') }} s
+      JOIN (SELECT 
+              server_id 
+            , date
+            , edition
+            , version
+            , license_id1
+            , license_id2 
+            FROM {{ ref('server_daily_details') }}
+            GROUP BY 1, 2, 3, 4, 5, 6) s
            ON sd.server_id = s.server_id
-           AND (sd.first_edition_date = s.date
-           OR sd.last_edition_date = s.date
-           OR sd.first_server_version_date = s.date)
-      GROUP BY 1
-    ),
-    api_request_trial_events AS (
-      SELECT
-          server_id
-        , sum(total_events) as api_request_trial_events_alltime
-      FROM {{ ref('user_events_by_date') }}
-      WHERE event_name = 'api_request_trial_license'
       GROUP BY 1
     ),
   last_server_date AS (
@@ -153,6 +154,7 @@ WITH sdd AS (
       , COUNT(CASE WHEN category = 'tutorial' THEN id ELSE NULL END)     AS tutorial_events_alltime
       , COUNT(CASE WHEN COALESCE(type, event) IN ('click_invite_members','click_copy_invite_link','api_teams_invite_members') THEN id ELSE NULL END) AS invite_members_events_alltime
       , COUNT(DISTINCT timestamp::DATE) AS days_active
+      , COUNT(CASE WHEN COALESCE(type, event) = 'api_request_trial_license' THEN id ELSE NULL END)         AS api_request_trial_events_alltime
       , DATEDIFF(DAY, MIN(TIMESTAMP::DATE), CURRENT_DATE) - COUNT(DISTINCT TIMESTAMP::DATE) AS days_inactive
     FROM {{ ref('user_events_telemetry') }}
     GROUP BY 1
@@ -180,10 +182,10 @@ WITH sdd AS (
          AND s1.date = s2.last_event_date
         {{ dbt_utils.group_by(n=15) }}
     ), 
-  server_fact_prep AS (
+  server_fact AS (
     SELECT
         sdd.server_id
-      , MAX(server_daily_details.version)                 AS version
+      , MAX(fse.version)                 AS version
       , MAX(fse.first_server_version)          AS first_server_version
       , MAX(fse.edition)                                  AS server_edition
       , MAX(fse.first_server_edition)                     AS first_server_edition
@@ -200,8 +202,8 @@ WITH sdd AS (
       , MAX(licenses.master_account_sfid)                 AS master_account_sfid
       , MAX(licenses.master_account_name)                 AS master_account_name
       , MAX(licenses.company)                             AS company
-      , MAX(s2.license_id1)                               AS last_license_id1
-      , MAX(S2.license_id2)                               AS last_license_id2
+      , MAX(fse.last_license_id1)                               AS last_license_id1
+      , MAX(fse.last_license_id2)                               AS last_license_id2
       , MAX(licenses.first_paid_license_date)             AS first_paid_license_date
       , MAX(licenses.last_paid_license_date)              AS last_paid_license_date
       , MAX(licenses.paid_license_expire_date)            AS paid_license_expire_date
@@ -249,7 +251,7 @@ WITH sdd AS (
       , MAX(lsd.admin_events_alltime)                     AS admin_events_alltime
       , MAX(lsd.days_active)                              AS days_active
       , MAX(lsd.days_inactive)                            AS days_inactive
-      , MAX(api.api_request_trial_events_alltime)         AS api_request_trial_events_alltime
+      , MAX(lsd.api_request_trial_events_alltime)         AS api_request_trial_events_alltime
       , MAX(sdd.installation_id)         AS installation_id
       , MAX(sdd.installation_type)       AS installation_type
       , max(registered_users) as registered_users
@@ -273,12 +275,6 @@ WITH sdd AS (
     FROM sdd
         LEFT JOIN server_details
           ON sdd.server_id = server_details.server_id
-        LEFT JOIN {{ ref('server_daily_details') }}
-            ON sdd.server_id = server_daily_details.server_id
-            AND (server_daily_details.date >= sdd.last_active_date)
-        LEFT JOIN {{ ref('server_daily_details') }} s2
-            ON sdd.server_id = s2.server_id
-            AND sdd.last_active_license_date = s2.date
         LEFT JOIN {{ ref('nps_server_daily_score') }} nps
             ON sdd.server_id = nps.server_id
             AND nps.date = DATE_TRUNC('day', CURRENT_DATE - INTERVAL '1 DAY')
@@ -295,22 +291,15 @@ WITH sdd AS (
             AND sdd.first_mm2_telemetry_date = oauth.date
         LEFT JOIN last_server_date lsd
             ON sdd.server_id = lsd.server_Id
-        LEFT JOIN api_request_trial_events api
-            ON sdd.server_id = api.server_id
         LEFT JOIN server_activity
             ON sdd.server_id = server_activity.user_id
         {% if is_incremental() %}
           WHERE sdd.last_active_date >= (SELECT MAX(last_active_date) FROM {{this}})
         {% endif %}
         {{ dbt_utils.group_by(n=1) }}
-    ),
-
-    server_fact AS (
+    )
       SELECT 
           *
         , MIN(first_active_date) OVER (PARTITION BY COALESCE(ACCOUNT_SFID, LOWER(COMPANY), SERVER_ID)) AS customer_first_active_date
         , MIN(first_paid_license_date) OVER (PARTITION BY COALESCE(ACCOUNT_SFID, LOWER(COMPANY), SERVER_ID)) AS customer_first_paid_license_date
-      FROM server_fact_prep
-    )
-SELECT *
-FROM server_fact
+      FROM server_fact
