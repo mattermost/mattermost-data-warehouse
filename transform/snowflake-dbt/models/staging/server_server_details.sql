@@ -6,7 +6,29 @@
   })
 }}
 
-WITH server_details AS (
+WITH rudder_servers AS (
+  SELECT * 
+  FROM {{ source('mm_telemetry_prod', 'server') }}
+  WHERE original_timestamp::date <= CURRENT_DATE
+  {% if is_incremental() %}
+  
+  AND original_timestamp >= (SELECT MAX(TIMESTAMP) FROM {{this}}) - interval '1 hour'
+
+  {% endif %}
+),
+
+segment_servers AS (
+  SELECT * 
+  FROM {{ source('mattermost2', 'server') }}
+  WHERE timestamp::date <= CURRENT_DATE
+  {% if is_incremental() %}
+  
+  AND timestamp >= (SELECT MAX(TIMESTAMP) FROM {{this}}) - interval '1 hour'
+
+  {% endif %}
+),
+
+server_details AS (
   SELECT
     COALESCE(s2.anonymous_id, s1.user_id)                            AS annonymous_id
   , COALESCE(s2.channel, ''::VARCHAR)                                AS channel
@@ -29,8 +51,8 @@ WITH server_details AS (
   , MAX(COALESCE(s2.received_at, s1.received_at))                    AS received_at
   , COALESCE(s2.CONTEXT_TRAITS_INSTALLATIONID, NULL)                 AS installation_id
   , COALESCE(s2.installation_type, NULL)                             AS installation_type
-FROM {{ source('mattermost2', 'server') }}                       s1
-     FULL OUTER JOIN {{ source('mm_telemetry_prod', 'server') }} s2
+FROM segment_servers                       s1
+     FULL OUTER JOIN rudder_servers s2
                      ON s1.user_id = s2.user_id
                          AND s1.timestamp::DATE = s2.original_timestamp::DATE
 WHERE COALESCE(s2.original_timestamp::date, s1.timestamp::date) <= CURRENT_DATE
@@ -77,28 +99,6 @@ max_timestamp              AS (
            , MAX(l.number) AS number
            , MAX(l.stripeid) AS stripeid
            , MAX(l.users) AS users
-           , MAX(l.feature_cluster) AS feature_cluster
-           , MAX(l.feature_compliance) AS feature_compliance
-           , MAX(l.feature_custom_brand)  AS feature_custom_brand
-           , MAX(l.feature_custom_permissions_schemes)  AS feature_custom_permissions_schemes
-           , MAX(l.feature_data_retention) AS feature_data_retention
-           , MAX(l.feature_elastic_search) AS feature_elastic_search
-           , MAX(l.feature_email_notification_contents) AS feature_email_notification_contents
-           , MAX(l.feature_future) AS feature_future
-           , MAX(l.feature_google) AS feature_google
-           , MAX(l.feature_guest_accounts) AS feature_guest_accounts 
-           , MAX(l.feature_guest_accounts_permissions) AS feature_guest_accounts_permissions
-           , MAX(l.feature_id_loaded) AS feature_id_loaded
-           , MAX(l.feature_ldap) AS feature_ldap
-           , MAX(l.feature_ldap_groups) AS feature_ldap_groups
-           , MAX(l.feature_lock_teammate_name_display) AS feature_lock_teammate_name_display
-           , MAX(l.feature_message_export) AS feature_message_export
-           , MAX(l.feature_metrics)            AS feature_metrics
-           , MAX(l.feature_mfa) AS feature_mfa
-           , MAX(l.feature_mhpns) AS feature_mhpns
-           , MAX(l.feature_office365) AS feature_office365
-           , MAX(l.feature_password) AS feature_password
-           , MAX(l.feature_saml) AS feature_saml
            , MAX(l.has_trial_and_non_trial) AS has_trial_and_non_trial 
            , MAX(l.trial) AS trial
          FROM {{ ref('licenses') }} l
