@@ -9332,6 +9332,7 @@ PR_Number,Merged_At,Author,Repo
 15790,2020-10-05T18:32:52Z,mattermost-build,mattermost-server
 15791,2020-10-05T18:34:41Z,mattermost-build,mattermost-server
 15792,2020-10-05T21:04:24Z,devinbinnie,mattermost-server
+15795,2020-11-17T03:32:37Z,rvillablanca,mattermost-server
 15806,2020-10-08T11:42:55Z,fireynis,mattermost-server
 15807,2020-10-06T08:39:06Z,agnivade,mattermost-server
 15817,2020-10-06T09:26:55Z,mattermost-build,mattermost-server
@@ -9409,6 +9410,7 @@ PR_Number,Merged_At,Author,Repo
 16048,2020-11-03T19:37:38Z,kaiwalyakoparkar,mattermost-server
 16052,2020-10-21T13:58:42Z,metanerd,mattermost-server
 16053,2020-10-26T17:24:27Z,nickmisasi,mattermost-server
+16054,2020-11-18T10:26:19Z,isacikgoz,mattermost-server
 16056,2020-10-26T17:17:56Z,ethervoid,mattermost-server
 16058,2020-10-23T19:39:37Z,devinbinnie,mattermost-server
 16060,2020-10-27T10:02:26Z,isacikgoz,mattermost-server
@@ -9446,6 +9448,7 @@ PR_Number,Merged_At,Author,Repo
 16170,2020-11-10T05:13:45Z,agnivade,mattermost-server
 16172,2020-10-31T09:13:28Z,isacikgoz,mattermost-server
 16183,2020-10-31T08:31:40Z,reflog,mattermost-server
+16188,2020-11-17T03:42:41Z,agnivade,mattermost-server
 16192,2020-11-02T20:04:04Z,mattermost-build,mattermost-server
 16193,2020-11-02T20:43:33Z,weblate,mattermost-server
 16194,2020-11-03T15:38:10Z,weblate,mattermost-server
@@ -9459,6 +9462,7 @@ PR_Number,Merged_At,Author,Repo
 16205,2020-11-03T18:52:48Z,mattermost-build,mattermost-server
 16208,2020-11-04T09:14:09Z,eltociear,mattermost-server
 16209,2020-11-04T09:41:43Z,reflog,mattermost-server
+16210,2020-11-17T13:48:51Z,hanzei,mattermost-server
 16213,2020-11-05T16:07:04Z,hmhealey,mattermost-server
 16216,2020-11-06T11:49:16Z,jespino,mattermost-server
 16217,2020-11-06T13:19:57Z,hmhealey,mattermost-server
@@ -9477,6 +9481,7 @@ PR_Number,Merged_At,Author,Repo
 16247,2020-11-10T08:10:11Z,weblate,mattermost-server
 16249,2020-11-12T20:35:45Z,wiggin77,mattermost-server
 16251,2020-11-10T16:14:50Z,reflog,mattermost-server
+16252,2020-11-18T15:40:12Z,isacikgoz,mattermost-server
 16255,2020-11-11T17:49:57Z,agnivade,mattermost-server
 16256,2020-11-12T09:56:36Z,agnivade,mattermost-server
 16257,2020-11-12T04:09:20Z,agnivade,mattermost-server
@@ -9484,10 +9489,17 @@ PR_Number,Merged_At,Author,Repo
 16261,2020-11-11T16:11:49Z,cpanato,mattermost-server
 16263,2020-11-16T12:55:33Z,agnivade,mattermost-server
 16265,2020-11-16T14:25:49Z,mgdelacroix,mattermost-server
+16269,2020-11-18T09:31:58Z,isacikgoz,mattermost-server
+16270,2020-11-17T22:01:21Z,nronas,mattermost-server
+16271,2020-11-17T17:56:18Z,nickmisasi,mattermost-server
+16273,2020-11-18T02:15:17Z,mkraft,mattermost-server
 16277,2020-11-16T15:52:27Z,ethervoid,mattermost-server
 16279,2020-11-16T16:22:31Z,metanerd,mattermost-server
 16280,2020-11-16T16:23:31Z,mattermost-build,mattermost-server
 16281,2020-11-16T17:18:50Z,ethervoid,mattermost-server
+16290,2020-11-17T15:43:36Z,agnivade,mattermost-server
+16296,2020-11-17T17:48:27Z,metanerd,mattermost-server
+16298,2020-11-18T15:11:06Z,agnivade,mattermost-server
 1,2015-06-15T18:00:45Z,jwilander,platform-private
 2,2015-06-16T17:33:33Z,jwilander,platform-private
 3,2015-06-16T17:54:14Z,crspeller,platform-private
@@ -10316,6 +10328,7 @@ PR_Number,Merged_At,Author,Repo
 1394,2020-10-28T11:23:00Z,amyblais,desktop
 1396,2020-10-23T22:07:35Z,Willyfrog,desktop
 1404,2020-11-08T12:43:41Z,wget,desktop
+1409,2020-11-17T14:13:04Z,deanwhillier,desktop
 7,2015-11-24T05:36:25Z,it33,process
 8,2015-12-04T19:47:24Z,it33,process
 9,2015-12-05T00:51:19Z,it33,process
@@ -11058,6 +11071,7 @@ PR_Number,Merged_At,Author,Repo
 821,2020-11-12T14:07:08Z,nickmisasi,enterprise
 822,2020-11-14T10:19:57Z,streamer45,enterprise
 823,2020-11-14T20:45:28Z,agnivade,enterprise
+824,2020-11-17T03:32:41Z,agnivade,enterprise
 825,2020-11-16T15:47:07Z,ethervoid,enterprise
 826,2020-11-16T16:22:10Z,metanerd,enterprise
 1,2015-11-21T01:08:51Z,coreyhulen,docs
@@ -14403,6 +14417,8 @@ PR_Number,Merged_At,Author,Repo
 4109,2020-11-13T19:35:10Z,amyblais,docs
 4110,2020-11-13T21:48:28Z,amyblais,docs
 4111,2020-11-16T15:25:45Z,justinegeffen,docs
+4117,2020-11-17T22:11:41Z,wiersgallak,docs
+4119,2020-11-18T13:24:22Z,justinegeffen,docs
 1,2016-01-06T01:07:09Z,fmaker,mattermost-docker
 3,2016-02-18T00:59:22Z,Em-AK,mattermost-docker
 4,2016-03-21T01:28:53Z,it33,mattermost-docker
@@ -14584,6 +14600,7 @@ PR_Number,Merged_At,Author,Repo
 492,2020-09-18T09:12:40Z,thePanz,mattermost-docker
 497,2020-10-07T12:06:26Z,metanerd,mattermost-docker
 501,2020-11-03T09:12:22Z,sstaszkiewicz-copperleaf,mattermost-docker
+502,2020-11-17T11:05:17Z,tohn,mattermost-docker
 2,2016-01-10T05:27:35Z,hjf288,mattermost-push-proxy
 3,2016-03-17T18:06:18Z,enahum,mattermost-push-proxy
 4,2016-06-14T22:10:56Z,coreyhulen,mattermost-push-proxy
@@ -19556,6 +19573,7 @@ PR_Number,Merged_At,Author,Repo
 4954,2020-11-13T00:29:16Z,josephbaylon,mattermost-mobile
 4955,2020-11-10T08:04:11Z,weblate,mattermost-mobile
 4956,2020-11-10T08:10:31Z,weblate,mattermost-mobile
+4959,2020-11-17T18:52:04Z,josephbaylon,mattermost-mobile
 4960,2020-11-12T22:51:43Z,enahum,mattermost-mobile
 4961,2020-11-13T20:29:20Z,enahum,mattermost-mobile
 4962,2020-11-12T23:21:00Z,mattermost-build,mattermost-mobile
@@ -21338,11 +21356,15 @@ PR_Number,Merged_At,Author,Repo
 1283,2020-11-05T15:38:18Z,mattermost-build,mattermost-redux
 1284,2020-11-10T14:48:14Z,devinbinnie,mattermost-redux
 1286,2020-11-16T20:19:31Z,hmhealey,mattermost-redux
+1287,2020-11-17T02:11:34Z,levb,mattermost-redux
 1291,2020-11-13T14:20:19Z,cinlloc,mattermost-redux
 1292,2020-11-12T11:36:28Z,mickmister,mattermost-redux
 1294,2020-11-13T16:11:00Z,isacikgoz,mattermost-redux
 1295,2020-11-16T20:04:01Z,devinbinnie,mattermost-redux
+1297,2020-11-18T14:26:01Z,larkox,mattermost-redux
+1298,2020-11-17T14:48:53Z,dizkek,mattermost-redux
 1299,2020-11-16T16:23:40Z,metanerd,mattermost-redux
+1301,2020-11-17T17:25:58Z,metanerd,mattermost-redux
 1,2017-07-06T19:30:44Z,crspeller,mattermost-helm
 2,2017-07-07T17:03:46Z,crspeller,mattermost-helm
 3,2017-08-16T17:46:59Z,grundleborg,mattermost-helm
@@ -28307,6 +28329,7 @@ PR_Number,Merged_At,Author,Repo
 6555,2020-10-26T10:24:46Z,agnivade,mattermost-webapp
 6556,2020-09-25T09:20:55Z,mattermost-build,mattermost-webapp
 6557,2020-09-25T13:23:43Z,mattermost-build,mattermost-webapp
+6558,2020-11-17T09:23:23Z,larkox,mattermost-webapp
 6559,2020-09-25T16:23:42Z,mattermost-build,mattermost-webapp
 6560,2020-10-01T15:45:29Z,hardikmodi1,mattermost-webapp
 6562,2020-10-06T07:11:08Z,sudheerDev,mattermost-webapp
@@ -28552,6 +28575,7 @@ PR_Number,Merged_At,Author,Repo
 6837,2020-10-19T17:35:59Z,mattermost-build,mattermost-webapp
 6838,2020-10-28T20:34:35Z,catalintomai,mattermost-webapp
 6839,2020-10-21T09:48:20Z,josephbaylon,mattermost-webapp
+6840,2020-11-18T09:06:14Z,cinlloc,mattermost-webapp
 6841,2020-10-20T14:34:39Z,weblate,mattermost-webapp
 6842,2020-10-20T14:36:35Z,weblate,mattermost-webapp
 6843,2020-10-20T13:00:16Z,mattermost-build,mattermost-webapp
@@ -28589,8 +28613,10 @@ PR_Number,Merged_At,Author,Repo
 6879,2020-10-22T15:24:13Z,devinbinnie,mattermost-webapp
 6880,2020-10-26T23:54:44Z,MikeworX,mattermost-webapp
 6881,2020-11-03T18:59:43Z,lestgabo,mattermost-webapp
+6882,2020-11-17T10:15:18Z,sridhar02,mattermost-webapp
 6883,2020-10-24T00:02:36Z,saturninoabril,mattermost-webapp
 6884,2020-11-03T21:35:41Z,seongwon-kang,mattermost-webapp
+6885,2020-11-17T09:39:51Z,sowmiyamuthuraman,mattermost-webapp
 6886,2020-10-22T11:44:58Z,mattermost-build,mattermost-webapp
 6887,2020-10-22T15:36:32Z,mattermost-build,mattermost-webapp
 6888,2020-10-23T19:36:02Z,devinbinnie,mattermost-webapp
@@ -28612,6 +28638,7 @@ PR_Number,Merged_At,Author,Repo
 6906,2020-10-23T19:47:52Z,mattermost-build,mattermost-webapp
 6907,2020-10-27T17:24:02Z,hmhealey,mattermost-webapp
 6908,2020-10-28T16:01:07Z,devinbinnie,mattermost-webapp
+6909,2020-11-17T02:35:19Z,jfrerich,mattermost-webapp
 6911,2020-10-30T13:47:32Z,pikami,mattermost-webapp
 6914,2020-11-02T22:28:51Z,vanya829,mattermost-webapp
 6915,2020-10-29T13:48:38Z,1jz,mattermost-webapp
@@ -28649,8 +28676,10 @@ PR_Number,Merged_At,Author,Repo
 6969,2020-11-13T17:15:40Z,Revanth47,mattermost-webapp
 6970,2020-10-30T20:11:41Z,Revanth47,mattermost-webapp
 6974,2020-10-30T19:07:38Z,mattermost-build,mattermost-webapp
+6975,2020-11-17T15:34:29Z,Revanth47,mattermost-webapp
 6976,2020-11-13T17:16:19Z,tianlangwu,mattermost-webapp
 6977,2020-11-16T22:22:04Z,mickmister,mattermost-webapp
+6981,2020-11-17T15:34:00Z,ilhan-mstf,mattermost-webapp
 6985,2020-11-02T20:08:37Z,ilhan-mstf,mattermost-webapp
 6986,2020-11-02T20:02:49Z,oliverJurgen,mattermost-webapp
 6990,2020-11-13T22:53:10Z,IanvsPoplicola,mattermost-webapp
@@ -28664,6 +28693,7 @@ PR_Number,Merged_At,Author,Repo
 7002,2020-11-10T22:47:18Z,sudheerDev,mattermost-webapp
 7003,2020-11-02T19:07:38Z,mattermost-build,mattermost-webapp
 7004,2020-11-02T20:07:37Z,mattermost-build,mattermost-webapp
+7005,2020-11-17T10:32:10Z,MikeworX,mattermost-webapp
 7006,2020-11-02T20:37:47Z,weblate,mattermost-webapp
 7007,2020-11-02T20:39:47Z,weblate,mattermost-webapp
 7008,2020-11-09T14:22:04Z,hmhealey,mattermost-webapp
@@ -28672,7 +28702,9 @@ PR_Number,Merged_At,Author,Repo
 7011,2020-11-04T09:08:59Z,josephbaylon,mattermost-webapp
 7012,2020-11-03T19:02:45Z,nickmisasi,mattermost-webapp
 7013,2020-11-03T19:17:01Z,mattermost-build,mattermost-webapp
+7015,2020-11-17T08:55:17Z,seongwon-kang,mattermost-webapp
 7016,2020-11-06T11:57:38Z,seongwon-kang,mattermost-webapp
+7017,2020-11-18T01:28:54Z,levb,mattermost-webapp
 7018,2020-11-13T22:24:30Z,Manimaran11,mattermost-webapp
 7019,2020-11-04T15:08:26Z,nevyangelova,mattermost-webapp
 7020,2020-11-09T15:53:37Z,hahmadia,mattermost-webapp
@@ -28686,18 +28718,33 @@ PR_Number,Merged_At,Author,Repo
 7034,2020-11-11T16:07:29Z,pablovelezvidal,mattermost-webapp
 7039,2020-11-09T19:18:58Z,nevyangelova,mattermost-webapp
 7044,2020-11-09T19:49:57Z,mattermost-build,mattermost-webapp
+7045,2020-11-17T10:42:52Z,isacikgoz,mattermost-webapp
 7046,2020-11-10T08:08:28Z,weblate,mattermost-webapp
 7047,2020-11-10T08:09:22Z,weblate,mattermost-webapp
+7051,2020-11-17T04:55:31Z,agnivade,mattermost-webapp
 7052,2020-11-12T00:26:46Z,saturninoabril,mattermost-webapp
+7053,2020-11-17T19:45:18Z,MikeworX,mattermost-webapp
 7054,2020-11-16T15:49:57Z,MikeworX,mattermost-webapp
+7055,2020-11-17T01:40:16Z,mickmister,mattermost-webapp
 7061,2020-11-12T20:07:09Z,crspeller,mattermost-webapp
 7063,2020-11-13T16:08:14Z,nickmisasi,mattermost-webapp
+7064,2020-11-18T15:21:57Z,hmhealey,mattermost-webapp
 7065,2020-11-12T20:19:57Z,mattermost-build,mattermost-webapp
 7067,2020-11-13T16:52:32Z,nickmisasi,mattermost-webapp
 7069,2020-11-16T15:17:04Z,nickmisasi,mattermost-webapp
+7071,2020-11-17T09:11:57Z,larkox,mattermost-webapp
+7073,2020-11-17T10:54:32Z,catalintomai,mattermost-webapp
 7075,2020-11-16T16:22:46Z,metanerd,mattermost-webapp
+7076,2020-11-17T15:13:59Z,hahmadia,mattermost-webapp
 7077,2020-11-16T22:34:02Z,saturninoabril,mattermost-webapp
+7080,2020-11-17T11:19:30Z,saturninoabril,mattermost-webapp
+7081,2020-11-17T15:03:21Z,josephbaylon,mattermost-webapp
 7084,2020-11-16T22:15:18Z,hahmadia,mattermost-webapp
+7085,2020-11-18T10:57:25Z,sudheerDev,mattermost-webapp
+7086,2020-11-17T15:15:17Z,mattermost-build,mattermost-webapp
+7088,2020-11-17T16:45:18Z,mattermost-build,mattermost-webapp
+7089,2020-11-17T17:48:07Z,metanerd,mattermost-webapp
+7092,2020-11-18T15:37:34Z,mattermost-build,mattermost-webapp
 1,2017-11-15T17:37:52Z,mthornba,mattermost-build
 1,2018-07-16T00:57:37Z,jwilander,mattermost-plugin-jira
 2,2018-07-20T22:44:11Z,lieut-data,mattermost-plugin-jira
@@ -30377,6 +30424,7 @@ PR_Number,Merged_At,Author,Repo
 278,2020-11-04T12:40:00Z,mgdelacroix,mmctl
 279,2020-11-04T19:57:18Z,mgdelacroix,mmctl
 280,2020-11-11T09:14:30Z,isacikgoz,mmctl
+284,2020-11-17T12:25:54Z,metanerd,mmctl
 4,2019-05-15T17:13:46Z,levb,mattermost-plugin-giphy
 6,2019-08-23T18:08:49Z,mickmister,mattermost-plugin-giphy
 7,2019-08-26T19:46:48Z,levb,mattermost-plugin-giphy
@@ -30405,6 +30453,7 @@ PR_Number,Merged_At,Author,Repo
 19,2020-05-13T07:36:59Z,hanzei,mattermost-plugin-email-reply
 22,2020-10-09T08:25:09Z,shihanng,mattermost-plugin-email-reply
 23,2020-10-21T11:49:04Z,shihanng,mattermost-plugin-email-reply
+25,2020-11-17T13:30:58Z,hanzei,mattermost-plugin-email-reply
 1,2019-02-06T07:28:54Z,jasonblais,mattermost-plugin-community
 2,2019-03-06T18:20:27Z,cpanato,mattermost-plugin-community
 7,2019-11-12T11:01:04Z,hanzei,mattermost-plugin-community
@@ -30641,6 +30690,7 @@ PR_Number,Merged_At,Author,Repo
 194,2020-11-11T12:08:23Z,Szymongib,mattermost-operator
 195,2020-11-11T13:09:02Z,jwilander,mattermost-operator
 196,2020-11-13T16:55:21Z,Szymongib,mattermost-operator
+198,2020-11-18T10:04:29Z,stylianosrigas,mattermost-operator
 1,2019-03-21T14:29:01Z,cpanato,mattermost-plugin-nps
 3,2019-03-22T18:42:53Z,hmhealey,mattermost-plugin-nps
 4,2019-03-25T16:41:18Z,hmhealey,mattermost-plugin-nps
@@ -30876,6 +30926,7 @@ PR_Number,Merged_At,Author,Repo
 49,2020-05-14T10:10:34Z,bbodenmiller,mattermost-plugin-skype4business
 54,2020-05-28T19:18:56Z,hanzei,mattermost-plugin-skype4business
 56,2020-06-15T09:06:04Z,mickmister,mattermost-plugin-skype4business
+57,2020-11-17T07:46:57Z,larkox,mattermost-plugin-skype4business
 59,2020-07-18T06:54:04Z,hanzei,mattermost-plugin-skype4business
 60,2020-07-27T17:10:09Z,dependabot,mattermost-plugin-skype4business
 62,2020-08-02T22:05:12Z,dependabot,mattermost-plugin-skype4business
@@ -31220,7 +31271,10 @@ PR_Number,Merged_At,Author,Repo
 359,2020-11-06T18:41:34Z,cpanato,mattermost-cloud
 360,2020-11-13T16:55:03Z,gabrieljackson,mattermost-cloud
 361,2020-11-11T13:35:15Z,gabrieljackson,mattermost-cloud
+362,2020-11-17T08:46:24Z,Szymongib,mattermost-cloud
 363,2020-11-16T18:29:09Z,gigawhitlocks,mattermost-cloud
+366,2020-11-17T11:13:51Z,stylianosrigas,mattermost-cloud
+369,2020-11-18T12:18:08Z,stylianosrigas,mattermost-cloud
 1,2019-04-13T03:58:24Z,cpanato,mattermost-metrics-server
 2,2019-04-18T21:01:12Z,saturninoabril,mattermost-metrics-server
 3,2019-05-02T12:13:11Z,saturninoabril,mattermost-metrics-server
@@ -32406,6 +32460,7 @@ PR_Number,Merged_At,Author,Repo
 548,2020-11-11T17:31:46Z,lynn915,mattermost-handbook
 549,2020-11-11T22:04:43Z,danielsischy,mattermost-handbook
 550,2020-11-11T23:41:34Z,harryfromwork,mattermost-handbook
+551,2020-11-17T16:55:50Z,jasonblais,mattermost-handbook
 553,2020-11-12T21:13:29Z,stylianosrigas,mattermost-handbook
 555,2020-11-16T15:28:28Z,TQuock,mattermost-handbook
 1,2019-11-16T03:38:38Z,jasonblais,mattermost-hackathon-nov2019
@@ -32842,6 +32897,7 @@ PR_Number,Merged_At,Author,Repo
 395,2020-11-11T10:44:54Z,streamer45,mattermost-load-test-ng
 396,2020-11-11T07:59:00Z,streamer45,mattermost-load-test-ng
 397,2020-11-11T13:53:46Z,streamer45,mattermost-load-test-ng
+400,2020-11-18T08:08:39Z,streamer45,mattermost-load-test-ng
 1,2019-11-28T00:37:17Z,dependabot,mattermost-plugin-todo
 2,2019-11-28T00:37:05Z,dependabot,mattermost-plugin-todo
 10,2020-01-06T14:14:06Z,levb,mattermost-plugin-todo
@@ -33877,6 +33933,7 @@ PR_Number,Merged_At,Author,Repo
 552,2020-11-13T21:04:42Z,enelson720,mattermost-looker
 553,2020-11-13T22:40:40Z,rbradleyhaas,mattermost-looker
 554,2020-11-13T23:18:12Z,enelson720,mattermost-looker
+555,2020-11-17T15:17:02Z,enelson720,mattermost-looker
 3,2020-01-30T16:26:11Z,enelson720,mattermost-data-warehouse
 4,2020-01-30T16:34:34Z,enelson720,mattermost-data-warehouse
 5,2020-01-30T16:39:28Z,enelson720,mattermost-data-warehouse
@@ -34376,6 +34433,14 @@ PR_Number,Merged_At,Author,Repo
 512,2020-11-16T16:29:50Z,enelson720,mattermost-data-warehouse
 513,2020-11-16T18:43:04Z,enelson720,mattermost-data-warehouse
 514,2020-11-16T21:15:34Z,enelson720,mattermost-data-warehouse
+515,2020-11-17T01:25:45Z,rbradleyhaas,mattermost-data-warehouse
+516,2020-11-17T16:22:15Z,enelson720,mattermost-data-warehouse
+517,2020-11-17T16:54:57Z,enelson720,mattermost-data-warehouse
+518,2020-11-17T18:29:41Z,enelson720,mattermost-data-warehouse
+519,2020-11-17T20:27:08Z,enelson720,mattermost-data-warehouse
+520,2020-11-17T20:33:58Z,enelson720,mattermost-data-warehouse
+521,2020-11-18T00:06:14Z,enelson720,mattermost-data-warehouse
+522,2020-11-18T14:50:42Z,enelson720,mattermost-data-warehouse
 1,2020-01-23T10:33:56Z,jatinjtg,mattermost-plugin-confluence
 2,2020-01-30T12:47:23Z,jatinjtg,mattermost-plugin-confluence
 3,2020-01-28T11:40:14Z,chetanyakan,mattermost-plugin-confluence
@@ -34766,6 +34831,7 @@ PR_Number,Merged_At,Author,Repo
 353,2020-10-22T20:57:08Z,justinegeffen,mattermost-plugin-incident-management
 354,2020-10-23T12:28:36Z,justinegeffen,mattermost-plugin-incident-management
 355,2020-10-30T13:24:42Z,hanzei,mattermost-plugin-incident-management
+356,2020-11-17T19:01:41Z,cpoile,mattermost-plugin-incident-management
 359,2020-10-29T14:25:31Z,cpoile,mattermost-plugin-incident-management
 360,2020-11-02T19:34:20Z,justinegeffen,mattermost-plugin-incident-management
 361,2020-10-28T14:38:43Z,cpoile,mattermost-plugin-incident-management
@@ -34780,8 +34846,11 @@ PR_Number,Merged_At,Author,Repo
 371,2020-10-30T16:00:30Z,cpoile,mattermost-plugin-incident-management
 372,2020-11-02T18:57:04Z,cpoile,mattermost-plugin-incident-management
 373,2020-11-02T17:13:23Z,cpoile,mattermost-plugin-incident-management
+374,2020-11-17T19:25:06Z,cpoile,mattermost-plugin-incident-management
 375,2020-11-05T14:28:06Z,cpoile,mattermost-plugin-incident-management
 376,2020-11-13T16:18:11Z,BenCookie95,mattermost-plugin-incident-management
+378,2020-11-17T20:34:34Z,agarciamontoro,mattermost-plugin-incident-management
+380,2020-11-17T20:36:02Z,cpoile,mattermost-plugin-incident-management
 1,2020-03-26T01:23:36Z,agarciamontoro,mattermost-plugin-channel-export
 2,2020-03-26T14:50:44Z,hanzei,mattermost-plugin-channel-export
 3,2020-04-16T10:06:36Z,agarciamontoro,mattermost-plugin-channel-export
@@ -35021,6 +35090,8 @@ PR_Number,Merged_At,Author,Repo
 20,2020-10-20T16:26:48Z,larkox,mattermost-plugin-msteams-meetings
 26,2020-11-13T08:39:16Z,larkox,mattermost-plugin-msteams-meetings
 27,2020-11-12T11:15:52Z,larkox,mattermost-plugin-msteams-meetings
+32,2020-11-18T15:16:43Z,larkox,mattermost-plugin-msteams-meetings
+33,2020-11-18T15:20:54Z,larkox,mattermost-plugin-msteams-meetings
 1,2020-09-16T20:36:12Z,hanzei,mattermost-plugin-recommend
 1,2020-09-03T21:19:25Z,levb,mattermost-plugin-apps
 2,2020-09-14T04:40:10Z,levb,mattermost-plugin-apps
@@ -35040,7 +35111,9 @@ PR_Number,Merged_At,Author,Repo
 25,2020-10-26T12:16:46Z,levb,mattermost-plugin-apps
 27,2020-10-27T12:41:13Z,levb,mattermost-plugin-apps
 29,2020-11-07T17:37:30Z,mickmister,mattermost-plugin-apps
+32,2020-11-18T02:19:06Z,levb,mattermost-plugin-apps
 33,2020-11-10T14:05:50Z,levb,mattermost-plugin-apps
+34,2020-11-18T14:20:56Z,levb,mattermost-plugin-apps
 36,2020-11-12T11:22:48Z,mickmister,mattermost-plugin-apps
 1,2020-09-09T09:15:39Z,iomodo,mattermost-plugin-test
 1,2020-09-28T17:02:31Z,esethna,notices
@@ -35121,6 +35194,8 @@ PR_Number,Merged_At,Author,Repo
 98,2020-11-16T15:38:41Z,ogi-m,notices
 99,2020-11-16T15:47:03Z,ogi-m,notices
 100,2020-11-16T16:21:53Z,ogi-m,notices
+101,2020-11-17T13:08:49Z,ogi-m,notices
+102,2020-11-17T16:23:52Z,ogi-m,notices
 8,2020-10-05T15:23:33Z,agnivade,gosaml2-internal
 10,2020-10-06T09:16:56Z,agnivade,gosaml2-internal
 12,2020-10-08T05:47:20Z,agnivade,gosaml2-internal
@@ -35174,4 +35249,5 @@ PR_Number,Merged_At,Author,Repo
 1,2020-10-22T13:29:42Z,stylianosrigas,cloud-thanos-store-discovery
 2,2020-10-26T10:12:03Z,stylianosrigas,cloud-thanos-store-discovery
 1,2020-11-16T20:12:51Z,enahum,react-native-emm
+2,2020-11-17T16:50:25Z,enahum,react-native-emm
 1,2020-11-09T13:41:19Z,stylianosrigas,cloud-blackbox-target-discovery
