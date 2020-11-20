@@ -21,7 +21,7 @@ WITH server_details AS (
   , COALESCE(s2.id, s1.id)                                           AS id
   , COALESCE(s2.operating_system, s1.operating_system)               AS operating_system
   , COALESCE(s2.system_admins, s1.system_admins)                     AS system_admins
-  , COALESCE(s2.timestamp, s1.timestamp)                             AS timestamp
+  , COALESCE(s2.original_timestamp, s1.timestamp)                    AS timestamp
   , COALESCE(s2.user_id, s1.user_id)                                 AS user_id
   , MAX(COALESCE(s2.uuid_ts, s1.uuid_ts))                            AS uuid_ts
   , COALESCE(s2.version, s1.version)                                 AS version
@@ -32,11 +32,11 @@ WITH server_details AS (
 FROM {{ source('mattermost2', 'server') }}                       s1
      FULL OUTER JOIN {{ source('mm_telemetry_prod', 'server') }} s2
                      ON s1.user_id = s2.user_id
-                         AND s1.timestamp::DATE = s2.timestamp::DATE
-WHERE COALESCE(s2.timestamp::date, s1.timestamp::date) <= CURRENT_DATE
+                         AND s1.timestamp::DATE = s2.original_timestamp::DATE
+WHERE COALESCE(s2.original_timestamp::date, s1.timestamp::date) <= CURRENT_DATE
 {% if is_incremental() %}
 
-AND COALESCE(s2.uuid_ts, s1.uuid_ts) >= (SELECT MAX(timestamp) FROM {{this}}) - interval '2 hours'
+AND COALESCE(s2.original_timestamp, s1.timestamp) >= (SELECT MAX(timestamp) FROM {{this}}) - interval '1 hours'
 
 {% endif %}
 GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 20, 21
@@ -52,7 +52,7 @@ max_timestamp              AS (
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND s1.uuid_ts >= (SELECT MAX(uuid_ts) FROM {{ this }}) - interval '2 hours'
+        AND s1.timestamp >= (SELECT MAX(timestamp) FROM {{ this }}) - interval '1 hours'
 
     {% endif %}
     GROUP BY 1, 2
@@ -135,7 +135,7 @@ max_timestamp              AS (
            , MAX(s.database_version)              AS database_version
            , s.installation_id                    AS installation_id
            , s.installation_type                  AS installation_type
-           , s.uuid_ts
+           , MAX(s.uuid_ts)                       AS uuid_ts
          FROM server_details s
               JOIN max_timestamp mt
                    ON s.user_id = mt.user_id
@@ -147,7 +147,7 @@ max_timestamp              AS (
         {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        WHERE s.uuid_ts >= (SELECT MAX(uuid_ts) FROM {{ this }}) - interval '2 hours'
+        WHERE s.timestamp >= (SELECT MAX(timestamp) FROM {{ this }}) - interval '1 hours'
 
          {% endif %}
          GROUP BY 1, 2, 5, 7, 8, 9, 10, 13, 14, 15, 22, 23, 25, 26, 27
