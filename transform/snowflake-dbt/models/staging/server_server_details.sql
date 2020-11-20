@@ -48,7 +48,7 @@ max_timestamp              AS (
       , MAX(s1.uuid_ts)          AS max_timestamp
       , COUNT(s1.user_id)          AS occurrences
     FROM server_details s1
-    WHERE s1.timestamp::DATE <= CURRENT_DATE
+    WHERE s1.uuid_ts::DATE <= CURRENT_DATE
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -150,7 +150,7 @@ max_timestamp              AS (
         WHERE s.uuid_ts >= (SELECT MAX(uuid_ts) FROM {{ this }}) - interval '2 hours'
 
          {% endif %}
-         GROUP BY 1, 2, 5, 7, 8, 9, 10, 13, 14, 15, 22, 23, 25, 26
+         GROUP BY 1, 2, 5, 7, 8, 9, 10, 13, 14, 15, 22, 23, 25, 26, 27
      )
 SELECT *
 FROM server_server_details
