@@ -53,5 +53,6 @@ blapi = KubernetesPodOperator(
     arguments=["run_tap", "--tap", "blapi", "--target", "snowflake"],
     volumes=[volume],
     volume_mounts=[volume_mount],
+    startup_timeout_seconds=300,
     dag=dag,
 )
