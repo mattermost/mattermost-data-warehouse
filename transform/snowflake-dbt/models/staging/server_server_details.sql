@@ -43,12 +43,12 @@ GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 20, 21
 ),
 max_timestamp              AS (
     SELECT
-        s1.timestamp::DATE         AS date
+        s1.uuid_ts::DATE         AS date
       , s1.user_id                 AS user_id
-      , MAX(s1.timestamp)          AS max_timestamp
+      , MAX(s1.uuid_ts)          AS max_timestamp
       , COUNT(s1.user_id)          AS occurrences
     FROM server_details s1
-    WHERE s1.timestamp::DATE <= CURRENT_DATE
+    WHERE s1.uuid_ts::DATE <= CURRENT_DATE
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
@@ -139,7 +139,7 @@ max_timestamp              AS (
          FROM server_details s
               JOIN max_timestamp mt
                    ON s.user_id = mt.user_id
-                       AND s.timestamp = mt.max_timestamp
+                       AND s.uuid_ts = mt.max_timestamp
               LEFT JOIN license
                         ON s.user_id = license.server_id
                             AND s.timestamp::date >= license.issued_date
@@ -150,7 +150,7 @@ max_timestamp              AS (
         WHERE s.timestamp >= (SELECT MAX(timestamp) FROM {{ this }}) - interval '1 hours'
 
          {% endif %}
-         GROUP BY 1, 2, 5, 7, 8, 9, 10, 13, 14, 15, 22, 23, 25, 26
+         GROUP BY 1, 2, 5, 7, 8, 9, 10, 13, 14, 15, 22, 23, 25, 26, 27
      )
 SELECT *
 FROM server_server_details
