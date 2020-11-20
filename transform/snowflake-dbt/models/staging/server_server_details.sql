@@ -150,7 +150,7 @@ max_timestamp              AS (
         WHERE s.timestamp >= (SELECT MAX(timestamp) FROM {{ this }}) - interval '1 hours'
 
          {% endif %}
-         GROUP BY 1, 2, 5, 7, 8, 9, 10, 13, 14, 15, 22, 23, 25, 26, 27
+         GROUP BY 1, 2, 5, 7, 8, 9, 10, 13, 14, 15, 22, 23, 25, 26
      )
 SELECT *
 FROM server_server_details
