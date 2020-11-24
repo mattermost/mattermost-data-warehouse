@@ -74,7 +74,7 @@ max_timestamp              AS (
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND s1.timestamp >= (SELECT MAX(timestamp) FROM {{ this }}) - interval '1 hours'
+        AND s1.timestamp >= (SELECT MAX(timestamp) FROM {{ this }}) - interval '12 hours'
 
     {% endif %}
     GROUP BY 1, 2
