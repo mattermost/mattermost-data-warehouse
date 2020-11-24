@@ -62,7 +62,7 @@ WITH todays_lead_status_updates AS (
     FROM {{ source('orgm', 'lead') }}
     WHERE most_recent_qsc_date__c::date > current_date - interval '1 days'
 ), lead_status_hist AS (
-    SELECT lead_sfid, status, micro_status, date, owner
+    SELECT lead_sfid, status, micro_status, date, owner, null as additional_details
     FROM todays_lead_status_updates
     
     {% if is_incremental() %}
