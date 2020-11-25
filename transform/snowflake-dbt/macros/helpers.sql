@@ -229,23 +229,6 @@ select get_sys_var({{ var_name }})
                 AND timestamp <= CURRENT_TIMESTAMP
                 AND coalesce(type, event) NOT IN ('api_profiles_get_in_channel', 'api_profiles_get_by_usernames', 'api_profiles_get_by_ids', 'application_backgrounded', 'application_opened')
                 AND (a.join_id is null)
-            {% elif is_incremental() and adapter.quote(relation)[7:28] != 'MM_PLUGIN_DEV.NPS_NPS' %}
-            LEFT JOIN 
-                (
-                 SELECT 
-                    id as join_id
-                 FROM {{ this }}
-                 WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
-                 AND timestamp <= CURRENT_TIMESTAMP
-                 AND timestamp::date >= 
-                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND timestamp <= CURRENT_TIMESTAMP) - INTERVAL '1 DAYS'
-                 GROUP BY 1
-                ) a
-                ON {{ relation }}.id = a.join_id
-                WHERE timestamp::date >= 
-                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND timestamp <= CURRENT_TIMESTAMP) - INTERVAL '1 DAYS'
-                AND timestamp <= CURRENT_TIMESTAMP
-                AND (a.join_id is null)
             {% elif is_incremental() and adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
             LEFT JOIN 
                 (
