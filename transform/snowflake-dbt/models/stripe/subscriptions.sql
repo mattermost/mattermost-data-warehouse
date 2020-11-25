@@ -28,6 +28,7 @@ WITH subscriptions AS (
     {% if is_incremental() %}
 
     WHERE subscriptions.created::date >= (SELECT MAX(created::date) FROM {{ this }})
+    OR subscriptions.updated::date >= (SELECT MAX(updated::date) FROM {{ this }})
 
     {% endif %}
 )

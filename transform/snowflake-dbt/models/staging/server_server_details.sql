@@ -2,11 +2,33 @@
     "materialized": "incremental",
     "schema": "staging",
     "unique_key":'id',
-    "tags":'preunion'
+    "tags":'hourly'
   })
 }}
 
-WITH server_details AS (
+WITH rudder_servers AS (
+  SELECT * 
+  FROM {{ source('mm_telemetry_prod', 'server') }}
+  WHERE original_timestamp::date <= CURRENT_DATE
+  {% if is_incremental() %}
+  
+  AND original_timestamp >= (SELECT MAX(TIMESTAMP) FROM {{this}}) - interval '12 hour'
+
+  {% endif %}
+),
+
+segment_servers AS (
+  SELECT * 
+  FROM {{ source('mattermost2', 'server') }}
+  WHERE timestamp::date <= CURRENT_DATE
+  {% if is_incremental() %}
+  
+  AND timestamp >= (SELECT MAX(TIMESTAMP) FROM {{this}}) - interval '12 hour'
+
+  {% endif %}
+),
+
+server_details AS (
   SELECT
     COALESCE(s2.anonymous_id, s1.user_id)                            AS annonymous_id
   , COALESCE(s2.channel, ''::VARCHAR)                                AS channel
@@ -21,7 +43,7 @@ WITH server_details AS (
   , COALESCE(s2.id, s1.id)                                           AS id
   , COALESCE(s2.operating_system, s1.operating_system)               AS operating_system
   , COALESCE(s2.system_admins, s1.system_admins)                     AS system_admins
-  , COALESCE(s2.timestamp, s1.timestamp)                             AS timestamp
+  , MAX(COALESCE(s2.original_timestamp, s1.timestamp))               AS timestamp
   , COALESCE(s2.user_id, s1.user_id)                                 AS user_id
   , MAX(COALESCE(s2.uuid_ts, s1.uuid_ts))                            AS uuid_ts
   , COALESCE(s2.version, s1.version)                                 AS version
@@ -29,17 +51,17 @@ WITH server_details AS (
   , MAX(COALESCE(s2.received_at, s1.received_at))                    AS received_at
   , COALESCE(s2.CONTEXT_TRAITS_INSTALLATIONID, NULL)                 AS installation_id
   , COALESCE(s2.installation_type, NULL)                             AS installation_type
-FROM {{ source('mattermost2', 'server') }}                       s1
-     FULL OUTER JOIN {{ source('mm_telemetry_prod', 'server') }} s2
+FROM segment_servers                       s1
+     FULL OUTER JOIN rudder_servers s2
                      ON s1.user_id = s2.user_id
-                         AND s1.timestamp::DATE = s2.timestamp::DATE
-WHERE COALESCE(s2.timestamp::date, s1.timestamp::date) <= CURRENT_DATE
+                         AND s1.timestamp::DATE = s2.original_timestamp::DATE
+WHERE COALESCE(s2.original_timestamp::date, s1.timestamp::date) <= CURRENT_DATE
 {% if is_incremental() %}
 
-AND COALESCE(s2.timestamp::date, s1.timestamp::date) >= (SELECT MAX(DATE) FROM {{this}})
+AND COALESCE(s2.original_timestamp, s1.timestamp) >= (SELECT MAX(timestamp) FROM {{this}}) - interval '12 hours'
 
 {% endif %}
-GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 20, 21
+GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 17, 20, 21
 ),
 max_timestamp              AS (
     SELECT
@@ -52,7 +74,7 @@ max_timestamp              AS (
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND s1.timestamp::DATE >= (SELECT MAX(DATE) FROM {{ this }})
+        AND s1.timestamp >= (SELECT MAX(timestamp) FROM {{ this }}) - interval '12 hours'
 
     {% endif %}
     GROUP BY 1, 2
@@ -61,49 +83,26 @@ max_timestamp              AS (
          SELECT
              l.license_id
            , l.server_id
-           , l.customer_id
-           , l.company
-           , l.edition
-           , l.issued_date
-           , l.start_date
-           , l.server_expire_date_join   AS expire_date
-           , l.master_account_sfid
-           , l.master_account_name
-           , l.account_sfid
-           , l.account_name
-           , l.license_email
-           , l.contact_sfid
-           , l.contact_email
-           , l.number
-           , l.stripeid
-           , l.users
-           , l.feature_cluster
-           , l.feature_compliance
-           , l.feature_custom_brand
-           , l.feature_custom_permissions_schemes
-           , l.feature_data_retention
-           , l.feature_elastic_search
-           , l.feature_email_notification_contents
-           , l.feature_future
-           , l.feature_google
-           , l.feature_guest_accounts
-           , l.feature_guest_accounts_permissions
-           , l.feature_id_loaded
-           , l.feature_ldap
-           , l.feature_ldap_groups
-           , l.feature_lock_teammate_name_display
-           , l.feature_message_export
-           , l.feature_metrics           
-           , l.feature_mfa
-           , l.feature_mhpns
-           , l.feature_office365
-           , l.feature_password
-           , l.feature_saml
-           , l.has_trial_and_non_trial
-           , l.trial
+           , MAX(l.customer_id) AS customer_id
+           , MAX(l.company) AS company 
+           , MAX(l.edition) AS edition
+           , MAX(l.issued_date) AS issued_date
+           , MAX(l.start_date) AS start_date
+           , MAX(l.server_expire_date_join)   AS expire_date
+           , MAX(l.master_account_sfid) AS master_account_sfid
+           , MAX(l.master_account_name) AS master_account_name
+           , MAX(l.account_sfid) AS account_sfid
+           , MAX(l.account_name) AS account_name
+           , MAX(l.license_email) AS license_email
+           , MAX(l.contact_sfid) AS contact_sfid
+           , MAX(l.contact_email) AS contact_email
+           , MAX(l.number) AS number
+           , MAX(l.stripeid) AS stripeid
+           , MAX(l.users) AS users
+           , MAX(l.has_trial_and_non_trial) AS has_trial_and_non_trial 
+           , MAX(l.trial) AS trial
          FROM {{ ref('licenses') }} l
-         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
-         , 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42
+         GROUP BY 1, 2
      ),
      server_server_details AS (
          SELECT
@@ -136,6 +135,7 @@ max_timestamp              AS (
            , MAX(s.database_version)              AS database_version
            , s.installation_id                    AS installation_id
            , s.installation_type                  AS installation_type
+           , MAX(s.uuid_ts)                       AS uuid_ts
          FROM server_details s
               JOIN max_timestamp mt
                    ON s.user_id = mt.user_id
@@ -147,7 +147,7 @@ max_timestamp              AS (
         {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        WHERE s.timestamp::date >= (SELECT MAX(DATE) FROM {{ this }})
+        WHERE s.timestamp >= (SELECT MAX(timestamp) FROM {{ this }}) - interval '12 hours'
 
          {% endif %}
          GROUP BY 1, 2, 5, 7, 8, 9, 10, 13, 14, 15, 22, 23, 25, 26

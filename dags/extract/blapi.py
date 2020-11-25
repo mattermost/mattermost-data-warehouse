@@ -46,11 +46,13 @@ del pod_defaults["cmds"]
 blapi = KubernetesPodOperator(
     **pod_defaults,
     image=PIPELINEWISE_IMAGE,
+    labels={"topology.kubernetes.io/zone": "us-east-1a"},
     task_id="blapi-import",
     name="blapi-import",
     secrets=[PIPELINEWISE_SECRETS,],
     arguments=["run_tap", "--tap", "blapi", "--target", "snowflake"],
     volumes=[volume],
     volume_mounts=[volume_mount],
+    startup_timeout_seconds=300,
     dag=dag,
 )

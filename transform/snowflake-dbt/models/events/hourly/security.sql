@@ -2,7 +2,7 @@
     "materialized": "incremental",
     "schema": "events",
     "unique_key": "id",
-    "tags":"preunion"
+    "tags":"hourly"
   })
 }}
 
@@ -68,7 +68,7 @@ WITH security AS (
     AND logdate::date <= CURRENT_DATE
     {% if is_incremental() %}
 
-    AND (logdate || ' ' || logtime)::TIMESTAMP >= (SELECT MAX(TIMESTAMP) FROM {{this}})
+    AND (logdate || ' ' || logtime)::TIMESTAMP >= (SELECT MAX(TIMESTAMP) FROM {{this}}) - interval '12 hours'
 
     {% endif %}
     GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16

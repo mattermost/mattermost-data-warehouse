@@ -12,7 +12,8 @@ WITH enterprise_license_fact AS (
         MAX(licenses.server_expire_date_join::date) AS expiresat,
         MAX(license_daily_details.last_license_telemetry_date) AS last_license_telemetry_date,
         MAX(CASE WHEN license_daily_details.date = CONVERT_TIMEZONE('America/Los_Angeles',current_timestamp)::date - INTERVAL '1 days' THEN COALESCE(license_daily_details.license_users,license_daily_details.customer_users) ELSE NULL END)::int AS current_max_licensed_users,
-        MAX(CASE WHEN license_daily_details.date = CONVERT_TIMEZONE('America/Los_Angeles',current_timestamp)::date - INTERVAL '1 days' THEN (license_daily_details.license_registered_users) ELSE NULL END)::int AS current_max_license_registered_users,
+        MAX(CASE WHEN license_daily_details.date = CONVERT_TIMEZONE('America/Los_Angeles',current_timestamp)::date - INTERVAL '1 days' THEN (license_daily_details.license_registered_users) ELSE NULL END)::int -
+        COALESCE(MAX(CASE WHEN license_daily_details.date = CONVERT_TIMEZONE('America/Los_Angeles',current_timestamp)::date - INTERVAL '1 days' THEN (license_daily_details.license_registered_deactivated_users) ELSE NULL END)::int, 0) AS current_max_license_registered_users,
         AVG(license_daily_details.license_server_dau)::int AS current_rolling_7day_avg_dau,
         AVG(license_daily_details.license_server_mau)::int AS current_rolling_7day_avg_mau,
         MAX(CASE WHEN license_daily_details.date = CONVERT_TIMEZONE('America/Los_Angeles',current_timestamp)::date - INTERVAL '1 days' THEN license_daily_details.license_server_dau ELSE NULL END)::int AS current_max_license_server_dau,
