@@ -101,6 +101,8 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(p.version_comgithubmatterpollmatterpoll, NULL))        AS version_comgithubmatterpollmatterpoll
            , MAX(COALESCE(p.enable_commattermostpluginincidentmanagement, NULL))        AS enable_commattermostpluginincidentmanagement
            , MAX(COALESCE(p.version_commattermostpluginincidentmanagement, NULL))        AS version_commattermostpluginincidentmanagement
+           , MAX(COALESCE(p.enable_comgithubjespinorecommend, NULL))        AS enable_comgithubjespinorecommend
+           , MAX(COALESCE(p.version_comgithubjespinorecommend, NULL))        AS version_comgithubjespinorecommend            
          FROM 
             (
               SELECT s.*
