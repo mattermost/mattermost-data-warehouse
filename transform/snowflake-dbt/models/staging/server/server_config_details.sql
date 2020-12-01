@@ -539,6 +539,8 @@ SELECT
   , splugin.version_comgithubmatterpollmatterpoll
   , splugin.enable_commattermostpluginincidentmanagement
   , splugin.version_commattermostpluginincidentmanagement
+  , splugin.enable_comgithubjespinorecommend
+  , splugin.version_comgithubjespinorecommend
 FROM {{ ref('server_daily_details') }}                      s
     LEFT JOIN {{ ref('server_activity_details') }}            sactivity
     ON s.server_id = sactivity.server_id AND s.date = sactivity.date
@@ -631,7 +633,7 @@ FROM {{ ref('server_daily_details') }}                      s
 WHERE s.date >= (SELECT MAX(date) FROM {{this}})
 
 {% endif %}
-{{ dbt_utils.group_by(n=532)}}
+{{ dbt_utils.group_by(n=534)}}
 )
 SELECT *
 FROM server_config_details
