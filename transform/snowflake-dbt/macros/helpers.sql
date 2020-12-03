@@ -262,6 +262,24 @@ select get_sys_var({{ var_name }})
                      (SELECT MAX(ORIGINAL_TIMESTAMP) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND ORIGINAL_timestamp <= CURRENT_TIMESTAMP) - INTERVAL '6 HOURS'
                 AND ORIGINAL_timestamp <= CURRENT_TIMESTAMP
                 AND (a.join_id is null)
+
+            {% elif is_incremental() and this.schema == 'web' %}
+            LEFT JOIN 
+                (
+                 SELECT 
+                    id as join_id
+                 FROM {{ this }}
+                 WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
+                 AND timestamp <= CURRENT_TIMESTAMP
+                 AND TIMESTAMP >= 
+                     (SELECT MAX(TIMESTAMP) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND TIMESTAMP <= CURRENT_TIMESTAMP) - INTERVAL '6 HOURS'
+                 GROUP BY 1
+                ) a
+                ON {{ relation }}.id = a.join_id
+                WHERE timestamp >= 
+                     (SELECT MAX(TIMESTAMP) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND timestamp <= CURRENT_TIMESTAMP) - INTERVAL '6 HOURS'
+                AND timestamp <= CURRENT_TIMESTAMP
+                AND (a.join_id is null)
             {% endif %}
         )
 
