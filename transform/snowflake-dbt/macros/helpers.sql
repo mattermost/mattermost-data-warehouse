@@ -218,14 +218,14 @@ select get_sys_var({{ var_name }})
                  FROM {{ this }}
                  WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
                  AND timestamp <= CURRENT_TIMESTAMP
-                 AND timestamp::date >= 
-                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND timestamp <= CURRENT_TIMESTAMP) - INTERVAL '1 DAYS'
+                 AND timestamp >= 
+                     (SELECT MAX(TIMESTAMP) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND timestamp <= CURRENT_TIMESTAMP) - INTERVAL '12 hours'
                  AND coalesce(type, event) NOT IN ('api_profiles_get_in_channel', 'api_profiles_get_by_usernames', 'api_profiles_get_by_ids', 'application_backgrounded', 'application_opened')
                  GROUP BY 1
                 ) a
                 ON {{ relation }}.id = a.join_id
-                WHERE timestamp::date >= 
-                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND timestamp <= CURRENT_TIMESTAMP) - INTERVAL '1 DAYS'
+                WHERE timestamp >= 
+                     (SELECT MAX(TIMESTAMP) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND timestamp <= CURRENT_TIMESTAMP) - INTERVAL '12 hours'
                 AND timestamp <= CURRENT_TIMESTAMP
                 AND coalesce(type, event) NOT IN ('api_profiles_get_in_channel', 'api_profiles_get_by_usernames', 'api_profiles_get_by_ids', 'application_backgrounded', 'application_opened')
                 AND (a.join_id is null)
@@ -236,14 +236,14 @@ select get_sys_var({{ var_name }})
                     id as join_id
                  FROM {{ this }}
                  WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
-                 AND original_timestamp::date <= CURRENT_TIMESTAMP
-                 AND original_timestamp::date >= 
-                     (SELECT MAX(ORIGINAL_TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND original_timestamp::date <= CURRENT_TIMESTAMP) - INTERVAL '1 DAYS'
+                 AND original_timestamp <= CURRENT_TIMESTAMP
+                 AND original_timestamp >= 
+                     (SELECT MAX(ORIGINAL_TIMESTAMP) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND original_timestamp <= CURRENT_TIMESTAMP) - INTERVAL '6 HOURS'
                  GROUP BY 1
                 ) a
                 ON {{ relation }}.id = a.join_id
                 WHERE original_timestamp <= CURRENT_TIMESTAMP
-                AND original_timestamp::date >= (SELECT MAX(ORIGINAL_TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}) - INTERVAL '1 DAYS'
+                AND original_timestamp >= (SELECT MAX(ORIGINAL_TIMESTAMP) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND ORIGINAL_timestamp <= CURRENT_TIMESTAMP) - INTERVAL '6 HOURS'
                 AND (a.join_id is null)
             {% elif is_incremental() and this.schema == 'qa' %}
             LEFT JOIN 
@@ -252,15 +252,15 @@ select get_sys_var({{ var_name }})
                     id as join_id
                  FROM {{ this }}
                  WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
-                 AND timestamp <= CURRENT_TIMESTAMP
-                 AND timestamp::date >= 
-                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND timestamp <= CURRENT_TIMESTAMP) - INTERVAL '1 DAYS'
+                 AND ORIGINAL_timestamp <= CURRENT_TIMESTAMP
+                 AND ORIGINAL_TIMESTAMP >= 
+                     (SELECT MAX(ORIGINAL_TIMESTAMP) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND ORIGINAL_TIMESTAMP <= CURRENT_TIMESTAMP) - INTERVAL '6 HOURS'
                  GROUP BY 1
                 ) a
                 ON {{ relation }}.id = a.join_id
-                WHERE timestamp::date >= 
-                     (SELECT MAX(TIMESTAMP::date) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND timestamp <= CURRENT_TIMESTAMP) - INTERVAL '1 DAYS'
-                AND timestamp <= CURRENT_TIMESTAMP
+                WHERE ORIGINAL_timestamp >= 
+                     (SELECT MAX(ORIGINAL_TIMESTAMP) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND ORIGINAL_timestamp <= CURRENT_TIMESTAMP) - INTERVAL '6 HOURS'
+                AND ORIGINAL_timestamp <= CURRENT_TIMESTAMP
                 AND (a.join_id is null)
             {% endif %}
         )

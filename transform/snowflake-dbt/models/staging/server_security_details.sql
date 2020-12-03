@@ -113,33 +113,14 @@ WITH security                AS (
            , l.number
            , l.stripeid
            , l.users
-           , l.feature_cluster
-           , l.feature_compliance
-           , l.feature_custom_brand
-           , l.feature_custom_permissions_schemes
-           , l.feature_data_retention
-           , l.feature_elastic_search
-           , l.feature_email_notification_contents
-           , l.feature_future
-           , l.feature_google
-           , l.feature_guest_accounts
-           , l.feature_guest_accounts_permissions
-           , l.feature_id_loaded
-           , l.feature_ldap
-           , l.feature_ldap_groups
-           , l.feature_lock_teammate_name_display
-           , l.feature_message_export
-           , l.feature_metrics           
-           , l.feature_mfa
-           , l.feature_mhpns
-           , l.feature_office365
-           , l.feature_password
-           , l.feature_saml
            , l.has_trial_and_non_trial
            , l.trial
          FROM {{ ref('licenses') }} l
-         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
-         , 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42
+         WHERE EXISTS (
+                        SELECT s.id FROM security s 
+                        WHERE l.server_id = s.id
+                      )
+         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
      ),
      server_security_details    AS (
          SELECT
