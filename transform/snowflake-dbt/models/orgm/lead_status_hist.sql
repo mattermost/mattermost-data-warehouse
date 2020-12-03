@@ -5,19 +5,34 @@
 }}
 
 WITH todays_lead_status_updates AS (
-    SELECT lead.sfid AS lead_sfid, 'MCL' AS status, NULL AS micro_status, most_recent_mcl_date__c::date AS date, ownerid as owner
+    SELECT lead.sfid AS lead_sfid, 'MCL' AS status, NULL AS micro_status, most_recent_mcl_date__c::date AS date, ownerid as owner, NULL as additional_details
     FROM {{ source('orgm', 'lead') }}
     WHERE most_recent_mcl_date__c::date > current_date - interval '1 days'
     UNION ALL
-    SELECT lead.sfid AS lead_sfid, 'MEL' AS status, NULL AS micro_status, most_recent_mel_date__c::date AS date, ownerid as owner
+    SELECT lead.sfid AS lead_sfid, 'MEL' AS status, NULL AS micro_status, most_recent_mel_date__c::date AS date, ownerid as owner, NULL as additional_details
     FROM {{ source('orgm', 'lead') }}
     WHERE most_recent_mel_date__c::date > current_date - interval '1 days'
     UNION ALL
-    SELECT lead.sfid AS lead_sfid, 'MQL' AS status, NULL AS micro_status, most_recent_mql_date__c::date AS date, ownerid as owner
+    SELECT lead.sfid AS lead_sfid, 'MQL' AS status, NULL AS micro_status, most_recent_mql_date__c::date AS date, ownerid as owner,
+        CASE
+        WHEN most_recent_action_detail__c = 'In-Product Trial Request' THEN 'Trial Request - In-Product'
+        WHEN most_recent_action_detail__c = 'mattermost.com Trial Request' THEN 'Trial Request - Website'
+        WHEN most_recent_action__c = 'Contact Request' AND most_recent_action_detail__c IN ('General','Hipchat Migration') THEN 'Contact Request - General'
+        WHEN most_recent_action__c = 'Contact Request' AND most_recent_action_detail__c = 'Pricing' THEN 'Contact Request - Pricing'
+        WHEN most_recent_action__c = 'Contact Request' AND most_recent_action_detail__c = 'In-Portal Contact Us' THEN 'Contact Request - In-Portal'
+        WHEN most_recent_action__c = 'Contact Request' AND most_recent_action_detail__c = 'In-Cloud Contact Us' THEN 'Contact Request - In-Cloud'
+        WHEN most_recent_action__c = 'Demo Request' THEN 'Contact Request - Demo'
+        WHEN most_recent_action_detail__c = 'Cloud Workspace Creation' THEN 'Cloud - Ent/MM Workspace Creation'
+        WHEN most_recent_action__c = 'Cloud Enterprise Quote Request' THEN 'Cloud - Enterprise Quote Request'
+        WHEN most_recent_action__c = 'Government Inquiry' THEN 'Contact Request - General'
+        WHEN most_recent_action__c IN ('Cloud Beta Trial','Cloud Signup') THEN 'Cloud - Beta'
+        WHEN most_recent_action_detail__c = 'Remote Work Offer' THEN 'Contact Request - Remote Work Offer'
+        WHEN most_recent_action_detail__c = 'Admin Advisor 500' THEN 'AA - 500 Users'
+        ELSE NULL END as additional_details
     FROM {{ source('orgm', 'lead') }}
     WHERE most_recent_mql_date__c::date > current_date - interval '1 days'
     UNION ALL
-    SELECT lead.sfid AS lead_sfid, 'SCL' AS status, NULL AS micro_status, most_recent_scl_date__c::date AS date, ownerid as owner
+    SELECT lead.sfid AS lead_sfid, 'SCL' AS status, NULL AS micro_status, most_recent_scl_date__c::date AS date, ownerid as owner, NULL as additional_details
     FROM {{ source('orgm', 'lead') }}
     WHERE most_recent_scl_date__c::date > current_date - interval '1 days'
         AND (outreach__c::date != most_recent_scl_date__c::date OR outreach__c IS NULL)
@@ -26,43 +41,43 @@ WITH todays_lead_status_updates AS (
         AND (discovery_call_booked__c::date != most_recent_scl_date__c::date OR discovery_call_booked__c IS NULL)
         AND (discovery_call_completed__c::date != most_recent_scl_date__c::date OR discovery_call_completed__c IS NULL)
     UNION ALL
-    SELECT lead.sfid AS lead_sfid, 'SCL' AS status, 'Outreach (Automation)' AS micro_status, outreach__c::date AS date, ownerid as owner
+    SELECT lead.sfid AS lead_sfid, 'SCL' AS status, 'Outreach (Automation)' AS micro_status, outreach__c::date AS date, ownerid as owner, NULL as additional_details
     FROM {{ source('orgm', 'lead') }}
     WHERE outreach__c::date > current_date - interval '1 days'
     UNION ALL
-    SELECT lead.sfid AS lead_sfid, 'SCL' AS status, 'Outreach (Sales Manual)' AS micro_status, outreach__c::date AS date, ownerid as owner
+    SELECT lead.sfid AS lead_sfid, 'SCL' AS status, 'Outreach (Sales Manual)' AS micro_status, outreach__c::date AS date, ownerid as owner, NULL as additional_details
     FROM {{ source('orgm', 'lead') }}
     WHERE outreach__c::date > current_date - interval '1 days'
     UNION ALL
-    SELECT lead.sfid AS lead_sfid, 'SCL' AS status, 'Connected' AS micro_status, connected__c::date AS date, ownerid as owner
+    SELECT lead.sfid AS lead_sfid, 'SCL' AS status, 'Connected' AS micro_status, connected__c::date AS date, ownerid as owner, NULL as additional_details
     FROM {{ source('orgm', 'lead') }}
     WHERE connected__c::date > current_date - interval '1 days'
     UNION ALL
-    SELECT lead.sfid AS lead_sfid, 'SCL' AS status, 'Discovery Call Booked' AS micro_status, discovery_call_booked__c::date AS date, ownerid as owner
+    SELECT lead.sfid AS lead_sfid, 'SCL' AS status, 'Discovery Call Booked' AS micro_status, discovery_call_booked__c::date AS date, ownerid as owner, NULL as additional_details
     FROM {{ source('orgm', 'lead') }}
     WHERE discovery_call_booked__c::date > current_date - interval '1 days'
     UNION ALL
-    SELECT lead.sfid AS lead_sfid, 'SCL' AS status, 'Discovery Call Booked' AS micro_status, discovery_call_completed__c::date AS date, ownerid as owner
+    SELECT lead.sfid AS lead_sfid, 'SCL' AS status, 'Discovery Call Booked' AS micro_status, discovery_call_completed__c::date AS date, ownerid as owner, NULL as additional_details
     FROM {{ source('orgm', 'lead') }}
     WHERE discovery_call_completed__c::date > current_date - interval '1 days'
     UNION ALL
-    SELECT lead.sfid AS lead_sfid, 'Recycle' AS status, RECYCLE_REASON__C AS micro_status, most_recent_recycle_date__c::date AS date, ownerid as owner
+    SELECT lead.sfid AS lead_sfid, 'Recycle' AS status, RECYCLE_REASON__C AS micro_status, most_recent_recycle_date__c::date AS date, ownerid as owner, NULL as additional_details
     FROM {{ source('orgm', 'lead') }}
     WHERE most_recent_recycle_date__c::date > current_date - interval '1 days'
     UNION ALL
-    SELECT lead.sfid AS lead_sfid, 'Junk' AS status, JUNK_REASON__C AS micro_status, first_not_a_lead_date__c::date AS date, ownerid as owner
+    SELECT lead.sfid AS lead_sfid, 'Junk' AS status, JUNK_REASON__C AS micro_status, first_not_a_lead_date__c::date AS date, ownerid as owner, NULL as additional_details
     FROM {{ source('orgm', 'lead') }}
     WHERE first_not_a_lead_date__c::date > current_date - interval '1 days'
     UNION ALL
-    SELECT lead.sfid AS lead_sfid, 'QSO' AS status, NULL AS micro_status, most_recent_qso_date__c::date AS date, ownerid as owner
+    SELECT lead.sfid AS lead_sfid, 'QSO' AS status, NULL AS micro_status, most_recent_qso_date__c::date AS date, ownerid as owner, NULL as additional_details
     FROM {{ source('orgm', 'lead') }}
     WHERE most_recent_qso_date__c::date > current_date - interval '1 days'
     UNION ALL
-    SELECT lead.sfid AS lead_sfid, 'QSC' AS status, NULL AS micro_status, most_recent_qsc_date__c::date AS date, ownerid as owner
+    SELECT lead.sfid AS lead_sfid, 'QSC' AS status, NULL AS micro_status, most_recent_qsc_date__c::date AS date, ownerid as owner, NULL as additional_details
     FROM {{ source('orgm', 'lead') }}
     WHERE most_recent_qsc_date__c::date > current_date - interval '1 days'
 ), lead_status_hist AS (
-    SELECT lead_sfid, status, micro_status, date, owner, null as additional_details
+    SELECT lead_sfid, status, micro_status, date, owner, additional_details
     FROM todays_lead_status_updates
     
     {% if is_incremental() %}
