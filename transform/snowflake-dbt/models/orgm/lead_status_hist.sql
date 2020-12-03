@@ -27,6 +27,7 @@ WITH todays_lead_status_updates AS (
         WHEN most_recent_action__c = 'Government Inquiry' THEN 'Contact Request - General'
         WHEN most_recent_action__c IN ('Cloud Beta Trial','Cloud Signup') THEN 'Cloud - Beta'
         WHEN most_recent_action_detail__c = 'Remote Work Offer' THEN 'Contact Request - Remote Work Offer'
+        WHEN most_recent_action_detail__c = 'Admin Advisor 500' THEN 'AA - 500 Users'
         ELSE NULL END as additional_details
     FROM {{ source('orgm', 'lead') }}
     WHERE most_recent_mql_date__c::date > current_date - interval '1 days'
