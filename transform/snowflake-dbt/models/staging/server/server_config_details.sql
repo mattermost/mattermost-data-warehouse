@@ -543,6 +543,12 @@ SELECT
   , splugin.version_comgithubjespinorecommend
   , splugin.enable_commattermostagenda
   , splugin.version_commattermostagenda
+  , splugin.enable_commattermostmsteamsmeetings
+  , splugin.enable_commattermostpluginchannelexport
+  , splugin.enable_comnilsbrinkmannicebreaker
+  , splugin.version_commattermostmsteamsmeetings
+  , splugin.version_commattermostpluginchannelexport
+  , splugin.version_comnilsbrinkmannicebreaker
 FROM {{ ref('server_daily_details') }}                      s
     LEFT JOIN {{ ref('server_activity_details') }}            sactivity
     ON s.server_id = sactivity.server_id AND s.date = sactivity.date
@@ -635,7 +641,7 @@ FROM {{ ref('server_daily_details') }}                      s
 WHERE s.date >= (SELECT MAX(date) FROM {{this}})
 
 {% endif %}
-{{ dbt_utils.group_by(n=536)}}
+{{ dbt_utils.group_by(n=542)}}
 )
 SELECT *
 FROM server_config_details
