@@ -198,7 +198,7 @@ select get_sys_var({{ var_name }})
                     WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}
                     AND timestamp <= CURRENT_TIMESTAMP
                     AND timestamp) >= 
-                        (SELECT MAX(timestamp)) FROM {{ this }} WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }} AND timestamp <= CURRENT_TIMESTAMP) - INTERVAL '12 HOURS'
+                        (SELECT MAX(timestamp) FROM {{ this }} WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }} AND timestamp <= CURRENT_TIMESTAMP) - INTERVAL '12 HOURS'
                     GROUP BY 1
                     ) a
                     ON {{ relation }}.id = a.join_id
