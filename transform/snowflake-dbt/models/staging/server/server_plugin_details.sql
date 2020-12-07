@@ -104,7 +104,13 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(p.enable_comgithubjespinorecommend, NULL))        AS enable_comgithubjespinorecommend
            , MAX(COALESCE(p.version_comgithubjespinorecommend, NULL))        AS version_comgithubjespinorecommend
            , MAX(COALESCE(p.enable_commattermostagenda, NULL))        AS enable_commattermostagenda
-           , MAX(COALESCE(p.version_commattermostagenda, NULL))        AS version_commattermostagenda             
+           , MAX(COALESCE(p.version_commattermostagenda, NULL))        AS version_commattermostagenda         
+           , MAX(COALESCE(p.enable_commattermostmsteamsmeetings, NULL))        AS enable_commattermostmsteamsmeetings
+           , MAX(COALESCE(p.enable_commattermostpluginchannelexport, NULL))        AS enable_commattermostpluginchannelexport
+           , MAX(COALESCE(p.enable_comnilsbrinkmannicebreaker, NULL))        AS enable_comnilsbrinkmannicebreaker
+           , MAX(COALESCE(p.version_commattermostmsteamsmeetings, NULL))        AS version_commattermostmsteamsmeetings
+           , MAX(COALESCE(p.version_commattermostpluginchannelexport, NULL))        AS version_commattermostpluginchannelexport
+           , MAX(COALESCE(p.version_comnilsbrinkmannicebreaker, NULL))        AS version_comnilsbrinkmannicebreaker
          FROM 
             (
               SELECT s.*
