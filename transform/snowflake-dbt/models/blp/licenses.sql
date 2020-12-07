@@ -23,7 +23,7 @@ WITH license        AS (
 
     SELECT
         l.server_id as customerid
-      , l.site_name as company
+      , NULL as company
       , uniform(10000, 99999, random())::int as number
       , l.email
       , null as stripeid
