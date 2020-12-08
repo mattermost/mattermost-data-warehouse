@@ -18,6 +18,20 @@ WITH license        AS (
       , to_timestamp(l.expiresat / 1000)::DATE AS expiresat
     FROM {{ source('licenses', 'licenses') }} l
     {{ dbt_utils.group_by(n=8) }}
+
+    UNION ALL
+
+    SELECT
+        l.server_id as customerid
+      , NULL as company
+      , uniform(10000, 99999, random())::int as number
+      , l.email
+      , null as stripeid
+      , l.id as licenseid
+      , license_issued_at::date as issuedat
+      , end_date::date as expiresat
+    FROM {{ source('blapi', 'trial_requests')}} l
+    {{ dbt_utils.group_by(n=8) }}
 ),
 
      max_segment_date        AS (

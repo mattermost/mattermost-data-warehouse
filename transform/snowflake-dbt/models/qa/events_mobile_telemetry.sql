@@ -1,8 +1,7 @@
 {{config({
     "materialized": "incremental",
     "schema": "qa",
-    "tags":"hourly",
-    "unique_key":"id"
+    "tags":"hourly"
   })
 }}
 
