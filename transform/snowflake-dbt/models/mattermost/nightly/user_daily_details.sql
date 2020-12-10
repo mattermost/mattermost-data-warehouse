@@ -1,7 +1,7 @@
 {{config({
     "materialized": 'incremental',
     "schema": "mattermost",
-    "enabled":"false"
+    "enabled":false
   })
 }}
 

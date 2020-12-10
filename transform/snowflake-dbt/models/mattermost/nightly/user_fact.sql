@@ -1,7 +1,7 @@
 {{config({
     "materialized": 'table',
     "schema": "mattermost",
-    "enabled":"false"
+    "enabled":false
   })
 }}
 
