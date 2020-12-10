@@ -1,6 +1,6 @@
 words
 compliance
-hippa
+hipaa
 gov
 on-prem
 onprem
@@ -26,10 +26,12 @@ infosec
 comms
 messaging
 communication
+comm
 collaboration
 collab
 chat
 sso
+saml
 ldap
 high availability
 elasticsearch
