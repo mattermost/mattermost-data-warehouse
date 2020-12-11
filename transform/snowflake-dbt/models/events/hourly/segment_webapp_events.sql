@@ -14,7 +14,7 @@ with rudder as (
 ),
 
 max_time as (
- SELECT MAX(timestamp) - interval '1 days' as max_time FROM {{ this }}
+ SELECT MAX(timestamp) - interval '1 days' as max_time FROM {{ this }} WHERE timestamp <= CURRENT_TIMESTAMP
 ),
 
 join_key as (
