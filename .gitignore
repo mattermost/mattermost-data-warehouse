@@ -79,6 +79,9 @@ target/
 # Jupyter Notebook
 .ipynb_checkpoints
 
+# Logs
+transform/snowflake-dbt/logs/
+
 # .vscode
 .vscode/
 Snowflake_Prod.session.sql
