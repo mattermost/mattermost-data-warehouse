@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
     dbt_image:
-      image: docker.io/adovenmm/dbt-image:latest
+      image: docker.io/adovenmm/dbt-image:v0.18.1
       environment:
         DBT_PROFILES_DIR: /usr/local/dbt_profiles/
         SNOWFLAKE_LOAD_DATABASE: "RAW"
