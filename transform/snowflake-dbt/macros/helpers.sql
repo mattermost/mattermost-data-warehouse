@@ -328,18 +328,18 @@ select get_sys_var({{ var_name }})
                 WHERE timestamp <= CURRENT_TIMESTAMP
             {% elif is_incremental() and adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
                 JOIN max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} mt
-                    ON {{ relation }}.timestamp >= mt.max_time
+                    ON {{ relation }}.original_timestamp >= mt.max_time
                 LEFT JOIN join_key_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} a
                     ON {{ relation }}.id = a.join_id
                     AND a.join_id is null
-                WHERE timestamp <= CURRENT_TIMESTAMP
+                WHERE original_timestamp <= CURRENT_TIMESTAMP
             {% elif is_incremental() and this.schema == 'qa' %}
                 JOIN max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} mt
-                    ON {{ relation }}.timestamp >= mt.max_time
+                    ON {{ relation }}.original_timestamp >= mt.max_time
                 LEFT JOIN join_key_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} a
                     ON {{ relation }}.id = a.join_id
                     AND a.join_id is null
-                WHERE timestamp <= CURRENT_TIMESTAMP
+                WHERE original_timestamp <= CURRENT_TIMESTAMP
             {% elif is_incremental() and this.schema == 'web' %}
                 JOIN max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} mt
                     ON {{ relation }}.timestamp >= mt.max_time
