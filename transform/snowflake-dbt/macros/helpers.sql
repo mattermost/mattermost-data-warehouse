@@ -163,11 +163,134 @@ select get_sys_var({{ var_name }})
 
     {%- set ordered_column_names = column_superset.keys() -%}
 
-    {%- for relation in relations %}
-        {%- set quoted_relation = ["'", relation, "'"]|join -%}
+    {%- if is_incremental() -%}
+        with 
+        --
+        {%- for relation in relations -%}
+            {%- if this.table == 'user_events_telemetry' -%}
+             --
+             max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} AS (
+                 SELECT 
+                    MAX(timestamp) AS max_time
+                 FROM {{ this }} 
+                 WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }} 
+                 AND timestamp <= (CURRENT_TIMESTAMP - INTERVAL '12 HOURS')
+             ),
 
-        (
-            select
+             join_key_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} AS (
+                    SELECT 
+                        id as join_id
+                    FROM {{ this }}
+                    JOIN max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} mt
+                        ON {{ this }}.timestamp >= mt.max_time 
+                    WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}
+                    AND timestamp <= CURRENT_TIMESTAMP
+                    GROUP BY 1
+             ),
+
+            {%- elif this.table == 'mobile_events' -%}
+             --
+             max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} AS (
+                 SELECT 
+                    MAX(timestamp) AS max_time
+                 FROM {{ this }} 
+                 WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} 
+                 AND timestamp <= (CURRENT_TIMESTAMP - INTERVAL '12 HOURS')
+                 AND coalesce(type, event) NOT IN ('api_profiles_get_in_channel', 'api_profiles_get_by_usernames', 'api_profiles_get_by_ids', 'application_backgrounded', 'application_opened')
+             ),
+
+             join_key_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} AS (
+                    SELECT 
+                        id as join_id
+                    FROM {{ this }}
+                    JOIN max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} mt
+                        ON {{ this }}.timestamp >= mt.max_time 
+                    WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
+                    AND coalesce(type, event) NOT IN ('api_profiles_get_in_channel', 'api_profiles_get_by_usernames', 'api_profiles_get_by_ids', 'application_backgrounded', 'application_opened')
+                    AND timestamp <= CURRENT_TIMESTAMP
+                    GROUP BY 1
+             ),
+
+            {%- elif adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
+             --
+             max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} AS (
+                 SELECT 
+                    MAX(timestamp) AS max_time
+                 FROM {{ this }} 
+                 WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} 
+                 AND timestamp <= (CURRENT_TIMESTAMP - INTERVAL '3 HOURS')
+             ),
+
+             join_key_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} AS (
+                    SELECT 
+                        id as join_id
+                    FROM {{ this }}
+                    JOIN max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} mt
+                        ON {{ this }}.timestamp >= mt.max_time 
+                    WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
+                    AND timestamp <= CURRENT_TIMESTAMP
+                    GROUP BY 1
+             ),
+
+            {%- elif this.schema == 'qa'  %}
+             --
+             max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} AS (
+                 SELECT 
+                    MAX(timestamp) AS max_time
+                 FROM {{ this }} 
+                 WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} 
+                 AND timestamp <= (CURRENT_TIMESTAMP - INTERVAL '3 HOURS')
+             ),
+
+             join_key_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} AS (
+                    SELECT 
+                        id as join_id
+                    FROM {{ this }}
+                    JOIN max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} mt
+                        ON {{ this }}.timestamp >= mt.max_time 
+                    WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
+                    AND timestamp <= CURRENT_TIMESTAMP
+                    GROUP BY 1
+             ){% if not loop.last -%},{% endif %}
+
+            {%- elif this.schema == 'web'  %}
+             --
+             max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} AS (
+                 SELECT 
+                    MAX(timestamp) AS max_time
+                 FROM {{ this }} 
+                 WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} 
+                 AND timestamp <= (CURRENT_TIMESTAMP - INTERVAL '3 HOURS')
+             ),
+
+             join_key_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} AS (
+                    SELECT 
+                        id as join_id
+                    FROM {{ this }}
+                    JOIN max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} mt
+                        ON {{ this }}.timestamp >= mt.max_time 
+                    WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
+                    AND timestamp <= CURRENT_TIMESTAMP
+                    GROUP BY 1
+             ),
+        
+            {%- endif -%}
+
+        {%- endfor -%}
+
+    {%- endif -%}
+
+    {%- if not is_incremental() -%}
+    with 
+    --
+    {%- elif is_incremental() -%}
+    --
+    {%- endif -%}
+
+    {%- for relation in relations %}
+
+               {{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} AS (
+               select
 
                 cast({{ dbt_utils.string_literal(relation) }} as {{ dbt_utils.type_string() }}) as {{ source_column_name if ('_DBT_SOURCE_RELATION' not in column_superset) else '_DBT_SOURCE_RELATION2'}},
                 {% for col_name in ordered_column_names -%}
@@ -184,105 +307,65 @@ select get_sys_var({{ var_name }})
                         cast({{ col_name }} as {{ col_type }}) as {{ col.quoted }}
 
                         {%- endif -%}
-                        {%- if not loop.last -%},{%- endif -%}
+                        {%- if not loop.last -%},{%- elif loop.last -%}
+                        {%- endif -%}
 
-                {%- endfor -%}
-
-            from {{ relation }}
-            {% if is_incremental() and this.table == 'user_events_telemetry' %}
-                LEFT JOIN 
-                    (
-                    SELECT 
-                        id as join_id
-                    FROM {{ this }}
-                    WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }}
-                    AND timestamp <= CURRENT_TIMESTAMP
-                    AND timestamp >= 
-                        (SELECT MAX(timestamp) FROM {{ this }} WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }} AND timestamp <= CURRENT_TIMESTAMP) - INTERVAL '12 HOURS'
-                    GROUP BY 1
-                    ) a
+                {%- endfor -%} 
+              from {{ relation }}
+              {% if is_incremental() and this.table == 'user_events_telemetry' %}
+                JOIN max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} mt
+                    ON {{ relation }}.timestamp >= mt.max_time
+                LEFT JOIN join_key_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} a
                     ON {{ relation }}.id = a.join_id
-                WHERE timestamp >= 
-                        (SELECT MAX(timestamp) FROM {{ this }} WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }} AND timestamp <= CURRENT_TIMESTAMP) - INTERVAL '12 HOURS'
-                AND timestamp <= CURRENT_TIMESTAMP
-                AND (a.join_id is null)
+                    AND a.join_id is null
+                WHERE timestamp <= CURRENT_TIMESTAMP
             {% elif is_incremental() and this.table == 'mobile_events' %}
-            LEFT JOIN 
-                (
-                 SELECT 
-                    id as join_id
-                 FROM {{ this }}
-                 WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
-                 AND timestamp <= CURRENT_TIMESTAMP
-                 AND timestamp >= 
-                     (SELECT MAX(TIMESTAMP) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND timestamp <= CURRENT_TIMESTAMP) - INTERVAL '12 hours'
-                 AND coalesce(type, event) NOT IN ('api_profiles_get_in_channel', 'api_profiles_get_by_usernames', 'api_profiles_get_by_ids', 'application_backgrounded', 'application_opened')
-                 GROUP BY 1
-                ) a
-                ON {{ relation }}.id = a.join_id
-                WHERE timestamp >= 
-                     (SELECT MAX(TIMESTAMP) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND timestamp <= CURRENT_TIMESTAMP) - INTERVAL '12 hours'
-                AND timestamp <= CURRENT_TIMESTAMP
-                AND coalesce(type, event) NOT IN ('api_profiles_get_in_channel', 'api_profiles_get_by_usernames', 'api_profiles_get_by_ids', 'application_backgrounded', 'application_opened')
-                AND (a.join_id is null)
+                JOIN max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} mt
+                    ON {{ relation }}.timestamp >= mt.max_time
+                LEFT JOIN join_key_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} a
+                    ON {{ relation }}.id = a.join_id
+                    AND a.join_id is null
+                WHERE timestamp <= CURRENT_TIMESTAMP
             {% elif is_incremental() and adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
-            LEFT JOIN 
-                (
-                 SELECT 
-                    id as join_id
-                 FROM {{ this }}
-                 WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
-                 AND original_timestamp <= CURRENT_TIMESTAMP
-                 AND original_timestamp >= 
-                     (SELECT MAX(ORIGINAL_TIMESTAMP) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND original_timestamp <= CURRENT_TIMESTAMP) - INTERVAL '3 HOURS'
-                 GROUP BY 1
-                ) a
-                ON {{ relation }}.id = a.join_id
-                WHERE original_timestamp <= CURRENT_TIMESTAMP
-                AND original_timestamp >= (SELECT MAX(ORIGINAL_TIMESTAMP) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND ORIGINAL_timestamp <= CURRENT_TIMESTAMP) - INTERVAL '3 HOURS'
-                AND (a.join_id is null)
+                JOIN max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} mt
+                    ON {{ relation }}.timestamp >= mt.max_time
+                LEFT JOIN join_key_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} a
+                    ON {{ relation }}.id = a.join_id
+                    AND a.join_id is null
+                WHERE timestamp <= CURRENT_TIMESTAMP
             {% elif is_incremental() and this.schema == 'qa' %}
-            LEFT JOIN 
-                (
-                 SELECT 
-                    id as join_id
-                 FROM {{ this }}
-                 WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
-                 AND ORIGINAL_timestamp <= CURRENT_TIMESTAMP
-                 AND ORIGINAL_TIMESTAMP >= 
-                     (SELECT MAX(ORIGINAL_TIMESTAMP) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND ORIGINAL_TIMESTAMP <= CURRENT_TIMESTAMP) - INTERVAL '3 HOURS'
-                 GROUP BY 1
-                ) a
-                ON {{ relation }}.id = a.join_id
-                WHERE ORIGINAL_timestamp >= 
-                     (SELECT MAX(ORIGINAL_TIMESTAMP) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND ORIGINAL_timestamp <= CURRENT_TIMESTAMP) - INTERVAL '3 HOURS'
-                AND ORIGINAL_timestamp <= CURRENT_TIMESTAMP
-                AND (a.join_id is null)
-
+                JOIN max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} mt
+                    ON {{ relation }}.timestamp >= mt.max_time
+                LEFT JOIN join_key_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} a
+                    ON {{ relation }}.id = a.join_id
+                    AND a.join_id is null
+                WHERE timestamp <= CURRENT_TIMESTAMP
             {% elif is_incremental() and this.schema == 'web' %}
-            LEFT JOIN 
-                (
-                 SELECT 
-                    id as join_id
-                 FROM {{ this }}
-                 WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
-                 AND timestamp <= CURRENT_TIMESTAMP
-                 AND TIMESTAMP >= 
-                     (SELECT MAX(TIMESTAMP) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND TIMESTAMP <= CURRENT_TIMESTAMP) - INTERVAL '3 HOURS'
-                 GROUP BY 1
-                ) a
-                ON {{ relation }}.id = a.join_id
-                WHERE timestamp >= 
-                     (SELECT MAX(TIMESTAMP) FROM {{ this }} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} AND timestamp <= CURRENT_TIMESTAMP) - INTERVAL '3 HOURS'
-                AND timestamp <= CURRENT_TIMESTAMP
-                AND (a.join_id is null)
+                JOIN max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} mt
+                    ON {{ relation }}.timestamp >= mt.max_time
+                LEFT JOIN join_key_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} a
+                    ON {{ relation }}.id = a.join_id
+                    AND a.join_id is null
+                WHERE timestamp <= CURRENT_TIMESTAMP
             {% endif %}
+
+            ){% if not loop.last -%},{% endif %}
+
+    {%- endfor -%}
+
+        {%- for relation in relations %}
+        (
+            select
+                {{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }}.*
+            --
+            from {{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }}
+            
         )
 
         {% if not loop.last -%}
             union all
         {% endif -%}
 
-    {%- endfor -%}
+        {%- endfor -%} 
 
 {%- endmacro -%}

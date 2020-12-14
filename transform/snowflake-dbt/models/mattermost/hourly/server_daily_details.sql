@@ -6,6 +6,50 @@
   })
 }}
 
+{% if is_incremental() %}
+WITH max_date AS (
+    SELECT MAX(DATE) as max_date FROM {{ this }}
+), 
+
+security AS (
+    SELECT s.*
+    FROM {{ ref('server_security_details') }} s
+    JOIN max_date  
+        ON s.date >= max_date.max_date
+        AND s.date <= CURRENT_DATE
+),
+
+server AS (
+    SELECT s.*
+    FROM {{ ref('server_server_details') }} s
+    JOIN max_date  
+        ON s.date >= max_date.max_date 
+        AND s.date <= CURRENT_DATE
+)
+
+servers as (
+  SELECT 
+      coalesce(s2.server_id, s1.server_id)                 AS server_id
+    , CASE WHEN MIN(COALESCE(s1.date, s2.date)) <= MIN(COALESCE(s2.date, s1.date)) 
+            THEN MIN(COALESCE(s1.date, s2.date)) 
+              ELSE MIN(COALESCE(s2.date, s1.date)) END     AS min_date
+    , CASE WHEN MAX(CURRENT_DATE) <= 
+                  CASE WHEN MAX(COALESCE(s1.date, s2.date)) >= MAX(COALESCE(s2.date, s1.date)) 
+                    THEN MAX(COALESCE(s1.date, s2.date)) 
+                    ELSE MAX(COALESCE(s2.date, s1.date)) END
+          THEN MAX(CURRENT_DATE)
+          ELSE CASE WHEN MAX(COALESCE(s1.date, s2.date)) >= MAX(COALESCE(s2.date, s1.date)) 
+                    THEN MAX(COALESCE(s1.date, s2.date)) 
+                    ELSE MAX(COALESCE(s2.date, s1.date)) END
+          END                                             AS max_date
+  FROM security                    s1
+         FULL OUTER JOIN server    s2
+                         ON s1.server_id = s2.server_id
+                            AND s1.date = s2.date
+  GROUP BY 1),
+
+{% else %}
+
 WITH servers as (
   SELECT 
       coalesce(s2.server_id, s1.server_id)                 AS server_id
@@ -28,6 +72,8 @@ WITH servers as (
   WHERE COALESCE(s1.date, s2.date) <= CURRENT_DATE
   GROUP BY 1
 ),
+
+{% endif %}
 dates as (
   SELECT 
       d.date
