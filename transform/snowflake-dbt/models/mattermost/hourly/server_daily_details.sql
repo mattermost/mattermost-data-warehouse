@@ -25,7 +25,7 @@ server AS (
     JOIN max_date  
         ON s.date >= max_date.max_date 
         AND s.date <= CURRENT_DATE
-)
+),
 
 servers as (
   SELECT 
