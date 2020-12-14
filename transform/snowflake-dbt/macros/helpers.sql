@@ -215,10 +215,10 @@ select get_sys_var({{ var_name }})
              --
              max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} AS (
                  SELECT 
-                    MAX(timestamp) AS max_time
+                    MAX(original_timestamp) AS max_time
                  FROM {{ this }} 
                  WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} 
-                 AND timestamp <= (CURRENT_TIMESTAMP - INTERVAL '3 HOURS')
+                 AND original_timestamp <= (CURRENT_TIMESTAMP - INTERVAL '3 HOURS')
              ),
 
              join_key_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} AS (
@@ -226,9 +226,9 @@ select get_sys_var({{ var_name }})
                         id as join_id
                     FROM {{ this }}
                     JOIN max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} mt
-                        ON {{ this }}.timestamp >= mt.max_time 
+                        ON {{ this }}.original_timestamp >= mt.max_time 
                     WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
-                    AND timestamp <= CURRENT_TIMESTAMP
+                    AND original_timestamp <= CURRENT_TIMESTAMP
                     GROUP BY 1
              ),
 
@@ -236,10 +236,10 @@ select get_sys_var({{ var_name }})
              --
              max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} AS (
                  SELECT 
-                    MAX(timestamp) AS max_time
+                    MAX(original_timestamp) AS max_time
                  FROM {{ this }} 
                  WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }} 
-                 AND timestamp <= (CURRENT_TIMESTAMP - INTERVAL '3 HOURS')
+                 AND original_timestamp <= (CURRENT_TIMESTAMP - INTERVAL '3 HOURS')
              ),
 
              join_key_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} AS (
@@ -247,11 +247,11 @@ select get_sys_var({{ var_name }})
                         id as join_id
                     FROM {{ this }}
                     JOIN max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} mt
-                        ON {{ this }}.timestamp >= mt.max_time 
+                        ON {{ this }}.original_timestamp >= mt.max_time 
                     WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }}
-                    AND timestamp <= CURRENT_TIMESTAMP
+                    AND original_timestamp <= CURRENT_TIMESTAMP
                     GROUP BY 1
-             ){% if not loop.last -%},{% endif %}
+             ),
 
             {%- elif this.schema == 'web'  %}
              --
@@ -328,18 +328,18 @@ select get_sys_var({{ var_name }})
                 WHERE timestamp <= CURRENT_TIMESTAMP
             {% elif is_incremental() and adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
                 JOIN max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} mt
-                    ON {{ relation }}.timestamp >= mt.max_time
+                    ON {{ relation }}.original_timestamp >= mt.max_time
                 LEFT JOIN join_key_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} a
                     ON {{ relation }}.id = a.join_id
                     AND a.join_id is null
-                WHERE timestamp <= CURRENT_TIMESTAMP
+                WHERE original_timestamp <= CURRENT_TIMESTAMP
             {% elif is_incremental() and this.schema == 'qa' %}
                 JOIN max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} mt
-                    ON {{ relation }}.timestamp >= mt.max_time
+                    ON {{ relation }}.original_timestamp >= mt.max_time
                 LEFT JOIN join_key_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} a
                     ON {{ relation }}.id = a.join_id
                     AND a.join_id is null
-                WHERE timestamp <= CURRENT_TIMESTAMP
+                WHERE original_timestamp <= CURRENT_TIMESTAMP
             {% elif is_incremental() and this.schema == 'web' %}
                 JOIN max_time_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} mt
                     ON {{ relation }}.timestamp >= mt.max_time
