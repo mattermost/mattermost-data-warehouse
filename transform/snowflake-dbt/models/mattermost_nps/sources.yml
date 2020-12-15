@@ -11,3 +11,14 @@ sources:
       
       - name: nps_feedback
         description: 'NPS feedback data'
+
+  - name: mm_plugin_prod
+    database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
+    schema: mm_plugin_prod
+
+    tables: 
+      - name: nps_nps_score
+        description: 'NPS score data'
+      
+      - name: nps_nps_feedback
+        description: 'NPS feedback data'

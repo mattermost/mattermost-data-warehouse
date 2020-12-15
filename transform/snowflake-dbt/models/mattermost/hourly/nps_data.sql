@@ -5,20 +5,68 @@
 }}
 
 WITH daily_nps_scores AS (
-    SELECT timestamp::date as date,
-  		*
+    
+        SELECT timestamp::date as date
+  		, license_id
+        , server_version
+        , user_role
+        , server_install_date
+        , license_sku
+        , user_create_at
+        , score
+        , user_actual_id
+        , user_id
   	FROM (
           SELECT ROW_NUMBER() over (PARTITION BY timestamp::DATE, user_id ORDER BY timestamp DESC) AS rownum, *
           FROM {{ source('mattermost_nps', 'nps_score') }}
       )
   	where rownum = 1
-), daily_feedback_scores AS (
-    SELECT timestamp::date as date, *
+
+        UNION ALL
+    
+        SELECT 
+            timestamp::date as date
+            , license_id
+            , serverversion as server_version
+            , user_role
+            , server_install_date
+            , license_sku
+            , user_create_at
+            , score
+            , useractualid as user_actual_id
+            , user_id
+        FROM (
+            SELECT ROW_NUMBER() over (PARTITION BY timestamp::DATE, user_id ORDER BY timestamp DESC) AS rownum, *
+            FROM {{ source('mm_plugin_prod', 'nps_nps_score') }}
+        )
+        where rownum = 1
+        
+), 
+
+daily_feedback_scores AS (
+    
+        SELECT
+            timestamp::date as date
+          , user_actual_id
+          , feedback
   	FROM (
           SELECT ROW_NUMBER() over (PARTITION BY timestamp::DATE, user_id ORDER BY timestamp DESC) AS rownum, *
           FROM {{ source('mattermost_nps', 'nps_feedback') }}
       )
   	where rownum = 1
+    
+    UNION ALL
+    
+        SELECT
+            timestamp::date as date
+          , useractualid as user_actual_id
+          , feedback
+        FROM (
+                SELECT ROW_NUMBER() over (PARTITION BY timestamp::DATE, user_id ORDER BY timestamp DESC) AS rownum, *
+                FROM {{ source('mm_plugin_prod', 'nps_nps_feedback') }} 
+        )
+        WHERE rownum = 1
+    
 ), nps_data AS (
     SELECT
        daily_nps_scores.license_id,

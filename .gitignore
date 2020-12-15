@@ -5,6 +5,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# dbt_utils
+transform/snowflake-dbt/dbt_modules/
 # C extensions
 *.so
 
