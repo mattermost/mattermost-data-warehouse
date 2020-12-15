@@ -5,12 +5,64 @@
   })
 }}
 
-WITH min_nps                AS (
+WITH daily_nps_scores AS (
+    
+        SELECT timestamp::date as date
+        , timestamp::timestamp as timestamp
+        , id
+  		  , license_id
+        , server_version
+        , user_role
+        , server_install_date
+        , license_sku
+        , user_create_at
+        , score
+        , user_actual_id
+        , user_id as server_id
+  	FROM (
+          SELECT ROW_NUMBER() over (PARTITION BY timestamp::DATE, user_id ORDER BY timestamp DESC) AS rownum, *
+          FROM {{ source('mattermost_nps', 'nps_score') }}
+          WHERE TIMESTAMP <= CURRENT_TIMESTAMP
+          {% if is_incremental() %}
+           AND TIMESTAMP::date >= (SELECT MAX(date) from {{this}})
+          {% endif %}
+      )
+  	where rownum = 1
+
+        UNION ALL
+    
+        SELECT 
+            original_timestamp::date as date
+            , original_timestamp::timestamp as timestamp
+            , id
+            , license_id
+            , serverversion as server_version
+            , user_role
+            , server_install_date
+            , license_sku
+            , user_create_at
+            , score
+            , useractualid as user_actual_id
+            , user_id as server_id
+        FROM (
+            SELECT ROW_NUMBER() over (PARTITION BY original_timestamp::DATE, user_id ORDER BY original_timestamp DESC) AS rownum, *
+            FROM {{ source('mm_plugin_prod', 'nps_nps_score') }}
+            WHERE ORIGINAL_TIMESTAMP::timestamp <= CURRENT_TIMESTAMP
+            {% if is_incremental() %}
+            AND ORIGINAL_TIMESTAMP::date >= (SELECT MAX(date) from {{this}})
+            {% endif %}
+        )
+        where rownum = 1
+        
+), 
+
+min_nps                AS (
     SELECT
         server_id
       , user_actual_id       AS user_id
       , MIN(timestamp::DATE) AS min_nps_date
-    FROM {{ source('mattermost_nps', 'nps_score') }} 
+    FROM daily_nps_scores
+    WHERE TIMESTAMP <= CURRENT_TIMESTAMP 
     GROUP BY 1, 2),
 
      dates                  AS (
@@ -24,6 +76,46 @@ WITH min_nps                AS (
                        AND d.date <= current_date
          GROUP BY 1, 2, 3
      ),
+
+     daily_feedback_scores AS (
+    
+        SELECT
+            timestamp::date as date
+          , timestamp::timestamp AS timestamp
+          , id
+          , user_id as server_id
+          , user_actual_id as user_id
+          , feedback
+  	FROM (
+          SELECT ROW_NUMBER() over (PARTITION BY timestamp::DATE, user_id ORDER BY timestamp DESC) AS rownum, *
+          FROM {{ source('mattermost_nps', 'nps_feedback') }}
+          WHERE TIMESTAMP <= CURRENT_TIMESTAMP
+            {% if is_incremental() %}
+            AND TIMESTAMP::date >= (SELECT MAX(date) from {{this}})
+            {% endif %}
+      )
+  	where rownum = 1
+    
+    UNION ALL
+    
+        SELECT
+            original_timestamp::date as date
+          , original_timestamp::timestamp as timestamp
+          , id
+          , user_id as server_id
+          , useractualid as user_id
+          , feedback
+        FROM (
+                SELECT ROW_NUMBER() over (PARTITION BY original_timestamp::DATE, user_id ORDER BY original_timestamp DESC) AS rownum, *
+                FROM {{ source('mm_plugin_prod', 'nps_nps_feedback') }} 
+                WHERE ORIGINAL_TIMESTAMP::timestamp <= CURRENT_TIMESTAMP
+            {% if is_incremental() %}
+            AND ORIGINAL_TIMESTAMP::date >= (SELECT MAX(date) from {{this}})
+            {% endif %}
+        )
+        WHERE rownum = 1
+    
+), 
 
      max_date_by_month      AS (
          SELECT
@@ -46,14 +138,14 @@ WITH min_nps                AS (
            , COUNT(DISTINCT CASE WHEN DATE_TRUNC('day', feedback.timestamp) = d.date then feedback.id
                         ELSE NULL END)                                            AS feedback_count
          FROM dates                                 d
-              JOIN {{ source('mattermost_nps', 'nps_score') }}         nps
+              JOIN daily_nps_scores         nps
                    ON d.date >= nps.timestamp::DATE
                        AND d.server_id = nps.server_id
                        AND d.user_id = nps.user_actual_id
-              LEFT JOIN {{ source('mattermost_nps', 'nps_feedback') }} feedback
+              LEFT JOIN daily_feedback_scores feedback
                         ON d.date >= feedback.timestamp::DATE
                             AND d.server_id = feedback.server_id
-                            AND d.user_id = feedback.user_actual_id
+                            AND d.user_id = feedback.user_id
          GROUP BY 1, 2, 3, 4
      ),
 
@@ -85,13 +177,13 @@ WITH min_nps                AS (
            , m.feedback_count_alltime
            , m.id
          FROM max_date_by_month                     m
-              JOIN {{ source('mattermost_nps', 'nps_score') }}         nps
+              JOIN daily_nps_scores         nps
                    ON m.server_id = nps.server_id
                        AND m.user_id = nps.user_actual_id
                        AND m.max_timestamp = nps.timestamp
-              LEFT JOIN {{ source('mattermost_nps', 'nps_feedback') }} feedback
+              LEFT JOIN daily_feedback_scores feedback
                         ON m.server_id = feedback.server_id
-                            AND m.user_id = feedback.user_actual_id
+                            AND m.user_id = feedback.user_id
                             AND m.max_feedback_date = DATE_TRUNC('day', feedback.timestamp::DATE)
           {% if is_incremental() %}
 
