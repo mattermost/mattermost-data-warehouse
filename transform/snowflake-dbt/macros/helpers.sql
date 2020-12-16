@@ -292,8 +292,16 @@ select get_sys_var({{ var_name }})
     {%- endif -%}
 
     {%- for relation in relations %}
+               {%- if this.table == 'pages' -%}
+
+               {{ ((((["'", relation, "'"]|join).split('.')[1]))|replace("'", ""))|lower }}_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} AS (
+               
+               {%- else -%}
 
                {{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} AS (
+
+               {%- endif -%}
+               --    
                select
 
                 cast({{ dbt_utils.string_literal(relation) }} as {{ dbt_utils.type_string() }}) as {{ source_column_name if ('_DBT_SOURCE_RELATION' not in column_superset) else '_DBT_SOURCE_RELATION2'}},
