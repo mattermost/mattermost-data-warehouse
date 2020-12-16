@@ -4,8 +4,16 @@
     "schema": "mattermost"
   })
 }}
+{% if is_incremental() %}
+  WITH max_date AS (
+    SELECT MAX(DATE) AS max_date
+    FROM {{this}}
+  ),
 
+ nps_data AS (
+{% else %}
 WITH nps_data                       AS (
+{% endif %} 
     SELECT
         last_score_date
       , server_id
@@ -45,7 +53,7 @@ WITH nps_data                       AS (
            , nps.server_version
            , nps.last_date
            , min_version_nps_date
-           , {{ dbt_utils.surrogate_key('d.date', 'nps.user_id', 'nps.server_id', 'nps.server_version') }} AS id
+           , {{ dbt_utils.surrogate_key(['d.date', 'nps.user_id', 'nps.server_id', 'nps.server_version']) }} AS id
          FROM {{ source('util', 'dates') }}              d
               JOIN min_nps_by_version nps
                    ON d.date >= nps.min_version_nps_date
@@ -77,11 +85,10 @@ WITH nps_data                       AS (
                        AND n1.server_version = n2.server_version
                        AND n1.date <= n2.last_date
                        AND n1.date >= n2.last_score_date
-        {% if is_incremental() %}
-
-        WHERE n1.date >= (SELECT MAX(date) FROM {{this}})
-
-        {% endif %}
+           {% if is_incremental() %}
+              JOIN max_date
+                   ON n1.date >= max_date.max_date
+           {% endif %}
         {{ dbt_utils.group_by(n=16) }}
      )
      SELECT *
