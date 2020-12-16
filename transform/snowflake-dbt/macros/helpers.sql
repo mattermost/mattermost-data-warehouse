@@ -292,12 +292,12 @@ select get_sys_var({{ var_name }})
     {%- endif -%}
 
     {%- for relation in relations %}
-               {%- if this.table == 'pages' -%}
-
+               {%- if this.table == 'daily_website_traffic' -%}
+            --
                {{ ((((["'", relation, "'"]|join).split('.')[1]))|replace("'", ""))|lower }}_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} AS (
-               
+        
                {%- else -%}
-
+            --
                {{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} AS (
 
                {%- endif -%}
@@ -379,16 +379,32 @@ select get_sys_var({{ var_name }})
     {%- endfor -%}
 
         {%- for relation in relations %}
+        {%- if this.table == 'daily_website_traffic' -%}
         (
+            --
+            select
+               {{ ((((["'", relation, "'"]|join).split('.')[1]))|replace("'", ""))|lower }}_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }}.*
+            --
+            from {{ ((((["'", relation, "'"]|join).split('.')[1]))|replace("'", ""))|lower }}_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} 
+            --
+        )
+               {%- else -%}
+            --
+        (
+            --
             select
                 {{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }}.*
             --
             from {{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }}
+            --
+        )   
             
-        )
+               {%- endif -%}
 
         {% if not loop.last -%}
+        --
             union all
+        --
         {% endif -%}
 
         {%- endfor -%} 
