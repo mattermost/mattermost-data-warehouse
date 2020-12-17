@@ -153,7 +153,7 @@ dates as (
                              AND d.date = s2.date
   ),
   server_daily_details AS (
-    SELECT *
+    SELECT server_daily_details_window.*
     FROM server_daily_details_window
     {% if is_incremental() %}
 
