@@ -5,7 +5,21 @@
   })
 }}
 
+{% if is_incremental() %}
+
+WITH max_date AS (
+  SELECT MAX(DATE) as max_date
+  FROM {{ this }}
+),
+
+server_daily_details_ext AS (
+
+{% else %}
+
 WITH server_daily_details_ext AS (
+
+{% endif %}
+--
     SELECT
         s.date
       , s.server_id
@@ -569,14 +583,14 @@ WITH server_daily_details_ext AS (
       , sc.version_commattermostpluginchannelexport
       , sc.version_comnilsbrinkmannicebreaker
     FROM {{ ref('server_daily_details') }}         s
+    {% if is_incremental() %}
+    JOIN max_date
+         ON s.date >= max_date.max_date
+    {% endif %}
          LEFT JOIN {{ ref('server_config_details') }} sc
                    ON s.server_id = sc.server_id
                        AND s.date = sc.date
-    {% if is_incremental() %}
-    
-    WHERE s.date >= (SELECT MAX(date) FROM {{this}})
-
-    {% endif %}
+    WHERE date >= '2016-04-01'
     {{ dbt_utils.group_by(n=561) }}
 )
 
