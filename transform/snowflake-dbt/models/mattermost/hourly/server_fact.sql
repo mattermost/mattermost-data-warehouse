@@ -55,11 +55,11 @@ WITH sdd AS (
     ),
 
     max_rudder_time AS (
-      select user_id as server_id, max(timestamp) as max_time from {{ source('mm_telemetry_prod', 'activity') }} group by 1
+      select user_id as server_id, max(timestamp) as max_time, max(timestamp::date) as max_date from {{ source('mm_telemetry_prod', 'activity') }} group by 1
     ),
 
     max_segment_time AS (
-      select user_id as server_id, max(timestamp) as max_time from {{ source('mattermost2', 'activity') }} group by 1
+      select user_id as server_id, max(timestamp) as max_time, max(timestamp::date) as max_date from {{ source('mattermost2', 'activity') }} group by 1
     ),
 
     rudder_activity AS (
@@ -98,7 +98,7 @@ WITH sdd AS (
         , max(COALESCE(r.max_time, s.max_time)) AS max_timestamp
       FROM rudder_activity r
       FULL OUTER JOIN segment_activity s
-        ON r.user_id = s.user_id and r.timestamp::date = s.timestamp::date
+        ON r.user_id = s.user_id and r.max_date = s.max_date
       GROUP BY 1
     ),
     

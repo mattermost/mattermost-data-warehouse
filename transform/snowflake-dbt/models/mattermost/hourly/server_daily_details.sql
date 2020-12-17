@@ -73,7 +73,7 @@ WITH servers as (
                          ON s1.server_id = s2.server_id
                             AND s1.date = s2.date
   WHERE COALESCE(s1.date, s2.date) <= CURRENT_DATE
-  AND COALESCE(s1.date, s2.date) >= '2020-04-01'
+  AND COALESCE(s1.date, s2.date) >= '2016-04-01'
   GROUP BY 1
 ),
 

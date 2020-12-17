@@ -5,7 +5,21 @@
   })
 }}
 
+{% if is_incremental() %}
+
+WITH max_date AS (
+  SELECT MAX(DATE) as max_date
+  FROM {{ this }}
+),
+
+server_config_details AS (
+
+{% else %}
+
 WITH server_config_details AS (
+
+{% endif %}
+--
 SELECT
     s.date
   , s.server_id
@@ -550,6 +564,12 @@ SELECT
   , splugin.version_commattermostpluginchannelexport
   , splugin.version_comnilsbrinkmannicebreaker
 FROM {{ ref('server_daily_details') }}                      s
+{% if is_incremental() %}
+
+JOIN max_date
+     ON s.date >= max_date.max_date
+
+{% endif %}
     LEFT JOIN {{ ref('server_activity_details') }}            sactivity
     ON s.server_id = sactivity.server_id AND s.date = sactivity.date
     LEFT JOIN {{ ref('server_analytics_details') }}           sanalytics
@@ -636,11 +656,7 @@ FROM {{ ref('server_daily_details') }}                      s
     ON s.server_id = swarn.server_id AND s.date = swarn.date
     LEFT JOIN {{ ref('server_channel_moderation_details') }}       schannel
     ON s.server_id = schannel.server_id AND s.date = schannel.date
-{% if is_incremental() %}
-
-WHERE s.date >= (SELECT MAX(date) FROM {{this}})
-
-{% endif %}
+WHERE s.date >= '2016-04-01'
 {{ dbt_utils.group_by(n=542)}}
 )
 SELECT *
