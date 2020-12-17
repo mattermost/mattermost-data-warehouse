@@ -8,7 +8,10 @@
 
 {% if is_incremental() %}
 WITH max_date AS (
-    SELECT MAX(DATE) as max_date FROM {{ this }}
+    SELECT 
+      MAX(DATE) as max_date
+    , MAX(DATE) - INTERVAL '1 DAY' AS max_date_less_one
+      FROM {{ this }}
 ), 
 
 security AS (
@@ -70,6 +73,7 @@ WITH servers as (
                          ON s1.server_id = s2.server_id
                             AND s1.date = s2.date
   WHERE COALESCE(s1.date, s2.date) <= CURRENT_DATE
+  AND COALESCE(s1.date, s2.date) >= '2020-04-01'
   GROUP BY 1
 ),
 
@@ -154,7 +158,8 @@ dates as (
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        WHERE date >= (SELECT MAX(date) FROM {{ this }}) - interval '1 day'
+    JOIN max_date
+      ON server_daily_details_window.date >= max_date.max_date_less_one
 
     {% endif %}
     GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
