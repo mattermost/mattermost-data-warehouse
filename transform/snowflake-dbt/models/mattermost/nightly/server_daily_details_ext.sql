@@ -590,7 +590,7 @@ WITH server_daily_details_ext AS (
          LEFT JOIN {{ ref('server_config_details') }} sc
                    ON s.server_id = sc.server_id
                        AND s.date = sc.date
-    WHERE date >= '2016-04-01'
+    WHERE s.date >= '2016-04-01'
     {{ dbt_utils.group_by(n=561) }}
 )
 
