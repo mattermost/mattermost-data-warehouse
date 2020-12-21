@@ -81,9 +81,12 @@ ip_exclusions AS (
         ON trim(s.server_id) = trim(ve.server_id)
     LEFT JOIN license_exclusions le
         ON trim(s.server_id) = trim(le.server_id)
+    LEFT JOIN {{ ref('server_fact') }} fact
+        ON TRIM(s.server_id) = TRIM(fact.server_id)
     WHERE sf.server_id is NULL
     AND ve.server_id is NULL
     AND le.server_id is NULL
+    AND fact.installation_id IS NULL
     GROUP BY 1, 2
 ),
 
@@ -92,7 +95,8 @@ cloud_servers AS (
         CASE WHEN regexp_substr(s.first_server_version, '[0-9]{1,2}.{1}[0-9]{1,2}.{1}[0-9]{1,2}$') IS NULL THEN 'Version Format' 
             WHEN (lower(SPLIT_PART(coalesce(c.email, 'test@test.com'), '@', 2)) IN ('mattermost.com', 'adamcgross.com', 'hulen.com')
             AND coalesce(c.email, 'test@test.com') != 'jason@mattermost.com')
-            OR lower(coalesce(c.email, 'test@test.com')) IN ('ericsteven1992@gmail.com', 'eric.nelson720@gmail.com') THEN 'Internal Email' 
+            OR lower(coalesce(c.email, 'test@test.com')) IN ('ericsteven1992@gmail.com', 'eric.nelson720@gmail.com') THEN 'Internal Email'
+            WHEN sb.cws_installation IS NULL THEN 'No Blapi/Stripe Installation Found'
             ELSE NULL END as reason
       , s.server_id
      FROM {{ ref('server_fact') }} s
@@ -120,6 +124,12 @@ cloud_servers AS (
     AND ve.server_id is NULL
     AND le.server_id is NULL
     AND ip.server_id is NULL
+    AND CASE WHEN regexp_substr(s.first_server_version, '[0-9]{1,2}.{1}[0-9]{1,2}.{1}[0-9]{1,2}$') IS NULL THEN 'Version Format' 
+            WHEN (lower(SPLIT_PART(coalesce(c.email, 'test@test.com'), '@', 2)) IN ('mattermost.com', 'adamcgross.com', 'hulen.com')
+            AND coalesce(c.email, 'test@test.com') != 'jason@mattermost.com')
+            OR lower(coalesce(c.email, 'test@test.com')) IN ('ericsteven1992@gmail.com', 'eric.nelson720@gmail.com') THEN 'Internal Email'
+            WHEN sb.cws_installation IS NULL THEN 'No Blapi/Stripe Installation Found'
+            ELSE NULL END IS NOT NULL
      GROUP BY 1, 2
 ),
 
