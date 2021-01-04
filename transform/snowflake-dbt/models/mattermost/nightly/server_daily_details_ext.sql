@@ -485,7 +485,7 @@ WITH server_daily_details_ext AS (
       , sc.enable
       , sc.isdefault_stun_uri
       , sc.isdefault_turn_uri
-      , sc.id
+      , {{ dbt_utils.surrogate_key(['s.date', 's.server_id']) }} as id
       , sc.data_source_replicas
       , sc.data_source_search_replicas
       , sc.enable_confluence
