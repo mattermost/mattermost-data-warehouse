@@ -466,7 +466,7 @@ SELECT
   , swebrtc.enable
   , swebrtc.isdefault_stun_uri
   , swebrtc.isdefault_turn_uri
-  , {{ dbt_utils.surrogate_key('s.date', 's.server_id') }} AS id
+  , {{ dbt_utils.surrogate_key(['s.date', 's.server_id']) }} AS id
   , ssql.data_source_replicas
   , ssql.data_source_search_replicas
   , splugin.enable_confluence
