@@ -18,7 +18,7 @@ security AS (
     SELECT s.*
     FROM {{ ref('server_security_details') }} s
     JOIN max_date  
-        ON s.date >= max_date.max_date
+        ON s.date >= max_date.max_date_less_one
         AND s.date <= CURRENT_DATE
 ),
 
@@ -26,7 +26,7 @@ server AS (
     SELECT s.*
     FROM {{ ref('server_server_details') }} s
     JOIN max_date  
-        ON s.date >= max_date.max_date 
+        ON s.date >= max_date.max_date_less_one
         AND s.date <= CURRENT_DATE
 ),
 
