@@ -79,7 +79,7 @@ WITH license_daily_details as (
            , d.license_id
            , MAX(start_date)                          AS start_date
            , MAX(edition)                             AS edition
-           , MAX(expire_date)                         AS expire_date
+           , MIN(expire_date)                         AS expire_date
            , MAX(feature_cluster)                     AS feature_cluster
            , MAX(feature_compliance)                  AS feature_compliance
            , MAX(feature_custom_brand)                AS feature_custom_brand
@@ -115,6 +115,7 @@ WITH license_daily_details as (
          AND d.date >= (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
-         GROUP BY 1, 2, 3)
+         GROUP BY 1, 2, 3
+         HAVING MIN(d.expire_date) >= d.date)
 SELECT *
 FROM server_license_details

@@ -8,7 +8,7 @@
 {% if is_incremental() %}
 
 WITH max_date AS (
-  SELECT MAX(DATE) as max_date
+  SELECT MAX(DATE) - interval '1 day' as max_date
   FROM {{ this }}
 ),
 
