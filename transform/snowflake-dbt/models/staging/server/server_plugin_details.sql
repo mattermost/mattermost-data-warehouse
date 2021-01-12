@@ -94,7 +94,7 @@ max_rudder_timestamp       AS (
            , MAX(p.VERSION_MEMES) as version_memes
            , MAX(p.VERSION_JITSI) as version_jitsi
            , MAX(p.VERSION_SKYPE4BUSINESS) as version_skype4business
-           , COALESCE(p.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
+           , MAX(COALESCE(p.CONTEXT_TRAITS_INSTALLATIONID, NULL))                   AS installation_id
            , MAX(COALESCE(p.enable_mattermostprofanityfilter, NULL))        AS enable_mattermostprofanityfilter
            , MAX(COALESCE(p.version_mattermostprofanityfilter, NULL))        AS version_mattermostprofanityfilter
            , MAX(COALESCE(p.enable_comgithubmatterpollmatterpoll, NULL))        AS enable_comgithubmatterpollmatterpoll
@@ -129,7 +129,7 @@ max_rudder_timestamp       AS (
             ) p
             ON s.timestamp::date = p.timestamp::date
             AND s.user_id = p.user_id
-         GROUP BY 1, 2, 38, 57
+         GROUP BY 1, 2, 38
      )
 SELECT *
 FROM server_plugin_details
