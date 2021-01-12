@@ -110,6 +110,7 @@ WITH license_daily_details as (
            , MAX(feature_cloud)                       AS feature_cloud
          FROM license_daily_details d
          WHERE d.date <= CURRENT_DATE
+         AND d.server_id is not null
          {% if is_incremental() %}
          
          AND d.date >= (SELECT MAX(date) FROM {{this}})
