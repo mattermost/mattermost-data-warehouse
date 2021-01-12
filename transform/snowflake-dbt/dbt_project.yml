@@ -111,5 +111,7 @@ seeds:
       schema: staging
     use_case_key_words:
       schema: util
+    blog_paths:
+      schema: ga
 
 
