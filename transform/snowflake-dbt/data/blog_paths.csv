@@ -1,5 +1,4 @@
 page_path,category
-/blog/,R&D
 /blog/instrumenting-go-code-via-ast/,R&D
 /blog/hermes-mattermost/,R&D
 /blog/go-idiomatic-error-handling/,R&D
