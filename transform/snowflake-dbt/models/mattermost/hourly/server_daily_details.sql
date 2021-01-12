@@ -6,6 +6,53 @@
   })
 }}
 
+{% if is_incremental() %}
+WITH max_date AS (
+    SELECT 
+      MAX(DATE) as max_date
+    , MAX(DATE) - INTERVAL '3 DAY' AS max_date_less_one
+      FROM {{ this }}
+), 
+
+security AS (
+    SELECT s.*
+    FROM {{ ref('server_security_details') }} s
+    JOIN max_date  
+        ON s.date >= max_date.max_date_less_one
+        AND s.date <= CURRENT_DATE
+),
+
+server AS (
+    SELECT s.*
+    FROM {{ ref('server_server_details') }} s
+    JOIN max_date  
+        ON s.date >= max_date.max_date_less_one
+        AND s.date <= CURRENT_DATE
+),
+
+servers as (
+  SELECT 
+      coalesce(s2.server_id, s1.server_id)                 AS server_id
+    , CASE WHEN MIN(COALESCE(s1.date, s2.date)) <= MIN(COALESCE(s2.date, s1.date)) 
+            THEN MIN(COALESCE(s1.date, s2.date)) 
+              ELSE MIN(COALESCE(s2.date, s1.date)) END     AS min_date
+    , CASE WHEN MAX(CURRENT_DATE) <= 
+                  CASE WHEN MAX(COALESCE(s1.date, s2.date)) >= MAX(COALESCE(s2.date, s1.date)) 
+                    THEN MAX(COALESCE(s1.date, s2.date)) 
+                    ELSE MAX(COALESCE(s2.date, s1.date)) END
+          THEN MAX(CURRENT_DATE)
+          ELSE CASE WHEN MAX(COALESCE(s1.date, s2.date)) >= MAX(COALESCE(s2.date, s1.date)) 
+                    THEN MAX(COALESCE(s1.date, s2.date)) 
+                    ELSE MAX(COALESCE(s2.date, s1.date)) END
+          END                                             AS max_date
+  FROM security                    s1
+         FULL OUTER JOIN server    s2
+                         ON s1.server_id = s2.server_id
+                            AND s1.date = s2.date
+  GROUP BY 1),
+
+{% else %}
+
 WITH servers as (
   SELECT 
       coalesce(s2.server_id, s1.server_id)                 AS server_id
@@ -26,8 +73,11 @@ WITH servers as (
                          ON s1.server_id = s2.server_id
                             AND s1.date = s2.date
   WHERE COALESCE(s1.date, s2.date) <= CURRENT_DATE
+  AND COALESCE(s1.date, s2.date) >= '2016-04-01'
   GROUP BY 1
 ),
+
+{% endif %}
 dates as (
   SELECT 
       d.date
@@ -103,12 +153,13 @@ dates as (
                              AND d.date = s2.date
   ),
   server_daily_details AS (
-    SELECT *
+    SELECT server_daily_details_window.*
     FROM server_daily_details_window
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        WHERE date >= (SELECT MAX(date) FROM {{ this }}) - interval '1 day'
+    JOIN max_date
+      ON server_daily_details_window.date >= max_date.max_date_less_one
 
     {% endif %}
     GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
