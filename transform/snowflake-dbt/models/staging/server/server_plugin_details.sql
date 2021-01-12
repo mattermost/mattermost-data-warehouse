@@ -75,7 +75,7 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(s.version_webex, p.version_webex, p.VERSION_COMMATTERMOSTWEBEX))                  AS version_webex
            , MAX(COALESCE(s.version_welcome_bot, p.version_welcome_bot, p.VERSION_COMMATTERMOSTWELCOMEBOT))            AS version_welcome_bot
            , MAX(COALESCE(s.version_zoom, p.version_zoom))                   AS version_zoom
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, p.timestamp::date)', 'COALESCE(s.user_id, p.user_id)', 'COALESCE(p.CONTEXT_TRAITS_INSTALLATIONID, NULL)') }} AS id
+           , {{ dbt_utils.surrogate_key(['COALESCE(s.timestamp::DATE, p.timestamp::date)', 'COALESCE(s.user_id, p.user_id)']) }} AS id
            , MAX(COALESCE(s.enable_confluence, p.enable_confluence, p.ENABLE_COMMATTERMOSTCONFLUENCE))              AS enable_confluence
            , MAX(COALESCE(s.enable_jitsi, p.enable_jitsi))                   AS enable_jitsi
            , MAX(COALESCE(s.enable_mscalendar, p.enable_mscalendar, p.ENABLE_COMMATTERMOSTMSCALENDAR))              AS enable_mscalendar
