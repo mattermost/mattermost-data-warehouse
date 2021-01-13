@@ -50,6 +50,7 @@ WITH sdd AS (
       , MIN(CASE WHEN sdde.USER_COUNT > 10000 THEN DATE ELSE NULL END)                       AS first_10kreg_users_date
       , MAX(sdde.POSTS)                                                                     AS max_posts
       , MAX(sdde.enabled_plugins)                                                           AS max_enabled_plugins
+      , MAX(sdde.disabled_plugins)                                                           AS max_disabled_plugins
     FROM {{ ref('server_daily_details_ext') }} sdde
     WHERE DATE <= CURRENT_DATE - INTERVAL '1 DAY'
     GROUP BY 1
@@ -288,6 +289,7 @@ WITH sdd AS (
         , MAX(server_details.max_registered_users) as max_registered_users
         , MAX(server_details.max_registered_deactivated_users) as max_registered_deactivated_users
         , MAX(server_details.max_enabled_plugins)              as max_enabled_plugins
+        , MAX(server_details.max_disabled_plugins)              as max_disabled_plugins
     FROM sdd
         LEFT JOIN server_details
           ON sdd.server_id = server_details.server_id
