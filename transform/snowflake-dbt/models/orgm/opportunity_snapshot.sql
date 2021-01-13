@@ -37,6 +37,9 @@ WITH opportunity_totals AS (
         forecastcategoryname, 
         expectedrevenue, 
         amount,
+        new + expansion + coterm + loe as net_new_amount,
+        renewal as renewal_amount,
+        territory_segment__c,
         new,
         expansion,
         coterm,
@@ -44,10 +47,7 @@ WITH opportunity_totals AS (
         renewal,
         multi,
         renewal_multi,
-        monthly_billing,
-        new + expansion + coterm + loe as net_new_amount,
-        renewal as renewal_amount,
-        territory_segment__c
+        monthly_billing
         FROM {{ source('orgm', 'opportunity') }}
         LEFT JOIN opportunity_totals ON opportunity.sfid = opportunity_totals.opportunityid
         {% if is_incremental() %}
