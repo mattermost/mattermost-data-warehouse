@@ -9,8 +9,14 @@
 WITH opportunity_totals AS (
     SELECT 
         opportunityid,
-        SUM(new_amount__c) + SUM(expansion_amount__c) + SUM(coterm_expansion_amount__c) AS net_new_amount,
-        SUM(renewal_amount__c) AS renewal_amount
+        SUM(new_amount__c) as new,
+        SUM(expansion_amount__c) expansion, 
+        SUM(coterm_expansion_amount__c) as coterm,
+        SUM(leftover_expansion_amount__c) as loe,
+        SUM(renewal_amount__c) AS renewal,
+        SUM(multi_amount__c) AS multi,
+        SUM(renewal_multi_amount__c) AS renewal_multi,
+        SUM(monthly_billing_amount__c) AS monthly_billing
     FROM {{ source('orgm', 'opportunitylineitem') }}
     GROUP BY 1
 ), opportunity_snapshot AS (
@@ -31,8 +37,16 @@ WITH opportunity_totals AS (
         forecastcategoryname, 
         expectedrevenue, 
         amount,
-        net_new_amount,
-        renewal_amount,
+        new,
+        expansion,
+        coterm,
+        loe,
+        renewal,
+        multi,
+        renewal_multi,
+        monthly_billing,
+        new + expansion + coterm + loe as net_new_amount,
+        renewal as renewal_amount,
         territory_segment__c
         FROM {{ source('orgm', 'opportunity') }}
         LEFT JOIN opportunity_totals ON opportunity.sfid = opportunity_totals.opportunityid
