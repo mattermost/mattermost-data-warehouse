@@ -42,7 +42,7 @@ WITH daily_nps_scores AS (
         UNION ALL
     
         SELECT 
-            original_timestamp::date as date
+              timestamp::date as date
             , license_id
             , serverversion as server_version
             , user_role
@@ -88,7 +88,7 @@ daily_feedback_scores AS (
     UNION ALL
     
         SELECT
-            original_timestamp::date as date
+            timestamp::date as date
           , useractualid as user_actual_id
           , feedback
           , id as feedback_id
@@ -97,9 +97,9 @@ daily_feedback_scores AS (
                 FROM {{ source('mm_plugin_prod', 'nps_nps_feedback') }} nps
                 {% if is_incremental() %}
                 JOIN max_time mt 
-                ON nps.IMESTAMP >= mt.max_time
+                ON nps.TIMESTAMP >= mt.max_time
                 {% endif %}
-                WHERE nps.timestamp::TIMESTAMP <= CURRENT_TIMESTAMP
+                WHERE nps.timestamp::DATE <= CURRENT_DATE
         )
         WHERE rownum = 1
     
