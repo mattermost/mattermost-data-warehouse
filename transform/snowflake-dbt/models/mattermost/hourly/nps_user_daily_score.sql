@@ -27,7 +27,7 @@ min_nps                AS (
       , user_id       AS user_id
       , min(timestamp) AS min_nps_date
     FROM {{ ref('nps_data') }}
-    WHERE TIMESTAMP <= CURRENT_TIMESTAMP 
+    WHERE TIMESTAMP::DATE <= CURRENT_DATE
     GROUP BY 1, 2),
 
      dates                  AS (
