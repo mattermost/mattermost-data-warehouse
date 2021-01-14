@@ -35,7 +35,7 @@ WITH daily_nps_scores AS (
           JOIN max_time mt 
           ON nps.TIMESTAMP >= mt.max_time
           {% endif %}
-          WHERE nps.timestamp <= CURRENT_TIMESTAMP
+          WHERE nps.timestamp::DATE <= CURRENT_DATE
       )
   	where rownum = 1
 
@@ -52,16 +52,16 @@ WITH daily_nps_scores AS (
             , score
             , useractualid as user_actual_id
             , user_id
-            , original_timestamp::timestamp as timestamp
+            , timestamp::timestamp as timestamp
             , id as nps_id
         FROM (
-            SELECT ROW_NUMBER() over (PARTITION BY nps.original_timestamp::DATE, nps.user_id ORDER BY nps.original_timestamp DESC) AS rownum, nps.*
+            SELECT ROW_NUMBER() over (PARTITION BY nps.timestamp::DATE, nps.user_id ORDER BY nps.timestamp DESC) AS rownum, nps.*
             FROM {{ source('mm_plugin_prod', 'nps_nps_score') }} nps
             {% if is_incremental() %}
             JOIN max_time mt 
-            ON nps.ORIGINAL_TIMESTAMP >= mt.max_time
+            ON nps.TIMESTAMP >= mt.max_time
             {% endif %}
-            WHERE nps.ORIGINAL_TIMESTAMP <= CURRENT_TIMESTAMP
+            WHERE nps.TIMESTAMP::date <= CURRENT_DATE
         )
         where rownum = 1
         
@@ -81,7 +81,7 @@ daily_feedback_scores AS (
           JOIN max_time mt 
           ON nps.TIMESTAMP >= mt.max_time
           {% endif %}
-          WHERE nps.timestamp <= CURRENT_TIMESTAMP
+          WHERE nps.timestamp::DATE <= CURRENT_DATE
       )
   	where rownum = 1
     
@@ -93,13 +93,13 @@ daily_feedback_scores AS (
           , feedback
           , id as feedback_id
         FROM (
-                SELECT ROW_NUMBER() over (PARTITION BY nps.original_timestamp::DATE, nps.user_id ORDER BY nps.original_timestamp DESC) AS rownum, nps.*
+                SELECT ROW_NUMBER() over (PARTITION BY nps.timestamp::DATE, nps.user_id ORDER BY nps.timestamp DESC) AS rownum, nps.*
                 FROM {{ source('mm_plugin_prod', 'nps_nps_feedback') }} nps
                 {% if is_incremental() %}
                 JOIN max_time mt 
-                ON nps.ORIGINAL_TIMESTAMP >= mt.max_time
+                ON nps.IMESTAMP >= mt.max_time
                 {% endif %}
-                WHERE nps.ORIGINAL_TIMESTAMP <= CURRENT_TIMESTAMP
+                WHERE nps.timestamp::TIMESTAMP <= CURRENT_TIMESTAMP
         )
         WHERE rownum = 1
     
@@ -124,7 +124,6 @@ daily_feedback_scores AS (
 	FROM daily_nps_scores
     LEFT JOIN daily_feedback_scores
         ON daily_nps_scores.user_actual_id = daily_feedback_scores.user_actual_id AND daily_nps_scores.date = daily_feedback_scores.date
-    WHERE timestamp <= CURRENT_TIMESTAMP
-)
+    WHERE timestamp::date <= CURRENT_DATE)
 
 SELECT * FROM nps_data
