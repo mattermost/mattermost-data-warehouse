@@ -7,7 +7,7 @@
 
 {% if is_incremental() %}
 WITH max_time AS (
-    SELECT MAX(TIMESTAMP) - INTERVAL '6 HOURS' AS MAX_TIME
+    SELECT MAX(DATE) AS MAX_TIME
     FROM {{ this }}
 ),
 
@@ -29,11 +29,11 @@ WITH daily_nps_scores AS (
         , timestamp::timestamp as timestamp
         , id as nps_id
   	FROM (
-          SELECT ROW_NUMBER() over (PARTITION BY nps.timestamp::DATE, nps.user_id ORDER BY nps.timestamp DESC) AS rownum, nps.*
+          SELECT ROW_NUMBER() over (PARTITION BY nps.timestamp::DATE, nps.user_actual_id ORDER BY nps.timestamp DESC) AS rownum, nps.*
           FROM {{ source('mattermost_nps', 'nps_score') }} nps
           {% if is_incremental() %}
           JOIN max_time mt 
-          ON nps.TIMESTAMP >= mt.max_time
+          ON nps.TIMESTAMP::DATE >= mt.max_time
           {% endif %}
           WHERE nps.timestamp::DATE <= CURRENT_DATE
       )
@@ -55,11 +55,11 @@ WITH daily_nps_scores AS (
             , timestamp::timestamp as timestamp
             , id as nps_id
         FROM (
-            SELECT ROW_NUMBER() over (PARTITION BY nps.timestamp::DATE, nps.user_id ORDER BY nps.timestamp DESC) AS rownum, nps.*
+            SELECT ROW_NUMBER() over (PARTITION BY nps.timestamp::DATE, nps.useractualid ORDER BY nps.timestamp DESC) AS rownum, nps.*
             FROM {{ source('mm_plugin_prod', 'nps_nps_score') }} nps
             {% if is_incremental() %}
             JOIN max_time mt 
-            ON nps.TIMESTAMP >= mt.max_time
+            ON nps.TIMESTAMP::DATE >= mt.max_time
             {% endif %}
             WHERE nps.TIMESTAMP::date <= CURRENT_DATE
         )
@@ -75,7 +75,7 @@ daily_feedback_scores AS (
           , feedback
           , id as feedback_id
   	FROM (
-          SELECT ROW_NUMBER() over (PARTITION BY nps.timestamp::DATE, nps.user_id ORDER BY nps.timestamp DESC) AS rownum, nps.*
+          SELECT ROW_NUMBER() over (PARTITION BY nps.timestamp::DATE, nps.user_actual_id ORDER BY nps.timestamp DESC) AS rownum, nps.*
           FROM {{ source('mattermost_nps', 'nps_feedback') }} nps
           {% if is_incremental() %}
           JOIN max_time mt 
@@ -93,11 +93,11 @@ daily_feedback_scores AS (
           , feedback
           , id as feedback_id
         FROM (
-                SELECT ROW_NUMBER() over (PARTITION BY nps.timestamp::DATE, nps.user_id ORDER BY nps.timestamp DESC) AS rownum, nps.*
+                SELECT ROW_NUMBER() over (PARTITION BY nps.timestamp::DATE, nps.useractualid ORDER BY nps.timestamp DESC) AS rownum, nps.*
                 FROM {{ source('mm_plugin_prod', 'nps_nps_feedback') }} nps
                 {% if is_incremental() %}
                 JOIN max_time mt 
-                ON nps.TIMESTAMP >= mt.max_time
+                ON nps.TIMESTAMP ::DATE>= mt.max_time
                 {% endif %}
                 WHERE nps.timestamp::DATE <= CURRENT_DATE
         )
