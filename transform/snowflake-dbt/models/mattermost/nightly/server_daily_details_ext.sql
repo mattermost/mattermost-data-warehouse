@@ -5,7 +5,21 @@
   })
 }}
 
+{% if is_incremental() %}
+
+WITH max_date AS (
+  SELECT MAX(DATE) - interval '1 day' as max_date
+  FROM {{ this }}
+),
+
+server_daily_details_ext AS (
+
+{% else %}
+
 WITH server_daily_details_ext AS (
+
+{% endif %}
+--
     SELECT
         s.date
       , s.server_id
@@ -471,7 +485,7 @@ WITH server_daily_details_ext AS (
       , sc.enable
       , sc.isdefault_stun_uri
       , sc.isdefault_turn_uri
-      , sc.id
+      , {{ dbt_utils.surrogate_key(['s.date', 's.server_id']) }} as id
       , sc.data_source_replicas
       , sc.data_source_search_replicas
       , sc.enable_confluence
@@ -569,14 +583,14 @@ WITH server_daily_details_ext AS (
       , sc.version_commattermostpluginchannelexport
       , sc.version_comnilsbrinkmannicebreaker
     FROM {{ ref('server_daily_details') }}         s
+    {% if is_incremental() %}
+    JOIN max_date
+         ON s.date >= max_date.max_date
+    {% endif %}
          LEFT JOIN {{ ref('server_config_details') }} sc
                    ON s.server_id = sc.server_id
                        AND s.date = sc.date
-    {% if is_incremental() %}
-    
-    WHERE s.date >= (SELECT MAX(date) FROM {{this}})
-
-    {% endif %}
+    WHERE s.date >= '2016-04-01'
     {{ dbt_utils.group_by(n=561) }}
 )
 

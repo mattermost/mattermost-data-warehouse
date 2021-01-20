@@ -244,6 +244,11 @@ users:
         member_of:
             - loader
 
+    - lightup:
+        can_login: yes
+        member_of:
+            - stitch
+
 # Warehouses
 warehouses:
     - analyst_xs:

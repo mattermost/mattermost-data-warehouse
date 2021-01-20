@@ -49,7 +49,6 @@ WITH license_daily_details as (
            , l.feature_office365
            , l.feature_password
            , l.feature_saml
-           , {{ dbt_utils.surrogate_key('l.date', 'l.license_id', 'l.customer_id', 'l.server_id')}} AS id
            , MAX(l.timestamp)                                                        AS timestamp
            , l.installation_id
            , l.feature_advanced_logging
@@ -69,8 +68,8 @@ WITH license_daily_details as (
          {% endif %}
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
          , 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
-         , 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 45
-         , 46, 47
+         , 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 44
+         , 45, 46
      ),
 
      server_license_details AS (
@@ -80,7 +79,7 @@ WITH license_daily_details as (
            , d.license_id
            , MAX(start_date)                          AS start_date
            , MAX(edition)                             AS edition
-           , MAX(expire_date)                         AS expire_date
+           , MIN(expire_date)                         AS expire_date
            , MAX(feature_cluster)                     AS feature_cluster
            , MAX(feature_compliance)                  AS feature_compliance
            , MAX(feature_custom_brand)                AS feature_custom_brand
@@ -105,17 +104,19 @@ WITH license_daily_details as (
            , MAX(feature_saml)                        AS feature_saml
            , MAX(issued_date)                         AS issued_date
            , MAX(users)                               AS users
-           , {{ dbt_utils.surrogate_key('d.date', 'd.license_id', 'd.server_id')}} AS id
+           , {{ dbt_utils.surrogate_key(['d.date','d.server_id'])}} AS id
            , MAX(installation_id)                     AS installation_id
            , MAX(feature_advanced_logging)            AS feature_advanced_logging
            , MAX(feature_cloud)                       AS feature_cloud
          FROM license_daily_details d
          WHERE d.date <= CURRENT_DATE
+         AND d.server_id is not null
          {% if is_incremental() %}
          
          AND d.date >= (SELECT MAX(date) FROM {{this}})
 
          {% endif %}
-         GROUP BY 1, 2, 3)
+         GROUP BY 1, 2, 3
+         HAVING MIN(d.expire_date) >= d.date)
 SELECT *
 FROM server_license_details

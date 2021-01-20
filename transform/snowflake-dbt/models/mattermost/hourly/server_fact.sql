@@ -49,10 +49,34 @@ WITH sdd AS (
       , MIN(CASE WHEN sdde.USER_COUNT > 5000 THEN DATE ELSE NULL END)                       AS first_5kreg_users_date
       , MIN(CASE WHEN sdde.USER_COUNT > 10000 THEN DATE ELSE NULL END)                       AS first_10kreg_users_date
       , MAX(sdde.POSTS)                                                                     AS max_posts
+      , MAX(sdde.enabled_plugins)                                                           AS max_enabled_plugins
+      , MAX(sdde.disabled_plugins)                                                           AS max_disabled_plugins
     FROM {{ ref('server_daily_details_ext') }} sdde
     WHERE DATE <= CURRENT_DATE - INTERVAL '1 DAY'
     GROUP BY 1
-    ), 
+    ),
+
+    max_rudder_time AS (
+      select user_id as server_id, max(timestamp) as max_time, max(timestamp::date) as max_date from {{ source('mm_telemetry_prod', 'activity') }} group by 1
+    ),
+
+    max_segment_time AS (
+      select user_id as server_id, max(timestamp) as max_time, max(timestamp::date) as max_date from {{ source('mattermost2', 'activity') }} group by 1
+    ),
+
+    rudder_activity AS (
+     SELECT * 
+        FROM {{ source('mm_telemetry_prod', 'activity') }} s1 
+        JOIN max_rudder_time s2
+          ON s1.user_id = s2.server_id AND s1.timestamp = s2.max_time 
+    ),
+
+    segment_activity AS (
+      SELECT * 
+        FROM {{ source('mattermost2', 'activity') }} s1
+        JOIN max_segment_time s2
+          ON s1.user_id = s2.server_id AND s1.timestamp = s2.max_time 
+    ),
 
     server_activity as (
       SELECT 
@@ -74,23 +98,12 @@ WITH sdd AS (
         , max(COALESCE(r.incoming_webhooks, s.incoming_webhooks)) as incoming_webhooks
         , max(COALESCE(r.outgoing_webhooks, s.outgoing_webhooks)) as outgoing_webhooks
         , max(COALESCE(r.max_time, s.max_time)) AS max_timestamp
-      FROM (
-            SELECT * 
-            FROM {{ source('mm_telemetry_prod', 'activity') }} s1
-            JOIN (select user_id as server_id, max(timestamp) as max_time from {{ source('mm_telemetry_prod', 'activity') }} group by 1) s2
-            ON s1.user_id = s2.server_id AND s1.timestamp = s2.max_time
-          ) r
-      FULL OUTER JOIN
-          (
-            SELECT * 
-            FROM {{ source('mattermost2', 'activity') }} s1
-            JOIN (select user_id as server_id, max(timestamp) as max_time from {{ source('mattermost2', 'activity') }} group by 1) s2
-            ON s1.user_id = s2.server_id AND s1.timestamp = s2.max_time
-          ) s
-        ON r.user_id = s.user_id and r.timestamp::date = s.timestamp::date
-      
+      FROM rudder_activity r
+      FULL OUTER JOIN segment_activity s
+        ON r.user_id = s.user_id and r.max_date = s.max_date
       GROUP BY 1
     ),
+    
     licenses AS (
       SELECT 
           server_id
@@ -119,6 +132,17 @@ WITH sdd AS (
     FROM {{ ref('server_upgrades') }}
     GROUP BY 1
     ),
+    s_ext as (
+            SELECT 
+              server_id 
+            , date
+            , edition
+            , version
+            , license_id1
+            , license_id2 
+            FROM {{ ref('server_daily_details') }}
+            GROUP BY 1, 2, 3, 4, 5, 6
+    ),
     first_server_edition AS (
       SELECT
           s.server_id
@@ -131,15 +155,7 @@ WITH sdd AS (
         , MAX(CASE WHEN sd.last_active_license_date = s.date THEN license_id1 ELSE NULL END)     AS last_license_id1
         , MAX(CASE WHEN sd.last_active_license_date = s.date THEN license_id2 ELSE NULL END)     AS last_license_id2
       FROM sdd sd
-      JOIN (SELECT 
-              server_id 
-            , date
-            , edition
-            , version
-            , license_id1
-            , license_id2 
-            FROM {{ ref('server_daily_details') }}
-            GROUP BY 1, 2, 3, 4, 5, 6) s
+      JOIN s_ext s
            ON sd.server_id = s.server_id
       GROUP BY 1
     ),
@@ -272,6 +288,8 @@ WITH sdd AS (
         , max(server_activity.outgoing_webhooks) as outgoing_webhooks
         , MAX(server_details.max_registered_users) as max_registered_users
         , MAX(server_details.max_registered_deactivated_users) as max_registered_deactivated_users
+        , MAX(server_details.max_enabled_plugins)              as max_enabled_plugins
+        , MAX(server_details.max_disabled_plugins)              as max_disabled_plugins
     FROM sdd
         LEFT JOIN server_details
           ON sdd.server_id = server_details.server_id

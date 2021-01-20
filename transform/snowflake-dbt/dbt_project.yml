@@ -109,5 +109,9 @@ seeds:
       schema: mattermost
     github_contributions_all:
       schema: staging
+    use_case_key_words:
+      schema: util
+    blog_paths:
+      schema: ga
 
 

@@ -24,29 +24,29 @@ WITH upgrade         AS (
            , server_id
            , account_sfid
            , license_id
-           , CASE WHEN regexp_substr(regexp_substr(prev_version,'^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') IS NULL THEN
+           , NULLIF(CASE WHEN regexp_substr(regexp_substr(prev_version,'^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') IS NULL THEN
                     regexp_substr(prev_version, '^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}') 
                   ELSE regexp_substr(regexp_substr(prev_version,'^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') 
-                END AS prev_version
-           , CASE WHEN regexp_substr(regexp_substr(current_version,'^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') IS NULL THEN
+                END, '') AS prev_version
+           , NULLIF(CASE WHEN regexp_substr(regexp_substr(current_version,'^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') IS NULL THEN
                     regexp_substr(current_version, '^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}') 
                   ELSE regexp_substr(regexp_substr(current_version,'^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') 
-                END  AS current_version
-           , prev_edition
-           , current_edition
+                END, '')  AS current_version
+           , NULLIF(prev_edition, '') AS prev_edition
+           , NULLIF(current_edition, '') AS current_edition
            , {{ dbt_utils.surrogate_key('date', 'server_id') }} as id
          FROM upgrade
          WHERE (
-              (CASE WHEN SPLIT_PART(current_version, '.', 1)::FLOAT > SPLIT_PART(COALESCE(prev_version, current_version), '.', 1)::float THEN TRUE
-                WHEN SPLIT_PART(current_version, '.', 1)::FLOAT = SPLIT_PART(COALESCE(prev_version, current_version), '.', 1)::float
-                  AND SPLIT_PART(current_version, '.', 2)::FLOAT > SPLIT_PART(COALESCE(prev_version, current_version), '.', 2)::float THEN TRUE
+              (CASE WHEN NULLIF(SPLIT_PART(current_version, '.', 1),'')::FLOAT > NULLIF(SPLIT_PART(COALESCE(prev_version, current_version), '.', 1),'')::float THEN TRUE
+                WHEN NULLIF(SPLIT_PART(current_version, '.', 1),'')::FLOAT = NULLIF(SPLIT_PART(COALESCE(prev_version, current_version), '.', 1),'')::float
+                  AND NULLIF(SPLIT_PART(current_version, '.', 2),'')::FLOAT > NULLIF(SPLIT_PART(COALESCE(prev_version, current_version), '.', 2),'')::float THEN TRUE
                 
-                WHEN SPLIT_PART(current_version, '.', 1)::FLOAT = SPLIT_PART(COALESCE(prev_version, current_version), '.', 1)::float
+                WHEN NULLIF(SPLIT_PART(current_version, '.', 1),'')::FLOAT = NULLIF(SPLIT_PART(COALESCE(prev_version, current_version), '.', 1), '')::float
                   
-                  AND SPLIT_PART(CASE WHEN regexp_substr(regexp_substr(current_version,'^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') IS NULL THEN
+                  AND NULLIF(SPLIT_PART(CASE WHEN regexp_substr(regexp_substr(current_version,'^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') IS NULL THEN
                                   regexp_substr(current_version, '^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}') 
                                   ELSE regexp_substr(regexp_substr(current_version,'^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') 
-                                END, '.', 2)::FLOAT = SPLIT_PART(COALESCE(
+                                END, '.', 2),'')::FLOAT = NULLIF(SPLIT_PART(COALESCE(
                                                         CASE WHEN regexp_substr(regexp_substr(prev_version,'^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') IS NULL THEN
                                                             regexp_substr(prev_version, '^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}') 
                                                         ELSE regexp_substr(regexp_substr(prev_version,'^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') 
@@ -54,13 +54,13 @@ WITH upgrade         AS (
                                                         ,CASE WHEN regexp_substr(regexp_substr(current_version,'^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') IS NULL THEN
                                                               regexp_substr(current_version, '^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}') 
                                                             ELSE regexp_substr(regexp_substr(current_version,'^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') 
-                                                          END), '.', 2)::float
+                                                          END), '.', 2),'')::float
                   
-                  AND SPLIT_PART(CASE WHEN regexp_substr(regexp_substr(current_version,'^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') IS NULL THEN
+                  AND NULLIF(SPLIT_PART(CASE WHEN regexp_substr(regexp_substr(current_version,'^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') IS NULL THEN
                                   regexp_substr(current_version, '^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}') 
                                   ELSE regexp_substr(regexp_substr(current_version,'^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') 
-                                END, '.', 3)::FLOAT > 
-                                            SPLIT_PART(COALESCE(
+                                END, '.', 3),'')::FLOAT > 
+                                            NULLIF(SPLIT_PART(COALESCE(
                                                         CASE WHEN regexp_substr(regexp_substr(prev_version,'^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') IS NULL THEN
                                                             regexp_substr(prev_version, '^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}') 
                                                         ELSE regexp_substr(regexp_substr(prev_version,'^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') 
@@ -68,9 +68,9 @@ WITH upgrade         AS (
                                                         , CASE WHEN regexp_substr(regexp_substr(current_version,'^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') IS NULL THEN
                                                               regexp_substr(current_version, '^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}') 
                                                             ELSE regexp_substr(regexp_substr(current_version,'^[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}'), '[0-9]{0,}[.]{1}[0-9[{0,}[.]{1}[0-9]{0,}[.]{1}[0-9]{0,}$') 
-                                                          END), '.', 3)::float THEN TRUE
+                                                          END), '.', 3), '')::float THEN TRUE
                 ELSE FALSE END)
-             OR (current_edition = 'true' AND coalesce(prev_edition, 'true') = 'false')
+             OR (NULLIF(current_edition, '') = 'true' AND coalesce(prev_edition, 'true') = 'false')
              )
          AND date <= CURRENT_DATE
          {% if is_incremental() %}
