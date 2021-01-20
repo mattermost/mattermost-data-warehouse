@@ -13,7 +13,7 @@ engine = snowflake_engine_factory(os.environ, "TRANSFORMER", "util")
 connection = engine.connect()
 
 # SET CLEARBIT API KEY
-clearbit.key = os.getenv('CLEARBIT_KEY') #sk_974159dce24e26d3f89499b123f27cc4'
+clearbit.key = os.getenv('CLEARBIT_KEY')
 
 # DETERMINE CLOUD_CLEARBIT TABLE IS BUILT AND HAS NOT BEEN DROPPED
 try:
