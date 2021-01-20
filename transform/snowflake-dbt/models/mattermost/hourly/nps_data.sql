@@ -33,7 +33,7 @@ WITH daily_nps_scores AS (
           FROM {{ source('mattermost_nps', 'nps_score') }} nps
           {% if is_incremental() %}
           JOIN max_time mt 
-          ON nps.TIMESTAMP::DATE >= mt.max_time
+          ON nps.TIMESTAMP::DATE >= mt.max_time - INTERVAL '1 DAY'
           {% endif %}
           WHERE nps.timestamp::DATE <= CURRENT_DATE
       )
@@ -59,7 +59,7 @@ WITH daily_nps_scores AS (
             FROM {{ source('mm_plugin_prod', 'nps_nps_score') }} nps
             {% if is_incremental() %}
             JOIN max_time mt 
-            ON nps.TIMESTAMP::DATE >= mt.max_time
+            ON nps.TIMESTAMP::DATE >= mt.max_time - INTERVAL '1 DAY'
             {% endif %}
             WHERE nps.TIMESTAMP::date <= CURRENT_DATE
         )
@@ -74,16 +74,16 @@ daily_feedback_scores AS (
           , user_actual_id
           , feedback
           , id as feedback_id
-  	FROM (
-          SELECT ROW_NUMBER() over (PARTITION BY nps.timestamp::DATE, nps.user_actual_id ORDER BY nps.timestamp DESC) AS rownum, nps.*
-          FROM {{ source('mattermost_nps', 'nps_feedback') }} nps
-          {% if is_incremental() %}
-          JOIN max_time mt 
-          ON nps.TIMESTAMP >= mt.max_time
-          {% endif %}
-          WHERE nps.timestamp::DATE <= CURRENT_DATE
-      )
-  	where rownum = 1
+  	    FROM (
+                SELECT ROW_NUMBER() over (PARTITION BY nps.timestamp::DATE, nps.user_actual_id ORDER BY nps.timestamp DESC) AS rownum, nps.*
+                FROM {{ source('mattermost_nps', 'nps_feedback') }} nps
+                {% if is_incremental() %}
+                JOIN max_time mt 
+                ON nps.TIMESTAMP::DATE >= mt.max_time - INTERVAL '1 DAY'
+                {% endif %}
+                WHERE nps.timestamp::DATE <= CURRENT_DATE
+        )
+  	    where rownum = 1
     
     UNION ALL
     
@@ -97,7 +97,7 @@ daily_feedback_scores AS (
                 FROM {{ source('mm_plugin_prod', 'nps_nps_feedback') }} nps
                 {% if is_incremental() %}
                 JOIN max_time mt 
-                ON nps.TIMESTAMP ::DATE>= mt.max_time
+                ON nps.TIMESTAMP::DATE >= mt.max_time - INTERVAL '1 DAY'
                 {% endif %}
                 WHERE nps.timestamp::DATE <= CURRENT_DATE
         )
