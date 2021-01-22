@@ -18,7 +18,7 @@ clearbit.key = os.getenv('CLEARBIT_KEY')
 # DETERMINE CLOUD_CLEARBIT TABLE IS BUILT AND HAS NOT BEEN DROPPED
 try:
     query = f'''SELECT * FROM ANALYTICS.MATTERMOST.CLOUD_CLEARBIT'''
-    test = execute_dataframe(engine, query)
+    test = execute_dataframe(engine, query=query)
 except:
     test = None
 
