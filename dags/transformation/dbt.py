@@ -26,6 +26,7 @@ from dags.kube_secrets import (
     PG_IMPORT_BUCKET,
     HEROKU_POSTGRESQL_URL,
     SSH_KEY,
+    CLEARBIT_KEY
 )
 
 # Load the env vars into a dict and set Secrets
@@ -158,6 +159,7 @@ update_clearbit = KubernetesPodOperator(
         SNOWFLAKE_PASSWORD,
         SNOWFLAKE_ACCOUNT,
         SNOWFLAKE_TRANSFORM_WAREHOUSE,
+        CLEARBIT_KEY
     ],
     env_vars=env_vars,
     arguments=[update_clearbit_cmd],
