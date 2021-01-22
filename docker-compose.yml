@@ -21,7 +21,7 @@ services:
           read_only: True
 
     data_image:
-      image: docker.io/adovenmm/data-image:v01.21
+      image: docker.io/adovenmm/data-image:v01.21.1
       env_file:
         - .env
       restart: always
