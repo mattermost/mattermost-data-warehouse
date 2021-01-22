@@ -43,13 +43,16 @@ ORDER BY COALESCE(SF.FIRST_ACTIVE_DATE, CURRENT_DATE) ASC
 '''
 df = execute_dataframe(engine, query=q)
 
+print(df)
+
 # RETRIEVE CLEARBIT DATA FROM API USING CLEARBIT.ENRICHMENT.FIND AND THE USER'S EMAIL ADDRESS THAT CREATED THE CLOUD WORKSPACE
 cloud_clearbit = []
+response = None
 for index, row in df.iterrows():
     try:
         response = clearbit.Enrichment.find(email=f'''{row['LICENSE_EMAIL']}''', stream=True)
     except:
-        None
+        print("FAIL")
     if response is not None:
         cloud_clearbit.append([row['SERVER_ID'], response])
 
@@ -58,6 +61,8 @@ cols = []
 
 # CREATE DICTIONARY TO STORE RESULTS AS SERVER_ID:CLEARBIT RESPONSE KEY-VALUE PAIRS
 d = {}
+
+print(cloud_clearbit)
 
 # RETRIEVE ALL COLUMN NAMES REQUIRED TO GENERATE A DATAFRAME TO STORE EACH CLEARBIT PROPERTY AND STORE IN LIST
 for i in cloud_clearbit:
@@ -80,6 +85,7 @@ for i in cloud_clearbit:
 # ONLY RETAIN UNIQUE COLUMN VALUES AS SET THEN RECAST AS LIST FOR ITERATING PURPOSES.
 cols = set(cols)
 cols = list(cols)
+print(cols)
 
 # CREATE CLEARBIT DATAFRAME STRUCTURE USING UNIQUE COLUMN VALUES
 clearbit_df = pd.DataFrame(columns=cols)
@@ -106,6 +112,7 @@ for key, value in d.items():
             else:
                 clearbit_df.loc[index, k] = v
 
+print(clearbit_df)
 # Convert clearbit object data types to next best fit.
 clearbit_df2 = clearbit_df.convert_dtypes()
 
