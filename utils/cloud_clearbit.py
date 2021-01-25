@@ -28,7 +28,7 @@ try:
     clearbit_cols = []
     if len(col_df) > 0:
         for index, row in col_df.iterrows():
-            clearbit_cols.append(row['COLUMN_NAME'])
+            clearbit_cols.append(row['COLUMN_NAME'].lower())
     else:
        clearbit_cols = None
 
@@ -80,7 +80,7 @@ if len(cloud_clearbit) >= 1:
     if clearbit_cols is not None:
         d = {}
         clearbit_df = pd.DataFrame(columns=clearbit_cols)
-        clearbit_df['SERVER_ID'] = df['SERVER_ID'].unique()
+        clearbit_df['server_id'] = df['SERVER_ID'].unique()
         for i in cloud_clearbit:
             d[i[0]] = i[1] 
     else:
