@@ -143,6 +143,13 @@ WITH sdd AS (
             FROM {{ ref('server_daily_details') }}
             GROUP BY 1, 2, 3, 4, 5, 6
     ),
+    incident_mgmt as (
+      SELECT
+        TRIM(user_id) as server_id
+      , count(distinct id) as incident_mgmt_events_alltime
+      FROM {{ ref('incident_response_events')}}
+      group by 1
+    ),
     first_server_edition AS (
       SELECT
           s.server_id
@@ -290,6 +297,7 @@ WITH sdd AS (
         , MAX(server_details.max_registered_deactivated_users) as max_registered_deactivated_users
         , MAX(server_details.max_enabled_plugins)              as max_enabled_plugins
         , MAX(server_details.max_disabled_plugins)              as max_disabled_plugins
+        , MAX(im.incident_mgmt_events_alltime)                  as incident_mgmt_events_alltime
     FROM sdd
         LEFT JOIN server_details
           ON sdd.server_id = server_details.server_id
@@ -311,6 +319,8 @@ WITH sdd AS (
             ON sdd.server_id = lsd.server_Id
         LEFT JOIN server_activity
             ON sdd.server_id = server_activity.user_id
+        LEFT JOIN incident_mgmt im
+            ON sdd.server_id = im.server_id
         {% if is_incremental() %}
           WHERE sdd.last_active_date >= (SELECT MAX(last_active_date) FROM {{this}})
         {% endif %}
