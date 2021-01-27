@@ -26,6 +26,7 @@ from dags.kube_secrets import (
     PG_IMPORT_BUCKET,
     HEROKU_POSTGRESQL_URL,
     SSH_KEY,
+    CLEARBIT_KEY
 )
 
 # Load the env vars into a dict and set Secrets
@@ -143,26 +144,27 @@ dbt_run_union = KubernetesPodOperator(
     dag=dag,
 )
 
-# update_sequence_cmd = f"""
-#     {clone_and_setup_extraction_cmd} &&
-#     python utils/update_chronological_sequence.py
-# """
+update_clearbit_cmd = f"""
+    {clone_and_setup_extraction_cmd} &&
+    python utils/cloud_clearbit.py
+"""
 
-# update_chronological_sequence = KubernetesPodOperator(
-#     **pod_defaults,
-#     image=DATA_IMAGE,
-#     task_id="update-chronological-sequence",
-#     name="update-chronological-sequence",
-#     secrets=[
-#         SNOWFLAKE_USER,
-#         SNOWFLAKE_PASSWORD,
-#         SNOWFLAKE_ACCOUNT,
-#         SNOWFLAKE_TRANSFORM_WAREHOUSE,
-#     ],
-#     env_vars=env_vars,
-#     arguments=[update_sequence_cmd],
-#     dag=dag,
-# )
+update_clearbit = KubernetesPodOperator(
+    **pod_defaults,
+    image=DATA_IMAGE,
+    task_id="update-clearbit",
+    name="update-clearbit",
+    secrets=[
+        SNOWFLAKE_USER,
+        SNOWFLAKE_PASSWORD,
+        SNOWFLAKE_ACCOUNT,
+        SNOWFLAKE_TRANSFORM_WAREHOUSE,
+        CLEARBIT_KEY
+    ],
+    env_vars=env_vars,
+    arguments=[update_clearbit_cmd],
+    dag=dag,
+)
 
 pg_import_cmd = f"""
     {clone_and_setup_extraction_cmd} &&
@@ -193,4 +195,4 @@ pg_import = KubernetesPodOperator(
 )
 
 # update_chronological_sequence >> 
-user_agent >> dbt_run >> dbt_run_preunion >> dbt_run_union >> pg_import
+user_agent >> dbt_run >> dbt_run_preunion >> dbt_run_union >> pg_import >> update_clearbit
