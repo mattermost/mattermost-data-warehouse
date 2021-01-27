@@ -1,0 +1,5 @@
+version: 2
+
+models:
+  - name: hacktoberboard_dev
+    description: Aggregation of raw data from hacktoberboard_dev raw database schema telemetry.

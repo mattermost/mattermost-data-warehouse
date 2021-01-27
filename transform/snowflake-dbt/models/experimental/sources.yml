@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: hacktoberboard_dev
+    database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
+    schema: hacktoberboard_dev
+
+    tables: 
+      - name: config
+        description: 'Additional server configuration telemetry.'
+      
+      - name: server
+        description: 'Server cofiguration telemetry'
