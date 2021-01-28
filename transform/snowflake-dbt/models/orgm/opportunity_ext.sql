@@ -39,6 +39,7 @@ WITH w_end_date AS (
       netsuite_financial.netsuite_conn__opportunity__c AS opportunity_sfid,
       netsuite_conn__type__c AS paid_type,
       netsuite_conn__transaction_date__c AS paid_date,
+      payment_method__c AS payment_method,
       TRUE AS paid
     FROM {{ source('orgm', 'netsuite_conn__netsuite_financial__c') }} AS netsuite_financial
     WHERE (netsuite_conn__type__c = 'Cash Sale' AND netsuite_conn__status__c = 'Deposited') OR (netsuite_conn__type__c = 'Customer Payment' AND netsuite_conn__status__c IN ('Deposited','Not Deposited'))
@@ -83,6 +84,7 @@ WITH w_end_date AS (
       COALESCE(paid, FALSE) AS paid,
       paid_type,
       paid_date,
+      payment_method,
       SUM(new_amount__c) AS sum_new_amount,
       SUM(expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) AS sum_expansion_amount,
       SUM(expansion_amount__c + 365 * (coterm_expansion_amount__c + leftover_expansion_amount__c)/NULLIF((end_date__c::date - start_date__c::date + 1),0)) AS sum_expansion_w_proration_amount,
