@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: marketo
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: marketo
+
+    tables: 
+      - name: activities_fill_out_form
