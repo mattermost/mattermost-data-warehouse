@@ -35,35 +35,36 @@ WITH w_end_date AS (
   AND o.e_purchase_date__c IS NULL
   GROUP BY 1
 ), opportunity_paid_netsuite AS (
-    SELECT 
-      netsuite_financial.netsuite_conn__opportunity__c AS opportunity_sfid,
-      netsuite_conn__type__c AS paid_type,
-      netsuite_conn__transaction_date__c AS paid_date,
-      payment_method__c AS payment_method,
-      TRUE AS paid
-    FROM {{ source('orgm', 'netsuite_conn__netsuite_financial__c') }} AS netsuite_financial
-    WHERE (netsuite_conn__type__c = 'Cash Sale' AND netsuite_conn__status__c = 'Deposited') OR (netsuite_conn__type__c = 'Customer Payment' AND netsuite_conn__status__c IN ('Deposited','Not Deposited'))
-    GROUP BY 1, 2, 3, 4
+  SELECT
+    netsuite_financial.name,
+    max(netsuite_financial.netsuite_conn__opportunity__c) AS opportunity_sfid,
+    max(netsuite_conn__type__c) AS paid_type,
+    max(netsuite_conn__transaction_date__c) AS paid_date,
+    max(payment_method__c) AS payment_method,
+    TRUE AS paid
+  FROM {{ source('orgm', 'netsuite_conn__netsuite_financial__c') }} AS netsuite_financial
+  WHERE (netsuite_conn__type__c = 'Cash Sale' AND netsuite_conn__status__c = 'Deposited') OR (netsuite_conn__type__c = 'Customer Payment' AND netsuite_conn__status__c IN ('Deposited','Not Deposited'))
+  GROUP BY 1,6
 ), opportunity_marketing AS (
-    SELECT 
-      opportunity.sfid AS opportunity_sfid,
-      BOOLOR_AGG(TRUE) AS marketing_generated
-    FROM {{ source('orgm', 'opportunity') }}
-    LEFT JOIN {{ source('orgm', 'opportunitycontactrole') }} ON opportunity.sfid = opportunitycontactrole.opportunityid
-    LEFT JOIN {{ source('orgm', 'contact') }} AS contact ON opportunitycontactrole.contactid = contact.sfid
-    LEFT JOIN {{ source('orgm', 'lead') }} AS lead ON lead.convertedcontactid = contact.sfid
-    WHERE least(coalesce(contact.first_mql_date__c,current_timestamp()), coalesce(lead.first_mql_date__c,current_timestamp())) < opportunity.createddate
-      AND opportunity.type  IN ('Account Expansion', 'New Subscription')
-      AND coalesce(contact.first_mql_date__c, lead.first_mql_date__c) IS NOT NULL
-    GROUP BY 1
+  SELECT 
+    opportunity.sfid AS opportunity_sfid,
+    BOOLOR_AGG(TRUE) AS marketing_generated
+  FROM {{ source('orgm', 'opportunity') }}
+  LEFT JOIN {{ source('orgm', 'opportunitycontactrole') }} ON opportunity.sfid = opportunitycontactrole.opportunityid
+  LEFT JOIN {{ source('orgm', 'contact') }} AS contact ON opportunitycontactrole.contactid = contact.sfid
+  LEFT JOIN {{ source('orgm', 'lead') }} AS lead ON lead.convertedcontactid = contact.sfid
+  WHERE least(coalesce(contact.first_mql_date__c,current_timestamp()), coalesce(lead.first_mql_date__c,current_timestamp())) < opportunity.createddate
+    AND opportunity.type  IN ('Account Expansion', 'New Subscription')
+    AND coalesce(contact.first_mql_date__c, lead.first_mql_date__c) IS NOT NULL
+  GROUP BY 1
 ), opportunity_fc_amounts AS (
-    SELECT 
-        opportunity.sfid as opportunity_sfid,
-        SUM(CASE WHEN forecastcategoryname = 'Commit' THEN amount ELSE 0 END) AS amount_in_commit,
-        SUM(CASE WHEN forecastcategoryname = 'Best Case' THEN amount ELSE 0 END) AS amount_in_best_case,
-        SUM(CASE WHEN forecastcategoryname = 'Pipeline' THEN amount ELSE 0 END) AS amount_in_pipeline
-    FROM {{ source('orgm','opportunity') }}
-    GROUP BY 1
+  SELECT 
+      opportunity.sfid as opportunity_sfid,
+      SUM(CASE WHEN forecastcategoryname = 'Commit' THEN amount ELSE 0 END) AS amount_in_commit,
+      SUM(CASE WHEN forecastcategoryname = 'Best Case' THEN amount ELSE 0 END) AS amount_in_best_case,
+      SUM(CASE WHEN forecastcategoryname = 'Pipeline' THEN amount ELSE 0 END) AS amount_in_pipeline
+  FROM {{ source('orgm','opportunity') }}
+  GROUP BY 1
 ), opportunity_ext AS (
   SELECT
       opportunity.sfid as opportunity_sfid,
