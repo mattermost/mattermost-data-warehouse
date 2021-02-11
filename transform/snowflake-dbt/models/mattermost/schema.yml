@@ -54,3 +54,6 @@ models:
 
   - name: excludable_servers
     description: List of all identifiable excludable servers (mattermost-owned and/or test/development servers)
+  
+  - name: marketo_forms
+    description: Raw Marketo data for visualization in Looker.
