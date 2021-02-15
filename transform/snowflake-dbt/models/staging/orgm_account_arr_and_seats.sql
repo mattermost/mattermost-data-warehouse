@@ -47,7 +47,8 @@ WITH leap_years AS (
     SELECT
         account.sfid AS account_sfid,
         GREATEST(COALESCE(total_arr, 0),0) AS total_arr,
-        GREATEST(COALESCE(seats, 0),0) AS seats
+        GREATEST(COALESCE(seats, 0),0) AS seats,
+        'Salesforce-Account' AS object_type
     FROM {{ source('orgm','account') }}
     LEFT JOIN account_w_arr ON account.sfid = account_w_arr.account_sfid
     LEFT JOIN seats_licensed ON account.sfid = seats_licensed.account_sfid
