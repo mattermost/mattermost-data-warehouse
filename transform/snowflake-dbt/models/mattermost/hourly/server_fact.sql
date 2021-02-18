@@ -179,6 +179,8 @@ WITH sdd AS (
       , COUNT(DISTINCT timestamp::DATE) AS days_active
       , COUNT(CASE WHEN COALESCE(type, event) = 'api_request_trial_license' THEN id ELSE NULL END)         AS api_request_trial_events_alltime
       , DATEDIFF(DAY, MIN(TIMESTAMP::DATE), CURRENT_DATE) - COUNT(DISTINCT TIMESTAMP::DATE) AS days_inactive
+      , MIN(CASE WHEN COALESCE(type, event) IN ('ui_marketplace_download', 'api_install_marketplace_plugin') THEN timestamp::date ELSE NULL END) as first_plugin_install_date
+      , COUNT(DISTINCT CASE WHEN COALESCE(type, event) IN ('ui_marketplace_download') THEN plugin_id ELSE NULL END) AS plugins_downloaded
     FROM {{ ref('user_events_telemetry') }}
     GROUP BY 1
   ),
@@ -298,6 +300,8 @@ WITH sdd AS (
         , MAX(server_details.max_enabled_plugins)              as max_enabled_plugins
         , MAX(server_details.max_disabled_plugins)              as max_disabled_plugins
         , MAX(im.incident_mgmt_events_alltime)                  as incident_mgmt_events_alltime
+        , MAX(lsd.first_plugin_install_date) AS first_plugin_install_date
+        , MAX(lsd.plugins_downloaded) AS plugins_downloaded
     FROM sdd
         LEFT JOIN server_details
           ON sdd.server_id = server_details.server_id
