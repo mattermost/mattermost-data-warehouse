@@ -56,3 +56,10 @@ sources:
     tables: 
       - name: report
         description: 'Page visits to Docs'
+
+  - name: google_ads
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: google_ads
+
+    tables: 
+      - name: ad_groups

@@ -7,3 +7,4 @@ sources:
 
     tables: 
       - name: activities_fill_out_form
+      - name: marketo_form_names
