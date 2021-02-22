@@ -1,0 +1,8 @@
+version: 2
+
+models:
+  - name: telemetry_columns
+    description: Daily snapshot of the raw.information_schema.column_name relation, aggregated at the column level, to track newly added columns (new telemetry properties) to existing tables. Tracks new columns and first day they were added.
+  
+  - name: telemetry_table
+    description: Daily snapshot of the information_schema.column_name relation aggregated at the table level to track new columns (additional telemetry properties) and new table additions (entirely new telemtry). Tracks changes in total number of columns and new table additions (i.e. previous day columns = null)
