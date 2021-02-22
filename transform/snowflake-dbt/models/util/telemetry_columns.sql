@@ -18,7 +18,7 @@ WITH snapshot AS (
     GROUP BY 1, 2, 3, 4, 5, 6, 7
                  ),
 
-     telemetry_columns  AS (
+     telemetry  AS (
          SELECT
              snapshot_date
            , table_catalog
@@ -34,22 +34,27 @@ WITH snapshot AS (
            , lag(column_name)
                  OVER (PARTITION BY table_schema, table_name, column_name ORDER BY snapshot_date)          AS prev_day_value
          FROM snapshot
-     )
+     ),
 
-SELECT
-    table_catalog
-  , table_schema
-  , table_name
-  , column_name
-  , rank
-  , data_type
-  , ordinal_position
-  , min(snapshot_date)                                                                       AS date_added
-FROM telemetry_columns
-WHERE is_new
-GROUP BY 1, 2, 3, 4, 5, 6, 7
-{% if is_incremental() %}
+    telemetry_columns AS (
+        SELECT
+            table_catalog
+        , table_schema
+        , table_name
+        , column_name
+        , rank
+        , data_type
+        , ordinal_position
+        , min(snapshot_date)                                                                       AS date_added
+        FROM telemetry
+        WHERE is_new
+        GROUP BY 1, 2, 3, 4, 5, 6, 7
+    )
 
-HAVING MIN(snapshot_date) > (SELECT MAX(snapshot_date) FROM {{this}})
+    SELECT *
+    FROM telemetry_columns
+    {% if is_incremental() %}
 
-{% endif %}
+    WHERE date_added > (SELECT MAX(date_added) FROM {{this}})
+
+    {% endif %}
