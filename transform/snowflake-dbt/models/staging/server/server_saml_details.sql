@@ -65,7 +65,7 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(r.isdefault_username_attribute, s.isdefault_username_attribute))        AS isdefault_username_attribute
            , MAX(COALESCE(r.sign_request, s.sign_request))                        AS sign_request
            , MAX(COALESCE(r.verify, s.verify))                              AS verify_saml           
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
+           , {{ dbt_utils.surrogate_key(['COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)']) }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
          FROM 
             (

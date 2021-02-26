@@ -59,7 +59,7 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(s.profile_width, NULL))           AS profile_width
            , MAX(COALESCE(s.thumbnail_height, NULL))        AS thumbnail_height
            , MAX(COALESCE(s.thumbnail_width, NULL))         AS thumbnail_width           
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
+           , {{ dbt_utils.surrogate_key(['COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)']) }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
            FROM 
             (

@@ -49,7 +49,7 @@ WITH license_daily_details_all as (
            , MAX(l.feature_office365)                                                       AS feature_office365
            , MAX(l.feature_password)                                                        AS feature_password
            , MAX(l.feature_saml)                                                            AS feature_saml
-           , {{ dbt_utils.surrogate_key('l.date', 'l.license_id', 'l.customer_id')}}        AS id
+           , {{ dbt_utils.surrogate_key(['l.date', 'l.license_id', 'l.customer_id'])}}        AS id
            , MAX(l.timestamp)                                                               AS timestamp
            , COUNT(DISTINCT l.server_id)                                                    AS servers
            , MAX(a.timestamp::DATE)                                                         AS last_telemetry_date

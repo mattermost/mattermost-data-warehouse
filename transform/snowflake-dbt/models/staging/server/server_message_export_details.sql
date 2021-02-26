@@ -48,7 +48,7 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(s.is_default_global_relay_email_address, r.is_default_global_relay_email_address)) AS is_default_global_relay_email_address
            , MAX(COALESCE(s.is_default_global_relay_smtp_password, r.is_default_global_relay_smtp_password)) AS is_default_global_relay_smtp_password
            , MAX(COALESCE(s.is_default_global_relay_smtp_username, r.is_default_global_relay_smtp_username)) AS is_default_global_relay_smtp_username           
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
+           , {{ dbt_utils.surrogate_key(['COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)']) }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
            , MAX(COALESCE(r.download_export_results, NULL))        AS download_export_results
          FROM 

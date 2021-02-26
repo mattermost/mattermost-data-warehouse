@@ -54,7 +54,7 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(s.inactive_webapp_plugins, NULL))       AS inactive_webapp_plugins
            , MAX(COALESCE(r.plugins_with_broken_manifests, s.plugins_with_broken_manifests)) AS plugins_with_broken_manifests
            , MAX(COALESCE(r.plugins_with_settings, s.plugins_with_settings))         AS plugins_with_settings           
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
+           , {{ dbt_utils.surrogate_key(['COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)']) }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
          FROM 
             (

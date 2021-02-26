@@ -44,7 +44,7 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(r.allow_custom_themes, s.allow_custom_themes))     AS allow_custom_themes
            , MAX(COALESCE(r.enable_theme_selection, s.enable_theme_selection))  AS enable_theme_selection
            , MAX(COALESCE(r.isdefault_default_theme, s.isdefault_default_theme)) AS isdefault_default_theme           
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
+           , {{ dbt_utils.surrogate_key(['COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)']) }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
          FROM 
             (

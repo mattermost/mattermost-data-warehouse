@@ -44,7 +44,7 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(s.available_locales, r.available_locales))     AS available_locales
            , MAX(COALESCE(s.default_client_locale, r.default_client_locale)) AS default_client_locale
            , MAX(COALESCE(s.default_server_locale, r.default_server_locale)) AS default_server_locale           
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
+           , {{ dbt_utils.surrogate_key(['COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)']) }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
          FROM 
             (
