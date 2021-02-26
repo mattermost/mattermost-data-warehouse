@@ -27,7 +27,7 @@ server_events_by_date AS (
     SELECT
         events.date
       , events.server_id
-      , {{ dbt_utils.surrogate_key('events.date', 'events.server_id') }}                            AS id
+      , {{ dbt_utils.surrogate_key(['events.date', 'events.server_id']) }}                            AS id
       , MIN(first_active_date)                                                                      AS first_active_date
       , MAX(last_active_date)                                                                       AS last_active_date
       , COUNT(DISTINCT CASE WHEN active THEN user_id ELSE NULL END)                                 AS dau_total

@@ -130,7 +130,7 @@ max_timestamp              AS (
                  ELSE NULL END)              AS license_id2
            , MAX(license.license_email)           AS license_email
            , MAX(license.contact_sfid)            AS license_contact_sfid
-           , {{ dbt_utils.surrogate_key('s.timestamp::date', 's.user_id') }} AS id
+           , {{ dbt_utils.surrogate_key(['s.timestamp::date', 's.user_id']) }} AS id
            , s.context_ip                         AS context_ip
            , MAX(s.database_version)              AS database_version
            , s.installation_id                    AS installation_id

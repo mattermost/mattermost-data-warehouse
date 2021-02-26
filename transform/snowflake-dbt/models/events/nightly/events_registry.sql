@@ -65,7 +65,7 @@ rudder_events          AS (
 
      events_registry AS (
          SELECT
-             {{ dbt_utils.surrogate_key('event_name', 'event_category') }}                AS event_id
+             {{ dbt_utils.surrogate_key(['event_name', 'event_category']) }}                AS event_id
            , event_name
            , event_category
            , 'THIS IS A PLACEHOLDER DESCRIPTION. IT IS ONLY MEANT TO ESTABLISH THE MINIMUM LENGTH OF THIS FIELD. 

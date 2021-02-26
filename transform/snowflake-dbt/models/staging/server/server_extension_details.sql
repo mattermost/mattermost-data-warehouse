@@ -25,7 +25,7 @@ WITH max_timestamp        AS (
              timestamp::DATE                          AS date
            , e.user_id                                AS server_id
            , MAX(enable_experimental_extensions)      AS enable_experimental_extensions
-           , {{ dbt_utils.surrogate_key('timestamp::date', 'e.user_id') }} AS id
+           , {{ dbt_utils.surrogate_key(['timestamp::date', 'e.user_id']) }} AS id
          FROM {{ source('mattermost2', 'config_extension') }} e
               JOIN max_timestamp              mt
                    ON e.user_id = mt.user_id

@@ -34,7 +34,7 @@ WITH upgrade         AS (
                 END, '')  AS current_version
            , NULLIF(prev_edition, '') AS prev_edition
            , NULLIF(current_edition, '') AS current_edition
-           , {{ dbt_utils.surrogate_key('date', 'server_id') }} as id
+           , {{ dbt_utils.surrogate_key(['date', 'server_id']) }} as id
          FROM upgrade
          WHERE (
               (CASE WHEN NULLIF(SPLIT_PART(current_version, '.', 1),'')::FLOAT > NULLIF(SPLIT_PART(COALESCE(prev_version, current_version), '.', 1),'')::float THEN TRUE

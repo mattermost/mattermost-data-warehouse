@@ -27,7 +27,7 @@ WITH max_timestamp       AS (
            , MAX(enable)             AS enable
            , MAX(isdefault_stun_uri) AS isdefault_stun_uri
            , MAX(isdefault_turn_uri) AS isdefault_turn_uri
-           , {{ dbt_utils.surrogate_key('timestamp::date', 'w.user_id') }} AS id
+           , {{ dbt_utils.surrogate_key(['timestamp::date', 'w.user_id']) }} AS id
          FROM {{ source('mattermost2', 'config_webrtc') }} w
               JOIN max_timestamp        mt
                    ON w.user_id = mt.user_id

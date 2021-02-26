@@ -66,7 +66,7 @@ max_rudder_timestamp                AS (
            , MAX(COALESCE(s.segment_dedupe_id, NULL))                      AS segment_dedupe_id
            , MAX(COALESCE(s.skip_certificate_verification, r.skip_certificate_verification))          AS skip_certificate_verification
            , MAX(COALESCE(s.sync_interval_minutes, r.sync_interval_minutes))                  AS sync_interval_minutes           
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
+           , {{ dbt_utils.surrogate_key(['COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)']) }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
            , MAX(COALESCE(r.isnotempty_private_key, NULL))        AS isnotempty_private_key
            , MAX(COALESCE(r.isnotempty_public_certificate, NULL))        AS isnotempty_public_certificate

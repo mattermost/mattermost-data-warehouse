@@ -45,7 +45,7 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(r.symbol, s.symbol))                                 AS enable_symbol
            , MAX(COALESCE(r.number, s.number))                                 AS enable_number
            , MAX(COALESCE(r.minimum_length, s.minimum_length))                         AS password_minimum_length           
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
+           , {{ dbt_utils.surrogate_key(['COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)']) }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
          FROM 
             (

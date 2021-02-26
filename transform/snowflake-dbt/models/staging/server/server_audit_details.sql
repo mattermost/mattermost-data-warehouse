@@ -49,7 +49,7 @@ max_rudder_timestamp       AS (
             , MAX(COALESCE(r.SYSLOG_ENABLED, s.SYSLOG_ENABLED)) AS SYSLOG_ENABLED
             , MAX(COALESCE(r.SYSLOG_INSECURE, s.SYSLOG_INSECURE)) AS SYSLOG_INSECURE
             , MAX(COALESCE(r.SYSLOG_MAX_QUEUE_SIZE, s.SYSLOG_MAX_QUEUE_SIZE)) AS SYSLOG_MAX_QUEUE_SIZE
-           , {{ dbt_utils.surrogate_key('COALESCE(r.timestamp::DATE, s.timestamp::date)', 'COALESCE(r.user_id, s.user_id)') }} AS id
+           , {{ dbt_utils.surrogate_key(['COALESCE(r.timestamp::DATE, s.timestamp::date)', 'COALESCE(r.user_id, s.user_id)']) }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
            , MAX(COALESCE(r.ADVANCED_LOGGING_CONFIG, NULL))     AS ADVANCED_LOGGING_CONFIG
          FROM 

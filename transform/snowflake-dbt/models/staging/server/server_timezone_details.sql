@@ -25,7 +25,7 @@ WITH max_timestamp       AS (
              timestamp::DATE                         AS date
            , t.user_id                               AS server_id
            , MAX(isdefault_supported_timezones_path) AS isdefault_supported_timezones_path
-           , {{ dbt_utils.surrogate_key('timestamp::date', 't.user_id') }} AS id
+           , {{ dbt_utils.surrogate_key(['timestamp::date', 't.user_id']) }} AS id
          FROM {{ source('mattermost2', 'config_timezone') }} t
               JOIN max_timestamp          mt
                    ON t.user_id = mt.user_id

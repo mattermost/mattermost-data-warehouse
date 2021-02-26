@@ -48,7 +48,7 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(r.team_count, s.team_count))                AS team_count
            , MAX(COALESCE(r.team_guest_permissions, s.team_guest_permissions))    AS team_guest_permissions
            , MAX(COALESCE(r.team_user_permissions, s.team_user_permissions))     AS team_user_permissions     
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)', 'COALESCE(r.scheme_id, s.scheme_id)') }} AS id
+           , {{ dbt_utils.surrogate_key(['COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)', 'COALESCE(r.scheme_id, s.scheme_id)']) }} AS id
          FROM 
             (
               SELECT s.*

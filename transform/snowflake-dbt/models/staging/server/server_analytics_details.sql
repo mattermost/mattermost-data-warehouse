@@ -42,7 +42,7 @@ max_rudder_timestamp            AS (
              COALESCE(s.timestamp::DATE, r.timestamp::date)              AS date
            , COALESCE(s.user_id, r.user_id)                              AS server_id
            , MAX(COALESCE(s.isdefault_max_users_for_statistics, r.isdefault_max_users_for_statistics)) AS isdefault_max_users_for_statistics
-           , {{ dbt_utils.surrogate_key('COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)') }} AS id
+           , {{ dbt_utils.surrogate_key(['COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)']) }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
            FROM 
             (

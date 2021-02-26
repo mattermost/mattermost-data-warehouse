@@ -41,7 +41,7 @@ WITH security AS (
             ELSE false
         END AS ran_tests,
         (logdate || ' ' || logtime)::TIMESTAMP                            AS timestamp,
-        {{ dbt_utils.surrogate_key('logdate::date', 'logtime', 'cip', 'substring(regexp_substr(cs_uri_query, \'(^|&)id=([^&]*)\'), 5, 100)',
+        {{ dbt_utils.surrogate_key(['logdate::date', 'logtime', 'cip', 'substring(regexp_substr(cs_uri_query, \'(^|&)id=([^&]*)\'), 5, 100)',
         'COALESCE(CASE
                 WHEN split_part(regexp_substr(cs_uri_query, \'[^a]uc=[0-9]{1,10}\'),\'=\',2) = \'\' THEN NULL
                 ELSE split_part(regexp_substr(cs_uri_query, \'[^a]uc=[0-9]{1,10}\'),\'=\',2)::int
@@ -62,7 +62,7 @@ WITH security AS (
                 'CASE
             WHEN substring(regexp_substr(cs_uri_query, \'(^|&)ut=([^&]*)\'), 5, 100) = \'1\' THEN true
             ELSE false
-        END')}} as id
+        END'])}} as id
     FROM {{ source('diagnostics', 'log_entries') }}
     WHERE uri = '/security'
     AND logdate::date <= CURRENT_DATE

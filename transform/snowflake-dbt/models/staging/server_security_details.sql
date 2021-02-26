@@ -146,7 +146,7 @@ WITH security                AS (
            , MAX(license.contact_sfid)            AS license_contact_sfid
            , s.ip_count
            , s.occurrences
-           , {{ dbt_utils.surrogate_key('s.id', 's.date')}} AS id
+           , {{ dbt_utils.surrogate_key(['s.id', 's.date'])}} AS id
          FROM server_details s
               LEFT JOIN license
                         ON s.id = license.server_id
