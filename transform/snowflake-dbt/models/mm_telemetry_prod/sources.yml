@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: mm_telemetry_prod
-    database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
+    database: 'RAW'
     schema: mm_telemetry_prod
 
     tables:
