@@ -21,7 +21,7 @@ WITH opportunity_totals AS (
     GROUP BY 1
 ), opportunity_snapshot AS (
     SELECT
-        {{ dbt_utils.surrogate_key('current_date', 'sfid') }} AS id,
+        {{ dbt_utils.surrogate_key(['current_date', 'sfid']) }} AS id,
         current_date AS snapshot_date,
         sfid,
         name, 

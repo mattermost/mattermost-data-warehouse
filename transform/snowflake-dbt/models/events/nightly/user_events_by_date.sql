@@ -81,7 +81,7 @@ mobile_events2       AS (
       , MIN(m.timestamp)                                                                          AS min_timestamp
       , MAX(NULL::TIMESTAMP)                                    AS max_uuid_ts
       , m.category
-      , {{ dbt_utils.surrogate_key('m.timestamp::date', 'm.user_actual_id', 'm.user_id', 'm.context_useragent', 'lower(m.type)', 'm.category') }}                       AS id
+      , {{ dbt_utils.surrogate_key(['m.timestamp::date', 'm.user_actual_id', 'm.user_id', 'm.context_useragent', 'lower(m.type)', 'm.category']) }}                       AS id
     FROM {{ ref('mobile_events') }} m
     WHERE m.timestamp::DATE < CURRENT_DATE
     {% if is_incremental() %}
@@ -154,7 +154,7 @@ mobile_events2       AS (
            , MIN(e.timestamp)                                                                          AS min_timestamp
            , MAX(date_trunc('hour', e.uuid_ts) + interval '1 hour')                                                        AS max_uuid_ts
            , e.category
-           , {{ dbt_utils.surrogate_key('e.timestamp::date', 'e.user_actual_id', 'e.user_id', 'e.context_user_agent', 'lower(e.type)', 'e.category') }}                       AS id
+           , {{ dbt_utils.surrogate_key(['e.timestamp::date', 'e.user_actual_id', 'e.user_id', 'e.context_user_agent', 'lower(e.type)', 'e.category']) }}                       AS id
          FROM {{ source('mattermost2', 'event') }} e
               LEFT JOIN (
                           SELECT user_id, MIN(TIMESTAMP::DATE) AS MIN_DATE
@@ -236,7 +236,7 @@ mobile_events2       AS (
            , MIN(e.timestamp)                                                                          AS min_timestamp
            , MAX(NULL::TIMESTAMP)                                                                       AS max_uuid_ts
            , e.category
-           , {{ dbt_utils.surrogate_key('e.timestamp::date', 'e.user_actual_id', 'e.user_id', 'e.context_useragent', 'lower(e.type)', 'e.category') }}                       AS id
+           , {{ dbt_utils.surrogate_key(['e.timestamp::date', 'e.user_actual_id', 'e.user_id', 'e.context_useragent', 'lower(e.type)', 'e.category']) }}                       AS id
          FROM {{ source('mm_telemetry_prod', 'event') }} e
          WHERE e.timestamp::DATE < CURRENT_DATE
          {% if is_incremental() %}
@@ -329,7 +329,7 @@ mobile_events2       AS (
         , CONTEXT_USER_AGENT
         , MAX_TIMESTAMP
         , MIN_TIMESTAMP
-        , {{ dbt_utils.surrogate_key('DATE', 
+        , {{ dbt_utils.surrogate_key(['DATE', 
                                     'CASE WHEN USER_ID IS NULL THEN 
                                         COALESCE(MAX(USER_ID) OVER (PARTITION BY DATE, SERVER_ID ORDER BY MIN_TIMESTAMP ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING), UUID_STRING())
                                         ELSE USER_ID END',
@@ -338,7 +338,7 @@ mobile_events2       AS (
                                         ELSE SERVER_ID END',
                                     'CONTEXT_USER_AGENT', 
                                     'EVENT_NAME', 'OS', 'BROWSER_VERSION', 'OS_VERSION', 'EVENT_ID', 
-                                    'MIN_TIMESTAMP', 'MAX_TIMESTAMP') }}                                         AS ID
+                                    'MIN_TIMESTAMP', 'MAX_TIMESTAMP']) }}                                         AS ID
         , NULL                                        AS chronological_sequence
         , NULL AS seconds_after_prev_event
         , NULL AS UPDATED_AT
