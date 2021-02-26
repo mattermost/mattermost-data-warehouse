@@ -8,7 +8,7 @@
 
 WITH opportunitylineitem_snapshot AS (
     SELECT
-        {{ dbt_utils.surrogate_key('current_date', 'sfid') }} AS id,
+        {{ dbt_utils.surrogate_key(['current_date', 'sfid']) }} AS id,
         current_date AS snapshot_date,
         sfid,
         name,
