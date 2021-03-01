@@ -4,6 +4,3 @@ sources:
   - name: cs
     database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
     schema: cs
-
-    tables:
-      - name: available_renewals_by_opportunity
