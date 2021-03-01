@@ -1,0 +1,16 @@
+version: 2
+
+sources:
+  - name: sales_and_cs_gsheets
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: sales_and_cs_gsheets
+
+    tables:
+      - name: available_renewals_current_fy
+      - name: available_renewals_historical
+      - name: forecast
+      - name: forecast_by_segment
+      - name: new_and_expansion_by_month
+      - name: new_and_expansion_by_segment_by_month
+      - name: renewal_by_qtr
+      - name: renewal_by_segment_by_qtr
