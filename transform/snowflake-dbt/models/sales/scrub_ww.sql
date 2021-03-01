@@ -57,8 +57,8 @@ WITH ww_nn_amounts AS (
 ), scrub_ww AS (
     SELECT 
         tva_attain_new_and_exp_by_qtr.qtr,
-        commit_ww.commit_netnew AS nn_forecast,
-        commit_ww.upside_netnew AS nn_upside,
+        forecast.commit_netnew AS nn_forecast,
+        forecast.upside_netnew AS nn_upside,
         tva_attain_new_and_exp_by_qtr.target AS nn_target,
         tva_attain_new_and_exp_by_qtr.actual AS nn_actual,
         tva_attain_new_and_exp_by_qtr.tva AS nn_tva,
@@ -68,8 +68,8 @@ WITH ww_nn_amounts AS (
         nn_best_case_max,
         nn_pipeline_max,
         nn_omitted_max,
-        commit_ww.commit_renewal AS ren_forecast,
-        commit_ww.upside_renewal AS ren_upside,
+        forecast.commit_renewal AS ren_forecast,
+        forecast.upside_renewal AS ren_upside,
         tva_bookings_ren_by_qtr.target AS ren_target,
         tva_bookings_ren_by_qtr.actual AS ren_actual,
         tva_bookings_ren_by_qtr.tva AS ren_tva,
@@ -99,7 +99,7 @@ WITH ww_nn_amounts AS (
         available_renewals_lost_qtd AS ren_available_renewals_lost_qtd
     FROM {{ ref('tva_attain_new_and_exp_by_qtr') }}
     LEFT JOIN {{ ref('tva_bookings_ren_by_qtr') }} ON tva_attain_new_and_exp_by_qtr.qtr = tva_bookings_ren_by_qtr.qtr 
-    LEFT JOIN {{ source('sales','commit_ww') }} ON tva_bookings_ren_by_qtr.qtr = commit_ww.qtr 
+    JOIN {{ source('sales_and_cs_gsheets','forecast') }} ON tva_bookings_ren_by_qtr.qtr = forecast.qtr 
     LEFT JOIN ww_nn_amounts ON ww_nn_amounts.qtr = tva_bookings_ren_by_qtr.qtr
     LEFT JOIN ww_ren_amounts ON ww_ren_amounts.qtr = tva_bookings_ren_by_qtr.qtr
     LEFT JOIN ww_available_renewals ON ww_available_renewals.qtr = tva_bookings_ren_by_qtr.qtr
