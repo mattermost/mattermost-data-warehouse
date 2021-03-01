@@ -10,7 +10,7 @@ sources:
       - name: available_renewals_historical
       - name: forecast
       - name: forecast_by_segment
-      - name: new_and_expansion_by_month
-      - name: new_and_expansion_by_segment_by_month
+      - name: new_and_expansion_by_qtr
+      - name: new_and_expansion_by_segment_by_qtr
       - name: renewal_by_qtr
       - name: renewal_by_segment_by_qtr

@@ -1,11 +1,5 @@
 version: 2
 
 models:
-  - name: tva_all_by_mo
-    description: All Monthly Target vs Actuals
-
   - name: tva_all_by_qtr
     description: All Quarterly Target vs Actuals
-
-  - name: tva_all_by_fy
-    description: All FY Target vs Actuals
