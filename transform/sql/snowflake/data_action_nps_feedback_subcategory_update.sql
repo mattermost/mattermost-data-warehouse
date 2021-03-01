@@ -17,7 +17,7 @@ INSERT INTO analytics.mattermost.nps_feedback_classification(last_feedback_date,
             , PARSE_JSON(data):last_feedback_date::date AS last_feedback_date
             , PARSE_JSON(data):field_name::varchar AS field_name
             , PARSE_JSON(FORM_PARAMS):new_value::varchar as new_value
-            , _SDC_RECEIVED_AT as triggered_at
+            , _SDC_RECEIVED_AT::timestamp as triggered_at
             , PARSE_JSON(data):action_performed_by::varchar as triggered_by
             , __SDC_PRIMARY_KEY as data_action_id
             FROM LOOKER_DATA_ACTIONS.data
