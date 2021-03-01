@@ -25,7 +25,7 @@ WITH renewal_rate_by_renewal_opportunity AS (
     LEFT JOIN {{ source('orgm','account') }} ON account.sfid = available_renewals_by_opportunity.account_id
     LEFT JOIN {{ source('orgm','opportunity') }} ON opportunity.sfid = available_renewals_by_opportunity.renewal_opportunity
     LEFT JOIN {{ source('orgm','opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
-    GROUP BY 1, 2, 3, 4, 5, 7, 13
+    GROUP BY 1, 2, 3, 4, 5, 6, 7, 13
 )
 
 SELECT * FROM renewal_rate_by_renewal_opportunity
