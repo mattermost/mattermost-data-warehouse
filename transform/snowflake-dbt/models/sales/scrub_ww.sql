@@ -56,12 +56,12 @@ WITH ww_nn_amounts AS (
     GROUP BY 1
 ), scrub_ww AS (
     SELECT 
-        tva_attain_new_and_exp_by_qtr.qtr,
+        tva_new_and_exp_by_qtr.qtr,
         forecast.commit_netnew AS nn_forecast,
         forecast.upside_netnew AS nn_upside,
-        tva_attain_new_and_exp_by_qtr.target AS nn_target,
-        tva_attain_new_and_exp_by_qtr.actual AS nn_actual,
-        tva_attain_new_and_exp_by_qtr.tva AS nn_tva,
+        tva_new_and_exp_by_qtr.target AS nn_target,
+        tva_new_and_exp_by_qtr.actual AS nn_actual,
+        tva_new_and_exp_by_qtr.tva AS nn_tva,
         nn_open_max,
         nn_open_weighted,
         nn_commit_max,
@@ -70,9 +70,9 @@ WITH ww_nn_amounts AS (
         nn_omitted_max,
         forecast.commit_renewal AS ren_forecast,
         forecast.upside_renewal AS ren_upside,
-        tva_bookings_ren_by_qtr.target AS ren_target,
-        tva_bookings_ren_by_qtr.actual AS ren_actual,
-        tva_bookings_ren_by_qtr.tva AS ren_tva,
+        tva_ren_by_qtr.target AS ren_target,
+        tva_ren_by_qtr.actual AS ren_actual,
+        tva_ren_by_qtr.tva AS ren_tva,
         ren_open_max,
         ren_open_weighted,
         ren_commit_max,
@@ -97,12 +97,12 @@ WITH ww_nn_amounts AS (
         available_renewals_won_in_qtr_and_qtd AS ren_available_renewals_won_in_qtr_and_qtd,
         available_renewals_open_past_due_qtd AS ren_available_renewals_open_past_due_qtd,
         available_renewals_lost_qtd AS ren_available_renewals_lost_qtd
-    FROM {{ ref('tva_attain_new_and_exp_by_qtr') }}
-    LEFT JOIN {{ ref('tva_bookings_ren_by_qtr') }} ON tva_attain_new_and_exp_by_qtr.qtr = tva_bookings_ren_by_qtr.qtr 
-    JOIN {{ source('sales_and_cs_gsheets','forecast') }} ON tva_bookings_ren_by_qtr.qtr = forecast.qtr 
-    LEFT JOIN ww_nn_amounts ON ww_nn_amounts.qtr = tva_bookings_ren_by_qtr.qtr
-    LEFT JOIN ww_ren_amounts ON ww_ren_amounts.qtr = tva_bookings_ren_by_qtr.qtr
-    LEFT JOIN ww_available_renewals ON ww_available_renewals.qtr = tva_bookings_ren_by_qtr.qtr
+    FROM {{ ref('tva_new_and_exp_by_qtr') }}
+    LEFT JOIN {{ ref('tva_ren_by_qtr') }} ON tva_new_and_exp_by_qtr.qtr = tva_ren_by_qtr.qtr 
+    JOIN {{ source('sales_and_cs_gsheets','forecast') }} ON tva_new_and_exp_by_qtr.qtr = forecast.qtr 
+    LEFT JOIN ww_nn_amounts ON ww_nn_amounts.qtr = tva_new_and_exp_by_qtr.qtr
+    LEFT JOIN ww_ren_amounts ON ww_ren_amounts.qtr = tva_new_and_exp_by_qtr.qtr
+    LEFT JOIN ww_available_renewals ON ww_available_renewals.qtr = tva_new_and_exp_by_qtr.qtr
     GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41
 )
 
