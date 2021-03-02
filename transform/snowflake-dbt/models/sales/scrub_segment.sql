@@ -59,13 +59,13 @@ WITH segment_nn_amounts AS (
     GROUP BY 1, 2
 ), scrub_segment AS (
     SELECT 
-        REPLACE(REPLACE(tva_attain_new_and_exp_by_segment_by_qtr.target_slug,'attain_new_and_exp_by_segment_by_qtr_',''),'_','/') AS segment,
-        tva_attain_new_and_exp_by_segment_by_qtr.qtr,
+        tva_new_and_exp_by_segment_by_qtr.segment AS segment,
+        tva_new_and_exp_by_segment_by_qtr.qtr,
         forecast_by_segment.commit_netnew AS nn_forecast,
         forecast_by_segment.upside_netnew AS nn_upside,
-        tva_attain_new_and_exp_by_segment_by_qtr.target AS nn_target,
-        tva_attain_new_and_exp_by_segment_by_qtr.actual AS nn_actual,
-        tva_attain_new_and_exp_by_segment_by_qtr.tva AS nn_tva,
+        tva_new_and_exp_by_segment_by_qtr.target AS nn_target,
+        tva_new_and_exp_by_segment_by_qtr.actual AS nn_actual,
+        tva_new_and_exp_by_segment_by_qtr.tva AS nn_tva,
         nn_open_max,
         nn_open_weighted,
         nn_commit_max,
@@ -74,9 +74,9 @@ WITH segment_nn_amounts AS (
         nn_omitted_max,
         forecast_by_segment.commit_renewal AS ren_forecast,
         forecast_by_segment.upside_renewal AS ren_upside,
-        tva_bookings_ren_by_segment_by_qtr.target AS ren_target,
-        tva_bookings_ren_by_segment_by_qtr.actual AS ren_actual,
-        tva_bookings_ren_by_segment_by_qtr.tva AS ren_tva,
+        tva_ren_by_segment_by_qtr.target AS ren_target,
+        tva_ren_by_segment_by_qtr.actual AS ren_actual,
+        tva_ren_by_segment_by_qtr.tva AS ren_tva,
         ren_open_max,
         ren_open_weighted,
         ren_commit_max,
@@ -101,16 +101,16 @@ WITH segment_nn_amounts AS (
         available_renewals_won_in_qtr_and_qtd AS ren_available_renewals_won_in_qtr_and_qtd,
         available_renewals_open_past_due_qtd AS ren_available_renewals_open_past_due_qtd,
         available_renewals_lost_qtd AS ren_available_renewals_lost_qtd
-    FROM {{ ref('tva_attain_new_and_exp_by_segment_by_qtr') }}
-    LEFT JOIN {{ ref('tva_bookings_ren_by_segment_by_qtr') }} 
-        ON tva_attain_new_and_exp_by_segment_by_qtr.qtr = tva_bookings_ren_by_segment_by_qtr.qtr 
-            AND REPLACE(tva_attain_new_and_exp_by_segment_by_qtr.target_slug,'attain_new_and_exp_by_segment_by_qtr_','') = REPLACE(tva_bookings_ren_by_segment_by_qtr.target_slug,'bookings_ren_by_segment_by_qtr_','')
+    FROM {{ ref('tva_new_and_exp_by_segment_by_qtr') }}
+    LEFT JOIN {{ ref('tva_ren_by_segment_by_qtr') }} 
+        ON tva_new_and_exp_by_segment_by_qtr.qtr = tva_ren_by_segment_by_qtr.qtr 
+            AND tva_new_and_exp_by_segment_by_qtr.segment = tva_ren_by_segment_by_qtr.segment
     JOIN {{ source('sales_and_cs_gsheets','forecast_by_segment') }} 
-        ON tva_attain_new_and_exp_by_segment_by_qtr.qtr = forecast_by_segment.qtr 
-            AND REPLACE(REPLACE(tva_attain_new_and_exp_by_segment_by_qtr.target_slug,'attain_new_and_exp_by_segment_by_qtr_',''),'_','/') = forecast_by_segment.segment
-    LEFT JOIN segment_nn_amounts ON segment_nn_amounts.qtr = tva_attain_new_and_exp_by_segment_by_qtr.qtr AND segment_nn_amounts.territory_segment__c = REPLACE(tva_attain_new_and_exp_by_segment_by_qtr.target_slug,'attain_new_and_exp_by_segment_by_qtr_','')
-    LEFT JOIN segment_ren_amounts ON segment_ren_amounts.qtr = tva_bookings_ren_by_segment_by_qtr.qtr AND segment_ren_amounts.territory_segment__c = REPLACE(tva_bookings_ren_by_segment_by_qtr.target_slug,'bookings_ren_by_segment_by_qtr_','')
-    LEFT JOIN segment_available_renewals ON segment_available_renewals.qtr = tva_bookings_ren_by_segment_by_qtr.qtr AND segment_ren_amounts.territory_segment__c = segment_available_renewals.territory_segment__c
+        ON tva_new_and_exp_by_segment_by_qtr.qtr = forecast_by_segment.qtr 
+            AND tva_new_and_exp_by_segment_by_qtr.segment = forecast_by_segment.segment
+    LEFT JOIN segment_nn_amounts ON segment_nn_amounts.qtr = tva_new_and_exp_by_segment_by_qtr.qtr AND segment_nn_amounts.territory_segment__c = tva_new_and_exp_by_segment_by_qtr.segment
+    LEFT JOIN segment_ren_amounts ON segment_ren_amounts.qtr = tva_new_and_exp_by_segment_by_qtr.qtr AND segment_ren_amounts.territory_segment__c = tva_new_and_exp_by_segment_by_qtr.segment
+    LEFT JOIN segment_available_renewals ON segment_available_renewals.qtr = tva_new_and_exp_by_segment_by_qtr.qtr AND tva_new_and_exp_by_segment_by_qtr.segment = segment_available_renewals.territory_segment__c
     GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42
 )
 

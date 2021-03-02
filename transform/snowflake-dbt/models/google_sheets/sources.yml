@@ -10,7 +10,16 @@ sources:
       - name: available_renewals_historical
       - name: forecast
       - name: forecast_by_segment
-      - name: new_and_expansion_by_month
-      - name: new_and_expansion_by_segment_by_month
+      - name: new_and_expansion_by_qtr
+      - name: new_and_expansion_by_segment_by_qtr
       - name: renewal_by_qtr
       - name: renewal_by_segment_by_qtr
+
+  - name: finance_gsheets
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: finance_gsheets
+
+    tables:
+      - name: arr_by_quarter
+      - name: financial_model
+      - name: financial_statements
