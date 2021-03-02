@@ -93,8 +93,6 @@ seeds:
       schema: mattermost
     staff_github_usernames:
       schema: employee
-    target_fact:
-      schema: tva
     account_industry_mapping:
       schema: util
     auto_reply_ooo_phrases:
