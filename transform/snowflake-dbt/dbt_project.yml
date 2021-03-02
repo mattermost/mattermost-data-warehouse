@@ -101,10 +101,6 @@ seeds:
       schema: util
     version_release_dates:
       schema: mattermost
-    financial_statements:
-      schema: finance
-    financial_model:
-      schema: finance
     github_repo_categorization:
       schema: mattermost
     github_contributions_all:
