@@ -20,6 +20,6 @@ sources:
     schema: finance_gsheets
 
     tables:
-      - name: arr_by_quarter
+      - name: arr_by_qtr
       - name: financial_model
       - name: financial_statements

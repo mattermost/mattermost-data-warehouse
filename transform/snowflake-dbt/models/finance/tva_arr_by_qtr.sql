@@ -14,7 +14,7 @@ WITH actual_arr_by_qtr AS (
     GROUP BY 1
 ), arr_by_qtr AS (
     SELECT *
-    FROM {{ source('finance_gsheets', 'arr_by_quarter') }}
+    FROM {{ source('finance_gsheets', 'arr_by_qtr') }}
 ), tva_arr_by_qtr AS (
     SELECT
         arr_by_qtr.qtr,
