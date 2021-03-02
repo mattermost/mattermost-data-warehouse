@@ -111,5 +111,7 @@ seeds:
       schema: ga
     marketo_form_names:
       schema: marketo
+    nps_category_backfill:
+      schema: staging
 
 
