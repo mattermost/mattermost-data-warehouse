@@ -73,7 +73,7 @@ models:
 
 seeds:
   enabled: true
-  schema: targets
+  schema: staging
   quote_columns: False
 
   mm_snowflake:

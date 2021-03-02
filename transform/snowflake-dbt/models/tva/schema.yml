@@ -1,5 +1,0 @@
-version: 2
-
-models:
-  - name: tva_all_by_qtr
-    description: All Quarterly Target vs Actuals
