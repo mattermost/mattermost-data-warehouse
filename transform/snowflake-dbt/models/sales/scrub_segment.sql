@@ -6,7 +6,7 @@
 
 WITH segment_nn_amounts AS (
     SELECT 
-        opportunity.territory_segment__c,
+        REPLACE(opportunity.territory_segment__c,'_','/') AS segment,
         util.fiscal_year(opportunity.closedate)|| '-' || util.fiscal_quarter(opportunity.closedate) AS qtr,
         SUM(CASE WHEN opportunity.status_wlo__c = 'Open' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) ELSE 0 END) AS nn_open_max,
         SUM(CASE WHEN opportunity.status_wlo__c = 'Open' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) * probability * .01 ELSE 0 END) AS nn_open_weighted,
@@ -20,7 +20,7 @@ WITH segment_nn_amounts AS (
     GROUP BY 1, 2
 ), segment_ren_amounts AS (
     SELECT 
-        opportunity.territory_segment__c,
+        REPLACE(opportunity.territory_segment__c,'_','/') AS segment,
         util.fiscal_year(opportunity.closedate)|| '-' || util.fiscal_quarter(opportunity.closedate) AS qtr,
         SUM(CASE WHEN NOT opportunity.status_wlo__c = 'Open' THEN renewal_amount__c ELSE 0 END) AS ren_open_max,
         SUM(CASE WHEN NOT opportunity.status_wlo__c = 'Open' THEN renewal_amount__c * probability * .01 ELSE 0 END) AS ren_open_weighted,
@@ -34,7 +34,7 @@ WITH segment_nn_amounts AS (
     GROUP BY 1, 2
 ), segment_available_renewals AS (
     SELECT
-        opportunity.territory_segment__c,
+        REPLACE(opportunity.territory_segment__c,'_','/') AS segment,
         util.fiscal_year(renewal_rate_by_renewal_opportunity.renewal_date)|| '-' || util.fiscal_quarter(renewal_rate_by_renewal_opportunity.renewal_date) AS qtr,
         SUM(renewal_rate_by_renewal_opportunity.available_renewal) AS available_renewals,
         SUM(CASE WHEN renewal_date < current_date THEN renewal_rate_by_renewal_opportunity.available_renewal ELSE 0 END) AS available_renewals_qtd,
@@ -108,9 +108,9 @@ WITH segment_nn_amounts AS (
     JOIN {{ source('sales_and_cs_gsheets','forecast_by_segment') }} 
         ON tva_new_and_exp_by_segment_by_qtr.qtr = forecast_by_segment.qtr 
             AND tva_new_and_exp_by_segment_by_qtr.segment = forecast_by_segment.segment
-    LEFT JOIN segment_nn_amounts ON segment_nn_amounts.qtr = tva_new_and_exp_by_segment_by_qtr.qtr AND segment_nn_amounts.territory_segment__c = tva_new_and_exp_by_segment_by_qtr.segment
-    LEFT JOIN segment_ren_amounts ON segment_ren_amounts.qtr = tva_new_and_exp_by_segment_by_qtr.qtr AND segment_ren_amounts.territory_segment__c = tva_new_and_exp_by_segment_by_qtr.segment
-    LEFT JOIN segment_available_renewals ON segment_available_renewals.qtr = tva_new_and_exp_by_segment_by_qtr.qtr AND tva_new_and_exp_by_segment_by_qtr.segment = segment_available_renewals.territory_segment__c
+    LEFT JOIN segment_nn_amounts ON segment_nn_amounts.qtr = tva_new_and_exp_by_segment_by_qtr.qtr AND segment_nn_amounts.segment = tva_new_and_exp_by_segment_by_qtr.segment
+    LEFT JOIN segment_ren_amounts ON segment_ren_amounts.qtr = tva_new_and_exp_by_segment_by_qtr.qtr AND segment_ren_amounts.segment = tva_new_and_exp_by_segment_by_qtr.segment
+    LEFT JOIN segment_available_renewals ON segment_available_renewals.qtr = tva_new_and_exp_by_segment_by_qtr.qtr AND tva_new_and_exp_by_segment_by_qtr.segment = segment_available_renewals.segment
     GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42
 )
 

@@ -113,5 +113,3 @@ seeds:
       schema: marketo
     nps_category_backfill:
       schema: staging
-
-
