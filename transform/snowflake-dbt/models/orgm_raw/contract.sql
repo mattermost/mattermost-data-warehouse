@@ -7,5 +7,5 @@
     )
 }}
 
-{{ latest_record (source('orgm_raw','Pricebook2'))}}
+{{ latest_record (source('orgm_raw','contract'))}}
 WHERE NOT isdeleted

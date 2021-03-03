@@ -7,5 +7,4 @@
     )
 }}
 
-{{ latest_record (source('orgm_raw','campaignmember'))}}
-WHERE NOT isdeleted
+{{ latest_record (source('orgm_raw','userrole'))}}

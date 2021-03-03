@@ -7,5 +7,5 @@
     )
 }}
 
-{{ latest_record (source('orgm_raw','Task'))}}
+{{ latest_record (source('orgm_raw','task'))}}
 WHERE NOT isdeleted

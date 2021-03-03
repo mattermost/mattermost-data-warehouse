@@ -7,5 +7,5 @@
     )
 }}
 
-{{ latest_record (source('orgm_raw','Account'))}}
+{{ latest_record (source('orgm_raw','account'))}}
 WHERE NOT isdeleted

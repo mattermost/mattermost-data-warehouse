@@ -7,5 +7,5 @@
     )
 }}
 
-{{ latest_record (source('orgm_raw','OpportunityFieldHistory'))}}
+{{ latest_record (source('orgm_raw','opportunityfieldhistory'))}}
 WHERE NOT isdeleted

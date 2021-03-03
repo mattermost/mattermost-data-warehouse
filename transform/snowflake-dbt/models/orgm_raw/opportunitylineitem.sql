@@ -7,5 +7,5 @@
     )
 }}
 
-{{ latest_record (source('orgm_raw','OpportunityLineItem'))}}
+{{ latest_record (source('orgm_raw','opportunitylineitem'))}}
 WHERE NOT isdeleted

@@ -7,5 +7,5 @@
     )
 }}
 
-{{ latest_record (source('salesforce_raw','Opportunity'))}}
+{{ latest_record (source('orgm_raw','opportunity'))}}
 WHERE NOT isdeleted

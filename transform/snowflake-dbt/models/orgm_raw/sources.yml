@@ -1,29 +1,90 @@
 version: 2
+
 sources:
-  - name: salesforce_raw
-    schema: salesforce_raw
+  - name: orgm_raw
+    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    schema: orgm_raw
     loader: Stitch
     loaded_at_field: _sdc_batched_at
+
+    quoting:
+      database: true
+      schema: false
+      identifier: false
 
     freshness:
       warn_after: { count: 8, period: hour }
       error_after: { count: 24, period: hour }
-  
+
     tables:
-        - name: Account
-        - name: Campaign
-        - name: CampaignMember
-        - name: Contact
-        - name: Event
-        - name: Lead
-        - name: Opportunity
-        - name: OpportunityContactRole
-        - name: OpportunityFieldHistory
-        - name: OpportunityHistory
-        - name: OpportunityLineItem
-        - name: Pricebook2
-        - name: PricebookEntry
-        - name: Product2
-        - name: Profile
-        - name: Task
-        - name: User
+      - name: account
+        description: "SFDC Account"
+
+      - name: billing_entity__c
+        description: "SFDC Billing Entity"
+
+      - name: campaign
+        description: "SFDC Campaign"
+
+      - name: campaignmember
+        description: "SFDC Campaign member"
+
+      - name: contact
+        description: "SFDC Contact"
+      
+      - name: contract
+        description: "SFDC Contract"
+
+      - name: customer_onboarding__c
+        description: "SFDC Customer Onboarding"
+
+      - name: customer_reference__c
+        description: "SFDC Customer Reference"
+
+      - name: customer_risk__c
+        description: "SFDC Customer Risk"
+
+      - name: customer_risk__history
+        description: "SFDC Customer Risk History"
+
+      - name: lead
+        description: "SFDC Lead"
+
+      - name: netsuite_conn__netsuite_financial__c
+        description: "Netsuite Data in SFDC"
+
+      - name: opportunity
+        description: "SFDC Opportunity"
+
+      - name: opportunitycontactrole
+        description: "SFDC Opportunity Contact Role"
+
+      - name: opportunityfieldhistory
+        description: "SFDC Opportunity Field History"
+
+      - name: opportunityhistory
+        description: "SFDC Opportunity History"
+
+      - name: opportunitylineitem
+        description: "SFDC Opportunity Line Item"
+
+      - name: pricebookentry
+        description: "SFDC Pricebook Entry"
+
+      - name: product2
+        description: "SFDC Product"
+
+      - name: task
+        description: "SFDC Task"
+
+      - name: territory_mapping__c
+        description: "SFDC Territory Mapping"
+
+      - name: true_up_reports__c
+        description: "SFDC True Up Reports"
+    
+      - name: user
+        description: "SFDC User"
+    
+      - name: userrole
+        description: "SFDC User Role"

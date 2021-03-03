@@ -7,4 +7,4 @@
     )
 }}
 
-{{ latest_record (source('orgm_raw','User'))}}
+{{ latest_record (source('orgm_raw','user'))}}
