@@ -19,4 +19,4 @@ spec:
         secretName: pipelinewise-secrets
     - name: pipelinewise-volume
       persistentVolumeClaim:
-        claimName: pipelinewise-pv-claim
+        claimName: pipelinewise-pv
