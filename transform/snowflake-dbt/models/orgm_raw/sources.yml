@@ -1,0 +1,29 @@
+version: 2
+sources:
+  - name: salesforce_raw
+    schema: salesforce_raw
+    loader: Stitch
+    loaded_at_field: _sdc_batched_at
+
+    freshness:
+      warn_after: { count: 8, period: hour }
+      error_after: { count: 24, period: hour }
+  
+    tables:
+        - name: Account
+        - name: Campaign
+        - name: CampaignMember
+        - name: Contact
+        - name: Event
+        - name: Lead
+        - name: Opportunity
+        - name: OpportunityContactRole
+        - name: OpportunityFieldHistory
+        - name: OpportunityHistory
+        - name: OpportunityLineItem
+        - name: Pricebook2
+        - name: PricebookEntry
+        - name: Product2
+        - name: Profile
+        - name: Task
+        - name: User
