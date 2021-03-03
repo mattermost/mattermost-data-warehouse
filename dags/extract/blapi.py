@@ -41,7 +41,8 @@ volume_mount = VolumeMount(
     read_only=False,
 )
 
-del pod_defaults["cmds"]
+if "cmds" in pod_defaults:
+    del pod_defaults["cmds"]
 
 blapi = KubernetesPodOperator(
     **pod_defaults,
