@@ -410,3 +410,19 @@ select get_sys_var({{ var_name }})
         {%- endfor -%} 
 
 {%- endmacro -%}
+
+
+
+{% macro latest_record(src) %}
+    SELECT DISTINCT o.id as sfid, o.*
+    FROM {{ src }} o
+    INNER JOIN (
+        SELECT id,
+                MAX(_sdc_sequence) AS seq,
+                MAX(_sdc_batched_at) AS batch
+        FROM {{ src }}
+        GROUP BY id) oo
+    ON o.id = oo.id
+        AND o._sdc_sequence = oo.seq
+        AND o._sdc_batched_at = oo.batch
+{%- endmacro %}
