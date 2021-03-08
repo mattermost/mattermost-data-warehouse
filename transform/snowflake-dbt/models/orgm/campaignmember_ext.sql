@@ -9,9 +9,9 @@ WITH campaignmember_ext AS (
         campaignmember.sfid as campaignmember_sfid,
         COALESCE(contact.request_to_contact_us_date__c,lead.request_to_contact_us_date__c) AS contact_us_request_date,
         COALESCE(contact.trial_req_date__c,lead.request_a_trial_date__c) AS trial_request_date
-    FROM {{ source('orgm','campaignmember') }}
-    LEFT JOIN {{ source('orgm','lead') }} ON campaignmember.leadid = lead.sfid
-    LEFT JOIN {{ source('orgm','contact') }} ON campaignmember.contactid = contact.sfid
+    FROM {{ ref('campaignmember') }}
+    LEFT JOIN {{ ref('lead') }} ON campaignmember.leadid = lead.sfid
+    LEFT JOIN {{ ref('contact') }} ON campaignmember.contactid = contact.sfid
     WHERE COALESCE(contact.request_to_contact_us_date__c,lead.request_to_contact_us_date__c) IS NOT NULL 
         OR COALESCE(contact.trial_req_date__c,lead.request_a_trial_date__c) IS NOT NULL
 )
