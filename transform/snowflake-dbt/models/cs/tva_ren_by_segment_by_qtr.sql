@@ -9,9 +9,9 @@ WITH actual_ren_by_segment_by_qtr AS (
 	    REPLACE(opportunity.territory_segment__c,'_','/') AS segment,
 	    util.fiscal_year(opportunity.closedate)|| '-' || util.fiscal_quarter(opportunity.closedate) AS qtr,
 	    ROUND(SUM(renewal_amount__c),2) AS actual
-    FROM {{ source('orgm','account') }}
-        LEFT JOIN {{ source('orgm','opportunity') }} ON account.sfid = opportunity.accountid
-        LEFT JOIN {{ source('orgm','opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
+    FROM {{ ref('account') }}
+        LEFT JOIN {{ ref('opportunity') }} ON account.sfid = opportunity.accountid
+        LEFT JOIN {{ ref('opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
     WHERE util.fiscal_year(closedate) = util.get_sys_var('curr_fy') AND opportunity.iswon
     GROUP BY 1,2
 ), tva_ren_by_segment_by_qtr AS (

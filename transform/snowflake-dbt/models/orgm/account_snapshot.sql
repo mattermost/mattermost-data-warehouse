@@ -27,7 +27,7 @@ WITH account_snapshot AS (
         territory_geo__c,
         territory_segment__c,
         territory_last_updated__c
-        FROM {{ source('orgm', 'account') }}
+        FROM {{ ref('account') }}
         {% if is_incremental() %}
         WHERE current_date >= (SELECT MAX(snapshot_date) FROM {{this}})
         {% endif %}

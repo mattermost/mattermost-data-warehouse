@@ -22,9 +22,9 @@ WITH renewal_rate_by_renewal_opportunity AS (
         ROUND(LEAST(SUM(CASE WHEN status_wlo__c = 'Won' THEN renewal_amount__c ELSE 0 END),available_renewals_by_opportunity.available_renewal)*1.00/available_renewals_by_opportunity.available_renewal,4) as ren_rate,
         ROUND(LEAST(SUM(CASE WHEN status_wlo__c != 'Lost' THEN renewal_amount__c ELSE 0 END),available_renewals_by_opportunity.available_renewal)*1.00/available_renewals_by_opportunity.available_renewal,4) as max_ren_rate
     FROM {{ ref('available_renewal_by_opportunity') }} AS available_renewals_by_opportunity
-    LEFT JOIN {{ source('orgm','account') }} ON account.sfid = available_renewals_by_opportunity.account_id
-    LEFT JOIN {{ source('orgm','opportunity') }} ON opportunity.sfid = available_renewals_by_opportunity.renewal_opportunity
-    LEFT JOIN {{ source('orgm','opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
+    LEFT JOIN {{ ref('account') }} ON account.sfid = available_renewals_by_opportunity.account_id
+    LEFT JOIN {{ ref('opportunity') }} ON opportunity.sfid = available_renewals_by_opportunity.renewal_opportunity
+    LEFT JOIN {{ ref('opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
     GROUP BY 1, 2, 3, 4, 5, 6, 7, 13
 )
 

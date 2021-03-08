@@ -11,9 +11,9 @@ WITH account_dates AS (
       min(start_date__c) AS min_start_date,
       max(end_date__c) AS max_end_date
     FROM orgm.account
-        LEFT JOIN {{ source('orgm', 'account') }} AS master_account ON master_account.sfid = account.parentid
-        JOIN {{ source('orgm', 'opportunity') }} ON opportunity.accountid = account.sfid
-        JOIN {{ source('orgm', 'opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
+        LEFT JOIN {{ ref( 'account') }} AS master_account ON master_account.sfid = account.parentid
+        JOIN {{ ref( 'opportunity') }} ON opportunity.accountid = account.sfid
+        JOIN {{ ref( 'opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
     WHERE opportunity.iswon
     GROUP BY 1, 2
 ), with_util_dates AS (

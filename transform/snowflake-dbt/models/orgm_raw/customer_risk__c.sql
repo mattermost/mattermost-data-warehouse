@@ -2,7 +2,7 @@
     config(
         {
             "materialized": "table",
-            "schema": "orgm_new"
+            "schema": "orgm"
         }
     )
 }}

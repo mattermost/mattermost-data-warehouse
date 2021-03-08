@@ -8,8 +8,8 @@ WITH actual_ren_by_qtr AS (
     SELECT
       util.fiscal_year(opportunity.closedate)|| '-' || util.fiscal_quarter(opportunity.closedate) AS qtr,
       ROUND(SUM(renewal_amount__c)) AS actual
-    FROM {{ source('orgm', 'opportunity') }} AS opportunity
-    LEFT JOIN {{ source('orgm', 'opportunitylineitem') }} AS opportunitylineitem ON opportunity.sfid = opportunitylineitem.opportunityid
+    FROM {{ ref( 'opportunity') }} AS opportunity
+    LEFT JOIN {{ ref( 'opportunitylineitem') }} AS opportunitylineitem ON opportunity.sfid = opportunitylineitem.opportunityid
     WHERE iswon
     GROUP BY 1
 ), tva_ren_by_qtr AS (

@@ -10,7 +10,7 @@ WITH w_end_date AS (
         min(end_date__c) as min_end_date,
         max(end_date__c) as max_end_date,
         count(distinct end_date__c) as num_diff_end_dates
-  FROM {{ source('orgm', 'opportunitylineitem') }}
+  FROM {{ ref('opportunitylineitem') }}
   WHERE product_type__c='Recurring'
   GROUP BY 1
 ), w_start_date AS ( 
@@ -19,7 +19,7 @@ WITH w_end_date AS (
         min(start_date__c) as min_start_date,
         max(start_date__c) as max_start_date,
         count(distinct start_date__c) as num_diff_start_dates
-  FROM {{ source('orgm', 'opportunitylineitem') }}
+  FROM {{ ref('opportunitylineitem') }}
   WHERE product_type__c='Recurring'
   GROUP BY 1
 ), w_oppt_commit AS ( 
@@ -28,8 +28,8 @@ WITH w_end_date AS (
        min(ofh.createddate) as first_commit_date,
        max(ofh.createddate) as last_commit_date,
        count(distinct(to_char(ofh.createddate,'YYYY-MM'))) as num_times_slipped
-  FROM {{ source('orgm', 'opportunityfieldhistory') }} ofh
-  LEFT JOIN {{ source('orgm', 'opportunity') }} o ON (ofh.opportunityid = o.sfid)
+  FROM {{ ref('opportunityfieldhistory') }} ofh
+  LEFT JOIN {{ ref('opportunity') }} o ON (ofh.opportunityid = o.sfid)
   WHERE ofh.field = 'ForecastCategoryName'
   AND ofh.newvalue = 'Commit'
   AND o.e_purchase_date__c IS NULL
@@ -42,17 +42,17 @@ WITH w_end_date AS (
     max(netsuite_conn__transaction_date__c) AS paid_date,
     max(payment_method__c) AS payment_method,
     TRUE AS paid
-  FROM {{ source('orgm', 'netsuite_conn__netsuite_financial__c') }} AS netsuite_financial
+  FROM {{ ref('netsuite_conn__netsuite_financial__c') }} AS netsuite_financial
   WHERE (netsuite_conn__type__c = 'Cash Sale' AND netsuite_conn__status__c = 'Deposited') OR (netsuite_conn__type__c = 'Customer Payment' AND netsuite_conn__status__c IN ('Deposited','Not Deposited'))
   GROUP BY 1,6
 ), opportunity_marketing AS (
   SELECT 
     opportunity.sfid AS opportunity_sfid,
     BOOLOR_AGG(TRUE) AS marketing_generated
-  FROM {{ source('orgm', 'opportunity') }}
-  LEFT JOIN {{ source('orgm', 'opportunitycontactrole') }} ON opportunity.sfid = opportunitycontactrole.opportunityid
-  LEFT JOIN {{ source('orgm', 'contact') }} AS contact ON opportunitycontactrole.contactid = contact.sfid
-  LEFT JOIN {{ source('orgm', 'lead') }} AS lead ON lead.convertedcontactid = contact.sfid
+  FROM {{ ref('opportunity') }}
+  LEFT JOIN {{ ref('opportunitycontactrole') }} ON opportunity.sfid = opportunitycontactrole.opportunityid
+  LEFT JOIN {{ ref('contact') }} AS contact ON opportunitycontactrole.contactid = contact.sfid
+  LEFT JOIN {{ ref('lead') }} AS lead ON lead.convertedcontactid = contact.sfid
   WHERE least(coalesce(contact.first_mql_date__c,current_timestamp()), coalesce(lead.first_mql_date__c,current_timestamp())) < opportunity.createddate
     AND opportunity.type  IN ('Account Expansion', 'New Subscription')
     AND coalesce(contact.first_mql_date__c, lead.first_mql_date__c) IS NOT NULL
@@ -63,7 +63,7 @@ WITH w_end_date AS (
       SUM(CASE WHEN forecastcategoryname = 'Commit' THEN amount ELSE 0 END) AS amount_in_commit,
       SUM(CASE WHEN forecastcategoryname = 'Best Case' THEN amount ELSE 0 END) AS amount_in_best_case,
       SUM(CASE WHEN forecastcategoryname = 'Pipeline' THEN amount ELSE 0 END) AS amount_in_pipeline
-  FROM {{ source('orgm','opportunity') }}
+  FROM {{ ref('opportunity') }}
   GROUP BY 1
 ), opportunity_ext AS (
   SELECT
@@ -92,8 +92,8 @@ WITH w_end_date AS (
       SUM(renewal_amount__c) AS sum_renewal_amount,
       SUM(multi_amount__c) AS sum_multi_amount,
       SUM(renewal_multi_amount__c) AS sum_renewal_multi_amount
-  FROM {{ source('orgm', 'opportunity') }}
-  LEFT JOIN {{ source('orgm', 'opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
+  FROM {{ ref('opportunity') }}
+  LEFT JOIN {{ ref('opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
   LEFT JOIN w_end_date ON opportunity.sfid = w_end_date.opportunity_sfid
   LEFT JOIN w_start_date ON opportunity.sfid = w_start_date.opportunity_sfid
   LEFT JOIN w_oppt_commit ON opportunity.sfid = w_oppt_commit.opportunity_sfid

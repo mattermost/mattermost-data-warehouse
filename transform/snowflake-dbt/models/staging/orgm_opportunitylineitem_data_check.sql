@@ -11,6 +11,6 @@ WITH orgm_opportunitylineitem_data_check AS (
         systemmodstamp,
         createddate,
         TO_TIMESTAMP_NTZ(current_timestamp) AS processed_at
-    FROM {{ source('orgm','opportunitylineitem') }}
+    FROM {{ ref('opportunitylineitem') }}
 )
 SELECT * FROM orgm_opportunitylineitem_data_check
