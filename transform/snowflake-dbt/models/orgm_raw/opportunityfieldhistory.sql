@@ -7,7 +7,6 @@
     )
 }}
 
-
 SELECT DISTINCT o.id as sfid, o.*, coalesce(NEWVALUE__BO::VARCHAR,NEWVALUE__DE::VARCHAR,NEWVALUE__FL::VARCHAR,NEWVALUE__ST::VARCHAR) as newvalue, coalesce(OLDVALUE__BO::VARCHAR,OLDVALUE__DE::VARCHAR,OLDVALUE__FL::VARCHAR,OLDVALUE__ST::VARCHAR) as oldvalue
 FROM {{ source('orgm_raw','opportunityfieldhistory') }} o
 INNER JOIN (
