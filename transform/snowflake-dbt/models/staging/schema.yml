@@ -9,3 +9,27 @@ models:
 
   - name: orgm_opportunitylineitem_data_check
     description: OrgM Opportunity Line Item data sent to Heroku Postgres to confirm data integrity across systems.
+
+  - name: orgm_account_arr_and_seats
+    description: Current Account ARR & Licensed Seats
+    meta:
+      hightouch:
+        slug: "orgm-account-arr-and-seats"
+        primary_key: account_sfid
+        model:
+          id: 12312867
+        destinations:
+          - id: 52590
+            schedule:
+              type: manual
+            config:
+              subscribeAdd: true
+              subscribeChange: false
+              subscribeDelete: false
+              mappings:
+                - from: account_sfid
+                  to: sfid
+                - from: total_arr
+                  to: ARR_Current__c
+                - from: seats
+                  to: Seats_Licensed__c
