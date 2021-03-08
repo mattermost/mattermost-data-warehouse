@@ -1,7 +1,7 @@
 version: 2
 
 sources:
-  - name: orgm
+  - name: orgm_old
     database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
     schema: orgm_old
     loader: Stitch
@@ -44,7 +44,7 @@ sources:
       - name: opportunitylineitem
         description: "SFDC Opportunity Line Item"
 
-      - name: tasks_filtered
+      - name: task
         description: "SFDC Tasks with Marketo removed"
 
       - name: user
