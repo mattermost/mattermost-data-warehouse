@@ -13,7 +13,7 @@ WITH account_customer_journey_fannout AS (
 	    FIRST_VALUE(opportunity.competitor__c IGNORE NULLS) OVER (PARTITION BY account.sfid ORDER BY closedate desc) AS competitor,
 	    FIRST_VALUE(opportunity.target_integrations__c IGNORE NULLS) OVER (PARTITION BY account.sfid ORDER BY closedate desc) AS target_integrations,
 	    FIRST_VALUE(opportunity.other_integrations__c IGNORE NULLS) OVER (PARTITION BY account.sfid ORDER BY closedate desc) AS other_integrations,
-	    FIRST_VALUE(opportunity.current_identitiy_provider_sso__c IGNORE NULLS) OVER (PARTITION BY account.sfid ORDER BY closedate desc) AS current_identitiy_provider_sso,
+	    FIRST_VALUE(opportunity.current_identity_provider_sso__c IGNORE NULLS) OVER (PARTITION BY account.sfid ORDER BY closedate desc) AS current_identitiy_provider_sso,
 	    FIRST_VALUE(opportunity.emm_mdm__c IGNORE NULLS) OVER (PARTITION BY account.sfid ORDER BY closedate desc) AS emm_mdm,
 	    FIRST_VALUE(opportunity.extended_support_release_customer__c IGNORE NULLS) OVER (PARTITION BY account.sfid ORDER BY closedate desc) AS extended_support_release_customer,
 	    FIRST_VALUE(opportunity.current_productivity_platform__c IGNORE NULLS) OVER (PARTITION BY account.sfid ORDER BY closedate desc) AS current_productivity_platform,
