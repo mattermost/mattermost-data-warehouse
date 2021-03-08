@@ -31,7 +31,7 @@ select get_sys_var({{ var_name }})
 
 {% macro delete_orgm_rows(audit_table, orgm_table) %}
     {% set query %}
-        delete from {{ source('orgm', orgm_table) }}
+        delete from {{ source('orgm_old', orgm_table) }}
         where sfid
             in (select deleted_sfid from {{ audit_table }})
     {% endset %}

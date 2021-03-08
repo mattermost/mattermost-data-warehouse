@@ -15,6 +15,6 @@ WITH orgm_lead_data_check AS (
         email,
         converteddate,
         TO_TIMESTAMP_NTZ(current_timestamp) AS processed_at
-    FROM {{ source('orgm','lead') }}
+    FROM {{ ref('lead') }}
 )
 SELECT * FROM orgm_lead_data_check

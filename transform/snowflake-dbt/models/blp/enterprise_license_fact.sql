@@ -35,7 +35,7 @@ WITH enterprise_license_fact AS (
     LEFT JOIN {{ ref('license_daily_details') }} AS month_ago ON licenses.license_id = month_ago.license_id
         AND month_ago.date >= CONVERT_TIMEZONE('America/Los_Angeles',current_timestamp)::date - INTERVAL '38 days'
         AND month_ago.date < CONVERT_TIMEZONE('America/Los_Angeles',current_timestamp)::date - INTERVAL '30 days'
-    LEFT JOIN {{ source('orgm','account') }} ON account.sfid = licenses.account_sfid
+    LEFT JOIN {{ ref('account') }} ON account.sfid = licenses.account_sfid
     WHERE licenses.server_expire_date_join >= CONVERT_TIMEZONE('America/Los_Angeles',current_timestamp)::date AND NOT licenses.trial AND (account.arr_current__c > 0 or seats_licensed__c > 0)
     GROUP BY 1, 2
 )

@@ -235,7 +235,7 @@ WITH license        AS (
                             l.*
                           , a.name
                          FROM {{ ref('enterprise_license_mapping') }} l
-                              LEFT JOIN {{ source('orgm', 'account') }} a
+                              LEFT JOIN {{ ref( 'account') }} a
                                         ON l.account_sfid = a.sfid
                         ) elm
                         ON l.licenseid = elm.licenseid

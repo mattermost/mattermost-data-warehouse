@@ -24,7 +24,7 @@ with account_mapping as (
           ON trim(elm.licenseid) = trim(lo.licenseid)
         GROUP BY 1, 2, 3, 4
       ) elm
-  LEFT JOIN {{ source('orgm', 'account') }} a
+  LEFT JOIN {{ ref( 'account') }} a
       ON elm.account_sfid = a.sfid
   GROUP BY 1, 2, 3, 4, 5
 ),
