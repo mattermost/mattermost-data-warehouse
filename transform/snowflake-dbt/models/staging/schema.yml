@@ -33,3 +33,5 @@ models:
                   to: ARR_Current__c
                 - from: seats
                   to: Seats_Licensed__c
+                - from: object_type
+                  to: Description
