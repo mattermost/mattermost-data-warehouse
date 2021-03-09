@@ -8,7 +8,7 @@
 select
     current_timestamp AS processed_at,
     object_id__c AS deleted_sfid
-from {{ source('orgm', 'delete_history__c') }}
+from {{ source('orgm_old','delete_history__c') }}
 
 {% if is_incremental() %}
   where object_id__c not in (select deleted_sfid from {{ this }})

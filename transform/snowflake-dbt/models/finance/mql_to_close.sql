@@ -53,7 +53,7 @@ with marketo_form_fills as (
         additional_details                                                                  as mql_reason,
         DATE                                                                                as mql_date,
         CONVERTEDCONTACTID
-    from {{ source('orgm','lead') }}
+    from {{ ref('lead') }}
         left join marketo_form_fills on lower(lead.email) = lower(marketo_form_fills.email) and rank = 1
         left join lead_hist on lead.sfid = lead_hist.LEAD_SFID
     where coalesce(FIRST_MQL_DATE__C,MOST_RECENT_MQL_DATE__C) IS NOT NULL
@@ -126,12 +126,12 @@ with marketo_form_fills as (
         opportunity.CREATEDDATE::date as createddate,
         mql_reason
     from final_lead_details
-        join {{ source('orgm','contact') }} on final_lead_details.CONVERTEDCONTACTID = contact.sfid
-        join {{ source('orgm','opportunitycontactrole') }} on contact.sfid = OPPORTUNITYCONTACTROLE.CONTACTID
+        join {{ ref('contact') }} on final_lead_details.CONVERTEDCONTACTID = contact.sfid
+        join {{ ref('opportunitycontactrole') }} on contact.sfid = OPPORTUNITYCONTACTROLE.CONTACTID
         join {{ ref('opportunity_ext') }} on OPPORTUNITYCONTACTROLE.OPPORTUNITYID = OPPORTUNITY_SFID and MARKETING_GENERATED
-        join {{ source('orgm','opportunity') }} on OPPORTUNITY.sfid = OPPORTUNITY_EXT.OPPORTUNITY_SFID and final_lead_details.MOST_RECENT_MQL_DATE__C::date <= opportunity.CREATEDDATE::date
-        join {{ source('orgm','opportunitylineitem') }} on opportunity.SFID = OPPORTUNITYLINEITEM.opportunityid
-        join {{ source('orgm','account') }} on opportunity.accountid = ACCOUNT.sfid
+        join {{ ref('opportunity') }} on OPPORTUNITY.sfid = OPPORTUNITY_EXT.OPPORTUNITY_SFID and final_lead_details.MOST_RECENT_MQL_DATE__C::date <= opportunity.CREATEDDATE::date
+        join {{ ref('opportunitylineitem') }} on opportunity.SFID = OPPORTUNITYLINEITEM.opportunityid
+        join {{ ref('account') }} on opportunity.accountid = ACCOUNT.sfid
     group by 1, 2, 3, 4, 5, 6
 ), order_mql_leads as (
     select
@@ -166,11 +166,11 @@ with marketo_form_fills as (
         DATEDIFF('day', MIN_START_DATE, MAX_END_DATE) + 1                                     as length,
         max(mql_reason) as mql_reason
     from final_lead_details
-        left join {{ source('orgm','lead') }} on lead.sfid = final_lead_details.SFID
+        left join {{ ref('lead') }} on lead.sfid = final_lead_details.SFID
         left join lead_credit on lead_sfid = final_lead_details.SFID
-        left join {{ source('orgm','opportunity') }} on lead_credit.opportunity_sfid = opportunity.SFID
+        left join {{ ref('opportunity') }} on lead_credit.opportunity_sfid = opportunity.SFID
         left join{{ ref('opportunity_ext') }} on OPPORTUNITY.SFID = OPPORTUNITY_EXT.OPPORTUNITY_SFID
-        left join {{ source('orgm','account') }} on opportunity.accountid = ACCOUNT.sfid
+        left join {{ ref('account') }} on opportunity.accountid = ACCOUNT.sfid
     group by 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 , 19, 20
     order by OPPORTUNITY_SFID asc
 ), opportunity_hist as (
@@ -184,7 +184,7 @@ with marketo_form_fills as (
         MAX(CASE WHEN newvalue in ('6. Closed Won','Closed Won') THEN OPPORTUNITYFIELDHISTORY.CREATEDDATE ELSE NULL END)::date as stage_6,
         MAX(CASE WHEN newvalue in ('7. Closed Lost','Closed Lost') THEN OPPORTUNITYFIELDHISTORY.CREATEDDATE ELSE NULL END)::date as stage_7
     from lead_credit
-    left join {{ source('orgm','opportunityfieldhistory') }} on opportunityfieldhistory.OPPORTUNITYID = opportunity_sfid and field = 'StageName'
+    left join {{ ref('opportunityfieldhistory') }} on opportunityfieldhistory.OPPORTUNITYID = opportunity_sfid and field = 'StageName'
     group by 1
 )
 

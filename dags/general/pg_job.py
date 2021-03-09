@@ -42,7 +42,6 @@ def get_container_operator(task_name, job_name):
 # Create the DAG
 dag = DAG("pg_job", default_args=default_args, schedule_interval="20-59/30 * * * *")
 
-tasks_filtered = get_container_operator("tasks-filtered", "tasks_filtered")
 account_type = get_container_operator("account-type", "account_type")
 owner_segment_updates = get_container_operator(
     "owner-segment-updates", "owner_segment_updates"
@@ -71,4 +70,4 @@ update_unsequenced_outreach_leads = get_container_operator(
 
 heroku_connect_retry = get_container_operator("heroku-connect-retry", "connect_retry")
 
-tasks_filtered >> account_type >> owner_segment_updates >> lead_account >> lead_mql >> update_tasks_and_lead_connected >> update_unsequenced_outreach_leads >> update_opportunitylineitem_amounts >> pg_update_opportunity_time_in_stage >> heroku_connect_retry
+account_type >> owner_segment_updates >> lead_account >> lead_mql >> update_tasks_and_lead_connected >> update_unsequenced_outreach_leads >> update_opportunitylineitem_amounts >> pg_update_opportunity_time_in_stage >> heroku_connect_retry

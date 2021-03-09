@@ -8,8 +8,8 @@ WITH actual_new_and_exp_by_qtr AS (
     SELECT
 	    util.fiscal_year(opportunity.closedate)|| '-' || util.fiscal_quarter(opportunity.closedate) AS qtr,
 	    ROUND(SUM(new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c),2) AS actual
-    FROM {{ source('orgm','opportunity') }}
-        LEFT JOIN {{ source('orgm','opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
+    FROM {{ ref('opportunity') }}
+        LEFT JOIN {{ ref('opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
     WHERE util.fiscal_year(closedate) = util.get_sys_var('curr_fy') AND opportunity.iswon
     GROUP BY 1
 ), tva_new_and_exp_by_qtr AS (

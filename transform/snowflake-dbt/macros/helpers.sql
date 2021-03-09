@@ -22,7 +22,7 @@ select get_sys_var({{ var_name }})
 {%- endmacro %}
 
 {% macro post_audit_delete_hook(audit_table) %}
-    {% set orgm_tables = ['account', 'campaign', 'campaignmember', 'contact', 'lead', 'opportunity', 'opportunitylineitem', 'territory__c', 'territory_mapping__c'] %}
+    {% set orgm_tables = ['account', 'campaign', 'campaignmember', 'contact', 'lead', 'opportunity', 'opportunitylineitem', 'territory_mapping__c','task','opportunityfieldhistory'] %}
 
     {% for t in orgm_tables %}
         {{ delete_orgm_rows(audit_table, t) }}
@@ -31,7 +31,7 @@ select get_sys_var({{ var_name }})
 
 {% macro delete_orgm_rows(audit_table, orgm_table) %}
     {% set query %}
-        delete from {{ source('orgm', orgm_table) }}
+        delete from {{ source('orgm_old', orgm_table) }}
         where sfid
             in (select deleted_sfid from {{ audit_table }})
     {% endset %}

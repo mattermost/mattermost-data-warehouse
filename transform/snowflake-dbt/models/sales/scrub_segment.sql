@@ -14,8 +14,8 @@ WITH segment_nn_amounts AS (
         SUM(CASE WHEN forecastcategoryname = 'Best Case' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) ELSE 0 END) AS nn_best_case_max,
         SUM(CASE WHEN forecastcategoryname = 'Pipeline' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) ELSE 0 END) AS nn_pipeline_max,
         SUM(CASE WHEN forecastcategoryname = 'Omitted' THEN (new_amount__c + expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) ELSE 0 END) AS nn_omitted_max
-    FROM {{ source('orgm','opportunity') }}
-    LEFT JOIN {{ source('orgm','opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
+    FROM {{ ref('opportunity') }}
+    LEFT JOIN {{ ref('opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
     WHERE util.fiscal_year(closedate) = util.get_sys_var('curr_fy')
     GROUP BY 1, 2
 ), segment_ren_amounts AS (
@@ -28,8 +28,8 @@ WITH segment_nn_amounts AS (
         SUM(CASE WHEN forecastcategoryname = 'Best Case' THEN renewal_amount__c ELSE 0 END) AS ren_best_case_max,
         SUM(CASE WHEN forecastcategoryname = 'Pipeline' THEN renewal_amount__c ELSE 0 END) AS ren_pipeline_max,
         SUM(CASE WHEN forecastcategoryname = 'Omitted' THEN renewal_amount__c ELSE 0 END) AS ren_omitted_max
-    FROM {{ source('orgm','opportunity') }}
-    LEFT JOIN {{ source('orgm','opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
+    FROM {{ ref('opportunity') }}
+    LEFT JOIN {{ ref('opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
     WHERE util.fiscal_year(closedate) = util.get_sys_var('curr_fy')
     GROUP BY 1, 2
 ), segment_available_renewals AS (
@@ -55,7 +55,7 @@ WITH segment_nn_amounts AS (
         SUM(CASE WHEN opportunity.status_wlo__c = 'Won' AND renewal_rate_by_renewal_opportunity.renewal_date > opportunity.closedate AND util.fiscal_year(renewal_rate_by_renewal_opportunity.renewal_date)|| '-' || util.fiscal_quarter(renewal_rate_by_renewal_opportunity.renewal_date) != util.fiscal_year(opportunity.closedate)|| '-' || util.fiscal_quarter(opportunity.closedate) THEN renewal_rate_by_renewal_opportunity.won_renewal_gross_total ELSE 0 END) AS available_renewals_won_early,
         SUM(CASE WHEN opportunity.status_wlo__c = 'Open' AND util.fiscal_year(renewal_rate_by_renewal_opportunity.renewal_date)|| '-' || util.fiscal_quarter(renewal_rate_by_renewal_opportunity.renewal_date) = util.fiscal_year(opportunity.closedate)|| '-' || util.fiscal_quarter(opportunity.closedate) THEN renewal_rate_by_renewal_opportunity.open_renewal_gross_total ELSE 0 END) AS available_renewals_open_in_qtr
     FROM {{ ref('renewal_rate_by_renewal_opportunity') }}
-    LEFT JOIN {{ source('orgm','opportunity') }} ON opportunity.sfid = renewal_rate_by_renewal_opportunity.opportunityid
+    LEFT JOIN {{ ref('opportunity') }} ON opportunity.sfid = renewal_rate_by_renewal_opportunity.opportunityid
     GROUP BY 1, 2
 ), scrub_segment AS (
     SELECT 

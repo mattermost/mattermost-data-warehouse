@@ -52,7 +52,7 @@ WITH zendesk_ticket_details AS (
     FROM {{ source('zendesk_raw', 'tickets') }}
     LEFT JOIN {{ source('zendesk_raw', 'ticket_metrics') }} ON tickets.id = ticket_metrics.ticket_id
     LEFT JOIN {{ source('zendesk_raw', 'organizations') }} ON tickets.organization_id = organizations.id
-    LEFT JOIN {{ source('orgm', 'account') }} ON left(organizations.external_id,15) = left(account.sfid,15)
+    LEFT JOIN {{ ref( 'account') }} ON left(organizations.external_id,15) = left(account.sfid,15)
     LEFT JOIN {{ source('zendesk_raw', 'users') }} AS assignee ON assignee.id = tickets.assignee_id
     LEFT JOIN {{ ref('custom_ticket_fields') }} ON tickets.id = custom_ticket_fields.ticket_id
     LEFT JOIN {{ source('zendesk_raw', 'ticket_comments') }} ON tickets.id = ticket_comments.ticket_id

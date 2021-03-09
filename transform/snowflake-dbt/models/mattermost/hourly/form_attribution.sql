@@ -30,8 +30,8 @@ with website_visits_w_adgroup as (
 ), form_attribution as (
     select form_adgroup_attribution.*, coalesce(lead.status, case when contact.sfid is not null then 'Contact Only' else NULL end) as lead_status, lead.sfid as leadid, contact.sfid as contactid
     from form_adgroup_attribution
-    left join {{ source('orgm','lead') }} on lower(lead.email) = lower(form_adgroup_attribution.email)
-    left join {{ source('orgm','contact') }} on lower(contact.email) = lower(form_adgroup_attribution.email)
+    left join {{ ref('lead') }} on lower(lead.email) = lower(form_adgroup_attribution.email)
+    left join {{ ref('contact') }} on lower(contact.email) = lower(form_adgroup_attribution.email)
 )
 
 select * from form_attribution

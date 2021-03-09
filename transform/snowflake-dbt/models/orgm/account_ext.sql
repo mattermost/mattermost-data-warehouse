@@ -13,15 +13,15 @@ WITH account_customer_journey_fannout AS (
 	    FIRST_VALUE(opportunity.competitor__c IGNORE NULLS) OVER (PARTITION BY account.sfid ORDER BY closedate desc) AS competitor,
 	    FIRST_VALUE(opportunity.target_integrations__c IGNORE NULLS) OVER (PARTITION BY account.sfid ORDER BY closedate desc) AS target_integrations,
 	    FIRST_VALUE(opportunity.other_integrations__c IGNORE NULLS) OVER (PARTITION BY account.sfid ORDER BY closedate desc) AS other_integrations,
-	    FIRST_VALUE(opportunity.current_identitiy_provider_sso__c IGNORE NULLS) OVER (PARTITION BY account.sfid ORDER BY closedate desc) AS current_identitiy_provider_sso,
+	    FIRST_VALUE(opportunity.current_identity_provider_sso__c IGNORE NULLS) OVER (PARTITION BY account.sfid ORDER BY closedate desc) AS current_identitiy_provider_sso,
 	    FIRST_VALUE(opportunity.emm_mdm__c IGNORE NULLS) OVER (PARTITION BY account.sfid ORDER BY closedate desc) AS emm_mdm,
 	    FIRST_VALUE(opportunity.extended_support_release_customer__c IGNORE NULLS) OVER (PARTITION BY account.sfid ORDER BY closedate desc) AS extended_support_release_customer,
 	    FIRST_VALUE(opportunity.current_productivity_platform__c IGNORE NULLS) OVER (PARTITION BY account.sfid ORDER BY closedate desc) AS current_productivity_platform,
 	    FIRST_VALUE(opportunity.regulatory_requirements__c IGNORE NULLS) OVER (PARTITION BY account.sfid ORDER BY closedate desc) AS regulatory_requirements,
 	    FIRST_VALUE(opportunity.additional_environment_details__c IGNORE NULLS) OVER (PARTITION BY account.sfid ORDER BY closedate desc) AS additional_environment_details,
 	    FIRST_VALUE(opportunity.how_did_you_hear_about_mattermost__c IGNORE NULLS) OVER (PARTITION BY account.sfid ORDER BY closedate desc) AS how_did_you_hear_about_mattermost
-    FROM {{ source('orgm', 'account') }}
-    LEFT JOIN {{ source('orgm', 'opportunity') }} ON account.sfid = opportunity.accountid
+    FROM {{ ref('account') }}
+    LEFT JOIN {{ ref('opportunity') }} ON account.sfid = opportunity.accountid
 ), account_customer_journey AS (
     SELECT *
     FROM account_customer_journey_fannout
@@ -56,8 +56,8 @@ WITH account_customer_journey_fannout AS (
         SUM(CASE WHEN opportunity.isclosed AND NOT opportunity.iswon THEN opportunity_ext.sum_expansion_amount ELSE 0 END) AS sum_expansion_amount_lost,
         SUM(CASE WHEN opportunity.isclosed AND NOT opportunity.iswon THEN opportunity_ext.sum_renewal_amount ELSE 0 END) AS sum_renewal_amount_lost,
         SUM(CASE WHEN opportunity.isclosed AND NOT opportunity.iswon THEN opportunity_ext.sum_multi_amount ELSE 0 END) AS sum_multi_amount_lost
-    FROM {{ source('orgm', 'account') }}
-    LEFT JOIN {{ source('orgm', 'opportunity') }} ON account.sfid = opportunity.accountid
+    FROM {{ ref('account') }}
+    LEFT JOIN {{ ref('opportunity') }} ON account.sfid = opportunity.accountid
     LEFT JOIN {{ ref('opportunity_ext') }} ON account.sfid = opportunity_ext.accountid
     LEFT JOIN account_customer_journey ON account.sfid = account_customer_journey.account_sfid
     GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13

@@ -11,6 +11,6 @@ WITH orgm_opportunity_data_check AS (
         systemmodstamp,
         createddate,
         TO_TIMESTAMP_NTZ(current_timestamp) AS processed_at
-    FROM {{ source('orgm','opportunity') }}
+    FROM {{ ref('opportunity') }}
 )
 SELECT * FROM orgm_opportunity_data_check

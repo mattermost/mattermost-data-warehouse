@@ -17,7 +17,7 @@ WITH opportunity_totals AS (
         SUM(multi_amount__c) AS multi,
         SUM(renewal_multi_amount__c) AS renewal_multi,
         SUM(monthly_billing_amount__c) AS monthly_billing
-    FROM {{ source('orgm', 'opportunitylineitem') }}
+    FROM {{ ref('opportunitylineitem') }}
     GROUP BY 1
 ), opportunity_snapshot AS (
     SELECT
@@ -48,7 +48,7 @@ WITH opportunity_totals AS (
         multi,
         renewal_multi,
         monthly_billing
-        FROM {{ source('orgm', 'opportunity') }}
+        FROM {{ ref('opportunity') }}
         LEFT JOIN opportunity_totals ON opportunity.sfid = opportunity_totals.opportunityid
         {% if is_incremental() %}
         WHERE current_date >= (SELECT MAX(snapshot_date) FROM {{this}})
