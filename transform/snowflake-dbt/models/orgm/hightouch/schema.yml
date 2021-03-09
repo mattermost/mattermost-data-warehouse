@@ -17,7 +17,7 @@ models:
                   to: Seats_Licensed__c
               mode: update
               object: Account
-              formId: ACCOUNT_SFID
+              fromId: ACCOUNT_SFID
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
