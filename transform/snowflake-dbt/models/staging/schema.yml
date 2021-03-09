@@ -18,13 +18,17 @@ models:
         destinations:
           - id: 52590
             config:
-              mode: update
-              fromId: ACCOUNT_SFID
-              object: Account
               mappings:
+                - to: sfid
+                  from: account_sfid
                 - to: ARR_Current__c
-                  from: TOTAL_ARR
+                  from: total_arr
                 - to: Seats_Licensed__c
-                  from: SEATS
+                  from: seats
+                - to: Description
+                  from: object_type
+              subscribeAdd: true
+              subscribeChange: false
+              subscribeDelete: false
             schedule:
               type: manual
