@@ -1,0 +1,22 @@
+version: 2
+
+models:
+  - name: orgm_account_arr_and_seats
+    description: Current Account ARR & Licensed Seats
+    meta:
+      hightouch:
+        model:
+          id: 12867
+        destinations:
+          - id: 52590
+            config:
+              mappings:
+                - from: TOTAL_ARR
+                  to: ARR_Current__c
+                - from: SEATS
+                  to: Seats_Licensed__c
+              subscribeAdd: true
+              subscribeChange: false
+              subscribeDelete: false
+            schedule:
+              type: manual
