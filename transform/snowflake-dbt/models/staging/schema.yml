@@ -17,7 +17,7 @@ models:
         slug: "orgm-account-arr-and-seats"
         primary_key: account_sfid
         model:
-          id: 12312867
+          id: 12867
         destinations:
           - id: 52590
             schedule:
@@ -33,3 +33,5 @@ models:
                   to: ARR_Current__c
                 - from: seats
                   to: Seats_Licensed__c
+                - from: object_type
+                  to: Description
