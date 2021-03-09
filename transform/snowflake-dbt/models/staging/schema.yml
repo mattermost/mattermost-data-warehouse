@@ -1,35 +1,34 @@
 version: 2
-
 models:
   - name: orgm_account_data_check
-    description: OrgM Account data sent to Heroku Postgres to confirm data integrity across systems.
-
+    description: OrgM Account data sent to Heroku Postgres to confirm data integrity
+      across systems.
   - name: orgm_opportunity_data_check
-    description: OrgM Opportunity data sent to Heroku Postgres to confirm data integrity across systems.
-
+    description: OrgM Opportunity data sent to Heroku Postgres to confirm data
+      integrity across systems.
   - name: orgm_opportunitylineitem_data_check
-    description: OrgM Opportunity Line Item data sent to Heroku Postgres to confirm data integrity across systems.
-
+    description: OrgM Opportunity Line Item data sent to Heroku Postgres to confirm
+      data integrity across systems.
   - name: orgm_account_arr_and_seats
     description: Current Account ARR & Licensed Seats
     meta:
       hightouch:
         model:
-          id: 12867
+          id: 1094
         destinations:
           - id: 52590
-            schedule:
-              type: manual
             config:
+              mappings:
+                - to: sfid
+                  from: account_sfid
+                - to: ARR_Current__c
+                  from: total_arr
+                - to: Seats_Licensed__c
+                  from: seats
+                - to: Description
+                  from: object_type
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
-              mappings:
-                - from: account_sfid
-                  to: sfid
-                - from: total_arr
-                  to: ARR_Current__c
-                - from: seats
-                  to: Seats_Licensed__c
-                - from: object_type
-                  to: Description
+            schedule:
+              type: manual
