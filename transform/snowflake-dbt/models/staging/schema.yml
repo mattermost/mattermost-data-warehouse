@@ -14,8 +14,6 @@ models:
     description: Current Account ARR & Licensed Seats
     meta:
       hightouch:
-        slug: "orgm-account-arr-and-seats"
-        primary_key: account_sfid
         model:
           id: 12867
         destinations:
