@@ -15,6 +15,8 @@ models:
                   to: ARR_Current__c
                 - from: SEATS
                   to: Seats_Licensed__c
+              mode: update
+              object: Account
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
