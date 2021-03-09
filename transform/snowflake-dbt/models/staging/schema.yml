@@ -34,4 +34,4 @@ models:
                 - from: seats
                   to: Seats_Licensed__c
                 - from: object_type
-                  to: Description
+                  to: ShippingCity
