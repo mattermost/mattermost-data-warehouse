@@ -57,3 +57,6 @@ models:
   
   - name: marketo_forms
     description: Raw Marketo data for visualization in Looker.
+  
+  - name: user_agent_registry
+    description: Contains the components of each unique user_agent logged via user_events_telemetry table.
