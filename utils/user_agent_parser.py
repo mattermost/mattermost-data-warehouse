@@ -55,9 +55,9 @@ def parse_user_agent():
         GROUP BY 1
         UNION ALL
         SELECT CONTEXT_USERAGENT
-        FROM raw.mattermostcom.pages
+        FROM ANALYTICS.WEB.DAILY_WEBSITE_TRAFFIC
         LEFT JOIN (SELECT CONTEXT_USERAGENT as JOIN_KEY FROM analytics.WEB.user_agent_registry GROUP BY 1) a
-            ON raw.mattermostcom.pages.CONTEXT_USERAGENT = a.JOIN_KEY
+            ON ANALYTICS.WEB.DAILY_WEBSITE_TRAFFIC.CONTEXT_USERAGENT = a.JOIN_KEY
         WHERE CONTEXT_USERAGENT IS NOT NULL
             AND a.JOIN_KEY IS NULL
         GROUP BY 1
