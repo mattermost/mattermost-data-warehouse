@@ -60,6 +60,7 @@ WITH daily_server_user_agent_events AS (
     FROM {{ ref('user_events_telemetry') }}        events
          LEFT JOIN ANALYTICS.web.user_agent_registry user_agent
               ON COALESCE(events.context_user_agent, events.context_useragent) = user_agent.context_useragent
+              AND user_agent.context_useragent != 'unknown'
     WHERE (COALESCE(events.user_id, events.context_traits_server, events.context_server) IS NOT NULL)
     {% if is_incremental() %}
     AND events.timestamp::DATE >= (SELECT MAX(date) FROM {{this}})
