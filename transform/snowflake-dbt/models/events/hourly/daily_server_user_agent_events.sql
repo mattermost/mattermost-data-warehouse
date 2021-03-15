@@ -49,6 +49,7 @@ WITH daily_server_user_agent_events AS (
                                     , 'user_agent.device_model'])}}                   AS id
       , COUNT(DISTINCT COALESCE(events.user_actual_id, events.anonymous_id))          AS user_count
       , COUNT(COALESCE(events.user_actual_id, events.anonymous_id))                   AS events
+      , COUNT(CASE WHEN COALESCE(events.type, events.event) in ('api_posts_create') THEN events.id ELSE NULL END) AS posts
     FROM {{ ref('user_events_telemetry') }}        events
          JOIN ANALYTICS.web.user_agent_registry user_agent
               ON COALESCE(events.context_user_agent, events.context_useragent) = user_agent.context_useragent
