@@ -23,6 +23,8 @@ from dags.kube_secrets import (
     SNOWFLAKE_USER,
     AWS_ACCESS_KEY_ID,
     AWS_SECRET_ACCESS_KEY,
+    DBT_CLOUD_API_ACCOUNT_ID,
+    DBT_CLOUD_API_KEY,
     PG_IMPORT_BUCKET,
     HEROKU_POSTGRESQL_URL,
     SSH_KEY,
@@ -70,18 +72,19 @@ user_agent = KubernetesPodOperator(
     dag=dag,
 )
 
-
-dbt_run_cmd = f"""
-    {dbt_install_deps_cmd} &&
-    dbt run --profiles-dir profile --exclude tag:nightly tag:union tag:preunion
+dbt_run_cloud_cmd = f"""
+    {clone_and_setup_extraction_cmd} &&
+    python utils/run_dbt_cloud_job.py 19444 "Airflow dbt hourly"
 """
 
-dbt_run = KubernetesPodOperator(
+dbt_run_cloud = KubernetesPodOperator(
     **pod_defaults,
-    image=DBT_IMAGE,
-    task_id="dbt-run",
-    name="dbt-run",
+    image=DATA_IMAGE,
+    task_id="dbt-cloud-run",
+    name="dbt-cloud-run",
     secrets=[
+        DBT_CLOUD_API_ACCOUNT_ID,
+        DBT_CLOUD_API_KEY,
         SNOWFLAKE_ACCOUNT,
         SNOWFLAKE_USER,
         SNOWFLAKE_PASSWORD,
@@ -91,55 +94,7 @@ dbt_run = KubernetesPodOperator(
         SSH_KEY,
     ],
     env_vars=env_vars,
-    arguments=[dbt_run_cmd],
-    dag=dag,
-)
-
-dbt_run_preunion_cmd = f"""
-    {dbt_install_deps_cmd} &&
-    SNOWFLAKE_TRANSFORM_WAREHOUSE=transform_l dbt run --profiles-dir profile --models tag:preunion
-"""
-
-dbt_run_preunion = KubernetesPodOperator(
-    **pod_defaults,
-    image=DBT_IMAGE,
-    task_id="dbt-run-preunion",
-    name="dbt-run-preunion",
-    secrets=[
-        SNOWFLAKE_ACCOUNT,
-        SNOWFLAKE_USER,
-        SNOWFLAKE_PASSWORD,
-        SNOWFLAKE_TRANSFORM_ROLE,
-        SNOWFLAKE_TRANSFORM_WAREHOUSE,
-        SNOWFLAKE_TRANSFORM_SCHEMA,
-        SSH_KEY,
-    ],
-    env_vars=env_vars,
-    arguments=[dbt_run_preunion_cmd],
-    dag=dag,
-)
-
-dbt_run_union_cmd = f"""
-    {dbt_install_deps_cmd} &&
-    SNOWFLAKE_TRANSFORM_WAREHOUSE=transform_l dbt run --profiles-dir profile --models tag:union
-"""
-
-dbt_run_union = KubernetesPodOperator(
-    **pod_defaults,
-    image=DBT_IMAGE,
-    task_id="dbt-run-union",
-    name="dbt-run-union",
-    secrets=[
-        SNOWFLAKE_ACCOUNT,
-        SNOWFLAKE_USER,
-        SNOWFLAKE_PASSWORD,
-        SNOWFLAKE_TRANSFORM_ROLE,
-        SNOWFLAKE_TRANSFORM_WAREHOUSE,
-        SNOWFLAKE_TRANSFORM_SCHEMA,
-        SSH_KEY,
-    ],
-    env_vars=env_vars,
-    arguments=[dbt_run_union_cmd],
+    arguments=[dbt_run_cloud_cmd],
     dag=dag,
 )
 
@@ -193,5 +148,4 @@ pg_import = KubernetesPodOperator(
     dag=dag,
 )
 
-# update_chronological_sequence >>
-user_agent >> dbt_run >> dbt_run_preunion >> dbt_run_union >> pg_import >> update_clearbit
+user_agent >> dbt_run_cloud >> pg_import >> update_clearbit

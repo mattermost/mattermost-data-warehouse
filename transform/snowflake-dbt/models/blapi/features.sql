@@ -2,8 +2,7 @@
     "materialized": "incremental",
     "schema": "blapi",
     "unique_key":"id",
-    "tags":["hourly","blapi"],
-    "snowflake_warehouse": "transform_l"
+    "tags":["hourly","blapi"]
   })
 }}
 
