@@ -7,7 +7,7 @@ import requests
 BASE_URL = "https://cloud.getdbt.com/api/v2"
 
 token = os.getenv("DBT_CLOUD_API_KEY")
-account_id = os.getenv("DBT_CLOUD_ACCOUNT_ID")
+account_id = os.getenv("DBT_CLOUD_API_ACCOUNT_ID")
 timeout = int(os.getenv("DBT_JOB_TIMEOUT", 360))
 headers = {"Authorization": f"Token {token}", "Content-Type": "application/json"}
 
