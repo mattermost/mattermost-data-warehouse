@@ -24,10 +24,10 @@ clean-targets:         # directories to be removed by `dbt clean`
 # Run Hooks
 # ======
 on-run-start:
-    - "{{ resume_warehouse(var('warehouse_name')) }}"
+    - "{{ resume_warehouse(target.warehouse) }}"
 
 on-run-end:
-    - "{{ suspend_warehouse(var('warehouse_name')) }}"
+    - "{{ suspend_warehouse(target.warehouse) }}"
 
 
 quoting:
@@ -36,12 +36,10 @@ quoting:
     schema: false
 
 models:
-  vars:
-    warehouse_name: "{{ env_var('SNOWFLAKE_TRANSFORM_WAREHOUSE') }}"
-
   mm_snowflake:
     bizops:
       nightly:
+        +snowflake_warehouse: "TRANSFORM_L"
         tags: ["bizops", "nightly"]
 
     blp:
@@ -52,6 +50,7 @@ models:
 
     events:
       nightly:
+        +snowflake_warehouse: "TRANSFORM_L"
         tags: ["events", "nightly"]
 
     finance:
@@ -62,10 +61,12 @@ models:
     
     mattermost:
       nightly:
+        +snowflake_warehouse: "TRANSFORM_L"
         tags: "nightly"
 
     staging:
       server:
+        +snowflake_warehouse: "TRANSFORM_L"
         tags: ["server", "nightly"]
 
     qa:

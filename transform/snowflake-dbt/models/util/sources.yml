@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: util
-    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    database: ANALYTICS
     schema: util
 
     tables:

@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: mattermost
-    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    database: ANALYTICS
     schema: mattermost
 
     tables: 

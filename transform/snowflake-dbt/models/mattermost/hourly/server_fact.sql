@@ -1,8 +1,9 @@
 {{config({
-    'materialized': 'incremental',
-    'schema': 'mattermost',
-    'tags':'preunion',
-    'unique_key':'server_id'
+    "materialized": "incremental",
+    "schema": "mattermost",
+    "tags":"preunion",
+    "snowflake_warehouse": "transform_l",
+    "unique_key":"server_id"
   })
 }}
 
