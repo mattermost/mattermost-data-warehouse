@@ -26,7 +26,7 @@ from dags.kube_secrets import (
     PG_IMPORT_BUCKET,
     HEROKU_POSTGRESQL_URL,
     SSH_KEY,
-    CLEARBIT_KEY
+    CLEARBIT_KEY,
 )
 
 # Load the env vars into a dict and set Secrets
@@ -71,7 +71,6 @@ user_agent = KubernetesPodOperator(
 )
 
 
-# dbt-run
 dbt_run_cmd = f"""
     {dbt_install_deps_cmd} &&
     dbt run --profiles-dir profile --exclude tag:nightly tag:union tag:preunion
@@ -159,7 +158,7 @@ update_clearbit = KubernetesPodOperator(
         SNOWFLAKE_PASSWORD,
         SNOWFLAKE_ACCOUNT,
         SNOWFLAKE_TRANSFORM_WAREHOUSE,
-        CLEARBIT_KEY
+        CLEARBIT_KEY,
     ],
     env_vars=env_vars,
     arguments=[update_clearbit_cmd],
@@ -194,5 +193,5 @@ pg_import = KubernetesPodOperator(
     dag=dag,
 )
 
-# update_chronological_sequence >> 
+# update_chronological_sequence >>
 user_agent >> dbt_run >> dbt_run_preunion >> dbt_run_union >> pg_import >> update_clearbit
