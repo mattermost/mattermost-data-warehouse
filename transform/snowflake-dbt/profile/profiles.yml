@@ -13,6 +13,6 @@ snowflake:
       password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
       database: "{{ env_var('SNOWFLAKE_TRANSFORM_DATABASE') }}"
       role: "{{ env_var('SNOWFLAKE_TRANSFORM_ROLE') }}"
-      warehouse: "ANALYTICS"
+      warehouse: "TRANSFORM_XS"
       schema: "{{ env_var('SNOWFLAKE_TRANSFORM_SCHEMA') }}"
       client_session_keep_alive: True
