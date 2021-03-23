@@ -13,3 +13,27 @@ models:
           id: 13148
         destinations:
           - id: 52649
+        config:
+              mappings:
+                - from: TOTAL_ARR
+                  to: ARR_Current__c
+                - from: SEATS
+                  to: Seats_Licensed__c
+                - from: LAST_TELEMETRY_DATE
+                  to: Latest_Telemetry_date__c
+                - from: DAU
+                  to: Seats_Active_Latest__c
+                - from: MAU
+                  to: Seats_Active_MAU__c
+                - from: SERVER_VERSION
+                  to: Server_Version__c
+                - from: REGISTERED_USERS
+                  to: seats_registered__c
+              mode: update
+              object: Account
+              fromId: SFID
+              subscribeAdd: true
+              subscribeChange: false
+              subscribeDelete: false
+            schedule:
+              type: manual
