@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: information_schema_load
-    database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
+    database: 'RAW'
     schema: information_schema
 
     tables: 
@@ -10,7 +10,7 @@ sources:
         description: 'Contains list of all tables and accompanying details in the RAW Database.'
 
   - name: information_schema_transform
-    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    database: ANALYTICS
     schema: information_schema
 
     tables: 

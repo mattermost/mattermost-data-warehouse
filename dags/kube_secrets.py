@@ -15,6 +15,11 @@ BLAPI_DATABASE_URL = Secret(
 BLAPI_TOKEN = Secret("env", "BLAPI_TOKEN", "airflow", "BLAPI_TOKEN")
 BLAPI_URL = Secret("env", "BLAPI_URL", "airflow", "BLAPI_URL")
 
+# dbt Cloud
+DBT_CLOUD_API_KEY = Secret("env", "DBT_CLOUD_API_KEY", "airflow", "DBT_CLOUD_API_KEY")
+DBT_CLOUD_API_ACCOUNT_ID = Secret(
+    "env", "DBT_CLOUD_API_ACCOUNT_ID", "airflow", "DBT_CLOUD_API_ACCOUNT_ID"
+)
 
 # Snowflake Load
 SNOWFLAKE_LOAD_DATABASE = Secret(

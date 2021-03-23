@@ -2,5 +2,8 @@ version: 2
 
 sources:
   - name: cs
-    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    database: ANALYTICS
     schema: cs
+
+    tables:
+      - name: available_renewals_by_opportunity

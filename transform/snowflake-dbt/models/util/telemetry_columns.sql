@@ -38,7 +38,7 @@ WITH snapshot AS (
 
     telemetry_columns AS (
         SELECT
-            table_catalog
+          table_catalog
         , table_schema
         , table_name
         , column_name

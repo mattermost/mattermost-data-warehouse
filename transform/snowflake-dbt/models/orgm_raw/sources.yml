@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: orgm_raw
-    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    database: ANALYTICS
     schema: orgm_raw
     loader: Stitch
     loaded_at_field: _sdc_batched_at
