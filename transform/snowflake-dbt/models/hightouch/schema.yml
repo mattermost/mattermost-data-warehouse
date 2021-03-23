@@ -1,0 +1,15 @@
+version: 2
+
+models:
+  - name: account_updates
+    description: All SFDC enrichment updates for the Account object
+    columns:
+      - name: sfid
+        tests:
+          - unique
+    meta:
+      hightouch:
+        model:
+          id: 13148
+        destinations:
+          - id: 52649
