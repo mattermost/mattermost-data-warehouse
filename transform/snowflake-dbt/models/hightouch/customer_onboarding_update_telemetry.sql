@@ -4,7 +4,7 @@
   })
 }}
 
-with customer_onboarding_updates as (
+with customer_onboarding_update_telemetry as (
     select
         sfid,
         licenseid,
@@ -23,4 +23,4 @@ with customer_onboarding_updates as (
     group by 1, 2
 )
 
-select * from customer_onboarding_updates
+select * from customer_onboarding_update_telemetry

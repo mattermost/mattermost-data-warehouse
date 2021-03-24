@@ -31,15 +31,14 @@ with leads_to_mql as (
                         )
                 )
         ) and lead.status IN ('MCL','MEL','Recycle')
-), lead_updates as (
-    select lead.sfid, coalesce(existing_account__c,account.sfid) as account_sfid, coalesce(leads_to_mql.status,lead.status) as status, coalesce(leads_to_mql.most_recent_mql_date,lead.most_recent_mql_date__c) as most_recent_mql_date
+), lead_update_status as (
+    select lead.sfid, leads_to_mql.status
     from {{ ref('lead') }}
-    left join {{ ref('account')}} on account.cbit__clearbitdomain__c = split_part(email,'@',2) and converteddate is null and existing_account__c is null
     left join leads_to_mql on leads_to_mql.sfid = lead.sfid
     where 
-        (lead.existing_account__c, lead.status) 
+        (lead.status) 
         is distinct from 
-        (coalesce(lead.existing_account__c,account.cbit__clearbitdomain__c), coalesce(leads_to_mql.status,lead.status))
+        (leads_to_mql.status,lead.status)
 )
 
-select * from lead_updates
+select * from lead_update_status

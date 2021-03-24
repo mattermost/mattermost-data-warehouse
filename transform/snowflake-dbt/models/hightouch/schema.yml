@@ -1,12 +1,7 @@
 version: 2
 
 models:
-  - name: account_updates
-    description: All SFDC enrichment updates for the Account object
-    columns:
-      - name: sfid
-        tests:
-          - unique
+  - name: account_update_arr_seats_type
     meta:
       hightouch:
         model:
@@ -19,18 +14,8 @@ models:
               to: ARR_Current__c
             - from: SEATS
               to: Seats_Licensed__c
-            - from: LAST_TELEMETRY_DATE
-              to: Latest_Telemetry_date__c
-            - from: DAU
-              to: Seats_Active_Latest__c
-            - from: MAU
-              to: Seats_Active_MAU__c
-            - from: SERVER_VERSION
-              to: Server_Version__c
-            - from: REGISTERED_USERS
-              to: seats_registered__c
-            - from: SEATS_ACTIVE_MAX
-              to: Seats_Active_Max__c
+            - from: ACCOUNT_TYPE
+              to: Type
           mode: update
           object: Account
           fromId: SFID
@@ -40,12 +25,56 @@ models:
           schedule:
             type: manual
 
+    - name: account_update_telemetry
+      meta:
+        hightouch:
+          model:
+            id: 13148
+          destinations:
+            - id: 52649
+          config:
+            mappings:
+              - from: LAST_TELEMETRY_DATE
+                to: Latest_Telemetry_date__c
+              - from: DAU
+                to: Seats_Active_Latest__c
+              - from: MAU
+                to: Seats_Active_MAU__c
+              - from: SERVER_VERSION
+                to: Server_Version__c
+              - from: REGISTERED_USERS
+                to: seats_registered__c
+              - from: SEATS_ACTIVE_MAX
+                to: Seats_Active_Max__c
+            mode: update
+            object: Account
+            fromId: SFID
+            subscribeAdd: true
+            subscribeChange: false
+            subscribeDelete: false
+            schedule:
+              type: manual
+    - name: account_update_health_score
+      meta:
+        hightouch:
+          model:
+            id: 13148
+          destinations:
+            - id: 52649
+          config:
+            mappings:
+              - from: HEALTH_SCORE
+                to: Health_Score__c
+            mode: update
+            object: Account
+            fromId: SFID
+            subscribeAdd: true
+            subscribeChange: false
+            subscribeDelete: false
+            schedule:
+              type: manual
+
   - name: customer_onboarding_updates
-    description: All SFDC enrichment updates for the Customer Onboarding object
-    columns:
-      - name: sfid
-        tests:
-          - unique
     meta:
       hightouch:
         model:
@@ -75,23 +104,7 @@ models:
           schedule:
             type: manual
 
-  - name: lead_updates
-    description: All SFDC enrichment updates for the Lead object
-    columns:
-      - name: sfid
-        tests:
-          - unique
-
-  - name: opportunity_updates
-    description: All SFDC enrichment updates for the Opportunity object
-    columns:
-      - name: sfid
-        tests:
-          - unique
-
-  - name: opportunitylineitem_updates
-    description: All SFDC enrichment updates for the Opportunity Line Item object
-    columns:
-      - name: sfid
-        tests:
-          - unique
+  - name: lead_update_account_link
+  - name: lead_update_status
+  - name: opportunity_update_available_renewals
+  - name: opportunitylineitem_update_amounts

@@ -4,7 +4,7 @@
   })
 }}
 
-with opportunitylineitem_totals as (
+with opportunitylineitem_update_amounts as (
   select
     opportunitylineitem.sfid as sfid,
     case when opportunitylineitem.product_line_type__c = 'New' THEN opportunitylineitem.totalprice ELSE 0 END AS total_new_amount,
@@ -25,4 +25,4 @@ with opportunitylineitem_totals as (
     (oli_totals.total_new_amount, oli_totals.total_renewal_amount, oli_totals.total_expansion_amount, oli_totals.total_coterm_amount, oli_totals.total_leftover_amount, oli_totals.total_multi_amount, oli_totals.total_ren_multi_amount)
 )
 
-select * from opportunitylineitem_updates
+select * from opportunitylineitem_update_amounts
