@@ -1,7 +1,6 @@
 {{config({
     "materialized": "table",
-    "schema": "cs",
-    "post-hook": "{{ pg_import('staging.account_health_score', 'pg_update_account_health_score') }}"
+    "schema": "cs"
   })
 }}
 

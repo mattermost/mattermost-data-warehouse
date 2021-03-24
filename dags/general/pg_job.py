@@ -43,31 +43,12 @@ def get_container_operator(task_name, job_name):
 dag = DAG("pg_job", default_args=default_args, schedule_interval="20-59/30 * * * *")
 
 account_type = get_container_operator("account-type", "account_type")
-owner_segment_updates = get_container_operator(
-    "owner-segment-updates", "owner_segment_updates"
-)
-lead_account = get_container_operator("lead-account", "lead_account")
-update_opportunitylineitem_amounts = get_container_operator(
-    "update-opportunitylineitem-amounts", "update_opportunitylineitem_amounts"
-)
 
 pg_update_opportunity_time_in_stage = get_container_operator(
     "pg-update-opportunity-time-in-stage", "pg_update_opportunity_time_in_stage"
 )
 
-lead_mql = get_container_operator(
-    "lead-mql", "lead_mql"
-)
-
-update_tasks_and_lead_connected = get_container_operator(
-    "update-tasks-and-lead-connected", "update_tasks_and_lead_connected"
-)
-
-update_unsequenced_outreach_leads = get_container_operator(
-    "update-unsequenced-outreach-leads", "update_unsequenced_outreach_leads"
-)
-
 
 heroku_connect_retry = get_container_operator("heroku-connect-retry", "connect_retry")
 
-account_type >> owner_segment_updates >> lead_account >> lead_mql >> update_tasks_and_lead_connected >> update_unsequenced_outreach_leads >> update_opportunitylineitem_amounts >> pg_update_opportunity_time_in_stage >> heroku_connect_retry
+account_type >> owner_segment_updates >>  pg_update_opportunity_time_in_stage >> heroku_connect_retry
