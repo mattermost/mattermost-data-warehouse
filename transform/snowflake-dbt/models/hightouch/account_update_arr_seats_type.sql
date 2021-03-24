@@ -27,10 +27,16 @@ with account_type as (
     from {{ ref('account') }}
     left join {{ ref('account_arr_and_seats') }} on account.sfid = account_arr_and_seats.account_sfid
     left join account_type on account.sfid = account_type.sfid
-    where 
-        (account.arr_current__c, account.seats_licensed__c, account.type)
-        is distinct from
-        (account_arr_and_seats.total_arr, account_arr_and_seats.seats, account_type)
 )
 
-select * from account_update_arr_seats_type
+select account_update_arr_seats_type.*
+from account_update_arr_seats_type
+join {{ ref('account') }} on account.sfid = account_update_arr_seats_type.sfid
+where 
+    (round(account.arr_current__c,2), 
+    account.seats_licensed__c, 
+    account.type)
+    is distinct from
+    (round(account_update_arr_seats_type.total_arr,2), 
+    account_update_arr_seats_type.seats, 
+    account_update_arr_seats_type.account_type)

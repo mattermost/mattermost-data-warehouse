@@ -14,10 +14,12 @@ with available_renewals as (
   select opportunity.sfid, case when available_renewals.renewal_opportunity is null then null else available_renewals.avail_ren end as available_renewal
   from {{ ref('opportunity') }}
   left join available_renewals on available_renewals.renewal_opportunity = opportunity.sfid
-  where 
-    (opportunity.available_renewal__c) 
-    is distinct from 
-    (available_renewal)
 )
 
-select * from opportunity_update_available_renewals
+select opportunity_update_available_renewals.* 
+from opportunity_update_available_renewals
+join {{ ref('opportunity') }} on opportunity.sfid = opportunity_update_available_renewals.sfid
+where 
+  (opportunity.available_renewal__c) 
+  is distinct from 
+  (opportunity_update_available_renewals.available_renewal)

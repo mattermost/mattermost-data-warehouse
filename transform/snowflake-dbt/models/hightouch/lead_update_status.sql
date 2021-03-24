@@ -4,8 +4,8 @@
   })
 }}
 
-with leads_to_mql as (
-    select lead.sfid, 'MQL' as status, campaignmember.createddate as most_recent_mql_date
+with lead_update_status as (
+    select lead.sfid, 'MQL' as status
     from {{ ref('lead') }}
     left join {{ ref('campaignmember') }} on campaignmember.leadid = lead.sfid
     left join {{ ref('campaign') }} on campaign.sfid = campaignid
@@ -31,14 +31,13 @@ with leads_to_mql as (
                         )
                 )
         ) and lead.status IN ('MCL','MEL','Recycle')
-), lead_update_status as (
-    select lead.sfid, leads_to_mql.status
-    from {{ ref('lead') }}
-    join leads_to_mql on leads_to_mql.sfid = lead.sfid
-    where 
-        (lead.status) 
-        is distinct from 
-        (leads_to_mql.status)
 )
-
-select * from lead_update_status
+    
+select lead_update_status.*
+from {{ ref('lead') }}
+join lead_update_status on lead_update_status.sfid = lead.sfid
+where 
+    (lead.status) 
+    is distinct from 
+    (lead_update_status.status)
+ 

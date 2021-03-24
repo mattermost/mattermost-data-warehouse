@@ -17,12 +17,27 @@ with opportunitylineitem_totals as (
   from {{ ref('opportunitylineitem') }}
 ), opportunitylineitem_update_amounts as (
   select oli_totals.* 
-  from {{ ref('opportunitylineitem') }} as oli
-  join opportunitylineitem_totals as oli_totals on oli_totals.sfid = oli.sfid
-  where oli.product_line_type__c != 'Self-Service' and not oli.amount_manual_override__c and 
-    (oli.new_amount__c, oli.renewal_amount__c, oli.expansion_amount__c, oli.coterm_expansion_amount__c, oli.leftover_expansion_amount__c, oli.multi_amount__c, oli.renewal_multi_amount__c) 
-    is distinct from
-    (oli_totals.total_new_amount, oli_totals.total_renewal_amount, oli_totals.total_expansion_amount, oli_totals.total_coterm_amount, oli_totals.total_leftover_amount, oli_totals.total_multi_amount, oli_totals.total_ren_multi_amount)
+  from {{ ref('opportunitylineitem') }}
+  join opportunitylineitem_totals as oli_totals on oli_totals.sfid = opportunitylineitem.sfid
+  where opportunitylineitem.product_line_type__c != 'Self-Service' and not opportunitylineitem.amount_manual_override__c 
 )
 
-select * from opportunitylineitem_update_amounts
+select opportunitylineitem_update_amounts.* 
+from opportunitylineitem_update_amounts
+join {{ ref('opportunitylineitem') }} as oli on oli.sfid = opportunitylineitem_update_amounts.sfid
+where
+  (round(oli.new_amount__c,2), 
+  round(oli.renewal_amount__c,2), 
+  round(oli.expansion_amount__c,2), 
+  round(oli.coterm_expansion_amount__c,2), 
+  round(oli.leftover_expansion_amount__c,2), 
+  round(oli.multi_amount__c,2), 
+  round(oli.renewal_multi_amount__c,2))
+  is distinct from
+  (round(opportunitylineitem_update_amounts.total_new_amount,2),
+  round(opportunitylineitem_update_amounts.total_renewal_amount,2),
+  round(opportunitylineitem_update_amounts.total_expansion_amount,2),
+  round(opportunitylineitem_update_amounts.total_coterm_amount,2),
+  round(opportunitylineitem_update_amounts.total_leftover_amount,2),
+  round(opportunitylineitem_update_amounts.total_multi_amount,2),
+  round(opportunitylineitem_update_amounts.total_ren_multi_amount,2))
