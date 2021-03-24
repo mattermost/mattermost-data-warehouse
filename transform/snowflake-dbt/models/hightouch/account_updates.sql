@@ -34,6 +34,7 @@ with orgm_account_telemetry as (
             when account.type = 'Customer' then 'Customer (Attrited)'
             else account.type
         end as account_type,
+        account_health_score.health_score_w_override as health_score,
         coalesce(account_arr_and_seats.total_arr, account.arr_current__c) as total_arr, 
         coalesce(account_arr_and_seats.seats, account.seats_licensed__c) as seats,
         coalesce(orgm_account_telemetry.last_telemetry_date, account.latest_telemetry_date__c::date) as last_telemetry_date,

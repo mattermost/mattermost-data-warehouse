@@ -42,13 +42,6 @@ def get_container_operator(task_name, job_name):
 # Create the DAG
 dag = DAG("pg_job", default_args=default_args, schedule_interval="20-59/30 * * * *")
 
-account_type = get_container_operator("account-type", "account_type")
-
-pg_update_opportunity_time_in_stage = get_container_operator(
-    "pg-update-opportunity-time-in-stage", "pg_update_opportunity_time_in_stage"
-)
-
-
 heroku_connect_retry = get_container_operator("heroku-connect-retry", "connect_retry")
 
-pg_update_opportunity_time_in_stage >> heroku_connect_retry
+heroku_connect_retry
