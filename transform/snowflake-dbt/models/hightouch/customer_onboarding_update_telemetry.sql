@@ -9,7 +9,7 @@ with customer_onboarding_update_telemetry as (
         sfid,
         licenseid,
         MAX(enterprise_license_fact.last_license_telemetry_date) AS last_telemetry_date,
-        MAX(CASE WHEN enterprise_license_fact.current_max_license_server_dau > COALESCE(customer_onboarding__c.seats_active_max__c,0) THEN enterprise_license_fact.current_max_license_server_dau ELSE customer_onboarding__c.seats_active_max__c END) as seats_active_max,
+        MAX(CASE WHEN COALESCE(enterprise_license_fact.current_max_license_server_dau,0) > COALESCE(customer_onboarding__c.seats_active_max__c,0) THEN enterprise_license_fact.current_max_license_server_dau ELSE customer_onboarding__c.seats_active_max__c END) as seats_active_max,
         SUM(COALESCE(enterprise_license_fact.current_max_license_server_dau,0)) AS dau,
         SUM(COALESCE(enterprise_license_fact.current_max_license_server_mau,0)) AS mau,
         MAX(enterprise_license_fact.current_license_server_version) AS server_version,

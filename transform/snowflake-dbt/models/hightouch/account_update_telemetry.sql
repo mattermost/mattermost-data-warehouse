@@ -19,15 +19,16 @@ with orgm_account_telemetry as (
 ), account_update_telemetry as (
     select 
         account.sfid,
-        coalesce(orgm_account_telemetry.last_telemetry_date, account.latest_telemetry_date__c::date) as last_telemetry_date,
+        account.seats_active_override__c,
+        orgm_account_telemetry.last_telemetry_date as last_telemetry_date,
         CASE WHEN orgm_account_telemetry.dau > COALESCE(account.seats_active_max__c,0) THEN orgm_account_telemetry.dau ELSE account.seats_active_max__c END as seats_active_max,
-        coalesce(orgm_account_telemetry.dau, account.seats_active_latest__c) as dau,
-        coalesce(orgm_account_telemetry.mau, account.seats_active_mau__c) as mau,
-        coalesce(orgm_account_telemetry.server_version, account.server_version__c) as server_version,
-        coalesce(orgm_account_telemetry.registered_users, account.seats_registered__c) as registered_users
+        orgm_account_telemetry.dau as dau,
+        orgm_account_telemetry.mau as mau,
+        orgm_account_telemetry.server_version as server_version,
+        orgm_account_telemetry.registered_users as registered_users
     from {{ ref('account') }}
-    left join orgm_account_telemetry on account.sfid = orgm_account_telemetry.account_sfid and not account.seats_active_override__c
-    where 
+    left join orgm_account_telemetry on account.sfid = orgm_account_telemetry.account_sfid
+    where not account.seats_active_override__c and
         (account.latest_telemetry_date__c::date, account.seats_active_latest__c, account.seats_active_mau__c, account.server_version__c, account.seats_registered__c)
         is distinct from
         (orgm_account_telemetry.last_telemetry_date, orgm_account_telemetry.dau, orgm_account_telemetry.mau, orgm_account_telemetry.server_version, orgm_account_telemetry.registered_users)

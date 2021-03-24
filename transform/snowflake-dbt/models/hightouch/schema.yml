@@ -25,54 +25,54 @@ models:
           schedule:
             type: manual
 
-    - name: account_update_telemetry
-      meta:
-        hightouch:
-          model:
-            id: 13148
-          destinations:
-            - id: 52649
-          config:
-            mappings:
-              - from: LAST_TELEMETRY_DATE
-                to: Latest_Telemetry_date__c
-              - from: DAU
-                to: Seats_Active_Latest__c
-              - from: MAU
-                to: Seats_Active_MAU__c
-              - from: SERVER_VERSION
-                to: Server_Version__c
-              - from: REGISTERED_USERS
-                to: seats_registered__c
-              - from: SEATS_ACTIVE_MAX
-                to: Seats_Active_Max__c
-            mode: update
-            object: Account
-            fromId: SFID
-            subscribeAdd: true
-            subscribeChange: false
-            subscribeDelete: false
-            schedule:
-              type: manual
-    - name: account_update_health_score
-      meta:
-        hightouch:
-          model:
-            id: 13148
-          destinations:
-            - id: 52649
-          config:
-            mappings:
-              - from: HEALTH_SCORE
-                to: Health_Score__c
-            mode: update
-            object: Account
-            fromId: SFID
-            subscribeAdd: true
-            subscribeChange: false
-            subscribeDelete: false
-            schedule:
-              type: manual
+  - name: account_update_telemetry
+    meta:
+      hightouch:
+        model:
+          id: 13148
+        destinations:
+          - id: 52649
+        config:
+          mappings:
+            - from: LAST_TELEMETRY_DATE
+              to: Latest_Telemetry_date__c
+            - from: DAU
+              to: Seats_Active_Latest__c
+            - from: MAU
+              to: Seats_Active_MAU__c
+            - from: SERVER_VERSION
+              to: Server_Version__c
+            - from: REGISTERED_USERS
+              to: seats_registered__c
+            - from: SEATS_ACTIVE_MAX
+              to: Seats_Active_Max__c
+          mode: update
+          object: Account
+          fromId: SFID
+          subscribeAdd: true
+          subscribeChange: false
+          subscribeDelete: false
+          schedule:
+            type: manual
+  - name: account_update_health_score
+    meta:
+      hightouch:
+        model:
+          id: 13148
+        destinations:
+          - id: 52649
+        config:
+          mappings:
+            - from: HEALTH_SCORE
+              to: Health_Score__c
+          mode: update
+          object: Account
+          fromId: SFID
+          subscribeAdd: true
+          subscribeChange: false
+          subscribeDelete: false
+          schedule:
+            type: manual
 
   - name: customer_onboarding_updates
     meta:

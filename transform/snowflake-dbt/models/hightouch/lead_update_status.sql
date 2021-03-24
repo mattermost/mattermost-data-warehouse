@@ -12,7 +12,7 @@ with leads_to_mql as (
     left join {{ ref('account') }} on account.cleaned_up_website__c = lead.cleaned_up_website__c
     left join {{ ref('user') }} as owner on owner.sfid = account.ownerid
     where campaign.name = 'Cloud Workspace Creation'
-        and (campaignmember.createddate > most_recent_mql_date__c or most_recent_mql_date__c IS NULL)
+        and (campaignmember.createddate > most_recent_mql_date__c or most_recent_mql_date__c is null)
         and (
             owner.sales_segment__c IN ('AMER_APAC', 'EMEA', 'Federal')
             OR greatest(account.numberofemployees, lead.numberofemployees) > 500
@@ -34,11 +34,11 @@ with leads_to_mql as (
 ), lead_update_status as (
     select lead.sfid, leads_to_mql.status
     from {{ ref('lead') }}
-    left join leads_to_mql on leads_to_mql.sfid = lead.sfid
+    join leads_to_mql on leads_to_mql.sfid = lead.sfid
     where 
         (lead.status) 
         is distinct from 
-        (leads_to_mql.status,lead.status)
+        (leads_to_mql.status)
 )
 
 select * from lead_update_status

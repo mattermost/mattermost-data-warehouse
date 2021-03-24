@@ -4,7 +4,7 @@
   })
 }}
 
-with opportunitylineitem_update_amounts as (
+with opportunitylineitem_totals as (
   select
     opportunitylineitem.sfid as sfid,
     case when opportunitylineitem.product_line_type__c = 'New' THEN opportunitylineitem.totalprice ELSE 0 END AS total_new_amount,
@@ -15,7 +15,7 @@ with opportunitylineitem_update_amounts as (
     case when opportunitylineitem.product_line_type__c = 'Multi' THEN opportunitylineitem.totalprice ELSE 0 END AS total_multi_amount,
     case when opportunitylineitem.product_line_type__c = 'Ren-Multi' THEN opportunitylineitem.totalprice ELSE 0 END AS total_ren_multi_amount
   from {{ ref('opportunitylineitem') }}
-), opportunitylineitem_updates as (
+), opportunitylineitem_update_amounts as (
   select oli_totals.* 
   from {{ ref('opportunitylineitem') }} as oli
   join opportunitylineitem_totals as oli_totals on oli_totals.sfid = oli.sfid
