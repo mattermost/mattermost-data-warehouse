@@ -51,4 +51,4 @@ pg_update_opportunity_time_in_stage = get_container_operator(
 
 heroku_connect_retry = get_container_operator("heroku-connect-retry", "connect_retry")
 
-account_type >> owner_segment_updates >>  pg_update_opportunity_time_in_stage >> heroku_connect_retry
+pg_update_opportunity_time_in_stage >> heroku_connect_retry
