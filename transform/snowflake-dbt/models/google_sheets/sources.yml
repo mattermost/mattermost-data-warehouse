@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: sales_and_cs_gsheets
-    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    database: ANALYTICS
     schema: sales_and_cs_gsheets
 
     tables:
@@ -16,7 +16,7 @@ sources:
       - name: renewal_by_segment_by_qtr
 
   - name: finance_gsheets
-    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    database: ANALYTICS
     schema: finance_gsheets
 
     tables:

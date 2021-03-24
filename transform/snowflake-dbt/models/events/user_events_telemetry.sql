@@ -1,7 +1,8 @@
 {{config({
     "materialized": "incremental",
     "schema": "events",
-    "tags":"union"
+    "tags":"union",
+    "snowflake_warehouse": "transform_l",
   })
 }}
 

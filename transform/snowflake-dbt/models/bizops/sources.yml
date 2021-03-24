@@ -10,7 +10,7 @@ sources:
         description: 'Snowflake warehouse usage tracking'
 
   - name: bizops
-    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    database: ANALYTICS
     schema: bizops
 
     tables:
@@ -18,7 +18,7 @@ sources:
         description: 'Snowflake contract rates'
 
   - name: information_schema
-    database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
+    database: 'RAW'
     schema: information_schema
 
     tables:

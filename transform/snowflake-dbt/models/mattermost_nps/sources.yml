@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: mattermost_nps
-    database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
+    database: 'RAW'
     schema: mattermost_nps
 
     tables: 
@@ -13,7 +13,7 @@ sources:
         description: 'NPS feedback data'
 
   - name: mm_plugin_prod
-    database: '{{ env_var("SNOWFLAKE_LOAD_DATABASE") }}'
+    database: 'RAW'
     schema: mm_plugin_prod
 
     tables: 

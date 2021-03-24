@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: zendesk_raw
-    database: '{{ env_var("SNOWFLAKE_TRANSFORM_DATABASE") }}'
+    database: ANALYTICS
     schema: zendesk_raw
 
     tables: 
