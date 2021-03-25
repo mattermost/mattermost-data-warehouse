@@ -37,7 +37,7 @@ models:
             config:
               mappings:
                 - from: LAST_TELEMETRY_DATE
-                  to: Latest_Telemetry_date__c
+                  to: Latest_Telemetry_Date__c
                 - from: DAU
                   to: Seats_Active_Latest__c
                 - from: MAU
