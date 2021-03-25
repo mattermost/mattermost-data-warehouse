@@ -8,25 +8,23 @@ models:
           id: 13161
         destinations:
           - id: 52649
-        schedule:
-          type: cron
-          expression: "25-59/30 * * * *"
-        config:
-          mappings:
-            - from: TOTAL_ARR
-              to: ARR_Current__c
-            - from: SEATS
-              to: Seats_Licensed__c
-            - from: ACCOUNT_TYPE
-              to: Type
-          mode: update
-          object: Account
-          fromId: SFID
-          subscribeAdd: true
-          subscribeChange: false
-          subscribeDelete: false
-
-
+            schedule:
+              type: cron
+              expression: "25-59/30 * * * *"
+            config:
+              mappings:
+                - from: TOTAL_ARR
+                  to: ARR_Current__c
+                - from: SEATS
+                  to: Seats_Licensed__c
+                - from: ACCOUNT_TYPE
+                  to: Type
+              mode: update
+              object: Account
+              fromId: SFID
+              subscribeAdd: true
+              subscribeChange: false
+              subscribeDelete: false
   - name: account_update_telemetry
     meta:
       hightouch:
@@ -56,7 +54,6 @@ models:
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
-
   - name: account_update_health_score
     meta:
       hightouch:
@@ -78,7 +75,6 @@ models:
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
-
   - name: customer_onboarding_update_telemetry
     meta:
       hightouch:
@@ -109,7 +105,6 @@ models:
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
-
   - name: lead_update_account_link
     meta:
       hightouch:
@@ -130,7 +125,6 @@ models:
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
-
   - name: lead_update_status
     meta:
       hightouch:
@@ -151,7 +145,6 @@ models:
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
-
   - name: opportunity_update_available_renewals
     meta:
       hightouch:
