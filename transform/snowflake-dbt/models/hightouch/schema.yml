@@ -65,8 +65,9 @@ models:
         destinations:
           id: 52649
         schedule:
-          type: cron
-          expression: "25-59/30 * * * *"
+          type: dbt
+          accout_id: 13604
+          job_id: 19444
         config:
           mappings:
             - from: HEALTH_SCORE
