@@ -7,7 +7,7 @@ models:
         model:
           id: 13161
         destinations:
-          id: 52649
+          - id: 52649
         schedule:
           type: cron
           expression: "25-59/30 * * * *"
@@ -33,29 +33,29 @@ models:
         model:
           id: 13162
         destinations:
-          id: 52649
-        schedule:
-          type: manual
-        config:
-          mappings:
-            - from: LAST_TELEMETRY_DATE
-              to: Latest_Telemetry_date__c
-            - from: DAU
-              to: Seats_Active_Latest__c
-            - from: MAU
-              to: Seats_Active_MAU__c
-            - from: SERVER_VERSION
-              to: Server_Version__c
-            - from: REGISTERED_USERS
-              to: seats_registered__c
-            - from: SEATS_ACTIVE_MAX
-              to: Seats_Active_Max__c
-          mode: update
-          object: Account
-          fromId: SFID
-          subscribeAdd: true
-          subscribeChange: false
-          subscribeDelete: false
+          - id: 52649
+            schedule:
+              type: manual
+            config:
+              mappings:
+                - from: LAST_TELEMETRY_DATE
+                  to: Latest_Telemetry_date__c
+                - from: DAU
+                  to: Seats_Active_Latest__c
+                - from: MAU
+                  to: Seats_Active_MAU__c
+                - from: SERVER_VERSION
+                  to: Server_Version__c
+                - from: REGISTERED_USERS
+                  to: seats_registered__c
+                - from: SEATS_ACTIVE_MAX
+                  to: Seats_Active_Max__c
+              mode: update
+              object: Account
+              fromId: SFID
+              subscribeAdd: true
+              subscribeChange: false
+              subscribeDelete: false
 
   - name: account_update_health_score
     meta:
@@ -63,21 +63,21 @@ models:
         model:
           id: 13163
         destinations:
-          id: 52649
-        schedule:
-          type: dbt
-          accout_id: 13604
-          job_id: 19444
-        config:
-          mappings:
-            - from: HEALTH_SCORE
-              to: Health_Score__c
-          mode: update
-          object: Account
-          fromId: SFID
-          subscribeAdd: true
-          subscribeChange: false
-          subscribeDelete: false
+          - id: 52649
+            schedule:
+              type: dbt
+              accout_id: 13604
+              job_id: 19444
+            config:
+              mappings:
+                - from: HEALTH_SCORE
+                  to: Health_Score__c
+              mode: update
+              object: Account
+              fromId: SFID
+              subscribeAdd: true
+              subscribeChange: false
+              subscribeDelete: false
 
   - name: customer_onboarding_update_telemetry
     meta:
@@ -85,30 +85,30 @@ models:
         model:
           id: 13164
         destinations:
-          id: 52649
-        schedule:
-          type: cron
-          expression: "25-59/30 * * * *"
-        config:
-          mappings:
-            - from: LAST_TELEMETRY_DATE
-              to: Latest_Telemetry_date__c
-            - from: SEATS_ACTIVE_MAX
-              to: Seats_Active_Max__c
-            - from: DAU
-              to: Seats_Active_Latest__c
-            - from: MAU
-              to: Seats_Active_MAU__c
-            - from: SERVER_VERSION
-              to: Server_Version__c
-            - from: REGISTERED_USERS
-              to: Seats_Registered__c
-          mode: update
-          object: Customer_Onboarding__c
-          fromId: SFID
-          subscribeAdd: true
-          subscribeChange: false
-          subscribeDelete: false
+          - id: 52649
+            schedule:
+              type: cron
+              expression: "25-59/30 * * * *"
+            config:
+              mappings:
+                - from: LAST_TELEMETRY_DATE
+                  to: Latest_Telemetry_date__c
+                - from: SEATS_ACTIVE_MAX
+                  to: Seats_Active_Max__c
+                - from: DAU
+                  to: Seats_Active_Latest__c
+                - from: MAU
+                  to: Seats_Active_MAU__c
+                - from: SERVER_VERSION
+                  to: Server_Version__c
+                - from: REGISTERED_USERS
+                  to: Seats_Registered__c
+              mode: update
+              object: Customer_Onboarding__c
+              fromId: SFID
+              subscribeAdd: true
+              subscribeChange: false
+              subscribeDelete: false
 
   - name: lead_update_account_link
     meta:
@@ -116,20 +116,20 @@ models:
         model:
           id: 13165
         destinations:
-          id: 52649
-        schedule:
-          type: cron
-          expression: "25-59/30 * * * *"
-        config:
-          mappings:
-            - from: ACCOUNT_SFID
-              to: Existing_Account__c
-          mode: update
-          object: Lead
-          fromId: SFID
-          subscribeAdd: true
-          subscribeChange: false
-          subscribeDelete: false
+          - id: 52649
+            schedule:
+              type: cron
+              expression: "25-59/30 * * * *"
+            config:
+              mappings:
+                - from: ACCOUNT_SFID
+                  to: Existing_Account__c
+              mode: update
+              object: Lead
+              fromId: SFID
+              subscribeAdd: true
+              subscribeChange: false
+              subscribeDelete: false
 
   - name: lead_update_status
     meta:
@@ -137,20 +137,20 @@ models:
         model:
           id: 13166
         destinations:
-          id: 52649
-        schedule:
-          type: cron
-          expression: "25-59/30 * * * *"
-        config:
-          mappings:
-            - from: STATUS
-              to: Status
-          mode: update
-          object: Lead
-          fromId: SFID
-          subscribeAdd: true
-          subscribeChange: false
-          subscribeDelete: false
+          - id: 52649
+            schedule:
+              type: cron
+              expression: "25-59/30 * * * *"
+            config:
+              mappings:
+                - from: STATUS
+                  to: Status
+              mode: update
+              object: Lead
+              fromId: SFID
+              subscribeAdd: true
+              subscribeChange: false
+              subscribeDelete: false
 
   - name: opportunity_update_available_renewals
     meta:
@@ -158,37 +158,37 @@ models:
         model:
           id: 13167
         destinations:
-          id: 52649
-        schedule:
-          type: cron
-          expression: "25-59/30 * * * *"
-        config:
-          mappings:
-            - from: AVAILABLE_RENEWAL
-              to: Available_Renewal__c
-          mode: update
-          object: Opportunity
-          fromId: SFID
-          subscribeAdd: true
-          subscribeChange: false
-          subscribeDelete: false
+          - id: 52649
+            schedule:
+              type: cron
+              expression: "25-59/30 * * * *"
+            config:
+              mappings:
+                - from: AVAILABLE_RENEWAL
+                  to: Available_Renewal__c
+              mode: update
+              object: Opportunity
+              fromId: SFID
+              subscribeAdd: true
+              subscribeChange: false
+              subscribeDelete: false
   - name: opportunitylineitem_update_amounts
     meta:
       hightouch:
         model:
           id: 13168
         destinations:
-          id: 52649
-        schedule:
-          type: cron
-          expression: "25-59/30 * * * *"
-        config:
-          mappings:
-            - from: STATUS
-              to: Status
-          mode: update
-          object: Lead
-          fromId: SFID
-          subscribeAdd: true
-          subscribeChange: false
-          subscribeDelete: false
+          - id: 52649
+            schedule:
+              type: cron
+              expression: "25-59/30 * * * *"
+            config:
+              mappings:
+                - from: STATUS
+                  to: Status
+              mode: update
+              object: Lead
+              fromId: SFID
+              subscribeAdd: true
+              subscribeChange: false
+              subscribeDelete: false
