@@ -5,9 +5,12 @@ models:
     meta:
       hightouch:
         model:
-          id: 13148
+          id: 13161
         destinations:
-          - id: 52649
+          id: 52649
+        schedule:
+          type: cron
+          expression: "25-59/30 * * * *"
         config:
           mappings:
             - from: TOTAL_ARR
@@ -22,16 +25,17 @@ models:
           subscribeAdd: true
           subscribeChange: false
           subscribeDelete: false
-          schedule:
-            type: manual
+
 
   - name: account_update_telemetry
     meta:
       hightouch:
         model:
-          id: 13148
+          id: 13162
         destinations:
-          - id: 52649
+          id: 52649
+        schedule:
+          type: manual
         config:
           mappings:
             - from: LAST_TELEMETRY_DATE
@@ -52,15 +56,17 @@ models:
           subscribeAdd: true
           subscribeChange: false
           subscribeDelete: false
-          schedule:
-            type: manual
+
   - name: account_update_health_score
     meta:
       hightouch:
         model:
-          id: 13148
+          id: 13163
         destinations:
-          - id: 52649
+          id: 52649
+        schedule:
+          type: cron
+          expression: "25-59/30 * * * *"
         config:
           mappings:
             - from: HEALTH_SCORE
@@ -71,16 +77,17 @@ models:
           subscribeAdd: true
           subscribeChange: false
           subscribeDelete: false
-          schedule:
-            type: manual
 
-  - name: customer_onboarding_updates
+  - name: customer_onboarding_update_telemetry
     meta:
       hightouch:
         model:
-          id: 13148
+          id: 13164
         destinations:
-          - id: 52649
+          id: 52649
+        schedule:
+          type: cron
+          expression: "25-59/30 * * * *"
         config:
           mappings:
             - from: LAST_TELEMETRY_DATE
@@ -101,10 +108,86 @@ models:
           subscribeAdd: true
           subscribeChange: false
           subscribeDelete: false
-          schedule:
-            type: manual
 
   - name: lead_update_account_link
+    meta:
+      hightouch:
+        model:
+          id: 13164
+        destinations:
+          id: 52649
+        schedule:
+          type: cron
+          expression: "25-59/30 * * * *"
+        config:
+          mappings:
+            - from: ACCOUNT_SFID
+              to: Existing_Account__c
+          mode: update
+          object: Lead
+          fromId: SFID
+          subscribeAdd: true
+          subscribeChange: false
+          subscribeDelete: false
+
   - name: lead_update_status
+    meta:
+      hightouch:
+        model:
+          id: 13164
+        destinations:
+          id: 52649
+        schedule:
+          type: cron
+          expression: "25-59/30 * * * *"
+        config:
+          mappings:
+            - from: STATUS
+              to: Status
+          mode: update
+          object: Lead
+          fromId: SFID
+          subscribeAdd: true
+          subscribeChange: false
+          subscribeDelete: false
+
   - name: opportunity_update_available_renewals
+    meta:
+      hightouch:
+        model:
+          id: 13164
+        destinations:
+          id: 52649
+        schedule:
+          type: cron
+          expression: "25-59/30 * * * *"
+        config:
+          mappings:
+            - from: AVAILABLE_RENEWAL
+              to: Available_Renewal__c
+          mode: update
+          object: Opportunity
+          fromId: SFID
+          subscribeAdd: true
+          subscribeChange: false
+          subscribeDelete: false
   - name: opportunitylineitem_update_amounts
+    meta:
+      hightouch:
+        model:
+          id: 13164
+        destinations:
+          id: 52649
+        schedule:
+          type: cron
+          expression: "25-59/30 * * * *"
+        config:
+          mappings:
+            - from: STATUS
+              to: Status
+          mode: update
+          object: Lead
+          fromId: SFID
+          subscribeAdd: true
+          subscribeChange: false
+          subscribeDelete: false
