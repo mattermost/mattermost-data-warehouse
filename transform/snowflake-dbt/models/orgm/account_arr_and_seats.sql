@@ -1,7 +1,6 @@
 {{config({
     "materialized": 'table',
-    "schema": "staging",
-    "post-hook": "{{ pg_import('staging.orgm_account_arr_and_seats', 'update_account_arr_and_seats') }}"
+    "schema": "orgm",
   })
 }}
 
@@ -43,7 +42,7 @@ WITH leap_years AS (
     WHERE current_date >= opportunitylineitem.start_date__c AND current_date <= opportunitylineitem.end_date__c
     GROUP BY 1
     HAVING SUM(CASE WHEN product2.name like '%E10%' OR product2.name like '%E20%' OR product2.name like '%E25%' THEN opportunitylineitem.quantity ELSE 0 END) > 0
-), orgm_account_arr_and_seats AS (
+), account_arr_and_seats AS (
     SELECT
         account.sfid AS account_sfid,
         GREATEST(COALESCE(total_arr, 0),0) AS total_arr,
@@ -54,4 +53,4 @@ WITH leap_years AS (
     LEFT JOIN seats_licensed ON account.sfid = seats_licensed.account_sfid
 )
 
-SELECT * FROM orgm_account_arr_and_seats
+SELECT * FROM account_arr_and_seats

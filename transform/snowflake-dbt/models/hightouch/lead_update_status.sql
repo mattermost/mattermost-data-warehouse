@@ -1,15 +1,18 @@
-update orgm.lead
-set status = 'MQL',
-    most_recent_mql_date__c = a.cm_created
-from (
-    select lead.sfid, lead.status, lead.email, campaignmember.createddate as cm_created, owner.name as account_name, greatest(account.numberofemployees,lead.numberofemployees) as employee_count
-    from orgm.lead
-             left join orgm.campaignmember on campaignmember.leadid = lead.sfid
-             left join orgm.campaign on campaign.sfid = campaignid
-             left join orgm.account on account.cleaned_up_website__c = lead.cleaned_up_website__c
-             left join orgm.user as owner on owner.sfid = account.ownerid
+{{config({
+    "materialized": 'table',
+    "schema": "hightouch"
+  })
+}}
+
+with lead_update_status as (
+    select lead.sfid, 'MQL' as status
+    from {{ ref('lead') }}
+    left join {{ ref('campaignmember') }} on campaignmember.leadid = lead.sfid
+    left join {{ ref('campaign') }} on campaign.sfid = campaignid
+    left join {{ ref('account') }} on account.cleaned_up_website__c = lead.cleaned_up_website__c
+    left join {{ ref('user') }} as owner on owner.sfid = account.ownerid
     where campaign.name = 'Cloud Workspace Creation'
-        and (campaignmember.createddate > most_recent_mql_date__c or most_recent_mql_date__c IS NULL)
+        and (campaignmember.createddate > most_recent_mql_date__c or most_recent_mql_date__c is null)
         and (
             owner.sales_segment__c IN ('AMER_APAC', 'EMEA', 'Federal')
             OR greatest(account.numberofemployees, lead.numberofemployees) > 500
@@ -28,5 +31,13 @@ from (
                         )
                 )
         ) and lead.status IN ('MCL','MEL','Recycle')
-) as a
-where a.sfid = lead.sfid;
+)
+    
+select lead_update_status.*
+from {{ ref('lead') }}
+join lead_update_status on lead_update_status.sfid = lead.sfid
+where 
+    (lead.status) 
+    is distinct from 
+    (lead_update_status.status)
+ 
