@@ -25,7 +25,6 @@ models:
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
-
   - name: account_update_telemetry
     meta:
       hightouch:
@@ -55,7 +54,6 @@ models:
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
-
   - name: account_update_health_score
     meta:
       hightouch:
@@ -77,7 +75,6 @@ models:
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
-
   - name: customer_onboarding_update_telemetry
     meta:
       hightouch:
@@ -108,7 +105,6 @@ models:
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
-
   - name: lead_update_account_link
     meta:
       hightouch:
@@ -129,7 +125,6 @@ models:
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
-
   - name: lead_update_status
     meta:
       hightouch:
@@ -150,7 +145,6 @@ models:
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
-
   - name: opportunity_update_available_renewals
     meta:
       hightouch:
