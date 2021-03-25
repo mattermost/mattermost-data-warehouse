@@ -177,10 +177,22 @@ models:
               expression: "25-59/30 * * * *"
             config:
               mappings:
-                - from: STATUS
-                  to: Status
+                - from: TOTAL_NEW_AMOUNT
+                  to: New_Amount__c
+                - from: TOTAL_RENEWAL_AMOUNT
+                  to: Renewal_Amount__c
+                - from: TOTAL_EXPANSION_AMOUNT
+                  to: Expansion_Amount__c
+                - from: TOTAL_COTERM_AMOUNT
+                  to: Coterm_Expansion_Amount__c
+                - from: TOTAL_LEFTOVER_AMOUNT
+                  to: Leftover_Expansion_Amount__c
+                - from: TOTAL_MULTI_AMOUNT
+                  to: Multi_Amount__c
+                - from: TOTAL_REN_MULTI_AMOUNT
+                  to: Renewal_Multi_Amount__c
               mode: update
-              object: Lead
+              object: OpportunityLineItem
               fromId: SFID
               subscribeAdd: true
               subscribeChange: false
