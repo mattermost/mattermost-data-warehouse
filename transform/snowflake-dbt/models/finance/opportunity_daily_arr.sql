@@ -24,15 +24,16 @@ WITH leap_years AS (
     account.sfid AS account_sfid,
     coalesce(master_account.sfid, account.sfid) AS master_account_sfid,
   	util_dates.date::date AS day,
-  	SUM(365*(opportunitylineitem.totalprice)/(opportunitylineitem.end_date__c::date - opportunitylineitem.start_date__c::date + 1 - crosses_leap_day))::int AS total_arr
+  	SUM(CASE WHEN opportunity.iswon THEN 365*(opportunitylineitem.totalprice)/(opportunitylineitem.end_date__c::date - opportunitylineitem.start_date__c::date + 1 - crosses_leap_day) ELSE 0 END )::int AS won_arr,
+    SUM(CASE WHEN opportunity.isclosed AND NOT opportunity.iswon THEN 365*(opportunitylineitem.totalprice)/(opportunitylineitem.end_date__c::date - opportunitylineitem.start_date__c::date + 1 - crosses_leap_day)ELSE 0 END )::int AS lost_arr,
+    SUM(CASE WHEN NOT opportunity.isclosed THEN 365*(opportunitylineitem.totalprice)/(opportunitylineitem.end_date__c::date - opportunitylineitem.start_date__c::date + 1 - crosses_leap_day) ELSE 0 END )::int AS open_arr
   FROM {{ ref( 'opportunitylineitem') }}  AS opportunitylineitem
   LEFT JOIN opportunitylineitems_impacted ON opportunitylineitems_impacted.opportunitylineitem_sfid = opportunitylineitem.sfid
   LEFT JOIN {{ ref( 'opportunity') }}  AS opportunity ON opportunity.sfid = opportunitylineitem.opportunityid
   LEFT JOIN {{ ref( 'account') }}  AS account ON account.sfid = opportunity.accountid
   LEFT JOIN {{ ref( 'account') }}  AS master_account ON master_account.sfid = account.parentid
   LEFT JOIN {{ source('util', 'dates') }}  AS util_dates ON util_dates.date::date >= opportunitylineitem.start_date__c::date AND util_dates.date::date <= opportunitylineitem.end_date__c::date
-  WHERE opportunity.iswon
-    AND opportunitylineitem.end_date__c::date-opportunitylineitem.start_date__c::date <> 0 AND opportunitylineitem.product_type__c = 'Recurring'
+  WHERE opportunitylineitem.end_date__c::date-opportunitylineitem.start_date__c::date <> 0 AND opportunitylineitem.end_date__c::date - opportunitylineitem.start_date__c::date + 1 - crosses_leap_day <> 0 AND opportunitylineitem.product_type__c = 'Recurring'
   GROUP BY 1, 2, 3, 4
 )
 SELECT * FROM opportunity_daily_arr

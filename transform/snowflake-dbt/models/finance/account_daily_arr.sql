@@ -9,8 +9,9 @@ WITH account_daily_arr AS (
     account_sfid,
     master_account_sfid,
   	day,
-  	SUM(total_arr)::int AS total_arr
+  	SUM(won_arr)::int AS total_arr
   FROM {{ ref( 'opportunity_daily_arr') }}
+  WHERE won_arr <> 0
   GROUP BY 1, 2, 3
 )
 SELECT * FROM account_daily_arr
