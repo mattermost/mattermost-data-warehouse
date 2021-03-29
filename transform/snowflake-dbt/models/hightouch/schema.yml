@@ -10,7 +10,7 @@ models:
           - id: 52649
             schedule:
               type: dbt
-              accout_id: 13604
+              account_id: 13604
               job_id: 19444
             config:
               mappings:
@@ -35,7 +35,7 @@ models:
           - id: 52649
             schedule:
               type: dbt
-              accout_id: 13604
+              account_id: 13604
               job_id: 19444
             config:
               mappings:
@@ -66,7 +66,7 @@ models:
           - id: 52649
             schedule:
               type: dbt
-              accout_id: 13604
+              account_id: 13604
               job_id: 19444
             config:
               mappings:
@@ -87,7 +87,7 @@ models:
           - id: 52649
             schedule:
               type: dbt
-              accout_id: 13604
+              account_id: 13604
               job_id: 19444
             config:
               mappings:
@@ -118,7 +118,7 @@ models:
           - id: 52649
             schedule:
               type: dbt
-              accout_id: 13604
+              account_id: 13604
               job_id: 19444
             config:
               mappings:
@@ -139,7 +139,7 @@ models:
           - id: 52649
             schedule:
               type: dbt
-              accout_id: 13604
+              account_id: 13604
               job_id: 19444
             config:
               mappings:
@@ -160,7 +160,7 @@ models:
           - id: 52649
             schedule:
               type: dbt
-              accout_id: 13604
+              account_id: 13604
               job_id: 19444
             config:
               mappings:
@@ -181,7 +181,7 @@ models:
           - id: 52649
             schedule:
               type: dbt
-              accout_id: 13604
+              account_id: 13604
               job_id: 19444
             config:
               mappings:
