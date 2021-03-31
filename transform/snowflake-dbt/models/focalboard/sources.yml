@@ -1,7 +1,7 @@
 version: 2
 
 sources:
-  - name: focalboard
+  - name: hacktoberboard_prod
     database: 'RAW'
     schema: hacktoberboard_prod
 
