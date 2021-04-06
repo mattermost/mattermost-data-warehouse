@@ -21,7 +21,7 @@ WITH subscriptions AS (
         ,subscriptions.metadata:"cws-dns"::varchar as cws_dns
         ,subscriptions.metadata:"cws-blapi-subscription"::varchar as cws_blapi_subscription
         ,subscriptions.metadata:"cws-installation"::varchar as cws_installation
-        ,subscriptions.metadata:"billing_type"::varchar as billing_type
+        ,subscriptions.metadata:"billing-type"::varchar as billing_type
         ,subscriptions."START"
         ,subscriptions.status
         ,subscriptions.updated
