@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: hacktoberboard_prod
+    database: 'RAW'
+    schema: hacktoberboard_prod
+
+    tables:
+      - name: activity
+      - name: config
+      - name: server

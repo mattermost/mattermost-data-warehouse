@@ -6,7 +6,13 @@
   })
 }}
 
-WITH trial_requests AS (
+WITH lead AS (
+  SELECT *,
+  ROW_NUMBER() OVER (PARTITION BY email ORDER BY CREATEDDATE ASC) AS rank
+  FROM {{ ref('lead') }}
+),
+
+ trial_requests AS (
     SELECT 
       trial_requests.id as license_id,
       trial_requests.email,
@@ -25,7 +31,7 @@ WITH trial_requests AS (
       contact.sfid IS NOT NULL AS is_contact,
       lead.sfid IS NOT NULL AS is_lead
     FROM {{ source('blapi', 'trial_requests') }}
-    LEFT JOIN {{ ref( 'lead') }} ON trial_requests.email = lead.email
+    LEFT JOIN lead ON trial_requests.email = lead.email AND lead.rank = 1
     LEFT JOIN {{ ref( 'contact') }} ON trial_requests.email = contact.email
     {% if is_incremental() %}
 
