@@ -18,6 +18,7 @@ WITH leap_years AS (
     GROUP BY opportunitylineitem_sfid
 ), opportunitylineitem_daily_arr AS (
   SELECT
+    opportunitylineitem.sfid as opportunitylineitem_sfid,
     opportunity.sfid AS opportunity_sfid,
   	util_dates.date::date AS day,
   	SUM(CASE WHEN opportunity.iswon THEN 365*(opportunitylineitem.totalprice)/(opportunitylineitem.end_date__c::date - opportunitylineitem.start_date__c::date + 1 - crosses_leap_day) ELSE 0 END )::int AS won_arr,
@@ -49,6 +50,6 @@ WITH leap_years AS (
   LEFT JOIN {{ ref( 'opportunity') }}  AS opportunity ON opportunity.sfid = opportunitylineitem.opportunityid
   LEFT JOIN {{ source('util', 'dates') }}  AS util_dates ON util_dates.date::date >= opportunitylineitem.start_date__c::date AND util_dates.date::date <= opportunitylineitem.end_date__c::date
   WHERE opportunitylineitem.end_date__c::date-opportunitylineitem.start_date__c::date <> 0 AND opportunitylineitem.end_date__c::date - opportunitylineitem.start_date__c::date + 1 - crosses_leap_day <> 0 AND opportunitylineitem.product_type__c = 'Recurring'
-  GROUP BY 1, 2
+  GROUP BY 1, 2, 3
 )
 SELECT * FROM opportunitylineitem_daily_arr
