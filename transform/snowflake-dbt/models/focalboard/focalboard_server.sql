@@ -35,7 +35,6 @@ focalboard_server AS (
         , server.user_id
         , server.operating_system
         , server.uuid_ts
-        , server.id
         , server.context_library_name
         , server.received_at
       , {{ dbt_utils.surrogate_key(['server.timestamp::date', 'server.user_id'])}} as id

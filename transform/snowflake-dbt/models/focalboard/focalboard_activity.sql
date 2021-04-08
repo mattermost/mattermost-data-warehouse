@@ -32,7 +32,6 @@ focalboard_activity AS (
       , activity.daily_active_users
       , activity.event_text
       , activity.context_library_name
-      , activity.id
       , activity.original_timestamp
       , activity.context_library_version
       , activity.timestamp

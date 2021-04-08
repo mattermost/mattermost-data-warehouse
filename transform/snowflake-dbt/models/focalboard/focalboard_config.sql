@@ -26,7 +26,6 @@ focalboard_config AS (
         , config.sent_at
         , config.user_id
         , config.usessl
-        , config.id
         , config.received_at
         , config.context_library_version
         , config.dbtype
