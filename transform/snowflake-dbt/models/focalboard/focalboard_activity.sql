@@ -37,7 +37,7 @@ focalboard_activity AS (
       , activity.context_library_version
       , activity.timestamp
       , activity.context_ip
-      , {{ dbt_utils.surrogate_key(['activity.timestamp::date', 'activity.user_id'])}}
+      , {{ dbt_utils.surrogate_key(['activity.timestamp::date', 'activity.user_id'])}}  as id
     FROM {{ source('hacktoberboard_prod', 'activity') }} activity
     JOIN max_time mt
       ON activity.user_id = mt.user_id
