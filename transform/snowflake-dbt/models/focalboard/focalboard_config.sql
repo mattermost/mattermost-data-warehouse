@@ -26,7 +26,6 @@ focalboard_config AS (
         , config.sent_at
         , config.user_id
         , config.usessl
-        , config.id
         , config.received_at
         , config.context_library_version
         , config.dbtype
@@ -37,7 +36,7 @@ focalboard_config AS (
         , config.event
         , config.event_text
         , config.uuid_ts
-      , {{ dbt_utils.surrogate_key(['config.timestamp::date', 'config.user_id'])}}
+      , {{ dbt_utils.surrogate_key(['config.timestamp::date', 'config.user_id'])}} as id
     FROM {{ source('hacktoberboard_prod', 'config') }} config
     JOIN max_time mt
       ON config.user_id = mt.user_id
