@@ -1,0 +1,11 @@
+version: 2
+
+models:
+  - name: focalboard_activity
+    description: Daily activity telemetry related to each focalboard instance/server.
+
+  - name: focalboard_server
+    description: Daily server telemetry related to each focalboard instance/server.
+
+  - name: focalboard_config
+    description: Daily configuration telemetry related to each focalboard instance/server.
