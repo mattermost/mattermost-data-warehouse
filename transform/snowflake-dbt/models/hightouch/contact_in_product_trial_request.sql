@@ -33,7 +33,7 @@ with recent_in_product_trial_requests as (
         recent_in_product_trial_requests.most_recent_action_detail,
         recent_in_product_trial_requests.most_recent_lead_source,
         recent_in_product_trial_requests.most_recent_lead_source_detail,
-        recent_in_product_trial_requests.receive_emails_accepted,
+        not recent_in_product_trial_requests.receive_emails_accepted as optedoutofemail,
         recent_in_product_trial_requests.license_issued_at,
         '7013p000001NkNoAAK' as in_product_trial_request_campaignid,
         'Responded' as campaign_status,
