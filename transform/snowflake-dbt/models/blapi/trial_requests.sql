@@ -23,20 +23,21 @@ WITH lead AS (
       trial_requests.start_date,
       trial_requests.end_date,
       trial_requests.users,
-      trial_requests.license_payload,
       trial_requests.license_issued_at,
       trial_requests.receive_emails_accepted,
       trial_requests.terms_accepted,
       COALESCE(contact.sfid,lead.sfid) AS sfid,
       contact.sfid IS NOT NULL AS is_contact,
-      lead.sfid IS NOT NULL AS is_lead
+      lead.sfid IS NOT NULL AS is_lead,
+      REGEXP_LIKE(UPPER(trial_requests.email),'^[A-Z0-9._%+-/!#$%&''*=?^_`{|}~]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$') as valid_email
     FROM {{ source('blapi', 'trial_requests') }}
-    LEFT JOIN lead ON trial_requests.email = lead.email AND lead.rank = 1
-    LEFT JOIN {{ ref( 'contact') }} ON trial_requests.email = contact.email
+    LEFT JOIN lead ON trial_requests.email = lower(lead.email) AND lead.rank = 1
+    LEFT JOIN {{ ref( 'contact') }} ON trial_requests.email = lower(contact.email)
     {% if is_incremental() %}
 
-    WHERE license_issued_at >= (SELECT MAX(license_issued_at) FROM {{this}})
+      WHERE license_issued_at >= (SELECT MAX(license_issued_at) FROM {{this}})
 
     {% endif %}
 )
+
 SELECT * FROM trial_requests
