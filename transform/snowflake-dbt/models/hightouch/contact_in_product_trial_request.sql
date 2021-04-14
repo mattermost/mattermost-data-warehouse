@@ -37,7 +37,7 @@ with recent_in_product_trial_requests as (
         recent_in_product_trial_requests.license_issued_at,
         '7013p000001NkNoAAK' as in_product_trial_request_campaignid,
         'Responded' as campaign_status,
-        min(contact.dwh_external_id__c) as dwh_external_id
+        min(contact.sfid) as contact_sfid
     from recent_in_product_trial_requests
     join {{ ref('contact') }} on lower(contact.email) = recent_in_product_trial_requests.email or recent_in_product_trial_requests.trial_requests_sfid = contact.sfid 
     where (contact.trial_req_date__c is null or contact.trial_req_date__c::date < license_issued_at::date)
