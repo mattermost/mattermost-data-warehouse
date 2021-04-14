@@ -84,30 +84,30 @@ models:
           id: 13164
         destinations:
           - id: 52649
-            schedule:
-              type: dbt
-              account_id: 13604
-              job_id: 19444
             config:
-              mappings:
-                - from: LAST_TELEMETRY_DATE
-                  to: Latest_Telemetry_date__c
-                - from: SEATS_ACTIVE_MAX
-                  to: Seats_Active_Max__c
-                - from: DAU
-                  to: Seats_Active_Latest__c
-                - from: MAU
-                  to: Seats_Active_MAU__c
-                - from: SERVER_VERSION
-                  to: Server_Version__c
-                - from: REGISTERED_USERS
-                  to: Seats_Registered__c
               mode: update
-              object: Customer_Onboarding__c
               fromId: SFID
+              object: Customer_Onboarding__c
+              mappings:
+                - to: Latest_Telemetry_date__c
+                  from: LAST_TELEMETRY_DATE
+                - to: Seats_Active_Max__c
+                  from: SEATS_ACTIVE_MAX
+                - to: Seats_Active_Latest__c
+                  from: DAU
+                - to: Seats_Active_MAU__c
+                  from: MAU
+                - to: Server_Version__c
+                  from: SERVER_VERSION
+                - to: Seats_Registered__c
+                  from: REGISTERED_USERS
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
+            schedule:
+              type: dbt
+              account: 13604
+              job: 19444
   - name: lead_update_account_link
     meta:
       hightouch:
