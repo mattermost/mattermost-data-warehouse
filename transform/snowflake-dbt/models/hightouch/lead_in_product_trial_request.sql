@@ -27,8 +27,8 @@ with recent_in_product_trial_requests as (
 ), lead_in_product_trial_request as (
     select 
         recent_in_product_trial_requests.email,
-        recent_in_product_trial_requests.first_name,
-        recent_in_product_trial_requests.last_name,
+        coalesce(lead.firstname,recent_in_product_trial_requests.first_name) as first_name,
+        coalesce(lead.firstname,recent_in_product_trial_requests.last_name) as last_name,
         recent_in_product_trial_requests.ownerid,
         recent_in_product_trial_requests.most_recent_action,
         recent_in_product_trial_requests.most_recent_action_detail,
