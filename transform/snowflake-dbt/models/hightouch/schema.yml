@@ -63,20 +63,20 @@ models:
           id: 13163
         destinations:
           - id: 52649
-            schedule:
-              type: dbt
-              account_id: 13604
-              job_id: 19444
             config:
-              mappings:
-                - from: HEALTH_SCORE
-                  to: Health_Score__c
               mode: update
-              object: Account
               fromId: SFID
+              object: Account
+              mappings:
+                - to: Health_Score__c
+                  from: HEALTH_SCORE
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
+            schedule:
+              type: dbt
+              account: 13604
+              job: 19444
   - name: customer_onboarding_update_telemetry
     meta:
       hightouch:
