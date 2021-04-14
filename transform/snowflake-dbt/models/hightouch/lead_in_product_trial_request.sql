@@ -39,12 +39,14 @@ with recent_in_product_trial_requests as (
         '7013p000001NkNoAAK' as in_product_trial_request_campaignid,
         'Responded' as campaign_status,
         coalesce(lead.dwh_external_id__c, uuid_string()) as lead_dwh_external_id,
+        lead.sfid as lead_sfid,
+        campaignmember.sfid as campaignmember_sfid,
         coalesce(campaignmember.dwh_external_id__c, uuid_string()) as campaignmember_dwh_external_id
     from recent_in_product_trial_requests
     left join {{ ref('lead') }} on lower(lead.email) = recent_in_product_trial_requests.email or recent_in_product_trial_requests.trial_requests_sfid = lead.sfid 
     left join {{ ref('campaignmember') }} on lead.sfid = campaignmember.leadid and campaignmember.campaignid = '7013p000001NkNoAAK'
     where (lead.request_a_trial_date__c is null or lead.request_a_trial_date__c::date < license_issued_at::date)
-    {{ dbt_utils.group_by(n=14) }}
+    {{ dbt_utils.group_by(n=16) }}
 )
 
 select * from lead_in_product_trial_request
