@@ -157,20 +157,20 @@ models:
           id: 13167
         destinations:
           - id: 52649
-            schedule:
-              type: dbt
-              account_id: 13604
-              job_id: 19444
             config:
-              mappings:
-                - from: AVAILABLE_RENEWAL
-                  to: Available_Renewal__c
               mode: update
-              object: Opportunity
               fromId: SFID
+              object: Opportunity
+              mappings:
+                - to: Available_Renewal__c
+                  from: AVAILABLE_RENEWAL
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
+            schedule:
+              type: dbt
+              account: 13604
+              job: 19444
   - name: opportunitylineitem_update_amounts
     meta:
       hightouch:
