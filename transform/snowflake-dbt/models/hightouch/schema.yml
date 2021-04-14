@@ -178,29 +178,29 @@ models:
           id: 13168
         destinations:
           - id: 52649
-            schedule:
-              type: dbt
-              account_id: 13604
-              job_id: 19444
             config:
-              mappings:
-                - from: TOTAL_NEW_AMOUNT
-                  to: New_Amount__c
-                - from: TOTAL_RENEWAL_AMOUNT
-                  to: Renewal_Amount__c
-                - from: TOTAL_EXPANSION_AMOUNT
-                  to: Expansion_Amount__c
-                - from: TOTAL_COTERM_AMOUNT
-                  to: Coterm_Expansion_Amount__c
-                - from: TOTAL_LEFTOVER_AMOUNT
-                  to: Leftover_Expansion_Amount__c
-                - from: TOTAL_MULTI_AMOUNT
-                  to: Multi_Amount__c
-                - from: TOTAL_REN_MULTI_AMOUNT
-                  to: Renewal_Multi_Amount__c
               mode: update
-              object: OpportunityLineItem
               fromId: SFID
+              object: OpportunityLineItem
+              mappings:
+                - to: New_Amount__c
+                  from: TOTAL_NEW_AMOUNT
+                - to: Renewal_Amount__c
+                  from: TOTAL_RENEWAL_AMOUNT
+                - to: Expansion_Amount__c
+                  from: TOTAL_EXPANSION_AMOUNT
+                - to: Coterm_Expansion_Amount__c
+                  from: TOTAL_COTERM_AMOUNT
+                - to: Leftover_Expansion_Amount__c
+                  from: TOTAL_LEFTOVER_AMOUNT
+                - to: Multi_Amount__c
+                  from: TOTAL_MULTI_AMOUNT
+                - to: Renewal_Multi_Amount__c
+                  from: TOTAL_REN_MULTI_AMOUNT
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
+            schedule:
+              type: dbt
+              account: 13604
+              job: 19444
