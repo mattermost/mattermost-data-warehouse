@@ -115,20 +115,20 @@ models:
           id: 13165
         destinations:
           - id: 52649
-            schedule:
-              type: dbt
-              account_id: 13604
-              job_id: 19444
             config:
-              mappings:
-                - from: ACCOUNT_SFID
-                  to: Existing_Account__c
               mode: update
-              object: Lead
               fromId: SFID
+              object: Lead
+              mappings:
+                - to: Existing_Account__c
+                  from: ACCOUNT_SFID
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
+            schedule:
+              type: dbt
+              account: 13604
+              job: 19444
   - name: lead_update_status
     meta:
       hightouch:
