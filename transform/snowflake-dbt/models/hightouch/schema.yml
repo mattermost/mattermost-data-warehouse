@@ -1,5 +1,4 @@
 version: 2
-
 models:
   - name: account_update_arr_seats_type
     meta:
@@ -8,24 +7,24 @@ models:
           id: 13161
         destinations:
           - id: 52649
-            schedule:
-              type: dbt
-              account_id: 13604
-              job_id: 19444
             config:
-              mappings:
-                - from: TOTAL_ARR
-                  to: ARR_Current__c
-                - from: SEATS
-                  to: Seats_Licensed__c
-                - from: ACCOUNT_TYPE
-                  to: Type
               mode: update
-              object: Account
               fromId: SFID
+              object: Account
+              mappings:
+                - to: ARR_Current__c
+                  from: TOTAL_ARR
+                - to: Seats_Licensed__c
+                  from: SEATS
+                - to: Type
+                  from: ACCOUNT_TYPE
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
+            schedule:
+              type: dbt
+              account: 13604
+              job: 19444
   - name: account_update_telemetry
     meta:
       hightouch:
