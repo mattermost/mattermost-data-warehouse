@@ -1,9 +1,9 @@
 version: 2
 
 sources:
-  - name: orgm_old
+  - name: orgm_raw
     database: ANALYTICS
-    schema: orgm_old
+    schema: orgm_raw
     loader: Stitch
     loaded_at_field: _sdc_batched_at
 
@@ -20,6 +20,9 @@ sources:
       - name: account
         description: "SFDC Account"
 
+      - name: billing_entity__c
+        description: "SFDC Billing Entity"
+
       - name: campaign
         description: "SFDC Campaign"
 
@@ -28,48 +31,60 @@ sources:
 
       - name: contact
         description: "SFDC Contact"
+      
+      - name: contract
+        description: "SFDC Contract"
 
-      - name: delete_history__c
-        description: "History of deleted objects in SFDC"
-
-      - name: lead
-        description: "SFDC Lead"
-
-      - name: opportunity
-        description: "SFDC Opportunity"
-
-      - name: opportunityfieldhistory
-        description: "SFDC Opportunity Field History"
-
-      - name: opportunitylineitem
-        description: "SFDC Opportunity Line Item"
-
-      - name: task
-        description: "SFDC Tasks with Marketo removed"
-
-      - name: user
-        description: "SFDC User"
-
-      - name: territory__c
-        description: "SFDC Territory"
-
-      - name: territory_mapping__c
-        description: "SFDC Territory Mapping"
-
-      - name: billing_entity__c
-        description: "SFDC Billing Entity"
-
-      - name: product2
-        description: "SFDC Product"
-
-      - name: opportunitycontactrole
-        description: "SFDC Opportunity Contact Role"
+      - name: customer_onboarding__c
+        description: "SFDC Customer Onboarding"
 
       - name: customer_reference__c
         description: "SFDC Customer Reference"
 
+      - name: customer_risk__c
+        description: "SFDC Customer Risk"
+
+      - name: customer_risk__history
+        description: "SFDC Customer Risk History"
+
+      - name: lead
+        description: "SFDC Lead"
+
       - name: netsuite_conn__netsuite_financial__c
         description: "Netsuite Data in SFDC"
 
-      - name: customer_risk__c
-        description: "SFDC Customer Risk"
+      - name: opportunity
+        description: "SFDC Opportunity"
+
+      - name: opportunitycontactrole
+        description: "SFDC Opportunity Contact Role"
+
+      - name: opportunityfieldhistory
+        description: "SFDC Opportunity Field History"
+
+      - name: opportunityhistory
+        description: "SFDC Opportunity History"
+
+      - name: opportunitylineitem
+        description: "SFDC Opportunity Line Item"
+
+      - name: pricebookentry
+        description: "SFDC Pricebook Entry"
+
+      - name: product2
+        description: "SFDC Product"
+
+      - name: task
+        description: "SFDC Task"
+
+      - name: territory_mapping__c
+        description: "SFDC Territory Mapping"
+
+      - name: true_up_reports__c
+        description: "SFDC True Up Reports"
+    
+      - name: user
+        description: "SFDC User"
+    
+      - name: userrole
+        description: "SFDC User Role"
