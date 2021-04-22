@@ -1,5 +1,4 @@
 version: 2
-
 models:
   - name: account_update_arr_seats_type
     meta:
@@ -8,24 +7,24 @@ models:
           id: 13161
         destinations:
           - id: 52649
-            schedule:
-              type: dbt
-              account_id: 13604
-              job_id: 19444
             config:
-              mappings:
-                - from: TOTAL_ARR
-                  to: ARR_Current__c
-                - from: SEATS
-                  to: Seats_Licensed__c
-                - from: ACCOUNT_TYPE
-                  to: Type
               mode: update
-              object: Account
               fromId: SFID
+              object: Account
+              mappings:
+                - to: ARR_Current__c
+                  from: TOTAL_ARR
+                - to: Seats_Licensed__c
+                  from: SEATS
+                - to: Type
+                  from: ACCOUNT_TYPE
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
+            schedule:
+              type: dbt
+              account: 13604
+              job: 19444
   - name: account_update_telemetry
     meta:
       hightouch:
@@ -33,30 +32,30 @@ models:
           id: 13162
         destinations:
           - id: 52649
-            schedule:
-              type: dbt
-              account_id: 13604
-              job_id: 19444
             config:
-              mappings:
-                - from: LAST_TELEMETRY_DATE
-                  to: Latest_Telemetry_Date__c
-                - from: DAU
-                  to: Seats_Active_Latest__c
-                - from: MAU
-                  to: Seats_Active_MAU__c
-                - from: SERVER_VERSION
-                  to: Server_Version__c
-                - from: REGISTERED_USERS
-                  to: seats_registered__c
-                - from: SEATS_ACTIVE_MAX
-                  to: Seats_Active_Max__c
               mode: update
-              object: Account
               fromId: SFID
+              object: Account
+              mappings:
+                - to: Latest_Telemetry_Date__c
+                  from: LAST_TELEMETRY_DATE
+                - to: Seats_Active_Latest__c
+                  from: DAU
+                - to: Seats_Active_MAU__c
+                  from: MAU
+                - to: Server_Version__c
+                  from: SERVER_VERSION
+                - to: seats_registered__c
+                  from: REGISTERED_USERS
+                - to: Seats_Active_Max__c
+                  from: SEATS_ACTIVE_MAX
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
+            schedule:
+              type: dbt
+              account: 13604
+              job: 19444
   - name: account_update_health_score
     meta:
       hightouch:
@@ -64,20 +63,20 @@ models:
           id: 13163
         destinations:
           - id: 52649
-            schedule:
-              type: dbt
-              account_id: 13604
-              job_id: 19444
             config:
-              mappings:
-                - from: HEALTH_SCORE
-                  to: Health_Score__c
               mode: update
-              object: Account
               fromId: SFID
+              object: Account
+              mappings:
+                - to: Health_Score__c
+                  from: HEALTH_SCORE
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
+            schedule:
+              type: dbt
+              account: 13604
+              job: 19444
   - name: customer_onboarding_update_telemetry
     meta:
       hightouch:
@@ -85,30 +84,30 @@ models:
           id: 13164
         destinations:
           - id: 52649
-            schedule:
-              type: dbt
-              account_id: 13604
-              job_id: 19444
             config:
-              mappings:
-                - from: LAST_TELEMETRY_DATE
-                  to: Latest_Telemetry_date__c
-                - from: SEATS_ACTIVE_MAX
-                  to: Seats_Active_Max__c
-                - from: DAU
-                  to: Seats_Active_Latest__c
-                - from: MAU
-                  to: Seats_Active_MAU__c
-                - from: SERVER_VERSION
-                  to: Server_Version__c
-                - from: REGISTERED_USERS
-                  to: Seats_Registered__c
               mode: update
-              object: Customer_Onboarding__c
               fromId: SFID
+              object: Customer_Onboarding__c
+              mappings:
+                - to: Latest_Telemetry_date__c
+                  from: LAST_TELEMETRY_DATE
+                - to: Seats_Active_Max__c
+                  from: SEATS_ACTIVE_MAX
+                - to: Seats_Active_Latest__c
+                  from: DAU
+                - to: Seats_Active_MAU__c
+                  from: MAU
+                - to: Server_Version__c
+                  from: SERVER_VERSION
+                - to: Seats_Registered__c
+                  from: REGISTERED_USERS
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
+            schedule:
+              type: dbt
+              account: 13604
+              job: 19444
   - name: lead_update_account_link
     meta:
       hightouch:
@@ -116,20 +115,20 @@ models:
           id: 13165
         destinations:
           - id: 52649
-            schedule:
-              type: dbt
-              account_id: 13604
-              job_id: 19444
             config:
-              mappings:
-                - from: ACCOUNT_SFID
-                  to: Existing_Account__c
               mode: update
-              object: Lead
               fromId: SFID
+              object: Lead
+              mappings:
+                - to: Existing_Account__c
+                  from: ACCOUNT_SFID
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
+            schedule:
+              type: dbt
+              account: 13604
+              job: 19444
   - name: lead_update_status
     meta:
       hightouch:
@@ -137,20 +136,20 @@ models:
           id: 13166
         destinations:
           - id: 52649
-            schedule:
-              type: dbt
-              account_id: 13604
-              job_id: 19444
             config:
-              mappings:
-                - from: STATUS
-                  to: Status
               mode: update
-              object: Lead
               fromId: SFID
+              object: Lead
+              mappings:
+                - to: Status
+                  from: STATUS
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
+            schedule:
+              type: dbt
+              account: 13604
+              job: 19444
   - name: opportunity_update_available_renewals
     meta:
       hightouch:
@@ -158,20 +157,20 @@ models:
           id: 13167
         destinations:
           - id: 52649
-            schedule:
-              type: dbt
-              account_id: 13604
-              job_id: 19444
             config:
-              mappings:
-                - from: AVAILABLE_RENEWAL
-                  to: Available_Renewal__c
               mode: update
-              object: Opportunity
               fromId: SFID
+              object: Opportunity
+              mappings:
+                - to: Available_Renewal__c
+                  from: AVAILABLE_RENEWAL
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
+            schedule:
+              type: dbt
+              account: 13604
+              job: 19444
   - name: opportunitylineitem_update_amounts
     meta:
       hightouch:
@@ -179,29 +178,29 @@ models:
           id: 13168
         destinations:
           - id: 52649
-            schedule:
-              type: dbt
-              account_id: 13604
-              job_id: 19444
             config:
-              mappings:
-                - from: TOTAL_NEW_AMOUNT
-                  to: New_Amount__c
-                - from: TOTAL_RENEWAL_AMOUNT
-                  to: Renewal_Amount__c
-                - from: TOTAL_EXPANSION_AMOUNT
-                  to: Expansion_Amount__c
-                - from: TOTAL_COTERM_AMOUNT
-                  to: Coterm_Expansion_Amount__c
-                - from: TOTAL_LEFTOVER_AMOUNT
-                  to: Leftover_Expansion_Amount__c
-                - from: TOTAL_MULTI_AMOUNT
-                  to: Multi_Amount__c
-                - from: TOTAL_REN_MULTI_AMOUNT
-                  to: Renewal_Multi_Amount__c
               mode: update
-              object: OpportunityLineItem
               fromId: SFID
+              object: OpportunityLineItem
+              mappings:
+                - to: New_Amount__c
+                  from: TOTAL_NEW_AMOUNT
+                - to: Renewal_Amount__c
+                  from: TOTAL_RENEWAL_AMOUNT
+                - to: Expansion_Amount__c
+                  from: TOTAL_EXPANSION_AMOUNT
+                - to: Coterm_Expansion_Amount__c
+                  from: TOTAL_COTERM_AMOUNT
+                - to: Leftover_Expansion_Amount__c
+                  from: TOTAL_LEFTOVER_AMOUNT
+                - to: Multi_Amount__c
+                  from: TOTAL_MULTI_AMOUNT
+                - to: Renewal_Multi_Amount__c
+                  from: TOTAL_REN_MULTI_AMOUNT
               subscribeAdd: true
               subscribeChange: false
               subscribeDelete: false
+            schedule:
+              type: dbt
+              account: 13604
+              job: 19444

@@ -1,0 +1,8 @@
+version: 2
+
+models:
+  - name: incident_fact
+    description: "Tracking the state of an incident from creation to completion, as well as attributes including playbook details, actions taken, and more."
+  
+  - name: playbook_fact
+    description: "Tracking the creation of playbooks at the instance level as well as the incident metrics associated with each playbook"

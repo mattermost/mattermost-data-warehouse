@@ -14,6 +14,7 @@ WITH security AS (
         CASE WHEN substring(logtime, 1, 2)::integer >= 12 THEN 'B' ELSE 'A' END AS grouping,
         cip AS ip_address,
         substring(edge, 1, 3) AS location, 
+        substring(regexp_substr(cs_uri_query, '(^|&)be=([^&]*)'), 5, 100) AS edition,
         COALESCE( 
             CASE 
                 WHEN split_part(regexp_substr(cs_uri_query, 'auc=[0-9]{1,10}'), '=', 2) = '' THEN NULL 
@@ -71,7 +72,7 @@ WITH security AS (
     AND (logdate || ' ' || logtime)::TIMESTAMP >= (SELECT MAX(TIMESTAMP) FROM {{this}}) - interval '12 hours'
 
     {% endif %}
-    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17
 )
 
 SELECT * FROM security
