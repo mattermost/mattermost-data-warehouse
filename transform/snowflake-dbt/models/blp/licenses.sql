@@ -2,8 +2,7 @@
     "materialized": 'incremental',
     "schema": "blp",
     "unique_key": 'id',
-    "tags":'nightly',
-    "database":'ANALYTICS'
+    "tags":'nightly'
   })
 }}
 
