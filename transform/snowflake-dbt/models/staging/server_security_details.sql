@@ -14,6 +14,7 @@ WITH security                AS (
       , sec.grouping
       , sec.ip_address
       , sec.location
+      , sec.edition
       , sec.active_user_count
       , sec.user_count
       , sec.version
@@ -26,8 +27,8 @@ WITH security                AS (
     FROM {{ ref('security') }} sec
     WHERE sec.dev_build = 0
       AND sec.ran_tests = 0
-      AND regexp_substr(sec.version, '^[0-9]{1,2}\.{1}[0-9]{1,2}.{1}[0-9]{1,2}') is not null
-      AND regexp_substr(sec.version, '[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}$') is not null
+      AND (regexp_substr(sec.version, '^[0-9]{1,2}\.{1}[0-9]{1,2}.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}$') is not null
+      OR regexp_substr(sec.version, '^[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}$') is not null)
       AND sec.ip_address <> '194.30.0.184'
       AND sec.user_count >= sec.active_user_count
       AND NULLIF(sec.server_id, '') IS NOT NULL
@@ -76,6 +77,7 @@ WITH security                AS (
            , s.ip_address
            , MAX(CASE WHEN m.max_location_count = s.location_count THEN s.location 
                     ELSE NULL END)  AS location
+           , s.edition
            , s.active_user_count
            , MAX(s.user_count)      AS user_count
            , MAX(s.version)         AS version
@@ -92,7 +94,7 @@ WITH security                AS (
                        AND s.active_user_count = m.max_active_users
                        AND s.timestamp = m.max_timestamp
                        AND s.ip_address = m.max_ip
-         GROUP BY 1, 2, 3, 4, 5, 7, 10, 12, 13
+         GROUP BY 1, 2, 3, 4, 5, 7, 8, 11, 13, 14
      ),
      license                 AS (
          SELECT
@@ -131,6 +133,7 @@ WITH security                AS (
            , s.grouping
            , s.ip_address
            , s.location
+           , s.edition
            , s.active_user_count
            , s.user_count
            , s.version
@@ -159,7 +162,7 @@ WITH security                AS (
         AND s.date >= (SELECT MAX(date) FROM {{ this }})
 
          {% endif %}
-         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 18, 19, 20
+         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 19, 20, 21
      )
 SELECT *
 FROM server_security_details

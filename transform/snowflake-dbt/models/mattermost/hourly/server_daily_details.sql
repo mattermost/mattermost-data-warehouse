@@ -102,9 +102,9 @@ dates as (
           MAX(coalesce(s2.version, s1.version)) OVER (PARTITION BY d.server_id ORDER BY d.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
           ELSE coalesce(s2.version, s1.version) END                                      AS version
       , coalesce(s2.context_library_version, NULL)                                       AS context_library_version
-      , CASE WHEN coalesce(s2.edition, NULL) IS NULL THEN 
-          MAX(coalesce(s2.edition, NULL)) OVER (PARTITION BY d.server_id ORDER BY d.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
-          ELSE coalesce(s2.edition, NULL) END                                            AS edition
+      , CASE WHEN coalesce(s2.edition, s1.edition) IS NULL THEN 
+          MAX(coalesce(s2.edition, s1.edition)) OVER (PARTITION BY d.server_id ORDER BY d.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
+          ELSE coalesce(s2.edition, s1.edition) END                                            AS edition
       , coalesce(s1.active_user_count, NULL)                                             AS active_user_count
       , coalesce(s1.user_count, NULL)                                                    AS user_count
       , coalesce(s2.system_admins, NULL)                                                 AS system_admins
