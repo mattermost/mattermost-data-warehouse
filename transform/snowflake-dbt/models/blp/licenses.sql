@@ -2,7 +2,8 @@
     "materialized": 'incremental',
     "schema": "blp",
     "unique_key": 'id',
-    "tags":'nightly'
+    "tags":'nightly',
+    "database":'ANALYTICS'
   })
 }}
 
@@ -16,22 +17,28 @@ WITH license        AS (
       , l.licenseid
       , to_timestamp(l.issuedat / 1000)::DATE  AS issuedat
       , to_timestamp(l.expiresat / 1000)::DATE AS expiresat
+      , FALSE AS blapi
+      , NULL as users
+      , NULL as edition
     FROM {{ source('licenses', 'licenses') }} l
-    {{ dbt_utils.group_by(n=8) }}
+    {{ dbt_utils.group_by(n=11) }}
 
     UNION ALL
 
     SELECT
         l.server_id as customerid
-      , NULL as company
+      , site_name as company
       , uniform(10000, 99999, random())::int as number
       , l.email
       , null as stripeid
       , l.id as licenseid
       , license_issued_at::date as issuedat
       , end_date::date as expiresat
+      , TRUE AS blapi
+      , users
+      , 'E20 Trial' AS edition
     FROM {{ source('blapi', 'trial_requests')}} l
-    {{ dbt_utils.group_by(n=8) }}
+    {{ dbt_utils.group_by(n=11) }}
 ),
 
      max_segment_date        AS (
@@ -87,11 +94,14 @@ WITH license        AS (
          , l.licenseid
          , l.issuedat
          , l.expiresat
+         , CASE WHEN l.blapi THEN l.customerid ELSE NULL END AS server_id
+         , l.users
+         , l.edition
        FROM {{ source('util', 'dates') }} d
             JOIN license l
                  ON d.date >= l.issuedat
                  AND d.date <= CASE WHEN CURRENT_DATE <= l.expiresat THEN CURRENT_DATE ELSE l.expiresat END
-       {{ dbt_utils.group_by(n=9) }}
+       {{ dbt_utils.group_by(n=12) }}
      ), 
 
      license_details AS (
@@ -179,10 +189,10 @@ WITH license        AS (
          SELECT
              l.date
            , l.licenseid                                                                           AS license_id
-           , ld.server_id
+           , COALESCE(ld.server_id, l.server_id)                                                   AS server_id
            , l.customerid                                                                          AS customer_id
            , l.company
-           , ld.edition
+           , COALESCE(l.edition, ld.edition)                                                       AS edition
            , COALESCE(l.issuedat, ld.issued_date)                                                  AS issued_date
            , COALESCE(ld.start_date, l.issuedat)                                                   AS start_date
            , COALESCE(l.expiresat, ld.expire_date)                                                 AS expire_date
@@ -195,7 +205,7 @@ WITH license        AS (
            , lo.contact_email
            , l.number
            , l.stripeid
-           , ld.users
+           , COALESCE(l.users, ld.users)                                                           AS users
            , ld.feature_cluster
            , ld.feature_compliance
            , ld.feature_custom_brand
@@ -257,6 +267,7 @@ WITH license        AS (
            , MAX(ld.edition) OVER (PARTITION BY ld.license_id) AS edition
            , CASE WHEN REGEXP_SUBSTR(company, '[^a-zA-Z]TRIAL$') in ('-TRIAL', 'TRIAL', ' TRIAL') THEN TRUE 
                   WHEN DATEDIFF(day, ld.start_date, ld.expire_date) <= 35 THEN TRUE
+                  WHEN ld.edition = 'E20 Trial' THEN TRUE
                   ELSE FALSE END        AS trial
            , ld.issued_date
            , ld.start_date
@@ -264,10 +275,12 @@ WITH license        AS (
            , CASE WHEN lead(ld.start_date, 1) OVER (PARTITION BY ld.date, ld.server_id, ld.customer_id,
                   CASE WHEN REGEXP_SUBSTR(company, '[^a-zA-Z]TRIAL$') in ('-TRIAL', 'TRIAL', ' TRIAL') THEN TRUE 
                   WHEN DATEDIFF(day, ld.start_date, ld.expire_date) <= 35 THEN TRUE
+                  WHEN ld.edition = 'E20 Trial' THEN TRUE
                   ELSE FALSE END ORDER BY ld.start_date, ld.users) <= ld.expire_date
                     THEN lead(ld.start_date, 1) OVER (PARTITION BY ld.date, ld.server_id, ld.customer_id,
                   CASE WHEN REGEXP_SUBSTR(company, '[^a-zA-Z]TRIAL$') in ('-TRIAL', 'TRIAL', ' TRIAL') THEN TRUE 
                   WHEN DATEDIFF(day, ld.start_date, ld.expire_date) <= 35 THEN TRUE
+                  WHEN ld.edition = 'E20 Trial' THEN TRUE
                   ELSE FALSE END ORDER BY ld.start_date, ld.users) - INTERVAL '1 DAY'
              ELSE
                  ld.expire_date END     AS server_expire_date
@@ -309,19 +322,23 @@ WITH license        AS (
            , CASE WHEN
                   COUNT(CASE WHEN REGEXP_SUBSTR(company, '[^a-zA-Z]TRIAL$') in ('-TRIAL', 'TRIAL', ' TRIAL') THEN ld.server_id
                           WHEN DATEDIFF(day, ld.start_date, ld.expire_date) <= 35 THEN ld.server_id
+                          WHEN ld.edition = 'E20 Trial' THEN ld.server_id
                           ELSE NULL END) OVER (PARTITION BY ld.date, ld.server_id) >= 1
               AND COUNT(ld.server_id) OVER (PARTITION BY ld.date, ld.server_Id) > 
                   COUNT(CASE WHEN REGEXP_SUBSTR(company, '[^a-zA-Z]TRIAL$') in ('-TRIAL', 'TRIAL', ' TRIAL') THEN ld.server_id
                           WHEN DATEDIFF(day, ld.start_date, ld.expire_date) <= 35 THEN ld.server_id
+                          WHEN ld.edition = 'E20 Trial' THEN ld.server_id
                           ELSE NULL END) OVER (PARTITION BY ld.date, ld.server_id)
               THEN TRUE ELSE FALSE END      AS has_trial_and_non_trial
           , CASE WHEN lead(ld.start_date, 1) OVER (PARTITION BY ld.date, ld.server_id,
                   CASE WHEN REGEXP_SUBSTR(company, '[^a-zA-Z]TRIAL$') in ('-TRIAL', 'TRIAL', ' TRIAL') THEN TRUE 
-                  WHEN DATEDIFF(day, ld.start_date, ld.expire_date) <= 35 THEN TRUE
-                  ELSE FALSE END ORDER BY ld.start_date, ld.users) <= ld.expire_date
+                          WHEN DATEDIFF(day, ld.start_date, ld.expire_date) <= 35 THEN TRUE
+                          WHEN ld.edition = 'E20 Trial' THEN TRUE
+                          ELSE FALSE END ORDER BY ld.start_date, ld.users) <= ld.expire_date
                     THEN lead(ld.start_date, 1) OVER (PARTITION BY ld.date, ld.server_id,
                   CASE WHEN REGEXP_SUBSTR(company, '[^a-zA-Z]TRIAL$') in ('-TRIAL', 'TRIAL', ' TRIAL') THEN TRUE 
                   WHEN DATEDIFF(day, ld.start_date, ld.expire_date) <= 35 THEN TRUE
+                          WHEN ld.edition = 'E20 Trial' THEN TRUE
                   ELSE FALSE END ORDER BY ld.start_date, ld.users) - INTERVAL '1 DAY'
              ELSE
                  ld.expire_date END     AS server_expire_date_join
