@@ -105,7 +105,8 @@ incident_daily_details AS (
       , COUNT(CASE WHEN event = 'tasks' AND action = 'move_task' THEN events.id ELSE NULL END)          AS tasks_moved
     FROM dates d
     JOIN {{ ref('incident_response_events') }} events
-      ON events.timestamp::date <= d.date
+      ON d.server_id = COALESCE(events.user_id, events.anonymous_id)
+      AND events.timestamp::date <= d.date
       AND events.timestamp::date >= first_version_date
     WHERE events.timestamp::DATE <= CURRENT_TIMESTAMP
     GROUP BY 1, 2, 3, 4, 5, 6
