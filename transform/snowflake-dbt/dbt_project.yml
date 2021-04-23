@@ -90,10 +90,8 @@ seeds:
       schema: util
     snowflake_contract_rates:
       schema: bizops
-    contributor_map_data:
-      schema: mattermost
     staff_github_usernames:
-      schema: employee
+      schema: mattermost
     account_industry_mapping:
       schema: util
     auto_reply_ooo_phrases:
