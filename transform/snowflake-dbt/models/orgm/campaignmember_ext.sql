@@ -1,3 +1,4 @@
+
 {{config({
     "materialized": "table",
     "schema": "orgm"
