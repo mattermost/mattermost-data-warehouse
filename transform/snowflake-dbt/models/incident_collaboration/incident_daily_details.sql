@@ -64,10 +64,14 @@ incident_daily_details AS (
       , COUNT(DISTINCT CASE WHEN event = 'playbook' and action = 'deleted' 
                             THEN COALESCE(events.playbook_id, events.playbookid)
                             ELSE NULL END)                                                            AS playbooks_deleted
-      , COUNT(DISTINCT CASE WHEN currentstatus = 'Reported' THEN events.incident_id ELSE NULL END)    AS reported_incidents
-      , COUNT(DISTINCT CASE WHEN currentstatus = 'Active' THEN events.incident_id ELSE NULL END)      AS acknowledged_incidents
-      , COUNT(DISTINCT CASE WHEN currentstatus = 'Archived' THEN events.incident_id ELSE NULL END)    AS archived_incidents
-      , COUNT(DISTINCT CASE WHEN currentstatus = 'Resolved' THEN events.incident_id ELSE NULL END)    AS resolved_incidents
+      , COUNT(DISTINCT CASE WHEN currentstatus = 'Reported' 
+                              THEN COALESCE(events.incident_id, events.incidentid) ELSE NULL END)     AS reported_incidents
+      , COUNT(DISTINCT CASE WHEN currentstatus = 'Active'  
+                              THEN COALESCE(events.incident_id, events.incidentid) ELSE NULL END)     AS acknowledged_incidents
+      , COUNT(DISTINCT CASE WHEN currentstatus = 'Archived'  
+                              THEN COALESCE(events.incident_id, events.incidentid) ELSE NULL END)     AS archived_incidents
+      , COUNT(DISTINCT CASE WHEN currentstatus = 'Resolved'  
+                              THEN COALESCE(events.incident_id, events.incidentid) ELSE NULL END)     AS resolved_incidents
       , COUNT(DISTINCT COALESCE(events.useractualid, events.user_actual_id))                          AS incident_contributors
       , COUNT(DISTINCT CASE
                   WHEN event = 'incident' AND action = 'update_status' THEN events.id
