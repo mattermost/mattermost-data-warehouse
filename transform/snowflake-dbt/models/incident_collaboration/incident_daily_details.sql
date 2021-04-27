@@ -111,7 +111,7 @@ incident_daily_details AS (
     JOIN {{ ref('incident_response_events') }} events
       ON d.server_id = COALESCE(events.user_id, events.anonymous_id)
       AND events.timestamp::date <= d.date
-      AND events.timestamp::date <= d.last_version_date
+      AND COALESCE(events.plugin_version, events.pluginversion) = d.plugin_version
       AND events.timestamp::date >= d.first_version_date
     WHERE events.timestamp::DATE <= CURRENT_TIMESTAMP
     GROUP BY 1, 2, 3, 4, 5, 6
