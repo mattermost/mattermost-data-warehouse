@@ -44,9 +44,6 @@ WITH min_dates AS (
       JOIN version_dates vd
         ON d.date >= vd.first_version_date
         AND d.date <= CURRENT_DATE
-      {% if is_incremental() %}
-      WHERE last_active > (SELECT MAX(last_active) FROM {{this}})
-      {% endif %}
      ),
 
 incident_daily_details AS (
@@ -113,6 +110,7 @@ incident_daily_details AS (
                   WHEN event = 'tasks' AND action = 'run_task_slash_command' THEN events.id
                                                                              ELSE NULL END)           AS task_slash_commands_run
       , COUNT(CASE WHEN event = 'tasks' AND action = 'move_task' THEN events.id ELSE NULL END)          AS tasks_moved
+      , COUNT(DISTINCT COALESCE(events.user_actual_id, useractualid)) AS incident_version_users_to_date
     FROM dates d
     JOIN {{ ref('incident_response_events') }} events
       ON d.server_id = COALESCE(events.user_id, events.anonymous_id)
@@ -125,3 +123,6 @@ incident_daily_details AS (
 
 SELECT *
 FROM incident_daily_details
+{% if is_incremental() %}
+WHERE date >= (SELECT MAX(date) FROM {{this}})
+{% endif %}
