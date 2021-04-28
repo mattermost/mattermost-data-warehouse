@@ -63,15 +63,28 @@ def contributors():
     writer = csvlib.writer(sys.stdout)
     writer.writerow(["PR_Number", "Merged_At", "Author", "Repo"])
 
+    repo = []
+    has_next = True
     cursor = ""
-    result = graphql_query(gen_repo_query(org,cursor))
-    repo = result["data"]["organization"]["repositories"]["nodes"]
+    while has_next:
+        try:
+            result = graphql_query(gen_repo_query(org,cursor))
+        except Exception as e:
+            print(e)
+            return
+        
+        repo_results = result["data"]["organization"]["repositories"]["nodes"]
+        has_next = result["data"]["organization"]["repositories"]["pageInfo"]["hasNextPage"]
+        cursor = result["data"]["organization"]["repositories"]["pageInfo"]["endCursor"]
+
+        for i in repo_results:
+            repo.append(i["name"])
 
     for one_repo in repo:
         has_next = True
         cursor = ""
         while has_next:
-            query = gen_query(org, one_repo["name"] , cursor)
+            query = gen_query(org, one_repo, cursor)
 
             try:
                 result = graphql_query(query)
@@ -85,7 +98,7 @@ def contributors():
 
             for node in pull_requests["nodes"]:
                 if node and node["author"]:
-                    writer.writerow([node["number"], node["mergedAt"], node["author"]["login"],one_repo["name"]])
+                    writer.writerow([node["number"], node["mergedAt"], node["author"]["login"],one_repo])
 
 if __name__ == "__main__":
     contributors()
