@@ -21,7 +21,7 @@ WITH min_dates AS (
   version_dates AS (
       SELECT server_id
            , plugin_version
-           , first_version_date::date
+           , first_version_date::date                       AS first_version_date
            , COALESCE(
                   LAG(first_version_date) OVER (PARTITION BY server_id ORDER BY first_version_date DESC) -
                   INTERVAL '1 day',
