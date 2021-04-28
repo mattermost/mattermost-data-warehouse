@@ -137,10 +137,7 @@ update_github_contributors = KubernetesPodOperator(
         SNOWFLAKE_PASSWORD,
         SNOWFLAKE_ACCOUNT,
         SNOWFLAKE_TRANSFORM_WAREHOUSE,
-        TWITTER_ACCESS_KEY,
-        TWITTER_ACCESS_SECRET,
-        TWITTER_CONSUMER_KEY,
-        TWITTER_CONSUMER_SECRET
+        GITHUB_TOKEN
     ],
     env_vars=env_vars,
     arguments=[update_github_contributors_cmd],

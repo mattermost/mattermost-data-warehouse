@@ -6,7 +6,7 @@ import sys
 from jinja2 import Template
 
 def graphql_query(query):
-    github_token = os.getenv('GITHUB_TOKEN')
+    github_token = os.getenv("GITHUB_TOKEN")
     headers = {"Authorization": "Bearer {}".format(github_token)}
     request = requests.post('https://api.github.com/graphql', json={'query': query}, headers=headers)
     if request.status_code == 200:
