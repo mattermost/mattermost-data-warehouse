@@ -11,7 +11,7 @@ WITH min_dates AS (
     SELECT
         COALESCE(user_id, anonymous_id)         AS server_id
       , COALESCE(plugin_version, pluginversion) AS plugin_version
-      , MIN(timestamp::DATE)                    AS first_version_date
+      , MIN(timestamp)                    AS first_version_date
       , MAX(timestamp) AS last_active
     FROM {{ ref('incident_response_events') }}
     WHERE timestamp::DATE <= CURRENT_TIMESTAMP
@@ -19,11 +19,17 @@ WITH min_dates AS (
                       ),
   
   version_dates AS (
-      SELECT *
+      SELECT server_id
+           , plugin_version
+           , first_version_date::date
            , COALESCE(
                   LAG(first_version_date) OVER (PARTITION BY server_id ORDER BY first_version_date DESC) -
                   INTERVAL '1 day',
-                  CURRENT_DATE)                             AS last_version_date
+                  CURRENT_DATE)::date                             AS last_version_date
+           , COALESCE(
+                  LAG(first_version_date) OVER (PARTITION BY server_id ORDER BY first_version_date DESC) -
+                  INTERVAL '1 day',
+                  last_active)                             AS last_active
       FROM min_dates
      ),
      

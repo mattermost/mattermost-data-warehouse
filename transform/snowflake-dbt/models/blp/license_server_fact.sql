@@ -239,7 +239,22 @@ SELECT
                                                                     ELSE contact_sfid END
                                                                   , license_id)))
       )                                                                                     AS customer_name
-      , COALESCE(company
+      , COALESCE(
+                 COALESCE(account_name
+                        , FIRST_VALUE(account_name IGNORE NULLS) OVER (PARTITION BY COALESCE(server_id
+                                                                      , license_id) ORDER BY last_active_date desc)
+                        , MAX(account_name) OVER (PARTITION BY COALESCE(customer_id
+                                                                      , license_id))
+                        , MAX(account_name) OVER (PARTITION BY COALESCE(lower(company)
+                                                                       , license_id))
+                        , MAX(account_name) OVER (PARTITION BY COALESCE(contact_sfid
+                                                                      , license_id))
+                        , MAX(account_name) OVER (PARTITION BY COALESCE(CASE WHEN SPLIT_PART(lower(license_email), '@', 2) NOT IN 
+                                                                          (SELECT DOMAIN_NAME FROM {{ source('util', 'public_domains')}} GROUP BY 1) 
+                                                                            THEN SPLIT_PART(lower(license_email), '@', 2)
+                                                                          ELSE contact_sfid END
+                                                                        , license_id))),
+                  COALESCE(company
                 , FIRST_VALUE(company IGNORE NULLS) OVER (PARTITION BY COALESCE(server_id
                                                           , license_id) ORDER BY last_active_date desc)
                 , MAX(company) OVER (PARTITION BY COALESCE(customer_id
@@ -252,7 +267,7 @@ SELECT
                                                                           (SELECT DOMAIN_NAME FROM {{ source('util', 'public_domains')}} GROUP BY 1) 
                                                               THEN SPLIT_PART(lower(license_email), '@', 2)
                                                             ELSE contact_sfid END
-                                                          , license_id))) as company
+                                                          , license_id)))) as company
       , edition
       , users
       , trial
