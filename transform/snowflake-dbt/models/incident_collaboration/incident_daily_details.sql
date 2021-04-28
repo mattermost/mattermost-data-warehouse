@@ -37,7 +37,7 @@ WITH min_dates AS (
       FROM {{ source('util', 'dates') }} d 
       JOIN version_dates vd
         ON d.date >= vd.first_version_date
-        AND d.date <= vd.last_version_date
+        AND d.date <= CURRENT_DATE
       {% if is_incremental() %}
       WHERE last_active > (SELECT MAX(last_active) FROM {{this}})
       {% endif %}
@@ -64,10 +64,14 @@ incident_daily_details AS (
       , COUNT(DISTINCT CASE WHEN event = 'playbook' and action = 'deleted' 
                             THEN COALESCE(events.playbook_id, events.playbookid)
                             ELSE NULL END)                                                            AS playbooks_deleted
-      , COUNT(DISTINCT CASE WHEN currentstatus = 'Reported' THEN events.incident_id ELSE NULL END)    AS reported_incidents
-      , COUNT(DISTINCT CASE WHEN currentstatus = 'Active' THEN events.incident_id ELSE NULL END)      AS acknowledged_incidents
-      , COUNT(DISTINCT CASE WHEN currentstatus = 'Archived' THEN events.incident_id ELSE NULL END)    AS archived_incidents
-      , COUNT(DISTINCT CASE WHEN currentstatus = 'Resolved' THEN events.incident_id ELSE NULL END)    AS resolved_incidents
+      , COUNT(DISTINCT CASE WHEN COALESCE(currentstatus, current_status) = 'Reported' 
+                              THEN COALESCE(events.incident_id, events.incidentid) ELSE NULL END)     AS reported_incidents
+      , COUNT(DISTINCT CASE WHEN COALESCE(currentstatus, current_status) = 'Active'  
+                              THEN COALESCE(events.incident_id, events.incidentid) ELSE NULL END)     AS acknowledged_incidents
+      , COUNT(DISTINCT CASE WHEN COALESCE(currentstatus, current_status) = 'Archived'  
+                              THEN COALESCE(events.incident_id, events.incidentid) ELSE NULL END)     AS archived_incidents
+      , COUNT(DISTINCT CASE WHEN COALESCE(currentstatus, current_status) = 'Resolved'  
+                              THEN COALESCE(events.incident_id, events.incidentid) ELSE NULL END)     AS resolved_incidents
       , COUNT(DISTINCT COALESCE(events.useractualid, events.user_actual_id))                          AS incident_contributors
       , COUNT(DISTINCT CASE
                   WHEN event = 'incident' AND action = 'update_status' THEN events.id
@@ -107,7 +111,8 @@ incident_daily_details AS (
     JOIN {{ ref('incident_response_events') }} events
       ON d.server_id = COALESCE(events.user_id, events.anonymous_id)
       AND events.timestamp::date <= d.date
-      AND events.timestamp::date >= first_version_date
+      AND COALESCE(events.plugin_version, events.pluginversion) = d.plugin_version
+      AND events.timestamp::date >= d.first_version_date
     WHERE events.timestamp::DATE <= CURRENT_TIMESTAMP
     GROUP BY 1, 2, 3, 4, 5, 6
                          )

@@ -228,7 +228,7 @@ WITH license        AS (
            , ld.feature_password
            , ld.feature_saml
            , ld.timestamp
-           , {{ dbt_utils.surrogate_key(['l.licenseid', 'l.customerid', 'l.date', 'ld.server_id']) }} AS id
+           , {{ dbt_utils.surrogate_key(['l.licenseid', 'l.customerid', 'l.date', 'COALESCE(ld.server_id, l.server_id)']) }} AS id
            , ld.license_activation_date
            , ld.installation_id
            , ld.feature_advanced_logging
