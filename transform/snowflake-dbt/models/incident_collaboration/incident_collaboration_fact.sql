@@ -22,6 +22,9 @@ WITH incident_collaboration_fact AS (
         , SUM(CASE WHEN date = last_version_date::date THEN incidents_archived ELSE 0 END) AS incidents_archived
     FROM {{ref('incident_daily_details')}}
     GROUP BY 1
+    {% if is_incremental() %}
+    HAVING MAX(last_active::date) >= (SELECT MAX(last_active_date::date) FROM {{this}})
+    {% endif %}
 )
 
 SELECT *
