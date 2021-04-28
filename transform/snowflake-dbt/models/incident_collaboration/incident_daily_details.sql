@@ -110,7 +110,10 @@ incident_daily_details AS (
                   WHEN event = 'tasks' AND action = 'run_task_slash_command' THEN events.id
                                                                              ELSE NULL END)           AS task_slash_commands_run
       , COUNT(CASE WHEN event = 'tasks' AND action = 'move_task' THEN events.id ELSE NULL END)          AS tasks_moved
-      , COUNT(DISTINCT COALESCE(events.user_actual_id, useractualid)) AS incident_version_users_to_date
+      , COUNT(DISTINCT COALESCE(events.user_actual_id, useractualid)) AS version_users_to_date
+      , COUNT(DISTINCT CASE WHEN events.timestamp::date = d.date 
+                        THEN COALESCE(events.user_actual_id, useractualid) ELSE NULL END)             AS daily_active_users
+      , MAX(CASE WHEN events.timestamp::date = d.date THEN TRUE ELSE FALSE END)                       AS active
     FROM dates d
     JOIN {{ ref('incident_response_events') }} events
       ON d.server_id = COALESCE(events.user_id, events.anonymous_id)
