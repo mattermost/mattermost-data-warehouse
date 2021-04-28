@@ -122,7 +122,7 @@ update_twitter = KubernetesPodOperator(
     dag=dag,
 )
 
-update_twitter_cmd = f"""
+update_github_contributors_cmd = f"""
     {clone_and_setup_extraction_cmd} &&
     python utils/github_contributors.py
 """
