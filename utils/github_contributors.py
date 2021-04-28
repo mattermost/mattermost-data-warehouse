@@ -57,12 +57,11 @@ def cli():
     pass
 
 def contributors():
-    print("here")
     org = 'mattermost'
     data = []
 
     writer = csvlib.writer(sys.stdout)
-    writer.writerow(["PR", "Merged At", "Author", "Repo"])
+    writer.writerow(["PR_Number", "Merged_At", "Author", "Repo"])
 
     cursor = ""
     result = graphql_query(gen_repo_query(org,cursor))
