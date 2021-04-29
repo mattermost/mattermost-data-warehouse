@@ -3,3 +3,6 @@ version: 2
 models:
   - name: incident_daily_details
     description: "Tracking the state of an instances incident collaboration running total usage for each version an instance has utilized."
+
+  - name: incident_collaboration_fact
+    description: "Tracking topline/all-time metrics for each Mattermost Instances leveraging incident collaboration."
