@@ -14,7 +14,7 @@ WITH focalboard_fact AS (
         , MAX(daily_active_users) AS daily_active_users_max
         , MAX(weekly_active_users) AS weekly_active_users_max
         , MAX(monthly_active_users) AS monthly_active_users_max
-    FROM {{ref('focal_board_activity')}}
+    FROM {{ref('focalboard_activity')}}
     GROUP BY 1
     {% if is_incremental() %}
     HAVING MAX(timestamp) >= (SELECT MAX(last_active) FROM {{this}})
