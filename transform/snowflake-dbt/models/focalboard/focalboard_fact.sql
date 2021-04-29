@@ -14,6 +14,7 @@ WITH focalboard_fact AS (
         , MAX(daily_active_users) AS daily_active_users_max
         , MAX(weekly_active_users) AS weekly_active_users_max
         , MAX(monthly_active_users) AS monthly_active_users_max
+        , COUNT(DISTINCT CASE WHEN daily_active_users > 0 THEN timestamp::date ELSE NULL END) as days_active
     FROM {{ref('focalboard_activity')}}
     GROUP BY 1
     {% if is_incremental() %}
