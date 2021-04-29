@@ -20,7 +20,7 @@ WITH incident_collaboration_fact AS (
         , SUM(CASE WHEN date = last_version_date::date THEN acknowledged_incidents ELSE 0 END) AS incidents_acknowledged
         , SUM(CASE WHEN date = last_version_date::date THEN resolved_incidents ELSE 0 END) AS incidents_resolved
         , SUM(CASE WHEN date = last_version_date::date THEN archived_incidents ELSE 0 END) AS incidents_archived
-        , COUNT(CASE WHEN daily_active_users > 0 THEN date else null end) AS days_active
+        , COUNT(DISTINCT CASE WHEN daily_active_users > 0 THEN date else null end) AS days_active
     FROM {{ref('incident_daily_details')}}
     GROUP BY 1
     {% if is_incremental() %}
