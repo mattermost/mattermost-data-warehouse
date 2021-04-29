@@ -16,10 +16,10 @@ WITH incident_collaboration_fact AS (
         , MAX(version_users_to_date) AS users_max
         , MAX(daily_active_users) AS daily_active_users_max
         , SUM(CASE WHEN date = last_version_date::date THEN playbooks_created ELSE 0 END) AS playbooks_created
-        , SUM(CASE WHEN date = last_version_date::date THEN incidents_reported ELSE 0 END) AS incidents_reported
-        , SUM(CASE WHEN date = last_version_date::date THEN incidents_acknowledged ELSE 0 END) AS incidents_acknowledged
-        , SUM(CASE WHEN date = last_version_date::date THEN incidents_resolved ELSE 0 END) AS incidents_resolved
-        , SUM(CASE WHEN date = last_version_date::date THEN incidents_archived ELSE 0 END) AS incidents_archived
+        , SUM(CASE WHEN date = last_version_date::date THEN reported_incidents ELSE 0 END) AS incidents_reported
+        , SUM(CASE WHEN date = last_version_date::date THEN acknowledged_incidents ELSE 0 END) AS incidents_acknowledged
+        , SUM(CASE WHEN date = last_version_date::date THEN resolved_incidents ELSE 0 END) AS incidents_resolved
+        , SUM(CASE WHEN date = last_version_date::date THEN archived_incidents ELSE 0 END) AS incidents_archived
     FROM {{ref('incident_daily_details')}}
     GROUP BY 1
     {% if is_incremental() %}
