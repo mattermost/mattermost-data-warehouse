@@ -8,7 +8,7 @@
 
 WITH focalboard_fact AS (
     SELECT 
-        server_id
+          user_id AS instance_id
         , MIN(timestamp) AS first_active
         , MAX(timestamp) AS last_active
         , MAX(daily_active_users) AS daily_active_users_max
