@@ -2,7 +2,7 @@
     "materialized": "incremental",
     "schema": "focalboard",
     "tags":"hourly",
-    "unique_key":"server_id"
+    "unique_key":"instance_id"
   })
 }}
 
