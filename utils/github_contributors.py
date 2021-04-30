@@ -110,17 +110,15 @@ def contributors():
             for node in pull_requests["nodes"]:
                 if node and node["author"]:
                     records.append(
-                        [
-                            [
-                                node["number"],
-                                node["mergedAt"],
-                                node["author"]["login"],
-                                one_repo,
-                            ]
-                        ]
+                        {
+                            "PR_Number": node["number"],
+                            "Merged_At": node["mergedAt"],
+                            "Author": node["author"]["login"],
+                            "Repo": one_repo,
+                        }
                     )
 
-    df = pd.DataFrame(records, columns=["PR_Number", "Merged_At", "Author", "Repo",])
+    df = pd.DataFrame.from_records(records)
 
     engine = snowflake_engine_factory(os.environ, "TRANSFORMER", "util")
     connection = engine.connect()
