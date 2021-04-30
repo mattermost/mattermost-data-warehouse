@@ -1,20 +1,29 @@
-import requests
 import json as jsonlib
-import click
-import csv as csvlib
+import pandas as pd
+import requests
+import snowflake.connector
 import sys
 from jinja2 import Template
+
+from extract.utils import snowflake_engine_factory, execute_query, execute_dataframe
+
 
 def graphql_query(query):
     github_token = os.getenv("GITHUB_TOKEN")
     headers = {"Authorization": "Bearer {}".format(github_token)}
-    request = requests.post('https://api.github.com/graphql', json={'query': query}, headers=headers)
+    request = requests.post(
+        "https://api.github.com/graphql", json={"query": query}, headers=headers
+    )
     if request.status_code == 200:
         return request.json()
-    raise Exception("Query failed to run by returning code of {}.".format(request.status_code))
+    raise Exception(
+        "Query failed to run by returning code of {}.".format(request.status_code)
+    )
 
-def gen_query(org, repo, cursor = ""):
-    return Template("""
+
+def gen_query(org, repo, cursor=""):
+    return Template(
+        """
     {
       repository(name: "{{repo}}", owner: "{{org}}") {
         name
@@ -33,10 +42,13 @@ def gen_query(org, repo, cursor = ""):
         }
       }
     }
-    """).render(repo=repo, cursor=cursor, org=org)
-    
-def gen_repo_query(org, cursor = ""):
-    return Template("""
+    """
+    ).render(repo=repo, cursor=cursor, org=org)
+
+
+def gen_repo_query(org, cursor=""):
+    return Template(
+        """
     {
       organization(login: "{{org}}") {
         repositories(first: 100 {%if cursor %}, after: "{{cursor}}"{% endif %}) {
@@ -50,31 +62,29 @@ def gen_repo_query(org, cursor = ""):
         }
       }
     }
-    """).render(cursor=cursor, org=org)
+    """
+    ).render(cursor=cursor, org=org)
 
-@click.group()
-def cli():
-    pass
 
 def contributors():
-    org = 'mattermost'
+    org = "mattermost"
     data = []
 
-    writer = csvlib.writer(sys.stdout)
-    writer.writerow(["PR_Number", "Merged_At", "Author", "Repo"])
-
     repo = []
+    records = []
     has_next = True
     cursor = ""
     while has_next:
         try:
-            result = graphql_query(gen_repo_query(org,cursor))
+            result = graphql_query(gen_repo_query(org, cursor))
         except Exception as e:
             print(e)
             return
-        
+
         repo_results = result["data"]["organization"]["repositories"]["nodes"]
-        has_next = result["data"]["organization"]["repositories"]["pageInfo"]["hasNextPage"]
+        has_next = result["data"]["organization"]["repositories"]["pageInfo"][
+            "hasNextPage"
+        ]
         cursor = result["data"]["organization"]["repositories"]["pageInfo"]["endCursor"]
 
         for i in repo_results:
@@ -98,7 +108,30 @@ def contributors():
 
             for node in pull_requests["nodes"]:
                 if node and node["author"]:
-                    writer.writerow([node["number"], node["mergedAt"], node["author"]["login"],one_repo])
+                    records.append(
+                        [
+                            [
+                                node["number"],
+                                node["mergedAt"],
+                                node["author"]["login"],
+                                one_repo,
+                            ]
+                        ]
+                    )
+
+    df = pd.DataFrame(records, columns=["PR_Number", "Merged_At", "Author", "Repo",])
+
+    engine = snowflake_engine_factory(os.environ, "TRANSFORMER", "util")
+    connection = engine.connect()
+
+    df.to_sql(
+        "github_contributions_all",
+        con=connection,
+        index=False,
+        schema="staging",
+        if_exists="replace",
+    )
+
 
 if __name__ == "__main__":
     contributors()
