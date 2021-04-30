@@ -3,6 +3,7 @@ import pandas as pd
 import requests
 import snowflake.connector
 import sys
+import os
 from jinja2 import Template
 
 from extract.utils import snowflake_engine_factory, execute_query, execute_dataframe
