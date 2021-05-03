@@ -12,6 +12,7 @@ henry==0.1.1
 idna==2.7
 ipwhois
 ipython
+Jinja2==2.10.3
 keyrings.alt
 lxml
 meltano==1.6.0
@@ -21,6 +22,7 @@ pandas==0.24.2
 psycopg2-binary==2.7.5
 pyasn1-modules
 PyBambooHR==0.7.1
+PyGithub==1.43.8
 pylint==2.3
 pytest==5.0.0
 python-dateutil==2.7.3

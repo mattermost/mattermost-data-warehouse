@@ -9,7 +9,7 @@ profile: "snowflake"
 # The `source-paths` config, for example, states that source models can be found
 # in the "models/" directory. You probably won't need to change these!
 source-paths: ["models"]
-analysis-paths: ["analysis"] 
+analysis-paths: ["analysis"]
 test-paths: ["tests"]
 data-paths: ["data"]
 macro-paths: ["macros"]
@@ -58,7 +58,7 @@ models:
 
     ga:
       tags: "ga"
-    
+
     mattermost:
       nightly:
         +snowflake_warehouse: "TRANSFORM_L"
@@ -100,8 +100,6 @@ seeds:
       schema: mattermost
     github_repo_categorization:
       schema: mattermost
-    github_contributions_all:
-      schema: staging
     use_case_key_words:
       schema: util
     blog_paths:
