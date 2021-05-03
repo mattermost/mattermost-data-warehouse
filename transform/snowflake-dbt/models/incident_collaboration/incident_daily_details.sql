@@ -11,7 +11,7 @@ WITH min_dates AS (
     SELECT
         COALESCE(user_id, anonymous_id)         AS server_id
       , COALESCE(plugin_version, pluginversion) AS plugin_version
-      , MIN(timestamp::DATE)                    AS first_version_date
+      , MIN(timestamp)                    AS first_version_date
       , MAX(timestamp) AS last_active
     FROM {{ ref('incident_response_events') }}
     WHERE timestamp::DATE <= CURRENT_TIMESTAMP
@@ -19,11 +19,17 @@ WITH min_dates AS (
                       ),
   
   version_dates AS (
-      SELECT *
+      SELECT server_id
+           , plugin_version
+           , first_version_date::date                       AS first_version_date
            , COALESCE(
                   LAG(first_version_date) OVER (PARTITION BY server_id ORDER BY first_version_date DESC) -
                   INTERVAL '1 day',
-                  CURRENT_DATE)                             AS last_version_date
+                  CURRENT_DATE)::date                             AS last_version_date
+           , COALESCE(
+                  LAG(first_version_date) OVER (PARTITION BY server_id ORDER BY first_version_date DESC) -
+                  INTERVAL '1 day',
+                  last_active)                             AS last_active
       FROM min_dates
      ),
      
@@ -37,10 +43,7 @@ WITH min_dates AS (
       FROM {{ source('util', 'dates') }} d 
       JOIN version_dates vd
         ON d.date >= vd.first_version_date
-        AND d.date <= vd.last_version_date
-      {% if is_incremental() %}
-      WHERE last_active > (SELECT MAX(last_active) FROM {{this}})
-      {% endif %}
+        AND d.date <= CURRENT_DATE
      ),
 
 incident_daily_details AS (
@@ -56,18 +59,22 @@ incident_daily_details AS (
       , MAX(events.timestamp)                                                                         AS last_active
       , count(distinct COALESCE(events.playbook_id, events.playbookid))                               AS playbooks
       , COUNT(DISTINCT CASE WHEN event = 'playbook' and action = 'create' 
-                            THEN COALESCE(events.playbook_id, events.playbookid)
+                            THEN events.id
                             ELSE NULL END)                                                            AS playbooks_created
       , COUNT(DISTINCT CASE WHEN event = 'playbook' and action = 'update' 
-                            THEN COALESCE(events.playbook_id, events.playbookid)
+                            THEN events.id
                             ELSE NULL END)                                                            AS playbooks_edited
       , COUNT(DISTINCT CASE WHEN event = 'playbook' and action = 'deleted' 
-                            THEN COALESCE(events.playbook_id, events.playbookid)
+                            THEN events.id
                             ELSE NULL END)                                                            AS playbooks_deleted
-      , COUNT(DISTINCT CASE WHEN currentstatus = 'Reported' THEN events.incident_id ELSE NULL END)    AS reported_incidents
-      , COUNT(DISTINCT CASE WHEN currentstatus = 'Active' THEN events.incident_id ELSE NULL END)      AS acknowledged_incidents
-      , COUNT(DISTINCT CASE WHEN currentstatus = 'Archived' THEN events.incident_id ELSE NULL END)    AS archived_incidents
-      , COUNT(DISTINCT CASE WHEN currentstatus = 'Resolved' THEN events.incident_id ELSE NULL END)    AS resolved_incidents
+      , COUNT(DISTINCT CASE WHEN COALESCE(currentstatus, current_status) = 'Reported' 
+                              THEN COALESCE(events.incident_id, events.incidentid) ELSE NULL END)     AS reported_incidents
+      , COUNT(DISTINCT CASE WHEN COALESCE(currentstatus, current_status) = 'Active'  
+                              THEN COALESCE(events.incident_id, events.incidentid) ELSE NULL END)     AS acknowledged_incidents
+      , COUNT(DISTINCT CASE WHEN COALESCE(currentstatus, current_status) = 'Archived'  
+                              THEN COALESCE(events.incident_id, events.incidentid) ELSE NULL END)     AS archived_incidents
+      , COUNT(DISTINCT CASE WHEN COALESCE(currentstatus, current_status) = 'Resolved'  
+                              THEN COALESCE(events.incident_id, events.incidentid) ELSE NULL END)     AS resolved_incidents
       , COUNT(DISTINCT COALESCE(events.useractualid, events.user_actual_id))                          AS incident_contributors
       , COUNT(DISTINCT CASE
                   WHEN event = 'incident' AND action = 'update_status' THEN events.id
@@ -103,14 +110,22 @@ incident_daily_details AS (
                   WHEN event = 'tasks' AND action = 'run_task_slash_command' THEN events.id
                                                                              ELSE NULL END)           AS task_slash_commands_run
       , COUNT(CASE WHEN event = 'tasks' AND action = 'move_task' THEN events.id ELSE NULL END)          AS tasks_moved
+      , COUNT(DISTINCT COALESCE(events.user_actual_id, useractualid)) AS version_users_to_date
+      , COUNT(DISTINCT CASE WHEN events.timestamp::date = d.date 
+                        THEN COALESCE(events.user_actual_id, useractualid) ELSE NULL END)             AS daily_active_users
+      , MAX(CASE WHEN events.timestamp::date = d.date THEN TRUE ELSE FALSE END)                       AS active
     FROM dates d
     JOIN {{ ref('incident_response_events') }} events
       ON d.server_id = COALESCE(events.user_id, events.anonymous_id)
       AND events.timestamp::date <= d.date
-      AND events.timestamp::date >= first_version_date
+      AND COALESCE(events.plugin_version, events.pluginversion) = d.plugin_version
+      AND events.timestamp::date >= d.first_version_date
     WHERE events.timestamp::DATE <= CURRENT_TIMESTAMP
     GROUP BY 1, 2, 3, 4, 5, 6
                          )
 
 SELECT *
 FROM incident_daily_details
+{% if is_incremental() %}
+WHERE date >= (SELECT MAX(date) FROM {{this}})
+{% endif %}

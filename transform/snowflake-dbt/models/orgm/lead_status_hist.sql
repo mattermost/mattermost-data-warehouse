@@ -15,20 +15,20 @@ WITH todays_lead_status_updates AS (
     UNION ALL
     SELECT lead.sfid AS lead_sfid, 'MQL' AS status, NULL AS micro_status, most_recent_mql_date__c::date AS date, ownerid as owner,
         CASE
-        WHEN most_recent_action_detail__c = 'In-Product Trial Request' THEN 'Trial Request - In-Product'
-        WHEN most_recent_action_detail__c = 'mattermost.com Trial Request' THEN 'Trial Request - Website'
-        WHEN most_recent_action__c = 'Contact Request' AND most_recent_action_detail__c IN ('General','Hipchat Migration') THEN 'Contact Request - General'
-        WHEN most_recent_action__c = 'Contact Request' AND most_recent_action_detail__c = 'Pricing' THEN 'Contact Request - Pricing'
-        WHEN most_recent_action__c = 'Contact Request' AND most_recent_action_detail__c = 'In-Portal Contact Us' THEN 'Contact Request - In-Portal'
-        WHEN most_recent_action__c = 'Contact Request' AND most_recent_action_detail__c = 'In-Cloud Contact Us' THEN 'Contact Request - In-Cloud'
-        WHEN most_recent_action__c = 'Demo Request' THEN 'Contact Request - Demo'
-        WHEN most_recent_action_detail__c = 'Cloud Workspace Creation' THEN 'Cloud - Ent/MM Workspace Creation'
-        WHEN most_recent_action__c = 'Cloud Enterprise Quote Request' THEN 'Cloud - Enterprise Quote Request'
-        WHEN most_recent_action__c = 'Government Inquiry' THEN 'Contact Request - General'
-        WHEN most_recent_action__c IN ('Cloud Beta Trial','Cloud Signup') THEN 'Cloud - Beta'
-        WHEN most_recent_action_detail__c = 'Remote Work Offer' THEN 'Contact Request - Remote Work Offer'
-        WHEN most_recent_action_detail__c = 'Admin Advisor 500' THEN 'AA - 500 Users'
-        ELSE NULL END as additional_details
+            WHEN most_recent_action_detail__c = 'In-Product Trial Request' THEN 'Trial Request - In-Product'
+            WHEN most_recent_action_detail__c = 'mattermost.com Trial Request' THEN 'Trial Request - Website'
+            WHEN most_recent_action__c = 'Cloud Trial' AND most_recent_action_detail__c = 'Cloud Trial Request' THEN 'Trial Request - Cloud'
+            WHEN most_recent_action__c LIKE 'Contact Request%' AND most_recent_action_detail__c IN ('General','Hipchat Migration','Contact Us (Sales)','Government Inquiry','Remote Work Offer') THEN 'Contact Request - General'
+            WHEN most_recent_action__c = 'Contact Request' AND most_recent_action_detail__c = 'Pricing' THEN 'Contact Request - Pricing'
+            WHEN most_recent_action__c = 'Contact Request' AND most_recent_action_detail__c = 'In-Portal Contact Us' THEN 'Contact Request - In-Portal'
+            WHEN most_recent_action__c = 'Contact Request' AND most_recent_action_detail__c = 'In-Cloud Contact Us' THEN 'Contact Request - In-Cloud'
+            WHEN most_recent_action__c = 'Contact Request' AND most_recent_action_detail__c = 'Nonprofit License' THEN 'Contact Request - Nonprofit License'
+            WHEN most_recent_action__c = 'Demo Request' THEN 'Contact Request - Demo'
+            WHEN most_recent_action_detail__c = 'Cloud Workspace Creation' THEN 'Cloud - Ent/MM Workspace Creation'
+            WHEN most_recent_action__c = 'Cloud Enterprise Quote Request' THEN 'Cloud - Enterprise Quote Request'
+            WHEN most_recent_action__c IN ('Cloud Beta Trial', 'Cloud Signup') THEN 'Cloud - Beta'
+            WHEN most_recent_action_detail__c LIKE 'Admin Advisor%' THEN 'Admin Advisor'
+            ELSE NULL END as additional_details
     FROM {{ ref('lead') }}
     WHERE most_recent_mql_date__c::date > current_date - interval '1 days'
     UNION ALL

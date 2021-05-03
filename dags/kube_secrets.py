@@ -122,3 +122,5 @@ TWITTER_ACCESS_SECRET = Secret(
 PIPELINEWISE_SECRETS = Secret("volume", "/app/wrk", "pipelinewise-secrets")
 
 CLEARBIT_KEY = Secret("env", "CLEARBIT_KEY", "airflow", "CLEARBIT_KEY")
+
+GITHUB_TOKEN = Secret("env", "GITHUB_TOKEN", "airflow", "GITHUB_TOKEN")

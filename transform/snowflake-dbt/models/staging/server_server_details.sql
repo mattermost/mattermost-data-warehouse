@@ -49,7 +49,8 @@ server_details AS (
   , COALESCE(s2.version, s1.version)                                 AS version
   , MAX(COALESCE(s2.sent_at, s1.sent_at))                            AS sent_at
   , MAX(COALESCE(s2.received_at, s1.received_at))                    AS received_at
-  , COALESCE(s2.CONTEXT_TRAITS_INSTALLATIONID, NULL)                 AS installation_id
+  , COALESCE(s2.CONTEXT_TRAITS_INSTALLATIONID, 
+             s2.context_traits_installation_id)                      AS installation_id
   , COALESCE(s2.installation_type, NULL)                             AS installation_type
 FROM segment_servers                       s1
      FULL OUTER JOIN rudder_servers s2

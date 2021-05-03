@@ -25,6 +25,7 @@ license_exclusions AS (
                             'Mattermost  Inc.',
                             'Mattermost'
                             )
+        AND l.license_activation_date is not null
     LEFT JOIN seed_file sf
         ON s.server_id = sf.server_id
     WHERE sf.server_id is null
@@ -35,26 +36,29 @@ version_exclusions AS (
         SELECT
           CASE WHEN sec.dev_build = 1 or sec.ran_tests = 1 THEN 'Dev Build/Ran Tests'
                WHEN sec.ip_address = '194.30.0.184' THEN 'Restricted IP'
-               WHEN sec.version NOT LIKE '_.%._._.%._' THEN 'Custom Build Version Format'
+               WHEN (regexp_substr(sec.version, '^[0-9]{1,2}\.{1}[0-9]{1,2}.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}$') is null
+                       AND regexp_substr(sec.version, '^[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}$') is null) 
+                       THEN 'Custom Build Version Format'
                WHEN sec.user_count < sec.active_user_count THEN 'Active Users > Registered Users'
                ELSE NULL END    AS REASON
-        , trim(sec.id)                AS server_id
+        , trim(sec.server_id)                AS server_id
     FROM {{ ref('security') }} sec
     LEFT JOIN seed_file sf
-        ON trim(sec.id) = sf.server_id
+        ON trim(sec.server_id) = sf.server_id
     LEFT JOIN license_exclusions le
-        ON trim(sec.id) = le.server_id
+        ON trim(sec.server_id) = le.server_id
     LEFT JOIN {{ ref('server_fact') }} s
-        ON trim(sec.id) = s.server_id
+        ON trim(sec.server_id) = s.server_id
     WHERE sf.server_id is NULL
     AND le.server_id is null
     AND s.server_id is null
     AND (sec.dev_build = 1
       OR sec.ran_tests = 1
-      OR sec.version NOT LIKE '_.%._._.%._'
-      OR regexp_substr(sec.version, '[0-9]{1,2}.{1}[0-9]{1,2}.{1}[0-9]{1,2}$') IS NULL
+      OR (regexp_substr(sec.version, '^[0-9]{1,2}\.{1}[0-9]{1,2}.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}$') is null
+          AND regexp_substr(sec.version, '^[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}$') is null
+          AND regexp_substr(sec.version, '^[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}(cloud(-|\.){1}|ee_live{1})') is null)
       OR sec.ip_address = '194.30.0.184'
-      OR sec.user_count < sec.active_user_count)
+      OR sec.user_count < (sec.active_user_count + (sec.user_count * .2)))
       AND sec.date <= CURRENT_DATE - INTERVAL '1 DAY'
     GROUP BY 1, 2
 ),

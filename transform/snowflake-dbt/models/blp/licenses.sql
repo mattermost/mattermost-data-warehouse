@@ -27,7 +27,7 @@ WITH license        AS (
     SELECT
         l.server_id as customerid
       , site_name as company
-      , uniform(10000, 99999, random())::int as number
+      , MAX(uniform(10000, 99999, random())::int) as number
       , l.email
       , null as stripeid
       , l.id as licenseid
@@ -37,7 +37,31 @@ WITH license        AS (
       , users
       , 'E20 Trial' AS edition
     FROM {{ source('blapi', 'trial_requests')}} l
-    {{ dbt_utils.group_by(n=11) }}
+    GROUP BY 1, 2, 4, 5, 6, 7, 8, 9, 10, 11
+
+    UNION all
+
+    SELECT
+        COALESCE(c.metadata:"id"::VARCHAR, c.metadata:"cws-customer")                                    AS customerid
+      , COALESCE(c.name, c.metadata:"company"::VARCHAR, SPLIT_PART(c.email, '@', 2)::VARCHAR)            AS company
+      , MAX(COALESCE(c.metadata:"number"::INT, c.metadata:"netsuite_customer_id"::INT))                  AS number
+      , c.email
+      , s.id                                                                                             AS stripe_id
+      , COALESCE(s.metadata:"cws-license-id"::VARCHAR, NULL)                                             AS licenseid
+      , (s.current_period_start)::DATE                                                                   AS issuedat
+      , (s.current_period_end)::DATE                                                                     AS expiresat
+      , FALSE                                                                                            AS blapi
+      , COALESCE(s.quantity, c.metadata:"seats"::INT)                                                    AS users
+      , COALESCE(c.metadata:"sku"::VARCHAR, SPLIT_PART(s.plan:"name"::VARCHAR, ' ', 2)) AS edition
+    FROM {{ source('stripe_raw', 'subscriptions')}} s
+    JOIN {{ source('stripe_raw', 'customers') }} c
+      ON s.customer = c.id
+    WHERE COALESCE(c.metadata:"id"::VARCHAR, c.metadata:"cws-customer") NOT IN (SELECT customerid FROM {{ source('licenses', 'licenses') }} GROUP BY 1)
+    AND COALESCE(c.metadata:"id"::VARCHAR, c.metadata:"cws-customer") IS NOT NULL
+    AND COALESCE(s.metadata:"sku"::VARCHAR, SPLIT_PART(s.plan:"name"::VARCHAR, ' ', 2)) IN
+      ('E20', 'E10')
+    AND s.status NOT IN ('incomplete_expired')
+    GROUP BY 1, 2, 4, 5, 6, 7, 8, 9, 10, 11
 ),
 
      max_segment_date        AS (
@@ -228,17 +252,17 @@ WITH license        AS (
            , ld.feature_password
            , ld.feature_saml
            , ld.timestamp
-           , {{ dbt_utils.surrogate_key(['l.licenseid', 'l.customerid', 'l.date', 'ld.server_id']) }} AS id
+           , {{ dbt_utils.surrogate_key(['l.licenseid', 'l.customerid', 'l.date', 'COALESCE(ld.server_id, l.server_id)']) }} AS id
            , ld.license_activation_date
            , ld.installation_id
            , ld.feature_advanced_logging
            , ld.feature_cloud
          FROM date_ranges    l
               LEFT JOIN license_details ld
-                        ON l.licenseid = ld.license_id
+                        ON COALESCE(l.licenseid, l.customerid) = CASE WHEN l.licenseid is null THEN ld.customer_id ELSE ld.license_id END
                         AND l.date = ld.date
               LEFT JOIN license_overview lo
-                        ON l.licenseid = lo.licenseid
+                        ON COALESCE(l.licenseid, l.customerid) = COALESCE(lo.licenseid, lo.customerid)
               LEFT JOIN (
                          SELECT 
                             l.*
