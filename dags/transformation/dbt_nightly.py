@@ -23,13 +23,14 @@ from dags.kube_secrets import (
     SNOWFLAKE_USER,
     AWS_ACCESS_KEY_ID,
     AWS_SECRET_ACCESS_KEY,
+    GITHUB_TOKEN,
     PG_IMPORT_BUCKET,
     HEROKU_POSTGRESQL_URL,
     SSH_KEY,
     TWITTER_ACCESS_KEY,
     TWITTER_ACCESS_SECRET,
     TWITTER_CONSUMER_KEY,
-    TWITTER_CONSUMER_SECRET
+    TWITTER_CONSUMER_SECRET,
 )
 
 # Load the env vars into a dict and set Secrets
@@ -115,12 +116,34 @@ update_twitter = KubernetesPodOperator(
         TWITTER_ACCESS_KEY,
         TWITTER_ACCESS_SECRET,
         TWITTER_CONSUMER_KEY,
-        TWITTER_CONSUMER_SECRET
+        TWITTER_CONSUMER_SECRET,
     ],
     env_vars=env_vars,
     arguments=[update_twitter_cmd],
     dag=dag,
 )
+
+# update_github_contributors_cmd = f"""
+#     {clone_and_setup_extraction_cmd} &&
+#     python utils/github_contributors.py
+# """
+
+# update_github_contributors = KubernetesPodOperator(
+#     **pod_defaults,
+#     image=DATA_IMAGE,
+#     task_id="github-contributors",
+#     name="github-contributors",
+#     secrets=[
+#         SNOWFLAKE_USER,
+#         SNOWFLAKE_PASSWORD,
+#         SNOWFLAKE_ACCOUNT,
+#         SNOWFLAKE_TRANSFORM_WAREHOUSE,
+#         GITHUB_TOKEN,
+#     ],
+#     env_vars=env_vars,
+#     arguments=[update_github_contributors_cmd],
+#     dag=dag,
+# )
 
 
 dbt_run = KubernetesPodOperator(
