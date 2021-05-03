@@ -123,27 +123,27 @@ update_twitter = KubernetesPodOperator(
     dag=dag,
 )
 
-update_github_contributors_cmd = f"""
-    {clone_and_setup_extraction_cmd} &&
-    python utils/github_contributors.py
-"""
+# update_github_contributors_cmd = f"""
+#     {clone_and_setup_extraction_cmd} &&
+#     python utils/github_contributors.py
+# """
 
-update_github_contributors = KubernetesPodOperator(
-    **pod_defaults,
-    image=DATA_IMAGE,
-    task_id="github-contributors",
-    name="github-contributors",
-    secrets=[
-        SNOWFLAKE_USER,
-        SNOWFLAKE_PASSWORD,
-        SNOWFLAKE_ACCOUNT,
-        SNOWFLAKE_TRANSFORM_WAREHOUSE,
-        GITHUB_TOKEN,
-    ],
-    env_vars=env_vars,
-    arguments=[update_github_contributors_cmd],
-    dag=dag,
-)
+# update_github_contributors = KubernetesPodOperator(
+#     **pod_defaults,
+#     image=DATA_IMAGE,
+#     task_id="github-contributors",
+#     name="github-contributors",
+#     secrets=[
+#         SNOWFLAKE_USER,
+#         SNOWFLAKE_PASSWORD,
+#         SNOWFLAKE_ACCOUNT,
+#         SNOWFLAKE_TRANSFORM_WAREHOUSE,
+#         GITHUB_TOKEN,
+#     ],
+#     env_vars=env_vars,
+#     arguments=[update_github_contributors_cmd],
+#     dag=dag,
+# )
 
 
 dbt_run = KubernetesPodOperator(
