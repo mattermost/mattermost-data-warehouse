@@ -1,7 +1,0 @@
-version: 2
-models:
-  - name: daily_traffic
-    description: Google Analytics traffic for Mattermost.com and Mattermost.org
-
-  - name: daily_page_views
-    description: Google Analytics page views for Mattermost.com and Developers.Mattermost.com

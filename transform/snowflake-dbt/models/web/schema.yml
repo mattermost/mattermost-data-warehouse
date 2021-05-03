@@ -3,3 +3,6 @@ version: 2
 models:
   - name: daily_website_traffic
     description: The daily website traffic to Mattermost web properties - integrations.mattermost.com, customers.mattermost.com, and www.mattermost.com.
+
+  - name: daily_page_views
+    description: Google Analytics page views
