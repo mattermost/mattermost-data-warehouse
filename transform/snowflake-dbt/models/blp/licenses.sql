@@ -52,17 +52,14 @@ WITH license        AS (
       , (s.current_period_end)::DATE                                                                     AS expiresat
       , FALSE                                                                                            AS blapi
       , COALESCE(s.quantity, c.metadata:"seats"::INT)                                                    AS users
-      , COALESCE(c.metadata:"sku"::VARCHAR,
-                CASE
-                    WHEN s.trial_start IS NOT NULL THEN SPLIT_PART(s.plan:"name"::VARCHAR, ' ', 2) || ' Trial'
-                                                    ELSE SPLIT_PART(s.plan:"name"::VARCHAR, ' ', 2) END) AS edition
+      , COALESCE(c.metadata:"sku"::VARCHAR, SPLIT_PART(s.plan:"name"::VARCHAR, ' ', 2)) AS edition
     FROM {{ source('stripe_raw', 'subscriptions')}} s
     JOIN {{ source('stripe_raw', 'customers') }} c
       ON s.customer = c.id
     WHERE COALESCE(c.metadata:"id"::VARCHAR, c.metadata:"cws-customer") NOT IN (SELECT customerid FROM {{ source('licenses', 'licenses') }} GROUP BY 1)
     AND COALESCE(c.metadata:"id"::VARCHAR, c.metadata:"cws-customer") IS NOT NULL
-    AND COALESCE(s.metadata:"sku"::VARCHAR, SPLIT_PART(s.plan:"name"::VARCHAR, ' ', 2) || ' Trial') IN
-      ('E20', 'E10', 'E20 Trial', 'E10 Trial')
+    AND COALESCE(s.metadata:"sku"::VARCHAR, SPLIT_PART(s.plan:"name"::VARCHAR, ' ', 2)) IN
+      ('E20', 'E10')
     AND s.status NOT IN ('incomplete_expired')
     GROUP BY 1, 2, 4, 5, 6, 7, 8, 9, 10, 11
 ),
