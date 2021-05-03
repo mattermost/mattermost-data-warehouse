@@ -55,7 +55,8 @@ version_exclusions AS (
     AND (sec.dev_build = 1
       OR sec.ran_tests = 1
       OR (regexp_substr(sec.version, '^[0-9]{1,2}\.{1}[0-9]{1,2}.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}$') is null
-                       AND regexp_substr(sec.version, '^[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}$') is null)
+          AND regexp_substr(sec.version, '^[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}$') is null
+          AND regexp_substr(sec.version, '^[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}cloud-{1}[0-9]{4}-{1}[0-9]{2}-{1}[0-9]{2}-{1}[0-9]{1}$') is null)
       OR sec.ip_address = '194.30.0.184'
       OR sec.user_count < (sec.active_user_count + (sec.user_count * .2)))
       AND sec.date <= CURRENT_DATE - INTERVAL '1 DAY'
