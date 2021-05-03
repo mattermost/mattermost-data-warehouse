@@ -105,6 +105,6 @@ seeds:
     blog_paths:
       schema: ga
     marketo_form_names:
-      schema: marketo
+      schema: staging
     nps_category_backfill:
       schema: staging
