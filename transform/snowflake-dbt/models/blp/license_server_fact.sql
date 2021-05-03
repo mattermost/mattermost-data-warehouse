@@ -319,6 +319,7 @@ UNION ALL
 
 SELECT *
 FROM cloud_subscriptions
+WHERE license_id NOT IN (select license_id from license_union group by 1)
 )
 
 SELECT 
