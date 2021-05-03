@@ -59,13 +59,13 @@ incident_daily_details AS (
       , MAX(events.timestamp)                                                                         AS last_active
       , count(distinct COALESCE(events.playbook_id, events.playbookid))                               AS playbooks
       , COUNT(DISTINCT CASE WHEN event = 'playbook' and action = 'create' 
-                            THEN COALESCE(events.playbook_id, events.playbookid)
+                            THEN events.id
                             ELSE NULL END)                                                            AS playbooks_created
       , COUNT(DISTINCT CASE WHEN event = 'playbook' and action = 'update' 
-                            THEN COALESCE(events.playbook_id, events.playbookid)
+                            THEN events.id
                             ELSE NULL END)                                                            AS playbooks_edited
       , COUNT(DISTINCT CASE WHEN event = 'playbook' and action = 'deleted' 
-                            THEN COALESCE(events.playbook_id, events.playbookid)
+                            THEN events.id
                             ELSE NULL END)                                                            AS playbooks_deleted
       , COUNT(DISTINCT CASE WHEN COALESCE(currentstatus, current_status) = 'Reported' 
                               THEN COALESCE(events.incident_id, events.incidentid) ELSE NULL END)     AS reported_incidents
