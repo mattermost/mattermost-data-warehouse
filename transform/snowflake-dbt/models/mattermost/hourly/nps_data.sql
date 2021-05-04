@@ -44,18 +44,18 @@ WITH daily_nps_scores AS (
         SELECT 
               timestamp::date as date
             , license_id
-            , serverversion as server_version
+            , COALESCE(serverversion, server_version) as server_version
             , user_role
             , server_install_date
             , license_sku
             , user_create_at
             , score
-            , useractualid as user_actual_id
+            , COALESCE(useractualid, user_actual_id) as user_actual_id
             , user_id
             , timestamp::timestamp as timestamp
             , id as nps_id
         FROM (
-            SELECT ROW_NUMBER() over (PARTITION BY nps.timestamp::DATE, nps.useractualid ORDER BY nps.timestamp DESC) AS rownum, nps.*
+            SELECT ROW_NUMBER() over (PARTITION BY nps.timestamp::DATE, COALESCE(nps.useractualid, nps.user_actual_id) ORDER BY nps.timestamp DESC) AS rownum, nps.*
             FROM {{ source('mm_plugin_prod', 'nps_nps_score') }} nps
             {% if is_incremental() %}
             JOIN max_time mt 
@@ -89,11 +89,11 @@ daily_feedback_scores AS (
     
         SELECT
             timestamp::date as date
-          , useractualid as user_actual_id
+          , COALESCE(useractualid, user_actual_id) as user_actual_id
           , feedback
           , id as feedback_id
         FROM (
-                SELECT ROW_NUMBER() over (PARTITION BY nps.timestamp::DATE, nps.useractualid ORDER BY nps.timestamp DESC) AS rownum, nps.*
+                SELECT ROW_NUMBER() over (PARTITION BY nps.timestamp::DATE, COALESCE(nps.useractualid, nps.user_actual_id) ORDER BY nps.timestamp DESC) AS rownum, nps.*
                 FROM {{ source('mm_plugin_prod', 'nps_nps_feedback') }} nps
                 {% if is_incremental() %}
                 JOIN max_time mt 
