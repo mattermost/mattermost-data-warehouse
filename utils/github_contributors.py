@@ -2,6 +2,7 @@ import json as jsonlib
 import pandas as pd
 import requests
 import snowflake.connector
+from snowflake.connector.pandas_tools import pd_writer
 import sys
 import os
 from jinja2 import Template
@@ -129,6 +130,7 @@ def contributors():
         index=False,
         schema="staging",
         if_exists="replace",
+        method=pd_writer,
     )
 
 
