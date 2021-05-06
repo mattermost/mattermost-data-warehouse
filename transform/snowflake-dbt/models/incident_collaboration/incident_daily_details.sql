@@ -116,7 +116,7 @@ incident_daily_details AS (
       , COUNT(DISTINCT CASE WHEN events.timestamp::date >= d.date - INTERVAL '7 DAYS' 
                   THEN COALESCE(events.user_actual_id, useractualid) ELSE NULL END)                   AS weekly_active_users
       , COUNT(DISTINCT CASE WHEN events.timestamp::date >= d.date - INTERVAL '30 DAYS' 
-                  THEN COALESCE(events.user_actual_id, useractualid) ELSE NULL END)                   AS monthly_active_user
+                  THEN COALESCE(events.user_actual_id, useractualid) ELSE NULL END)                   AS monthly_active_users
     FROM dates d
     JOIN {{ ref('incident_response_events') }} events
       ON d.server_id = COALESCE(events.user_id, events.anonymous_id)
