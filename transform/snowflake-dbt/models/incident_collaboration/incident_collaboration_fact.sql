@@ -16,7 +16,7 @@ WITH incident_collaboration_fact AS (
         , MAX(version_users_to_date) AS users_max
         , MAX(daily_active_users) AS daily_active_users_max
         , MAX(weekly_active_users) AS weekly_active_users_max
-        , MAX(monthly_active_users) AS weekly_active_users_max
+        , MAX(monthly_active_users) AS monthly_active_users_max
         , SUM(CASE WHEN date = last_version_date::date THEN playbooks_created ELSE 0 END) AS playbooks_created
         , SUM(CASE WHEN date = last_version_date::date THEN playbooks_edited ELSE 0 END) AS playbooks_edited
         , SUM(CASE WHEN date = last_version_date::date THEN reported_incidents ELSE 0 END) AS incidents_reported
