@@ -7,7 +7,7 @@ from typing import List
 
 from airflow.contrib.kubernetes.pod import Resources
 
-DATA_IMAGE = "docker.io/adovenmm/data-image:v1.23.0"
+DATA_IMAGE = "docker.io/adovenmm/data-image:v1.23.1"
 DBT_IMAGE = "docker.io/adovenmm/dbt-image:v0.18.1"
 PERMIFROST_IMAGE = "docker.io/adovenmm/permifrost-image:latest"
 PSQL_IMAGE = "docker.io/adovenmm/data-warehouse-psql:latest"

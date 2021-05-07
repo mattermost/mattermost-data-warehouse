@@ -112,26 +112,34 @@ def contributors():
                 if node and node["author"]:
                     records.append(
                         {
-                            "PR_Number": node["number"],
-                            "Merged_At": node["mergedAt"],
-                            "Author": node["author"]["login"],
-                            "Repo": one_repo,
+                            "PR_NUMBER": node["number"],
+                            "MERGED_AT": node["mergedAt"],
+                            "AUTHOR": node["author"]["login"],
+                            "REPO": one_repo,
                         }
                     )
 
     df = pd.DataFrame.from_records(records)
 
-    engine = snowflake_engine_factory(os.environ, "TRANSFORMER", "util")
-    connection = engine.connect()
+    try:
+        engine = snowflake_engine_factory(os.environ, "TRANSFORMER", "util")
+        connection = engine.connect()
+        connection.execute("DELETE FROM staging.github_contributions_all")
 
-    df.to_sql(
-        "github_contributions_all",
-        con=connection,
-        index=False,
-        schema="staging",
-        if_exists="replace",
-        method=pd_writer,
-    )
+        print(f"Preparing to load results to Snowflake. Records: {len(records)}")
+
+        df.to_sql(
+            "github_contributions_all",
+            con=connection,
+            index=False,
+            schema="STAGING",
+            if_exists="append",
+            method=pd_writer,
+        )
+    except Exception as e:
+        print(e)
+        connection.close()
+        return
 
 
 if __name__ == "__main__":
