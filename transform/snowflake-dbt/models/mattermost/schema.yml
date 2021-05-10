@@ -60,3 +60,6 @@ models:
   
   - name: user_agent_registry
     description: Contains the components of each unique user_agent logged via user_events_telemetry table.
+
+  - name: server_feature_flag_details
+    description: Split.io feature flag data for A/B testing features at the daily server level.
