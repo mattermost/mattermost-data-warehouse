@@ -10,10 +10,10 @@
 WITH sdd AS (
             SELECT 
               server_id
-            , MIN(CASE WHEN in_security OR in_mm2_server THEN date ELSE NULL END) AS            first_active_date
-            , MAX(CASE WHEN in_security OR in_mm2_server THEN date ELSE NULL END) AS            last_active_date
-            , MIN(CASE WHEN in_security THEN date ELSE NULL END) AS                             first_telemetry_active_date
-            , MAX(CASE WHEN in_security THEN date ELSE NULL END) AS                             last_telemetry_active_date
+            , MIN(CASE WHEN in_security OR in_mm2_server THEN timestamp ELSE NULL END) AS            first_active_date
+            , MAX(CASE WHEN in_security OR in_mm2_server THEN timestamp ELSE NULL END) AS            last_active_date
+            , MIN(CASE WHEN in_security THEN timestamp ELSE NULL END) AS                             first_telemetry_active_date
+            , MAX(CASE WHEN in_security THEN timestamp ELSE NULL END) AS                             last_telemetry_active_date
             , MAX(installation_id) AS installation_id
             , MAX(installation_type) AS installation_type
             , MIN(CASE WHEN version IS NOT NULL THEN date ELSE NULL END) AS                     first_server_version_date
@@ -25,8 +25,8 @@ WITH sdd AS (
                                                                         ELSE NULL END) AS last_active_license_date
             , MIN(CASE WHEN license_id1 IS NOT NULL OR license_id2 IS NOT NULL THEN date
                                                                         ELSE NULL END) AS first_active_license_date
-            , MIN(CASE WHEN in_mm2_server THEN date ELSE NULL END)                           AS first_mm2_telemetry_date
-            , MAX(CASE WHEN in_mm2_server THEN date ELSE NULL END)                           AS last_mm2_telemetry_date
+            , MIN(CASE WHEN in_mm2_server THEN timestamp ELSE NULL END)                           AS first_mm2_telemetry_date
+            , MAX(CASE WHEN in_mm2_server THEN timestamp ELSE NULL END)                           AS last_mm2_telemetry_date
             FROM {{ ref('server_daily_details') }}
             GROUP BY 1
           ),
@@ -319,7 +319,7 @@ WITH sdd AS (
             ON sdd.server_id = licenses.server_id
         LEFT JOIN {{ ref('server_oauth_details') }} oauth
             ON sdd.server_id = oauth.server_id
-            AND sdd.first_mm2_telemetry_date = oauth.date
+            AND sdd.first_mm2_telemetry_date::date = oauth.date::date
         LEFT JOIN last_server_date lsd
             ON sdd.server_id = lsd.server_Id
         LEFT JOIN server_activity
