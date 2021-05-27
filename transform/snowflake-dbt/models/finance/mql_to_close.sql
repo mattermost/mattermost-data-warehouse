@@ -10,7 +10,7 @@ with marketo_form_fills as (
         activitydate::date as form_fill_date,
         split_part(SUBSTRING(form_fields, regexp_instr(form_fields, '"Email";s:[0-9]+:"'), length(form_fields)), '"',4) as email,
         primary_attribute_value
-    from {{ source('marketo','activities_fill_out_form') }}
+    from {{ source('staging','activities_fill_out_form') }}
     where primary_attribute_value IN (
                                       'Cloud Beta Trial',
                                       'Cloud Enterprise Quote Request',
