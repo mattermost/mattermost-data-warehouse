@@ -305,6 +305,7 @@ WITH sdd AS (
         , MAX(lsd.first_plugin_install_date) AS first_plugin_install_date
         , MAX(lsd.plugins_downloaded) AS plugins_downloaded
         , MAX(server_details.first_active_user_date) AS first_active_user_date
+        , MAX(server_details.last_active_user_date) AS last_active_user_date
     FROM sdd
         LEFT JOIN server_details
           ON sdd.server_id = server_details.server_id
