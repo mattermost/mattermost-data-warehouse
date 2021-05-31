@@ -43,6 +43,7 @@ WITH sdd AS (
             ELSE COALESCE(sdde.user_count,0) END)                                          AS  max_registered_users
       , MAX(coalesce(sdde.registered_deactivated_users, 0))                                AS  max_registered_deactivated_users
       , MAX(CASE WHEN sdde.active_user_count > 0 or coalesce(sdde.active_users_daily, sdde.active_users) > 0 THEN date ELSE NULL END) AS                   last_active_user_date
+      , MIN(CASE WHEN sdde.active_user_count > 0 or coalesce(sdde.active_users_daily, sdde.active_users) > 0 THEN date ELSE NULL END) AS                   first_active_user_date
       , MIN(CASE WHEN sdde.USER_COUNT > 100 THEN DATE ELSE NULL END)                        AS first_100reg_users_date
       , MIN(CASE WHEN sdde.USER_COUNT > 500 THEN DATE ELSE NULL END)                        AS first_500reg_users_date
       , MIN(CASE WHEN sdde.USER_COUNT > 1000 THEN DATE ELSE NULL END)                       AS first_1kreg_users_date
@@ -303,6 +304,7 @@ WITH sdd AS (
         , MAX(im.incident_mgmt_events_alltime)                  as incident_mgmt_events_alltime
         , MAX(lsd.first_plugin_install_date) AS first_plugin_install_date
         , MAX(lsd.plugins_downloaded) AS plugins_downloaded
+        , MAX(server_details.first_active_user_date) AS first_active_user_date
     FROM sdd
         LEFT JOIN server_details
           ON sdd.server_id = server_details.server_id
