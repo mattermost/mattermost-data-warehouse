@@ -1,3 +1,10 @@
+{{
+  config({
+    "materialized": 'table',
+    "schema": "util"
+  })
+}}
+
 WITH date_spine AS (
 
   {{ dbt_utils.date_spine(
@@ -83,7 +90,7 @@ WITH date_spine AS (
       fiscal_year || '-' || MONTHNAME(date_day)                                               AS fiscal_month_name,
       ('FY' || SUBSTR(fiscal_month_name, 3, 8))                                               AS fiscal_month_name_fy,
 
-      holidays.name                                                                           AS holiday_desc,
+      holidays.name                                                                           AS holiday_name,
       holidays.region                                                                         AS holiday_region,
       holidays.name is not null                                                               AS is_holiday,
       DATE_TRUNC('month', last_day_of_fiscal_quarter)                                         AS last_month_of_fiscal_quarter,
@@ -92,12 +99,12 @@ WITH date_spine AS (
       IFF(DATE_TRUNC('month', last_day_of_fiscal_year) = date_actual, TRUE, FALSE)            AS is_first_day_of_last_month_of_fiscal_year
 
     FROM date_spine
-    LEFT JOIN {{ ref('holidays') }} on holidays.date = date_spine.date_day
+    LEFT JOIN {{ ref('holidays') }} on holidays.date::date = date_spine.date_day
 
 ), dates as (
   SELECT 
     date_day,
-    date_actual,
+    date_actual as "date",
     day_name,
     month_actual,
     year_actual,
@@ -132,7 +139,8 @@ WITH date_spine AS (
     fiscal_quarter_number_absolute,
     fiscal_month_name,
     fiscal_month_name_fy,
-    holiday_desc,
+    holiday_name,
+    holiday_region,
     is_holiday,
     last_month_of_fiscal_quarter,
     is_first_day_of_last_month_of_fiscal_quarter,
