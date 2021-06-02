@@ -104,7 +104,7 @@ WITH date_spine AS (
 ), dates as (
   SELECT 
     date_day,
-    date_actual as "date",
+    date_actual as date,
     day_name,
     month_actual,
     year_actual,
