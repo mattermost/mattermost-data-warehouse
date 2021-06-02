@@ -32,7 +32,7 @@ default_args = {
 # Create the DAG
 dag = DAG("blapi", default_args=default_args, schedule_interval="0 * * * *")
 
-volume_config = {"persistentVolumeClaim": {"claimName": "pipelinewise-pv-claim"}}
+volume_config = {"persistentVolumeClaim": {"claimName": "pipelinewise-pv"}}
 volume = Volume(name="pipelinewise-volume", configs=volume_config)
 volume_mount = VolumeMount(
     "pipelinewise-volume",
@@ -47,7 +47,6 @@ if "cmds" in pod_defaults:
 blapi = KubernetesPodOperator(
     **pod_defaults,
     image=PIPELINEWISE_IMAGE,
-    labels={"topology.kubernetes.io/zone": "us-east-1a"},
     task_id="blapi-import",
     name="blapi-import",
     secrets=[PIPELINEWISE_SECRETS,],

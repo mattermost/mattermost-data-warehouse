@@ -88,6 +88,7 @@ WITH security                AS (
            , s.ran_tests
            , MAX(m.ip_count)        AS ip_count
            , MAX(m.occurrences)     AS occurrences
+           , s.timestamp
          FROM security      s
               JOIN max_hour m
                    ON COALESCE(NULLIF(s.id, ''), s.ip_address) = m.id
@@ -95,7 +96,7 @@ WITH security                AS (
                        AND s.active_user_count = m.max_active_users
                        AND s.timestamp = m.max_timestamp
                        AND s.ip_address = m.max_ip
-         GROUP BY 1, 2, 3, 4, 5, 7, 8, 11, 13, 14
+         GROUP BY 1, 2, 3, 4, 5, 7, 8, 11, 13, 14, 17
      ),
      license                 AS (
          SELECT
@@ -151,6 +152,7 @@ WITH security                AS (
            , MAX(license.contact_sfid)            AS license_contact_sfid
            , s.ip_count
            , s.occurrences
+           , s.timestamp
            , {{ dbt_utils.surrogate_key(['s.id', 's.date'])}} AS id
          FROM server_details s
               LEFT JOIN license
@@ -163,7 +165,7 @@ WITH security                AS (
         AND s.date >= (SELECT MAX(date) FROM {{ this }})
 
          {% endif %}
-         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 19, 20, 21
+         GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 19, 20, 21, 22
      )
 SELECT *
 FROM server_security_details

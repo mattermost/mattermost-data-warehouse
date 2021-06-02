@@ -45,3 +45,6 @@ models:
 
   - name: cloud_portal_pageview_events
     description: The specific pageview events to capture the cloud workspace creation onboarding flow w/in the customer portal.
+
+  - name: feature_flag_telemetry
+    description: Split.io feature flag data for A/B testing features.

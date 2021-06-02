@@ -6,7 +6,7 @@
   })
 }}
 
-WITH license        AS (
+WITH license_old        AS (
     SELECT
         l.customerid
       , l.company
@@ -37,7 +37,12 @@ WITH license        AS (
       , users
       , 'E20 Trial' AS edition
     FROM {{ source('blapi', 'trial_requests')}} l
-    GROUP BY 1, 2, 4, 5, 6, 7, 8, 9, 10, 11
+    GROUP BY 1, 2, 4, 5, 6, 7, 8, 9, 10, 11),
+
+    license AS (
+
+    SELECT *
+    FROM license_old
 
     UNION all
 
@@ -61,6 +66,8 @@ WITH license        AS (
     AND COALESCE(s.metadata:"sku"::VARCHAR, SPLIT_PART(s.plan:"name"::VARCHAR, ' ', 2)) IN
       ('E20', 'E10')
     AND s.status NOT IN ('incomplete_expired')
+    AND NOT EXISTS (select licenseid FROM license_old old
+                    WHERE COALESCE(s.metadata:"cws-license-id"::VARCHAR, NULL)  = old.licenseid GROUP BY 1) 
     GROUP BY 1, 2, 4, 5, 6, 7, 8, 9, 10, 11
 ),
 

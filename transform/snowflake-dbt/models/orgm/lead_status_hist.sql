@@ -1,3 +1,9 @@
+{% if execute %}
+  {% if flags.FULL_REFRESH %}
+      {{ exceptions.raise_compiler_error("Full refresh is not allowed for this model. Exclude it from the run via the argument \"--exclude lead_status_hist\".") }}
+  {% endif %}
+{% endif %}
+
 {{config({
     "materialized": "incremental",
     "schema": "orgm",

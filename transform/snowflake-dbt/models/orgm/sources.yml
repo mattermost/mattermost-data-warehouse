@@ -1,6 +1,19 @@
 version: 2
 
 sources:
+  - name: orgm
+    database: ANALYTICS
+    schema: orgm
+
+    quoting:
+      database: true
+      schema: false
+      identifier: false
+
+    tables:
+      - name: account_domain_mapping
+        description: "SFDC Account Domain Mapping"
+
   - name: orgm_raw
     database: ANALYTICS
     schema: orgm_raw
@@ -31,7 +44,7 @@ sources:
 
       - name: contact
         description: "SFDC Contact"
-      
+
       - name: contract
         description: "SFDC Contract"
 
@@ -82,9 +95,9 @@ sources:
 
       - name: true_up_reports__c
         description: "SFDC True Up Reports"
-    
+
       - name: user
         description: "SFDC User"
-    
+
       - name: userrole
         description: "SFDC User Role"

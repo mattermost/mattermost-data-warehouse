@@ -49,10 +49,10 @@ min_nps                AS (
           , timestamp::timestamp AS timestamp
           , id
           , user_id as server_id
-          , user_actual_id as user_id
+          , COALESCE(user_actual_id, null) as user_id
           , feedback
   	FROM (
-          SELECT ROW_NUMBER() over (PARTITION BY timestamp::DATE, user_id ORDER BY timestamp DESC) AS rownum, *
+          SELECT ROW_NUMBER() over (PARTITION BY timestamp::DATE, COALESCE(user_actual_id, null) ORDER BY timestamp DESC) AS rownum, *
           FROM {{ source('mattermost_nps', 'nps_feedback') }}
           WHERE TIMESTAMP::DATE <= CURRENT_DATE
             {% if is_incremental() %}
@@ -68,10 +68,10 @@ min_nps                AS (
           , timestamp::timestamp as timestamp
           , id
           , user_id as server_id
-          , useractualid as user_id
+          , COALESCE(user_actual_id, useractualid) as user_id
           , feedback
         FROM (
-                SELECT ROW_NUMBER() over (PARTITION BY timestamp::DATE, user_id ORDER BY timestamp DESC) AS rownum, *
+                SELECT ROW_NUMBER() over (PARTITION BY timestamp::DATE, COALESCE(user_actual_id, useractualid) ORDER BY timestamp DESC) AS rownum, *
                 FROM {{ source('mm_plugin_prod', 'nps_nps_feedback') }} 
                 WHERE TIMESTAMP::DATE <= CURRENT_DATE
             {% if is_incremental() %}
