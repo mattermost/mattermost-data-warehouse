@@ -41,6 +41,7 @@ WITH account_customer_journey_fannout AS (
         regulatory_requirements,
         additional_environment_details,
         how_did_you_hear_about_mattermost,
+        MIN(CASE WHEN opportunity.iswon AND opportunity.new_logo__c THEN opportunity.closedate ELSE NULL END) as min_close_won_date,
         COUNT(DISTINCT CASE WHEN opportunity.iswon THEN opportunity.sfid ELSE NULL END) AS count_won_oppt,
         COUNT(DISTINCT CASE WHEN NOT opportunity.isclosed THEN opportunity.sfid ELSE NULL END) AS count_open_oppt,
         COUNT(DISTINCT CASE WHEN opportunity.isclosed AND NOT opportunity.iswon THEN opportunity.sfid ELSE NULL END) AS count_lost_oppt,
