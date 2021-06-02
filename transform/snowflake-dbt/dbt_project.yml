@@ -102,6 +102,8 @@ seeds:
       schema: mattermost
     use_case_key_words:
       schema: util
+    holidays:
+      schema: util
     blog_paths:
       schema: ga
     marketo_form_names:
