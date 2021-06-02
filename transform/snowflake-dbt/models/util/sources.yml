@@ -6,8 +6,6 @@ sources:
     schema: util
 
     tables:
-      - name: dates
-        description: 'Date utility table'
       - name: world_cities
         description: 'City information (Latitude/Longitude)'
       - name: stop_words

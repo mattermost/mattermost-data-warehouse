@@ -82,7 +82,7 @@ dates as (
   SELECT 
       d.date
     , s.server_id
-  FROM {{ source('util', 'dates') }} d
+  FROM {{ ref('dates') }} d
   JOIN servers s
        ON d.date >= s.min_date
        AND d.date <= s.max_date

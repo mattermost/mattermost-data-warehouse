@@ -77,7 +77,7 @@ WITH license        AS (
            , MAX(l.users)      AS users
            , MAX(l.timestamp)  AS max_timestamp
            , MIN(l.timestamp)  AS license_activation_date
-         FROM {{ source('util', 'dates') }} d
+         FROM {{ ref('dates') }} d
          JOIN {{ source('mattermost2','license') }} l
               ON l.timestamp::date <= d.date
               AND d.date <= CURRENT_DATE
@@ -98,7 +98,7 @@ WITH license        AS (
            , MAX(l.users)      AS users
            , MAX(l.timestamp)  AS max_timestamp
            , MIN(l.timestamp)  AS license_activation_date
-         FROM {{ source('util', 'dates') }} d
+         FROM {{ ref('dates') }} d
          JOIN {{ source('mm_telemetry_prod','license') }} l
               ON l.timestamp::date <= d.date
               AND d.date <= CURRENT_DATE
@@ -120,7 +120,7 @@ WITH license        AS (
          , CASE WHEN l.blapi THEN l.customerid ELSE NULL END AS server_id
          , l.users
          , l.edition
-       FROM {{ source('util', 'dates') }} d
+         FROM {{ ref('dates') }} d
             JOIN license l
                  ON d.date >= l.issuedat
                  AND d.date <= CASE WHEN CURRENT_DATE <= l.expiresat THEN CURRENT_DATE ELSE l.expiresat END
