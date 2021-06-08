@@ -21,7 +21,7 @@ WITH account_dates AS (
         dates.date AS day,
         account_sfid,
         master_account_sfid
-    FROM {{ source('util', 'dates') }}
+    FROM {{ ref('dates') }}
     JOIN account_dates AS account ON 1 = 1
     WHERE dates.date >= min_start_date - interval '1 day' AND dates.date <= max_end_date + interval '2 day'
 )
