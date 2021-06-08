@@ -52,7 +52,8 @@ max_rudder_timestamp       AS (
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
            , MAX(COALESCE(r.cloud_billing, NULL))               AS cloud_billing
            , MAX(COALESCE(r.enable_shared_channels, NULL))        AS enable_shared_channels
-           , MAX(COALESCE(r.cloud_user_limit, NULL))        AS cloud_user_limit 
+           , MAX(COALESCE(r.cloud_user_limit, NULL))        AS cloud_user_limit
+           , MAX(COALESCE(r.enable_remote_cluster_service, NULL))        AS enable_remote_cluster
          FROM 
             (
               SELECT s.*
