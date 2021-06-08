@@ -31,7 +31,7 @@ with account_mapping as (
 
 licensed_servers as (
 SELECT
-    {{ dbt_utils.surrogate_key(['l.license_id']) }} as id
+    {{ dbt_utils.surrogate_key(['l.license_id', 'l.server_id']) }} as id
   , l.server_id
   , l.license_id
   , MAX(trim(COALESCE(am.company, l.company, s.company))) AS company
@@ -64,7 +64,7 @@ GROUP BY 1, 2, 3, 7, 8, 9, 10, 16, 17, 18
 
 nonactivated_licenses as (
   SELECT
-    {{ dbt_utils.surrogate_key(['l.license_id']) }} as id
+    {{ dbt_utils.surrogate_key(['l.license_id', 'l.server_id']) }} as id
   , l.server_id
   , l.license_id
   , MAX(trim(coalesce(am.company, l.company))) AS company
@@ -141,7 +141,7 @@ max_sku AS (
 
 cloud_subscriptions AS (
   SELECT 
-      {{ dbt_utils.surrogate_key(['s.cws_installation'])}}               AS id
+      {{ dbt_utils.surrogate_key(['s.cws_installation', 'coalesce(sf.server_id, server.user_id)'])}}               AS id
     , COALESCE(sf.server_id, server.user_id)                       AS server_id
     , s.cws_installation                                           AS license_id
     , c.cws_customer                                               AS customer_id
