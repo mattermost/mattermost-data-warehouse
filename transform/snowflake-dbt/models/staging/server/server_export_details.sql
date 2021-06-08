@@ -29,7 +29,6 @@ server_export_details AS (
         , MAX(r.CONTEXT_REQUEST_IP) AS context_request_ip
         , MAX(r.ANONYMOUS_ID) AS anonymous_id
         , MAX(r.CONTEXT_IP) AS context_ip
-        , MAX(r.ID) AS id
         , MAX(r.CONTEXT_TRAITS_INSTALLATIONID) AS context_traits_installationid
         , MAX(r.SENT_AT) AS sent_at
         , MAX(r.ORIGINAL_TIMESTAMP) AS original_timestamp
@@ -47,7 +46,7 @@ server_export_details AS (
     JOIN max_export_timestamp        mt
                    ON r.user_id = mt.server_id
                        AND mt.max_timestamp = r.timestamp
-    {{dbt_utils.group_by(n=25)}}
+    {{dbt_utils.group_by(n=2)}}
 )
 
 SELECT *
