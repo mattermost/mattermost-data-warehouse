@@ -113,7 +113,7 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(p.version_comnilsbrinkmannicebreaker, NULL))        AS version_comnilsbrinkmannicebreaker
            , MAX(COALESCE(p.version_com_mattermost_apps, NULL))        AS version_mattermost_apps
            , MAX(COALESCE(p.enable_com_mattermost_apps, NULL))        AS enable_mattermost_apps
-           , MAX(COALESCE(p.VERSION_COM_GITHUB_MATTERMOST_PLUGIN_CIRCLECI, VERSION_COMGITHUBMATTERMOSTPLUGINCIRCLECI))        AS version_circleci
+           , MAX(COALESCE(p.VERSION_COM_GITHUB_MATTERMOST_PLUGIN_CIRCLECI, p.VERSION_COMGITHUBMATTERMOSTPLUGINCIRCLECI))        AS version_circleci
            , MAX(COALESCE(p.ENABLE_COM_GITHUB_MATTERMOST_PLUGIN_CIRCLECI, p.ENABLE_COMGITHUBMATTERMOSTPLUGINCIRCLECI))        AS enable_circleci
            , MAX(COALESCE(p.VERSION_COMGITHUBMOUSSETCMATTERMOSTPLUGINDICEROLLER, p.VERSION_COM_GITHUB_MOUSSETC_MATTERMOST_PLUGIN_DICEROLLER))        AS version_diceroller
            , MAX(COALESCE(p.ENABLE_COM_GITHUB_MOUSSETC_MATTERMOST_PLUGIN_DICEROLLER, p.ENABLE_COMGITHUBMOUSSETCMATTERMOSTPLUGINDICEROLLER))        AS enable_diceroller
