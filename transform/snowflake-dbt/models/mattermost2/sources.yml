@@ -150,7 +150,7 @@ sources:
       - name: pages
         description: Contains raw user-level data from rudderstack pages method.
 
-      - name: _groups
+      - name: groups
         description: Contains raw server-level group data as a single row per server per timestamp.
 
       - name: channel_moderation
