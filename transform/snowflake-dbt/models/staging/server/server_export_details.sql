@@ -24,7 +24,7 @@ WITH max_export_timestamp       AS (
 
 server_export_details AS (
     SELECT 
-          r.timestamp::DATE,                      AS date
+          r.timestamp::DATE                      AS date
         , r.user_id                                        AS server_id
         , MAX(r.CONTEXT_REQUEST_IP) AS context_request_ip
         , MAX(r.ANONYMOUS_ID) AS anonymous_id

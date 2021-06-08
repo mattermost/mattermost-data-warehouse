@@ -46,7 +46,6 @@ max_rudder_timestamp       AS (
             , MAX(COALESCE(r.TIMESTAMP, s.TIMESTAMP)) AS timestamp
             , MAX(COALESCE(r.CONTEXT_IP,  NULL)) AS context_ip
             , MAX(COALESCE(r.ANONYMOUS_ID,  NULL)) AS anonymous_id
-            , MAX(COALESCE(r.ID, s.ID)) AS id
             , MAX(COALESCE(r.EVENT, s.EVENT)) AS event
             , MAX(COALESCE(r.GROUP_TEAM_COUNT, s.GROUP_TEAM_COUNT)) AS group_team_count
             , MAX(COALESCE(r.GROUP_MEMBER_COUNT, s.GROUP_MEMBER_COUNT)) AS group_member_count
