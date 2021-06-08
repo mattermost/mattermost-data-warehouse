@@ -43,7 +43,7 @@ server_export_details AS (
         , MAX(r.CONTEXT_LIBRARY_VERSION) AS context_library_version
         , MAX(r.CONTEXT_TRAITS_INSTALLATION_ID) AS context_traits_installation_id
         , {{ dbt_utils.surrogate_key(['r.timestamp::date', 'r.user_id']) }} AS id
-    FROM {{ ref('config_export')}} r
+    FROM {{ source('mm_telemetry_prod', 'config_export') }} r
     JOIN max_export_timestamp        mt
                    ON r.user_id = mt.server_id
                        AND mt.max_timestamp = r.timestamp
