@@ -40,7 +40,7 @@ WITH min_dates AS (
         , vd.plugin_version
         , vd.first_version_date
         , vd.last_version_date
-      FROM {{ source('util', 'dates') }} d 
+      FROM {{ ref('dates') }} d 
       JOIN version_dates vd
         ON d.date >= vd.first_version_date
         AND d.date <= CURRENT_DATE
