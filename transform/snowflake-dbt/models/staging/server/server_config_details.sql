@@ -568,7 +568,7 @@ SELECT
   , sfile.archive_recursion
   , snativeapp.isdefault_app_custom_url_schemes
   , splugin.version_mattermost_apps
-  , splugin. enable_mattermost_apps
+  , splugin.enable_mattermost_apps
   , splugin.version_circleci
   , splugin.enable_circleci
   , splugin.version_diceroller
