@@ -74,6 +74,7 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(s.view_archived_channels, NULL ))                    AS view_archived_channels           
            , {{ dbt_utils.surrogate_key(['COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)']) }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
+           , MAX(COALESCES(r.enable_custom_user_statuses, NULL))               AS enable_custom_user_statuses
          FROM 
             (
               SELECT s.*

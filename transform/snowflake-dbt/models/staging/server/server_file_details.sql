@@ -41,10 +41,10 @@ max_rudder_timestamp       AS (
          SELECT
              COALESCE(s.timestamp::DATE, r.timestamp::date)              AS date
            , COALESCE(s.user_id, r.user_id)                              AS server_id
-           , MAX(COALESCE(s.amazon_s3_signv2, r.amazon_s3_signv2))        AS amazon_s3_signv2
-           , MAX(COALESCE(s.amazon_s3_sse, r.amazon_s3_sse))           AS amazon_s3_sse
-           , MAX(COALESCE(s.amazon_s3_ssl, r.amazon_s3_ssl))           AS amazon_s3_ssl
-           , MAX(COALESCE(s.amazon_s3_trace, r.amazon_s3_trace))         AS amazon_s3_trace
+           , MAX(COALESCE(s.amazon_s3_signv2, r.amazon_s3_signv2, r.amazon_s_3_signv_2))        AS amazon_s3_signv2
+           , MAX(COALESCE(s.amazon_s3_sse, r.amazon_s3_sse, r.amazon_s_3_sse))           AS amazon_s3_sse
+           , MAX(COALESCE(s.amazon_s3_ssl, r.amazon_s3_ssl, r.amazon_s_3_ssl))           AS amazon_s3_ssl
+           , MAX(COALESCE(s.amazon_s3_trace, r.amazon_s3_trace, r.amazon_s_3_trace))         AS amazon_s3_trace
            , MAX(COALESCE(s.driver_name, r.driver_name))             AS driver_name
            , MAX(COALESCE(s.enable_file_attachments, r.enable_file_attachments)) AS enable_file_attachments
            , MAX(COALESCE(s.enable_mobile_download, r.enable_mobile_download))  AS enable_mobile_download
@@ -61,6 +61,8 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(s.thumbnail_width, NULL))         AS thumbnail_width           
            , {{ dbt_utils.surrogate_key(['COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)']) }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
+           , MAX(COALESCE(r.EXTRACT_CONTENT,  NULL)) AS extract_content
+           , MAX(COALESCE(r.ARCHIVE_RECURSION,  NULL)) AS archive_recursion
            FROM 
             (
               SELECT s.*

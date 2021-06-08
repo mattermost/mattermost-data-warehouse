@@ -41,7 +41,10 @@ sources:
         
       - name: config_experimental
         description: The raw Server experimental configuration data sent to Mattermost by Telemetry-Enabled Servers.
-        
+     
+      - name: config_export
+        description: The raw Server export configuration data sent to Mattermost by Telemetry-Enabled Servers.
+         
       - name: config_extension
         description: The raw Server extension configuration data sent to Mattermost by Telemetry-Enabled Servers.
      
