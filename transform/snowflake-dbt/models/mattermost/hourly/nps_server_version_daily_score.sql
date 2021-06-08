@@ -54,7 +54,7 @@ WITH nps_data                       AS (
            , nps.last_date
            , min_version_nps_date
            , {{ dbt_utils.surrogate_key(['d.date', 'nps.user_id', 'nps.server_id', 'nps.server_version']) }} AS id
-         FROM {{ source('util', 'dates') }}              d
+         FROM {{ ref('dates') }}            d
               JOIN min_nps_by_version nps
                    ON d.date >= nps.min_version_nps_date
                        AND d.date <= nps.last_date

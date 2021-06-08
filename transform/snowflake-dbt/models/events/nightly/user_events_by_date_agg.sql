@@ -22,7 +22,7 @@ WITH min_active              AS (
              d.date
            , m.user_id
            , m.server_id
-         FROM {{ source('util', 'dates') }}      d
+         FROM {{ ref('dates') }}      d
               JOIN min_active m
                    ON d.date >= m.min_active_date
                        AND d.date <= m.max_active_date

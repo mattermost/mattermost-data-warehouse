@@ -7,7 +7,7 @@
 WITH leap_years AS (
     SELECT 
         dates.date AS date
-    FROM {{ source('util','dates') }}
+    FROM {{ ref('dates') }}
     WHERE dates.date::varchar LIKE '%-02-29'
     GROUP BY 1
 ), opportunitylineitems_impacted AS (

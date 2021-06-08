@@ -35,7 +35,7 @@ min_nps                AS (
              d.date AS date
            , server_id
            , user_id
-         FROM {{ source('util', 'dates') }}   d
+         FROM {{ ref('dates') }}   d
               JOIN min_nps nps
                    ON d.date >= nps.min_nps_date::date
                        AND d.date <= current_date
