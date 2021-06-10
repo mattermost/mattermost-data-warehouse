@@ -324,7 +324,9 @@ select get_sys_var({{ var_name }})
 
                 {%- endfor -%} 
               from {{ relation }}
+              
               {% if is_incremental() and this.table == 'user_events_telemetry' %}
+
                 JOIN max_time mt
                     ON {{ relation }}.timestamp >= mt.max_time
                 LEFT JOIN join_key a
@@ -332,6 +334,7 @@ select get_sys_var({{ var_name }})
                     AND a._dbt_source_relation2 = {{ ["'", relation, "'"]|join }}
                 WHERE timestamp <= CURRENT_TIMESTAMP
                 AND a.join_id is null
+                
             {% elif is_incremental() and this.table == 'mobile_events' %}
                 JOIN max_time mt
                     ON {{ relation }}.timestamp >= mt.max_time
