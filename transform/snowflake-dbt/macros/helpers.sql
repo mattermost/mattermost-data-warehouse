@@ -399,7 +399,88 @@ select get_sys_var({{ var_name }})
                 WHERE timestamp <= CURRENT_TIMESTAMP
                 AND a.join_id is null 
             {% endif %}
-
+            {% if 'EVENT' in relation_columns[relation] and 'TYPE' in relation_columns[relation] and this.table == 'user_events_telemetry' %}
+                AND COALESCE({{ relation }}.type, {{ relation }}.event) NOT IN (
+                    'api_channel_get',
+                    'api_channel_get_by_name_and_teamname',
+                    'api_channels_join_direct',
+                    'api_posts_get_after',
+                    'api_posts_get_before',
+                    'api_profiles_get',
+                    'api_profiles_get_by_ids',
+                    'api_profiles_get_by_usernames',
+                    'api_profiles_get_in_channel',
+                    'api_profiles_get_in_group_channels',
+                    'api_profiles_get_in_team',
+                    'api_profiles_get_not_in_channel',
+                    'api_profiles_get_not_in_team',
+                    'api_profiles_get_without_team',
+                    'channel_switch',
+                    'page_load',
+                    'lhs_dm_gm_count',
+                    'ui_channel_selected',
+                    'ui_channel_selected_v2',
+                    'ui_direct_channel_x_button_clicked',
+                    'application_backgrounded',
+                    'application_installed',
+                    'application_opened',
+                    'application_updated'
+                )
+                {% elif 'EVENT' not in relation_columns[relation] and 'TYPE' in relation_columns[relation] and this.table == 'user_events_telemetry' %}
+                AND {{ relation }}.type NOT IN (
+                    'api_channel_get',
+                    'api_channel_get_by_name_and_teamname',
+                    'api_channels_join_direct',
+                    'api_posts_get_after',
+                    'api_posts_get_before',
+                    'api_profiles_get',
+                    'api_profiles_get_by_ids',
+                    'api_profiles_get_by_usernames',
+                    'api_profiles_get_in_channel',
+                    'api_profiles_get_in_group_channels',
+                    'api_profiles_get_in_team',
+                    'api_profiles_get_not_in_channel',
+                    'api_profiles_get_not_in_team',
+                    'api_profiles_get_without_team',
+                    'channel_switch',
+                    'page_load',
+                    'lhs_dm_gm_count',
+                    'ui_channel_selected',
+                    'ui_channel_selected_v2',
+                    'ui_direct_channel_x_button_clicked',
+                    'application_backgrounded',
+                    'application_installed',
+                    'application_opened',
+                    'application_updated'
+                )
+                {% elif 'EVENT' in relation_columns[relation] and 'TYPE' not in relation_columns[relation] and this.table == 'user_events_telemetry' %}
+                AND {{ relation }}.event NOT IN (
+                    'api_channel_get',
+                    'api_channel_get_by_name_and_teamname',
+                    'api_channels_join_direct',
+                    'api_posts_get_after',
+                    'api_posts_get_before',
+                    'api_profiles_get',
+                    'api_profiles_get_by_ids',
+                    'api_profiles_get_by_usernames',
+                    'api_profiles_get_in_channel',
+                    'api_profiles_get_in_group_channels',
+                    'api_profiles_get_in_team',
+                    'api_profiles_get_not_in_channel',
+                    'api_profiles_get_not_in_team',
+                    'api_profiles_get_without_team',
+                    'channel_switch',
+                    'page_load',
+                    'lhs_dm_gm_count',
+                    'ui_channel_selected',
+                    'ui_channel_selected_v2',
+                    'ui_direct_channel_x_button_clicked',
+                    'application_backgrounded',
+                    'application_installed',
+                    'application_opened',
+                    'application_updated'
+                )
+                {% endif %}
             ){% if not loop.last -%},{% endif %}
 
     {%- endfor -%}
