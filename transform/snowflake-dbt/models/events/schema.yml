@@ -48,3 +48,6 @@ models:
 
   - name: feature_flag_telemetry
     description: Split.io feature flag data for A/B testing features.
+
+  - name: daily_user_agent_events
+    description: Contains a daily snapshot of all events, instances, and users that performed an event on a specific user agent.  
