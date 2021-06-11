@@ -6,3 +6,6 @@ models:
 
   - name: daily_page_views
     description: Google Analytics page views
+
+  - name: user_agent_registry
+    description: Contains all user agents collected via server-side and user event telemetry.
