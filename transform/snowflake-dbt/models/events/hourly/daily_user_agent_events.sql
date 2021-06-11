@@ -9,8 +9,6 @@
 WITH daily_user_agent_events AS (
     SELECT
         events.timestamp::DATE                                                        AS date
-      , COALESCE(events.type, events.event)                                           AS event
-      , COALESCE(user_agent.context_useragent, COALESCE(events.context_user_agent, events.context_useragent)) AS context_useragent
       , COALESCE(user_agent.browser, CASE WHEN events._dbt_source_relation2 IN ('"ANALYTICS".EVENTS.MOBILE_EVENTS') THEN 'Mobile App' ELSE NULL END) AS browser
       , COALESCE(user_agent.browser_version, CASE WHEN events._dbt_source_relation2 IN ('"ANALYTICS".EVENTS.MOBILE_EVENTS') THEN events.context_app_version ELSE NULL END) AS browser_version
       , COALESCE(user_agent.operating_system, CASE WHEN events._dbt_source_relation2 IN ('"ANALYTICS".EVENTS.MOBILE_EVENTS') THEN events.context_os_name ELSE NULL END) AS operating_system
@@ -19,8 +17,6 @@ WITH daily_user_agent_events AS (
       , COALESCE(user_agent.device_brand, CASE WHEN events._dbt_source_relation2 IN ('"ANALYTICS".EVENTS.MOBILE_EVENTS') THEN events.context_device_manufacturer ELSE NULL END) AS device_brand
       , COALESCE(user_agent.device_model, CASE WHEN events._dbt_source_relation2 IN ('"ANALYTICS".EVENTS.MOBILE_EVENTS') THEN events.context_device_model ELSE NULL END) AS device_model
       , {{ dbt_utils.surrogate_key(['events.timestamp::DATE'
-                                    , 'COALESCE(events.type, events.event)'
-                                    , 'COALESCE(user_agent.context_useragent, COALESCE(events.context_user_agent, events.context_useragent))'
       , 'COALESCE(user_agent.browser, CASE WHEN events._dbt_source_relation2 IN (\'"ANALYTICS".EVENTS.MOBILE_EVENTS\') THEN \'Mobile App\' ELSE NULL END)'
       , 'COALESCE(user_agent.browser_version, CASE WHEN events._dbt_source_relation2 IN (\'"ANALYTICS".EVENTS.MOBILE_EVENTS\') THEN events.context_app_version ELSE NULL END)'
       , 'COALESCE(user_agent.operating_system, CASE WHEN events._dbt_source_relation2 IN (\'"ANALYTICS".EVENTS.MOBILE_EVENTS\') THEN events.context_os_name ELSE NULL END)'
@@ -33,14 +29,13 @@ WITH daily_user_agent_events AS (
       , COUNT(events.id)                   AS events
       , MAX(events.timestamp) AS last_updated
     FROM {{ ref('user_events_telemetry') }}        events
-         LEFT JOIN ANALYTICS.web.user_agent_registry user_agent
-              ON COALESCE(events.context_user_agent, events.context_useragent) = user_agent.context_useragent
+         JOIN ANALYTICS.web.user_agent_registry user_agent
+              ON NULLIF(COALESCE(events.context_user_agent, events.context_useragent), '') = user_agent.context_useragent
               AND user_agent.context_useragent != 'unknown'
-    WHERE COALESCE(events.context_user_agent, events.context_useragent) IS NOT NULL
     {% if is_incremental() %}
-    AND events.timestamp::TIMESTAMP >= (SELECT MAX(last_updated)::TIMESTAMP - INTERVAL '6 HOURS' FROM {{this}})
+    WHERE events.timestamp::TIMESTAMP >= (SELECT MAX(last_updated)::TIMESTAMP - INTERVAL '6 HOURS' FROM {{this}})
     {% endif %}
-    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
+    GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9
                    )
 SELECT *
 FROM daily_user_agent_events
