@@ -587,6 +587,7 @@ SELECT
   , sgroup.group_count
   , sgroup.group_synced_channel_count
   , sgroup.group_count_with_allow_reference
+  , sservice.enable_legacy_sidebar
 FROM {{ ref('server_daily_details') }}                      s
 {% if is_incremental() %}
 
@@ -685,7 +686,7 @@ JOIN max_date
     LEFT JOIN {{ ref('server_group_details') }}       sgroup
     ON s.server_id = sgroup.server_id AND s.date =  sgroup.date
 WHERE s.date >= '2016-04-01'
-{{ dbt_utils.group_by(n=566)}}
+{{ dbt_utils.group_by(n=567)}}
 )
 SELECT *
 FROM server_config_details
