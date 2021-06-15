@@ -606,6 +606,7 @@ WITH server_daily_details_ext AS (
       , sc.group_count
       , sc.group_synced_channel_count
       , sc.group_count_with_allow_reference
+      , sc.enable_legacy_sidebar
     FROM {{ ref('server_daily_details') }}         s
     {% if is_incremental() %}
     JOIN max_date
@@ -615,7 +616,7 @@ WITH server_daily_details_ext AS (
                    ON s.server_id = sc.server_id
                        AND s.date = sc.date
     WHERE s.date >= '2016-04-01'
-    {{ dbt_utils.group_by(n=585) }}
+    {{ dbt_utils.group_by(n=586) }}
 )
 
 SELECT *

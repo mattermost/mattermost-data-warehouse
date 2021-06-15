@@ -129,6 +129,7 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(r.RESTRICT_LINK_PREVIEWS, NULL)) AS restrict_link_previews
            , MAX(COALESCE(r.enable_file_search, NULL)) AS enable_file_search
            , MAX(COALESCE(r.THREAD_AUTO_FOLLOW, NULL)) AS thread_autofollow
+           , MAX(COALESCE(r.enable_legacy_sidebar, NULL))    AS enable_legacy_sidebar
          FROM 
             (
               SELECT s.*
