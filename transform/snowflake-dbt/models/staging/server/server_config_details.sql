@@ -563,6 +563,31 @@ SELECT
   , splugin.version_commattermostmsteamsmeetings
   , splugin.version_commattermostpluginchannelexport
   , splugin.version_comnilsbrinkmannicebreaker
+  , sexperimental.enable_remote_cluster
+  , sfile.extract_content
+  , sfile.archive_recursion
+  , snativeapp.isdefault_app_custom_url_schemes
+  , splugin.version_mattermost_apps
+  , splugin.enable_mattermost_apps
+  , splugin.version_circleci
+  , splugin.enable_circleci
+  , splugin.version_diceroller
+  , splugin.enable_diceroller
+  , sservice.enable_link_previews
+  , sservice.restrict_link_previews
+  , sservice.enable_file_search
+  , sservice.thread_autofollow
+  , steam.enable_custom_user_statuses
+  , sexport.retention_days as export_retention_days
+  , sgroup.group_team_count
+  , sgroup.group_member_count
+  , sgroup.group_channel_count
+  , sgroup.distinct_group_member_count
+  , sgroup.group_synced_team_count
+  , sgroup.group_count
+  , sgroup.group_synced_channel_count
+  , sgroup.group_count_with_allow_reference
+  , sservice.enable_legacy_sidebar
 FROM {{ ref('server_daily_details') }}                      s
 {% if is_incremental() %}
 
@@ -656,8 +681,12 @@ JOIN max_date
     ON s.server_id = swarn.server_id AND s.date = swarn.date
     LEFT JOIN {{ ref('server_channel_moderation_details') }}       schannel
     ON s.server_id = schannel.server_id AND s.date = schannel.date
+    LEFT JOIN {{ ref('server_export_details') }}       sexport
+    ON s.server_id = sexport.server_id AND s.date = sexport.date
+    LEFT JOIN {{ ref('server_group_details') }}       sgroup
+    ON s.server_id = sgroup.server_id AND s.date =  sgroup.date
 WHERE s.date >= '2016-04-01'
-{{ dbt_utils.group_by(n=542)}}
+{{ dbt_utils.group_by(n=567)}}
 )
 SELECT *
 FROM server_config_details

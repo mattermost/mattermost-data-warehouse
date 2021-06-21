@@ -582,6 +582,31 @@ WITH server_daily_details_ext AS (
       , sc.version_commattermostmsteamsmeetings
       , sc.version_commattermostpluginchannelexport
       , sc.version_comnilsbrinkmannicebreaker
+      , sc.enable_remote_cluster
+      , sc.extract_content
+      , sc.archive_recursion
+      , sc.isdefault_app_custom_url_schemes
+      , sc.version_mattermost_apps
+      , sc. enable_mattermost_apps
+      , sc.version_circleci
+      , sc.enable_circleci
+      , sc.version_diceroller
+      , sc.enable_diceroller
+      , sc.enable_link_previews
+      , sc.restrict_link_previews
+      , sc.enable_file_search
+      , sc.thread_autofollow
+      , sc.enable_custom_user_statuses
+      , sc.export_retention_days
+      , sc.group_team_count
+      , sc.group_member_count
+      , sc.group_channel_count
+      , sc.distinct_group_member_count
+      , sc.group_synced_team_count
+      , sc.group_count
+      , sc.group_synced_channel_count
+      , sc.group_count_with_allow_reference
+      , sc.enable_legacy_sidebar
     FROM {{ ref('server_daily_details') }}         s
     {% if is_incremental() %}
     JOIN max_date
@@ -591,7 +616,7 @@ WITH server_daily_details_ext AS (
                    ON s.server_id = sc.server_id
                        AND s.date = sc.date
     WHERE s.date >= '2016-04-01'
-    {{ dbt_utils.group_by(n=561) }}
+    {{ dbt_utils.group_by(n=586) }}
 )
 
 SELECT *

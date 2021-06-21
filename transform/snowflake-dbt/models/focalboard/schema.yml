@@ -12,3 +12,9 @@ models:
 
   - name: focalboard_fact
     description: Tracking topline/all-time metrics for each Instance that's leveraged Mattermost's focalboard product.
+
+  - name: focalboard_blocks
+    description: Daily configuration telemetry related to each focalboard instance/server's blocks.
+
+  - name: focalboard_workspaces
+    description: Daily configuration telemetry related to each focalboard instance/server's workspaces.

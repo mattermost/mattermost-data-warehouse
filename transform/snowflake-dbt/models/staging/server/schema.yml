@@ -129,3 +129,9 @@ models:
 
   - name: server_config_details
     description: Contains a daily snapshot of all relevant server configuration dimensions and measures from server details tables in analytics.staging schema per server.
+
+  - name: server_group_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mm_telemetry_prod._groups.
+
+  - name: server_export_details
+    description: Part of staging data models to create mattermost.server_daily_details data model. Contains cleaned version of raw.mm_telemetry_prod.config_export.
