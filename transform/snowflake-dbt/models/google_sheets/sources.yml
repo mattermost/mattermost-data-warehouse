@@ -23,3 +23,10 @@ sources:
       - name: arr_by_qtr
       - name: financial_model
       - name: financial_statements
+
+  - name: marketing_gsheets
+    database: ANALYTICS
+    schema: marketing_gsheets
+
+    tables:
+      - name: fy22_bottoms_up_targets
