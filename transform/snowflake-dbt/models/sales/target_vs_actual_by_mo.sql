@@ -8,36 +8,36 @@
 with months as (
     select 
         month, 
-        extract(day from last_day(month)) as days_in_period,
-        case when month = date_trunc(month, current_date) then extract(day from current_date) - 1 when last_day(month) < current_date then extract(day from last_day(month)) else 0 end as days_completed_in_period,
-        case when month = date_trunc(month, current_date) then datediff(day,current_date,last_day(month)) + 1 when last_day(month) < current_date then 0 else extract(day from last_day(month)) end as days_left_in_period,
-        1.00*(case when month = date_trunc(month, current_date) then extract(day from current_date) - 1 when last_day(month) < current_date then extract(day from last_day(month)) else 0 end) / extract(day from last_day(month)) as percent_completed
-    from {{ ref('harper_targets_fy2022')}}
+        extract(day from last_day(month::date)) as days_in_period,
+        case when month = date_trunc(month, current_date) then extract(day from current_date) - 1 when last_day(month::date) < current_date then extract(day from last_day(month::date)) else 0 end as days_completed_in_period,
+        case when month = date_trunc(month, current_date) then datediff(day,current_date,last_day(month::date)) + 1 when last_day(month::date) < current_date then 0 else extract(day from last_day(month::date)) end as days_left_in_period,
+        1.00*(case when month = date_trunc(month, current_date) then extract(day from current_date) - 1 when last_day(month::date) < current_date then extract(day from last_day(month::date)) else 0 end) / extract(day from last_day(month::date)) as percent_completed
+    from {{ source('marketing_gsheets','fy22_bottoms_up_targets') }}
 ), targets_prorated as (
     select 
-        harper_targets_fy2022.month,
+        fy22_bottoms_up_targets.month,
         months.days_in_period,
         months.days_completed_in_period,
         months.days_left_in_period,
         months.percent_completed,
-        harper_targets_fy2022.leads as leads_target,
-        round(harper_targets_fy2022.leads * percent_completed,0) as leads_target_prorated,
-        harper_targets_fy2022.mqls as mqls_target, 
-        round(harper_targets_fy2022.mqls * percent_completed,0) as mqls_target_prorated,
-        harper_targets_fy2022.sals as sals_target,
-        round(harper_targets_fy2022.sals * percent_completed,0) as sals_target_prorated,
-        harper_targets_fy2022.sqls as sqls_target,
-        round(harper_targets_fy2022.sqls * percent_completed,0) as sqls_target_prorated,
-        harper_targets_fy2022.opportunities as opportunities_target,
-        round(harper_targets_fy2022.opportunities * percent_completed,0) as opportunities_target_prorated,
-        harper_targets_fy2022.new_logos as new_logos_target,
-        round(harper_targets_fy2022.new_logos * percent_completed,0) as new_logos_target_prorated,
-        harper_targets_fy2022.new_pipeline as new_pipeline_target,
-        round(harper_targets_fy2022.new_pipeline * percent_completed,0) as new_pipeline_target_prorated,
-        harper_targets_fy2022.new_arr as new_arr_target,
-        round(harper_targets_fy2022.new_arr * percent_completed,0) as new_arr_target_prorated
-    from {{ ref('harper_targets_fy2022') }}
-    join months on harper_targets_fy2022.month = months.month
+        fy22_bottoms_up_targets.leads as leads_target,
+        round(fy22_bottoms_up_targets.leads * percent_completed,0) as leads_target_prorated,
+        fy22_bottoms_up_targets.mqls as mqls_target, 
+        round(fy22_bottoms_up_targets.mqls * percent_completed,0) as mqls_target_prorated,
+        fy22_bottoms_up_targets.sals as sals_target,
+        round(fy22_bottoms_up_targets.sals * percent_completed,0) as sals_target_prorated,
+        fy22_bottoms_up_targets.sqls as sqls_target,
+        round(fy22_bottoms_up_targets.sqls * percent_completed,0) as sqls_target_prorated,
+        fy22_bottoms_up_targets.opportunities as opportunities_target,
+        round(fy22_bottoms_up_targets.opportunities * percent_completed,0) as opportunities_target_prorated,
+        fy22_bottoms_up_targets.new_logos as new_logos_target,
+        round(fy22_bottoms_up_targets.new_logos * percent_completed,0) as new_logos_target_prorated,
+        fy22_bottoms_up_targets.new_pipeline as new_pipeline_target,
+        round(fy22_bottoms_up_targets.new_pipeline * percent_completed,0) as new_pipeline_target_prorated,
+        fy22_bottoms_up_targets.new_arr as new_arr_target,
+        round(fy22_bottoms_up_targets.new_arr * percent_completed,0) as new_arr_target_prorated
+    from {{ source('marketing_gsheets','fy22_bottoms_up_targets') }}
+    join months on fy22_bottoms_up_targets.month = months.month
 ), leads as (
     select date_trunc(month, createddate) as month, count(*) as leads_actual
     from {{ ref('lead') }}

@@ -110,5 +110,3 @@ seeds:
       schema: staging
     nps_category_backfill:
       schema: staging
-    harper_targets_fy2022:
-      schema: staging
