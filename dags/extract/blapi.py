@@ -29,31 +29,30 @@ default_args = {
     "start_date": datetime(2019, 1, 1, 0, 0, 0),
 }
 
-if os.getenv("AIRFLOW_BASE_URL") == "https://airflow.internal.mattermost.com":
-    # Create the DAG
-    dag = DAG("blapi", default_args=default_args, schedule_interval="0 * * * *")
+# Create the DAG
+dag = DAG("blapi", default_args=default_args, schedule_interval="0 * * * *")
 
-    volume_config = {"persistentVolumeClaim": {"claimName": "pipelinewise-pv"}}
-    volume = Volume(name="pipelinewise-volume", configs=volume_config)
-    volume_mount = VolumeMount(
-        "pipelinewise-volume",
-        mount_path="/app/.pipelinewise",
-        sub_path=None,
-        read_only=False,
-    )
+volume_config = {"persistentVolumeClaim": {"claimName": "pipelinewise-pv"}}
+volume = Volume(name="pipelinewise-volume", configs=volume_config)
+volume_mount = VolumeMount(
+    "pipelinewise-volume",
+    mount_path="/app/.pipelinewise",
+    sub_path=None,
+    read_only=False,
+)
 
-    if "cmds" in pod_defaults:
-        del pod_defaults["cmds"]
+if "cmds" in pod_defaults:
+    del pod_defaults["cmds"]
 
-    blapi = KubernetesPodOperator(
-        **pod_defaults,
-        image=PIPELINEWISE_IMAGE,
-        task_id="blapi-import",
-        name="blapi-import",
-        secrets=[PIPELINEWISE_SECRETS],
-        arguments=["run_tap", "--tap", "blapi", "--target", "snowflake"],
-        volumes=[volume],
-        volume_mounts=[volume_mount],
-        startup_timeout_seconds=300,
-        dag=dag,
-    )
+blapi = KubernetesPodOperator(
+    **pod_defaults,
+    image=PIPELINEWISE_IMAGE,
+    task_id="blapi-import",
+    name="blapi-import",
+    secrets=[PIPELINEWISE_SECRETS],
+    arguments=["run_tap", "--tap", "blapi", "--target", "snowflake"],
+    volumes=[volume],
+    volume_mounts=[volume_mount],
+    startup_timeout_seconds=300,
+    dag=dag,
+)

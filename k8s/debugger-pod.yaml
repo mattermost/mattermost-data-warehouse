@@ -2,11 +2,12 @@ kind: Pod
 apiVersion: v1
 metadata:
   name: volume-debugger
+  namespace: airflow
 spec:
   volumes:
     - name: volume-to-debug
       persistentVolumeClaim:
-        claimName: pipelinewise-pv-claim
+        claimName: pipelinewise-pv
   containers:
     - name: debugger
       image: busybox
