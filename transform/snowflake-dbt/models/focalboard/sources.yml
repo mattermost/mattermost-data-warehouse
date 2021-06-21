@@ -9,3 +9,5 @@ sources:
       - name: activity
       - name: config
       - name: server
+      - name: workspaces
+      - name: blocks
