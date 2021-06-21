@@ -31,7 +31,6 @@ focalboard_workspaces AS (
         , workspaces.timestamp
         , workspaces.event_text
         , workspaces.anonymous_id
-        , workspaces.id
         , workspaces.sent_at
         , workspaces.user_id
       , {{ dbt_utils.surrogate_key(['workspaces.timestamp::date', 'workspaces.user_id'])}} as id

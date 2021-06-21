@@ -22,7 +22,6 @@ focalboard_blocks AS (
         , blocks.context_request_ip
         , blocks.comment
         , blocks.divider
-        , blocks.id
         , blocks.received_at
         , blocks.sent_at
         , blocks.anonymous_id
