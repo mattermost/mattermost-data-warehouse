@@ -21,7 +21,10 @@ def mm_failed_task(context):
     Function to be used as a callable for on_failure_callback.
     Send a Mattermost alert.
     """
-    if mm_webhook_url == None:
+    if (
+        mm_webhook_url is None
+        or os.getenv("AIRFLOW_BASE_URL") != "https://airflow.internal.mattermost.com"
+    ):
         return
 
     # Set all of the contextual vars
