@@ -16,3 +16,9 @@ models:
 
   - name: license_server_fact
     description: Contains a single row per server per license for every time a license has appeared in the server's telemetry.
+
+  - name: customer_conversion_onprem
+    description: Contains a single row per Mattermost Messaging On-Prem customer that has ever had a closed-won opportunity associated with their customer Salesforce account record.
+
+  - name: customer_conversion_cloud
+    description: Contains a single row per Mattermost Messaging Cloud customer that has ever has a closed-won opportunity associated with their customer Salesforce account record.
