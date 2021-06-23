@@ -49,7 +49,7 @@ WHERE ol.subs_id__c IS NOT NULL
 AND (
         ol.subs_id__c NOT IN (SELECT blapi_subscription_id FROM existing_conversions)
     OR
-        sf.last_active_date::date > (SELECT MAX(last_active_date) FROM {{ this }})
+        sf.last_active_date::date >= (SELECT MAX(last_active_date) FROM {{ this }})
     )
 {% endif %}
 GROUP BY 1, 2, 3, 4, 5, 6, 7, 8
