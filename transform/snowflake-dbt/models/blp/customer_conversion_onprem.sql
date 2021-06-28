@@ -62,6 +62,7 @@ SELECT
                          ELSE NULL END) < MIN(o.createddate)::DATE,
              FALSE)                                                                                                  AS trial_to_paid_conversion
   , MAX(CASE WHEN a.name IN ('Hold Public') THEN TRUE ELSE FALSE END)                                                AS hold_public
+  , MAX(o.amount) AS amount
   , {{ dbt_utils.surrogate_key(['o.accountid'
         , 'CASE
         WHEN a.name IN (\'Hold Public\') THEN COALESCE(lsf.license_email, c.email)
