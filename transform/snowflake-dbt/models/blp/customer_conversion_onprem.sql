@@ -11,6 +11,12 @@ WITH existing_conversions AS (
     FROM {{this}}
 ),
 
+new_closed_ops AS (
+    SELECT DISTINCT accountid
+    FROM {{ ref('opportunity') }}
+    WHERE createddate >= (SELECT MAX(last_won_opportunity_date) from {{this}})
+),
+
 {% else %}
 
 WITH 
@@ -38,8 +44,9 @@ SELECT
                  sf.first_active_date))::DATE                                                                        AS first_telemetry_date
   , MIN(COALESCE(lsf.server_activation_date,
                  sf.first_active_date))::DATE <
-    MIN(o.createddate)::DATE                                                                                         AS free_to_paid
-  , MIN(o.createddate)::DATE                                                                                         AS paid_conversion_date
+    MIN(o.createddate)::DATE                                AS free_to_paid
+  , MIN(o.createddate)::DATE                                AS paid_conversion_date
+  , MAX(o.createddate) AS last_won_opportunity_date
   , MAX(ol.end_date__c)::DATE                                                                                        AS paid_expire_date
   , MAX(COALESCE(sf.last_active_date, lsf.last_server_telemetry))::DATE                                                                  AS last_telemetry_date
   , IFF(MAX(ol.end_date__c)::DATE < CURRENT_DATE, TRUE, FALSE)                                                       AS churned
@@ -59,7 +66,7 @@ SELECT
                                                                                      THEN lsf.edition
                                                                                      ELSE NULL END IS NOT NULL
                          THEN lsf.issued_date
-                         ELSE NULL END) < MIN(o.createddate)::DATE,
+                         ELSE NULL END) < MIN(CASE WHEN o.type = 'New Subscription' THEN o.createddate ELSE NULL END)::DATE,
              FALSE)                                                                                                  AS trial_to_paid_conversion
   , MAX(CASE WHEN a.name IN ('Hold Public') THEN TRUE ELSE FALSE END)                                                AS hold_public
   , MAX(o.amount) AS amount
@@ -84,7 +91,7 @@ FROM {{ ref('opportunity') }}                  o
      LEFT JOIN mattermost.server_fact  sf
                ON lsf.server_id = sf.server_id
 WHERE o.iswon
-  AND o.type = 'New Subscription'
+  AND o.type in ('New Subscription', 'Existing Business', 'Renewal', 'Contract Expansion', 'Account Expansion')
   AND CASE
           WHEN COALESCE(lsf.edition, 'E20 Trial') <> 'E20 Trial'
                                                                   THEN lsf.edition
@@ -97,13 +104,14 @@ WHERE o.iswon
                                                                                                 THEN NULL END END !=
       'Mattermost Cloud'
 {% if is_incremental() %}
-    AND (
+    and (
             o.accountid NOT IN (SELECT accountid from existing_conversions)
         OR 
-            ol.end_date__c::date >= (SELECT max(paid_expire_date) from {{this}})
+            o.accountid IN (SELECT accountid from new_closed_ops)
         )
 {% endif %}
-GROUP BY 1, 2)
+GROUP BY 1, 2
+)
 
 
 SELECT * 
