@@ -161,3 +161,6 @@ sources:
 
       - name: warn_metrics
         description: Contains raw server-level warn metrics data as a single row per server per timestamp. Warn metrics are banner notifications when servers are reaching registered user thresholds.
+
+      - name: config_feature_flags
+        description: Contains raw server-level split.io feature flag data as a single row per server per timestamp.

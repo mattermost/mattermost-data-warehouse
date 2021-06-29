@@ -323,7 +323,17 @@ select get_sys_var({{ var_name }})
                         {%- endif -%}
 
                 {%- endfor -%} 
-              from {{ relation }}
+                
+              from 
+              {% if (((relation|replace("'", "")|join).split('.')[0]))|lower == '"raw"'%}
+
+              {{ relation }}
+
+              {% else %}
+
+              {{ ref((((["'", relation|replace("'", "")]|join).split('.')[2]))|lower) }}
+
+              {% endif %}
               
               {% if is_incremental() and this.table == 'user_events_telemetry' %}
 
