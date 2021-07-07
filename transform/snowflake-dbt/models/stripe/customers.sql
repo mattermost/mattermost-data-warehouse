@@ -13,6 +13,7 @@ WITH customers AS (
         ,customers.default_source
         ,customers.delinquent
         ,customers.email
+        ,customers.name
         ,customers.id
         ,customers.invoice_prefix
         ,customers.livemode
