@@ -67,6 +67,7 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(r.verify, s.verify))                              AS verify_saml           
            , {{ dbt_utils.surrogate_key(['COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)']) }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
+           , MAX(COALESCE(r.ignore_guests_ldap_sync, NULL)) AS ignore_guests_ldap_sync
          FROM 
             (
               SELECT s.*

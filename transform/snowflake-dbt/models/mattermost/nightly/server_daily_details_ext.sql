@@ -607,6 +607,16 @@ WITH server_daily_details_ext AS (
       , sc.group_synced_channel_count
       , sc.group_count_with_allow_reference
       , sc.enable_legacy_sidebar
+      , sc.managed_resource_paths
+      , sc.openid_google
+      , sc.openid_gitlab
+      , sc.openid_office365
+      , sc.enable_openid
+      , sc.enable_gossip_compression
+      , sc.openid_office_365
+      , sc.ignore_guests_ldap_sync
+      , sc.conn_max_idletime_milliseconds
+      , sc.collapsed_threads
     FROM {{ ref('server_daily_details') }}         s
     {% if is_incremental() %}
     JOIN max_date

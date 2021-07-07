@@ -49,7 +49,6 @@ max_rudder_timestamp               AS (
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
            , MAX(COALESCE(r.admin_notices_enabled, NULL))        AS admin_notices_enabled
            , MAX(COALESCE(r.user_notices_enabled, NULL))        AS user_notices_enabled
-
            FROM 
             (
               SELECT s.*

@@ -51,6 +51,7 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(r.trace, s.trace))                                  AS trace           
            , {{ dbt_utils.surrogate_key(['COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)']) }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
+           , MAX(COALESCE(r.conn_max_idletime_milliseconds, NULL)) AS conn_max_idletime_milliseconds
          FROM 
             (
               SELECT s.*

@@ -588,6 +588,15 @@ SELECT
   , sgroup.group_synced_channel_count
   , sgroup.group_count_with_allow_reference
   , sservice.enable_legacy_sidebar
+  , sservice.managed_resource_paths
+  , soauth.openid_google
+  , soauth.openid_gitlab
+  , soauth.openid_office365
+  , soauth.enable_openid
+  , scluster.enable_gossip_compression
+  , ssaml.ignore_guests_ldap_sync
+  , ssql.conn_max_idletime_milliseconds
+  , sservice.collapsed_threads
 FROM {{ ref('server_daily_details') }}                      s
 {% if is_incremental() %}
 
