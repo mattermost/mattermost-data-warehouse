@@ -43,6 +43,7 @@ with signup_pages as (
 ), customer_facts as (
     select distinct
         customers.cws_customer as portal_customer_id,
+        customers.id as stripe_customer_id,
         subscriptions.cws_dns as dns,
         customers.name as company_name,
         customers.email
@@ -58,6 +59,7 @@ select
     signup_pages.entered_company_name_at,
     created_workspace.workspace_provisioning_started_at,
     completed_signup.completed_signup_at,
+    customer_facts.stripe_customer_id,
     customer_facts.dns,
     customer_facts.company_name,
     customer_facts.email
