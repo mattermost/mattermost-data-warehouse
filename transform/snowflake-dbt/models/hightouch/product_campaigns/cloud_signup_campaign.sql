@@ -7,6 +7,7 @@
 select
     facts.email,
     facts.dns,
+    facts.stripe_customer_id,
     left(facts.company_name, 40) as company_name,
     lead.dwh_external_id__c is not null as lead_exists,
     contact.dwh_external_id__c is not null as contact_exists,
