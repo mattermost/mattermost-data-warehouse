@@ -130,6 +130,8 @@ max_rudder_timestamp       AS (
            , MAX(COALESCE(r.enable_file_search, NULL)) AS enable_file_search
            , MAX(COALESCE(r.THREAD_AUTO_FOLLOW, NULL)) AS thread_autofollow
            , MAX(COALESCE(r.enable_legacy_sidebar, NULL))    AS enable_legacy_sidebar
+           , MAX(COALESCE(r.collapsed_threads, NULL)) AS collapsed_threads
+           , MAX(COALESCE(r.managed_resource_paths, NULL)) AS managed_resource_paths
          FROM 
             (
               SELECT s.*

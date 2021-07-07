@@ -51,6 +51,7 @@ max_rudder_timestamp          AS (
            , {{ dbt_utils.surrogate_key(['COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)']) }} AS id
            , MAX(COALESCE(r.enable_experimental_gossip_encryption, NULL)) AS enable_experimental_gossip_encryption
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
+           , MAX(COALESCE(r.enable_gossip_compression, NULL)) AS enable_gossip_compression
            FROM 
             (
               SELECT s.*

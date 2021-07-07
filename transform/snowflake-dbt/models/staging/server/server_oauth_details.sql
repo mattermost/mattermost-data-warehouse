@@ -40,11 +40,15 @@ max_rudder_timestamp       AS (
          SELECT
              COALESCE(r.timestamp::DATE, s.timestamp::date)                        AS date
            , COALESCE(r.user_id, s.user_id)                                        AS server_id
-           , MAX(COALESCE(r.enable_office365, s.enable_office365))                       AS enable_office365_oauth
+           , MAX(COALESCE(r.enable_office365, s.enable_office365, r.enable_office_365))                       AS enable_office365_oauth
            , MAX(COALESCE(r.enable_google, s.enable_google))                          AS enable_google_oauth
            , MAX(COALESCE(r.enable_gitlab, s.enable_gitlab))                          AS enable_gitlab_oauth           
            , {{ dbt_utils.surrogate_key(['COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)']) }} AS id
            , COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID, NULL)                   AS installation_id
+           , MAX(COALESCE(r.openid_google, NULL)) AS openid_google
+           , MAX(COALESCE(r.openid_gitlab, NULL)) AS openid_gitlab
+           , MAX(COALESCE(r.openid_office365, r.openid_office_365)) AS openid_office365
+           , MAX(COALESCE(r.enable_openid, NULL)) AS enable_openid
          FROM 
             (
               SELECT s.*
