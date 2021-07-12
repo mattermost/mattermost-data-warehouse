@@ -613,7 +613,6 @@ WITH server_daily_details_ext AS (
       , sc.openid_office365
       , sc.enable_openid
       , sc.enable_gossip_compression
-      , sc.openid_office_365
       , sc.ignore_guests_ldap_sync
       , sc.conn_max_idletime_milliseconds
       , sc.collapsed_threads
@@ -626,7 +625,7 @@ WITH server_daily_details_ext AS (
                    ON s.server_id = sc.server_id
                        AND s.date = sc.date
     WHERE s.date >= '2016-04-01'
-    {{ dbt_utils.group_by(n=586) }}
+    {{ dbt_utils.group_by(n=595) }}
 )
 
 SELECT *
