@@ -613,7 +613,6 @@ WITH server_daily_details_ext AS (
       , sc.openid_office365
       , sc.enable_openid
       , sc.enable_gossip_compression
-      , sc.openid_office_365
       , sc.ignore_guests_ldap_sync
       , sc.conn_max_idletime_milliseconds
       , sc.collapsed_threads
