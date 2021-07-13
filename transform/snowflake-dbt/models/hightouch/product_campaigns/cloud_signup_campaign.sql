@@ -8,7 +8,7 @@ select
     facts.email,
     facts.dns,
     facts.stripe_customer_id,
-    left(facts.company_name, 40) as company_name,
+    left(coalesce(facts.company_name, facts.email), 40) as company_name,
     lead.dwh_external_id__c is not null as lead_exists,
     contact.dwh_external_id__c is not null as contact_exists,
     coalesce(campaignmember.dwh_external_id__c, UUID_STRING('78157189-82de-4f4d-9db3-88c601fbc22e', '7013p000001TxBuAAK' || facts.portal_customer_id || facts.email)) AS campaignmember_external_id,
