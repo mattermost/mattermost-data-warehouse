@@ -21,6 +21,7 @@ select
     'MM Cloud' as lead_source_detail,
     false as marketing_suspend,
     '7013p000001TuhdAAC' as campaign_id,
+    '70118000000RMdfAAG' as sandbox_campaign_id,
     campaignmember.sfid as campaignmember_sfid,
     lead.sfid as lead_sfid,
     contact.sfid as contact_sfid,
