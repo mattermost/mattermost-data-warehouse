@@ -95,6 +95,12 @@ incident_daily_details AS (
                 DISTINCT CASE WHEN event = 'incident' AND action = 'restart' 
                 THEN events.id ELSE NULL END)                                                         AS restarted_incident
       , COUNT(DISTINCT CASE
+                  WHEN event = 'tasks' AND action = 'publish_retrospective' THEN events.id
+                                                                            ELSE NULL END)            AS retrospectives_published
+      , COUNT(DISTINCT CASE
+                  WHEN event = 'tasks' AND action = 'update_retrospective' THEN events.id
+                                                                            ELSE NULL END)            AS retrospectives_updated
+      , COUNT(DISTINCT CASE
                   WHEN event = 'tasks' AND action = 'set_assignee_for_task' THEN events.id
                                                                             ELSE NULL END)            AS task_assignees_set
       , COUNT(DISTINCT CASE
