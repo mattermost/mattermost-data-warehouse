@@ -130,7 +130,7 @@ WITH license_old        AS (
          FROM {{ ref('dates') }} d
             JOIN license l
                  ON d.date >= l.issuedat
-                 AND d.date <= CASE WHEN CURRENT_DATE <= l.expiresat THEN CURRENT_DATE ELSE l.expiresat END
+                 AND d.date <= IFF(CURRENT_DATE <= l.expiresat, CURRENT_DATE, l.expiresat)
        {{ dbt_utils.group_by(n=12) }}
      ), 
 
@@ -266,7 +266,7 @@ WITH license_old        AS (
            , ld.feature_cloud
          FROM date_ranges    l
               LEFT JOIN license_details ld
-                        ON COALESCE(l.licenseid, l.customerid) = CASE WHEN l.licenseid is null THEN ld.customer_id ELSE ld.license_id END
+                        ON l.licenseid = ld.license_id
                         AND l.date = ld.date
               LEFT JOIN license_overview lo
                         ON COALESCE(l.licenseid, l.customerid) = COALESCE(lo.licenseid, lo.customerid)
