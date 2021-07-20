@@ -59,6 +59,7 @@ LEFT JOIN account_mapping am
   ON l.license_id = am.license_id
 WHERE l.server_id IS NOT NULL
 AND l.license_id <> '16tfkttgktgdmb5m8xakqncx3c'
+AND l.issued_date::DATE <= CURRENT_DATE
 GROUP BY 1, 2, 3, 7, 8, 9, 10, 16, 17, 18
 ),
 
@@ -92,6 +93,7 @@ nonactivated_licenses as (
     ON l.license_id = am.license_id       
   WHERE s.license_id is null
   AND l.license_id <> '16tfkttgktgdmb5m8xakqncx3c'
+  AND l.issued_date::DATE <= CURRENT_DATE
   GROUP BY 1, 2, 3, 7, 8, 9, 10, 16, 17, 18
 ),
 
@@ -182,6 +184,7 @@ cloud_subscriptions AS (
         LEFT JOIN max_sku ms
                   ON s.id = ms.subscription
   WHERE s.cws_installation IS NOT NULL
+  AND s.created::DATE <= CURRENT_DATE
   GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
   , 24, 25, 26
 ),
