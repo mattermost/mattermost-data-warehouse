@@ -13,12 +13,14 @@ with account_mapping as (
     , elm.licenseid as license_id
     , elm.opportunity_sfid
     , elm.company
+    , elm.contact_sfid
   FROM (
         SELECT
             COALESCE(elm.account_sfid, lo.account_sfid)         AS account_sfid
           , COALESCE(elm.opportunity_sfid, lo.opportunity_sfid) AS opportunity_sfid
           , COALESCE(trim(elm.licenseid), trim(lo.licenseid))   AS licenseid
           , COALESCE(trim(elm.company), trim(lo.company))       AS company
+          , COALESCE(trim(lo.contact_sfid), NULL)       AS contact_sfid
         FROM {{ ref('enterprise_license_mapping') }} elm
         FULL OUTER JOIN {{ ref('license_overview') }} lo
           ON trim(elm.licenseid) = trim(lo.licenseid)
@@ -42,7 +44,7 @@ SELECT
   , l.start_date
   , l.expire_date
   , MAX(trim(lower(l.license_email))) AS license_email
-  , MAX(l.contact_sfid) AS contact_sfid
+  , MAX(COALESCE(am.contact_sfid, l.contact_sfid)) AS contact_sfid
   , MAX(COALESCE(am.account_sfid, l.account_sfid, s.account_sfid)) AS account_sfid
   , MAX(COALESCE(am.account_name, l.account_name, s.account_name)) AS account_name
   , MAX(am.opportunity_sfid) AS opportunity_sfid
@@ -76,7 +78,7 @@ nonactivated_licenses as (
   , l.start_date
   , l.expire_date
   , MAX(trim(lower(l.license_email))) AS license_email
-  , MAX(l.contact_sfid) AS contact_sfid
+  , MAX(COALESCE(am.contact_sfid, l.contact_sfid)) AS contact_sfid
   , MAX(COALESCE(am.account_sfid, l.account_sfid)) AS account_sfid
   , MAX(COALESCE(am.account_name, l.account_name)) AS account_name
   , MAX(am.opportunity_sfid) AS opportunity_sfid
@@ -158,10 +160,10 @@ cloud_subscriptions AS (
                MIN(s.current_period_start::DATE))                  AS start_date
     , s.current_period_end::DATE                                   AS expire_date
     , c.email                                                      AS license_email
-    , NULL                                                         AS contact_sfid
-    , NULL                                                         AS account_sfid
-    , NULL                                                         AS account_name
-    , NULL                                                         AS opportunity_sfid
+    , MAX(COALESCE(am.contact_sfid, NULL))                                                         AS contact_sfid
+    , MAX(COALESCE(am.account_sfid, NULL))                                                         AS account_sfid
+    , MAX(COALESCE(am.account_name, NULL))                                                        AS account_name
+    , MAX(COALESCE(am.opportunity_sfid, NULL))                                                     AS opportunity_sfid
     , c.id                                                         AS stripeid
     , c.cws_customer                                               AS license_customer_id
     , NULL                                                         AS number
@@ -183,9 +185,11 @@ cloud_subscriptions AS (
                       AND server.context_traits_installationid IS NOT NULL
         LEFT JOIN max_sku ms
                   ON s.id = ms.subscription
+        LEFT JOIN account_mapping am
+                  ON s.cws_installation = am.license_id
   WHERE s.cws_installation IS NOT NULL
   AND s.created::DATE <= CURRENT_DATE
-  GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
+  GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 18, 19, 20, 21
   , 24, 25, 26
 ),
 
