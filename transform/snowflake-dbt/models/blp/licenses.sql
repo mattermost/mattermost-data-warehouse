@@ -224,7 +224,7 @@ WITH license_old        AS (
            , l.company
            , COALESCE(l.edition, ld.edition)                                                       AS edition
            , COALESCE(l.issuedat, ld.issued_date)                                                  AS issued_date
-           , COALESCE(ld.start_date, l.issuedat)                                                   AS start_date
+           , COALESCE(l.issuedat, ld.start_date)                                                   AS start_date
            , COALESCE(l.expiresat, ld.expire_date)                                                 AS expire_date
            , COALESCE(elm.account_sfid, lo.master_account_sfid)                                    AS master_account_sfid
            , COALESCE(elm.name, lo.master_account_name)                                            AS master_account_name
