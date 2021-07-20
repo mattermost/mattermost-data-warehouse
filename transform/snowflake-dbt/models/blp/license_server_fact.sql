@@ -352,9 +352,9 @@ SELECT
    , l.stripeid                
    , l.license_customer_id     
    , l.number                  
-   , l.license_activation_date 
-   , l.last_active_date        
-   , l.server_activation_date  
+   , MIN(l.license_activation_date) AS license_activation_date 
+   , MAX(l.last_active_date)        AS last_active_date
+   , MIN(l.server_activation_date)  AS server_activation_date  
    , l.license_priority_rank   
    , l.license_retired_date
    , activity.date as last_server_telemetry
