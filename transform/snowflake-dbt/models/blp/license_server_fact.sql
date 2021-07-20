@@ -24,11 +24,11 @@ with account_mapping as (
         FROM {{ ref('enterprise_license_mapping') }} elm
         FULL OUTER JOIN {{ ref('license_overview') }} lo
           ON trim(elm.licenseid) = trim(lo.licenseid)
-        GROUP BY 1, 2, 3, 4
+        GROUP BY 1, 2, 3, 4, 5
       ) elm
   LEFT JOIN {{ ref( 'account') }} a
       ON elm.account_sfid = a.sfid
-  GROUP BY 1, 2, 3, 4, 5
+  GROUP BY 1, 2, 3, 4, 5, 6
 ),
 
 licensed_servers as (
