@@ -29,6 +29,43 @@ LEFT JOIN {{ ref( 'account') }} AS master_account ON master_account.sfid = accou
 LEFT JOIN {{ ref( 'contact') }} ON licenses.email = contact.email AND contact.accountid = account.sfid
 GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16),
 
+online_conversions AS (
+  SELECT
+    COALESCE(s2.metadata:"cws-license-id"::VARCHAR, NULL)                                        AS licenseid,
+    COALESCE(c.company_name, a.name)       AS company,
+        c.stripe_id AS stripe_id,
+        datediff(day, c.created_at::date, s.end_date::date) AS licenselength,
+        c.created_at::date as issuedat,
+        s.end_date::date as expiresat,
+        c.id                           AS customer_id,
+        c.email as license_email,
+        a.name as master_account_name, 
+        a.id as master_account_sfid,
+        a.name as account_name, 
+        a.id as account_sfid,
+        o.name as opportunity_name, 
+        o.sfid as opportunity_sfid,
+        contact.email as contact_email,
+        contact.sfid as contact_sfid
+  FROM {{ ref('opportunitylineitem') }}    ol
+     JOIN {{ ref('opportunity') }} o
+          ON ol.opportunityid = o.id
+     JOIN {{ ref('account') }} a
+          ON o.accountid = a.id
+     JOIN {{ ref('subscriptions_blapi') }}    s
+          ON ol.subs_id__c = s.id
+     JOIN {{ ref('customers_blapi') }}        c
+          ON s.customer_id = c.id
+     JOIN {{ source('stripe_raw', 'subscriptions') }} s2
+          ON s.stripe_id = s2.id
+     LEFT JOIN {{ ref( 'contact') }} ON c.email = contact.email AND contact.accountid = a.sfid
+WHERE ol.subs_id__c IS NOT NULL
+  AND s.cloud_installation_id IS NULL
+  AND COALESCE(s2.metadata:"cws-license-id"::VARCHAR, NULL) NOT IN (SELECT licenseid FROM licenses_old GROUP BY 1)
+  AND COALESCE(s2.metadata:"cws-license-id"::VARCHAR, NULL) IS NOT NULL
+GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+),
+
 licenses_new AS (
 SELECT 
     COALESCE(s.metadata:"cws-license-id"::VARCHAR, NULL)                                        AS licenseid,
@@ -49,15 +86,63 @@ SELECT
         contact.sfid as contact_sfid
 FROM {{ source('stripe_raw', 'subscriptions') }} s
 JOIN {{ source('stripe_raw', 'customers') }} c ON s.customer = c.id
-LEFT JOIN {{ ref( 'opportunity') }} ON opportunity.license_key__c = COALESCE(s.metadata:"cws-license-id"::VARCHAR, NULL)
+LEFT JOIN {{ ref( 'opportunity') }} 
+ON IFF(TRIM(SPLIT_PART(opportunity.license_key__c, ',', 2)) IS NOT NULL, 
+    ( 
+      TRIM(SPLIT_PART(opportunity.license_key__c, ',', 1)) = 
+      COALESCE(s.metadata:"cws-license-id"::VARCHAR, NULL)
+    OR 
+      TRIM(SPLIT_PART(opportunity.license_key__c, ',', 2)) = 
+      COALESCE(s.metadata:"cws-license-id"::VARCHAR, NULL)
+    OR 
+      TRIM(SPLIT_PART(opportunity.license_key__c, ',', 3)) = 
+      COALESCE(s.metadata:"cws-license-id"::VARCHAR, NULL)
+    ),
+    opportunity.license_key__c =
+    COALESCE(s.metadata:"cws-license-id"::VARCHAR, NULL) 
+)
 LEFT JOIN {{ ref( 'account') }} ON account.sfid = opportunity.accountid
 LEFT JOIN {{ ref( 'account') }} AS master_account ON master_account.sfid = account.parentid
 LEFT JOIN {{ ref( 'contact') }} ON c.email = contact.email AND contact.accountid = account.sfid
 WHERE COALESCE(s.metadata:"cws-license-id"::VARCHAR, NULL) NOT IN (SELECT licenseid FROM licenses_old GROUP BY 1)
+  AND COALESCE(s.metadata:"cws-license-id"::VARCHAR, NULL) NOT IN (SELECT licenseid FROM online_conversions GROUP BY 1)
   AND COALESCE(s.metadata:"sku"::VARCHAR, SPLIT_PART(s.plan:"name"::VARCHAR, ' ', 2) || ' Trial') IN
       ('E20', 'E10', 'E20 Trial', 'E10 Trial')
   AND s.status NOT IN ('incomplete_expired')
   AND COALESCE(s.metadata:"cws-license-id"::VARCHAR, NULL) IS NOT NULL
+GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+),
+
+cloud_conversions AS (
+  SELECT
+    COALESCE(s.cloud_installation_id::VARCHAR, NULL)                                        AS licenseid,
+    COALESCE(c.company_name, a.name)       AS company,
+        c.stripe_id AS stripe_id,
+        datediff(day, c.created_at::date, s.end_date::date) AS licenselength,
+        c.created_at::date as issuedat,
+        s.end_date::date as expiresat,
+        c.id                           AS customer_id,
+        c.email as license_email,
+        a.name as master_account_name, 
+        a.id as master_account_sfid,
+        a.name as account_name, 
+        a.id as account_sfid,
+        o.name as opportunity_name, 
+        o.sfid as opportunity_sfid,
+        contact.email as contact_email,
+        contact.sfid as contact_sfid
+  FROM {{ ref('opportunitylineitem') }}    ol
+     JOIN {{ ref('opportunity') }} o
+          ON ol.opportunityid = o.id
+     JOIN {{ ref('account') }} a
+          ON o.accountid = a.id
+     JOIN {{ ref('subscriptions_blapi') }}    s
+          ON ol.subs_id__c = s.id
+     JOIN {{ ref('customers_blapi') }}        c
+          ON s.customer_id = c.id
+     LEFT JOIN {{ ref( 'contact') }} ON c.email = contact.email AND contact.accountid = a.sfid
+WHERE ol.subs_id__c IS NOT NULL
+  AND s.cloud_installation_id IS NOT NULL
 GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
 ),
 
@@ -71,7 +156,20 @@ license_overview AS (
   SELECT
     *
   FROM licenses_new
+
+  UNION ALL
+
+  SELECT
+    *
+  FROM cloud_conversions
+
+  UNION all
+
+  SELECT
+    *
+  FROM online_conversions
 )
 
 SELECT * FROM license_overview
 WHERE licenseid is not null
+GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
