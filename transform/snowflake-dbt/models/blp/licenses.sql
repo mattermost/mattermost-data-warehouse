@@ -29,7 +29,7 @@ WITH license_old        AS (
       , site_name as company
       , MAX(uniform(10000, 99999, random())::int) as number
       , l.email
-      , null as stripeid
+      , COALESCE(s.id, null) as stripeid
       , l.id as licenseid
       , license_issued_at::date as issuedat
       , end_date::date as expiresat
@@ -37,6 +37,8 @@ WITH license_old        AS (
       , users
       , 'E20 Trial' AS edition
     FROM {{ source('blapi', 'trial_requests')}} l
+    LEFT JOIN {{ source('stripe_raw', 'subscriptions') }} s
+          ON l.id = s.metadata:"cws-license-id"
     GROUP BY 1, 2, 4, 5, 6, 7, 8, 9, 10, 11),
 
     license AS (
