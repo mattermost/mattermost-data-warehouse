@@ -6,7 +6,31 @@
   })
 }}
 
-WITH license_old        AS (
+WITH license_new AS (
+      SELECT
+        COALESCE(c.metadata:"id"::VARCHAR, c.metadata:"cws-customer")                                    AS customerid
+      , COALESCE(c.name, c.metadata:"company"::VARCHAR, SPLIT_PART(c.email, '@', 2)::VARCHAR)            AS company
+      , MAX(COALESCE(c.metadata:"number"::INT, c.metadata:"netsuite_customer_id"::INT))                  AS number
+      , c.email
+      , s.id                                                                                             AS stripe_id
+      , COALESCE(s.metadata:"cws-license-id"::VARCHAR, NULL)                                             AS licenseid
+      , (s.current_period_start)::DATE                                                                   AS issuedat
+      , (s.current_period_end)::DATE                                                                     AS expiresat
+      , FALSE                                                                                            AS blapi
+      , COALESCE(s.quantity, c.metadata:"seats"::INT)                                                    AS users
+      , COALESCE(c.metadata:"sku"::VARCHAR, SPLIT_PART(s.plan:"name"::VARCHAR, ' ', 2)) AS edition
+    FROM {{ source('stripe_raw', 'subscriptions')}} s
+    JOIN {{ source('stripe_raw', 'customers') }} c
+      ON s.customer = c.id
+    WHERE COALESCE(c.metadata:"id"::VARCHAR, c.metadata:"cws-customer") NOT IN (SELECT customerid FROM {{ source('licenses', 'licenses') }} GROUP BY 1)
+    AND COALESCE(c.metadata:"id"::VARCHAR, c.metadata:"cws-customer") IS NOT NULL
+    AND COALESCE(s.metadata:"sku"::VARCHAR, SPLIT_PART(s.plan:"name"::VARCHAR, ' ', 2)) IN
+      ('E20', 'E10')
+    AND s.status NOT IN ('incomplete_expired')
+    GROUP BY 1, 2, 4, 5, 6, 7, 8, 9, 10, 11
+),
+
+license_old        AS (
     SELECT
         l.customerid
       , l.company
@@ -43,34 +67,17 @@ WITH license_old        AS (
 
     license AS (
 
-    SELECT *
+    SELECT 
+        *
     FROM license_old
+    WHERE NOT EXISTS (select licenseid FROM license_new new
+                    WHERE license_old.licenseid = new.licenseid GROUP BY 1) 
 
     UNION all
 
     SELECT
-        COALESCE(c.metadata:"id"::VARCHAR, c.metadata:"cws-customer")                                    AS customerid
-      , COALESCE(c.name, c.metadata:"company"::VARCHAR, SPLIT_PART(c.email, '@', 2)::VARCHAR)            AS company
-      , MAX(COALESCE(c.metadata:"number"::INT, c.metadata:"netsuite_customer_id"::INT))                  AS number
-      , c.email
-      , s.id                                                                                             AS stripe_id
-      , COALESCE(s.metadata:"cws-license-id"::VARCHAR, NULL)                                             AS licenseid
-      , (s.current_period_start)::DATE                                                                   AS issuedat
-      , (s.current_period_end)::DATE                                                                     AS expiresat
-      , FALSE                                                                                            AS blapi
-      , COALESCE(s.quantity, c.metadata:"seats"::INT)                                                    AS users
-      , COALESCE(c.metadata:"sku"::VARCHAR, SPLIT_PART(s.plan:"name"::VARCHAR, ' ', 2)) AS edition
-    FROM {{ source('stripe_raw', 'subscriptions')}} s
-    JOIN {{ source('stripe_raw', 'customers') }} c
-      ON s.customer = c.id
-    WHERE COALESCE(c.metadata:"id"::VARCHAR, c.metadata:"cws-customer") NOT IN (SELECT customerid FROM {{ source('licenses', 'licenses') }} GROUP BY 1)
-    AND COALESCE(c.metadata:"id"::VARCHAR, c.metadata:"cws-customer") IS NOT NULL
-    AND COALESCE(s.metadata:"sku"::VARCHAR, SPLIT_PART(s.plan:"name"::VARCHAR, ' ', 2)) IN
-      ('E20', 'E10')
-    AND s.status NOT IN ('incomplete_expired')
-    AND NOT EXISTS (select licenseid FROM license_old old
-                    WHERE COALESCE(s.metadata:"cws-license-id"::VARCHAR, NULL)  = old.licenseid GROUP BY 1) 
-    GROUP BY 1, 2, 4, 5, 6, 7, 8, 9, 10, 11
+        *
+    FROM license_new
 ),
 
      max_segment_date        AS (
@@ -88,9 +95,9 @@ WITH license_old        AS (
            , MIN(l.timestamp)  AS license_activation_date
          FROM {{ ref('dates') }} d
          JOIN {{ source('mattermost2','license') }} l
-              ON l.timestamp::date <= d.date
-              AND d.date <= CURRENT_DATE
-              AND d.date >= to_timestamp(l.issued / 1000)::DATE
+              ON l.timestamp::date <= d.date::date
+              AND d.date::date <= CURRENT_DATE::date
+              AND d.date::date >= to_timestamp(l.issued / 1000)::DATE
          {{ dbt_utils.group_by(n=4) }}
      ),
 
@@ -109,9 +116,9 @@ WITH license_old        AS (
            , MIN(l.timestamp)  AS license_activation_date
          FROM {{ ref('dates') }} d
          JOIN {{ source('mm_telemetry_prod','license') }} l
-              ON l.timestamp::date <= d.date
-              AND d.date <= CURRENT_DATE
-              AND d.date >= to_timestamp(l.issued / 1000)::DATE
+              ON l.timestamp::date <= d.date::date
+              AND d.date::date <= CURRENT_DATE::date
+              AND d.date::date >= to_timestamp(l.issued / 1000)::DATE
          {{ dbt_utils.group_by(n=4) }}
      ),
 
@@ -131,8 +138,8 @@ WITH license_old        AS (
          , l.edition
          FROM {{ ref('dates') }} d
             JOIN license l
-                 ON d.date >= l.issuedat
-                 AND d.date <= IFF(CURRENT_DATE <= l.expiresat, CURRENT_DATE, l.expiresat)
+                 ON d.date::date >= l.issuedat::date
+                 AND d.date::date <= IFF(CURRENT_DATE::date <= l.expiresat::date, CURRENT_DATE::date, l.expiresat::date)
        {{ dbt_utils.group_by(n=12) }}
      ), 
 
@@ -269,7 +276,7 @@ WITH license_old        AS (
          FROM date_ranges    l
               LEFT JOIN license_details ld
                         ON l.licenseid = ld.license_id
-                        AND l.date = ld.date
+                        AND l.date::date = ld.date::date
               LEFT JOIN license_overview lo
                         ON COALESCE(l.licenseid, l.customerid) = COALESCE(lo.licenseid, lo.customerid)
               LEFT JOIN (
