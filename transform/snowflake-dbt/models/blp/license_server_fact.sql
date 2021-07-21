@@ -351,7 +351,7 @@ SELECT
    , l.opportunity_sfid        
    , l.stripeid                
    , l.license_customer_id     
-   , l.number                  
+   , l.number    
     , l.license_activation_date 
     , l.last_active_date        
     , l.server_activation_date  
