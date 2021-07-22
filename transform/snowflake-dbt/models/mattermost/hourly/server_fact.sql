@@ -29,7 +29,9 @@ WITH sdd AS (
             , MAX(CASE WHEN in_mm2_server THEN timestamp ELSE NULL END)                           AS last_mm2_telemetry_date
             FROM {{ ref('server_daily_details') }}
             GROUP BY 1
+            {% if is_incremental() %}
             HAVING MAX(CASE WHEN in_security OR in_mm2_server THEN timestamp ELSE NULL END)::date >= (SELECT MAX(last_active_date::date) FROM {{this}})
+            {% endif %}
           ),
 
     server_details AS (
