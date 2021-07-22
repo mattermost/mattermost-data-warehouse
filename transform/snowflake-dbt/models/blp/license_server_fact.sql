@@ -40,9 +40,9 @@ SELECT
   , MAX(l.edition) AS edition
   , MAX(l.users)   AS users
   , l.trial
-  , l.issued_date
-  , l.start_date
-  , l.expire_date
+  , MIN(l.issued_date::date) AS issued_date
+  , MIN(l.start_date::date) AS start_date
+  , MAX(l.expire_date::date) AS expire_date
   , MAX(trim(lower(l.license_email))) AS license_email
   , MAX(COALESCE(am.contact_sfid, l.contact_sfid)) AS contact_sfid
   , MAX(COALESCE(am.account_sfid, l.account_sfid, s.account_sfid)) AS account_sfid
@@ -62,7 +62,7 @@ LEFT JOIN account_mapping am
 WHERE l.server_id IS NOT NULL
 AND l.license_id <> '16tfkttgktgdmb5m8xakqncx3c'
 AND l.issued_date::DATE <= CURRENT_DATE
-GROUP BY 1, 2, 3, 7, 8, 9, 10, 16, 17, 18
+GROUP BY 1, 2, 3, 7, 16, 17, 18
 ),
 
 nonactivated_licenses as (
@@ -74,9 +74,9 @@ nonactivated_licenses as (
   , MAX(l.edition) AS edition
   , MAX(l.users)   AS users
   , l.trial
-  , l.issued_date
-  , l.start_date
-  , l.expire_date
+  , MIN(l.issued_date::date) AS issued_date
+  , MIN(l.start_date::date) AS start_date
+  , MAX(l.expire_date::date) AS expire_date
   , MAX(trim(lower(l.license_email))) AS license_email
   , MAX(COALESCE(am.contact_sfid, l.contact_sfid)) AS contact_sfid
   , MAX(COALESCE(am.account_sfid, l.account_sfid)) AS account_sfid
@@ -96,7 +96,7 @@ nonactivated_licenses as (
   WHERE s.license_id is null
   AND l.license_id <> '16tfkttgktgdmb5m8xakqncx3c'
   AND l.issued_date::DATE <= CURRENT_DATE
-  GROUP BY 1, 2, 3, 7, 8, 9, 10, 16, 17, 18
+  GROUP BY 1, 2, 3, 7, 16, 17, 18
 ),
 
 license_union as (
@@ -154,11 +154,11 @@ cloud_subscriptions AS (
     , COALESCE(ms.plan_name, 'Mattermost Cloud')                   AS edition
     , s.quantity                                                   AS users
     , FALSE                                                        AS trial
-    , s.created::DATE                                              AS issued_date
-    , COALESCE(MIN(sf.first_active_date), 
+    , MIN(s.created::DATE)                                         AS issued_date
+    , COALESCE(MIN(sf.first_active_date::date), 
                MIN(server.timestamp::date), 
                MIN(s.current_period_start::DATE))                  AS start_date
-    , s.current_period_end::DATE                                   AS expire_date
+    , MAX(s.current_period_end::DATE)                              AS expire_date
     , c.email                                                      AS license_email
     , MAX(COALESCE(am.contact_sfid, NULL))                                                         AS contact_sfid
     , MAX(COALESCE(am.account_sfid, NULL))                                                         AS account_sfid
@@ -189,7 +189,7 @@ cloud_subscriptions AS (
                   ON s.cws_installation = am.license_id
   WHERE s.cws_installation IS NOT NULL
   AND s.created::DATE <= CURRENT_DATE
-  GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 18, 19, 20, 21
+  GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9 13, 18, 19, 20, 21
   , 24, 25, 26
 ),
 
