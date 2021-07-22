@@ -189,7 +189,7 @@ cloud_subscriptions AS (
                   ON s.cws_installation = am.license_id
   WHERE s.cws_installation IS NOT NULL
   AND s.created::DATE <= CURRENT_DATE
-  GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9 13, 18, 19, 20, 21
+  GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 13, 18, 19, 20, 21
   , 24, 25, 26
 ),
 

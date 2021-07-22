@@ -29,6 +29,7 @@ WITH sdd AS (
             , MAX(CASE WHEN in_mm2_server THEN timestamp ELSE NULL END)                           AS last_mm2_telemetry_date
             FROM {{ ref('server_daily_details') }}
             GROUP BY 1
+            HAVING MAX(CASE WHEN in_security OR in_mm2_server THEN timestamp ELSE NULL END)::date >= (SELECT MAX(last_active_date::date) FROM {{this}})
           ),
 
     server_details AS (
@@ -330,7 +331,7 @@ WITH sdd AS (
         LEFT JOIN incident_mgmt im
             ON sdd.server_id = im.server_id
         {% if is_incremental() %}
-          WHERE sdd.last_active_date >= (SELECT MAX(last_active_date) FROM {{this}})
+          WHERE sdd.last_active_date::date >= (SELECT MAX(last_active_date::date) FROM {{this}})
         {% endif %}
         {{ dbt_utils.group_by(n=1) }}
     )
