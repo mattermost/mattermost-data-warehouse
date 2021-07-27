@@ -187,7 +187,7 @@ WITH sdd AS (
       , MIN(CASE WHEN COALESCE(type, event) IN ('ui_marketplace_download', 'api_install_marketplace_plugin') THEN timestamp::date ELSE NULL END) as first_plugin_install_date
       , COUNT(DISTINCT CASE WHEN COALESCE(type, event) IN ('ui_marketplace_download') THEN plugin_id ELSE NULL END) AS plugins_downloaded
       , MAX(CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '672 HOURS' AND sdd.first_active_date + INTERVAL '700 HOURS' 
-                    THEN TRUE ELSE FALSE) AS retention_28day_flag
+                    THEN TRUE ELSE FALSE END) AS retention_28day_flag
     FROM {{ ref('user_events_telemetry') }}
     JOIN sdd ON sdd.server_id = COALESCE(user_events_telemetry.user_id, user_events_telemetry.context_server, user_events_telemetry.context_traits_server)
     GROUP BY 1
