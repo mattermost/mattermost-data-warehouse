@@ -21,12 +21,14 @@ WITH licenses_old AS (
         opportunity.name as opportunity_name, 
         opportunity.sfid as opportunity_sfid,
         contact.email as contact_email,
-        contact.sfid as contact_sfid
+        contact.sfid as contact_sfid,
+        MAX(COALESCE(regexp_substr(ol.productcode, 'E20'), regexp_substr(ol.productcode, 'E10'))) AS edition
 FROM {{ source('licenses', 'licenses') }}
 LEFT JOIN {{ ref( 'opportunity') }} ON opportunity.license_key__c = licenses.licenseid
 LEFT JOIN {{ ref( 'account') }} ON account.sfid = opportunity.accountid
 LEFT JOIN {{ ref( 'account') }} AS master_account ON master_account.sfid = account.parentid
 LEFT JOIN {{ ref( 'contact') }} ON licenses.email = contact.email AND contact.accountid = account.sfid
+LEFT JOIN {{ ref('opportunitylineitem') }}    ol ON opportunity.id = ol.opportunityid AND regexp_substr(ol.productcode, 'Enterprise Edition') IS NOT NULL
 GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16),
 
 online_conversions AS (
@@ -46,7 +48,11 @@ online_conversions AS (
         o.name as opportunity_name, 
         o.sfid as opportunity_sfid,
         contact.email as contact_email,
-        contact.sfid as contact_sfid
+        contact.sfid as contact_sfid,
+        MAX(COALESCE(regexp_substr(ol.productcode, 'E20'), regexp_substr(ol.productcode, 'E10'), 
+            CASE WHEN regexp_substr(ol.productcode, '(Cloud Professional|Professional Cloud)') IS NOT NULL THEN 'Mattermost Cloud Professional' 
+                 WHEN regexp_substr(ol.productcode, '(Cloud Enterprise|Enterprise Cloud)') IS NOT NULL THEN 'Mattermost Cloud Enterprise' 
+                  ELSE NULL END)) AS edition
   FROM {{ ref('opportunitylineitem') }}    ol
      JOIN {{ ref('opportunity') }} o
           ON ol.opportunityid = o.id
@@ -83,7 +89,11 @@ SELECT
         opportunity.name as opportunity_name, 
         opportunity.sfid as opportunity_sfid,
         contact.email as contact_email,
-        contact.sfid as contact_sfid
+        contact.sfid as contact_sfid,
+        MAX(COALESCE(regexp_substr(ol.productcode, 'E20'), regexp_substr(ol.productcode, 'E10'), 
+            CASE WHEN regexp_substr(ol.productcode, '(Cloud Professional|Professional Cloud)') IS NOT NULL THEN 'Mattermost Cloud Professional' 
+                 WHEN regexp_substr(ol.productcode, '(Cloud Enterprise|Enterprise Cloud)') IS NOT NULL THEN 'Mattermost Cloud Enterprise' 
+                  ELSE NULL END)) AS edition
 FROM {{ source('stripe_raw', 'subscriptions') }} s
 JOIN {{ source('stripe_raw', 'customers') }} c ON s.customer = c.id
 LEFT JOIN {{ ref( 'opportunity') }} 
@@ -104,6 +114,7 @@ ON IFF(TRIM(SPLIT_PART(opportunity.license_key__c, ',', 2)) IS NOT NULL,
 LEFT JOIN {{ ref( 'account') }} ON account.sfid = opportunity.accountid
 LEFT JOIN {{ ref( 'account') }} AS master_account ON master_account.sfid = account.parentid
 LEFT JOIN {{ ref( 'contact') }} ON c.email = contact.email AND contact.accountid = account.sfid
+LEFT JOIN {{ ref('opportunitylineitem') }}    ol ON opportunity.id = ol.opportunityid AND regexp_substr(ol.productcode, '(Enterprise Edition|Cloud)') IS NOT NULL
 WHERE COALESCE(s.metadata:"cws-license-id"::VARCHAR, NULL) NOT IN (SELECT licenseid FROM licenses_old GROUP BY 1)
   AND COALESCE(s.metadata:"cws-license-id"::VARCHAR, NULL) NOT IN (SELECT licenseid FROM online_conversions GROUP BY 1)
   AND COALESCE(s.metadata:"sku"::VARCHAR, SPLIT_PART(s.plan:"name"::VARCHAR, ' ', 2) || ' Trial') IN
@@ -130,7 +141,11 @@ cloud_conversions AS (
         o.name as opportunity_name, 
         o.sfid as opportunity_sfid,
         contact.email as contact_email,
-        contact.sfid as contact_sfid
+        contact.sfid as contact_sfid,
+        MAX(COALESCE(regexp_substr(ol.productcode, 'E20'), regexp_substr(ol.productcode, 'E10'), 
+            CASE WHEN regexp_substr(ol.productcode, '(Cloud Professional|Professional Cloud)') IS NOT NULL THEN 'Mattermost Cloud Professional' 
+                 WHEN regexp_substr(ol.productcode, '(Cloud Enterprise|Enterprise Cloud)') IS NOT NULL THEN 'Mattermost Cloud Enterprise' 
+                  ELSE NULL END)) AS edition
   FROM {{ ref('opportunitylineitem') }}    ol
      JOIN {{ ref('opportunity') }} o
           ON ol.opportunityid = o.id
