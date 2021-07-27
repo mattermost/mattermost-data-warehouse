@@ -150,8 +150,8 @@ cloud_subscriptions AS (
       {{ dbt_utils.surrogate_key(['s.cws_installation', 'coalesce(sf.server_id, server.user_id)'])}}               AS id
     , COALESCE(sf.server_id, server.user_id)                       AS server_id
     , s.cws_installation                                           AS license_id
-    , c.cws_customer                                               AS customer_id
-    , INITCAP(SPLIT_PART(replace(s.cws_dns, '-', ' '), '.', 1))    AS customer_name
+    , COALESCE(am.account_sfid, c.cws_customer)                                               AS customer_id
+    , COALESCE(am.account_name, INITCAP(SPLIT_PART(replace(s.cws_dns, '-', ' '), '.', 1)))    AS customer_name
     , INITCAP(SPLIT_PART(replace(s.cws_dns, '-', ' '), '.', 1))    AS company
     , COALESCE(am.edition, ms.plan_name, 'Mattermost Cloud')       AS edition
     , s.quantity                                                   AS users
