@@ -476,6 +476,6 @@ LEFT JOIN server_activity activity
 WHERE 
   issued_date >= (SELECT MAX(issued_date) FROM {{this}})
   OR 
-  last_active_date >= (SELECT MAX(last_active_date) FROM {{this}})
+  last_active_date::date >= (SELECT MAX(last_active_date::date) FROM {{this}})
 
 {% endif %}
