@@ -40,8 +40,8 @@ with signup_pages as (
                 and cloud_pageview_events.category = 'cloud_first_user_onboarding'
                 and type = 'pageview_welcome'
     group by 1
-), customer_facts as (
-    select distinct
+), customer_facts_pre as (
+    select
         customers.cws_customer as portal_customer_id,
         customers.id as stripe_customer_id,
         subscriptions.cws_dns as dns,
@@ -49,11 +49,16 @@ with signup_pages as (
         subscriptions.trial_start,
         subscriptions.trial_end,
         customers.name as company_name,
-        customers.email
+        customers.email,
+        row_number() over (partition by customers.cws_customer order by subscriptions.created desc) as row_num
     from {{ ref('customers') }}
         left join {{ ref('subscriptions') }}
             on customers.id = subscriptions.customer
                 and subscriptions.cws_installation is not null
+), customer_facts as (
+    select *
+    from customer_facts_pre
+    where row_num = 1
 ), server_facts as (
     select
         customer_facts.portal_customer_id,
@@ -61,6 +66,7 @@ with signup_pages as (
     from
         {{ ref('server_fact') }}
     join customer_facts on server_fact.installation_id = customer_facts.installation_id
+    where server_fact.installation_id is not null and customer_facts.installation_id is not null
     group by 1
 )
 select
@@ -81,4 +87,4 @@ from signup_pages
     left join created_workspace on signup_pages.portal_customer_id = created_workspace.portal_customer_id
     left join completed_signup on signup_pages.portal_customer_id = completed_signup.portal_customer_id
     left join customer_facts on signup_pages.portal_customer_id = customer_facts.portal_customer_id
-    left join server_facts on signup_pages.portal_customer_id = customer_facts.portal_customer_id
+    left join server_facts on signup_pages.portal_customer_id = server_facts.portal_customer_id
