@@ -45,12 +45,23 @@ with signup_pages as (
         customers.cws_customer as portal_customer_id,
         customers.id as stripe_customer_id,
         subscriptions.cws_dns as dns,
+        subscriptions.cws_installation as installation_id,
+        subscriptions.trial_start,
+        subscriptions.trial_end,
         customers.name as company_name,
         customers.email
     from {{ ref('customers') }}
         left join {{ ref('subscriptions') }}
             on customers.id = subscriptions.customer
                 and subscriptions.cws_installation is not null
+), server_facts as (
+    select
+        customer_facts.portal_customer_id,
+        max(last_active_date) as last_active_date
+    from
+        {{ ref('server_fact') }}
+    join customer_facts on server_fact.installation_id = customer_facts.installation_id
+    group by 1
 )
 select
     signup_pages.portal_customer_id,
@@ -61,9 +72,13 @@ select
     completed_signup.completed_signup_at,
     customer_facts.stripe_customer_id,
     customer_facts.dns,
+    customer_facts.trial_start,
+    customer_facts.trial_end,
     customer_facts.company_name,
-    customer_facts.email
+    customer_facts.email,
+    server_facts.last_active_date
 from signup_pages
     left join created_workspace on signup_pages.portal_customer_id = created_workspace.portal_customer_id
     left join completed_signup on signup_pages.portal_customer_id = completed_signup.portal_customer_id
     left join customer_facts on signup_pages.portal_customer_id = customer_facts.portal_customer_id
+    left join server_facts on signup_pages.portal_customer_id = customer_facts.portal_customer_id

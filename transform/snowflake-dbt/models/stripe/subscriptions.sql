@@ -14,6 +14,8 @@ WITH subscriptions AS (
         ,subscriptions.created
         ,subscriptions.current_period_end
         ,subscriptions.current_period_start
+        ,subscriptions.trial_end
+        ,subscriptions.trial_start
         ,subscriptions.quantity
         ,subscriptions.customer
         ,subscriptions.id
