@@ -65,14 +65,16 @@ WITH w_end_date AS (
       SUM(CASE WHEN forecastcategoryname = 'Pipeline' THEN amount ELSE 0 END) AS amount_in_pipeline
   FROM {{ ref('opportunity') }}
   GROUP BY 1
-), opp_products as (
-    select OPPORTUNITY.ID as id,
-           SUM(
-             iff(PRODUCT_LINE_TYPE__C = 'Expansion', TOTALPRICE/((END_DATE__C::date - START_DATE__C::date +1)/365),
-               iff(PRODUCT_LINE_TYPE__C = 'New Business', TOTALPRICE/((END_DATE__C::date - START_DATE__C::date + 1)/365), 0))
-               ) as Net_New_ARR__c
-    from {{ ref('opportunity') }}
-    left join {{ ref('opportunitylineitem') }} on OPPORTUNITY.ID = OPPORTUNITYID
+), opp_products AS (
+  SELECT 
+      opportunity.sfid as id,
+      SUM(
+          IFF(PRODUCT_LINE_TYPE__C = 'Expansion', TOTALPRICE/((END_DATE__C::date - START_DATE__C::date +1)/365),
+          IFF(PRODUCT_LINE_TYPE__C = 'New Business', TOTALPRICE/((END_DATE__C::date - START_DATE__C::date + 1)/365), 0))
+          ) as Net_New_ARR__c
+  FROM {{ ref('opportunity') }}
+  LEFT JOIN {{ ref('opportunitylineitem') }} on opportunity.sfid = opportunitylineitem.opportunityid
+  GROUP BY 1
 ), opportunity_ext AS (
   SELECT
       opportunity.sfid as opportunity_sfid,
