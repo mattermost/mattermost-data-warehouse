@@ -474,8 +474,8 @@ LEFT JOIN server_activity activity
 {% if is_incremental() %}
 
 WHERE 
-  issued_date >= (SELECT MAX(issued_date) FROM {{this}})
+  issued_date >= (SELECT MAX(issued_date)::date - INTERVAL '1 DAY' FROM {{this}})
   OR 
-  last_active_date::date >= (SELECT MAX(last_active_date::date) FROM {{this}})
+  last_active_date::date >= (SELECT MAX(last_active_date::date) - INTERVAL '1 DAY' FROM {{this}})
 
 {% endif %}
