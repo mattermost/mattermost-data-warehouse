@@ -4,6 +4,29 @@
   })
 }}
 
+with existing_members as (
+    select
+        campaignmember.sfid,
+        campaignmember.email,
+        campaignmember.dwh_external_id__c,
+        row_number() over (partition by campaignmember.email order by createddate desc) as row_num
+    from {{ ref('campaignmember') }}
+    where campaignmember.campaignid = '7013p000001TuhdAAC'
+), existing_leads as (
+    select
+        lead.sfid,
+        lead.email,
+        lead.dwh_external_id__c,
+        row_number() over (partition by lead.email order by createddate desc) as row_num
+    from {{ ref('lead') }}
+), existing_contacts as (
+    select
+        contact.sfid,
+        contact.email,
+        contact.dwh_external_id__c,
+        row_number() over (partition by contact.email order by createddate desc) as row_num
+    from {{ ref('contact') }}
+)
 select
     facts.email,
     facts.dns,
@@ -44,7 +67,9 @@ select
         facts.submitted_form_at) as last_action_date
 from
     {{ ref('cloud_signup_campaign_facts') }} facts
-    left join {{ ref('campaignmember') }}
-        on facts.email = campaignmember.email and campaignmember.campaignid = '7013p000001TuhdAAC'
-    left join {{ ref('lead') }} on facts.email = lead.email
-    left join {{ ref('contact') }} on facts.email = contact.email
+    left join existing_members as campaignmember
+        on facts.email = campaignmember.email and campaignmember.row_num = 1
+    left join existing_leads as lead
+        on facts.email = lead.email and lead.row_num = 1
+    left join existing_contacts as contact
+        on facts.email = contact.email and contact.row_num = 1
