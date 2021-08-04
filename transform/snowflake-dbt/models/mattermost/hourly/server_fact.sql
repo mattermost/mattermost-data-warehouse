@@ -103,7 +103,7 @@ WITH sdd AS (
         , max(COALESCE(r.incoming_webhooks, s.incoming_webhooks)) as incoming_webhooks
         , max(COALESCE(r.outgoing_webhooks, s.outgoing_webhooks)) as outgoing_webhooks
         , max(COALESCE(r.max_time, s.max_time)) AS max_timestamp
-        , MAX(COALESCE(r.context_ip, r.context_request_ip)) AS latest_ip_address
+        , MAX(COALESCE(r.context_ip, r.context_request_ip)) AS last_ip_address
       FROM rudder_activity r
       FULL OUTER JOIN segment_activity s
         ON r.user_id = s.user_id and r.max_date = s.max_date
