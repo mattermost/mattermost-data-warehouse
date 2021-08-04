@@ -6,6 +6,8 @@
   })
 }}
 
+{{ license_cleaning('license_server_fact') }}
+
 with account_mapping as (
   SELECT 
       elm.account_sfid
