@@ -73,12 +73,12 @@ for index, row in df.iterrows():
         try:
             response = clearbit.Reveal.find(ip=row['LAST_IP_ADDRESS'])
         except:
-            None
+            response = None
     else:
         try:
             response = clearbit.Enrichment.find(email=f'''{row['LICENSE_EMAIL']}''', stream=True)
         except:
-            None
+            response = None
     if response is not None:
         cloud_clearbit.append([row['SERVER_ID'], response])
 
