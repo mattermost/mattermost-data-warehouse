@@ -50,15 +50,16 @@ SELECT
   , SF.SERVER_ID
   , SF.INSTALLATION_ID
   , COALESCE(SF.FIRST_ACTIVE_DATE, CURRENT_DATE) AS FIRST_ACTIVE_DATE
+  , SF.LAST_IP_ADDRESS
 FROM ANALYTICS.MATTERMOST.SERVER_FACT SF
 JOIN ANALYTICS.BLP.LICENSE_SERVER_FACT LSF
     ON SF.SERVER_ID = LSF.SERVER_ID
 LEFT JOIN ANALYTICS.MATTERMOST.EXCLUDABLE_SERVERS ES
     ON SF.SERVER_ID = ES.SERVER_ID
 {'LEFT JOIN ANALYTICS.MATTERMOST.CLOUD_CLEARBIT CB ON SF.SERVER_ID = CB.SERVER_ID' if test is not None else ''}
-WHERE SF.INSTALLATION_ID IS NOT NULL
-AND ES.REASON IS NULL
+WHERE ES.REASON IS NULL
 {'AND CB.SERVER_ID IS NULL' if test is not None else ''}
+GROUP BY 1, 2, 3, 4, 5, 6
 ORDER BY COALESCE(SF.FIRST_ACTIVE_DATE, CURRENT_DATE) ASC
 '''
 df = execute_dataframe(engine, query=q)
@@ -67,10 +68,16 @@ df = execute_dataframe(engine, query=q)
 cloud_clearbit = []
 response = None
 for index, row in df.iterrows():
-    try:
-        response = clearbit.Enrichment.find(email=f'''{row['LICENSE_EMAIL']}''', stream=True)
-    except:
-        None
+    if row['INSTALLATION_ID'] is None:
+        try:
+            response = clearbit.Reveal.find(ip=row['LAST_IP_ADDRESS'])
+        except:
+            None
+    else:
+        try:
+            response = clearbit.Enrichment.find(email=f'''{row['LICENSE_EMAIL']}''', stream=True)
+        except:
+            None
     if response is not None:
         cloud_clearbit.append([row['SERVER_ID'], response])
 
