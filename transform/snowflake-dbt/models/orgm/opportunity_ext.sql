@@ -65,6 +65,16 @@ WITH w_end_date AS (
       SUM(CASE WHEN forecastcategoryname = 'Pipeline' THEN amount ELSE 0 END) AS amount_in_pipeline
   FROM {{ ref('opportunity') }}
   GROUP BY 1
+), opp_products AS (
+  SELECT 
+      opportunity.sfid as id,
+      SUM(
+          IFF(PRODUCT_LINE_TYPE__C = 'Expansion', TOTALPRICE/((END_DATE__C::date - START_DATE__C::date +1)/365),
+          IFF(PRODUCT_LINE_TYPE__C = 'New Business', TOTALPRICE/((END_DATE__C::date - START_DATE__C::date + 1)/365), 0))
+          ) as Net_New_ARR__c
+  FROM {{ ref('opportunity') }}
+  LEFT JOIN {{ ref('opportunitylineitem') }} on opportunity.sfid = opportunitylineitem.opportunityid
+  GROUP BY 1
 ), opportunity_ext AS (
   SELECT
       opportunity.sfid as opportunity_sfid,
@@ -86,6 +96,7 @@ WITH w_end_date AS (
       paid_type,
       paid_date,
       payment_method,
+      Net_New_ARR__c,
       SUM(new_amount__c) AS sum_new_amount,
       SUM(expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) AS sum_expansion_amount,
       SUM(expansion_amount__c + 365 * (coterm_expansion_amount__c + leftover_expansion_amount__c)/NULLIF((end_date__c::date - start_date__c::date + 1),0)) AS sum_expansion_w_proration_amount,
@@ -100,7 +111,8 @@ WITH w_end_date AS (
   LEFT JOIN opportunity_paid_netsuite ON opportunity.sfid = opportunity_paid_netsuite.opportunity_sfid
   LEFT JOIN opportunity_marketing ON opportunity.sfid = opportunity_marketing.opportunity_sfid
   LEFT JOIN opportunity_fc_amounts ON opportunity.sfid = opportunity_fc_amounts.opportunity_sfid
-  GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
+  LEFT JOIN opp_products ON opportunity.sfid = opp_products.id
+  GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
 )
 
  SELECT * FROM opportunity_ext
