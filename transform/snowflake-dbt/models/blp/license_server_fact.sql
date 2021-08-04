@@ -54,7 +54,6 @@ SELECT
   , MAX(am.opportunity_sfid) AS opportunity_sfid
   , l.stripeid
   , l.customer_id
-  , l.number
   , MIN(l.license_activation_date) AS license_activation_date
   , MAX(l.timestamp)  AS last_active_date
   , MIN(s.first_active_date) AS server_activation_date
@@ -66,7 +65,7 @@ LEFT JOIN account_mapping am
 WHERE l.server_id IS NOT NULL
 AND l.license_id <> '16tfkttgktgdmb5m8xakqncx3c'
 AND l.issued_date::DATE <= CURRENT_DATE
-GROUP BY 1, 2, 3, 7, 16, 17, 18
+GROUP BY 1, 2, 3, 7, 16, 17
 ),
 
 nonactivated_licenses as (
@@ -88,7 +87,6 @@ nonactivated_licenses as (
   , MAX(am.opportunity_sfid) AS opportunity_sfid
   , l.stripeid
   , l.customer_id
-  , l.number
   , MIN(l.license_activation_date) AS license_activation_date
   , MAX(l.timestamp)  AS last_active_date
   , MIN(NULL) AS server_activation_date
@@ -100,7 +98,7 @@ nonactivated_licenses as (
   WHERE s.license_id is null
   AND l.license_id <> '16tfkttgktgdmb5m8xakqncx3c'
   AND l.issued_date::DATE <= CURRENT_DATE
-  GROUP BY 1, 2, 3, 7, 16, 17, 18
+  GROUP BY 1, 2, 3, 7, 16, 17
 ),
 
 license_union as (
@@ -170,7 +168,6 @@ cloud_subscriptions AS (
     , MAX(COALESCE(am.opportunity_sfid, NULL))                                                     AS opportunity_sfid
     , c.id                                                         AS stripeid
     , c.cws_customer                                               AS license_customer_id
-    , NULL                                                         AS number
     , s.created::TIMESTAMP                                         AS license_activation_date
     , COALESCE(MAX(sf.last_active_date::TIMESTAMP), 
         MAX(server.timestamp::TIMESTAMP))                          AS last_active_date
@@ -193,8 +190,8 @@ cloud_subscriptions AS (
                   ON s.cws_installation = am.license_id
   WHERE s.cws_installation IS NOT NULL
   AND s.created::DATE <= CURRENT_DATE
-  GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 13, 18, 19, 20, 21
-  , 24, 25, 26
+  GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 13, 18, 19, 20
+  , 23, 24, 25
 ),
 
 license_server_fact as (
@@ -308,7 +305,6 @@ SELECT
       , opportunity_sfid
       , stripeid
       , customer_id   AS license_customer_id
-      , number
       , license_activation_date::TIMESTAMP AS license_activation_date
       , last_active_date
       , server_activation_date
@@ -354,8 +350,7 @@ SELECT
    , l.account_name            
    , l.opportunity_sfid        
    , l.stripeid                
-   , l.license_customer_id     
-   , l.number                  
+   , l.license_customer_id            
     , l.license_activation_date 
     , l.last_active_date        
     , l.server_activation_date  
