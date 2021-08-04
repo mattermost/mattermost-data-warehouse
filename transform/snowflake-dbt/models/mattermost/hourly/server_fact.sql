@@ -168,7 +168,7 @@ WITH sdd AS (
         , MAX(sd.last_edition_date)                                                              AS last_edition_date
         , MAX(CASE WHEN sd.last_active_license_date = s.date THEN license_id1 ELSE NULL END)     AS last_license_id1
         , MAX(CASE WHEN sd.last_active_license_date = s.date THEN license_id2 ELSE NULL END)     AS last_license_id2
-        , MAX(CASE WHEN sd.last_server_version_date = s.date THEN s.ip_addres ELSE NULL END)     AS last_ip_address
+        , MAX(CASE WHEN sd.last_server_version_date = s.date THEN s.ip_address ELSE NULL END)     AS last_ip_address
       FROM sdd sd
       JOIN s_ext s
            ON sd.server_id = s.server_id
