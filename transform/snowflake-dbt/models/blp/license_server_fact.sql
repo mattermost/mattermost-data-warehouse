@@ -6,7 +6,11 @@
   })
 }}
 
+{% if is_incremental() %}
+
 {{ license_cleaning('license_server_fact') }}
+
+{% endif %}
 
 with account_mapping as (
   SELECT 
