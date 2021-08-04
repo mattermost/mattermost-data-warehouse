@@ -56,6 +56,15 @@ select get_sys_var({{ var_name }})
     alter warehouse {{warehouse}} suspend
 {% endmacro %}
 
+{% macro license_cleaning(destination_table) %}
+    {% set query %}
+        delete from analytics.blp.license_server_fact using (SELECT license_id FROM analytics.blp.license_server_fact WHERE server_id IS NOT NULL GROUP BY 1) lsf
+        WHERE license_server_fact.license_id = lsf.license_id AND license_server_fact.server_id is null
+    {% endset %}
+
+    {% do run_query(query) %}
+{% endmacro %}
+
 {% macro get_rudder_track_tables(schema, database=target.database, table_exclusions=table_exclusions, table_inclusions=table_inclusions) %}
     {% for scheme in schema %}
     select distinct
