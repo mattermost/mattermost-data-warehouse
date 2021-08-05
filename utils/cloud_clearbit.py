@@ -35,12 +35,39 @@ try:
 except:
     clearbit_cols = None
 
+# RETRIEVE COLUMN NAMES IF TABLE ALREADY EXISTS
+try:
+    col_q = f'''
+    SELECT COLUMN_NAME 
+    FROM ANALYTICS.INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_NAME = 'ONPREM_CLEARBIT'
+    AND TABLE_SCHEMA = 'MATTERMOST'
+    ORDER BY ORDINAL_POSITION
+    '''
+    col_df = execute_dataframe(engine, query=col_q)
+    onprem_cols = []
+    if len(col_df) > 0:
+        for index, row in col_df.iterrows():
+            onprem_cols.append(row['COLUMN_NAME'].lower())
+    else:
+       onprem_cols = None
+
+except:
+    onprem_cols = None
+
 # DETERMINE CLOUD_CLEARBIT TABLE IS BUILT AND HAS NOT BEEN DROPPED
 try:
     query = f'''SELECT * FROM ANALYTICS.MATTERMOST.CLOUD_CLEARBIT'''
     test = execute_dataframe(engine, query=query)
 except:
     test = None
+
+# DETERMINE ONPREM_CLEARBIT TABLE IS BUILT AND HAS NOT BEEN DROPPED
+try:
+    query = f'''SELECT * FROM ANALYTICS.MATTERMOST.ONPREM_CLEARBIT'''
+    test_onprem = execute_dataframe(engine, query=query)
+except:
+    test_onprem = None
 
 # RETRIEVE ALL WORKSPACES THAT HAVE NOT ALREADY BEEN ENRICHED BY CLEARBIT
 q = f'''
@@ -57,8 +84,10 @@ JOIN ANALYTICS.BLP.LICENSE_SERVER_FACT LSF
 LEFT JOIN ANALYTICS.MATTERMOST.EXCLUDABLE_SERVERS ES
     ON SF.SERVER_ID = ES.SERVER_ID
 {'LEFT JOIN ANALYTICS.MATTERMOST.CLOUD_CLEARBIT CB ON SF.SERVER_ID = CB.SERVER_ID' if test is not None else ''}
+{'LEFT JOIN ANALYTICS.MATTERMOST.ONPREM_CLEARBIT OC ON SF.SERVER_ID = OC.SERVER_ID' if test_onprem is not None else ''}
 WHERE ES.REASON IS NULL
 {'AND CB.SERVER_ID IS NULL' if test is not None else ''}
+{'AND OC.SERVER_ID IS NULL' if test_onprem is not None else ''}
 AND SF.FIRST_ACTIVE_DATE::DATE >= '2020-02-01'
 GROUP BY 1, 2, 3, 4, 5, 6
 ORDER BY COALESCE(SF.FIRST_ACTIVE_DATE, CURRENT_DATE) ASC
@@ -68,20 +97,28 @@ df = execute_dataframe(engine, query=q)
 
 # RETRIEVE CLEARBIT DATA FROM API USING CLEARBIT.ENRICHMENT.FIND AND THE USER'S EMAIL ADDRESS THAT CREATED THE CLOUD WORKSPACE
 cloud_clearbit = []
+onprem_clearbit = []
 response = None
+response_onprem = None
 for index, row in df.iterrows():
     if row['INSTALLATION_ID'] is None:
+        response_onprem = None
         try:
-            response = clearbit.Reveal.find(ip=row['LAST_IP_ADDRESS'])
+            response_onprem = clearbit.Reveal.find(ip=row['LAST_IP_ADDRESS'])
         except:
-            response = None
+            response_onprem = None
     else:
+        response = None
         try:
             response = clearbit.Enrichment.find(email=f'''{row['LICENSE_EMAIL']}''', stream=True)
         except:
             response = None
     if response is not None:
         cloud_clearbit.append([row['SERVER_ID'], response])
+        response = None
+    elif response_onprem is not None:
+        onprem_clearbit.append([row['SERVER_ID'], response])
+        response_onprem = None
 
 # CHECK IF NEW DATA TO LOAD
 if len(cloud_clearbit) >= 1:
@@ -89,7 +126,7 @@ if len(cloud_clearbit) >= 1:
     if clearbit_cols is not None:
         d = {}
         clearbit_df = pd.DataFrame(columns=clearbit_cols)
-        clearbit_df['server_id'] = df['SERVER_ID'].unique()
+        clearbit_df['server_id'] = df[df['INSTALLATION_ID'] is not None]['SERVER_ID'].unique()
         for i in cloud_clearbit:
             d[i[0]] = i[1] 
     else:
@@ -123,7 +160,7 @@ if len(cloud_clearbit) >= 1:
         clearbit_df = pd.DataFrame(columns=cols)
 
         # ADD A ROW FOR EACH UNIQUE WORKSPACE (SERVER_ID)
-        clearbit_df['server_id'] = df['SERVER_ID'].unique()
+        clearbit_df['server_id'] = df[df['INSTALLATION_ID'] is not None]['SERVER_ID'].unique()
 
     # ITERATE THROUGH CLOUD WORKSPACE CLEARBIT KEY-VALUE PAIRS
     # UPDATE EACH RESPECTIVE COLUMN PROPERTY USING INDEX AND COLUMN NAME
@@ -155,12 +192,94 @@ if len(cloud_clearbit) >= 1:
     # CONVERT COLUMN NAMES TO LOWERCASE FOR LOADING PURPOSES
     clearbit_df2.columns = clearbit_df2.columns.str.lower()
 
+    engine = snowflake_engine_factory(os.environ, "TRANSFORMER", "util")
+    connection = engine.connect()
+
     # ADD NEW WORKSPACE ROWS TO CLOUD_CLEARBIT TABLE
     clearbit_df2.to_sql("cloud_clearbit", con=connection, index=False, schema="MATTERMOST", if_exists="append")
     print(f'''Success. Uploaded {len(clearbit_df2)} rows to ANALYTICS.MATTERMOST.CLOUD_CLEARBIT''')
 
 else:
     print("Nothing to do.")
+
+
+if len(onprem_clearbit) >= 1:
+    # USE EXISTING COLUMN NAMES IF TABLE ALREADY EXISTS
+    if onprem_cols is not None:
+        d = {}
+        onprem_df = pd.DataFrame(columns=clearbit_cols)
+        onprem_df['server_id'] = df[df['INSTALLATION_ID'] is None]['SERVER_ID'].unique()
+        for i in onprem_clearbit:
+            d[i[0]] = i[1] 
+    else:
+        # CREATE EMPTY LIST TO STORE COLUMN NAMES FOR NESTED CLEARBIT DATA
+        cols = []
+        # CREATE DICTIONARY TO STORE RESULTS AS SERVER_ID:CLEARBIT RESPONSE KEY-VALUE PAIRS
+        d = {}
+        # RETRIEVE ALL COLUMN NAMES REQUIRED TO GENERATE A DATAFRAME TO STORE EACH CLEARBIT PROPERTY AND STORE IN LIST
+        for i in onprem_clearbit:
+            for key, value in i[1].items():
+                if isinstance(value,dict):
+                    for k, v in value.items():
+                        if isinstance(v, dict):
+                            for k1, v1 in v.items():
+                                if isinstance(v1, dict):
+                                    for k2, v2 in v1.items():
+                                        cols.append(key.lower() + '_' + k.lower() + '_' + k1.lower() + '_' + k2.lower())
+                                else:
+                                    cols.append(key.lower() + '_' + k.lower() + '_' + k1.lower())
+                        else:
+                            cols.append(key.lower() + '_' + k.lower())
+                else:
+                    cols.append(key.lower())
+        # GENERATE SERVER_ID:CLEARBIT RESPONSE KEY-VALUE PAIR RECORDS AND STORE IN DICTIONARY
+            d[i[0]] = i[1]
+        # ONLY RETAIN UNIQUE COLUMN VALUES AS SET THEN RECAST AS LIST FOR ITERATING PURPOSES.
+        cols = set(cols)
+        cols = list(cols)
+
+        # CREATE CLEARBIT DATAFRAME STRUCTURE USING UNIQUE COLUMN VALUES
+        onprem_df = pd.DataFrame(columns=cols)
+
+        # ADD A ROW FOR EACH UNIQUE WORKSPACE (SERVER_ID)
+        onprem_df['server_id'] = df[df['INSTALLATION_ID'] is None]['SERVER_ID'].unique()
+
+    # ITERATE THROUGH CLOUD WORKSPACE CLEARBIT KEY-VALUE PAIRS
+    # UPDATE EACH RESPECTIVE COLUMN PROPERTY USING INDEX AND COLUMN NAME
+    for key, value in d.items():
+        for index, row in onprem_df[onprem_df['server_id'] == key].iterrows():
+            for k, v in value.items():
+                if isinstance(v,dict):
+                    for k1, v1 in v.items():
+                        if isinstance(v1, dict):
+                            for k2, v2 in v1.items():
+                                if isinstance(v2, dict):
+                                    for k3, v3 in v2.items():
+                                        onprem_df.loc[index, k.lower() + '_' + k1.lower() + '_' + k2.lower() + '_' + k3.lower()] = v3
+                                else:
+                                    onprem_df.loc[index, k.lower() + '_' + k1.lower() + '_' + k2.lower()] = v2
+                        else:
+                            onprem_df.loc[index, k.lower() + '_' + k1.lower()] = v1
+                else:
+                    onprem_df.loc[index, k.lower()] = v
+
+    # Convert clearbit object data types to next best fit.
+    onprem_df2 = onprem_df.convert_dtypes()
+
+    # CAST REMAINING CLEARBIT OBJECT COLUMNS TO STRINGS
+    columns = ['company_site_phonenumbers','company_techcategories','company_domainaliases','company_tech','person_gravatar_urls','person_gravatar_avatars',\
+            'company_tags','company_site_emailaddresses']
+    onprem_df2[columns] = onprem_df2[columns].astype(str)
+
+    # CONVERT COLUMN NAMES TO LOWERCASE FOR LOADING PURPOSES
+    onprem_df2.columns = onprem_df2.columns.str.lower()
+
+    engine = snowflake_engine_factory(os.environ, "TRANSFORMER", "util")
+    connection = engine.connect()
+
+    # ADD NEW WORKSPACE ROWS TO CLOUD_CLEARBIT TABLE
+    onprem_df2.to_sql("onprem_clearbit", con=connection, index=False, schema="MATTERMOST", if_exists="append")
+    print(f'''Success. Uploaded {len(onprem_df2)} rows to ANALYTICS.MATTERMOST.ONPREM_CLEARBIT''')
 
 
 
