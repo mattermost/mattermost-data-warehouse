@@ -40,7 +40,13 @@ try:
     query = f'''SELECT * FROM ANALYTICS.MATTERMOST.CLOUD_CLEARBIT'''
     test = execute_dataframe(engine, query=query)
 except:
-    test = None
+     test = None
+
+try:
+    query = f'''SELECT * FROM ANALYTICS.STAGING.CLEARBIT_CLOUD_EXCEPTIONS'''
+    exceptions_test = execute_dataframe(engine, query=query)
+except:
+    exeptions_test = None
 
 # RETRIEVE ALL WORKSPACES THAT HAVE NOT ALREADY BEEN ENRICHED BY CLEARBIT
 q = f'''
@@ -57,17 +63,19 @@ JOIN ANALYTICS.BLP.LICENSE_SERVER_FACT LSF
 LEFT JOIN ANALYTICS.MATTERMOST.EXCLUDABLE_SERVERS ES
     ON SF.SERVER_ID = ES.SERVER_ID
 {'LEFT JOIN ANALYTICS.MATTERMOST.CLOUD_CLEARBIT CB ON SF.SERVER_ID = CB.SERVER_ID' if test is not None else ''}
+{'LEFT JOIN ANALYTICS.STAGING.CLEARBIT_CLOUD_EXCEPTIONS CE ON SF.SERVER_ID = CE.SERVER_ID' if exceptions_test is not None else ''}
 WHERE ES.REASON IS NULL
 {'AND CB.SERVER_ID IS NULL' if test is not None else ''}
+{'AND CE.SERVER_ID IS NULL' if exceptions_test is not None else ''}
 AND SF.FIRST_ACTIVE_DATE::DATE >= '2020-02-01'
 AND SF.INSTALLATION_ID IS NOT NULL
 GROUP BY 1, 2, 3, 4, 5, 6
 ORDER BY COALESCE(SF.FIRST_ACTIVE_DATE, CURRENT_DATE) ASC
-LIMIT 5000
 '''
 df = execute_dataframe(engine, query=q)
 
 # RETRIEVE CLEARBIT DATA FROM API USING CLEARBIT.ENRICHMENT.FIND AND THE USER'S EMAIL ADDRESS THAT CREATED THE CLOUD WORKSPACE
+clearbit_cloud_exceptions = pd.DataFrame(columns=['SERVER_ID']) 
 cloud_clearbit = []
 response = None
 for index, row in df.iterrows():
@@ -79,6 +87,9 @@ for index, row in df.iterrows():
 
     if response is not None:
         cloud_clearbit.append([row['SERVER_ID'], response])
+        response = None
+    else:
+        clearbit_cloud_exceptions.append(row['SERVER_ID'])
         response = None
 
 # CHECK IF NEW DATA TO LOAD
@@ -121,7 +132,7 @@ if len(cloud_clearbit) >= 1:
         clearbit_df = pd.DataFrame(columns=cols)
 
         # ADD A ROW FOR EACH UNIQUE WORKSPACE (SERVER_ID)
-        clearbit_df['server_id'] = df[df['INSTALLATION_ID'] is not None]['SERVER_ID'].unique()
+        clearbit_df['server_id'] = df[df['INSTALLATION_ID'].notnull()]['SERVER_ID'].unique()
 
     # ITERATE THROUGH CLOUD WORKSPACE CLEARBIT KEY-VALUE PAIRS
     # UPDATE EACH RESPECTIVE COLUMN PROPERTY USING INDEX AND COLUMN NAME
@@ -152,6 +163,7 @@ if len(cloud_clearbit) >= 1:
 
     # CONVERT COLUMN NAMES TO LOWERCASE FOR LOADING PURPOSES
     clearbit_df2.columns = clearbit_df2.columns.str.lower()
+    clearbit_cloud_exceptions.columns = clearbit_cloud_exceptions.columns.str.lower()
 
     engine = snowflake_engine_factory(os.environ, "TRANSFORMER", "util")
     connection = engine.connect()
@@ -159,6 +171,9 @@ if len(cloud_clearbit) >= 1:
     # ADD NEW WORKSPACE ROWS TO CLOUD_CLEARBIT TABLE
     clearbit_df2.to_sql("cloud_clearbit", con=connection, index=False, schema="MATTERMOST", if_exists="append")
     print(f'''Success. Uploaded {len(clearbit_df2)} rows to ANALYTICS.MATTERMOST.CLOUD_CLEARBIT''')
+
+    clearbit_cloud_exceptions.to_sql("clearbit_cloud_exceptions", con=connection, index=False, schema="STAGING", if_exists="append")
+    print(f'''Success. Uploaded {len(clearbit_cloud_exceptions)} rows to ANALYTICS.STAGING.CLEARBIT_CLOUD_EXCEPTIONS''')
 
 else:
     print("Nothing to do.")

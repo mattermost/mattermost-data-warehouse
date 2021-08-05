@@ -42,32 +42,37 @@ try:
 except:
     test_onprem = None
 
+try:
+    query = f'''SELECT * FROM ANALYTICS.STAGING.CLEARBIT_ONPREM_EXCEPTIONS'''
+    exceptions_test = execute_dataframe(engine, query=query)
+except:
+    exeptions_test = None
+
 # RETRIEVE ALL WORKSPACES THAT HAVE NOT ALREADY BEEN ENRICHED BY CLEARBIT
 q = f'''
 SELECT 
-    LSF.LICENSE_EMAIL
-  , SPLIT_PART(LICENSE_EMAIL, '@', 2) AS EMAIL_DOMAIN
-  , SF.SERVER_ID
+    SF.SERVER_ID
   , SF.INSTALLATION_ID
   , COALESCE(SF.FIRST_ACTIVE_DATE, CURRENT_DATE) AS FIRST_ACTIVE_DATE
   , SF.LAST_IP_ADDRESS
 FROM ANALYTICS.MATTERMOST.SERVER_FACT SF
-JOIN ANALYTICS.BLP.LICENSE_SERVER_FACT LSF
-    ON SF.SERVER_ID = LSF.SERVER_ID
 LEFT JOIN ANALYTICS.MATTERMOST.EXCLUDABLE_SERVERS ES
     ON SF.SERVER_ID = ES.SERVER_ID
 {'LEFT JOIN ANALYTICS.MATTERMOST.ONPREM_CLEARBIT OC ON SF.SERVER_ID = OC.SERVER_ID' if test_onprem is not None else ''}
+{'LEFT JOIN ANALYTICS.STAGING.CLEARBIT_CLOUD_EXCEPTIONS CE ON SF.SERVER_ID = CE.SERVER_ID' if exceptions_test is not None else ''}
 WHERE ES.REASON IS NULL
 {'AND OC.SERVER_ID IS NULL' if test_onprem is not None else ''}
+{'AND CE.SERVER_ID IS NULL' if exceptions_test is not None else ''}
 AND SF.FIRST_ACTIVE_DATE::DATE >= '2020-02-01'
 AND SF.INSTALLATION_ID IS NULL
-GROUP BY 1, 2, 3, 4, 5, 6
+GROUP BY 1, 2, 3, 4
 ORDER BY COALESCE(SF.FIRST_ACTIVE_DATE, CURRENT_DATE) ASC
 LIMIT 5000
 '''
 df = execute_dataframe(engine, query=q)
 
 # RETRIEVE CLEARBIT DATA FROM API USING CLEARBIT.ENRICHMENT.FIND AND THE USER'S EMAIL ADDRESS THAT CREATED THE CLOUD WORKSPACE
+clearbit_onprem_exceptions = pd.DataFrame(columns=['SERVER_ID'])
 onprem_clearbit = []
 response_onprem = None
 for index, row in df.iterrows():
@@ -78,6 +83,9 @@ for index, row in df.iterrows():
     
     if response_onprem is not None:
         onprem_clearbit.append([row['SERVER_ID'], response_onprem])
+        response_onprem = None
+    else:
+        clearbit_onprem_exceptions.append(pd.Series(row['SERVER_ID']), ignore_index=True)
         response_onprem = None
 
 if len(onprem_clearbit) >= 1:
@@ -146,11 +154,12 @@ if len(onprem_clearbit) >= 1:
 
     # CAST REMAINING CLEARBIT OBJECT COLUMNS TO STRINGS
     columns = ['company_site_phonenumbers','company_techcategories','company_domainaliases','company_tech',\
-            'company_tags','company_site_emailaddresses']
+            'company_tags','company_site_emailaddresses', 'company_ultimateparent_domain','company', 'company_parent_domain']
     onprem_df2[columns] = onprem_df2[columns].astype(str)
 
     # CONVERT COLUMN NAMES TO LOWERCASE FOR LOADING PURPOSES
     onprem_df2.columns = onprem_df2.columns.str.lower()
+    clearbit_onprem_exceptions.columns = clearbit_onprem_exceptions.columns.str.lower()
 
     engine = snowflake_engine_factory(os.environ, "TRANSFORMER", "util")
     connection = engine.connect()
@@ -159,5 +168,9 @@ if len(onprem_clearbit) >= 1:
     onprem_df2.to_sql("onprem_clearbit", con=connection, index=False, schema="MATTERMOST", if_exists="append")
     print(f'''Success. Uploaded {len(onprem_df2)} rows to ANALYTICS.MATTERMOST.ONPREM_CLEARBIT''')
 
+    clearbit_onprem_exceptions.to_sql("clearbit_onprem_exceptions", con=connection, index=False, schema="STAGING", if_exists="append")
+    print(f'''Success. Uploaded {len(clearbit_onprem_exceptions)} rows to ANALYTICS.STAGING.CLEARBIT_ONPREM_EXCEPTIONS''')
 
+else:
+    print("Nothing to do.")
 
