@@ -49,14 +49,14 @@ with months as (
     where util.fiscal_year(most_recent_mql_date__c) = util.fiscal_year(current_date)
     group by 1
 ), sals as (
-    select date_trunc(month, createddate) as month, count(*) as sals_actual
+    select date_trunc(month, most_recent_scl_date__c) as month, count(*) as sals_actual
     from {{ ref('lead') }}
-    where util.fiscal_year(createddate) = util.fiscal_year(current_date)
+    where util.fiscal_year(most_recent_scl_date__c) = util.fiscal_year(current_date)
     group by 1
 ), sqls as (
-    select date_trunc(month, createddate) as month, count(*) as sqls_actual
+    select date_trunc(month, most_recent_qsc_date__c) as month, count(*) as sqls_actual
     from {{ ref('lead') }}
-    where util.fiscal_year(createddate) = util.fiscal_year(current_date)
+    where util.fiscal_year(most_recent_qsc_date__c) = util.fiscal_year(current_date)
     group by 1
 ), opportunities as (
     select date_trunc(month, createddate) as month, count(*) as opportunities_actual
