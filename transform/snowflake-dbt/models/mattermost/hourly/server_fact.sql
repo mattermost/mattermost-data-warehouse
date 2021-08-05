@@ -20,6 +20,7 @@ WITH sdd AS (
             , MAX(CASE WHEN version IS NOT NULL THEN DATE ELSE NULL END) AS                     last_server_version_date
             , MIN(CASE WHEN edition IS NOT NULL THEN date ELSE NULL END)                     AS first_edition_date
             , MAX(CASE WHEN edition IS NOT NULL THEN date ELSE NULL END)                     AS last_edition_date
+            , MAX(CASE WHEN NULLIF(ip_address, '') IS NOT NULL THEN date ELSE NULL END)      AS last_ip_date
             , MAX(CASE
                 WHEN license_id1 IS NOT NULL OR license_id2 IS NOT NULL THEN date
                                                                         ELSE NULL END) AS last_active_license_date
@@ -168,7 +169,7 @@ WITH sdd AS (
         , MAX(sd.last_edition_date)                                                              AS last_edition_date
         , MAX(CASE WHEN sd.last_active_license_date = s.date THEN license_id1 ELSE NULL END)     AS last_license_id1
         , MAX(CASE WHEN sd.last_active_license_date = s.date THEN license_id2 ELSE NULL END)     AS last_license_id2
-        , MAX(CASE WHEN sd.last_server_version_date = s.date THEN s.ip_address ELSE NULL END)     AS last_ip_address
+        , NULLIF(MAX(CASE WHEN sd.last_ip_date = s.date THEN s.ip_address ELSE NULL END), '')     AS last_ip_address
       FROM sdd sd
       JOIN s_ext s
            ON sd.server_id = s.server_id
@@ -316,7 +317,7 @@ WITH sdd AS (
         , MAX(server_details.first_active_user_date) AS first_active_user_date
         , MAX(server_details.last_active_user_date) AS last_active_user_date
         , MAX(lsd.retention_28day_flag) AS retention_28day_flag
-        , MAX(COALESCE(server_activity.last_ip_address, fse.last_ip_address)) AS last_ip_address
+        , MAX(COALESCE(nullif(TRIM(server_activity.last_ip_address), ''), NULLIF(fse.last_ip_address, ''))) AS last_ip_address
     FROM sdd
         LEFT JOIN server_details
           ON sdd.server_id = server_details.server_id
