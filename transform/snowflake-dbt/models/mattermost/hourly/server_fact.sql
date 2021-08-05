@@ -316,7 +316,7 @@ WITH sdd AS (
         , MAX(server_details.first_active_user_date) AS first_active_user_date
         , MAX(server_details.last_active_user_date) AS last_active_user_date
         , MAX(lsd.retention_28day_flag) AS retention_28day_flag
-        , MAX(COALESCE(server_activity.last_ip_address, fse.last_ip_address)) AS last_ip_address
+        , MAX(COALESCE(nullif(server_activity.last_ip_address, ''), fse.last_ip_address)) AS last_ip_address
     FROM sdd
         LEFT JOIN server_details
           ON sdd.server_id = server_details.server_id
