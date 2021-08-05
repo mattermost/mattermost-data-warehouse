@@ -180,9 +180,11 @@ select get_sys_var({{ var_name }})
         --
         max_time AS (
                  SELECT
-                    MAX(timestamp) - INTERVAL '12 HOURS' as max_time
+                    _dbt_source_relation2
+                    , MAX(timestamp) - INTERVAL '12 HOURS' as max_time
                  FROM {{ this }} 
                  WHERE {{this}}.timestamp <= CURRENT_TIMESTAMP
+                 GROUP BY 1
              ), 
 
         join_key AS (
@@ -193,6 +195,7 @@ select get_sys_var({{ var_name }})
                 JOIN max_time mt
                     ON {{ this }}.timestamp >= mt.max_time
                     AND {{this}}.timestamp <= CURRENT_TIMESTAMP
+                    AND {{this}}._dbt_source_relation2 = mt._dbt_source_relation2
              ),
         {%- elif this.table == 'mobile_events' -%}
              --
@@ -348,6 +351,7 @@ select get_sys_var({{ var_name }})
 
                 JOIN max_time mt
                     ON {{ relation }}.timestamp >= mt.max_time
+                    AND mt._dbt_source_relation2 = {{ ["'", relation, "'"]|join }}
                 LEFT JOIN join_key a
                     ON {{ relation }}.id = a.join_id
                     AND a._dbt_source_relation2 = {{ ["'", relation, "'"]|join }}
