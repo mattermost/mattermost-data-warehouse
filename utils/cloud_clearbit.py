@@ -126,7 +126,7 @@ if len(cloud_clearbit) >= 1:
     if clearbit_cols is not None:
         d = {}
         clearbit_df = pd.DataFrame(columns=clearbit_cols)
-        clearbit_df['server_id'] = df[df['INSTALLATION_ID'] is not None]['SERVER_ID'].unique()
+        clearbit_df['server_id'] = df[df['INSTALLATION_ID'].notnull()]['SERVER_ID'].unique()
         for i in cloud_clearbit:
             d[i[0]] = i[1] 
     else:
@@ -208,7 +208,7 @@ if len(onprem_clearbit) >= 1:
     if onprem_cols is not None:
         d = {}
         onprem_df = pd.DataFrame(columns=clearbit_cols)
-        onprem_df['server_id'] = df[df['INSTALLATION_ID'] is None]['SERVER_ID'].unique()
+        onprem_df['server_id'] = df[df['INSTALLATION_ID'].isnull()]['SERVER_ID'].unique()
         for i in onprem_clearbit:
             d[i[0]] = i[1] 
     else:
