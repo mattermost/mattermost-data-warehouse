@@ -190,7 +190,7 @@ select get_sys_var({{ var_name }})
         join_key AS (
                 SELECT 
                     id as join_id
-                  , _dbt_source_relation2
+                  , {{this}}._dbt_source_relation2
                 FROM {{ this }}
                 JOIN max_time mt
                     ON {{ this }}.timestamp >= mt.max_time
