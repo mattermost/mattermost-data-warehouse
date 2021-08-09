@@ -83,7 +83,7 @@ for index, row in df.iterrows():
         response = None
     else:
         exceptions += 1
-        cloud_exceptions.append([row['server_id']])
+        cloud_exceptions.append([row['SERVER_ID']])
 
 
 # CHECK IF NEW DATA TO LOAD
