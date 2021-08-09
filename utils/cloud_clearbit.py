@@ -42,12 +42,6 @@ try:
 except:
      test = None
 
-try:
-    query = f'''SELECT * FROM ANALYTICS.STAGING.CLEARBIT_CLOUD_EXCEPTIONS'''
-    exceptions_test = execute_dataframe(engine, query=query)
-except:
-    exeptions_test = None
-
 # RETRIEVE ALL WORKSPACES THAT HAVE NOT ALREADY BEEN ENRICHED BY CLEARBIT
 q = f'''
 SELECT 
@@ -63,10 +57,8 @@ JOIN ANALYTICS.BLP.LICENSE_SERVER_FACT LSF
 LEFT JOIN ANALYTICS.MATTERMOST.EXCLUDABLE_SERVERS ES
     ON SF.SERVER_ID = ES.SERVER_ID
 {'LEFT JOIN ANALYTICS.MATTERMOST.CLOUD_CLEARBIT CB ON SF.SERVER_ID = CB.SERVER_ID' if test is not None else ''}
-{'LEFT JOIN ANALYTICS.STAGING.CLEARBIT_CLOUD_EXCEPTIONS CE ON SF.SERVER_ID = CE.SERVER_ID' if exceptions_test is not None else ''}
 WHERE ES.REASON IS NULL
 {'AND CB.SERVER_ID IS NULL' if test is not None else ''}
-{'AND CE.SERVER_ID IS NULL' if exceptions_test is not None else ''}
 AND SF.FIRST_ACTIVE_DATE::DATE >= '2020-02-01'
 AND SF.INSTALLATION_ID IS NOT NULL
 GROUP BY 1, 2, 3, 4, 5, 6
@@ -75,8 +67,9 @@ ORDER BY COALESCE(SF.FIRST_ACTIVE_DATE, CURRENT_DATE) ASC
 df = execute_dataframe(engine, query=q)
 
 # RETRIEVE CLEARBIT DATA FROM API USING CLEARBIT.ENRICHMENT.FIND AND THE USER'S EMAIL ADDRESS THAT CREATED THE CLOUD WORKSPACE
-clearbit_cloud_exceptions = pd.DataFrame(columns=['SERVER_ID']) 
 cloud_clearbit = []
+exceptions = 0
+cloud_exceptions = []
 response = None
 for index, row in df.iterrows():
     response = None
@@ -89,8 +82,9 @@ for index, row in df.iterrows():
         cloud_clearbit.append([row['SERVER_ID'], response])
         response = None
     else:
-        clearbit_cloud_exceptions.append(row['SERVER_ID'])
-        response = None
+        exceptions += 1
+        cloud_exceptions.append([row['server_id']])
+
 
 # CHECK IF NEW DATA TO LOAD
 if len(cloud_clearbit) >= 1:
@@ -171,9 +165,7 @@ if len(cloud_clearbit) >= 1:
     # ADD NEW WORKSPACE ROWS TO CLOUD_CLEARBIT TABLE
     clearbit_df2.to_sql("cloud_clearbit", con=connection, index=False, schema="MATTERMOST", if_exists="append")
     print(f'''Success. Uploaded {len(clearbit_df2)} rows to ANALYTICS.MATTERMOST.CLOUD_CLEARBIT''')
-
-    clearbit_cloud_exceptions.to_sql("clearbit_cloud_exceptions", con=connection, index=False, schema="STAGING", if_exists="append")
-    print(f'''Success. Uploaded {len(clearbit_cloud_exceptions)} rows to ANALYTICS.STAGING.CLEARBIT_CLOUD_EXCEPTIONS''')
-
+    print(f'''Exceptions: {exceptions}''')
+    print(f'''Exception Server ID's: {cloud_exceptions}''')
 else:
     print("Nothing to do.")
