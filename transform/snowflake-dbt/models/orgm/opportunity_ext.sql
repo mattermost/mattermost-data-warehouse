@@ -75,6 +75,12 @@ WITH w_end_date AS (
   FROM {{ ref('opportunity') }}
   LEFT JOIN {{ ref('opportunitylineitem') }} on opportunity.sfid = opportunitylineitem.opportunityid
   GROUP BY 1
+), opp_net_new_arr_override AS (
+  SELECT
+      opportunity.sfid as id,
+      IFNULL(opportunity.Override_Total_Net_New_ARR__c, Net_New_ARR__c) as Total_Net_New_ARR_with_Override__c
+  FROM {{ ref('opportunity') }}
+  LEFT JOIN opp_products on opp_products.id = opportunity.sfid
 ), opportunity_ext AS (
   SELECT
       opportunity.sfid as opportunity_sfid,
