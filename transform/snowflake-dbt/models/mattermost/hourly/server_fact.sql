@@ -20,6 +20,7 @@ WITH sdd AS (
             , MAX(CASE WHEN version IS NOT NULL THEN DATE ELSE NULL END) AS                     last_server_version_date
             , MIN(CASE WHEN edition IS NOT NULL THEN date ELSE NULL END)                     AS first_edition_date
             , MAX(CASE WHEN edition IS NOT NULL THEN date ELSE NULL END)                     AS last_edition_date
+            , MAX(CASE WHEN NULLIF(ip_address, '') IS NOT NULL THEN date ELSE NULL END)      AS last_ip_date
             , MAX(CASE
                 WHEN license_id1 IS NOT NULL OR license_id2 IS NOT NULL THEN date
                                                                         ELSE NULL END) AS last_active_license_date
@@ -103,6 +104,7 @@ WITH sdd AS (
         , max(COALESCE(r.incoming_webhooks, s.incoming_webhooks)) as incoming_webhooks
         , max(COALESCE(r.outgoing_webhooks, s.outgoing_webhooks)) as outgoing_webhooks
         , max(COALESCE(r.max_time, s.max_time)) AS max_timestamp
+        , MAX(COALESCE(r.context_ip, r.context_request_ip)) AS last_ip_address
       FROM rudder_activity r
       FULL OUTER JOIN segment_activity s
         ON r.user_id = s.user_id and r.max_date = s.max_date
@@ -144,9 +146,10 @@ WITH sdd AS (
             , edition
             , version
             , license_id1
-            , license_id2 
+            , license_id2
+            , ip_address
             FROM {{ ref('server_daily_details') }}
-            GROUP BY 1, 2, 3, 4, 5, 6
+            GROUP BY 1, 2, 3, 4, 5, 6, 7
     ),
     incident_mgmt as (
       SELECT
@@ -166,6 +169,7 @@ WITH sdd AS (
         , MAX(sd.last_edition_date)                                                              AS last_edition_date
         , MAX(CASE WHEN sd.last_active_license_date = s.date THEN license_id1 ELSE NULL END)     AS last_license_id1
         , MAX(CASE WHEN sd.last_active_license_date = s.date THEN license_id2 ELSE NULL END)     AS last_license_id2
+        , NULLIF(MAX(CASE WHEN sd.last_ip_date = s.date THEN s.ip_address ELSE NULL END), '')     AS last_ip_address
       FROM sdd sd
       JOIN s_ext s
            ON sd.server_id = s.server_id
@@ -313,6 +317,7 @@ WITH sdd AS (
         , MAX(server_details.first_active_user_date) AS first_active_user_date
         , MAX(server_details.last_active_user_date) AS last_active_user_date
         , MAX(lsd.retention_28day_flag) AS retention_28day_flag
+        , MAX(COALESCE(nullif(TRIM(server_activity.last_ip_address), ''), NULLIF(fse.last_ip_address, ''))) AS last_ip_address
     FROM sdd
         LEFT JOIN server_details
           ON sdd.server_id = server_details.server_id

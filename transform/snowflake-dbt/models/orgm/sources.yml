@@ -60,6 +60,9 @@ sources:
       - name: customer_risk__history
         description: "SFDC Customer Risk History"
 
+      - name: event
+        description: "SFDC Event"
+
       - name: lead
         description: "SFDC Lead"
 

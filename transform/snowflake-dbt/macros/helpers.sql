@@ -56,6 +56,15 @@ select get_sys_var({{ var_name }})
     alter warehouse {{warehouse}} suspend
 {% endmacro %}
 
+{% macro license_cleaning(destination_table) %}
+    {% set query %}
+        delete from analytics.blp.license_server_fact using (SELECT license_id FROM analytics.blp.license_server_fact WHERE server_id IS NOT NULL GROUP BY 1) lsf
+        WHERE license_server_fact.license_id = lsf.license_id AND license_server_fact.server_id is null
+    {% endset %}
+
+    {% do run_query(query) %}
+{% endmacro %}
+
 {% macro get_rudder_track_tables(schema, database=target.database, table_exclusions=table_exclusions, table_inclusions=table_inclusions) %}
     {% for scheme in schema %}
     select distinct
@@ -171,19 +180,22 @@ select get_sys_var({{ var_name }})
         --
         max_time AS (
                  SELECT
-                    MAX(timestamp) - INTERVAL '12 HOURS' as max_time
+                    _dbt_source_relation2
+                    , MAX(timestamp) - INTERVAL '12 HOURS' as max_time
                  FROM {{ this }} 
                  WHERE {{this}}.timestamp <= CURRENT_TIMESTAMP
+                 GROUP BY 1
              ), 
 
         join_key AS (
                 SELECT 
                     id as join_id
-                  , _dbt_source_relation2
+                  , {{this}}._dbt_source_relation2
                 FROM {{ this }}
                 JOIN max_time mt
                     ON {{ this }}.timestamp >= mt.max_time
                     AND {{this}}.timestamp <= CURRENT_TIMESTAMP
+                    AND {{this}}._dbt_source_relation2 = mt._dbt_source_relation2
              ),
         {%- elif this.table == 'mobile_events' -%}
              --
@@ -339,6 +351,7 @@ select get_sys_var({{ var_name }})
 
                 JOIN max_time mt
                     ON {{ relation }}.timestamp >= mt.max_time
+                    AND mt._dbt_source_relation2 = {{ ["'", relation, "'"]|join }}
                 LEFT JOIN join_key a
                     ON {{ relation }}.id = a.join_id
                     AND a._dbt_source_relation2 = {{ ["'", relation, "'"]|join }}
