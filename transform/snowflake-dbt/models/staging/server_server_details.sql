@@ -12,7 +12,7 @@ WITH rudder_servers AS (
   WHERE original_timestamp::date <= CURRENT_DATE
   {% if is_incremental() %}
   
-  AND original_timestamp >= (SELECT MAX(TIMESTAMP) FROM {{this}}) - interval '12 hour'
+  AND original_timestamp::DATE >= (SELECT MAX(DATE) - INTERVAL '1 DAY' FROM {{this}})
 
   {% endif %}
 ),
@@ -23,7 +23,7 @@ segment_servers AS (
   WHERE timestamp::date <= CURRENT_DATE
   {% if is_incremental() %}
   
-  AND timestamp >= (SELECT MAX(TIMESTAMP) FROM {{this}}) - interval '12 hour'
+  AND timestamp::date >= (SELECT MAX(DATE) - INTERVAL '1 DAY' FROM {{this}})
 
   {% endif %}
 ),
@@ -32,7 +32,7 @@ server_details AS (
   SELECT
     COALESCE(s2.anonymous_id, s1.user_id)                            AS annonymous_id
   , COALESCE(s2.channel, ''::VARCHAR)                                AS channel
-  , COALESCE(s2.context_ip, ''::VARCHAR)                             AS context_ip
+  , COALESCE(s2.context_ip, s2.context_request_ip, ''::VARCHAR)                             AS context_ip
   , COALESCE(s2.context_library_name, s1.context_library_name)       AS context_library_name
   , COALESCE(s2.context_library_version, s1.context_library_version) AS context_library_version
   , COALESCE(s2.database_type, s1.database_type)                     AS database_type
@@ -59,7 +59,7 @@ FROM segment_servers                       s1
 WHERE COALESCE(s2.original_timestamp::date, s1.timestamp::date) <= CURRENT_DATE
 {% if is_incremental() %}
 
-AND COALESCE(s2.original_timestamp, s1.timestamp) >= (SELECT MAX(timestamp) FROM {{this}}) - interval '12 hours'
+AND COALESCE(s2.original_timestamp, s1.timestamp)::date >= (SELECT MAX(date) - interval '1 day' FROM {{this}})
 
 {% endif %}
 GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 17, 20, 21
@@ -148,7 +148,7 @@ max_timestamp              AS (
         {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        WHERE s.timestamp >= (SELECT MAX(timestamp) FROM {{ this }}) - interval '12 hours'
+        WHERE s.timestamp::date >= (SELECT MAX(DATE) - interval ' 1 day' FROM {{ this }})
 
          {% endif %}
          GROUP BY 1, 2, 5, 7, 8, 9, 10, 13, 14, 15, 22, 23, 25, 26
