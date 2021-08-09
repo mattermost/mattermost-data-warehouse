@@ -120,6 +120,28 @@ update_clearbit = KubernetesPodOperator(
     dag=dag,
 )
 
+update_onprem_clearbit_cmd = f"""
+    {clone_and_setup_extraction_cmd} &&
+    python utils/onprem_clearbit.py
+"""
+
+update_onprem_clearbit = KubernetesPodOperator(
+    **pod_defaults,
+    image=DATA_IMAGE,
+    task_id="update-onprem-clearbit",
+    name="update-onprem-clearbit",
+    secrets=[
+        SNOWFLAKE_USER,
+        SNOWFLAKE_PASSWORD,
+        SNOWFLAKE_ACCOUNT,
+        SNOWFLAKE_TRANSFORM_WAREHOUSE,
+        CLEARBIT_KEY,
+    ],
+    env_vars=env_vars,
+    arguments=[update_onprem_clearbit_cmd],
+    dag=dag,
+)
+
 pg_import_cmd = f"""
     {clone_and_setup_extraction_cmd} &&
     python extract/pg_import/pg_import.py
@@ -148,4 +170,4 @@ pg_import = KubernetesPodOperator(
     dag=dag,
 )
 
-user_agent >> dbt_run_cloud >> pg_import >> update_clearbit
+user_agent >> dbt_run_cloud >> pg_import >> update_clearbit >> update_onprem_clearbit
