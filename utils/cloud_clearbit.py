@@ -157,7 +157,6 @@ if len(cloud_clearbit) >= 1:
 
     # CONVERT COLUMN NAMES TO LOWERCASE FOR LOADING PURPOSES
     clearbit_df2.columns = clearbit_df2.columns.str.lower()
-    clearbit_cloud_exceptions.columns = clearbit_cloud_exceptions.columns.str.lower()
 
     engine = snowflake_engine_factory(os.environ, "TRANSFORMER", "util")
     connection = engine.connect()

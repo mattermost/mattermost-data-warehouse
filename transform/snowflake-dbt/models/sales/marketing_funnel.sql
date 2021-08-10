@@ -87,6 +87,11 @@ new_logo_and_arr_creation as (
     group by 1
 ),
 
+marketing_spend as (
+    select month, spend as marketing_spend
+    from {{ source('marketing_gsheets','fy22_budget_by_month') }}
+),
+
 marketing_funnel as (
     select
         months.month,
@@ -98,7 +103,8 @@ marketing_funnel as (
         coalesce(new_business_opportunity_creation.count_new_business_opportunity_creation,0) as count_new_business_opportunity_creation,
         coalesce(pipeline_created.pipeline_amount,0) as pipeline_amount,
         coalesce(new_logo_and_arr_creation.count_new_logo,0) as count_new_logo,
-        coalesce(new_logo_and_arr_creation.arr,0) as arr
+        coalesce(new_logo_and_arr_creation.arr,0) as arr,
+        coalesce(marketing_spend.marketing_spend,0) as marketing_spend
     from months
     left join web_traffic on months.month = web_traffic.month
     left join lead_creation on months.month = lead_creation.month
@@ -108,6 +114,7 @@ marketing_funnel as (
     left join new_business_opportunity_creation on months.month = new_business_opportunity_creation.month
     left join pipeline_created on months.month = pipeline_created.month
     left join new_logo_and_arr_creation on months.month = new_logo_and_arr_creation.month
+    left join marketing_spend on months.month = marketing_spend.month
 )
 
 select * from marketing_funnel

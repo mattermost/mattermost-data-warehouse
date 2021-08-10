@@ -46,7 +46,7 @@ try:
     query = f'''SELECT * FROM ANALYTICS.STAGING.CLEARBIT_ONPREM_EXCEPTIONS'''
     exceptions_test = execute_dataframe(engine, query=query)
 except:
-    exeptions_test = None
+    exceptions_test = None
 
 # RETRIEVE ALL SERVERS THAT HAVE NOT ALREADY BEEN ENRICHED BY CLEARBIT
 q = f'''
@@ -67,7 +67,7 @@ AND SF.FIRST_ACTIVE_DATE::DATE >= '2020-02-01'
 AND SF.INSTALLATION_ID IS NULL
 AND NULLIF(SF.LAST_IP_ADDRESS, '') IS NOT NULL
 GROUP BY 1, 2, 3, 4
-ORDER BY COALESCE(SF.FIRST_ACTIVE_DATE, CURRENT_DATE) ASC
+ORDER BY COALESCE(SF.FIRST_ACTIVE_DATE, CURRENT_DATE) DESC
 LIMIT 5000
 '''
 df = execute_dataframe(engine, query=q)
@@ -172,6 +172,28 @@ if len(onprem_clearbit) >= 1:
     clearbit_onprem_exceptions.to_sql("clearbit_onprem_exceptions", con=connection, index=False, schema="STAGING", if_exists="append")
     print(f'''Success. Uploaded {len(clearbit_onprem_exceptions)} rows to ANALYTICS.STAGING.CLEARBIT_ONPREM_EXCEPTIONS''')
 
+
+    engine = snowflake_engine_factory(os.environ, "TRANSFORMER", "util")
+    connection = engine.connect()
+    try:
+        query = f'''SELECT * FROM ANALYTICS.STAGING.CLEARBIT_ONPREM_EXCEPTIONS'''
+        exceptions_test = execute_dataframe(engine, query=query)
+    except:
+        exceptions_test = None 
+
+    if exceptions_test is None:
+        query = '''CREATE OR REPLACE TABLE ANALYTICS.STAGING.CLEARBIT_ONPREM_EXCEPTIONS AS SELECT DISTINCT SERVER_ID, CURRENT_TIMESTAMP AS received_at FROM ANALYTICS.MATTERMOST.ONPREM_CLEARBIT WHERE FUZZY IS NULL;'''
+        execute_query(engine, query)
+
+        q2 = '''DELETE FROM ANALYTICS.MATTERMOST.ONPREM_CLEARBIT WHERE FUZZY IS NULL;'''
+        execute_query(engine, query=q2)
+    elif exceptions_test is not None:
+        query = '''INSERT INTO ANALYTICS.STAGING.CLEARBIT_ONPREM_EXCEPTIONS(SERVER_ID, received_at)
+                        SELECT DISTINCT SERVER_ID, CURRENT_TIMESTAMP AS received_at FROM ANALYTICS.MATTERMOST.ONPREM_CLEARBIT WHERE FUZZY IS NULL;'''
+        execute_query(engine, query)
+
+        q2 = '''DELETE FROM ANALYTICS.MATTERMOST.ONPREM_CLEARBIT WHERE FUZZY IS NULL;'''
+        execute_query(engine, query=q2)
 else:
     print("Nothing to do.")
 
