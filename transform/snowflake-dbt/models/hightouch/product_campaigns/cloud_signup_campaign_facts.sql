@@ -46,6 +46,7 @@ with signup_pages as (
         customers.id as stripe_customer_id,
         subscriptions.cws_dns as dns,
         subscriptions.cws_installation as installation_id,
+        subscriptions.created,
         subscriptions.trial_start,
         subscriptions.trial_end,
         customers.name as company_name,
@@ -78,7 +79,11 @@ select
     completed_signup.completed_signup_at,
     customer_facts.stripe_customer_id,
     customer_facts.dns,
-    customer_facts.trial_start,
+    case
+        when customer_facts.created > customer_facts.trial_start
+        then customer_facts.created
+        else customer_facts.trial_start
+    end as trial_start,
     customer_facts.trial_end,
     customer_facts.company_name,
     customer_facts.email,
