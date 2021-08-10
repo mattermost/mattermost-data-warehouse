@@ -46,7 +46,7 @@ try:
     query = f'''SELECT * FROM ANALYTICS.STAGING.CLEARBIT_ONPREM_EXCEPTIONS'''
     exceptions_test = execute_dataframe(engine, query=query)
 except:
-    exeptions_test = None
+    exceptions_test = None
 
 # RETRIEVE ALL SERVERS THAT HAVE NOT ALREADY BEEN ENRICHED BY CLEARBIT
 q = f'''
@@ -172,6 +172,22 @@ if len(onprem_clearbit) >= 1:
     clearbit_onprem_exceptions.to_sql("clearbit_onprem_exceptions", con=connection, index=False, schema="STAGING", if_exists="append")
     print(f'''Success. Uploaded {len(clearbit_onprem_exceptions)} rows to ANALYTICS.STAGING.CLEARBIT_ONPREM_EXCEPTIONS''')
 
+
+    engine = snowflake_engine_factory(os.environ, "TRANSFORMER", "util")
+    connection = engine.connect()
+    try:
+        query = f'''SELECT * FROM ANALYTICS.STAGING.CLEARBIT_ONPREM_EXCEPTIONS'''
+        exceptions_test = execute_dataframe(engine, query=query)
+    except:
+        exceptions_test = None 
+
+    if exceptions_test is None:
+        query = '''CREATE OR REPLACE TABLE ANALYTICS.STAGING.CLEARBIT_ONPREM_EXCEPTIONS AS SELECT DISTINCT SERVER_ID FROM ANALYTICS.MATTERMOST.ONPREM_CLEARBIT WHERE FUZZY IS NULL;'''
+        execute_query(engine, query)
+    elif exceptions_test is not None:
+        query = '''INSERT INTO ANALYTICS.STAGING.CLEARBIT_ONPREM_EXCEPTIONS(SERVER_ID)
+                        SELECT DISTINCT SERVER_ID FROM ANALYTICS.MATTERMOST.ONPREM_CLEARBIT WHERE FUZZY IS NULL;'''
+        execute_query(engine, query)
 else:
     print("Nothing to do.")
 
