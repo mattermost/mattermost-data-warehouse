@@ -353,7 +353,7 @@ SELECT
             CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
             OR DATEDIFF('DAY', start_date, expire_date) < 120
           THEN TRUE 
-          ELSE FALSE END THEN 'E20 Trial'
+          ELSE FALSE END AND l.opportunity_sfid IS NULL AND l.account_sfid IS NULL THEN 'E20 Trial'
            ELSE l.edition END    AS edition               
    , l.users              
    , CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
