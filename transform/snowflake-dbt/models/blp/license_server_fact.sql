@@ -339,14 +339,25 @@ SELECT
    , l.customer_id             
    , l.customer_name           
    , l.company                 
-   , CASE WHEN l.edition = 'E20' AND 
+   , CASE WHEN l.edition in ('E20') AND 
           CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
             OR DATEDIFF('DAY', start_date, expire_date) < 120 
           THEN TRUE 
-          ELSE FALSE END THEN 'E20 Trial' ELSE l.edition END    AS edition               
+          ELSE FALSE END THEN 'E20 Trial'
+          WHEN l.edition in ('E10') AND ACCOUNT_SFID IS NULL and
+            CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END THEN 'E20 Trial'
+          WHEN l.edition IS NULL AND 
+            CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120
+          THEN TRUE 
+          ELSE FALSE END THEN 'E20 Trial'
+           ELSE l.edition END    AS edition               
    , l.users              
    , CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
-            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120
           THEN TRUE 
           ELSE FALSE END AS TRIAL                     
    , l.issued_date             
