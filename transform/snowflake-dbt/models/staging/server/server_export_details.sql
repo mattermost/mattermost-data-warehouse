@@ -16,7 +16,7 @@ WITH max_export_timestamp       AS (
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND timestamp::date >= (SELECT MAX(timestamp::date) FROM {{ this }})
+        AND timestamp::date >= (SELECT MAX(timestamp::date) FROM {{ this }}) - INTERVAL '1 DAY'
 
     {% endif %}
     GROUP BY 1, 2
