@@ -12,7 +12,7 @@ WITH rudder_servers AS (
   WHERE original_timestamp::date <= CURRENT_DATE
   {% if is_incremental() %}
   
-  AND original_timestamp::DATE >= (SELECT MAX(DATE) - INTERVAL '1 DAY' FROM {{this}})
+  AND original_timestamp::DATE >= (SELECT MAX(DATE) - INTERVAL '2 DAY' FROM {{this}})
 
   {% endif %}
 ),
@@ -59,7 +59,7 @@ FROM segment_servers                       s1
 WHERE COALESCE(s2.original_timestamp::date, s1.timestamp::date) <= CURRENT_DATE
 {% if is_incremental() %}
 
-AND COALESCE(s2.original_timestamp, s1.timestamp)::date >= (SELECT MAX(date) - interval '1 day' FROM {{this}})
+AND COALESCE(s2.original_timestamp, s1.timestamp)::date >= (SELECT MAX(date) - interval '2 day' FROM {{this}})
 
 {% endif %}
 GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 17, 20, 21
@@ -75,7 +75,7 @@ max_timestamp              AS (
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND s1.timestamp >= (SELECT MAX(timestamp) FROM {{ this }}) - interval '12 hours'
+        AND s1.timestamp >= (SELECT MAX(timestamp) FROM {{ this }}) - interval '48 hours'
 
     {% endif %}
     GROUP BY 1, 2
@@ -148,7 +148,7 @@ max_timestamp              AS (
         {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        WHERE s.timestamp::date >= (SELECT MAX(DATE) - interval ' 1 day' FROM {{ this }})
+        WHERE s.timestamp::date >= (SELECT MAX(DATE) - interval '2 day' FROM {{ this }})
 
          {% endif %}
          GROUP BY 1, 2, 5, 7, 8, 9, 10, 13, 14, 15, 22, 23, 25, 26
