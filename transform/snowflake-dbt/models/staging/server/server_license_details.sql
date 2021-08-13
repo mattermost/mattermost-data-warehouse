@@ -63,7 +63,7 @@ WITH license_daily_details as (
               ELSE FALSE END
          {% if is_incremental() %}
 
-         AND l.date >= (SELECT MAX(date) FROM {{this}})
+         AND l.date >= (SELECT MAX(date) FROM {{this}}) - INTERVAL '1 DAY'
 
          {% endif %}
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
@@ -113,7 +113,7 @@ WITH license_daily_details as (
          AND d.server_id is not null
          {% if is_incremental() %}
          
-         AND d.date >= (SELECT MAX(date) FROM {{this}})
+         AND d.date >= (SELECT MAX(date) FROM {{this}}) - INTERVAL '1 DAY'
 
          {% endif %}
          GROUP BY 1, 2, 3
