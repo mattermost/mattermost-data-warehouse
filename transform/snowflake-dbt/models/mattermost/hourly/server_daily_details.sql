@@ -10,7 +10,7 @@
 WITH max_date AS (
     SELECT 
       MAX(DATE) as max_date
-    , MAX(DATE) - INTERVAL '3 DAY' AS max_date_less_one
+    , MAX(DATE) - INTERVAL '2 DAY' AS max_date_less_one
       FROM {{ this }}
 ), 
 
