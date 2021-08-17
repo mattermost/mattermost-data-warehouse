@@ -35,6 +35,7 @@ select
     facts.trial_end,
     facts.last_active_date,
     facts.cloud_posts_total,
+    facts.cloud_posts_daily,
     facts.cloud_mau,
     facts.cloud_dau,
     left(coalesce(facts.company_name, facts.email), 40) as company_name,

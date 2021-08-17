@@ -66,7 +66,8 @@ with signup_pages as (
         max(last_active_date) as last_active_date,
         max(posts) as cloud_posts_total,
         max(monthly_active_users) as cloud_mau,
-        max(active_users) as cloud_dau
+        max(active_users) as cloud_dau,
+        max(posts_previous_day) as cloud_posts_daily
     from
         {{ ref('server_fact') }}
     join customer_facts on server_fact.installation_id = customer_facts.installation_id
@@ -93,7 +94,8 @@ select
     server_facts.last_active_date,
     server_facts.cloud_posts_total,
     server_facts.cloud_mau,
-    server_facts.cloud_dau
+    server_facts.cloud_dau,
+    server_facts.cloud_posts_daily
 from signup_pages
     left join created_workspace on signup_pages.portal_customer_id = created_workspace.portal_customer_id
     left join completed_signup on signup_pages.portal_customer_id = completed_signup.portal_customer_id
