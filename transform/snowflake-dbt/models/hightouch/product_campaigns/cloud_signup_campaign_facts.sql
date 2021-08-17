@@ -63,7 +63,10 @@ with signup_pages as (
 ), server_facts as (
     select
         customer_facts.portal_customer_id,
-        max(last_active_date) as last_active_date
+        max(last_active_date) as last_active_date,
+        max(posts) as cloud_posts_total,
+        max(monthly_active_users) as cloud_mau,
+        max(active_users) as cloud_dau
     from
         {{ ref('server_fact') }}
     join customer_facts on server_fact.installation_id = customer_facts.installation_id
@@ -87,7 +90,10 @@ select
     customer_facts.trial_end,
     customer_facts.company_name,
     customer_facts.email,
-    server_facts.last_active_date
+    server_facts.last_active_date,
+    server_facts.cloud_posts_total,
+    server_facts.cloud_mau,
+    server_facts.cloud_dau
 from signup_pages
     left join created_workspace on signup_pages.portal_customer_id = created_workspace.portal_customer_id
     left join completed_signup on signup_pages.portal_customer_id = completed_signup.portal_customer_id
