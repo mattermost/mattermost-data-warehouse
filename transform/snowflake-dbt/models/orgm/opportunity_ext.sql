@@ -79,6 +79,7 @@ WITH w_end_date AS (
   SELECT
       opportunity.sfid as opportunity_sfid,
       opportunity.accountid as accountid,
+      iswon,
       min_end_date,
       max_end_date,
       num_diff_end_dates,
