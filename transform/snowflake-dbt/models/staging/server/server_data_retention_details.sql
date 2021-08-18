@@ -15,7 +15,7 @@ WITH max_segment_timestamp                 AS (
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND timestamp::date >= (SELECT MAX(date) FROM {{ this }})
+        AND timestamp::date >= (SELECT MAX(date) FROM {{ this }}) - INTERVAL '1 DAY'
 
     {% endif %}
     GROUP BY 1, 2
@@ -31,7 +31,7 @@ max_rudder_timestamp                 AS (
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND timestamp::date >= (SELECT MAX(date) FROM {{ this }})
+        AND timestamp::date >= (SELECT MAX(date) FROM {{ this }}) - INTERVAL '1 DAY'
 
     {% endif %}
     GROUP BY 1, 2

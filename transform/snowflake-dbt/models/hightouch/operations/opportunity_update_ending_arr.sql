@@ -7,7 +7,7 @@
 with opportunity_end_date as (
   select distinct
     opportunity_sfid,
-    max_end_date,
+    max_end_date
   from {{ ref('opportunity_ext') }}
   where iswon 
 ),
