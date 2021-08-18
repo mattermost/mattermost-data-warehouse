@@ -1,7 +1,7 @@
 {{config({
     "materialized": "incremental",
     "schema": "mattermost",
-    "tags":"preunion",
+    "tags":"union",
     "snowflake_warehouse": "transform_l",
     "unique_key":"server_id"
   })
@@ -30,7 +30,7 @@ WITH first_active AS (
       AND uet.user_actual_id IS NOT NULL
       AND sf.installation_id is null
     {% endif %}
-    GROUP BY 1, 2
+    GROUP BY 1, 2, 3
                      )
 
 SELECT
@@ -38,9 +38,10 @@ SELECT
   ,   first_active.server_id
   ,   first_active.user_actual_id AS user_id
   ,   CASE WHEN nullif(COUNT(DISTINCT uet2.user_actual_id),0) IS NOT NULL THEN TRUE ELSE FALSE END AS retained_28day_users
+  ,   first_active.id
 FROM first_active
      LEFT JOIN {{ ref('user_events_telemetry') }} uet2
           ON uet2.user_actual_id = first_active.user_actual_id
               AND uet2.timestamp between first_active.first_active_timestamp + interval '672 hours' and first_active.first_active_timestamp + interval '696 hours'
 WHERE first_active.first_active_timestamp <= CURRENT_TIMESTAMP - INTERVAL '696 HOURS'
-group by 1, 2
+group by 1, 2, 3, 5
