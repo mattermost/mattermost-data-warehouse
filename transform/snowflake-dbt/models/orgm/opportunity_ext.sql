@@ -85,6 +85,7 @@ WITH w_end_date AS (
   SELECT
       opportunity.sfid as opportunity_sfid,
       opportunity.accountid as accountid,
+      iswon,
       min_end_date,
       max_end_date,
       num_diff_end_dates,
@@ -120,7 +121,7 @@ WITH w_end_date AS (
   LEFT JOIN opportunity_fc_amounts ON opportunity.sfid = opportunity_fc_amounts.opportunity_sfid
   LEFT JOIN opp_products ON opportunity.sfid = opp_products.id
   LEFT JOIN opp_net_new_arr_override on opportunity.sfid = opp_net_new_arr_override.id
-  GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
+  GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22
 )
 
  SELECT * FROM opportunity_ext
