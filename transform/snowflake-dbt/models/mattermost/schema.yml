@@ -60,3 +60,6 @@ models:
 
   - name: server_feature_flag_details
     description: Split.io feature flag data for A/B testing features at the daily server level.
+
+  - name: user_28day_retention
+    description: Contains all users from 2020-02-01 onward with a first active timestamp, server id, and boolean indicating whether they were active on the 28th day from initial first activity.
