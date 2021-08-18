@@ -12,7 +12,7 @@ with opportunity_end_date as (
   where iswon 
 ),
 
-opportunity_ending_arr as (
+opportunity_update_ending_arr as (
   select
     opportunity_end_date.opportunity_sfid,
     coalesce(won_arr,0) as ending_arr
@@ -22,4 +22,4 @@ opportunity_ending_arr as (
       and opportunity_end_date.opportunity_sfid = opportunity_daily_arr.opportunity_sfid
 )
 
-select * from opportunity_ending_arr
+select * from opportunity_update_ending_arr
