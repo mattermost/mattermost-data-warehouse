@@ -3,7 +3,7 @@
     "schema": "mattermost",
     "tags":"union",
     "snowflake_warehouse": "transform_l",
-    "unique_key":"server_id"
+    "unique_key":"id"
   })
 }}
 
