@@ -12,9 +12,9 @@ WITH license_new AS (
       , COALESCE(c.name, c.metadata:"company"::VARCHAR, SPLIT_PART(c.email, '@', 2)::VARCHAR)            AS company
       , MAX(COALESCE(c.metadata:"number"::INT, c.metadata:"netsuite_customer_id"::INT))                  AS number
       , c.email
-      , s.id                                                                                             AS stripe_id
+      , c.id                                                                                             AS stripe_id
       , COALESCE(s.metadata:"cws-license-id"::VARCHAR, NULL)                                             AS licenseid
-      , (s.current_period_start)::DATE                                                                   AS issuedat
+      , (s.start_date)::DATE                                                                   AS issuedat
       , (s.current_period_end)::DATE                                                                     AS expiresat
       , FALSE                                                                                            AS blapi
       , COALESCE(s.quantity, c.metadata:"seats"::INT)                                                    AS users
