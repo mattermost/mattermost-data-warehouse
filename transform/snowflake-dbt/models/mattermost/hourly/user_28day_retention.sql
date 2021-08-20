@@ -38,10 +38,11 @@ SELECT
   ,   first_active.server_id
   ,   first_active.user_actual_id AS user_id
   ,   CASE WHEN nullif(COUNT(DISTINCT uet2.user_actual_id),0) IS NOT NULL THEN TRUE ELSE FALSE END AS retained_28day_users
+  ,   MAX(uet2.timestamp) AS retained_28day_timestamp
   ,   first_active.id
 FROM first_active
      LEFT JOIN {{ ref('user_events_telemetry') }} uet2
           ON uet2.user_actual_id = first_active.user_actual_id
               AND uet2.timestamp between first_active.first_active_timestamp + interval '672 hours' and first_active.first_active_timestamp + interval '696 hours'
 WHERE first_active.first_active_timestamp <= CURRENT_TIMESTAMP - INTERVAL '696 HOURS'
-group by 1, 2, 3, 5
+group by 1, 2, 3, 6
