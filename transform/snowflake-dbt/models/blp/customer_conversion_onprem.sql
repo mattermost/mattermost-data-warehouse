@@ -122,3 +122,4 @@ LEFT JOIN {{ ref('license_server_fact') }} lsf
     AND lsf.license_priority_rank = 1
     AND lsf.edition = 'E20 Trial'
     AND lsf.server_id is not null
+{{ dbt_utils.group_by(n=17)}}
