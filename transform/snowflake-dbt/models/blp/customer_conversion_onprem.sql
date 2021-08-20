@@ -114,7 +114,7 @@ GROUP BY 1, 2
 )
 
 
-SELECT cco.*, MAX(lsf.server_id)
+SELECT cco.*, MAX(lsf.server_id) as trial_server_id
 FROM customer_conversion_onprem cco
 LEFT JOIN {{ ref('license_server_fact') }} lsf
     ON cco.accountid = lsf.customer_id 
