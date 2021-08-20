@@ -55,14 +55,14 @@ SELECT
   , CASE WHEN MIN(lsf.license_id) IS NOT NULL THEN TRUE ELSE FALSE END                                               AS accountid_match
   , MIN(CASE
             WHEN CASE
-                     WHEN 'E20 Trial' = 'E20 Trial'
+                     WHEN lsf.edition = 'E20 Trial'
                                                                             THEN lsf.edition
                                                                             ELSE NULL END IS NOT NULL
                 THEN lsf.issued_date
                 ELSE NULL END)                                                                                       AS trial_date
   , COALESCE(MIN(CASE
                      WHEN CASE
-                              WHEN COALESCE(lsf.edition, 'E20 Trial') = 'E20 Trial'
+                              WHEN lsf.edition = 'E20 Trial'
                                                                                      THEN lsf.edition
                                                                                      ELSE NULL END IS NOT NULL
                          THEN lsf.issued_date
