@@ -181,9 +181,9 @@ select get_sys_var({{ var_name }})
         max_time AS (
                  SELECT
                     _dbt_source_relation2
-                    , MAX(timestamp) - INTERVAL '12 HOURS' as max_time
+                    , MAX(received_at) - INTERVAL '2 HOURS' as max_time
                  FROM {{ this }} 
-                 WHERE {{this}}.timestamp <= CURRENT_TIMESTAMP
+                 WHERE {{this}}.received_at <= CURRENT_TIMESTAMP
                  GROUP BY 1
              ), 
 
@@ -193,17 +193,16 @@ select get_sys_var({{ var_name }})
                   , {{this}}._dbt_source_relation2
                 FROM {{ this }}
                 JOIN max_time mt
-                    ON {{ this }}.timestamp >= mt.max_time
-                    AND {{this}}.timestamp <= CURRENT_TIMESTAMP
-                    AND {{this}}._dbt_source_relation2 = mt._dbt_source_relation2
+                    ON {{ this }}.received_at > mt.max_time
+                    AND {{this}}.received_at <= CURRENT_TIMESTAMP
              ),
         {%- elif this.table == 'mobile_events' -%}
              --
              max_time AS (
                  SELECT 
-                    MAX(timestamp) - INTERVAL '12 HOURS' AS max_time
+                    MAX(received_at) - INTERVAL '2 HOURS' AS max_time
                  FROM {{ this }} 
-                 WHERE timestamp <= CURRENT_TIMESTAMP
+                 WHERE received_at <= CURRENT_TIMESTAMP
              ),
 
              join_key AS (
@@ -212,17 +211,17 @@ select get_sys_var({{ var_name }})
                       , _dbt_source_relation
                     FROM {{ this }}
                     JOIN max_time mt
-                        ON {{ this }}.timestamp >= mt.max_time 
-                        AND {{ this }}.timestamp <= CURRENT_TIMESTAMP
+                        ON {{ this }}.received_at > mt.max_time 
+                        AND {{ this }}.received_at <= CURRENT_TIMESTAMP
              ),
 
             {%- elif adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
              --
              max_time AS (
                  SELECT 
-                    MAX(original_timestamp) - INTERVAL '3 HOURS' AS max_time
+                    MAX(received_at) - INTERVAL '3 HOURS' AS max_time
                  FROM {{ this }} 
-                 WHERE original_timestamp <= CURRENT_TIMESTAMP
+                 WHERE received_at <= CURRENT_TIMESTAMP
              ),
 
              join_key AS (
@@ -231,17 +230,17 @@ select get_sys_var({{ var_name }})
                       , _dbt_source_relation
                     FROM {{ this }}
                     JOIN max_time mt
-                        ON {{ this }}.original_timestamp >= mt.max_time 
-                        AND {{this}}.original_timestamp <= CURRENT_TIMESTAMP
+                        ON {{ this }}.received_at > mt.max_time 
+                        AND {{this}}.received_at <= CURRENT_TIMESTAMP
              ),
 
             {%- elif this.schema == 'qa'  %}
              --
              max_time AS (
                  SELECT 
-                    MAX(original_timestamp) -  INTERVAL '3 HOURS' AS max_time
+                    MAX(received_at) -  INTERVAL '3 HOURS' AS max_time
                  FROM {{ this }} 
-                 WHERE original_timestamp <= CURRENT_TIMESTAMP
+                 WHERE received_at <= CURRENT_TIMESTAMP
              ),
 
              join_key AS (
@@ -250,17 +249,17 @@ select get_sys_var({{ var_name }})
                       , _dbt_source_relation
                     FROM {{ this }}
                     JOIN max_time mt
-                        ON {{ this }}.original_timestamp >= mt.max_time 
-                        AND {{this}}.original_timestamp <= CURRENT_TIMESTAMP
+                        ON {{ this }}.received_at > mt.max_time 
+                        AND {{this}}.received_at <= CURRENT_TIMESTAMP
              ),
 
             {%- elif this.schema == 'web'  %}
              --
              max_time AS (
                  SELECT 
-                    MAX(timestamp) - INTERVAL '3 HOURS' AS max_time
+                    MAX(received_at) - INTERVAL '3 HOURS' AS max_time
                  FROM {{ this }} 
-                 WHERE timestamp <= CURRENT_TIMESTAMP
+                 WHERE received_at <= CURRENT_TIMESTAMP
              ),
 
              join_key AS (
@@ -269,17 +268,17 @@ select get_sys_var({{ var_name }})
                       , _dbt_source_relation
                     FROM {{ this }}
                     JOIN max_time mt
-                        ON {{ this }}.timestamp >= mt.max_time 
-                        AND {{this}}.timestamp <= CURRENT_TIMESTAMP
+                        ON {{ this }}.received_at > mt.max_time 
+                        AND {{this}}.received_at <= CURRENT_TIMESTAMP
              ),
 
              {%- else -%}
              --
              max_time AS (
                  SELECT 
-                    MAX(timestamp) - INTERVAL '12 HOURS' AS max_time
+                    MAX(received_at) - INTERVAL '2 HOURS' AS max_time
                  FROM {{ this }} 
-                 WHERE timestamp <= CURRENT_TIMESTAMP
+                 WHERE received_at <= CURRENT_TIMESTAMP
              ),
 
              join_key AS (
@@ -288,8 +287,8 @@ select get_sys_var({{ var_name }})
                       , _dbt_source_relation
                     FROM {{ this }}
                     JOIN max_time mt
-                        ON {{ this }}.timestamp >= mt.max_time 
-                        AND {{this}}.timestamp <= CURRENT_TIMESTAMP
+                        ON {{ this }}.received_at > mt.max_time 
+                        AND {{this}}.received_at <= CURRENT_TIMESTAMP
              ), 
         
             {%- endif -%}
@@ -350,53 +349,53 @@ select get_sys_var({{ var_name }})
               {% if is_incremental() and this.table == 'user_events_telemetry' %}
 
                 JOIN max_time mt
-                    ON {{ relation }}.timestamp >= mt.max_time
+                    ON {{ relation }}.received_at >= mt.max_time
                     AND mt._dbt_source_relation2 = {{ ["'", relation, "'"]|join }}
                 LEFT JOIN join_key a
                     ON {{ relation }}.id = a.join_id
                     AND a._dbt_source_relation2 = {{ ["'", relation, "'"]|join }}
-                WHERE timestamp <= CURRENT_TIMESTAMP
+                WHERE received_at <= CURRENT_TIMESTAMP
                 AND a.join_id is null
                 
             {% elif is_incremental() and this.table == 'mobile_events' %}
                 JOIN max_time mt
-                    ON {{ relation }}.timestamp >= mt.max_time
+                    ON {{ relation }}.received_at >= mt.max_time
                 LEFT JOIN join_key a
                     ON {{ relation }}.id = a.join_id
                     AND a._dbt_source_relation = {{ ["'", relation, "'"]|join }}
-                WHERE timestamp <= CURRENT_TIMESTAMP
+                WHERE received_at <= CURRENT_TIMESTAMP
                 AND a.join_id is null 
             {% elif is_incremental() and adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
                 JOIN max_time mt
-                    ON {{ relation }}.original_timestamp >= mt.max_time
+                    ON {{ relation }}.received_at >= mt.max_time
                 LEFT JOIN join_key a
                     ON {{ relation }}.id = a.join_id
                     AND a._dbt_source_relation = {{ ["'", relation, "'"]|join }}
-                WHERE original_timestamp <= CURRENT_TIMESTAMP
+                WHERE received_at <= CURRENT_TIMESTAMP
                 AND a.join_id is null
             {% elif is_incremental() and this.schema == 'qa' %}
                 JOIN max_time mt
-                    ON {{ relation }}.original_timestamp >= mt.max_time
+                    ON {{ relation }}.received_at >= mt.max_time
                 LEFT JOIN join_key a
                     ON {{ relation }}.id = a.join_id
                     AND a._dbt_source_relation = {{ ["'", relation, "'"]|join }}
-                WHERE original_timestamp <= CURRENT_TIMESTAMP
+                WHERE received_at <= CURRENT_TIMESTAMP
                 AND a.join_id is null
             {% elif is_incremental() and this.schema == 'web' %}
                 JOIN max_time mt
-                    ON {{ relation }}.timestamp >= mt.max_time
+                    ON {{ relation }}.received_at >= mt.max_time
                 LEFT JOIN join_key a
                     ON {{ relation }}.id = a.join_id
                     AND a._dbt_source_relation = {{ ["'", relation, "'"]|join }}
-                WHERE timestamp <= CURRENT_TIMESTAMP
+                WHERE received_at <= CURRENT_TIMESTAMP
                 AND a.join_id is null
             {% elif is_incremental() %}
                 JOIN max_time mt
-                    ON {{ relation }}.timestamp >= mt.max_time
+                    ON {{ relation }}.received_at >= mt.max_time
                 LEFT JOIN join_key a
                     ON {{ relation }}.id = a.join_id
                     AND a._dbt_source_relation = {{ ["'", relation, "'"]|join }}
-                WHERE timestamp <= CURRENT_TIMESTAMP
+                WHERE received_at <= CURRENT_TIMESTAMP
                 AND a.join_id is null 
             {% endif %}
             {% if 'EVENT' in relation_columns[relation] and 'TYPE' in relation_columns[relation] and this.table == 'user_events_telemetry' %}
