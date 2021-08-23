@@ -22,5 +22,6 @@ WITH existing_lead AS (
     LEFT JOIN {{ ref('contact') }} ON customers_with_onprem_subs.email = contact.email
     LEFT JOIN existing_lead ON customers_with_onprem_subs.email = existing_lead.email
     WHERE contact.id IS NULL
+    AND customers_with_onprem_subs.hightouch_sync_eligible
 )
 SELECT * FROM onprem_contacts_to_sync

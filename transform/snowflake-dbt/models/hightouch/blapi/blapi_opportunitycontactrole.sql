@@ -20,6 +20,7 @@ WITH onprem_ocrs_to_sync as (
         ON contact.sfid = opportunitycontactrole.contactid
             AND opportunity.sfid = opportunitycontactrole.opportunityid
     WHERE opportunity.sfid IS NULL AND contact.sfid IS NULL AND opportunitycontactrole.sfid IS NULL
+    AND customers_with_onprem_subs.hightouch_sync_eligible
 )
 SELECT *,
     UUID_STRING(
