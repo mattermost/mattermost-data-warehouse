@@ -50,11 +50,12 @@ WITH latest_credit_card_address AS (
         subscriptions.purchase_order_num,
         latest_credit_card_address.line1,
         latest_credit_card_address.line2,
+        latest_credit_card_address.line1 || ' ' || latest_credit_card_address.line2 as street_address,
         latest_credit_card_address.postal_code,
         latest_credit_card_address.city,
         latest_credit_card_address.state,
         latest_credit_card_address.country,
-        onprem_subscriptions.updated_at >= '2021-08-23' as hightouch_sync_eligible
+        onprem_subscriptions.updated_at >= '2021-08-18' as hightouch_sync_eligible
     FROM {{ ref('customers_blapi') }} customers
         JOIN {{ ref('onprem_subscriptions') }} ON customers.id = onprem_subscriptions.customer_id
         JOIN {{ ref('subscriptions') }} ON onprem_subscriptions.stripe_id = subscriptions.id
@@ -74,7 +75,7 @@ WITH latest_credit_card_address AS (
                 customers_with_onprem_subs.customer_id)
         ) AS account_external_id,
         account.sfid as account_sfid,
-        ROW_NUMBER() OVER (PARTITION BY account.cbit__clearbitdomain__c ORDER BY account.lastmodifieddate DESC) as row_num
+        ROW_NUMBER() OVER (PARTITION BY customers_with_onprem_subs.stripe_charge_id ORDER BY account.lastmodifieddate DESC) as row_num
     FROM customers_with_onprem_subs
     LEFT JOIN {{ ref('account') }}
         ON customers_with_onprem_subs.domain = account.cbit__clearbitdomain__c
@@ -88,7 +89,7 @@ WITH latest_credit_card_address AS (
                 customers_with_onprem_subs.customer_id || customers_with_onprem_subs.email)
         ) AS contact_external_id,
         contact.sfid as contact_sfid,
-        ROW_NUMBER() OVER (PARTITION BY contact.email ORDER BY contact.lastmodifieddate DESC) as row_num
+        ROW_NUMBER() OVER (PARTITION BY customers_with_onprem_subs.stripe_charge_id ORDER BY contact.lastmodifieddate DESC) as row_num
     FROM customers_with_onprem_subs
     LEFT JOIN {{ ref('contact') }}
        ON customers_with_onprem_subs.email = contact.email
@@ -102,7 +103,7 @@ WITH latest_credit_card_address AS (
                 customers_with_onprem_subs.subscription_version_id)
         ) AS opportunity_external_id,
         opportunity.sfid as opportunity_sfid,
-        ROW_NUMBER() OVER (PARTITION BY opportunity.stripe_id__c ORDER BY opportunity.lastmodifieddate DESC) as row_num
+        ROW_NUMBER() OVER (PARTITION BY customers_with_onprem_subs.stripe_charge_id ORDER BY opportunity.lastmodifieddate DESC) as row_num
     FROM customers_with_onprem_subs
     LEFT JOIN {{ ref('opportunity') }}
         ON customers_with_onprem_subs.stripe_charge_id = opportunity.stripe_id__c
@@ -114,7 +115,7 @@ WITH latest_credit_card_address AS (
             UUID_STRING('78157189-82de-4f4d-9db3-88c601fbc22e', customers_opportunity.opportunity_external_id || 'oli')
         ) AS opportunitylineitem_external_id,
         opportunitylineitem.sfid as opportunitylineitem_sfid,
-        ROW_NUMBER() OVER (PARTITION BY opportunitylineitem.subs_version_id__c ORDER BY opportunitylineitem.lastmodifieddate DESC) as row_num
+        ROW_NUMBER() OVER (PARTITION BY customers_with_onprem_subs.stripe_charge_id ORDER BY opportunitylineitem.lastmodifieddate DESC) as row_num
     FROM customers_with_onprem_subs
     LEFT JOIN customers_opportunity
         ON customers_with_onprem_subs.stripe_charge_id = customers_opportunity.stripe_charge_id
