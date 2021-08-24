@@ -50,7 +50,7 @@ WITH latest_credit_card_address AS (
         subscriptions.purchase_order_num,
         latest_credit_card_address.line1,
         latest_credit_card_address.line2,
-        latest_credit_card_address.line1 || ' ' || latest_credit_card_address.line2 as street_address,
+        latest_credit_card_address.line1 || ' ' || coalesce(latest_credit_card_address.line2, '') as street_address,
         latest_credit_card_address.postal_code,
         latest_credit_card_address.city,
         latest_credit_card_address.state,
