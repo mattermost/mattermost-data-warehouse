@@ -10,6 +10,7 @@ WITH onprem_opportunities_to_sync AS (
         customers_with_onprem_subs.*,
         'New Subscription' AS opportunity_type,
         'Online' as order_type,
+        '0053p0000064nt8AAA' AS ownerid,
         '6. Closed Won' as stagename,
         CASE WHEN account.name = 'Hold Public'
             THEN
