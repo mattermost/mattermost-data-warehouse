@@ -19,7 +19,7 @@ WITH onprem_opportunities_to_sync AS (
                 customers_with_onprem_subs.num_seats || ' inv:' ||
                 customers_with_onprem_subs.invoice_number
             ELSE
-                account.name || ' ' ||
+                customers_with_onprem_subs.domain || ' ' ||
                 customers_with_onprem_subs.sku || ' qty:' ||
                 customers_with_onprem_subs.num_seats || ' inv:' ||
                 customers_with_onprem_subs.invoice_number
