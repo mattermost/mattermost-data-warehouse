@@ -19,6 +19,7 @@ WITH max_time AS (
 focalboard_server AS (
     SELECT 
         server.timestamp::date as logging_date
+        , server.server_id
         , server.version
         , server.context_ip
         , server.event
