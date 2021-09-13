@@ -145,7 +145,7 @@ max_rudder_timestamp       AS (
             ) p
             ON s.timestamp::date = p.timestamp::date
             AND s.user_id = p.user_id
-         GROUP BY 1, 2, 38
+         GROUP BY 1, 2, 3
      )
 SELECT *
 FROM server_plugin_details
