@@ -9,7 +9,7 @@
 WITH focalboard_fact AS (
     SELECT 
           focalboard_activity.user_id AS focalboard_id
-        , server.server_id AS instance_id
+        , MAX(server.server_id) AS instance_id
         , MIN(focalboard_activity.timestamp) AS first_active
         , MAX(focalboard_activity.timestamp) AS last_active
         , MAX(focalboard_activity.daily_active_users) AS daily_active_users_max
@@ -20,7 +20,7 @@ WITH focalboard_fact AS (
     FROM {{ref('focalboard_activity')}}
     LEFT JOIN {{ ref('focalboard_server') }} server
       ON focalboard_activity.user_id = server.user_id
-    GROUP BY 1, 2
+    GROUP BY 1
     {% if is_incremental() %}
     HAVING MAX(focalboard_activity.received_at) >= (SELECT MAX(latest_received_at) FROM {{this}})
     {% endif %}
