@@ -339,12 +339,39 @@ SELECT
    , l.customer_id             
    , l.customer_name           
    , l.company                 
-   , l.edition                 
-   , l.users              
-   , CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+   , CASE WHEN l.edition in ('E20') AND l.opportunity_sfid is null AND 
+          CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
             OR DATEDIFF('DAY', start_date, expire_date) < 120 
           THEN TRUE 
-          ELSE FALSE END AS TRIAL                     
+          ELSE FALSE END THEN 'E20 Trial'
+          WHEN l.edition in ('E10') AND ACCOUNT_SFID IS NULL AND l.opportunity_sfid is null and
+            CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END THEN 'E20 Trial'
+          WHEN l.edition IS NULL AND 
+            CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120
+          THEN TRUE 
+          ELSE FALSE END AND l.opportunity_sfid IS NULL AND l.account_sfid IS NULL THEN 'E20 Trial'
+           ELSE l.edition END    AS edition               
+   , l.users              
+   , CASE WHEN l.edition in ('E20') AND l.opportunity_sfid is null AND 
+          CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END THEN TRUE
+          WHEN l.edition in ('E10') AND ACCOUNT_SFID IS NULL AND l.opportunity_sfid is null and
+            CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120 
+          THEN TRUE 
+          ELSE FALSE END THEN TRUE
+          WHEN l.edition IS NULL AND 
+            CASE WHEN l.trial OR COALESCE(lower(split_part(l.company,  ' - ', 2)), ' ') IN ('trial', 'non-prod', 'stage license') 
+            OR DATEDIFF('DAY', start_date, expire_date) < 120
+          THEN TRUE 
+          ELSE FALSE END AND l.opportunity_sfid IS NULL AND l.account_sfid IS NULL THEN TRUE
+           ELSE FALSE END AS TRIAL                     
    , l.issued_date             
    , l.start_date              
    , l.expire_date             

@@ -12,9 +12,9 @@ WITH license_new AS (
       , COALESCE(c.name, c.metadata:"company"::VARCHAR, SPLIT_PART(c.email, '@', 2)::VARCHAR)            AS company
       , MAX(COALESCE(c.metadata:"number"::INT, c.metadata:"netsuite_customer_id"::INT))                  AS number
       , c.email
-      , s.id                                                                                             AS stripe_id
+      , c.id                                                                                             AS stripe_id
       , COALESCE(s.metadata:"cws-license-id"::VARCHAR, NULL)                                             AS licenseid
-      , (s.current_period_start)::DATE                                                                   AS issuedat
+      , (s.start_date)::DATE                                                                   AS issuedat
       , (s.current_period_end)::DATE                                                                     AS expiresat
       , FALSE                                                                                            AS blapi
       , COALESCE(s.quantity, c.metadata:"seats"::INT)                                                    AS users
@@ -63,6 +63,7 @@ license_old        AS (
     FROM {{ source('blapi', 'trial_requests')}} l
     LEFT JOIN {{ source('stripe_raw', 'subscriptions') }} s
           ON l.id = s.metadata:"cws-license-id"
+    WHERE l.site_url != 'http://localhost:8065'
     GROUP BY 1, 2, 4, 5, 6, 7, 8, 9, 10, 11),
 
     license AS (

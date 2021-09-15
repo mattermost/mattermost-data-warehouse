@@ -46,6 +46,7 @@ with signup_pages as (
         customers.id as stripe_customer_id,
         subscriptions.cws_dns as dns,
         subscriptions.cws_installation as installation_id,
+        subscriptions.created,
         subscriptions.trial_start,
         subscriptions.trial_end,
         customers.name as company_name,
@@ -62,7 +63,11 @@ with signup_pages as (
 ), server_facts as (
     select
         customer_facts.portal_customer_id,
-        max(last_active_date) as last_active_date
+        max(last_active_date) as last_active_date,
+        max(posts) as cloud_posts_total,
+        max(monthly_active_users) as cloud_mau,
+        max(active_users) as cloud_dau,
+        max(posts_previous_day) as cloud_posts_daily
     from
         {{ ref('server_fact') }}
     join customer_facts on server_fact.installation_id = customer_facts.installation_id
@@ -78,11 +83,19 @@ select
     completed_signup.completed_signup_at,
     customer_facts.stripe_customer_id,
     customer_facts.dns,
-    customer_facts.trial_start,
+    case
+        when customer_facts.created > customer_facts.trial_start
+        then customer_facts.created
+        else customer_facts.trial_start
+    end as trial_start,
     customer_facts.trial_end,
     customer_facts.company_name,
     customer_facts.email,
-    server_facts.last_active_date
+    server_facts.last_active_date,
+    server_facts.cloud_posts_total,
+    server_facts.cloud_mau,
+    server_facts.cloud_dau,
+    server_facts.cloud_posts_daily
 from signup_pages
     left join created_workspace on signup_pages.portal_customer_id = created_workspace.portal_customer_id
     left join completed_signup on signup_pages.portal_customer_id = completed_signup.portal_customer_id

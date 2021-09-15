@@ -9,6 +9,8 @@ WITH onprem_opportunities_to_sync AS (
     SELECT
         customers_with_onprem_subs.*,
         'New Subscription' AS opportunity_type,
+        'Online' as order_type,
+        '0053p0000064nt8AAA' AS ownerid,
         '6. Closed Won' as stagename,
         CASE WHEN account.name = 'Hold Public'
             THEN
@@ -17,7 +19,7 @@ WITH onprem_opportunities_to_sync AS (
                 customers_with_onprem_subs.num_seats || ' inv:' ||
                 customers_with_onprem_subs.invoice_number
             ELSE
-                account.name || ' ' ||
+                customers_with_onprem_subs.domain || ' ' ||
                 customers_with_onprem_subs.sku || ' qty:' ||
                 customers_with_onprem_subs.num_seats || ' inv:' ||
                 customers_with_onprem_subs.invoice_number
@@ -27,7 +29,8 @@ WITH onprem_opportunities_to_sync AS (
         ON customers_with_onprem_subs.opportunity_external_id = opportunity.dwh_external_id__c
             OR customers_with_onprem_subs.stripe_charge_id = opportunity.stripe_id__c
     LEFT JOIN {{ ref('account') }}
-        ON opportunity.accountid = account.id
+        ON customers_with_onprem_subs.account_external_id = account.dwh_external_id__c
     WHERE opportunity.id IS NULL
+        AND customers_with_onprem_subs.hightouch_sync_eligible
 )
 SELECT * FROM onprem_opportunities_to_sync

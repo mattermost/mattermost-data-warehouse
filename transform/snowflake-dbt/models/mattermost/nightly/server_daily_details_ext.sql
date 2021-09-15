@@ -616,6 +616,9 @@ WITH server_daily_details_ext AS (
       , sc.ignore_guests_ldap_sync
       , sc.conn_max_idletime_milliseconds
       , sc.collapsed_threads
+      , sc.version_focalboard
+      , sc.enable_focalboard
+      , sc.chimera_oauth_proxy_url
     FROM {{ ref('server_daily_details') }}         s
     {% if is_incremental() %}
     JOIN max_date
@@ -625,7 +628,7 @@ WITH server_daily_details_ext AS (
                    ON s.server_id = sc.server_id
                        AND s.date = sc.date
     WHERE s.date >= '2016-04-01'
-    {{ dbt_utils.group_by(n=595) }}
+    {{ dbt_utils.group_by(n=598) }}
 )
 
 SELECT *

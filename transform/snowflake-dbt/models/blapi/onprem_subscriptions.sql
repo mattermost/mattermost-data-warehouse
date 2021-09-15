@@ -17,7 +17,8 @@ WITH latest_payment AS (
         s.*,
         p.sku,
         latest_payment.stripe_charge_id,
-        latest_payment.invoice_number
+        latest_payment.invoice_number,
+        ROW_NUMBER() OVER (PARTITION BY s.id ORDER BY s.transaction_id DESC) as row_num
     FROM {{ source('blapi', 'subscriptions_version') }} s
     JOIN {{ source('blapi', 'products') }} p ON s.product_id = p.id
     JOIN latest_payment ON s.id = latest_payment.subscription_id AND latest_payment.row_num = 1
@@ -25,3 +26,4 @@ WITH latest_payment AS (
         AND p.name != 'Mattermost Cloud'
 )
 SELECT * FROM subscriptions
+WHERE row_num = 1

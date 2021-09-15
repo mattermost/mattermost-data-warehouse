@@ -16,5 +16,6 @@ WITH onprem_accounts_to_sync as (
     LEFT JOIN {{ source('orgm', 'account_domain_mapping') }}
         ON customers_with_onprem_subs.domain = account_domain_mapping.domain
     WHERE account.id IS NULL AND account_domain_mapping.accountid IS NULL
+    AND customers_with_onprem_subs.hightouch_sync_eligible
 )
 SELECT * FROM onprem_accounts_to_sync

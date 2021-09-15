@@ -24,7 +24,7 @@ WITH subscriptions AS (
         ,subscriptions.metadata:"cws-blapi-subscription"::varchar as cws_blapi_subscription
         ,subscriptions.metadata:"cws-installation"::varchar as cws_installation
         ,subscriptions.metadata:"billing-type"::varchar as billing_type
-        ,subscriptions.metadata:"cws-renewed-from-sub"::varchar as renewed_from_sub_id
+        ,subscriptions.metadata:"cws-renewed-from-stripe-id"::varchar as renewed_from_sub_id
         ,subscriptions.metadata:"cws-license-id"::varchar as license_id
         ,subscriptions.metadata:"sfdc-migrated-opportunity-sfid"::varchar as sfdc_migrated_opportunity_sfid
         ,subscriptions.metadata:"internal_purchase_order"::varchar as purchase_order_num
@@ -40,6 +40,14 @@ WITH subscriptions AS (
     OR subscriptions.updated::date >= (SELECT MAX(updated::date) FROM {{ this }})
 
     {% endif %}
+), subscription_total AS (
+    SELECT
+        subscriptions.id,
+        SUM(subscription_items.plan_amount * subscription_items.quantity) as total_in_cents
+    FROM subscriptions
+    JOIN {{ ref('subscription_items') }} on subscriptions.id = subscription_items.subscription
+    GROUP BY 1
 )
-
-select * from subscriptions
+select subscriptions.*, coalesce(subscription_total.total_in_cents, 0) as total_in_cents
+from subscriptions
+left join subscription_total ON subscriptions.id = subscription_total.id

@@ -10,9 +10,9 @@ WITH max_time AS (
   SELECT 
     user_id
   , timestamp::date as date
-  , MAX(TIMESTAMP) AS max_time
+  , MAX(received_at) AS max_time
   FROM {{ source('hacktoberboard_prod', 'config') }}
-  WHERE TIMESTAMP::DATE <= CURRENT_DATE
+  WHERE received_at::DATE <= CURRENT_DATE
   GROUP BY 1, 2
 ), 
 
@@ -40,10 +40,10 @@ focalboard_config AS (
     FROM {{ source('hacktoberboard_prod', 'config') }} config
     JOIN max_time mt
       ON config.user_id = mt.user_id
-      AND config.timestamp = mt.max_time
-    WHERE config.TIMESTAMP::DATE <= CURRENT_DATE
+      AND config.received_at = mt.max_time
+    WHERE config.received_at::DATE <= CURRENT_DATE
     {% if is_incremental() %}
-      and config.timestamp::date >= (select max(logging_date) from {{ this }})
+      and config.received_at >= (select max(received_at) from {{ this }})
     {% endif %}
 )
 

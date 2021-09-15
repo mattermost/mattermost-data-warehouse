@@ -70,6 +70,8 @@ roles:
     - stitch:
         warehouses:
             - stitch
+            - transform_l
+            - reporting_s
         privileges:
             databases:
                 read:

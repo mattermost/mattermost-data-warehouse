@@ -597,6 +597,9 @@ SELECT
   , ssaml.ignore_guests_ldap_sync
   , ssql.conn_max_idletime_milliseconds
   , sservice.collapsed_threads
+  , splugin.version_focalboard
+  , splugin.enable_focalboard
+  , splugin.chimera_oauth_proxy_url
 FROM {{ ref('server_daily_details') }}                      s
 {% if is_incremental() %}
 
@@ -695,7 +698,7 @@ JOIN max_date
     LEFT JOIN {{ ref('server_group_details') }}       sgroup
     ON s.server_id = sgroup.server_id AND s.date =  sgroup.date
 WHERE s.date >= '2016-04-01'
-{{ dbt_utils.group_by(n=576)}}
+{{ dbt_utils.group_by(n=579)}}
 )
 SELECT *
 FROM server_config_details

@@ -75,10 +75,17 @@ WITH w_end_date AS (
   FROM {{ ref('opportunity') }}
   LEFT JOIN {{ ref('opportunitylineitem') }} on opportunity.sfid = opportunitylineitem.opportunityid
   GROUP BY 1
+), opp_net_new_arr_override AS (
+  SELECT
+      opportunity.sfid as id,
+      IFNULL(opportunity.Override_Total_Net_New_ARR__c, Net_New_ARR__c) as Net_New_ARR_with_Override__c
+  FROM {{ ref('opportunity') }}
+  LEFT JOIN opp_products on opp_products.id = opportunity.sfid
 ), opportunity_ext AS (
   SELECT
       opportunity.sfid as opportunity_sfid,
       opportunity.accountid as accountid,
+      iswon,
       min_end_date,
       max_end_date,
       num_diff_end_dates,
@@ -97,6 +104,7 @@ WITH w_end_date AS (
       paid_date,
       payment_method,
       Net_New_ARR__c,
+      Net_New_ARR_with_Override__c,
       SUM(new_amount__c) AS sum_new_amount,
       SUM(expansion_amount__c + coterm_expansion_amount__c + leftover_expansion_amount__c) AS sum_expansion_amount,
       SUM(expansion_amount__c + 365 * (coterm_expansion_amount__c + leftover_expansion_amount__c)/NULLIF((end_date__c::date - start_date__c::date + 1),0)) AS sum_expansion_w_proration_amount,
@@ -112,7 +120,8 @@ WITH w_end_date AS (
   LEFT JOIN opportunity_marketing ON opportunity.sfid = opportunity_marketing.opportunity_sfid
   LEFT JOIN opportunity_fc_amounts ON opportunity.sfid = opportunity_fc_amounts.opportunity_sfid
   LEFT JOIN opp_products ON opportunity.sfid = opp_products.id
-  GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+  LEFT JOIN opp_net_new_arr_override on opportunity.sfid = opp_net_new_arr_override.id
+  GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22
 )
 
  SELECT * FROM opportunity_ext
