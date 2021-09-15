@@ -597,6 +597,9 @@ SELECT
   , ssaml.ignore_guests_ldap_sync
   , ssql.conn_max_idletime_milliseconds
   , sservice.collapsed_threads
+  , splugin.version_focalboard
+  , splugin.enable_focalboard
+  , splugin.chimera_oauth_proxy_url
 FROM {{ ref('server_daily_details') }}                      s
 {% if is_incremental() %}
 
