@@ -616,6 +616,9 @@ WITH server_daily_details_ext AS (
       , sc.ignore_guests_ldap_sync
       , sc.conn_max_idletime_milliseconds
       , sc.collapsed_threads
+      , sc..version_focalboard
+      , sc.enable_focalboard
+      , sc.chimera_oauth_proxy_url
     FROM {{ ref('server_daily_details') }}         s
     {% if is_incremental() %}
     JOIN max_date
