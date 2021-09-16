@@ -142,32 +142,4 @@ update_onprem_clearbit = KubernetesPodOperator(
     dag=dag,
 )
 
-pg_import_cmd = f"""
-    {clone_and_setup_extraction_cmd} &&
-    python extract/pg_import/pg_import.py
-"""
-
-pg_import = KubernetesPodOperator(
-    **pod_defaults,
-    image=DATA_IMAGE,
-    task_id="pg-import",
-    name="pg-import",
-    secrets=[
-        SNOWFLAKE_ACCOUNT,
-        SNOWFLAKE_USER,
-        SNOWFLAKE_PASSWORD,
-        SNOWFLAKE_TRANSFORM_ROLE,
-        SNOWFLAKE_TRANSFORM_WAREHOUSE,
-        SNOWFLAKE_TRANSFORM_SCHEMA,
-        AWS_ACCESS_KEY_ID,
-        AWS_SECRET_ACCESS_KEY,
-        PG_IMPORT_BUCKET,
-        HEROKU_POSTGRESQL_URL,
-        SSH_KEY,
-    ],
-    env_vars=env_vars,
-    arguments=[pg_import_cmd],
-    dag=dag,
-)
-
-user_agent >> dbt_run_cloud >> pg_import >> update_clearbit >> update_onprem_clearbit
+user_agent >> dbt_run_cloud >> update_clearbit >> update_onprem_clearbit
