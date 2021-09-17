@@ -6,7 +6,9 @@
   })
 }}
 
-{% set col_count = get_rudder_track_column_count() %}
+{% if is_incremental() %}
+  {% set col_count = get_rudder_track_column_count() %}
+{% endif %}
 
 WITH max_time AS (
   SELECT 
