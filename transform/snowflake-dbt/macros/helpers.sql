@@ -89,6 +89,43 @@ select get_sys_var({{ var_name }})
 
 {% endmacro %}
 
+{% macro get_rudder_track_columns(schema, database=target.database, table_exclusions=table_exclusions, table_inclusions=table_inclusions) %}
+    select distinct
+        table_schema as "table_schema", table_name as "table_name", column_name as "column_name"
+    from {{database}}.information_schema.columns
+    WHERE table_schema ilike '{{ this.schema }}'
+    AND table_name ilike '{{ this.table }}'
+    {%- if table_exclusions -%}
+
+     and lower(table_name) not in ({{ table_exclusions}})
+     
+    {%- endif -%}
+    {%- if table_inclusions and scheme != 'portal_test' -%}
+
+     and lower(table_name) in ({{ table_inclusions}})
+     
+    {%- endif -%}
+
+{% endmacro %}
+
+{% macro get_rudder_track_column_count(schema=this.schema, database=this.database, table_exclusions=table_exclusions, table_inclusions=table_inclusions) %}
+    {%- call statement('column_count', fetch_result=True) -%}
+        select distinct
+            MAX(ordinal_position) as "column_count"
+        from {{database}}.information_schema.columns
+        WHERE table_schema ilike '{{ this.schema }}'
+        AND table_name ilike '{{ this.table }}'
+    {%- endcall -%}
+
+    {% if execute %}
+        {%- set result = load_result('column_count').table.columns['column_count'].values()[0] | int -%}
+        {{ return(result)}}
+    {% else %}
+        {{return(none)}}
+    {% endif %}
+
+{% endmacro %}
+
 {% macro get_rudder_relations(schema, database=target.database, table_exclusions="", table_inclusions="") %}
 
     {%- call statement('get_tables', fetch_result=True) %}

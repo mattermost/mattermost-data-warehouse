@@ -6,6 +6,8 @@
   })
 }}
 
+{% set col_count = get_rudder_track_column_count() %}
+
 WITH max_time AS (
   SELECT 
     user_id
@@ -48,6 +50,11 @@ focalboard_blocks AS (
     WHERE blocks.received_at::DATE <= CURRENT_DATE
     {% if is_incremental() %}
       and blocks.received_at >= (select max(received_at) from {{ this }})
+      {%- if col_count != none -%}
+
+      {{dbt_utils.group_by(n=col_count)}}
+
+      {%- endif -%}
     {% endif %}
 )
 
