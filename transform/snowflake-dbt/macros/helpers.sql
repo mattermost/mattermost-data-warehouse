@@ -328,16 +328,19 @@ select get_sys_var({{ var_name }})
                 WHERE received_at <= CURRENT_TIMESTAMP
                 AND a.join_id is null 
             {% endif %}
-
-            {% if 'EVENT' in relation_columns[relation] and 'TYPE' in relation_columns[relation] and this.table == 'user_events_telemetry' %}
-                AND COALESCE({{ relation }}.type, {{ relation }}.event) NOT IN 
-            
-            {% elif 'EVENT' not in relation_columns[relation] and 'TYPE' in relation_columns[relation] and this.table == 'user_events_telemetry' %}
-                AND {{ relation }}.type NOT IN  
-            
-            {% elif 'EVENT' in relation_columns[relation] and 'TYPE' not in relation_columns[relation] and this.table == 'user_events_telemetry' %}
-                AND {{ relation }}.event NOT IN 
-            {% endif %}
+            {% if this.table in ['user_events_telemetry', 'rudder_webapp_events', 'mobile_events', 'portal_events', 'cloud_pageview_events', 'cloud_portal_pageview_events'] %}
+                {% if is_incremental() %}
+                    AND
+                {% else %}
+                    WHERE
+                {% endif %}
+                {% if 'EVENT' in relation_columns[relation] and 'TYPE' in relation_columns[relation] %}
+                    COALESCE({{ relation }}.type, {{ relation }}.event) NOT IN 
+                {% elif 'EVENT' not in relation_columns[relation] and 'TYPE' in relation_columns[relation] %}
+                    {{ relation }}.type NOT IN  
+                {% elif 'EVENT' in relation_columns[relation] and 'TYPE' not in relation_columns[relation] %}
+                    {{ relation }}.event NOT IN 
+                {% endif %}
                 (
                     'api_channel_get',
                     'api_channel_get_by_name_and_teamname',
@@ -364,6 +367,7 @@ select get_sys_var({{ var_name }})
                     'application_opened',
                     'application_updated'
                 )
+            {% endif %}
             ){% if not loop.last -%}, {% endif %}
 
     {%- endfor -%}
