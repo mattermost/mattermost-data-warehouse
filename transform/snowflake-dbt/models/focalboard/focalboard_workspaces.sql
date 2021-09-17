@@ -19,7 +19,10 @@ WITH max_time AS (
 ),
 
 focalboard_workspaces AS (
-    SELECT 
+    SELECT
+    {% if not is_incremental() %}
+    DISTINCT
+    {% endif %}
         workspaces.timestamp::date as logging_date
         , workspaces.original_timestamp
         , workspaces.workspaces

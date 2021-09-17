@@ -19,7 +19,10 @@ WITH max_time AS (
 ), 
 
 focalboard_blocks AS (
-    SELECT 
+    SELECT      
+    {% if not is_incremental() %}
+    DISTINCT
+    {% endif %}
         blocks.timestamp::date as logging_date
         , blocks.context_request_ip
         , blocks.comment

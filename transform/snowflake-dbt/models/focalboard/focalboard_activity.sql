@@ -19,7 +19,10 @@ WITH max_time AS (
 ), 
 
 focalboard_activity AS (
-    SELECT 
+    SELECT     
+    {% if not is_incremental() %}
+    DISTINCT
+    {% endif %}
         activity.timestamp::date as logging_date
       , activity.received_at
       , activity.weekly_active_users

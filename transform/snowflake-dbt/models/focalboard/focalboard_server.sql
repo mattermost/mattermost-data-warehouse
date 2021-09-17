@@ -19,7 +19,10 @@ WITH max_time AS (
 ), 
 
 focalboard_server AS (
-    SELECT 
+    SELECT     
+    {% if not is_incremental() %}
+    DISTINCT
+    {% endif %} 
         server.timestamp::date as logging_date
         , server.server_id
         , server.version

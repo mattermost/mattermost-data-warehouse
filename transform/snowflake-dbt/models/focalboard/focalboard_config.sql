@@ -19,7 +19,10 @@ WITH max_time AS (
 ), 
 
 focalboard_config AS (
-    SELECT 
+    SELECT      
+    {% if not is_incremental() %}
+    DISTINCT
+    {% endif %}
         config.timestamp::date as logging_date
         , config.context_request_ip
         , config.timestamp
