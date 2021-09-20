@@ -6,6 +6,10 @@
   })
 }}
 
+{% if is_incremental() %}
+  {% set col_count = get_rudder_track_column_count() %}
+{% endif %}
+
 WITH max_time AS (
   SELECT 
     user_id
@@ -17,7 +21,10 @@ WITH max_time AS (
 ), 
 
 focalboard_activity AS (
-    SELECT 
+    SELECT     
+    {% if not is_incremental() %}
+    DISTINCT
+    {% endif %}
         activity.timestamp::date as logging_date
       , activity.received_at
       , activity.weekly_active_users
@@ -44,6 +51,11 @@ focalboard_activity AS (
     WHERE activity.received_at::DATE <= CURRENT_DATE
     {% if is_incremental() %}
       and activity.received_at >= (select max(received_at) from {{ this }})
+      {%- if col_count != none -%}
+
+      {{dbt_utils.group_by(n=col_count)}}
+
+      {%- endif -%}
     {% endif %}
 )
 

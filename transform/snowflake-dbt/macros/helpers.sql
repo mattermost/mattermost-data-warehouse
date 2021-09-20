@@ -89,6 +89,43 @@ select get_sys_var({{ var_name }})
 
 {% endmacro %}
 
+{% macro get_rudder_track_columns(schema, database=target.database, table_exclusions=table_exclusions, table_inclusions=table_inclusions) %}
+    select distinct
+        table_schema as "table_schema", table_name as "table_name", column_name as "column_name"
+    from {{database}}.information_schema.columns
+    WHERE table_schema ilike '{{ this.schema }}'
+    AND table_name ilike '{{ this.table }}'
+    {%- if table_exclusions -%}
+
+     and lower(table_name) not in ({{ table_exclusions}})
+     
+    {%- endif -%}
+    {%- if table_inclusions and scheme != 'portal_test' -%}
+
+     and lower(table_name) in ({{ table_inclusions}})
+     
+    {%- endif -%}
+
+{% endmacro %}
+
+{% macro get_rudder_track_column_count(schema=this.schema, database=this.database, table_exclusions=table_exclusions, table_inclusions=table_inclusions) %}
+    {%- call statement('column_count', fetch_result=True) -%}
+        select distinct
+            MAX(ordinal_position) as "column_count"
+        from {{database}}.information_schema.columns
+        WHERE table_schema ilike '{{ this.schema }}'
+        AND table_name ilike '{{ this.table }}'
+    {%- endcall -%}
+
+    {% if execute %}
+        {%- set result = load_result('column_count').table.columns['column_count'].values()[0] | int -%}
+        {{ return(result)}}
+    {% else %}
+        {{return(none)}}
+    {% endif %}
+
+{% endmacro %}
+
 {% macro get_rudder_relations(schema, database=target.database, table_exclusions="", table_inclusions="") %}
 
     {%- call statement('get_tables', fetch_result=True) %}
@@ -196,81 +233,6 @@ select get_sys_var({{ var_name }})
                     ON {{ this }}.received_at > mt.max_time
                     AND {{this}}.received_at <= CURRENT_TIMESTAMP
              ),
-        {%- elif this.table == 'mobile_events' -%}
-             --
-             max_time AS (
-                 SELECT 
-                    MAX(received_at) - INTERVAL '2 HOURS' AS max_time
-                 FROM {{ this }} 
-                 WHERE received_at <= CURRENT_TIMESTAMP
-             ),
-
-             join_key AS (
-                    SELECT 
-                        id as join_id
-                      , _dbt_source_relation
-                    FROM {{ this }}
-                    JOIN max_time mt
-                        ON {{ this }}.received_at > mt.max_time 
-                        AND {{ this }}.received_at <= CURRENT_TIMESTAMP
-             ),
-
-            {%- elif adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
-             --
-             max_time AS (
-                 SELECT 
-                    MAX(received_at) - INTERVAL '3 HOURS' AS max_time
-                 FROM {{ this }} 
-                 WHERE received_at <= CURRENT_TIMESTAMP
-             ),
-
-             join_key AS (
-                    SELECT 
-                        id as join_id
-                      , _dbt_source_relation
-                    FROM {{ this }}
-                    JOIN max_time mt
-                        ON {{ this }}.received_at > mt.max_time 
-                        AND {{this}}.received_at <= CURRENT_TIMESTAMP
-             ),
-
-            {%- elif this.schema == 'qa'  %}
-             --
-             max_time AS (
-                 SELECT 
-                    MAX(received_at) -  INTERVAL '3 HOURS' AS max_time
-                 FROM {{ this }} 
-                 WHERE received_at <= CURRENT_TIMESTAMP
-             ),
-
-             join_key AS (
-                    SELECT 
-                        id as join_id
-                      , _dbt_source_relation
-                    FROM {{ this }}
-                    JOIN max_time mt
-                        ON {{ this }}.received_at > mt.max_time 
-                        AND {{this}}.received_at <= CURRENT_TIMESTAMP
-             ),
-
-            {%- elif this.schema == 'web'  %}
-             --
-             max_time AS (
-                 SELECT 
-                    MAX(received_at) - INTERVAL '3 HOURS' AS max_time
-                 FROM {{ this }} 
-                 WHERE received_at <= CURRENT_TIMESTAMP
-             ),
-
-             join_key AS (
-                    SELECT 
-                        id as join_id
-                      , _dbt_source_relation
-                    FROM {{ this }}
-                    JOIN max_time mt
-                        ON {{ this }}.received_at > mt.max_time 
-                        AND {{this}}.received_at <= CURRENT_TIMESTAMP
-             ),
 
              {%- else -%}
              --
@@ -357,38 +319,6 @@ select get_sys_var({{ var_name }})
                 WHERE received_at <= CURRENT_TIMESTAMP
                 AND a.join_id is null
                 
-            {% elif is_incremental() and this.table == 'mobile_events' %}
-                JOIN max_time mt
-                    ON {{ relation }}.received_at >= mt.max_time
-                LEFT JOIN join_key a
-                    ON {{ relation }}.id = a.join_id
-                    AND a._dbt_source_relation = {{ ["'", relation, "'"]|join }}
-                WHERE received_at <= CURRENT_TIMESTAMP
-                AND a.join_id is null 
-            {% elif is_incremental() and adapter.quote(relation)[7:28] == 'MM_PLUGIN_DEV.NPS_NPS' %}
-                JOIN max_time mt
-                    ON {{ relation }}.received_at >= mt.max_time
-                LEFT JOIN join_key a
-                    ON {{ relation }}.id = a.join_id
-                    AND a._dbt_source_relation = {{ ["'", relation, "'"]|join }}
-                WHERE received_at <= CURRENT_TIMESTAMP
-                AND a.join_id is null
-            {% elif is_incremental() and this.schema == 'qa' %}
-                JOIN max_time mt
-                    ON {{ relation }}.received_at >= mt.max_time
-                LEFT JOIN join_key a
-                    ON {{ relation }}.id = a.join_id
-                    AND a._dbt_source_relation = {{ ["'", relation, "'"]|join }}
-                WHERE received_at <= CURRENT_TIMESTAMP
-                AND a.join_id is null
-            {% elif is_incremental() and this.schema == 'web' %}
-                JOIN max_time mt
-                    ON {{ relation }}.received_at >= mt.max_time
-                LEFT JOIN join_key a
-                    ON {{ relation }}.id = a.join_id
-                    AND a._dbt_source_relation = {{ ["'", relation, "'"]|join }}
-                WHERE received_at <= CURRENT_TIMESTAMP
-                AND a.join_id is null
             {% elif is_incremental() %}
                 JOIN max_time mt
                     ON {{ relation }}.received_at >= mt.max_time
@@ -398,89 +328,47 @@ select get_sys_var({{ var_name }})
                 WHERE received_at <= CURRENT_TIMESTAMP
                 AND a.join_id is null 
             {% endif %}
-            {% if 'EVENT' in relation_columns[relation] and 'TYPE' in relation_columns[relation] and this.table == 'user_events_telemetry' %}
-                AND COALESCE({{ relation }}.type, {{ relation }}.event) NOT IN (
-                    'api_channel_get',
-                    'api_channel_get_by_name_and_teamname',
-                    'api_channels_join_direct',
-                    'api_posts_get_after',
-                    'api_posts_get_before',
-                    'api_profiles_get',
-                    'api_profiles_get_by_ids',
-                    'api_profiles_get_by_usernames',
-                    'api_profiles_get_in_channel',
-                    'api_profiles_get_in_group_channels',
-                    'api_profiles_get_in_team',
-                    'api_profiles_get_not_in_channel',
-                    'api_profiles_get_not_in_team',
-                    'api_profiles_get_without_team',
-                    'channel_switch',
-                    'page_load',
-                    'lhs_dm_gm_count',
-                    'ui_channel_selected',
-                    'ui_channel_selected_v2',
-                    'ui_direct_channel_x_button_clicked',
-                    'application_backgrounded',
-                    'application_installed',
-                    'application_opened',
-                    'application_updated'
-                )
-                {% elif 'EVENT' not in relation_columns[relation] and 'TYPE' in relation_columns[relation] and this.table == 'user_events_telemetry' %}
-                AND {{ relation }}.type NOT IN (
-                    'api_channel_get',
-                    'api_channel_get_by_name_and_teamname',
-                    'api_channels_join_direct',
-                    'api_posts_get_after',
-                    'api_posts_get_before',
-                    'api_profiles_get',
-                    'api_profiles_get_by_ids',
-                    'api_profiles_get_by_usernames',
-                    'api_profiles_get_in_channel',
-                    'api_profiles_get_in_group_channels',
-                    'api_profiles_get_in_team',
-                    'api_profiles_get_not_in_channel',
-                    'api_profiles_get_not_in_team',
-                    'api_profiles_get_without_team',
-                    'channel_switch',
-                    'page_load',
-                    'lhs_dm_gm_count',
-                    'ui_channel_selected',
-                    'ui_channel_selected_v2',
-                    'ui_direct_channel_x_button_clicked',
-                    'application_backgrounded',
-                    'application_installed',
-                    'application_opened',
-                    'application_updated'
-                )
-                {% elif 'EVENT' in relation_columns[relation] and 'TYPE' not in relation_columns[relation] and this.table == 'user_events_telemetry' %}
-                AND {{ relation }}.event NOT IN (
-                    'api_channel_get',
-                    'api_channel_get_by_name_and_teamname',
-                    'api_channels_join_direct',
-                    'api_posts_get_after',
-                    'api_posts_get_before',
-                    'api_profiles_get',
-                    'api_profiles_get_by_ids',
-                    'api_profiles_get_by_usernames',
-                    'api_profiles_get_in_channel',
-                    'api_profiles_get_in_group_channels',
-                    'api_profiles_get_in_team',
-                    'api_profiles_get_not_in_channel',
-                    'api_profiles_get_not_in_team',
-                    'api_profiles_get_without_team',
-                    'channel_switch',
-                    'page_load',
-                    'lhs_dm_gm_count',
-                    'ui_channel_selected',
-                    'ui_channel_selected_v2',
-                    'ui_direct_channel_x_button_clicked',
-                    'application_backgrounded',
-                    'application_installed',
-                    'application_opened',
-                    'application_updated'
-                )
+            {% if this.table in ['user_events_telemetry', 'rudder_webapp_events', 'mobile_events', 'portal_events', 'cloud_pageview_events', 'cloud_portal_pageview_events'] %}
+                {% if is_incremental() %}
+                    AND
+                {% else %}
+                    WHERE
                 {% endif %}
-            ){% if not loop.last -%},{% endif %}
+                {% if 'EVENT' in relation_columns[relation] and 'TYPE' in relation_columns[relation] %}
+                    COALESCE({{ relation }}.type, {{ relation }}.event) NOT IN 
+                {% elif 'EVENT' not in relation_columns[relation] and 'TYPE' in relation_columns[relation] %}
+                    {{ relation }}.type NOT IN  
+                {% elif 'EVENT' in relation_columns[relation] and 'TYPE' not in relation_columns[relation] %}
+                    {{ relation }}.event NOT IN 
+                {% endif %}
+                (
+                    'api_channel_get',
+                    'api_channel_get_by_name_and_teamname',
+                    'api_channels_join_direct',
+                    'api_posts_get_after',
+                    'api_posts_get_before',
+                    'api_profiles_get',
+                    'api_profiles_get_by_ids',
+                    'api_profiles_get_by_usernames',
+                    'api_profiles_get_in_channel',
+                    'api_profiles_get_in_group_channels',
+                    'api_profiles_get_in_team',
+                    'api_profiles_get_not_in_channel',
+                    'api_profiles_get_not_in_team',
+                    'api_profiles_get_without_team',
+                    'channel_switch',
+                    'page_load',
+                    'lhs_dm_gm_count',
+                    'ui_channel_selected',
+                    'ui_channel_selected_v2',
+                    'ui_direct_channel_x_button_clicked',
+                    'application_backgrounded',
+                    'application_installed',
+                    'application_opened',
+                    'application_updated'
+                )
+            {% endif %}
+            ){% if not loop.last -%}, {% endif %}
 
     {%- endfor -%}
 
