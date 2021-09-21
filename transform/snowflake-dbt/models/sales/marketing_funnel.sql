@@ -93,19 +93,13 @@ new_logo_and_arr_creation as (
         count(distinct case when market_segment = 'Federal' then opportunity_ext.opportunity_sfid else null end) as federal_new_logo,
         count(distinct case when market_segment = 'Commercial' then opportunity_ext.opportunity_sfid else null end) as commercial_new_logo,
         count(distinct case when market_segment = 'Enterprise' then opportunity_ext.opportunity_sfid else null end) as enterprise_new_logo,
-        1.00*count(distinct case when market_segment = 'Federal' then opportunity_ext.opportunity_sfid else null end)/count(*) as perc_federal_new_logo,
-        1.00*count(distinct case when market_segment = 'Commercial' then opportunity_ext.opportunity_sfid else null end)/count(*) as perc_commercial_new_logo,
-        1.00*count(distinct case when market_segment = 'Enterprise' then opportunity_ext.opportunity_sfid else null end)/count(*) as perc_enterprise_new_logo,
         round(sum(amount),2) as arr,
         round(sum(case when market_segment = 'Federal' then amount else 0 end),2) as federal_arr,
         round(sum(case when market_segment = 'Commercial' then amount else 0 end),2) as commercial_arr,
         round(sum(case when market_segment = 'Enterprise' then amount else 0 end),2) as enterprise_arr,
-        round(avg(case when market_segment = 'Federal' then amount else 0 end),2) as federal_avg_amount,
-        round(avg(case when market_segment = 'Commercial' then amount else 0 end),2) as commercial_avg_amount,
-        round(avg(case when market_segment = 'Enterprise' then amount else 0 end),2) as enterprise_avg_amount,
-        round(avg(case when market_segment = 'Federal' then age else 0 end),2) as federal_avg_age,
-        round(avg(case when market_segment = 'Commercial' then age else 0 end),2) as commercial_avg_age,
-        round(avg(case when market_segment = 'Enterprise' then age else 0 end),2) as enterprise_avg_age
+        round(sum(case when market_segment = 'Federal' then age else 0 end),2) as federal_sum_age,
+        round(sum(case when market_segment = 'Commercial' then age else 0 end),2) as commercial_sum_age,
+        round(sum(case when market_segment = 'Enterprise' then age else 0 end),2) as enterprise_sum_age
     from {{ ref('opportunity') }}
     join {{ ref('opportunity_ext') }} on opportunity.sfid = opportunity_ext.opportunity_sfid
     where type in ('New Business','New Subscription')
@@ -147,19 +141,13 @@ marketing_funnel as (
         coalesce(federal_new_logo,0) as federal_new_logo,
         coalesce(commercial_new_logo,0) as commercial_new_logo,
         coalesce(enterprise_new_logo,0) as enterprise_new_logo,
-        coalesce(perc_federal_new_logo,0) as perc_federal_new_logo,
-        coalesce(perc_commercial_new_logo,0) as perc_commercial_new_logo,
-        coalesce(perc_enterprise_new_logo,0) as perc_enterprise_new_logo,
         coalesce(arr,0) as arr,
         coalesce(federal_arr,0) as federal_arr,
         coalesce(commercial_arr,0) as commercial_arr,
         coalesce(enterprise_arr,0) as enterprise_arr,
-        coalesce(federal_avg_amount,0) as federal_avg_amount,
-        coalesce(commercial_avg_amount,0) as commercial_avg_amount,
-        coalesce(enterprise_avg_amount,0) as enterprise_avg_amount,
-        coalesce(federal_avg_age,0) as federal_avg_age,
-        coalesce(commercial_avg_age,0) as commercial_avg_age,
-        coalesce(enterprise_avg_age,0) as enterprise_avg_age,
+        coalesce(federal_sum_age,0) as federal_sum_age,
+        coalesce(commercial_sum_age,0) as commercial_sum_age,
+        coalesce(enterprise_sum_age,0) as enterprise_sum_age,
         coalesce(marketing_spend.marketing_spend,0) as marketing_spend
     from months
     left join web_traffic on months.month = web_traffic.month
