@@ -81,10 +81,38 @@ WITH w_end_date AS (
       IFNULL(opportunity.Override_Total_Net_New_ARR__c, Net_New_ARR__c) as Net_New_ARR_with_Override__c
   FROM {{ ref('opportunity') }}
   LEFT JOIN opp_products on opp_products.id = opportunity.sfid
+), opp_created_by_segment as (
+  SELECT
+    opportunity.sfid as opportunity_sfid,
+    case 
+      when userrole.name like '%Federal%' then 'Federal'
+      when coalesce(numberofemployees,0) <= 999 and userrole.name = 'Sales Dev Reps' then 'Commercial BDR'
+      when coalesce(numberofemployees,0) <= 999 and userrole.name not like '%Federal%' then 'Commercial AE'
+      when coalesce(numberofemployees,0) > 999 and userrole.name = 'Sales Dev Reps' then 'Enterprise BDR'
+      when coalesce(numberofemployees,0) > 999 and userrole.name not like '%Federal%' then 'Enterprise AE'
+    else null 
+    end as created_by_segment
+  FROM {{ ref('opportunity') }}
+  JOIN {{ ref('user') }} as creator on opportunity.ownerid = creator.sfid
+  JOIN {{ ref('userrole') }} on creator.userroleid = userrole.sfid
+  JOIN {{ ref('account') }} on opportunity.accountid = account.sfid
+), opp_owner_role AS (
+  SELECT 
+    opportunity.sfid as opportunity_sfid,
+    userrole.sfid as owner_role_sfid,
+    userrole.name as owner_role_name
+  FROM {{ ref('opportunity') }}
+  JOIN {{ ref('user') }} as owner on opportunity.ownerid = owner.sfid
+  JOIN {{ ref('userrole') }} on owner.userroleid = userrole.sfid
 ), opportunity_ext AS (
   SELECT
       opportunity.sfid as opportunity_sfid,
       opportunity.accountid as accountid,
+      case when owner_role_name like '%Federal%' then 'Federal' when coalesce(numberofemployees,0) <= 999 then 'Commercial' when coalesce(numberofemployees,0) > 999 then 'Enterprise' end as market_segment,
+      opp_owner_role.owner_role_name,
+      opp_created_by_segment.created_by_segment,
+      opportunity.closedate,
+      case when iswon then datediff('day',opportunity.createddate, opportunity.closedate) else datediff('day',opportunity.createddate, current_date()) end as age,
       iswon,
       min_end_date,
       max_end_date,
@@ -113,6 +141,7 @@ WITH w_end_date AS (
       SUM(renewal_multi_amount__c) AS sum_renewal_multi_amount
   FROM {{ ref('opportunity') }}
   LEFT JOIN {{ ref('opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
+  JOIN {{ ref('account') }} on opportunity.accountid = account.sfid
   LEFT JOIN w_end_date ON opportunity.sfid = w_end_date.opportunity_sfid
   LEFT JOIN w_start_date ON opportunity.sfid = w_start_date.opportunity_sfid
   LEFT JOIN w_oppt_commit ON opportunity.sfid = w_oppt_commit.opportunity_sfid
@@ -121,7 +150,9 @@ WITH w_end_date AS (
   LEFT JOIN opportunity_fc_amounts ON opportunity.sfid = opportunity_fc_amounts.opportunity_sfid
   LEFT JOIN opp_products ON opportunity.sfid = opp_products.id
   LEFT JOIN opp_net_new_arr_override on opportunity.sfid = opp_net_new_arr_override.id
-  GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22
+  LEFT JOIN opp_created_by_segment on opportunity.sfid = opp_created_by_segment.opportunity_sfid
+  LEFT JOIN opp_owner_role on opportunity.sfid = opp_owner_role.opportunity_sfid
+  GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27
 )
 
  SELECT * FROM opportunity_ext
