@@ -175,6 +175,17 @@ WITH sdd AS (
            ON sd.server_id = s.server_id
       GROUP BY 1
     ),
+
+    cloud_payment_method AS (
+      SELECT s.cloud_installation_id
+          , MIN(pm.created_at) as first_payment_method_date
+      FROM {{ref('subscriptions_blapi')}} s
+      JOIN {{ ref('payment_methods')}} pm
+        ON s.customer_id = pm.customer_id
+      WHERE s.cloud_installation_id is not null
+      GROUP BY 1
+    ),
+
   last_server_date AS (
     SELECT
         COALESCE(user_id, context_server, context_traits_server) AS server_id
@@ -323,6 +334,7 @@ WITH sdd AS (
         , MAX(lsd.retention_28day_flag) AS retention_28day_flag
         , MAX(lsd.retention_28day_users) AS retention_28day_users
         , MAX(COALESCE(nullif(TRIM(server_activity.last_ip_address), ''), NULLIF(fse.last_ip_address, ''))) AS last_ip_address
+        , MIN(cpm.first_payment_method_date) AS cloud_payment_method_added
     FROM sdd
         LEFT JOIN server_details
           ON sdd.server_id = server_details.server_id
@@ -346,6 +358,8 @@ WITH sdd AS (
             ON sdd.server_id = server_activity.user_id
         LEFT JOIN incident_mgmt im
             ON sdd.server_id = im.server_id
+        LEFT JOIN cloud_payment_method cpm
+            ON sdd.installation_id = cpm.cloud_installation_id
         {% if is_incremental() %}
           WHERE sdd.last_active_date::date >= (SELECT MAX(last_active_date::date) - INTERVAL '1 DAY' FROM {{this}})
         {% endif %}
