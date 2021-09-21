@@ -15,6 +15,10 @@ BLAPI_DATABASE_URL = Secret(
 BLAPI_TOKEN = Secret("env", "BLAPI_TOKEN", "airflow", "BLAPI_TOKEN")
 BLAPI_URL = Secret("env", "BLAPI_URL", "airflow", "BLAPI_URL")
 
+BLAPI_TEST_URL = Secret("env", "BLAPI_TEST_URL", "airflow", "BLAPI_TEST_URL")
+BLAPI_TEST_TOKEN = Secret("env", "BLAPI_TEST_TOKEN", "airflow", "BLAPI_TEST_TOKEN")
+BLAPI_TEST_DATABASE_URL = Secret("env", "BLAPI_TEST_DATABASE_URL", "airflow", "BLAPI_TEST_DATABASE_URL")
+
 # dbt Cloud
 DBT_CLOUD_API_KEY = Secret("env", "DBT_CLOUD_API_KEY", "airflow", "DBT_CLOUD_API_KEY")
 DBT_CLOUD_API_ACCOUNT_ID = Secret(
