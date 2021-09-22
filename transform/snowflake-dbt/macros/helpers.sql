@@ -89,21 +89,78 @@ select get_sys_var({{ var_name }})
 
 {% endmacro %}
 
-{% macro get_rudder_track_columns(schema, database=target.database, table_exclusions=table_exclusions, table_inclusions=table_inclusions) %}
+{% macro get_target_table(schema = this.schema, database=this.database) %}
     select distinct
-        table_schema as "table_schema", table_name as "table_name", column_name as "column_name"
-    from {{database}}.information_schema.columns
+        table_schema as "table_schema", table_name as "table_name"
+    from {{database}}.information_schema.tables
     WHERE table_schema ilike '{{ this.schema }}'
     AND table_name ilike '{{ this.table }}'
-    {%- if table_exclusions -%}
 
-     and lower(table_name) not in ({{ table_exclusions}})
-     
-    {%- endif -%}
-    {%- if table_inclusions and scheme != 'portal_test' -%}
+{% endmacro %}
 
-     and lower(table_name) in ({{ table_inclusions}})
-     
+{%- macro add_new_columns(relation, column_superset, source_column_name=none, column_override=none) -%}
+
+    {#-- Prevent querying of db in parsing mode. This works because this macro does not create any new refs. -#}
+    {%- if not execute %}
+        {{ return('') }}
+    {% endif -%}
+
+    {%- set column_override = column_override if column_override is not none else {} -%}
+    {%- set source_column_name = source_column_name if source_column_name is not none else '_dbt_source_relation' -%}
+    {%- set dtypes = {} -%} 
+    {%- set match_names = [] -%}
+
+    {%- set missing_columns = {} -%}
+    {%- for tbl in relation -%}
+        {%- do dbt_utils._is_relation(tbl, 'add_new_columns') -%}
+        {%- set cols = adapter.get_columns_in_relation(tbl) -%}
+        {%- for key, value in column_superset.items() -%}
+        
+            {%- if value not in cols -%}
+                {%- for col in cols -%}
+                    {%- if (value.name == col.name) and (value.data_type != col.data_type) -%}
+
+                        {%- do dtypes.update({col.column: col.data_type}) -%}
+                        {%- do match_names.append(col.column) -%}
+                
+                    {%- elif value.name == col.name -%}
+
+                        {%- do dtypes.update({col.column: col.data_type}) -%}
+                        {%- do match_names.append(col.name) -%}
+                    
+                    {%- endif -%}
+                {%- endfor -%}
+
+                {%- if value.name not in match_names -%}
+                    {%- do missing_columns.update({value.column: value}) -%}
+                {%- endif -%}
+
+            {%- endif -%}
+
+        {%- endfor -%}
+    {%- endfor -%}
+
+    {%- set missing_column_names = missing_columns.keys() -%}
+
+    {%- if missing_columns == {} -%}
+        SELECT CURRENT_TIMESTAMP
+    {%- else -%}
+
+    ALTER TABLE {{ this.database }}.{{ this.schema }}.{{ this.table }} ADD COLUMN
+    {% for col_name in missing_column_names -%}
+        {%- if col_name not in dtypes.keys() -%}
+
+        {%- set col = missing_columns[col_name] -%}
+        {%- set col_type = column_override.get(col.column, col.data_type) -%}
+        {%- set col_name = col_name | lower -%}
+
+            {{ col_name }} {{ col_type }}
+
+            {%- if not loop.last -%},{%- elif loop.last -%};
+            {%- endif -%}
+        {%- endif -%}
+
+    {%- endfor -%}
     {%- endif -%}
 
 {% endmacro %}
@@ -134,7 +191,14 @@ select get_sys_var({{ var_name }})
 
     {%- endcall -%}
 
+    {%- call statement('get_target_table', fetch_result=True) %}
+
+      {{ get_target_table(schema, database) }}
+
+    {%- endcall -%}
+
     {%- set table_list = load_result('get_tables') -%}
+    {%- set target_table = load_result('get_target_table') -%}
 
     {%- if table_list and table_list['table'] -%}
         {%- set tbl_relations = [] -%}
@@ -143,14 +207,20 @@ select get_sys_var({{ var_name }})
             {%- do tbl_relations.append(tbl_relation) -%}
         {%- endfor -%}
 
-        {{ return(tbl_relations) }}
+        {%- set tgt_tbl_relations = [] -%}
+        {%- for row in target_table['table'] -%}
+            {%- set tgt_tbl_relation = api.Relation.create(database, row.table_schema, row.table_name) -%}
+            {%- do tgt_tbl_relations.append(tgt_tbl_relation) -%}
+        {%- endfor -%}
+
+        {{ return([tbl_relations, tgt_tbl_relations]) }}
     {%- else -%}
         {{ return([]) }}
     {%- endif -%}
 
 {% endmacro %}
 
-{%- macro union_relations(relations, column_override=none, include=[], exclude=[], source_column_name=none) -%}
+{%- macro union_relations(relations, tgt_relation, column_override=none, include=[], exclude=[], source_column_name=none) -%}
 
     {%- if exclude and include -%}
         {{ exceptions.raise_compiler_error("Both an exclude and include list were provided to the `union` macro. Only one is allowed") }}
@@ -208,6 +278,13 @@ select get_sys_var({{ var_name }})
     {%- endfor -%}
 
     {%- set ordered_column_names = column_superset.keys() -%}
+    
+    {%- call statement('add_new_columns', fetch_result=True) %}
+
+      {{ add_new_columns(relation = tgt_relation, column_superset=column_superset) }}
+
+    {%- endcall -%}
+
 
     {%- if is_incremental() -%}
         with
