@@ -92,7 +92,7 @@ select get_sys_var({{ var_name }})
 {% macro get_target_table(schema = this.schema, database=this.database) %}
     select distinct
         table_schema as "table_schema", table_name as "table_name"
-    from {{database}}.information_schema.tables
+    from {{this.database}}.information_schema.tables
     WHERE table_schema ilike '{{ this.schema }}'
     AND table_name ilike '{{ this.table }}'
 
@@ -209,7 +209,7 @@ select get_sys_var({{ var_name }})
 
         {%- set tgt_tbl_relations = [] -%}
         {%- for row in target_table['table'] -%}
-            {%- set tgt_tbl_relation = api.Relation.create(database, row.table_schema, row.table_name) -%}
+            {%- set tgt_tbl_relation = api.Relation.create(this.database, row.table_schema, row.table_name) -%}
             {%- do tgt_tbl_relations.append(tgt_tbl_relation) -%}
         {%- endfor -%}
 
