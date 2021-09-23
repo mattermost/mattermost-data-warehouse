@@ -3,6 +3,7 @@ from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 import logging
 import os
+import sys
 
 from sqlalchemy import *
 from sqlalchemy.sql import select, and_
@@ -14,7 +15,9 @@ def get_beginning_of_month(dt):
 
 
 def main():
-    test_mode = sys.argv[1]
+    test_mode = ""
+    if len(sys.argv) > 1:
+        test_mode = sys.argv[1]
     blapi_token = ""
     blapi_url = ""
     db_url = ""
