@@ -50,4 +50,5 @@ run_nightly_billing = KubernetesPodOperator(
     env_vars=env_vars,
     arguments=[run_nightly_billing_cmd],
     dag=dag,
+    is_delete_operator_pod=False,
 )
