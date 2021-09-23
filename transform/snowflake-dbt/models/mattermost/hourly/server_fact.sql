@@ -205,6 +205,7 @@ WITH sdd AS (
                     THEN TRUE ELSE FALSE END) AS retention_28day_flag
       , COUNT(DISTINCT CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '672 HOURS' AND sdd.first_active_date + INTERVAL '696 HOURS' 
                     THEN user_events_telemetry.user_actual_id ELSE NULL END) AS retention_28day_users
+      , COUNT(DISTINCT user_events_telemetry.user_actual_id) as active_users_alltime
     FROM {{ ref('user_events_telemetry') }}
     JOIN sdd ON sdd.server_id = COALESCE(user_events_telemetry.user_id, IFF(LENGTH(user_events_telemetry.context_server) < 26, NULL, user_events_telemetry.context_server),
                           IFF(LENGTH(user_events_telemetry.context_traits_userid) < 26, NULL,user_events_telemetry.context_traits_userid),
@@ -264,7 +265,9 @@ WITH sdd AS (
       , MAX(licenses.trial_license_expire_date)           AS trial_license_expire_date
       , MAX(sdd.first_active_date)             AS first_active_date
       , MAX(sdd.last_active_date)              AS last_active_date
-      , COALESCE(MAX(server_details.max_active_user_count),0)
+      , CASE WHEN COALESCE(MAX(server_details.max_active_user_count),0) >= COALESCE(MAX(lsd.active_users_alltime), 0)
+            THEN COALESCE(MAX(server_details.max_active_user_count),0) 
+               ELSE COALESCE(MAX(lsd.active_users_alltime), 0) END
                                                           AS max_active_user_count
       , MAX(COALESCE(max_monthly_active_users, 0))                             AS max_mau
       , MAX(lsd.last_event_date)         AS last_telemetry_active_user_date
