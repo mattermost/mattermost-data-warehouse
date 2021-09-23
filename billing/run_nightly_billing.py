@@ -59,6 +59,7 @@ def main():
             retries = 0
             url = f"{blapi_url}/api/v1/customer/{sub['customer_id']}/subscriptions/{sub['id']}/invoice/build"
 
+            resp = None
             while retries < 5:
                 try:
                     retries += 1
@@ -67,7 +68,7 @@ def main():
                 except requests.exceptions.ConnectionError:
                     pass
 
-            if resp.status_code != requests.codes.ok:
+            if resp and resp.status_code != requests.codes.ok:
                 message = f"Error building invoice for subscription {sub['id']} with dates {start_date}-{end_date}"
                 logging.error(message)
                 errors.append(message)
