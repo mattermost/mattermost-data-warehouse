@@ -3,6 +3,7 @@ from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 import logging
 import os
+import sys
 
 from sqlalchemy import *
 from sqlalchemy.sql import select, and_
@@ -14,11 +15,24 @@ def get_beginning_of_month(dt):
 
 
 def main():
-    blapi_token = os.getenv("BLAPI_TOKEN")
-    blapi_url = os.getenv("BLAPI_URL")
+    test_mode = ""
+    if len(sys.argv) > 1:
+        test_mode = sys.argv[1]
+    blapi_token = ""
+    blapi_url = ""
+    db_url = ""
+    if test_mode == "test":
+        blapi_token = os.getenv("BLAPI_TEST_TOKEN")
+        blapi_url = os.getenv("BLAPI_TEST_URL")
+        db_url = os.getenv("BLAPI_TEST_DATABASE_URL")
+    else:
+        blapi_token = os.getenv("BLAPI_TOKEN")
+        blapi_url = os.getenv("BLAPI_URL")
+        db_url = os.getenv("BLAPI_DATABASE_URL")
+    
     header = {"Authorization": f"Bearer {blapi_token}"}
 
-    engine = create_engine(os.getenv("BLAPI_DATABASE_URL"))
+    engine = create_engine(db_url)
     with engine.connect() as conn:
         now = datetime.now()
         end_date = datetime(now.year, now.month, now.day)
