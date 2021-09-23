@@ -38,7 +38,7 @@ dag = DAG(
 
 run_nightly_billing_cmd = f"""
     {clone_and_setup_extraction_cmd} &&
-    python billing/run_nightly_billing.py
+    python billing/run_nightly_billing.py test
 """
 
 run_nightly_billing = KubernetesPodOperator(
