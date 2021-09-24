@@ -3,6 +3,8 @@ from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 import logging
 import os
+import sys
+import time
 
 from sqlalchemy import *
 from sqlalchemy.sql import select, and_
@@ -14,11 +16,24 @@ def get_beginning_of_month(dt):
 
 
 def main():
-    blapi_token = os.getenv("BLAPI_TOKEN")
-    blapi_url = os.getenv("BLAPI_URL")
+    test_mode = ""
+    if len(sys.argv) > 1:
+        test_mode = sys.argv[1]
+    blapi_token = ""
+    blapi_url = ""
+    db_url = ""
+    if test_mode == "test":
+        blapi_token = os.getenv("BLAPI_TEST_TOKEN")
+        blapi_url = os.getenv("BLAPI_TEST_URL")
+        db_url = os.getenv("BLAPI_TEST_DATABASE_URL")
+    else:
+        blapi_token = os.getenv("BLAPI_TOKEN")
+        blapi_url = os.getenv("BLAPI_URL")
+        db_url = os.getenv("BLAPI_DATABASE_URL")
+    time.sleep(10000)
     header = {"Authorization": f"Bearer {blapi_token}"}
 
-    engine = create_engine(os.getenv("BLAPI_DATABASE_URL"))
+    engine = create_engine(db_url)
     with engine.connect() as conn:
         now = datetime.now()
         end_date = datetime(now.year, now.month, now.day)
@@ -45,6 +60,7 @@ def main():
             retries = 0
             url = f"{blapi_url}/api/v1/customer/{sub['customer_id']}/subscriptions/{sub['id']}/invoice/build"
 
+            resp = None
             while retries < 5:
                 try:
                     retries += 1
@@ -53,7 +69,7 @@ def main():
                 except requests.exceptions.ConnectionError:
                     pass
 
-            if resp.status_code != requests.codes.ok:
+            if resp and resp.status_code != requests.codes.ok:
                 message = f"Error building invoice for subscription {sub['id']} with dates {start_date}-{end_date}"
                 logging.error(message)
                 errors.append(message)

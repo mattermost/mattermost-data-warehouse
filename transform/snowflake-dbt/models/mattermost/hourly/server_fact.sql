@@ -175,6 +175,17 @@ WITH sdd AS (
            ON sd.server_id = s.server_id
       GROUP BY 1
     ),
+
+    cloud_payment_method AS (
+      SELECT s.cloud_installation_id
+          , MIN(pm.created_at) as first_payment_method_date
+      FROM {{ref('subscriptions_blapi')}} s
+      JOIN {{ ref('payment_methods')}} pm
+        ON s.customer_id = pm.customer_id
+      WHERE s.cloud_installation_id is not null
+      GROUP BY 1
+    ),
+
   last_server_date AS (
     SELECT
         COALESCE(user_id, context_server, context_traits_server) AS server_id
@@ -194,6 +205,7 @@ WITH sdd AS (
                     THEN TRUE ELSE FALSE END) AS retention_28day_flag
       , COUNT(DISTINCT CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '672 HOURS' AND sdd.first_active_date + INTERVAL '696 HOURS' 
                     THEN user_events_telemetry.user_actual_id ELSE NULL END) AS retention_28day_users
+      , COUNT(DISTINCT user_events_telemetry.user_actual_id) as active_users_alltime
     FROM {{ ref('user_events_telemetry') }}
     JOIN sdd ON sdd.server_id = COALESCE(user_events_telemetry.user_id, IFF(LENGTH(user_events_telemetry.context_server) < 26, NULL, user_events_telemetry.context_server),
                           IFF(LENGTH(user_events_telemetry.context_traits_userid) < 26, NULL,user_events_telemetry.context_traits_userid),
@@ -253,7 +265,9 @@ WITH sdd AS (
       , MAX(licenses.trial_license_expire_date)           AS trial_license_expire_date
       , MAX(sdd.first_active_date)             AS first_active_date
       , MAX(sdd.last_active_date)              AS last_active_date
-      , COALESCE(MAX(server_details.max_active_user_count),0)
+      , CASE WHEN COALESCE(MAX(server_details.max_active_user_count),0) >= COALESCE(MAX(lsd.active_users_alltime), 0)
+            THEN COALESCE(MAX(server_details.max_active_user_count),0) 
+               ELSE COALESCE(MAX(lsd.active_users_alltime), 0) END
                                                           AS max_active_user_count
       , MAX(COALESCE(max_monthly_active_users, 0))                             AS max_mau
       , MAX(lsd.last_event_date)         AS last_telemetry_active_user_date
@@ -323,6 +337,7 @@ WITH sdd AS (
         , MAX(lsd.retention_28day_flag) AS retention_28day_flag
         , MAX(lsd.retention_28day_users) AS retention_28day_users
         , MAX(COALESCE(nullif(TRIM(server_activity.last_ip_address), ''), NULLIF(fse.last_ip_address, ''))) AS last_ip_address
+        , MIN(cpm.first_payment_method_date) AS cloud_payment_method_added
     FROM sdd
         LEFT JOIN server_details
           ON sdd.server_id = server_details.server_id
@@ -346,6 +361,8 @@ WITH sdd AS (
             ON sdd.server_id = server_activity.user_id
         LEFT JOIN incident_mgmt im
             ON sdd.server_id = im.server_id
+        LEFT JOIN cloud_payment_method cpm
+            ON sdd.installation_id = cpm.cloud_installation_id
         {% if is_incremental() %}
           WHERE sdd.last_active_date::date >= (SELECT MAX(last_active_date::date) - INTERVAL '1 DAY' FROM {{this}})
         {% endif %}
