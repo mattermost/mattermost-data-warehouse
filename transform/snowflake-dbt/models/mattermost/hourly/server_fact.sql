@@ -57,6 +57,7 @@ WITH sdd AS (
       , MAX(sdde.POSTS)                                                                     AS max_posts
       , MAX(sdde.enabled_plugins)                                                           AS max_enabled_plugins
       , MAX(sdde.disabled_plugins)                                                           AS max_disabled_plugins
+      , MAX(CASE WHEN COALESCE(enable_testing, FALSE) or COALESCE(enable_developer_service, FALSE) THEN TRUE ELSE FALSE END)  AS dev_testing_enabled
     FROM {{ ref('server_daily_details_ext') }} sdde
     WHERE DATE <= CURRENT_DATE - INTERVAL '1 DAY'
     GROUP BY 1
@@ -338,6 +339,7 @@ WITH sdd AS (
         , MAX(lsd.retention_28day_users) AS retention_28day_users
         , MAX(COALESCE(nullif(TRIM(server_activity.last_ip_address), ''), NULLIF(fse.last_ip_address, ''))) AS last_ip_address
         , MIN(cpm.first_payment_method_date) AS cloud_payment_method_added
+        , MAX(server_details.dev_testing_enabled) AS dev_testing_enabled
     FROM sdd
         LEFT JOIN server_details
           ON sdd.server_id = server_details.server_id
