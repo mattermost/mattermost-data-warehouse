@@ -50,7 +50,7 @@ focalboard_config AS (
       AND config.received_at = mt.max_time
     WHERE config.received_at::DATE <= CURRENT_DATE
     {% if is_incremental() %}
-      and config.received_at >= (select max(received_at) from {{ this }})
+      and config.received_at > (select max(received_at) from {{ this }})
       {%- if col_count != none -%}
 
       {{dbt_utils.group_by(n=col_count)}}
