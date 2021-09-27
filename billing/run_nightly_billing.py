@@ -4,7 +4,6 @@ from dateutil.relativedelta import relativedelta
 import logging
 import os
 import sys
-import time
 
 from sqlalchemy import *
 from sqlalchemy.sql import select, and_
