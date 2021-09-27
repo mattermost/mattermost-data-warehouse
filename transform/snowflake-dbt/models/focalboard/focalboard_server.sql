@@ -52,7 +52,7 @@ focalboard_server AS (
       AND server.received_at = mt.max_time
     WHERE server.received_at::DATE <= CURRENT_DATE
     {% if is_incremental() %}
-      and server.received_at >= (select max(received_at) from {{ this }})
+      and server.received_at > (select max(received_at) from {{ this }})
       {%- if col_count != none -%}
 
       {{dbt_utils.group_by(n=col_count)}}

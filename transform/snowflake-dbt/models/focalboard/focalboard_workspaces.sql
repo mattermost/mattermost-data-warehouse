@@ -47,7 +47,7 @@ focalboard_workspaces AS (
       AND workspaces.received_at = mt.max_time
     WHERE workspaces.received_at::DATE <= CURRENT_DATE
     {% if is_incremental() %}
-      and workspaces.received_at >= (select max(received_at) from {{ this }})
+      and workspaces.received_at > (select max(received_at) from {{ this }})
       {%- if col_count != none -%}
 
       {{dbt_utils.group_by(n=col_count)}}

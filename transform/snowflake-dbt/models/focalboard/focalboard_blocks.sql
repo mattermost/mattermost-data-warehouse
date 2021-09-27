@@ -54,7 +54,7 @@ focalboard_blocks AS (
       AND blocks.received_at = mt.max_time
     WHERE blocks.received_at::DATE <= CURRENT_DATE
     {% if is_incremental() %}
-      and blocks.received_at >= (select max(received_at) from {{ this }})
+      and blocks.received_at > (select max(received_at) from {{ this }})
       {%- if col_count != none -%}
 
       {{dbt_utils.group_by(n=col_count)}}
