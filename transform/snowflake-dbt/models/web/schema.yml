@@ -9,3 +9,6 @@ models:
 
   - name: user_agent_registry
     description: Contains all user agents collected via server-side and user event telemetry.
+
+  - name: mattermost_docs_feedback
+    description: Contains the feedback responses to the Mattermost Documentation modal regarding user satisfaction with Mattermost Documentation.
