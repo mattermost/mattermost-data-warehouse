@@ -1,6 +1,10 @@
 version: 2
 
 sources:
+  - name: mattermost_docs
+    database: RAW
+    schema: mattermost_docs
+
   - name: web
     database: ANALYTICS
     schema: web
