@@ -4,7 +4,6 @@ from dateutil.relativedelta import relativedelta
 import logging
 import os
 import sys
-import time
 
 from sqlalchemy import *
 from sqlalchemy.sql import select, and_
@@ -30,7 +29,7 @@ def main():
         blapi_token = os.getenv("BLAPI_TOKEN")
         blapi_url = os.getenv("BLAPI_URL")
         db_url = os.getenv("BLAPI_DATABASE_URL")
-    time.sleep(10000)
+
     header = {"Authorization": f"Bearer {blapi_token}"}
 
     engine = create_engine(db_url)
