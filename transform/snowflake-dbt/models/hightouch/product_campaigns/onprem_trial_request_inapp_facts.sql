@@ -50,6 +50,7 @@ with existing_members as (
         , contact.sfid as contact_sfid
         , lead.sfid is not null as lead_exists
         , contact.sfid is not null as contact_exists
+        , '7013p000001NkNoAAK' as campaign_sfid
         , 'Enterprise Trial' as lead_action
         , 'In-Product Trial Request' as action_detail
         , 'Referral' as lead_source
