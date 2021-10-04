@@ -53,7 +53,7 @@ focalboard_blocks AS (
     JOIN max_time mt
       ON blocks.user_id = mt.user_id
       AND blocks.received_at = mt.max_time
-      AND activity.timestamp = mt.max_ts
+      AND blocks.timestamp = mt.max_ts
     WHERE blocks.received_at::DATE <= CURRENT_DATE
     {% if is_incremental() %}
       and blocks.received_at > (select max(received_at) from {{ this }})

@@ -46,7 +46,7 @@ focalboard_workspaces AS (
     JOIN max_time mt
       ON workspaces.user_id = mt.user_id
       AND workspaces.received_at = mt.max_time
-      AND activity.timestamp = mt.max_ts
+      AND workspaces.timestamp = mt.max_ts
     WHERE workspaces.received_at::DATE <= CURRENT_DATE
     {% if is_incremental() %}
       and workspaces.received_at > (select max(received_at) from {{ this }})
