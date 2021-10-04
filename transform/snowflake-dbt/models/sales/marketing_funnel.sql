@@ -47,6 +47,7 @@ lead_creation as (
 mql as (
     select date_trunc(month,most_recent_mql_date__c) as month, count(*) as count_mql
     from {{ ref('lead') }}
+    where First_MQL_Date__c != '' or (most_recent_mql_date__c != '' and Most_Recent_Reengaged_Date__c != '')
     group by 1
 ),
 
