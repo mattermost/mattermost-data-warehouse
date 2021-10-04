@@ -15,6 +15,7 @@ WITH max_time AS (
     user_id
   , timestamp::date as date
   , MAX(received_at) AS max_time
+  , MAX(timestamp) AS max_ts
   FROM {{ source('hacktoberboard_prod', 'activity') }}
   WHERE received_at::DATE <= CURRENT_DATE
   GROUP BY 1, 2
@@ -48,6 +49,7 @@ focalboard_activity AS (
     JOIN max_time mt
       ON activity.user_id = mt.user_id
       AND activity.received_at = mt.max_time
+      AND activity.timestamp = mt.max_ts
     WHERE activity.received_at::DATE <= CURRENT_DATE
     {% if is_incremental() %}
       and activity.received_at > (select max(received_at) from {{ this }})
