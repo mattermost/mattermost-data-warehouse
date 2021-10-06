@@ -45,9 +45,16 @@ lead_creation as (
 ),
 
 mql as (
-    select date_trunc(month,most_recent_mql_date__c) as month, count(*) as count_mql
+    select date_trunc(month,first_mql_date__c) as month, count(*) as count_mql
     from {{ ref('lead') }}
-    where First_MQL_Date__c is not null or (most_recent_mql_date__c is not null and Most_Recent_Reengaged_Date__c is not null)
+    where first_mql_date__c is not null
+    group by 1
+),
+
+reengaged_mql as (
+    select date_trunc(month,most_recent_mql_date__c) as month, count(*) as count_reengaged_mql
+    from {{ ref('lead') }}
+    where most_recent_mql_date__c is not null and Most_Recent_Reengaged_Date__c is not null
     group by 1
 ),
 
@@ -146,6 +153,7 @@ marketing_funnel as (
         coalesce(web_traffic.count_web_traffic,0) as count_web_traffic,
         coalesce(lead_creation.count_lead_creation,0) as count_lead_creation,
         coalesce(mql.count_mql,0) as count_mql,
+        coalesce(reengaged_mql.count_reengaged_mql,0) as count_reengaged_mql,
         coalesce(sal.count_sal,0) as count_sal,
         coalesce(sql.count_sql,0) as count_sql,
         coalesce(pipeline_created.pipeline_amount,0) as pipeline_amount,
@@ -187,6 +195,7 @@ marketing_funnel as (
     left join web_traffic on months.month = web_traffic.month
     left join lead_creation on months.month = lead_creation.month
     left join mql on months.month = mql.month
+    left join reengaged_mql on months.month = reengaged_mql.month
     left join sal on months.month = sal.month
     left join sql on months.month = sql.month
     left join pipeline_created on months.month = pipeline_created.month
