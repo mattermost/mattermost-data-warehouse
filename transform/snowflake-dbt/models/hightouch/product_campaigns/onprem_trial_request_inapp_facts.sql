@@ -29,6 +29,7 @@ with existing_members as (
 ), trial_facts as (
     select
         tr.email
+        , left(tr.email, 40) as first_name
         , tr.site_url
         , tr.license_id
         , tr.sfid

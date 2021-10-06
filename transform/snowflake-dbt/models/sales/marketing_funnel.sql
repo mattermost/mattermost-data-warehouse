@@ -17,19 +17,19 @@ web_traffic as (
         date_trunc(month,daily_website_traffic.timestamp) as month,
         count(distinct daily_website_traffic.anonymous_id) as count_web_traffic
     from {{ ref('daily_website_traffic') }}
-    left join web.user_agent_registry  AS user_agent_registry ON coalesce(daily_website_traffic.context_useragent, daily_website_traffic.context_user_agent) = user_agent_registry.context_useragent
+    left join {{ source('user_agent_registry', 'user_agent_registry') }} AS user_agent_registry ON coalesce(daily_website_traffic.context_useragent, daily_website_traffic.context_user_agent) = user_agent_registry.context_useragent
     where split_part(
         regexp_substr(
-            case 
-                when nullif(split_part(context_page_url, '?', 2),'') is not null 
-                    then case 
-                        when regexp_substr(split_part(context_page_url, '?', 1), 'preparing[-]{1}workspace') = 'preparing-workspace' 
+            case
+                when nullif(split_part(context_page_url, '?', 2),'') is not null
+                    then case
+                        when regexp_substr(split_part(context_page_url, '?', 1), 'preparing[-]{1}workspace') = 'preparing-workspace'
                             then 'https://customers.mattermost.com/preparing-workspace'
-                        else split_part(context_page_url, '?', 1) 
+                        else split_part(context_page_url, '?', 1)
                     end
-                when regexp_substr(context_page_url, 'preparing[-]{1}workspace') = 'preparing-workspace' 
+                when regexp_substr(context_page_url, 'preparing[-]{1}workspace') = 'preparing-workspace'
                     then 'https://customers.mattermost.com/preparing-workspace'
-                when nullif(split_part(context_page_url, '/requests/', 2),'') is not null 
+                when nullif(split_part(context_page_url, '/requests/', 2),'') is not null
                     then split_part(context_page_url, '/requests/', 1) || '/requests'
                 else context_page_url
             end,'^(https://|http://)([a-z0-9-]{1,20}[\.]{1}|[A-Za-z0-9-]{1,100})[A-Za-z0-9-]{0,100}[\.]{1}[a-z]{1,10}'
@@ -64,8 +64,8 @@ sql as (
 ),
 
 pipeline_created as (
-    select 
-        date_trunc(month,opportunity.createddate) as month, 
+    select
+        date_trunc(month,opportunity.createddate) as month,
         round(sum(opportunity_snapshot.amount),2) as pipeline_amount,
         count(distinct opportunity.sfid) as count_created,
         round(sum(case when created_by_segment like 'Federal%' then opportunity_snapshot.amount else 0 end),2) as federal_pipeline,
@@ -89,8 +89,8 @@ pipeline_created as (
 ),
 
 new_logo_and_arr_creation as (
-    select 
-        date_trunc(month,opportunity.closedate) as month, 
+    select
+        date_trunc(month,opportunity.closedate) as month,
         count(*) as count_new_logo,
         count(distinct case when market_segment = 'Federal' then opportunity_ext.opportunity_sfid else null end) as federal_new_logo,
         count(distinct case when market_segment = 'Commercial' then opportunity_ext.opportunity_sfid else null end) as commercial_new_logo,
