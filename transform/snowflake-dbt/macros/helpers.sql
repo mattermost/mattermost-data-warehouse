@@ -336,10 +336,6 @@ select get_sys_var({{ var_name }})
 
     {%- if not is_incremental() -%}
     with 
-    --
-    {%- elif is_incremental() -%}
-    --
-    {%- endif -%}
 
     {%- for relation in relations %}
                {%- if this.table == 'daily_website_traffic' -%}
@@ -403,7 +399,7 @@ select get_sys_var({{ var_name }})
                     ON {{ relation }}.id = a.join_id
                     AND a._dbt_source_relation = {{ ["'", relation, "'"]|join }}
                 WHERE received_at <= CURRENT_TIMESTAMP
-                AND a.join_id is null 
+                AND a.join_id is null
             {% endif %}
             {% if this.table in ['user_events_telemetry', 'rudder_webapp_events', 'mobile_events', 'portal_events', 'cloud_pageview_events', 'cloud_portal_pageview_events'] %}
                 {% if is_incremental() %}
