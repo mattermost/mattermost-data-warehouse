@@ -336,6 +336,10 @@ select get_sys_var({{ var_name }})
 
     {%- if not is_incremental() -%}
     with 
+    --
+    {%- elif is_incremental() -%}
+    --
+    {%- endif -%}
 
     {%- for relation in relations %}
                {%- if this.table == 'daily_website_traffic' -%}
