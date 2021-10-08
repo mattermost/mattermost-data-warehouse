@@ -285,6 +285,56 @@ select get_sys_var({{ var_name }})
 
     {%- endcall -%}
 
+
+    {%- if is_incremental() -%}
+        with
+        --
+
+        {%- if this.table == 'user_events_telemetry' -%}
+        --
+        max_time AS (
+                 SELECT
+                    _dbt_source_relation2
+                    , MAX(received_at) as max_time
+                 FROM {{ this }} 
+                 WHERE {{this}}.received_at <= CURRENT_TIMESTAMP
+                 GROUP BY 1
+             ), 
+
+        join_key AS (
+                SELECT 
+                    id as join_id
+                  , {{this}}._dbt_source_relation2
+                FROM {{ this }}
+                JOIN max_time mt
+                    ON {{ this }}.received_at > mt.max_time
+                    AND {{this}}.received_at <= CURRENT_TIMESTAMP
+             ),
+
+             {%- else -%}
+             --
+             max_time AS (
+                 SELECT 
+                    MAX(received_at) AS max_time
+                 FROM {{ this }} 
+                 WHERE received_at <= CURRENT_TIMESTAMP
+             ),
+
+             join_key AS (
+                    SELECT 
+                        id as join_id
+                      , _dbt_source_relation
+                    FROM {{ this }}
+                    JOIN max_time mt
+                        ON {{ this }}.received_at > mt.max_time 
+                        AND {{this}}.received_at <= CURRENT_TIMESTAMP
+             ), 
+        
+            {%- endif -%}
+
+    {%- endif -%}
+
+    {%- if not is_incremental() -%}
     with 
 
     {%- for relation in relations %}
@@ -333,12 +383,23 @@ select get_sys_var({{ var_name }})
               
               {% if is_incremental() and this.table == 'user_events_telemetry' %}
 
+                JOIN max_time mt
+                    ON {{ relation }}.received_at >= mt.max_time
+                    AND mt._dbt_source_relation2 = {{ ["'", relation, "'"]|join }}
+                LEFT JOIN join_key a
+                    ON {{ relation }}.id = a.join_id
+                    AND a._dbt_source_relation2 = {{ ["'", relation, "'"]|join }}
                 WHERE received_at <= CURRENT_TIMESTAMP
-                AND received_at > (SELECT MAX(received_at) FROM {{this}} WHERE _dbt_source_relation2 = {{ ["'", relation, "'"]|join }})
+                AND a.join_id is null
                 
             {% elif is_incremental() %}
+                JOIN max_time mt
+                    ON {{ relation }}.received_at >= mt.max_time
+                LEFT JOIN join_key a
+                    ON {{ relation }}.id = a.join_id
+                    AND a._dbt_source_relation = {{ ["'", relation, "'"]|join }}
                 WHERE received_at <= CURRENT_TIMESTAMP
-                AND received_at > (SELECT MAX(received_at) FROM {{this}} WHERE _dbt_source_relation = {{ ["'", relation, "'"]|join }})
+                AND a.join_id is null
             {% endif %}
             {% if this.table in ['user_events_telemetry', 'rudder_webapp_events', 'mobile_events', 'portal_events', 'cloud_pageview_events', 'cloud_portal_pageview_events'] %}
                 {% if is_incremental() %}
