@@ -31,7 +31,7 @@ WITH sdd AS (
             FROM {{ ref('server_daily_details') }}
             GROUP BY 1
             {% if is_incremental() %}
-            HAVING MAX(CASE WHEN in_security OR in_mm2_server THEN timestamp ELSE NULL END)::date > (SELECT MAX(last_active_date::date) - INTERVAL '1 DAY' FROM {{this}})
+            HAVING MAX(CASE WHEN in_security OR in_mm2_server THEN timestamp ELSE NULL END) > (SELECT MAX(last_active_date) - INTERVAL '6 HOURS' FROM {{this}})
             {% endif %}
           ),
 
@@ -70,9 +70,8 @@ WITH sdd AS (
           activity.user_id              as server_id
         , max(activity.timestamp)       as max_time
         , max(activity.timestamp::date) as max_date 
-      from sdd
-      JOIN {{ source('mattermost2', 'activity') }} 
-        ON activity.user_id = sdd.server_id
+      from {{ source('mattermost2', 'activity') }} 
+      where activity.user_id in (SELECT server_id from sdd GROUP BY 1)
       group by 1
     ),
 
@@ -81,9 +80,8 @@ WITH sdd AS (
           activity.user_id              as server_id
         , max(activity.timestamp)       as max_time
         , max(activity.timestamp::date) as max_date 
-      from sdd
-      JOIN {{ source('mattermost2', 'activity') }} 
-        ON activity.user_id = sdd.server_id
+      from {{ source('mattermost2', 'activity') }} 
+      where activity.user_id in (SELECT server_id from sdd GROUP BY 1)
       group by 1
     ),
 
@@ -114,7 +112,8 @@ WITH sdd AS (
         , context_request_ip  
         FROM {{ source('mm_telemetry_prod', 'activity') }} s1 
         JOIN max_rudder_time s2
-          ON s1.user_id = s2.server_id AND s1.timestamp = s2.max_time 
+          ON s1.user_id = s2.server_id 
+          AND s1.timestamp = s2.max_time 
     ),
 
     segment_activity AS (
@@ -143,7 +142,8 @@ WITH sdd AS (
         , max_date
         FROM {{ source('mattermost2', 'activity') }} s1
         JOIN max_segment_time s2
-          ON s1.user_id = s2.server_id AND s1.timestamp = s2.max_time 
+          ON s1.user_id = s2.server_id 
+          AND s1.timestamp = s2.max_time 
     ),
 
     server_activity as (
@@ -208,27 +208,11 @@ WITH sdd AS (
 
     incident_mgmt as (
       SELECT
-        sdd.server_id
+        incident_response_events.user_id as server_id
       , count(incident_response_events.id) as incident_mgmt_events_alltime
-      FROM sdd
-      JOIN {{ ref('incident_response_events')}}
-        ON sdd.server_id = incident_response_events.user_id
+      FROM {{ ref('incident_response_events')}}
+      where incident_response_events.user_id in (SELECT server_id from sdd GROUP BY 1)
       group by 1
-    ),
-
-    s_ext as (
-            SELECT 
-              server_daily_details.server_id 
-            , server_daily_details.date
-            , server_daily_details.edition
-            , server_daily_details.version
-            , server_daily_details.license_id1
-            , server_daily_details.license_id2
-            , server_daily_details.ip_address
-            FROM sdd
-            JOIN {{ ref('server_daily_details') }}
-              ON sdd.server_id = server_daily_details.server_id
-            GROUP BY 1, 2, 3, 4, 5, 6, 7
     ),
     
     first_server_edition AS (
@@ -244,7 +228,7 @@ WITH sdd AS (
         , MAX(CASE WHEN sd.last_active_license_date = s.date THEN license_id2 ELSE NULL END)     AS last_license_id2
         , NULLIF(MAX(CASE WHEN sd.last_ip_date = s.date THEN s.ip_address ELSE NULL END), '')     AS last_ip_address
       FROM sdd sd
-      JOIN s_ext s
+      JOIN {{ ref('server_daily_details') }} s
            ON sd.server_id = s.server_id
       GROUP BY 1
     ),
