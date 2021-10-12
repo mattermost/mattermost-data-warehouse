@@ -388,7 +388,7 @@ select get_sys_var({{ var_name }})
               {% if is_incremental() and this.table == 'user_events_telemetry' %}
 
                 JOIN max_time mt
-                    ON {{ relation }}.received_at >= mt.max_time
+                    ON {{ relation }}.received_at > mt.max_time
                     AND mt._dbt_source_relation2 = {{ ["'", relation, "'"]|join }}
                 LEFT JOIN join_key a
                     ON {{ relation }}.id = a.join_id
@@ -398,7 +398,8 @@ select get_sys_var({{ var_name }})
                 
             {% elif is_incremental() %}
                 JOIN max_time mt
-                    ON {{ relation }}.received_at >= mt.max_time
+                    ON {{ relation }}.received_at > mt.max_time
+                    AND mt._dbt_source_relation = {{ ["'", relation, "'"]|join }}
                 LEFT JOIN join_key a
                     ON {{ relation }}.id = a.join_id
                     AND a._dbt_source_relation = {{ ["'", relation, "'"]|join }}

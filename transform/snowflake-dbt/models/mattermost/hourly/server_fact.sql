@@ -37,12 +37,12 @@ WITH sdd AS (
 
     server_details AS (
     SELECT
-        server_id
+        sdde.server_id
       , MAX(CASE WHEN coalesce(sdde.active_users_daily, sdde.active_users) > sdde.active_user_count 
               THEN coalesce(sdde.active_users_daily, sdde.active_users)
               ELSE sdde.active_user_count END) AS                                              max_active_user_count
       , MAX(sdde.active_users_monthly) AS                                                      max_monthly_active_users
-      , MAX(CASE WHEN COALESCE(sdde.registered_users,0) > COALESCE(user_count, 0)
+      , MAX(CASE WHEN COALESCE(sdde.registered_users,0) > COALESCE(sdde.user_count, 0)
             THEN COALESCE(sdde.registered_users,0) 
             ELSE COALESCE(sdde.user_count,0) END)                                          AS  max_registered_users
       , MAX(coalesce(sdde.registered_deactivated_users, 0))                                AS  max_registered_deactivated_users
@@ -57,27 +57,33 @@ WITH sdd AS (
       , MAX(sdde.POSTS)                                                                     AS max_posts
       , MAX(sdde.enabled_plugins)                                                           AS max_enabled_plugins
       , MAX(sdde.disabled_plugins)                                                           AS max_disabled_plugins
-      , MAX(CASE WHEN COALESCE(enable_testing, FALSE) or COALESCE(enable_developer_service, FALSE) THEN TRUE ELSE FALSE END)  AS dev_testing_enabled
-    FROM {{ ref('server_daily_details_ext') }} sdde
-    WHERE DATE <= CURRENT_DATE - INTERVAL '1 DAY'
+      , MAX(CASE WHEN COALESCE(sdde.enable_testing, FALSE) or COALESCE(sdde.enable_developer_service, FALSE) THEN TRUE ELSE FALSE END)  AS dev_testing_enabled
+    FROM sdd
+    JOIN {{ ref('server_daily_details_ext') }} sdde
+      ON sdde.server_id = sdde.server_id
+    WHERE DATE < CURRENT_DATE
     GROUP BY 1
     ),
 
     max_rudder_time AS (
       select 
-          user_id as server_id
-        , max(timestamp) as max_time
-        , max(timestamp::date) as max_date 
-      from {{ source('mm_telemetry_prod', 'activity') }} 
+          activity.user_id              as server_id
+        , max(activity.timestamp)       as max_time
+        , max(activity.timestamp::date) as max_date 
+      from sdd
+      JOIN {{ source('mattermost2', 'activity') }} 
+        ON activity.user_id = sdd.server_id
       group by 1
     ),
 
     max_segment_time AS (
       select 
-        user_id as server_id
-        , max(timestamp) as max_time
-        , max(timestamp::date) as max_date 
-      from {{ source('mattermost2', 'activity') }} 
+          activity.user_id              as server_id
+        , max(activity.timestamp)       as max_time
+        , max(activity.timestamp::date) as max_date 
+      from sdd
+      JOIN {{ source('mattermost2', 'activity') }} 
+        ON activity.user_id = sdd.server_id
       group by 1
     ),
 
@@ -214,15 +220,17 @@ WITH sdd AS (
               ON sdd.server_id = server_daily_details.server_id
             GROUP BY 1, 2, 3, 4, 5, 6, 7
     ),
+
     incident_mgmt as (
       SELECT
         sdd.server_id
-      , count(distinct incident_response_events.id) as incident_mgmt_events_alltime
+      , count(incident_response_events.id) as incident_mgmt_events_alltime
       FROM sdd
       JOIN {{ ref('incident_response_events')}}
         ON sdd.server_id = incident_response_events.user_id
       group by 1
     ),
+    
     first_server_edition AS (
       SELECT
           s.server_id
@@ -251,7 +259,31 @@ WITH sdd AS (
       GROUP BY 1
     ),
 
-  last_server_date AS (
+  server_active_users AS (
+    SELECT
+        s1.server_id
+      , s1.dau_total
+      , s1.mobile_dau
+      , s1.mau_total
+      , s1.first_time_mau
+      , s1.reengaged_mau
+      , s1.current_mau
+      , s1.total_events
+      , s1.desktop_events
+      , s1.web_app_events
+      , s1.mobile_events
+      , s1.events_alltime
+      , s1.mobile_events_alltime
+      , s1.USERS
+      , s2.last_event_date
+    FROM {{ ref('server_events_by_date') }} s1
+    JOIN last_server_date s2
+         ON s1.server_id = s2.server_id
+         AND s1.date = s2.last_event_date
+        {{ dbt_utils.group_by(n=15) }}
+    ), 
+
+    last_server_date AS (
     SELECT
         COALESCE(user_id, context_server, context_traits_server) AS server_id
       , MAX(TIMESTAMP::DATE) AS last_event_date
@@ -278,29 +310,7 @@ WITH sdd AS (
                           IFF(LENGTH(user_events_telemetry.context_server) < 26, NULL, user_events_telemetry.context_server)) AND user_events_telemetry.user_actual_id is not null
     GROUP BY 1
   ),
-  server_active_users AS (
-    SELECT
-        s1.server_id
-      , s1.dau_total
-      , s1.mobile_dau
-      , s1.mau_total
-      , s1.first_time_mau
-      , s1.reengaged_mau
-      , s1.current_mau
-      , s1.total_events
-      , s1.desktop_events
-      , s1.web_app_events
-      , s1.mobile_events
-      , s1.events_alltime
-      , s1.mobile_events_alltime
-      , s1.USERS
-      , s2.last_event_date
-    FROM {{ ref('server_events_by_date') }} s1
-    JOIN last_server_date s2
-         ON s1.server_id = s2.server_id
-         AND s1.date = s2.last_event_date
-        {{ dbt_utils.group_by(n=15) }}
-    ), 
+
   server_fact AS (
     SELECT
         sdd.server_id
