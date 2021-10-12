@@ -316,7 +316,7 @@ select get_sys_var({{ var_name }})
              max_time AS (
                  SELECT 
                     _dbt_source_relation
-                    MAX(received_at) AS max_time
+                    , MAX(received_at) AS max_time
                  FROM {{ this }} 
                  WHERE received_at <= CURRENT_TIMESTAMP
                  GROUP BY 1
