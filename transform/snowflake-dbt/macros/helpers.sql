@@ -309,6 +309,7 @@ select get_sys_var({{ var_name }})
                 JOIN max_time mt
                     ON {{ this }}.received_at > mt.max_time
                     AND {{this}}.received_at <= CURRENT_TIMESTAMP
+                    AND {{this}}._dbt_source_relation2 = mt._dbt_source_relation2
              ),
 
              {%- else -%}
@@ -330,6 +331,7 @@ select get_sys_var({{ var_name }})
                     JOIN max_time mt
                         ON {{ this }}.received_at > mt.max_time 
                         AND {{this}}.received_at <= CURRENT_TIMESTAMP
+                        AND {{this}}._dbt_source_relation = mt._dbt_source_relation
              ), 
         
             {%- endif -%}
