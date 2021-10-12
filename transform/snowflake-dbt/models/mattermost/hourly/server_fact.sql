@@ -60,7 +60,7 @@ WITH sdd AS (
       , MAX(CASE WHEN COALESCE(sdde.enable_testing, FALSE) or COALESCE(sdde.enable_developer_service, FALSE) THEN TRUE ELSE FALSE END)  AS dev_testing_enabled
     FROM sdd
     JOIN {{ ref('server_daily_details_ext') }} sdde
-      ON sdde.server_id = sdde.server_id
+      ON sdde.server_id = sdd.server_id
     WHERE DATE < CURRENT_DATE
     GROUP BY 1
     ),
