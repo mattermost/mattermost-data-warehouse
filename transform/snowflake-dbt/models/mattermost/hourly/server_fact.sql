@@ -206,16 +206,6 @@ WITH sdd AS (
     GROUP BY 1
     ),
 
-    incident_mgmt as (
-      SELECT
-        sdd.server_id
-      , count(incident_response_events.id) as incident_mgmt_events_alltime
-      FROM sdd
-      JOIN {{ ref('incident_response_events')}}
-        ON sdd.server_id = incident_response_events.user_id
-      group by 1
-    ),
-
     s_ext as (
             SELECT 
               server_daily_details.server_id 
@@ -229,6 +219,16 @@ WITH sdd AS (
             JOIN {{ ref('server_daily_details') }}
               ON sdd.server_id = server_daily_details.server_id
             GROUP BY 1, 2, 3, 4, 5, 6, 7
+    ),
+
+    incident_mgmt as (
+      SELECT
+        sdd.server_id
+      , count(incident_response_events.id) as incident_mgmt_events_alltime
+      FROM sdd
+      JOIN {{ ref('incident_response_events')}}
+        ON sdd.server_id = incident_response_events.user_id
+      group by 1
     ),
     
     first_server_edition AS (
@@ -259,6 +259,30 @@ WITH sdd AS (
       GROUP BY 1
     ),
 
+  server_active_users AS (
+    SELECT
+        s1.server_id
+      , s1.dau_total
+      , s1.mobile_dau
+      , s1.mau_total
+      , s1.first_time_mau
+      , s1.reengaged_mau
+      , s1.current_mau
+      , s1.total_events
+      , s1.desktop_events
+      , s1.web_app_events
+      , s1.mobile_events
+      , s1.events_alltime
+      , s1.mobile_events_alltime
+      , s1.USERS
+      , s2.last_event_date
+    FROM {{ ref('server_events_by_date') }} s1
+    JOIN last_server_date s2
+         ON s1.server_id = s2.server_id
+         AND s1.date = s2.last_event_date
+        {{ dbt_utils.group_by(n=15) }}
+    ), 
+
     last_server_date AS (
     SELECT
         COALESCE(user_id, context_server, context_traits_server) AS server_id
@@ -286,30 +310,6 @@ WITH sdd AS (
                           IFF(LENGTH(user_events_telemetry.context_server) < 26, NULL, user_events_telemetry.context_server)) AND user_events_telemetry.user_actual_id is not null
     GROUP BY 1
   ),
-
-    server_active_users AS (
-    SELECT
-        s1.server_id
-      , s1.dau_total
-      , s1.mobile_dau
-      , s1.mau_total
-      , s1.first_time_mau
-      , s1.reengaged_mau
-      , s1.current_mau
-      , s1.total_events
-      , s1.desktop_events
-      , s1.web_app_events
-      , s1.mobile_events
-      , s1.events_alltime
-      , s1.mobile_events_alltime
-      , s1.USERS
-      , s2.last_event_date
-    FROM {{ ref('server_events_by_date') }} s1
-    JOIN last_server_date s2
-         ON s1.server_id = s2.server_id
-         AND s1.date = s2.last_event_date
-        {{ dbt_utils.group_by(n=15) }}
-    ), 
 
   server_fact AS (
     SELECT
