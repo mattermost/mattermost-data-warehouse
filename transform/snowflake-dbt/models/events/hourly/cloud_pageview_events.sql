@@ -15,7 +15,7 @@ LEFT JOIN
         (
           SELECT DISTINCT ID AS JOIN_KEY
           FROM {{ this }}
-          WHERE TIMESTAMP::DATE >= (SELECT MAX(timestamp::date) FROM {{ this }}) - INTERVAL '1 DAYS'
+          WHERE received_at > (SELECT MAX(received_at) FROM {{ this }})
           AND name != 'ApplicationLoaded'
         ) a
   ON p.id = a.JOIN_KEY
@@ -23,7 +23,7 @@ LEFT JOIN
 WHERE name != 'ApplicationLoaded'
 {% if is_incremental() %}
 
-AND p.timestamp::date >= (SELECT MAX(timestamp::date) FROM {{ this }}) - INTERVAL '1 DAYS'
+AND p.received_at > (SELECT MAX(received_at) FROM {{ this }})
 AND a.join_key is NULL
 
 {% endif %}
