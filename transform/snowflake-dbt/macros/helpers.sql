@@ -329,6 +329,7 @@ select get_sys_var({{ var_name }})
                     JOIN max_time mt
                         ON {{ this }}.received_at > mt.max_time 
                         AND {{this}}.received_at <= CURRENT_TIMESTAMP
+                    GROUP BY 1, 2
              ), 
         
             {%- endif -%}
