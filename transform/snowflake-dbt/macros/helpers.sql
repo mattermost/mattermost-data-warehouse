@@ -316,11 +316,9 @@ select get_sys_var({{ var_name }})
              --
              max_time AS (
                  SELECT 
-                    _dbt_source_relation
-                    , MAX(received_at) AS max_time
+                    MAX(received_at) AS max_time
                  FROM {{ this }} 
                  WHERE received_at <= CURRENT_TIMESTAMP
-                 GROUP BY 1
              ),
 
              join_key AS (
@@ -331,7 +329,6 @@ select get_sys_var({{ var_name }})
                     JOIN max_time mt
                         ON {{ this }}.received_at > mt.max_time 
                         AND {{this}}.received_at <= CURRENT_TIMESTAMP
-                        AND {{this}}._dbt_source_relation = mt._dbt_source_relation
              ), 
         
             {%- endif -%}
@@ -403,7 +400,6 @@ select get_sys_var({{ var_name }})
             {% elif is_incremental() %}
                 JOIN max_time mt
                     ON {{ relation }}.received_at > mt.max_time
-                    AND mt._dbt_source_relation = {{ ["'", relation, "'"]|join }}
                 LEFT JOIN join_key a
                     ON {{ relation }}.id = a.join_id
                     AND a._dbt_source_relation = {{ ["'", relation, "'"]|join }}
