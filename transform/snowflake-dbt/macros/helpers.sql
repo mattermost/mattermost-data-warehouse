@@ -285,7 +285,6 @@ select get_sys_var({{ var_name }})
 
     {%- endcall -%}
 
-
     {%+ if is_incremental() %}
         with
         {+% if this.table == 'user_events_telemetry' %}
@@ -306,11 +305,11 @@ select get_sys_var({{ var_name }})
              ),
             {%+ endif %}
 
-    {% endif %}
+    {%+ endif %}
 
-    {% if not is_incremental() %}
+    {%+ if not is_incremental() %}
     with 
-    {% endif %}
+    {%+ endif %}
     {% for relation in relations %}
                {%+ if this.table == 'daily_website_traffic' %}
                {{ ((((["'", relation, "'"]|join).split('.')[1]))|replace("'", ""))|lower }}_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} AS (
@@ -408,8 +407,6 @@ select get_sys_var({{ var_name }})
             {% endif %}
         {% endfor %} 
 {% endmacro %}
-
-
 
 {% macro latest_record(src) %}
     SELECT DISTINCT o.id as sfid, o.*
