@@ -287,7 +287,7 @@ select get_sys_var({{ var_name }})
 
     {%+ if is_incremental() %}
         with
-        {+% if this.table == 'user_events_telemetry' %}
+        {%+ if this.table == 'user_events_telemetry' %}
         max_time AS (
                  SELECT
                     _dbt_source_relation2
