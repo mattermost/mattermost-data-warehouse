@@ -270,3 +270,6 @@ warehouses:
 
     - reporting_m:
         size: medium
+    
+    - transform_m:
+        size: medium
