@@ -7,19 +7,19 @@
 
 WITH post_events AS (
   SELECT
-      e.date
-    , e.server_id
-    , SUM(CASE WHEN e.event_name IN ('api_posts_create') THEN total_events ELSE NULL END) AS posts
-    , SUM(CASE WHEN e.event_name in ('api_teams_invite_members') THEN total_events ELSE NULL END) AS invite_members
-    , SUM(CASE WHEN er.event_category IN ('signup') THEN total_events ELSE NULL END) AS signup_events
-    , SUM(CASE WHEN er.event_category IN ('signup_email') THEN total_events ELSE NULL END) AS signup_email_events
-    , SUM(CASE WHEN er.event_category IN ('admin') THEN total_events ELSE NULL END) AS admin_events
-    , SUM(CASE WHEN er.event_category IN ('tutorial') THEN total_events ELSE NULL END) AS tutorial_events
-  FROM {{ ref('user_events_by_date') }} e
-  JOIN {{ ref('events_registry')}} er
-      ON e.event_id = er.event_id
-  WHERE e.event_name IN ('api_posts_create', 'api_teams_invite_members')
-  OR er.event_category IN ('signup', 'signup_email', 'admin', 'tutorial')
+      e.timestamp::date as date
+    , COALESCE(e.user_id, IFF(LENGTH(e.context_server) < 26, NULL, e.context_server),
+                          IFF(LENGTH(e.context_traits_userid) < 26, NULL,e.context_traits_userid),
+                          IFF(LENGTH(e.context_server) < 26, NULL, e.context_server)) AS server_id
+    , COUNT(CASE WHEN coalesce(e.type, e.event) IN ('api_posts_create') THEN e.id ELSE NULL END) AS posts
+    , COUNT(CASE WHEN coalesce(e.type, e.event) in ('api_teams_invite_members') THEN e.id ELSE NULL END) AS invite_members
+    , COUNT(CASE WHEN e.category IN ('signup') THEN e.id ELSE NULL END) AS signup_events
+    , COUNT(CASE WHEN e.category IN ('signup_email') THEN e.id ELSE NULL END) AS signup_email_events
+    , COUNT(CASE WHEN e.category IN ('admin') THEN e.id ELSE NULL END) AS admin_events
+    , COUNT(CASE WHEN e.category IN ('tutorial') THEN e.id ELSE NULL END) AS tutorial_events
+  FROM {{ ref('user_events_telemetry') }} e
+  WHERE coalesce(e.type, e.event) IN ('api_posts_create', 'api_teams_invite_members')
+  OR e.category IN ('signup', 'signup_email', 'admin', 'tutorial')
   GROUP BY 1, 2
 ),
 

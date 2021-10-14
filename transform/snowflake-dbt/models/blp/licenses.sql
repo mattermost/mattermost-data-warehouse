@@ -24,7 +24,7 @@ WITH license_new AS (
       ON s.customer = c.id
     WHERE COALESCE(c.metadata:"id"::VARCHAR, c.metadata:"cws-customer") NOT IN (SELECT customerid FROM {{ source('licenses', 'licenses') }} GROUP BY 1)
     AND COALESCE(c.metadata:"id"::VARCHAR, c.metadata:"cws-customer") IS NOT NULL
-    AND COALESCE(s.metadata:"sku"::VARCHAR, CASE WHEN SPLIT_PART(s.plan:"name"::VARCHAR, ' ', 2)) IN
+    AND COALESCE(s.metadata:"sku"::VARCHAR, SPLIT_PART(s.plan:"name"::VARCHAR, ' ', 2)) IN
       ('E20', 'E10')
     AND s.status NOT IN ('incomplete_expired')
     GROUP BY 1, 2, 4, 5, 6, 7, 8, 9, 10, 11
