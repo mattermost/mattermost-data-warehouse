@@ -157,6 +157,7 @@ roles:
         warehouses:
             - transform_xs
             - transform_l
+            - transform_m
         privileges:
             databases:
                 read:
