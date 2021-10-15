@@ -1,7 +1,8 @@
 {{config({
     "materialized": 'incremental',
     "unique_key": 'id',
-    "schema": "staging"
+    "schema": "staging",
+    "snowflake_warehouse": "transform_l"
   })
 }}
 
