@@ -31,7 +31,7 @@ WITH sdd AS (
             FROM {{ ref('server_daily_details') }}
             GROUP BY 1
             {% if is_incremental() %}
-            HAVING MAX(CASE WHEN in_security OR in_mm2_server THEN timestamp ELSE NULL END) > (SELECT MAX(last_active_date) - INTERVAL '24 HOURS' FROM {{this}})
+            HAVING MAX(CASE WHEN in_security OR in_mm2_server THEN timestamp ELSE NULL END) > (SELECT MAX(last_active_date) - INTERVAL '12 HOURS' FROM {{this}})
             {% endif %}
           ),
 
