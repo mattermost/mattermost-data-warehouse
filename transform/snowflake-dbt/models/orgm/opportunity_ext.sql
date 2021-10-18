@@ -70,10 +70,10 @@ WITH w_end_date AS (
       opportunity.sfid as id,
       SUM(
           IFF(PRODUCT_LINE_TYPE__C = 'Expansion', TOTALPRICE/((END_DATE__C::date - START_DATE__C::date +1)/365),
-          IFF(PRODUCT_LINE_TYPE__C = 'New Business', TOTALPRICE/((END_DATE__C::date - START_DATE__C::date + 1)/365), 0))
+          IFF(PRODUCT_LINE_TYPE__C = 'New', TOTALPRICE/((END_DATE__C::date - START_DATE__C::date + 1)/365), 0))
           ) as Net_New_ARR__c
   FROM {{ ref('opportunity') }}
-  LEFT JOIN {{ ref('opportunitylineitem') }} on opportunity.sfid = opportunitylineitem.opportunityid
+  LEFT JOIN {{ ref('opportunitylineitem') }} on opportunity.sfid = opportunitylineitem.opportunityid and (END_DATE__C::date - START_DATE__C::date + 1) != 0
   GROUP BY 1
 ), opp_net_new_arr_override AS (
   SELECT

@@ -220,7 +220,7 @@ select get_sys_var({{ var_name }})
 
 {% endmacro %}
 
-{%- macro union_relations(relations, tgt_relation, column_override=none, include=[], exclude=[], source_column_name=none) -%}
+{% macro union_relations(relations, tgt_relation, column_override=none, include=[], exclude=[], source_column_name=none) %}
 
     {%- if exclude and include -%}
         {{ exceptions.raise_compiler_error("Both an exclude and include list were provided to the `union` macro. Only one is allowed") }}
@@ -285,204 +285,128 @@ select get_sys_var({{ var_name }})
 
     {%- endcall -%}
 
-
-    {%- if is_incremental() -%}
+    {%+ if is_incremental() %}
         with
-        --
-
-        {%- if this.table == 'user_events_telemetry' -%}
-        --
+        {%+ if this.table == 'user_events_telemetry' %}
         max_time AS (
                  SELECT
                     _dbt_source_relation2
-                    , MAX(received_at) - INTERVAL '2 HOURS' as max_time
+                    , MAX(received_at) as max_time
                  FROM {{ this }} 
                  WHERE {{this}}.received_at <= CURRENT_TIMESTAMP
                  GROUP BY 1
              ), 
-
-        join_key AS (
-                SELECT 
-                    id as join_id
-                  , {{this}}._dbt_source_relation2
-                FROM {{ this }}
-                JOIN max_time mt
-                    ON {{ this }}.received_at > mt.max_time
-                    AND {{this}}.received_at <= CURRENT_TIMESTAMP
-             ),
-
-             {%- else -%}
-             --
+             {%+ else %}
              max_time AS (
                  SELECT 
-                    MAX(received_at) - INTERVAL '2 HOURS' AS max_time
+                    MAX(received_at) AS max_time
                  FROM {{ this }} 
                  WHERE received_at <= CURRENT_TIMESTAMP
              ),
+            {%+ endif %}
 
-             join_key AS (
-                    SELECT 
-                        id as join_id
-                      , _dbt_source_relation
-                    FROM {{ this }}
-                    JOIN max_time mt
-                        ON {{ this }}.received_at > mt.max_time 
-                        AND {{this}}.received_at <= CURRENT_TIMESTAMP
-             ), 
-        
-            {%- endif -%}
+    {%+ endif %}
 
-    {%- endif -%}
-
-    {%- if not is_incremental() -%}
+    {%+ if not is_incremental() %}
     with 
-    --
-    {%- elif is_incremental() -%}
-    --
-    {%- endif -%}
-
-    {%- for relation in relations %}
-               {%- if this.table == 'daily_website_traffic' -%}
-            --
+    {%+ endif %}
+    {% for relation in relations %}
+               {%+ if this.table == 'daily_website_traffic' %}
                {{ ((((["'", relation, "'"]|join).split('.')[1]))|replace("'", ""))|lower }}_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} AS (
-        
-               {%- else -%}
-            --
+               {%+ else %}
                {{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} AS (
-
-               {%- endif -%}
-               --    
+               {%+ endif %}   
                select
-
                 cast({{ dbt_utils.string_literal(relation) }} as {{ dbt_utils.type_string() }}) as {{ source_column_name if ('_DBT_SOURCE_RELATION' not in column_superset) else '_DBT_SOURCE_RELATION2'}},
-                {% for col_name in ordered_column_names -%}
-
+                {%+ for col_name in ordered_column_names %}
                     {%- set col = column_superset[col_name] -%}
                     {%- set col_type = column_override.get(col.column, col.data_type) -%}
                     {%- set col_name = adapter.quote(col_name) if col_name in relation_columns[relation] else 'null' -%}
-                    
                         {%- if col.quoted[-10:-1] == 'TIMESTAMP' and col.quoted[1:3] == 'NPS' -%}
-
                         cast({{ relation }}.ORIGINAL_TIMESTAMP as DATE) as {{ col.quoted }}
-
                         {%- else -%}
                         cast({{ col_name }} as {{ col_type }}) as {{ col.quoted }}
-
                         {%- endif -%}
-                        {%- if not loop.last -%},{%- elif loop.last -%}
-                        {%- endif -%}
-
-                {%- endfor -%} 
-                
+                        {% if not loop.last %}, {% elif loop.last %}
+                        {% endif %}
+                {%+ endfor %}   
               from 
-              {% if (((relation|replace("'", "")|join).split('.')[0]))|lower == '"raw"'%}
-
+              {% if (((relation|replace("'", "")|join).split('.')[0]))|lower == '"raw"' -%}
               {{ relation }}
-
-              {% else %}
-
+              {% else -%}
               {{ ref((((["'", relation|replace("'", "")]|join).split('.')[2]))|lower) }}
-
-              {% endif %}
-              
-              {% if is_incremental() and this.table == 'user_events_telemetry' %}
-
+              {%- endif -%}
+              {%+ if is_incremental() and this.table == 'user_events_telemetry' %}
                 JOIN max_time mt
-                    ON {{ relation }}.received_at >= mt.max_time
+                    ON {{ relation }}.received_at > mt.max_time
                     AND mt._dbt_source_relation2 = {{ ["'", relation, "'"]|join }}
-                LEFT JOIN join_key a
-                    ON {{ relation }}.id = a.join_id
-                    AND a._dbt_source_relation2 = {{ ["'", relation, "'"]|join }}
                 WHERE received_at <= CURRENT_TIMESTAMP
-                AND a.join_id is null
-                
-            {% elif is_incremental() %}
+            {%+ elif is_incremental() %}
                 JOIN max_time mt
-                    ON {{ relation }}.received_at >= mt.max_time
-                LEFT JOIN join_key a
-                    ON {{ relation }}.id = a.join_id
-                    AND a._dbt_source_relation = {{ ["'", relation, "'"]|join }}
+                    ON {{ relation }}.received_at > mt.max_time
                 WHERE received_at <= CURRENT_TIMESTAMP
-                AND a.join_id is null 
+            {%+ endif %}
+            {%- if this.table in ['user_events_telemetry', 'rudder_webapp_events', 'mobile_events', 'portal_events', 'cloud_pageview_events', 'cloud_portal_pageview_events'] -%}
+                {%+ if is_incremental() %}
+                AND 
+                {%+ else %}
+                WHERE 
+                {%+ endif %}
+                {%+ if 'EVENT' in relation_columns[relation] and 'TYPE' in relation_columns[relation] %}
+                    COALESCE({{ relation }}.type, {{ relation }}.event) NOT IN (
+                {%+ elif 'EVENT' not in relation_columns[relation] and 'TYPE' in relation_columns[relation] %}
+                    {{ relation }}.type NOT IN (
+                {%+ elif 'EVENT' in relation_columns[relation] and 'TYPE' not in relation_columns[relation] %}
+                    {{ relation }}.event NOT IN (
+                {%+ endif %}
+                                            'api_channel_get',
+                                            'api_channel_get_by_name_and_teamname',
+                                            'api_channels_join_direct',
+                                            'api_posts_get_after',
+                                            'api_posts_get_before',
+                                            'api_profiles_get',
+                                            'api_profiles_get_by_ids',
+                                            'api_profiles_get_by_usernames',
+                                            'api_profiles_get_in_channel',
+                                            'api_profiles_get_in_group_channels',
+                                            'api_profiles_get_in_team',
+                                            'api_profiles_get_not_in_channel',
+                                            'api_profiles_get_not_in_team',
+                                            'api_profiles_get_without_team',
+                                            'channel_switch',
+                                            'page_load',
+                                            'lhs_dm_gm_count',
+                                            'ui_channel_selected',
+                                            'ui_channel_selected_v2',
+                                            'ui_direct_channel_x_button_clicked',
+                                            'application_backgrounded',
+                                            'application_installed',
+                                            'application_opened',
+                                            'application_updated')
             {% endif %}
-            {% if this.table in ['user_events_telemetry', 'rudder_webapp_events', 'mobile_events', 'portal_events', 'cloud_pageview_events', 'cloud_portal_pageview_events'] %}
-                {% if is_incremental() %}
-                    AND
-                {% else %}
-                    WHERE
-                {% endif %}
-                {% if 'EVENT' in relation_columns[relation] and 'TYPE' in relation_columns[relation] %}
-                    COALESCE({{ relation }}.type, {{ relation }}.event) NOT IN 
-                {% elif 'EVENT' not in relation_columns[relation] and 'TYPE' in relation_columns[relation] %}
-                    {{ relation }}.type NOT IN  
-                {% elif 'EVENT' in relation_columns[relation] and 'TYPE' not in relation_columns[relation] %}
-                    {{ relation }}.event NOT IN 
-                {% endif %}
-                (
-                    'api_channel_get',
-                    'api_channel_get_by_name_and_teamname',
-                    'api_channels_join_direct',
-                    'api_posts_get_after',
-                    'api_posts_get_before',
-                    'api_profiles_get',
-                    'api_profiles_get_by_ids',
-                    'api_profiles_get_by_usernames',
-                    'api_profiles_get_in_channel',
-                    'api_profiles_get_in_group_channels',
-                    'api_profiles_get_in_team',
-                    'api_profiles_get_not_in_channel',
-                    'api_profiles_get_not_in_team',
-                    'api_profiles_get_without_team',
-                    'channel_switch',
-                    'page_load',
-                    'lhs_dm_gm_count',
-                    'ui_channel_selected',
-                    'ui_channel_selected_v2',
-                    'ui_direct_channel_x_button_clicked',
-                    'application_backgrounded',
-                    'application_installed',
-                    'application_opened',
-                    'application_updated'
-                )
+            ){% if not loop.last %}, 
             {% endif %}
-            ){% if not loop.last -%}, {% endif %}
-
     {%- endfor -%}
 
-        {%- for relation in relations %}
-        {%- if this.table == 'daily_website_traffic' -%}
-        (
-            --
-            select
-               {{ ((((["'", relation, "'"]|join).split('.')[1]))|replace("'", ""))|lower }}_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }}.*
-            --
-            from {{ ((((["'", relation, "'"]|join).split('.')[1]))|replace("'", ""))|lower }}_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} 
-            --
-        )
-               {%- else -%}
-            --
-        (
-            --
-            select
-                {{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }}.*
-            --
-            from {{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }}
-            --
-        )   
-            
-               {%- endif -%}
-
-        {% if not loop.last -%}
-        --
+        {%- for relation in relations -%}
+            {% if this.table == 'daily_website_traffic' %}
+            (
+                select
+                {{ ((((["'", relation, "'"]|join).split('.')[1]))|replace("'", ""))|lower }}_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }}.*
+                from {{ ((((["'", relation, "'"]|join).split('.')[1]))|replace("'", ""))|lower }}_{{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }} 
+            )
+            {% else %}
+            (
+                select
+                    {{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }}.*
+                from {{ ((((["'", relation, "'"]|join).split('.')[2]))|replace("'", ""))|lower }}
+            )   
+            {% endif %}
+            {% if not loop.last %}
             union all
-        --
-        {% endif -%}
-
-        {%- endfor -%} 
-
-{%- endmacro -%}
-
-
+            {% endif %}
+        {% endfor %} 
+{% endmacro %}
 
 {% macro latest_record(src) %}
     SELECT DISTINCT o.id as sfid, o.*

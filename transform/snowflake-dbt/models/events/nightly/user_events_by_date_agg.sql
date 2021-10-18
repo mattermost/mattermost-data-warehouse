@@ -7,14 +7,18 @@
 
 WITH min_active              AS (
     SELECT
-        user_id
-      , server_id
-      , min(date) AS min_active_date
-      , CASE WHEN USER_ID IS NOT NULL AND MAX(DATE) < CURRENT_DATE - INTERVAL '1 DAY'
-            THEN CURRENT_DATE - INTERVAL '1 DAY' ELSE
-            MAX(DATE) END AS MAX_ACTIVE_DATE 
-    FROM {{ ref('user_events_by_date') }}
-    WHERE LENGTH(USER_ID) < 36
+        user_actual_id as user_id
+      , COALESCE(user_events_telemetry.user_id, IFF(LENGTH(user_events_telemetry.context_server) < 26, NULL, user_events_telemetry.context_server),
+                          IFF(LENGTH(user_events_telemetry.context_traits_userid) < 26, NULL,user_events_telemetry.context_traits_userid),
+                          IFF(LENGTH(user_events_telemetry.context_server) < 26, NULL, user_events_telemetry.context_server)) as server_id
+
+      , MAX(user_actual_role) AS user_actual_role
+      , min(received_at::date) AS min_active_date
+      , CASE WHEN MAX(received_at::date) < CURRENT_DATE
+            THEN CURRENT_DATE ELSE
+            MAX(received_at::date) END AS MAX_ACTIVE_DATE 
+    FROM {{ ref('user_events_telemetry') }}
+    WHERE user_actual_id is not null
     GROUP BY 1, 2),
 
      dates                   AS (
@@ -22,41 +26,72 @@ WITH min_active              AS (
              d.date
            , m.user_id
            , m.server_id
+           , m.user_actual_role
          FROM {{ ref('dates') }}      d
               JOIN min_active m
                    ON d.date >= m.min_active_date
                        AND d.date <= m.max_active_date
-         GROUP BY 1, 2, 3
+         GROUP BY 1, 2, 3, 4
      ),
      events                  AS (
          SELECT
              d.date
            , d.user_id
            , d.server_id                                                                       AS server_id 
-           , MAX(e.system_admin)                                                               AS system_admin
-           , MAX(e.system_user)                                                                AS system_user
-           , coalesce(sum(e.total_events), 0)                                                  AS total_events
-           , coalesce(sum(e.desktop_events), 0)                                                AS desktop_events
-           , coalesce(sum(e.web_app_events), 0)                                                AS web_app_events
-           , coalesce(sum(e.mobile_events), 0)                                                 AS mobile_events
-           , sum(CASE WHEN r.event_category = 'action' THEN e.total_events ELSE 0 END)         AS action_events
-           , sum(CASE WHEN r.event_category = 'api' THEN e.total_events ELSE 0 END)            AS api_events
-           , sum(CASE WHEN r.event_category = 'gfycat' THEN e.total_events ELSE 0 END)         AS gfycat_events
-           , sum(CASE WHEN r.event_category = 'performance' THEN e.total_events ELSE 0 END)    AS performance_events
-           , sum(CASE WHEN r.event_category = 'plugins' THEN e.total_events ELSE 0 END)        AS plugins_events
-           , sum(CASE WHEN r.event_category = 'settings' THEN e.total_events ELSE 0 END)       AS settings_events
-           , sum(CASE WHEN r.event_category = 'signup' THEN e.total_events ELSE 0 END)         AS signup_events
-           , sum(CASE WHEN r.event_category = 'system_console' THEN e.total_events ELSE 0 END) AS system_console_events
-           , sum(CASE WHEN r.event_category = 'tutorial' THEN e.total_events ELSE 0 END)       AS tutorial_events
-           , sum(CASE WHEN r.event_category = 'ui' THEN e.total_events ELSE 0 END)             AS ui_events
-           , MAX(max_timestamp)                                                               AS max_timestamp
+           , MAX(CASE WHEN COALESCE(e.user_actual_role, 'none') in ('system_admin', 'system_admin, system_user', 'system_administrator',
+                                             'admin_user', 'admin', 'system_user, system_admin', 'root_user','super_user',
+                                             'administrator')
+                    THEN TRUE ELSE FALSE END)                                                               AS system_admin
+           , MAX(CASE WHEN COALESCE(e.user_actual_role, 'none') in ('system_admin', 'system_admin, system_user', 'system_administrator',
+                                             'admin_user', 'admin', 'system_user, system_admin', 'root_user','super_user',
+                                             'administrator')
+                    THEN FALSE ELSE TRUE END)                                                                AS system_user
+           , coalesce(count(e.id), 0)                                                  AS total_events
+           , coalesce(count(CASE WHEN 
+                                CASE WHEN SPLIT_PART(e._dbt_source_relation2, '.', 3) IN ('SEGMENT_WEBAPP_EVENTS','RUDDER_WEBAPP_EVENTS') 
+                                        AND lower(COALESCE(e.context_user_agent, e.context_useragent)) LIKE '%electron%' THEN 'Desktop'
+                                 WHEN SPLIT_PART(e._dbt_source_relation2, '.', 3) IN ('SEGMENT_WEBAPP_EVENTS','RUDDER_WEBAPP_EVENTS') 
+                                        AND lower(COALESCE(e.context_user_agent, e.context_useragent)) NOT LIKE '%electron%' THEN 'WebApp'
+                                 WHEN SPLIT_PART(e._dbt_source_relation2, '.', 3) IN ('SEGMENT_MOBILE_EVENTS','MOBILE_EVENTS') THEN 'Mobile'
+                                 WHEN SPLIT_PART(e._dbt_source_relation2, '.', 3) IN ('PORTAL_EVENTS') THEN 'Customer Portal'
+                                 ELSE 'WebApp' END = 'Desktop' 
+                                    THEN e.id ELSE NULL END), 0)                               AS desktop_events
+           , coalesce(count(CASE WHEN 
+                                CASE WHEN SPLIT_PART(e._dbt_source_relation2, '.', 3) IN ('SEGMENT_WEBAPP_EVENTS','RUDDER_WEBAPP_EVENTS') 
+                                        AND lower(COALESCE(e.context_user_agent, e.context_useragent)) LIKE '%electron%' THEN 'Desktop'
+                                 WHEN SPLIT_PART(e._dbt_source_relation2, '.', 3) IN ('SEGMENT_WEBAPP_EVENTS','RUDDER_WEBAPP_EVENTS') 
+                                        AND lower(COALESCE(e.context_user_agent, e.context_useragent)) NOT LIKE '%electron%' THEN 'WebApp'
+                                 WHEN SPLIT_PART(e._dbt_source_relation2, '.', 3) IN ('SEGMENT_MOBILE_EVENTS','MOBILE_EVENTS') THEN 'Mobile'
+                                 WHEN SPLIT_PART(e._dbt_source_relation2, '.', 3) IN ('PORTAL_EVENTS') THEN 'Customer Portal'
+                                 ELSE 'WebApp' END = 'WebApp' 
+                                    THEN e.id ELSE NULL END), 0)                               AS web_app_events
+           , coalesce(count(CASE WHEN 
+                                CASE WHEN SPLIT_PART(e._dbt_source_relation2, '.', 3) IN ('SEGMENT_WEBAPP_EVENTS','RUDDER_WEBAPP_EVENTS') 
+                                        AND lower(COALESCE(e.context_user_agent, e.context_useragent)) LIKE '%electron%' THEN 'Desktop'
+                                 WHEN SPLIT_PART(e._dbt_source_relation2, '.', 3) IN ('SEGMENT_WEBAPP_EVENTS','RUDDER_WEBAPP_EVENTS') 
+                                        AND lower(COALESCE(e.context_user_agent, e.context_useragent)) NOT LIKE '%electron%' THEN 'WebApp'
+                                 WHEN SPLIT_PART(e._dbt_source_relation2, '.', 3) IN ('SEGMENT_MOBILE_EVENTS','MOBILE_EVENTS') THEN 'Mobile'
+                                 WHEN SPLIT_PART(e._dbt_source_relation2, '.', 3) IN ('PORTAL_EVENTS') THEN 'Customer Portal'
+                                 ELSE 'WebApp' END = 'Mobile' 
+                                    THEN e.id ELSE NULL END), 0)                               AS mobile_events
+           , count(CASE WHEN e.category = 'action' THEN e.id ELSE NULL END)               AS action_events
+           , count(CASE WHEN e.category = 'api' THEN e.id ELSE NULL END)            AS api_events
+           , count(CASE WHEN e.category = 'gfycat' THEN e.id ELSE NULL END)         AS gfycat_events
+           , count(CASE WHEN e.category = 'performance' THEN e.id ELSE NULL END)    AS performance_events
+           , count(CASE WHEN e.category = 'plugins' THEN e.id ELSE NULL END)        AS plugins_events
+           , count(CASE WHEN e.category = 'settings' THEN e.id ELSE NULL END)       AS settings_events
+           , count(CASE WHEN e.category = 'signup' THEN e.id ELSE NULL END)         AS signup_events
+           , count(CASE WHEN e.category = 'system_console' THEN e.id ELSE NULL END) AS system_console_events
+           , count(CASE WHEN e.category = 'tutorial' THEN e.id ELSE NULL END)       AS tutorial_events
+           , count(CASE WHEN e.category = 'ui' THEN e.id ELSE NULL END)             AS ui_events
+           , MAX(e.received_at)                                                               AS max_timestamp
          FROM dates                                d
-              LEFT JOIN {{ ref('user_events_by_date') }} e
-                        ON d.user_id = e.user_id
-                            AND COALESCE(d.server_id,'') = COALESCE(e.server_id, '')
-                            AND d.date = e.date
-              LEFT JOIN {{ ref('events_registry') }}     r
-                        ON e.event_id = r.event_id
+              LEFT JOIN {{ ref('user_events_telemetry') }} e
+                        ON d.user_id = e.user_actual_id
+                            AND COALESCE(d.server_id,'') = COALESCE(e.user_id, IFF(LENGTH(e.context_server) < 26, NULL, e.context_server),
+                          IFF(LENGTH(e.context_traits_userid) < 26, NULL,e.context_traits_userid),
+                          IFF(LENGTH(e.context_server) < 26, NULL, e.context_server))
+                            AND d.date = e.received_at::date
          GROUP BY 1, 2, 3),
 
      mau                     AS (
@@ -103,7 +138,7 @@ WITH min_active              AS (
               JOIN min_active m
                    ON e1.user_id = m.user_id
                    AND COALESCE(e1.server_id, '') = COALESCE(m.server_id, '')
-         WHERE e1.date <= CURRENT_DATE - INTERVAL '1 DAY'
+         WHERE e1.date < CURRENT_DATE
      ),
      user_events_by_date_agg AS (
          SELECT
@@ -187,10 +222,10 @@ WITH min_active              AS (
                    ON e1.user_id = m.user_id
                        AND e1.date = m.date
                        AND coalesce(e1.server_id, '') = coalesce(m.server_id, '')
-         WHERE e1.date <= CURRENT_DATE - interval '1 day'
+         WHERE e1.date < CURRENT_DATE
          {% if is_incremental() %}
 
-         AND e1.date >= (SELECT MAX(date) FROM {{this}})
+         AND e1.max_timestamp > (SELECT MAX(max_timestamp) FROM {{this}})
 
          {% endif %}
          GROUP BY 1, 2, 3, 33)

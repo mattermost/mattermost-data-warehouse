@@ -24,7 +24,7 @@ LEFT JOIN
         (
           SELECT DISTINCT ID AS JOIN_KEY
           FROM {{ this }}
-          WHERE TIMESTAMP::DATE >= (SELECT MAX(timestamp::date) FROM {{ this }}) - INTERVAL '1 DAYS'
+          WHERE received_at > (SELECT MAX(received_at) FROM {{ this }})
           AND path like '%cloud%'
         ) a
   ON p.id = a.JOIN_KEY
@@ -37,7 +37,7 @@ AND CASE WHEN split_part(path, '/', 3) = 'signup' THEN 'pageview_getting_started
         ELSE NULL END IS NOT NULL
 {% if is_incremental() %}
 
-AND p.timestamp::date >= (SELECT MAX(timestamp::date) FROM {{ this }}) - INTERVAL '1 DAYS'
+AND p.received_at > (SELECT MAX(received_at) FROM {{ this }})
 AND a.join_key is NULL
 
 {% endif %}

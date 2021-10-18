@@ -2,7 +2,7 @@
     "materialized": "incremental",
     "schema": "mattermost",
     "tags":"union",
-    "snowflake_warehouse": "transform_l",
+    "snowflake_warehouse": "transform_m",
     "unique_key":"id"
   })
 }}
