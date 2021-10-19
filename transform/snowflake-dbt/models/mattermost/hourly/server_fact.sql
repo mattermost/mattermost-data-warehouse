@@ -32,7 +32,7 @@ WITH sdd AS (
             WHERE timestamp <= CURRENT_TIMESTAMP
             GROUP BY 1
             {% if is_incremental() %}
-            HAVING MAX(CASE WHEN in_mm2_server THEN timestamp ELSE NULL END) > (SELECT MAX(last_active_date) - INTERVAL '2 HOURS' FROM {{this}})
+            HAVING MAX(CASE WHEN in_security OR in_mm2_server THEN timestamp ELSE NULL END) > (SELECT MAX(last_active_date) - INTERVAL '2 HOURS' FROM {{this}})
             {% endif %}
           ),
 
