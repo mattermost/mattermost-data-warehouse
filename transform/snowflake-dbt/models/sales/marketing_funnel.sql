@@ -41,8 +41,8 @@ web_traffic as (
 lead_creation as (
     select date_trunc(month,createddate) as month, count(distinct lower(email)) as count_lead_creation
     from {{ ref('lead') }}
-    where status != 'Not a Lead'
-        and email not like '%@mattermost.com' and email not like '%+%' and email != ''
+    where status != 'Not a Lead' and lead_source_text__c != 'Sales Generated'
+        and email not like '%@mattermost.com' and email not like '%+%' and email != '' and email not like '%test%'
         and company not like '%example%' and company not like '%ЛУЧШИЙ СПОСОБ ЗАРАБОТКА http://one33.ru/%' and company not like '%QQ%'
         and company not like '%Tencent%' and company not like '%Sina%' and company not like '%NetEase%' and company not like '%Net Ease%'
     group by 1
@@ -51,8 +51,8 @@ lead_creation as (
 mql as (
     select date_trunc(month,first_mql_date__c) as month, count(distinct lower(email)) as count_mql
     from {{ ref('lead') }}
-    where status != 'Not a Lead'
-        and email not like '%@mattermost.com' and email not like '%+%' and email != ''
+    where status != 'Not a Lead' and lead_source_text__c != 'Sales Generated'
+        and email not like '%@mattermost.com' and email not like '%+%' and email != '' and email not like '%test%'
         and company not like '%example%' and company not like '%ЛУЧШИЙ СПОСОБ ЗАРАБОТКА http://one33.ru/%' and company not like '%QQ%'
         and company not like '%Tencent%' and company not like '%Sina%' and company not like '%NetEase%' and company not like '%Net Ease%'
     group by 1
@@ -62,14 +62,18 @@ reengaged_mql as (
     select date_trunc(month,most_recent_mql_date__c) as month, count(distinct lower(email)) as count_reengaged_mql
     from {{ ref('lead') }}
     where most_recent_mql_date__c is not null and most_recent_reengaged_date__c is not null
+        and status != 'Not a Lead' and lead_source_text__c != 'Sales Generated'
+        and email not like '%@mattermost.com' and email not like '%+%' and email != '' and email not like '%test%'
+        and company not like '%example%' and company not like '%ЛУЧШИЙ СПОСОБ ЗАРАБОТКА http://one33.ru/%' and company not like '%QQ%'
+        and company not like '%Tencent%' and company not like '%Sina%' and company not like '%NetEase%' and company not like '%Net Ease%'
     group by 1
 ),
 
 sal as (
     select date_trunc(month,sal_date__c) as month, count(distinct lower(email)) as count_sal
     from {{ ref('lead') }}
-    where status != 'Not a Lead'
-        and email not like '%@mattermost.com' and email not like '%+%' and email != ''
+    where status != 'Not a Lead' and lead_source_text__c != 'Sales Generated'
+        and email not like '%@mattermost.com' and email not like '%+%' and email != '' and email not like '%test%'
         and company not like '%example%' and company not like '%ЛУЧШИЙ СПОСОБ ЗАРАБОТКА http://one33.ru/%' and company not like '%QQ%'
         and company not like '%Tencent%' and company not like '%Sina%' and company not like '%NetEase%' and company not like '%Net Ease%'
     group by 1
