@@ -12,8 +12,10 @@ WITH latest_credit_card_address AS (
         addresses.line2,
         addresses.postal_code,
         addresses.city,
-        coalesce(postal_code_mapping.state_code, addresses.state) as state,
-        coalesce(postal_code_mapping.country, addresses.country) as country,
+        addresses.state,
+        coalesce(postal_code_mapping.country_name, addresses.country) as country,
+        coalesce(postal_code_mapping.state_code, addresses.state) as state_code,
+        coalesce(postal_code_mapping.country, addresses.country) as country_code,
         ROW_NUMBER() OVER (PARTITION BY payment_methods.customer_id ORDER BY payment_methods.created_at DESC) as row_num
     FROM {{ ref('credit_cards') }}
     JOIN {{ ref('payment_methods') }} ON credit_cards.id = payment_methods.id
@@ -53,8 +55,22 @@ WITH latest_credit_card_address AS (
         latest_credit_card_address.line1 || ' ' || coalesce(latest_credit_card_address.line2, '') as street_address,
         latest_credit_card_address.postal_code,
         latest_credit_card_address.city,
-        latest_credit_card_address.state,
+        case
+            when latest_credit_card_address.country in ('US', 'CA')
+            then latest_credit_card_address.state
+            else null
+        end as state,
         latest_credit_card_address.country,
+        case
+            when latest_credit_card_address.country in ('US', 'CA')
+            then latest_credit_card_address.state_code
+            else null
+        end as state_code,
+        case
+            when latest_credit_card_address.country in ('US', 'CA')
+            then latest_credit_card_address.country_code
+            else null
+        end as country_code,
         onprem_subscriptions.updated_at >= '2021-08-18' as hightouch_sync_eligible
     FROM {{ ref('customers_blapi') }} customers
         JOIN {{ ref('onprem_subscriptions') }} ON customers.id = onprem_subscriptions.customer_id

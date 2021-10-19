@@ -31,18 +31,18 @@ WITH sdd AS (
             FROM {{ ref('server_daily_details') }}
             GROUP BY 1
             {% if is_incremental() %}
-            HAVING MAX(CASE WHEN in_security OR in_mm2_server THEN timestamp ELSE NULL END)::date >= (SELECT MAX(last_active_date::date) - INTERVAL '1 DAY' FROM {{this}})
+            HAVING MAX(CASE WHEN in_security OR in_mm2_server THEN timestamp ELSE NULL END) > (SELECT MAX(last_active_date) - INTERVAL '12 HOURS' FROM {{this}})
             {% endif %}
           ),
 
     server_details AS (
     SELECT
-        server_id
+        sdde.server_id
       , MAX(CASE WHEN coalesce(sdde.active_users_daily, sdde.active_users) > sdde.active_user_count 
               THEN coalesce(sdde.active_users_daily, sdde.active_users)
               ELSE sdde.active_user_count END) AS                                              max_active_user_count
       , MAX(sdde.active_users_monthly) AS                                                      max_monthly_active_users
-      , MAX(CASE WHEN COALESCE(sdde.registered_users,0) > COALESCE(user_count, 0)
+      , MAX(CASE WHEN COALESCE(sdde.registered_users,0) > COALESCE(sdde.user_count, 0)
             THEN COALESCE(sdde.registered_users,0) 
             ELSE COALESCE(sdde.user_count,0) END)                                          AS  max_registered_users
       , MAX(coalesce(sdde.registered_deactivated_users, 0))                                AS  max_registered_deactivated_users
@@ -57,31 +57,93 @@ WITH sdd AS (
       , MAX(sdde.POSTS)                                                                     AS max_posts
       , MAX(sdde.enabled_plugins)                                                           AS max_enabled_plugins
       , MAX(sdde.disabled_plugins)                                                           AS max_disabled_plugins
-    FROM {{ ref('server_daily_details_ext') }} sdde
-    WHERE DATE <= CURRENT_DATE - INTERVAL '1 DAY'
+      , MAX(CASE WHEN COALESCE(sdde.enable_testing, FALSE) or COALESCE(sdde.enable_developer_service, FALSE) THEN TRUE ELSE FALSE END)  AS dev_testing_enabled
+    FROM sdd
+    JOIN {{ ref('server_daily_details_ext') }} sdde
+      ON sdde.server_id = sdd.server_id
+    WHERE DATE < CURRENT_DATE
     GROUP BY 1
     ),
 
     max_rudder_time AS (
-      select user_id as server_id, max(timestamp) as max_time, max(timestamp::date) as max_date from {{ source('mm_telemetry_prod', 'activity') }} group by 1
+      select 
+          activity.user_id              as server_id
+        , max(activity.timestamp)       as max_time
+        , max(activity.timestamp::date) as max_date 
+      from {{ source('mm_telemetry_prod', 'activity') }} 
+      where activity.user_id in (SELECT server_id from sdd GROUP BY 1)
+      group by 1
     ),
 
     max_segment_time AS (
-      select user_id as server_id, max(timestamp) as max_time, max(timestamp::date) as max_date from {{ source('mattermost2', 'activity') }} group by 1
+      select 
+          activity.user_id              as server_id
+        , max(activity.timestamp)       as max_time
+        , max(activity.timestamp::date) as max_date 
+      from {{ source('mattermost2', 'activity') }} 
+      where activity.user_id in (SELECT server_id from sdd GROUP BY 1)
+      group by 1
     ),
 
     rudder_activity AS (
-     SELECT * 
+     SELECT 
+          user_id
+        , registered_users
+        , registered_deactivated_users
+        , posts
+        , direct_message_channels
+        , public_channels
+        , public_channels_deleted
+        , private_channels
+        , private_channels_deleted
+        , slash_commands
+        , teams
+        , posts_previous_day
+        , bot_posts_previous_day
+        , active_users_daily
+        , active_users_monthly
+        , bot_accounts
+        , guest_accounts
+        , incoming_webhooks
+        , outgoing_webhooks
+        , max_time
+        , max_date
+        , context_ip
+        , context_request_ip  
         FROM {{ source('mm_telemetry_prod', 'activity') }} s1 
         JOIN max_rudder_time s2
-          ON s1.user_id = s2.server_id AND s1.timestamp = s2.max_time 
+          ON s1.user_id = s2.server_id 
+          AND s1.timestamp = s2.max_time 
     ),
 
     segment_activity AS (
-      SELECT * 
+      SELECT 
+          user_id
+        , registered_users
+        , registered_deactivated_users
+        , posts
+        , direct_message_channels
+        , public_channels
+        , public_channels_deleted
+        , private_channels
+        , private_channels_deleted
+        , slash_commands
+        , teams
+        , posts_previous_day
+        , bot_posts_previous_day
+        , active_users
+        , active_users_daily
+        , active_users_monthly
+        , bot_accounts
+        , guest_accounts
+        , incoming_webhooks
+        , outgoing_webhooks
+        , max_time
+        , max_date
         FROM {{ source('mattermost2', 'activity') }} s1
         JOIN max_segment_time s2
-          ON s1.user_id = s2.server_id AND s1.timestamp = s2.max_time 
+          ON s1.user_id = s2.server_id 
+          AND s1.timestamp = s2.max_time 
     ),
 
     server_activity as (
@@ -113,51 +175,46 @@ WITH sdd AS (
     
     licenses AS (
       SELECT 
-          server_id
-        , MIN(CASE WHEN NOT TRIAL THEN issued_date ELSE NULL END) AS first_paid_license_date
-        , MIN(CASE WHEN TRIAL THEN issued_date ELSE NULL END)     AS first_trial_license_date
-        , MAX(CASE WHEN NOT TRIAL THEN issued_date ELSE NULL END) AS last_paid_license_date
-        , MAX(CASE WHEN TRIAL THEN issued_date ELSE NULL END)     AS last_trial_license_date
-        , MAX(ACCOUNT_SFID) AS account_sfid
-        , MAX(ACCOUNT_NAME) AS account_name
-        , MAX(MASTER_ACCOUNT_SFID) AS master_account_sfid
-        , MAX(MASTER_ACCOUNT_NAME) AS master_account_name
-        , MAX(COMPANY)             AS company
-        , MAX(CASE WHEN NOT TRIAL THEN expire_date ELSE NULL END) AS paid_license_expire_date
-        , MAX(CASE WHEN TRIAL THEN expire_date ELSE NULL END) AS trial_license_expire_date
-      FROM {{ ref('licenses') }}
+          sdd.server_id
+        , MIN(CASE WHEN NOT licenses.TRIAL THEN licenses.issued_date ELSE NULL END) AS first_paid_license_date
+        , MIN(CASE WHEN licenses.TRIAL THEN licenses.issued_date ELSE NULL END)     AS first_trial_license_date
+        , MAX(CASE WHEN NOT licenses.TRIAL THEN licenses.issued_date ELSE NULL END) AS last_paid_license_date
+        , MAX(CASE WHEN licenses.TRIAL THEN licenses.issued_date ELSE NULL END)     AS last_trial_license_date
+        , MAX(licenses.ACCOUNT_SFID) AS account_sfid
+        , MAX(licenses.ACCOUNT_NAME) AS account_name
+        , MAX(licenses.MASTER_ACCOUNT_SFID) AS master_account_sfid
+        , MAX(licenses.MASTER_ACCOUNT_NAME) AS master_account_name
+        , MAX(licenses.COMPANY)             AS company
+        , MAX(CASE WHEN NOT licenses.TRIAL THEN licenses.expire_date ELSE NULL END) AS paid_license_expire_date
+        , MAX(CASE WHEN licenses.TRIAL THEN licenses.expire_date ELSE NULL END) AS trial_license_expire_date
+      FROM sdd 
+      JOIN {{ ref('licenses') }}
+        ON licenses.server_id = sdd.server_id
       GROUP BY 1
     ),
+
   server_upgrades AS (
     SELECT
-        server_id
-      , COUNT(
-        CASE WHEN CURRENT_VERSION
-      > PREV_VERSION THEN server_id ELSE NULL END) AS version_upgrade_count
-      , COUNT(
-        CASE WHEN PREV_EDITION = 'false' AND CURRENT_EDITION = 'true' THEN server_id ELSE NULL END) AS edition_upgrade_count
-    FROM {{ ref('server_upgrades') }}
+        sdd.server_id
+      , COUNT(CASE WHEN server_upgrades.CURRENT_VERSION > server_upgrades.PREV_VERSION 
+            THEN server_upgrades.server_id ELSE NULL END)                             AS version_upgrade_count
+      , COUNT(CASE WHEN server_upgrades.PREV_EDITION = 'false' AND server_upgrades.CURRENT_EDITION = 'true' 
+                THEN server_upgrades.server_id ELSE NULL END)                                         AS edition_upgrade_count
+    FROM sdd
+    JOIN {{ ref('server_upgrades') }}
+      ON sdd.server_id = server_upgrades.server_id
     GROUP BY 1
     ),
-    s_ext as (
-            SELECT 
-              server_id 
-            , date
-            , edition
-            , version
-            , license_id1
-            , license_id2
-            , ip_address
-            FROM {{ ref('server_daily_details') }}
-            GROUP BY 1, 2, 3, 4, 5, 6, 7
-    ),
+
     incident_mgmt as (
       SELECT
-        TRIM(user_id) as server_id
-      , count(distinct id) as incident_mgmt_events_alltime
+        incident_response_events.user_id as server_id
+      , count(incident_response_events.id) as incident_mgmt_events_alltime
       FROM {{ ref('incident_response_events')}}
+      where incident_response_events.user_id in (SELECT server_id from sdd GROUP BY 1)
       group by 1
     ),
+    
     first_server_edition AS (
       SELECT
           s.server_id
@@ -171,7 +228,7 @@ WITH sdd AS (
         , MAX(CASE WHEN sd.last_active_license_date = s.date THEN license_id2 ELSE NULL END)     AS last_license_id2
         , NULLIF(MAX(CASE WHEN sd.last_ip_date = s.date THEN s.ip_address ELSE NULL END), '')     AS last_ip_address
       FROM sdd sd
-      JOIN s_ext s
+      JOIN {{ ref('server_daily_details') }} s
            ON sd.server_id = s.server_id
       GROUP BY 1
     ),
@@ -186,7 +243,7 @@ WITH sdd AS (
       GROUP BY 1
     ),
 
-  last_server_date AS (
+    last_server_date AS (
     SELECT
         COALESCE(user_id, context_server, context_traits_server) AS server_id
       , MAX(TIMESTAMP::DATE) AS last_event_date
@@ -206,13 +263,15 @@ WITH sdd AS (
       , COUNT(DISTINCT CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '672 HOURS' AND sdd.first_active_date + INTERVAL '696 HOURS' 
                     THEN user_events_telemetry.user_actual_id ELSE NULL END) AS retention_28day_users
       , COUNT(DISTINCT user_events_telemetry.user_actual_id) as active_users_alltime
-    FROM {{ ref('user_events_telemetry') }}
-    JOIN sdd ON sdd.server_id = COALESCE(user_events_telemetry.user_id, IFF(LENGTH(user_events_telemetry.context_server) < 26, NULL, user_events_telemetry.context_server),
+    FROM sdd 
+    JOIN {{ ref('user_events_telemetry') }}
+        ON sdd.server_id = COALESCE(user_events_telemetry.user_id, IFF(LENGTH(user_events_telemetry.context_server) < 26, NULL, user_events_telemetry.context_server),
                           IFF(LENGTH(user_events_telemetry.context_traits_userid) < 26, NULL,user_events_telemetry.context_traits_userid),
-                          IFF(LENGTH(user_events_telemetry.context_server) < 26, NULL, user_events_telemetry.context_server))
+                          IFF(LENGTH(user_events_telemetry.context_server) < 26, NULL, user_events_telemetry.context_server)) AND user_events_telemetry.user_actual_id is not null
     GROUP BY 1
   ),
-  server_active_users AS (
+
+    server_active_users AS (
     SELECT
         s1.server_id
       , s1.dau_total
@@ -235,6 +294,7 @@ WITH sdd AS (
          AND s1.date = s2.last_event_date
         {{ dbt_utils.group_by(n=15) }}
     ), 
+
   server_fact AS (
     SELECT
         sdd.server_id
@@ -338,6 +398,7 @@ WITH sdd AS (
         , MAX(lsd.retention_28day_users) AS retention_28day_users
         , MAX(COALESCE(nullif(TRIM(server_activity.last_ip_address), ''), NULLIF(fse.last_ip_address, ''))) AS last_ip_address
         , MIN(cpm.first_payment_method_date) AS cloud_payment_method_added
+        , MAX(server_details.dev_testing_enabled) AS dev_testing_enabled
     FROM sdd
         LEFT JOIN server_details
           ON sdd.server_id = server_details.server_id
@@ -363,9 +424,6 @@ WITH sdd AS (
             ON sdd.server_id = im.server_id
         LEFT JOIN cloud_payment_method cpm
             ON sdd.installation_id = cpm.cloud_installation_id
-        {% if is_incremental() %}
-          WHERE sdd.last_active_date::date >= (SELECT MAX(last_active_date::date) - INTERVAL '1 DAY' FROM {{this}})
-        {% endif %}
         {{ dbt_utils.group_by(n=1) }}
     )
       SELECT 

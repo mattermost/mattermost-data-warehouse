@@ -72,6 +72,7 @@ roles:
             - stitch
             - transform_l
             - reporting_s
+            - transform_xs
         privileges:
             databases:
                 read:
@@ -157,6 +158,7 @@ roles:
         warehouses:
             - transform_xs
             - transform_l
+            - transform_m
         privileges:
             databases:
                 read:
@@ -269,4 +271,7 @@ warehouses:
         size: small
 
     - reporting_m:
+        size: medium
+    
+    - transform_m:
         size: medium

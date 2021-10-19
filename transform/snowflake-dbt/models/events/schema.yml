@@ -7,9 +7,6 @@ models:
   - name: events_registry
     description: Contains id, name, category, and description of all user events currently being logged by Telemetry-Enabled Mattermost servers.
 
-  - name: user_events_by_date
-    description: Contains event uuid, user id, user role, event name, event category, and count of events performed each day.
-
   - name: user_events_by_date_agg
     description: Contains an aggregated version of user_events by date w/ MAU and DAU-specific dimensions.
 
@@ -48,3 +45,6 @@ models:
 
   - name: feature_flag_telemetry
     description: Split.io feature flag data for A/B testing features.
+
+  - name: focalboard_event_telemetry
+    description: Contains the tracked user events performed within the focalboard GUI.

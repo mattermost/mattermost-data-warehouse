@@ -39,7 +39,7 @@ models:
   mm_snowflake:
     bizops:
       nightly:
-        +snowflake_warehouse: "TRANSFORM_L"
+        +snowflake_warehouse: "TRANSFORM_M"
         tags: ["bizops", "nightly"]
 
     blp:
@@ -61,12 +61,12 @@ models:
 
     mattermost:
       nightly:
-        +snowflake_warehouse: "TRANSFORM_L"
+        +snowflake_warehouse: "TRANSFORM_M"
         tags: "nightly"
 
     staging:
       server:
-        +snowflake_warehouse: "TRANSFORM_L"
+        +snowflake_warehouse: "TRANSFORM_M"
         tags: ["server", "nightly"]
 
     qa:

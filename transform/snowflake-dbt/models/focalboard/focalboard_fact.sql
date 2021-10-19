@@ -22,7 +22,7 @@ WITH focalboard_fact AS (
       ON focalboard_activity.user_id = server.user_id
     GROUP BY 1
     {% if is_incremental() %}
-    HAVING MAX(focalboard_activity.received_at) >= (SELECT MAX(latest_received_at) FROM {{this}})
+    HAVING MAX(focalboard_activity.received_at) > (SELECT MAX(latest_received_at) FROM {{this}})
     {% endif %}
 )
 

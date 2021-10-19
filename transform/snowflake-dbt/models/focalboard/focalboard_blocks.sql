@@ -15,6 +15,7 @@ WITH max_time AS (
     user_id
   , timestamp::date as date
   , MAX(received_at) AS max_time
+  , MAX(timestamp) AS max_ts
   FROM {{ source('hacktoberboard_prod', 'blocks') }}
   WHERE received_at::DATE <= CURRENT_DATE
   GROUP BY 1, 2
@@ -52,9 +53,10 @@ focalboard_blocks AS (
     JOIN max_time mt
       ON blocks.user_id = mt.user_id
       AND blocks.received_at = mt.max_time
+      AND blocks.timestamp = mt.max_ts
     WHERE blocks.received_at::DATE <= CURRENT_DATE
     {% if is_incremental() %}
-      and blocks.received_at >= (select max(received_at) from {{ this }})
+      and blocks.received_at > (select max(received_at) from {{ this }})
       {%- if col_count != none -%}
 
       {{dbt_utils.group_by(n=col_count)}}
