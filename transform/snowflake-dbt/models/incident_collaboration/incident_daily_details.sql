@@ -120,10 +120,8 @@ incident_daily_details AS (
       , COUNT(DISTINCT CASE WHEN events.timestamp::date = d.date 
                         THEN COALESCE(events.user_actual_id, useractualid) ELSE NULL END)             AS daily_active_users
       , COUNT(DISTINCT CASE WHEN events.timestamp::date >= d.date - INTERVAL '7 DAYS'
-                  AND events.timestamp::date >= d.last_version_date::date 
                   THEN COALESCE(events.user_actual_id, useractualid) ELSE NULL END)                   AS weekly_active_users
       , COUNT(DISTINCT CASE WHEN events.timestamp::date >= d.date - INTERVAL '30 DAYS'
-                  AND events.timestamp::date >= d.last_version_date::date  
                   THEN COALESCE(events.user_actual_id, useractualid) ELSE NULL END)                   AS monthly_active_users
     FROM dates d
     JOIN {{ ref('incident_response_events') }} events
