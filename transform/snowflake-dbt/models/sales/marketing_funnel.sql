@@ -86,7 +86,7 @@ pipeline_created as (
     select
         date_trunc(month,opportunity.createddate) as month,
         round(sum(opportunity_snapshot.amount),2) as pipeline_amount,
-        count(distinct opportunity.account_id) as count_created,
+        count(distinct opportunity.accountid) as count_created,
         round(sum(case when created_by_segment like 'Federal%' then opportunity_snapshot.amount else 0 end),2) as federal_pipeline,
         round(sum(case when created_by_segment like 'Commercial%' then opportunity_snapshot.amount else 0 end),2) as commercial_ae_pipeline,
         round(sum(case when created_by_segment like 'Enterprise%' then opportunity_snapshot.amount else 0 end),2) as enterprise_ae_pipeline,
