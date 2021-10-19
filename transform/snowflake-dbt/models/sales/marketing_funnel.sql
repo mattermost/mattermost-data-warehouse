@@ -39,20 +39,39 @@ web_traffic as (
 ),
 
 lead_creation as (
-    select date_trunc(month,createddate) as month, count(*) as count_lead_creation
+    select date_trunc(month,createddate) as month, count(distinct lower(email)) as count_lead_creation
     from {{ ref('lead') }}
+    where status != 'Not a Lead'
+        and email not like '%@mattermost.com' and email not like '%+%' and email != ''
+        and company not like '%example%' and company not like '%ЛУЧШИЙ СПОСОБ ЗАРАБОТКА http://one33.ru/%' and company not like '%QQ%'
+        and company not like '%Tencent%' and company not like '%Sina%' and company not like '%NetEase%' and company not like '%Net Ease%'
     group by 1
 ),
 
 mql as (
-    select date_trunc(month,most_recent_mql_date__c) as month, count(*) as count_mql
+    select date_trunc(month,first_mql_date__c) as month, count(distinct lower(email)) as count_mql
     from {{ ref('lead') }}
+    where status != 'Not a Lead'
+        and email not like '%@mattermost.com' and email not like '%+%' and email != ''
+        and company not like '%example%' and company not like '%ЛУЧШИЙ СПОСОБ ЗАРАБОТКА http://one33.ru/%' and company not like '%QQ%'
+        and company not like '%Tencent%' and company not like '%Sina%' and company not like '%NetEase%' and company not like '%Net Ease%'
+    group by 1
+),
+
+reengaged_mql as (
+    select date_trunc(month,most_recent_mql_date__c) as month, count(distinct lower(email)) as count_reengaged_mql
+    from {{ ref('lead') }}
+    where most_recent_mql_date__c is not null and most_recent_reengaged_date__c is not null
     group by 1
 ),
 
 sal as (
-    select date_trunc(month,sal_date__c) as month, count(*) as count_sal
+    select date_trunc(month,sal_date__c) as month, count(distinct lower(email)) as count_sal
     from {{ ref('lead') }}
+    where status != 'Not a Lead'
+        and email not like '%@mattermost.com' and email not like '%+%' and email != ''
+        and company not like '%example%' and company not like '%ЛУЧШИЙ СПОСОБ ЗАРАБОТКА http://one33.ru/%' and company not like '%QQ%'
+        and company not like '%Tencent%' and company not like '%Sina%' and company not like '%NetEase%' and company not like '%Net Ease%'
     group by 1
 ),
 
@@ -67,7 +86,7 @@ pipeline_created as (
     select 
         date_trunc(month,opportunity.createddate) as month, 
         round(sum(opportunity_snapshot.amount),2) as pipeline_amount,
-        count(distinct opportunity.sfid) as count_created,
+        count(distinct opportunity.account_id) as count_created,
         round(sum(case when created_by_segment like 'Federal%' then opportunity_snapshot.amount else 0 end),2) as federal_pipeline,
         round(sum(case when created_by_segment like 'Commercial%' then opportunity_snapshot.amount else 0 end),2) as commercial_ae_pipeline,
         round(sum(case when created_by_segment like 'Enterprise%' then opportunity_snapshot.amount else 0 end),2) as enterprise_ae_pipeline,
@@ -91,7 +110,7 @@ pipeline_created as (
 new_logo_and_arr_creation as (
     select 
         date_trunc(month,opportunity.closedate) as month, 
-        count(*) as count_new_logo,
+        count(distinct opportunity.sfid) as count_new_logo,
         count(distinct case when market_segment = 'Federal' then opportunity_ext.opportunity_sfid else null end) as federal_new_logo,
         count(distinct case when market_segment = 'Commercial' then opportunity_ext.opportunity_sfid else null end) as commercial_new_logo,
         count(distinct case when market_segment = 'Enterprise' then opportunity_ext.opportunity_sfid else null end) as enterprise_new_logo,
