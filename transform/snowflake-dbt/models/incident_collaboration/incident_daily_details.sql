@@ -46,6 +46,30 @@ WITH min_dates AS (
         AND d.date <= CURRENT_DATE
      ),
 
+    active_users AS (
+      SELECT
+          d.date
+        , d.server_id
+        , count(distinct users.user_id)                   AS monthly_active_users
+        , count(distinct case when users.event_date between d.date - interval '7 days' and d.date 
+                      then users.user_id else null end)   AS weekly_active_users
+        , count(distinct case when users.event_date = d.date 
+                      then users.user_id else null end)   AS daily_active_users
+      FROM (SELECT date, server_id FROM dates GROUP BY 1, 2) d
+      LEFT JOIN (
+                SELECT 
+                     timestamp::date                               AS event_date
+                  , COALESCE(user_id, anonymous_id)                AS server_id
+                  , COALESCE(user_actual_id, useractualid)  AS user_id
+                  , COUNT(*)                                       AS events
+                FROM {{ ref('incident_response_events') }}
+                GROUP BY 1, 2, 3
+              ) users
+      ON d.server_id = users.server_id
+      AND users.event_date between d.date - interval '30 days' and d.date
+      GROUP BY 1, 2
+    ),
+
 incident_daily_details AS (
     SELECT
         d.date
@@ -118,11 +142,11 @@ incident_daily_details AS (
       , COUNT(CASE WHEN event = 'tasks' AND action = 'move_task' THEN events.id ELSE NULL END)          AS tasks_moved_alltime
       , COUNT(DISTINCT COALESCE(events.user_actual_id, useractualid)) AS version_users_to_date
       , COUNT(DISTINCT CASE WHEN events.timestamp::date = d.date 
-                        THEN COALESCE(events.user_actual_id, useractualid) ELSE NULL END)             AS daily_active_users
+                        THEN COALESCE(events.user_actual_id, useractualid) ELSE NULL END)             AS daily_active_users_version
       , COUNT(DISTINCT CASE WHEN events.timestamp::date >= d.date - INTERVAL '7 DAYS'
-                  THEN COALESCE(events.user_actual_id, useractualid) ELSE NULL END)                   AS weekly_active_users
+                  THEN COALESCE(events.user_actual_id, useractualid) ELSE NULL END)                   AS weekly_active_users_version
       , COUNT(DISTINCT CASE WHEN events.timestamp::date >= d.date - INTERVAL '30 DAYS'
-                  THEN COALESCE(events.user_actual_id, useractualid) ELSE NULL END)                   AS monthly_active_users
+                  THEN COALESCE(events.user_actual_id, useractualid) ELSE NULL END)                   AS monthly_active_users_version
       , COUNT(DISTINCT CASE WHEN event = 'playbook' and action = 'create' and events.timestamp::date = d.date 
                             THEN events.id
                             ELSE NULL END)                                                            AS playbooks_created
@@ -183,12 +207,18 @@ incident_daily_details AS (
                   WHEN event = 'tasks' AND action = 'run_task_slash_command' and events.timestamp::date = d.date THEN events.id
                                                                              ELSE NULL END)           AS task_slash_commands_run
       , COUNT(CASE WHEN event = 'tasks' AND action = 'move_task' and events.timestamp::date = d.date THEN events.id ELSE NULL END)          AS tasks_moved
+      , MAX(active_users.daily_active_users)        AS daily_active_users
+      , MAX(active_users.weekly_active_users)        AS weekly_active_users
+      , MAX(active_users.monthly_active_users)        AS monthly_active_users
     FROM dates d
     JOIN {{ ref('incident_response_events') }} events
       ON d.server_id = COALESCE(events.user_id, events.anonymous_id)
       AND events.timestamp::date <= d.date
       AND COALESCE(events.plugin_version, events.pluginversion) = d.plugin_version
       AND events.timestamp::date >= d.first_version_date
+    JOIN active_users
+      ON d.server_id = active_users.server_id
+      AND d.date = active_users.date
     WHERE events.timestamp::DATE <= CURRENT_TIMESTAMP
     GROUP BY 1, 2, 3, 4, 5, 6
                          )
