@@ -60,12 +60,14 @@ def main():
             url = f"{blapi_url}/api/v1/customer/{sub['customer_id']}/subscriptions/{sub['id']}/invoice/build"
 
             resp = None
-            while retries < 5:
+            while retries < 10:
                 try:
                     retries += 1
-                    resp = requests.post(url, json=payload, headers=header)
+                    resp = requests.post(
+                        url, json=payload, headers=header, timeout=(0.1, 10)
+                    )
                     break
-                except requests.exceptions.ConnectionError:
+                except requests.exceptions.ReadTimeout:
                     pass
 
             if resp and resp.status_code != requests.codes.ok:
