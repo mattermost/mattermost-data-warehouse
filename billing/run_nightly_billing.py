@@ -67,13 +67,16 @@ def main():
                         url, json=payload, headers=header, timeout=(0.1, 10)
                     )
                     break
-                except requests.exceptions.ReadTimeout:
-                    pass
+                except requests.exceptions.RequestException:
+                    message = f"Retrying: Error building invoice for subscription {sub['id']} with dates {start_date}-{end_date}"
+                    logging.error(message)
 
             if resp and resp.status_code != requests.codes.ok:
                 message = f"Error building invoice for subscription {sub['id']} with dates {start_date}-{end_date}"
                 logging.error(message)
                 errors.append(message)
+            else:
+                logging.info(f"Successfully built invoice for subscription {sub.id}")
 
         if errors:
             raise Exception("\n".join(errors))
