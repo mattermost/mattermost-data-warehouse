@@ -31,6 +31,7 @@ select
     facts.email,
     facts.dns,
     facts.stripe_customer_id,
+    facts.installation_id,
     facts.trial_start,
     facts.trial_end,
     facts.last_active_date,
