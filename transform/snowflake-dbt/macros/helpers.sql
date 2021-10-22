@@ -78,6 +78,12 @@ select get_sys_var({{ var_name }})
         AND REGEXP_SUBSTR(TABLE_NAME, '[0-9]') IS NULL
         AND table_name not like 'EVENT_%'
         {% endif %}
+        {% if this.table == 'server_telemetry' %}
+        AND table_name not in ('TRACKS', 'USERS', 'SCREENS', 'IDENTIFIES', 'PAGES', 'RUDDER_DISCARDS')
+        AND REGEXP_SUBSTR(TABLE_NAME, '[0-9]') IS NULL
+        AND table_name not like 'EVENT_%'
+        {% endif %}
+
     {%- if table_exclusions -%}
 
      and lower(table_name) not in ({{ table_exclusions}})
