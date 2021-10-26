@@ -64,17 +64,17 @@ incident_collaboration_fact AS (
         , MAX(incident_daily_details.weekly_active_users) AS weekly_active_users_max
         , MAX(incident_daily_details.monthly_active_users) AS monthly_active_users_max
         , SUM(CASE WHEN incident_daily_details.date = incident_daily_details.last_version_date::date 
-                    THEN incident_daily_details.playbooks_created ELSE 0 END) AS playbooks_created
+                    THEN incident_daily_details.playbooks_created_alltime ELSE 0 END) AS playbooks_created
         , SUM(CASE WHEN incident_daily_details.date = incident_daily_details.last_version_date::date 
-                    THEN incident_daily_details.playbooks_edited ELSE 0 END) AS playbooks_edited
+                    THEN incident_daily_details.playbooks_edited_alltime ELSE 0 END) AS playbooks_edited
         , SUM(CASE WHEN incident_daily_details.date = incident_daily_details.last_version_date::date 
-                    THEN incident_daily_details.reported_incidents ELSE 0 END) AS incidents_reported
+                    THEN incident_daily_details.reported_incidents_alltime ELSE 0 END) AS incidents_reported
         , SUM(CASE WHEN incident_daily_details.date = incident_daily_details.last_version_date::date 
-                    THEN acknowledged_incidents ELSE 0 END) AS incidents_acknowledged
+                    THEN acknowledged_incidents_alltime ELSE 0 END) AS incidents_acknowledged
         , SUM(CASE WHEN incident_daily_details.date = incident_daily_details.last_version_date::date 
-                    THEN incident_daily_details.resolved_incidents ELSE 0 END) AS incidents_resolved
+                    THEN incident_daily_details.resolved_incidents_alltime ELSE 0 END) AS incidents_resolved
         , SUM(CASE WHEN incident_daily_details.date = incident_daily_details.last_version_date::date 
-                    THEN incident_daily_details.archived_incidents ELSE 0 END) AS incidents_archived
+                    THEN incident_daily_details.archived_incidents_alltime ELSE 0 END) AS incidents_archived
         , COUNT(DISTINCT CASE WHEN incident_daily_details.daily_active_users > 0 
                     THEN incident_daily_details.date else null end) AS days_active
     FROM {{ref('incident_daily_details')}}

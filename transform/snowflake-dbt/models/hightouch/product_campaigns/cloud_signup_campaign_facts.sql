@@ -83,6 +83,7 @@ select
     completed_signup.completed_signup_at,
     customer_facts.stripe_customer_id,
     customer_facts.dns,
+    customer_facts.installation_id,
     case
         when customer_facts.created > customer_facts.trial_start
         then customer_facts.created

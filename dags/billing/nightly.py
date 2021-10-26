@@ -38,6 +38,7 @@ dag = DAG(
 
 run_nightly_billing_cmd = f"""
     {clone_and_setup_extraction_cmd} &&
+    echo '172.24.4.186 blapi.internal.mattermost.com' >> /etc/hosts &&
     python billing/run_nightly_billing.py
 """
 
