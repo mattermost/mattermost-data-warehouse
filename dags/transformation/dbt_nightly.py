@@ -166,4 +166,4 @@ dbt_run = KubernetesPodOperator(
 )
 
 # dbt_seed_nightly >> update_twitter >> dbt_run
-dbt_seed_nightly >> dbt_run
+dbt_seed_nightly
