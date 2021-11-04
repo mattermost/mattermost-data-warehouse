@@ -393,6 +393,13 @@ select get_sys_var({{ var_name }})
                                             'application_installed',
                                             'application_opened',
                                             'application_updated')
+            {% elif this.table in ['performance_events'] %}
+                {%+ if is_incremental() %}
+                AND 
+                {%+ else %}
+                WHERE 
+                {%+ endif %}
+                {{ relation }}.category IN ('performance')
             {% endif %}
             ){% if not loop.last %}, 
             {% endif %}
