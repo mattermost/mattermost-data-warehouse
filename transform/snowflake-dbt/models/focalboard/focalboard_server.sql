@@ -13,9 +13,9 @@
 WITH max_time AS (
   SELECT 
     user_id
-  , timestamp::date as date
+  , received_at::date as date
   , MAX(received_at) AS max_time
-  , MAX(timestamp) AS max_ts
+  , MAX(received_at) AS max_ts
   FROM {{ source('hacktoberboard_prod', 'server') }}
   WHERE received_at::DATE <= CURRENT_DATE
   GROUP BY 1, 2
@@ -26,7 +26,7 @@ focalboard_server AS (
     {% if not is_incremental() %}
     DISTINCT
     {% endif %} 
-        server.timestamp::date as logging_date
+        server.received_at::date as logging_date
         , server.server_id
         , server.version
         , server.context_ip
@@ -46,12 +46,12 @@ focalboard_server AS (
         , server.uuid_ts
         , server.context_library_name
         , server.received_at
-      , {{ dbt_utils.surrogate_key(['server.timestamp::date', 'server.user_id'])}} as id
+      , {{ dbt_utils.surrogate_key(['server.received_at::date', 'server.user_id'])}} as id
     FROM {{ source('hacktoberboard_prod', 'server') }} server
     JOIN max_time mt
       ON server.user_id = mt.user_id
       AND server.received_at = mt.max_time
-      AND server.timestamp = mt.max_ts
+      AND server.received_at = mt.max_ts
     WHERE server.received_at::DATE <= CURRENT_DATE
     {% if is_incremental() %}
       and server.received_at > (select max(received_at) from {{ this }})
