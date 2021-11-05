@@ -13,9 +13,9 @@
 WITH max_time AS (
   SELECT 
     user_id
-  , timestamp::date as date
+  , received_at::date as date
   , MAX(received_at) AS max_time
-  , MAX(timestamp) AS max_ts
+  , MAX(received_at) AS max_ts
   FROM {{ source('hacktoberboard_prod', 'blocks') }}
   WHERE received_at::DATE <= CURRENT_DATE
   GROUP BY 1, 2
@@ -26,7 +26,7 @@ focalboard_blocks AS (
     {% if not is_incremental() %}
     DISTINCT
     {% endif %}
-        blocks.timestamp::date as logging_date
+        blocks.received_at::date as logging_date
         , blocks.context_request_ip
         , blocks.comment
         , blocks.divider
@@ -48,12 +48,12 @@ focalboard_blocks AS (
         , blocks.user_id
         , blocks.checkbox
         , blocks.timestamp
-      , {{ dbt_utils.surrogate_key(['blocks.timestamp::date', 'blocks.user_id'])}} as id
+      , {{ dbt_utils.surrogate_key(['blocks.received_at::date', 'blocks.user_id'])}} as id
     FROM {{ source('hacktoberboard_prod', 'blocks') }} blocks
     JOIN max_time mt
       ON blocks.user_id = mt.user_id
       AND blocks.received_at = mt.max_time
-      AND blocks.timestamp = mt.max_ts
+      AND blocks.received_at = mt.max_ts
     WHERE blocks.received_at::DATE <= CURRENT_DATE
     {% if is_incremental() %}
       and blocks.received_at > (select max(received_at) from {{ this }})
