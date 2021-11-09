@@ -29,9 +29,10 @@ WITH sdd AS (
             , MIN(CASE WHEN in_mm2_server THEN timestamp ELSE NULL END)                           AS first_mm2_telemetry_date
             , MAX(CASE WHEN in_mm2_server THEN timestamp ELSE NULL END)                           AS last_mm2_telemetry_date
             FROM {{ ref('server_daily_details') }}
+            WHERE timestamp <= CURRENT_TIMESTAMP
             GROUP BY 1
             {% if is_incremental() %}
-            HAVING MAX(CASE WHEN in_security OR in_mm2_server THEN timestamp ELSE NULL END) > (SELECT MAX(last_active_date) - INTERVAL '6 HOURS' FROM {{this}})
+            HAVING MAX(CASE WHEN in_security OR in_mm2_server THEN timestamp ELSE NULL END) > (SELECT MAX(last_active_date) - INTERVAL '2 HOURS' FROM {{this}})
             {% endif %}
           ),
 
@@ -70,7 +71,7 @@ WITH sdd AS (
           activity.user_id              as server_id
         , max(activity.timestamp)       as max_time
         , max(activity.timestamp::date) as max_date 
-      from {{ source('mattermost2', 'activity') }} 
+      from {{ source('mm_telemetry_prod', 'activity') }} 
       where activity.user_id in (SELECT server_id from sdd GROUP BY 1)
       group by 1
     ),

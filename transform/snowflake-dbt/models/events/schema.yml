@@ -48,3 +48,6 @@ models:
 
   - name: focalboard_event_telemetry
     description: Contains the tracked user events performed within the focalboard GUI.
+
+  - name: performance_events
+    description: Contains the events with category = performance. Specifically targeting page load events for dev team reporting.

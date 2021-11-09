@@ -73,7 +73,17 @@ select get_sys_var({{ var_name }})
     WHERE table_schema ilike '{{ scheme }}'
         {% if table_inclusions != "'pages'" %}
         AND table_name not in ('TRACKS', 'USERS', 'SCREENS', 'IDENTIFIES', 'PAGES', 'RUDDER_DISCARDS')
+        {% elif scheme == 'mm_telemetry_rc' or scheme == 'mm_telemetry_qa' %}
+        AND table_name not in ('TRACKS', 'USERS', 'SCREENS', 'IDENTIFIES', 'PAGES', 'RUDDER_DISCARDS')
+        AND REGEXP_SUBSTR(TABLE_NAME, '[0-9]') IS NULL
+        AND table_name not like 'EVENT_%'
         {% endif %}
+        {% if this.table == 'server_telemetry' %}
+        AND table_name not in ('TRACKS', 'USERS', 'SCREENS', 'IDENTIFIES', 'PAGES', 'RUDDER_DISCARDS')
+        AND REGEXP_SUBSTR(TABLE_NAME, '[0-9]') IS NULL
+        AND table_name not like 'EVENT_%'
+        {% endif %}
+
     {%- if table_exclusions -%}
 
      and lower(table_name) not in ({{ table_exclusions}})
@@ -383,6 +393,13 @@ select get_sys_var({{ var_name }})
                                             'application_installed',
                                             'application_opened',
                                             'application_updated')
+            {% elif this.table in ['performance_events'] %}
+                {%+ if is_incremental() %}
+                AND 
+                {%+ else %}
+                WHERE 
+                {%+ endif %}
+                {{ relation }}.category IN ('performance')
             {% endif %}
             ){% if not loop.last %}, 
             {% endif %}

@@ -10,8 +10,8 @@ WITH focalboard_fact AS (
     SELECT 
           focalboard_activity.user_id AS focalboard_id
         , MAX(server.server_id) AS instance_id
-        , MIN(focalboard_activity.timestamp) AS first_active
-        , MAX(focalboard_activity.timestamp) AS last_active
+        , MIN(focalboard_activity.received_at) AS first_active
+        , MAX(focalboard_activity.received_at) AS last_active
         , MAX(focalboard_activity.daily_active_users) AS daily_active_users_max
         , MAX(focalboard_activity.weekly_active_users) AS weekly_active_users_max
         , MAX(focalboard_activity.monthly_active_users) AS monthly_active_users_max

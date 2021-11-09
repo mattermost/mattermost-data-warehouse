@@ -140,6 +140,11 @@ if len(cloud_clearbit) >= 1:
                                 if isinstance(v2, dict):
                                     for k3, v3 in v2.items():
                                         clearbit_df.loc[index, k.lower() + '_' + k1.lower() + '_' + k2.lower() + '_' + k3.lower()] = v3
+                                        if isinstance(v3, dict):
+                                            for k4, v4 in v3.items():
+                                                clearbit_df.loc[index, k.lower() + '_' + k1.lower() + '_' + k2.lower() + '_' + k3.lower() + '_' + k4.lower()] = v4
+                                        else:
+                                            clearbit_df.loc[index, k.lower() + '_' + k1.lower() + '_' + k2.lower() + '_' + k3.lower()] = v3 
                                 else:
                                     clearbit_df.loc[index, k.lower() + '_' + k1.lower() + '_' + k2.lower()] = v2
                         else:

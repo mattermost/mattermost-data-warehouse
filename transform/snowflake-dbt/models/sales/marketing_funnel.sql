@@ -12,6 +12,58 @@ with months as (
     group by 1
 ),
 
+key_assumptions as (
+    select
+        month,
+        run_rate,
+        budget,
+        cpl,
+        traffic_lead,
+        lead_mql,
+        mql_sal,
+        sal_sql,
+        sql_opp,
+        opp_newlogo,
+        lead_mql_coverage,
+        mql_sal_coverage,
+        sal_sql_coverage,
+        sql_opp_coverage,
+        opp_logo_coverage,
+        pipeline_arr_coverage,
+        avg_quota_achievement,
+        percent_fed_logos,
+        percent_comm_logos,
+        percent_ent_logos,
+        asp_fed,
+        asp_comm,
+        asp_ent,
+        avg_sales_cyle_fed,
+        avg_sales_cycle_comm,
+        avg_sales_cycle_ent,
+        fed_expansion,
+        comm_expansion,
+        ent_expansion,
+        comm_bdr_quota_opps,
+        comm_bdr_quota_pipeline,
+        comm_bdr_logos,
+        comm_bdr_new_arr,
+        ent_fed_bdr_quota_opps,
+        ent_fed_bdr_quota_pipeline,
+        fed_ae_quota_opps,
+        fed_ae_quota_pipeline,
+        fed_ae_quota_logos,
+        fed_ae_quota_arr,
+        comm_ae_quota_opps,
+        comm_ae_quota_pipeline,
+        comm_ae_logos,
+        comm_ae_new_arr,
+        ent_ae_quota_opps,
+        ent_ae_quota_pipeline,
+        ent_ae_logos,
+        ent_ae_new_arr
+    from {{ source('marketing_gsheets','fy22_key_assumptions') }}
+),
+
 web_traffic as (
     select
         date_trunc(month,daily_website_traffic.timestamp) as month,
@@ -39,20 +91,43 @@ web_traffic as (
 ),
 
 lead_creation as (
-    select date_trunc(month,createddate) as month, count(*) as count_lead_creation
+    select date_trunc(month,createddate) as month, count(distinct lower(email)) as count_lead_creation
     from {{ ref('lead') }}
+    where status != 'Not a Lead' and lead_source_text__c != 'Sales Generated'
+        and email not like '%@mattermost.com' and email not like '%+%' and email != '' and email not like '%test%'
+        and company not like '%example%' and company not like '%ЛУЧШИЙ СПОСОБ ЗАРАБОТКА http://one33.ru/%' and company not like '%QQ%'
+        and company not like '%Tencent%' and company not like '%Sina%' and company not like '%NetEase%' and company not like '%Net Ease%'
     group by 1
 ),
 
 mql as (
-    select date_trunc(month,most_recent_mql_date__c) as month, count(*) as count_mql
+    select date_trunc(month,first_mql_date__c) as month, count(distinct lower(email)) as count_mql
     from {{ ref('lead') }}
+    where status != 'Not a Lead' and lead_source_text__c != 'Sales Generated'
+        and email not like '%@mattermost.com' and email not like '%+%' and email != '' and email not like '%test%'
+        and company not like '%example%' and company not like '%ЛУЧШИЙ СПОСОБ ЗАРАБОТКА http://one33.ru/%' and company not like '%QQ%'
+        and company not like '%Tencent%' and company not like '%Sina%' and company not like '%NetEase%' and company not like '%Net Ease%'
+    group by 1
+),
+
+reengaged_mql as (
+    select date_trunc(month,most_recent_mql_date__c) as month, count(distinct lower(email)) as count_reengaged_mql
+    from {{ ref('lead') }}
+    where most_recent_mql_date__c is not null and most_recent_reengaged_date__c is not null
+        and status != 'Not a Lead' and lead_source_text__c != 'Sales Generated'
+        and email not like '%@mattermost.com' and email not like '%+%' and email != '' and email not like '%test%'
+        and company not like '%example%' and company not like '%ЛУЧШИЙ СПОСОБ ЗАРАБОТКА http://one33.ru/%' and company not like '%QQ%'
+        and company not like '%Tencent%' and company not like '%Sina%' and company not like '%NetEase%' and company not like '%Net Ease%'
     group by 1
 ),
 
 sal as (
-    select date_trunc(month,sal_date__c) as month, count(*) as count_sal
+    select date_trunc(month,sal_date__c) as month, count(distinct lower(email)) as count_sal
     from {{ ref('lead') }}
+    where status != 'Not a Lead' and lead_source_text__c != 'Sales Generated'
+        and email not like '%@mattermost.com' and email not like '%+%' and email != '' and email not like '%test%'
+        and company not like '%example%' and company not like '%ЛУЧШИЙ СПОСОБ ЗАРАБОТКА http://one33.ru/%' and company not like '%QQ%'
+        and company not like '%Tencent%' and company not like '%Sina%' and company not like '%NetEase%' and company not like '%Net Ease%'
     group by 1
 ),
 
@@ -67,7 +142,7 @@ pipeline_created as (
     select
         date_trunc(month,opportunity.createddate) as month,
         round(sum(opportunity_snapshot.amount),2) as pipeline_amount,
-        count(distinct opportunity.sfid) as count_created,
+        count(distinct opportunity.accountid) as count_created,
         round(sum(case when created_by_segment like 'Federal%' then opportunity_snapshot.amount else 0 end),2) as federal_pipeline,
         round(sum(case when created_by_segment like 'Commercial%' then opportunity_snapshot.amount else 0 end),2) as commercial_ae_pipeline,
         round(sum(case when created_by_segment like 'Enterprise%' then opportunity_snapshot.amount else 0 end),2) as enterprise_ae_pipeline,
@@ -89,9 +164,9 @@ pipeline_created as (
 ),
 
 new_logo_and_arr_creation as (
-    select
-        date_trunc(month,opportunity.closedate) as month,
-        count(*) as count_new_logo,
+    select 
+        date_trunc(month,opportunity.closedate) as month, 
+        count(distinct opportunity.sfid) as count_new_logo,
         count(distinct case when market_segment = 'Federal' then opportunity_ext.opportunity_sfid else null end) as federal_new_logo,
         count(distinct case when market_segment = 'Commercial' then opportunity_ext.opportunity_sfid else null end) as commercial_new_logo,
         count(distinct case when market_segment = 'Enterprise' then opportunity_ext.opportunity_sfid else null end) as enterprise_new_logo,
@@ -145,6 +220,7 @@ marketing_funnel as (
         coalesce(web_traffic.count_web_traffic,0) as count_web_traffic,
         coalesce(lead_creation.count_lead_creation,0) as count_lead_creation,
         coalesce(mql.count_mql,0) as count_mql,
+        coalesce(reengaged_mql.count_reengaged_mql,0) as count_reengaged_mql,
         coalesce(sal.count_sal,0) as count_sal,
         coalesce(sql.count_sql,0) as count_sql,
         coalesce(pipeline_created.pipeline_amount,0) as pipeline_amount,
@@ -181,11 +257,59 @@ marketing_funnel as (
         coalesce(federal_m18_arr,0) as federal_m18_arr,
         coalesce(commercial_m18_arr,0) as commercial_m18_arr,
         coalesce(enterprise_m18_arr,0) as enterprise_m18_arr,
-        coalesce(marketing_spend.marketing_spend,0) as marketing_spend
+        coalesce(marketing_spend.marketing_spend,0) as marketing_spend,
+        key_assumptions.run_rate as run_rate_assumption,
+        key_assumptions.budget as budget_assumption,
+        key_assumptions.cpl as cpl_assumption,
+        key_assumptions.traffic_lead as traffic_lead_assumption,
+        key_assumptions.lead_mql as lead_mql_assumption,
+        key_assumptions.mql_sal as mql_sal_assumption,
+        key_assumptions.sal_sql as sal_sql_assumption,
+        key_assumptions.sql_opp as sql_opp_assumption,
+        key_assumptions.opp_newlogo as opp_newlogo_assumption,
+        key_assumptions.lead_mql_coverage as lead_mql_coverage_assumption,
+        key_assumptions.mql_sal_coverage as mql_sal_coverage_assumption,
+        key_assumptions.sal_sql_coverage as sal_sql_coverage_assumption,
+        key_assumptions.sql_opp_coverage as sql_opp_coverage_assumption,
+        key_assumptions.opp_logo_coverage as opp_logo_coverage_assumption,
+        key_assumptions.pipeline_arr_coverage as pipeline_arr_coverage_assumption,
+        key_assumptions.avg_quota_achievement as avg_quota_achievement_assumption,
+        key_assumptions.percent_fed_logos as percent_fed_logos_assumption,
+        key_assumptions.percent_comm_logos as percent_comm_logos_assumption,
+        key_assumptions.percent_ent_logos as percent_ent_logos_assumption,
+        key_assumptions.asp_fed as asp_fed_assumption,
+        key_assumptions.asp_comm as asp_comm_assumption,
+        key_assumptions.asp_ent as asp_ent_assumption,
+        key_assumptions.avg_sales_cyle_fed as avg_sales_cyle_fed_assumption,
+        key_assumptions.avg_sales_cycle_comm as avg_sales_cycle_comm_assumption,
+        key_assumptions.avg_sales_cycle_ent as avg_sales_cycle_ent_assumption,
+        key_assumptions.fed_expansion as fed_expansion_assumption,
+        key_assumptions.comm_expansion as comm_expansion_assumption,
+        key_assumptions.ent_expansion as ent_expansion_assumption,
+        key_assumptions.comm_bdr_quota_opps as comm_bdr_quota_opps_assumption,
+        key_assumptions.comm_bdr_quota_pipeline as comm_bdr_quota_pipeline_assumption,
+        key_assumptions.comm_bdr_logos as comm_bdr_logos_assumption,
+        key_assumptions.comm_bdr_new_arr as comm_bdr_new_arr_assumption,
+        key_assumptions.ent_fed_bdr_quota_opps as ent_fed_bdr_quota_opps_assumption,
+        key_assumptions.ent_fed_bdr_quota_pipeline as ent_fed_bdr_quota_pipeline_assumption,
+        key_assumptions.fed_ae_quota_opps as fed_ae_quota_opps_assumption,
+        key_assumptions.fed_ae_quota_pipeline as fed_ae_quota_pipeline_assumption,
+        key_assumptions.fed_ae_quota_logos as fed_ae_quota_logos_assumption,
+        key_assumptions.fed_ae_quota_arr as fed_ae_quota_arr_assumption,
+        key_assumptions.comm_ae_quota_opps as comm_ae_quota_opps_assumption,
+        key_assumptions.comm_ae_quota_pipeline as comm_ae_quota_pipeline_assumption,
+        key_assumptions.comm_ae_logos as comm_ae_logos_assumption,
+        key_assumptions.comm_ae_new_arr as comm_ae_new_arr_assumption,
+        key_assumptions.ent_ae_quota_opps as ent_ae_quota_opps_assumption,
+        key_assumptions.ent_ae_quota_pipeline as ent_ae_quota_pipeline_assumption,
+        key_assumptions.ent_ae_logos as ent_ae_logos_assumption,
+        key_assumptions.ent_ae_new_arr as ent_ae_new_arr_assumption
     from months
+    left join key_assumptions on months.month = key_assumptions.month
     left join web_traffic on months.month = web_traffic.month
     left join lead_creation on months.month = lead_creation.month
     left join mql on months.month = mql.month
+    left join reengaged_mql on months.month = reengaged_mql.month
     left join sal on months.month = sal.month
     left join sql on months.month = sql.month
     left join pipeline_created on months.month = pipeline_created.month

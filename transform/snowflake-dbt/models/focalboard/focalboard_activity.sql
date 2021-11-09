@@ -13,9 +13,9 @@
 WITH max_time AS (
   SELECT 
     user_id
-  , timestamp::date as date
+  , received_at::date as date
   , MAX(received_at) AS max_time
-  , MAX(timestamp) AS max_ts
+  , MAX(received_at) AS max_ts
   FROM {{ source('hacktoberboard_prod', 'activity') }}
   WHERE received_at::DATE <= CURRENT_DATE
   GROUP BY 1, 2
@@ -26,7 +26,7 @@ focalboard_activity AS (
     {% if not is_incremental() %}
     DISTINCT
     {% endif %}
-        activity.timestamp::date as logging_date
+        activity.received_at::date as logging_date
       , activity.received_at
       , activity.weekly_active_users
       , activity.sent_at
@@ -44,12 +44,12 @@ focalboard_activity AS (
       , activity.context_library_version
       , activity.timestamp
       , activity.context_ip
-      , {{ dbt_utils.surrogate_key(['activity.timestamp::date', 'activity.user_id'])}}  as id
+      , {{ dbt_utils.surrogate_key(['activity.received_at::date', 'activity.user_id'])}}  as id
     FROM {{ source('hacktoberboard_prod', 'activity') }} activity
     JOIN max_time mt
       ON activity.user_id = mt.user_id
       AND activity.received_at = mt.max_time
-      AND activity.timestamp = mt.max_ts
+      AND activity.received_at = mt.max_ts
     WHERE activity.received_at::DATE <= CURRENT_DATE
     {% if is_incremental() %}
       and activity.received_at > (select max(received_at) from {{ this }})

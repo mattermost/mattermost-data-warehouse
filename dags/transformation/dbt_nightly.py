@@ -98,30 +98,30 @@ dbt_seed_nightly = KubernetesPodOperator(
     dag=dag,
 )
 
-update_twitter_cmd = f"""
-    {clone_and_setup_extraction_cmd} &&
-    python utils/twitter_mentions.py
-"""
+# update_twitter_cmd = f"""
+#     {clone_and_setup_extraction_cmd} &&
+#     python utils/twitter_mentions.py
+# """
 
-update_twitter = KubernetesPodOperator(
-    **pod_defaults,
-    image=DATA_IMAGE,
-    task_id="update-twitter",
-    name="update-twitter",
-    secrets=[
-        SNOWFLAKE_USER,
-        SNOWFLAKE_PASSWORD,
-        SNOWFLAKE_ACCOUNT,
-        SNOWFLAKE_TRANSFORM_WAREHOUSE,
-        TWITTER_ACCESS_KEY,
-        TWITTER_ACCESS_SECRET,
-        TWITTER_CONSUMER_KEY,
-        TWITTER_CONSUMER_SECRET,
-    ],
-    env_vars=env_vars,
-    arguments=[update_twitter_cmd],
-    dag=dag,
-)
+# update_twitter = KubernetesPodOperator(
+#     **pod_defaults,
+#     image=DATA_IMAGE,
+#     task_id="update-twitter",
+#     name="update-twitter",
+#     secrets=[
+#         SNOWFLAKE_USER,
+#         SNOWFLAKE_PASSWORD,
+#         SNOWFLAKE_ACCOUNT,
+#         SNOWFLAKE_TRANSFORM_WAREHOUSE,
+#         TWITTER_ACCESS_KEY,
+#         TWITTER_ACCESS_SECRET,
+#         TWITTER_CONSUMER_KEY,
+#         TWITTER_CONSUMER_SECRET,
+#     ],
+#     env_vars=env_vars,
+#     arguments=[update_twitter_cmd],
+#     dag=dag,
+# )
 
 update_github_contributors_cmd = f"""
     {clone_and_setup_extraction_cmd} &&
@@ -165,4 +165,5 @@ dbt_run = KubernetesPodOperator(
     dag=dag,
 )
 
-dbt_seed_nightly >> update_twitter >> dbt_run
+# dbt_seed_nightly >> update_twitter >> dbt_run
+dbt_seed_nightly
