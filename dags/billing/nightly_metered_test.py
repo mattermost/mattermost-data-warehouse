@@ -41,9 +41,6 @@ run_nightly_billing_cmd = f"""
     python billing/run__metered_nightly_billing.py test
 """
 
-if pod_defaults['is_delete_operator_pod'] == True:
-    pod_defaults['is_delete_operator_pod'] = False
-
 run_nightly_billing = KubernetesPodOperator(
     **pod_defaults,
     image=DATA_IMAGE,
