@@ -32,20 +32,20 @@ default_args = {
 # We purposely don't run this job on the first day of the month, because stripe will
 # create the draft invoices for the previous month and we handle that in blapi directly
 dag = DAG(
-    "test_env_nightly_billing", default_args=default_args, schedule_interval="0 1 2-31 * *"
+    "test_env_metered_nightly_billing", default_args=default_args, schedule_interval="0 1 2-31 * *"
 )
 
 
 run_nightly_billing_cmd = f"""
     {clone_and_setup_extraction_cmd} &&
-    python billing/run__metered_nightly_billing.py test
+    python billing/run_metered_nightly_billing.py test
 """
 
 run_nightly_billing = KubernetesPodOperator(
     **pod_defaults,
     image=DATA_IMAGE,
-    task_id="test-env-run-nightly-billing",
-    name="test-env-run-nightly-billing",
+    task_id="test-env-run-metered-nightly-billing",
+    name="test-env-run-metered-nightly-billing",
     secrets=[BLAPI_TEST_DATABASE_URL, BLAPI_TEST_TOKEN, BLAPI_TEST_URL],
     env_vars=env_vars,
     arguments=[run_nightly_billing_cmd],
