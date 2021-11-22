@@ -21,6 +21,7 @@ def main():
     blapi_token = ""
     blapi_url = ""
     db_url = ""
+    print(test_mode)
     if test_mode == "test":
         blapi_token = os.getenv("BLAPI_TEST_TOKEN")
         blapi_url = os.getenv("BLAPI_TEST_URL")
