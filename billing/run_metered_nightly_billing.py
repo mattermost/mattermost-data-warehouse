@@ -63,6 +63,7 @@ def main():
             while retries < 10:
                 try:
                     retries += 1
+                    print("Attempt %d to hit URL: %s", retries, url)
                     resp = requests.post(
                         url, json=payload, headers=header, timeout=(0.1, 10)
                     )
@@ -70,11 +71,15 @@ def main():
                 except requests.exceptions.RequestException:
                     message = f"Retrying: Error building invoice for subscription {sub['id']} with dates {start_date}-{end_date}"
                     logging.error(message)
+                    print(message)
+                except Exception as e:
+                    print(e)
 
             if resp and resp.status_code != requests.codes.ok:
                 message = f"Error building invoice for subscription {sub['id']} with dates {start_date}-{end_date}"
                 logging.error(message)
                 errors.append(message)
+                print(message)
             else:
                 logging.info(f"Successfully built invoice for subscription {sub.id}")
 
