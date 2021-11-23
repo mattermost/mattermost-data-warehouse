@@ -58,5 +58,10 @@ def poll_dbt_run(run_id: int):
 
 
 if __name__ == "__main__":
-    run_id = trigger_dbt_run(sys.argv[1], sys.argv[2])
-    poll_dbt_run(run_id)
+    try:
+        run_id = trigger_dbt_run(sys.argv[1], sys.argv[2])
+        poll_dbt_run(run_id)
+    except Exception as e:
+        print("An exception occurred")
+        print(e)
+        raise
