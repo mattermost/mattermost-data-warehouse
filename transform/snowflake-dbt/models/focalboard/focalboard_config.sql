@@ -59,6 +59,7 @@ focalboard_config AS (
 
       {%- endif -%}
     {% endif %}
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY config.anonymous_id ORDER BY config.timestamp) = 1
 )
 
 SELECT *
