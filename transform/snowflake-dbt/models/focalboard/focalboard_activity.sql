@@ -59,6 +59,7 @@ focalboard_activity AS (
 
       {%- endif -%}
     {% endif %}
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY activity.anonymous_id ORDER BY activity.timestamp) = 1
 )
 
 SELECT *

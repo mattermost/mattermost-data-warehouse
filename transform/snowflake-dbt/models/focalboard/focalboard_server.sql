@@ -61,6 +61,7 @@ focalboard_server AS (
 
       {%- endif -%}
     {% endif %}
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY server.anonymous_id ORDER BY server.timestamp) = 1
 
     
 )

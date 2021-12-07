@@ -56,6 +56,7 @@ focalboard_workspaces AS (
 
       {%- endif -%}
     {% endif %}
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY workspaces.anonymous_id ORDER BY workspaces.timestamp) = 1
 )
 
 SELECT *
