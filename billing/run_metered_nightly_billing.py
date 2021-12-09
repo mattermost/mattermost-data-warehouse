@@ -65,6 +65,7 @@ def main():
                 try:
                     retries += 1
                     print("Attempt %d to hit URL: %s", retries, url)
+                    print(payload)
                     resp = requests.post(
                         url, json=payload, headers=header, timeout=(0.1, 10)
                     )
