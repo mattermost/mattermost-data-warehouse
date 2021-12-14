@@ -105,10 +105,14 @@ WITH latest_credit_card_address AS (
                 customers_with_onprem_subs.customer_id || customers_with_onprem_subs.email)
         ) AS contact_external_id,
         contact.sfid as contact_sfid,
+        account.id as account_sfid,
+        account.dwh_external_id__c as contact_account_external_id,
         ROW_NUMBER() OVER (PARTITION BY customers_with_onprem_subs.stripe_charge_id ORDER BY contact.lastmodifieddate DESC) as row_num
     FROM customers_with_onprem_subs
     LEFT JOIN {{ ref('contact') }}
        ON customers_with_onprem_subs.email = contact.email
+    LEFT JOIN {{ ref('account') }}
+        ON contact.accountid = account.id
 ), customers_opportunity AS (
     SELECT
         customers_with_onprem_subs.stripe_charge_id,
@@ -140,8 +144,12 @@ WITH latest_credit_card_address AS (
 )
 SELECT
     customers_with_onprem_subs.*,
-    customers_account.account_external_id,
-    customers_account.account_sfid,
+    case
+        when customers_account.account_sfid is null and customers_contact.account_sfid is not null
+        then customers_contact.contact_account_external_id
+        else customers_account.account_external_id
+    end as account_external_id,
+    coalesce(customers_account.account_sfid, customers_contact.account_sfid) as account_sfid,
     customers_contact.contact_external_id,
     customers_contact.contact_sfid,
     customers_opportunity.opportunity_external_id,
