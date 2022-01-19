@@ -1,6 +1,18 @@
 version: 2
 
 models:
+  - name: account_mapping
+    description: Account mapping information
+  
+  - name: licensed_servers
+    description: Licensed servers information
+ 
+  - name: nonactivated_licenses
+    description: Non Activated Licenses
+  
+  - name: cloud_subscriptions_blp
+    description: Overview of Cloud Subscriptions
+
   - name: license_overview
     description: Overview of license information
 
