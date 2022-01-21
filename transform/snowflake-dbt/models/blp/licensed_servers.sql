@@ -35,8 +35,6 @@ LEFT JOIN  {{ ref('account_mapping') }} am
   ON l.license_id = am.license_id
 WHERE l.server_id IS NOT NULL
 AND l.license_id <> '16tfkttgktgdmb5m8xakqncx3c'
-AND l.license_id <> 'mdhgp9rsjtyfjeye1nhrtgqapo'
-AND l.license_id <> 'xmfoy61ru3r55kcosr9bpyw35h'
 AND l.issued_date::DATE <= CURRENT_DATE
 GROUP BY 1, 2, 3, 7, 16, 17
 )
