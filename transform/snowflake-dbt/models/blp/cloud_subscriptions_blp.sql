@@ -1,5 +1,5 @@
 {{config({
-    "materialized": 'incremental',
+    "materialized": 'table',
     "schema": "blp",
     "unique_key": 'id',
     "tags":'hourly'
