@@ -474,3 +474,5 @@ WHERE
   last_active_date::date >= (SELECT MAX(last_active_date::date) - INTERVAL '1 DAY' FROM {{this}})
 
 {% endif %}
+QUALIFY ROW_NUMBER() OVER (PARTITION BY L.id ORDER BY ISSUED_DATE) = 1
+
