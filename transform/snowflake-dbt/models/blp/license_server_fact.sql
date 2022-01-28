@@ -464,7 +464,7 @@ SELECT
           ELSE FALSE END) AS customer_license_users
 FROM license_server_fact l
 LEFT JOIN server_activity activity
-    ON l.server_id = activity.server_id 
+    ON l.server_id = activity.server_id
 
 {% if is_incremental() %}
 
