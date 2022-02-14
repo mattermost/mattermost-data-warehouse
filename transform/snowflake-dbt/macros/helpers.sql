@@ -58,7 +58,8 @@ select get_sys_var({{ var_name }})
 
 {% macro license_cleaning(destination_table) %}
     {% set query %}
-        delete from analytics.blp.license_server_fact using (SELECT license_id FROM analytics.blp.license_server_fact WHERE server_id IS NOT NULL GROUP BY 1) lsf
+        delete from analytics.blp.license_server_fact using (SELECT license_id FROM analytics.blp.license_server_fact 
+        WHERE server_id IS NOT NULL GROUP BY 1) lsf
         WHERE license_server_fact.license_id = lsf.license_id AND license_server_fact.server_id is null
     {% endset %}
 
@@ -305,7 +306,16 @@ select get_sys_var({{ var_name }})
                  FROM {{ this }} 
                  WHERE {{this}}.received_at <= CURRENT_TIMESTAMP
                  GROUP BY 1
-             ), 
+             ),
+        {%+ elif this.table == 'performance_events' %}
+                max_time AS (
+                 SELECT
+                    _dbt_source_relation
+                    , MAX(received_at) as max_time
+                 FROM {{ this }} 
+                 WHERE {{this}}.received_at <= CURRENT_TIMESTAMP
+                 GROUP BY 1
+             ),
              {%+ else %}
              max_time AS (
                  SELECT 
@@ -350,6 +360,11 @@ select get_sys_var({{ var_name }})
                 JOIN max_time mt
                     ON {{ relation }}.received_at > mt.max_time
                     AND mt._dbt_source_relation2 = {{ ["'", relation, "'"]|join }}
+                WHERE received_at <= CURRENT_TIMESTAMP
+             {%+ elif is_incremental() and this.table == 'performance_events' %}
+                JOIN max_time mt
+                    ON {{ relation }}.received_at > mt.max_time
+                    AND mt._dbt_source_relation = {{ ["'", relation, "'"]|join }}
                 WHERE received_at <= CURRENT_TIMESTAMP
             {%+ elif is_incremental() %}
                 JOIN max_time mt
@@ -400,7 +415,10 @@ select get_sys_var({{ var_name }})
                 {%+ else %}
                 WHERE 
                 {%+ endif %}
-                {{ relation }}.category IN ('performance')
+                {{ relation }}.category IN ('performance') 
+                {%+ if (((relation|replace("'", "")|join).split('.')[1]))|lower == 'mm_telemetry_rc' %}
+                    AND user_id = '93mykbogbjfrbbdqphx3zhze5c' 
+                {%+ endif %}   
             {% endif %}
             ){% if not loop.last %}, 
             {% endif %}
