@@ -263,6 +263,8 @@ WITH sdd AS (
                     THEN TRUE ELSE FALSE END) AS retention_28day_flag
       , COUNT(DISTINCT CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '672 HOURS' AND sdd.first_active_date + INTERVAL '696 HOURS' 
                     THEN user_events_telemetry.user_actual_id ELSE NULL END) AS retention_28day_users
+      , COUNT(DISTINCT CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '24 HOURS' AND sdd.first_active_date + INTERVAL '48 HOURS' 
+                    THEN user_events_telemetry.user_actual_id ELSE NULL END) AS retention_1day_users
       , COUNT(DISTINCT user_events_telemetry.user_actual_id) as active_users_alltime
     FROM sdd 
     JOIN {{ ref('user_events_telemetry') }}
@@ -397,6 +399,7 @@ WITH sdd AS (
         , MAX(server_details.last_active_user_date) AS last_active_user_date
         , MAX(lsd.retention_28day_flag) AS retention_28day_flag
         , MAX(lsd.retention_28day_users) AS retention_28day_users
+        , MAX(lsd.retention_1day_users) AS retention_1day_users
         , MAX(COALESCE(nullif(TRIM(server_activity.last_ip_address), ''), NULLIF(fse.last_ip_address, ''))) AS last_ip_address
         , MIN(cpm.first_payment_method_date) AS cloud_payment_method_added
         , MAX(server_details.dev_testing_enabled) AS dev_testing_enabled
