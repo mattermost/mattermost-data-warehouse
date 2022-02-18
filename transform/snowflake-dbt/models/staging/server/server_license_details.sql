@@ -104,7 +104,7 @@ WITH license_daily_details as (
            , MAX(feature_saml)                        AS feature_saml
            , MAX(issued_date)                         AS issued_date
            , MAX(users)                               AS users
-           , {{ dbt_utils.surrogate_key(['d.date','d.server_id'])}} AS id
+           , {{ dbt_utils.surrogate_key(['d.date','license_id','d.server_id'])}} AS id
            , MAX(installation_id)                     AS installation_id
            , MAX(feature_advanced_logging)            AS feature_advanced_logging
            , MAX(feature_cloud)                       AS feature_cloud
