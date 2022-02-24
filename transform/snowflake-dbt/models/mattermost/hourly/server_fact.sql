@@ -259,6 +259,8 @@ WITH sdd AS (
       , DATEDIFF(DAY, MIN(TIMESTAMP::DATE), CURRENT_DATE) - COUNT(DISTINCT TIMESTAMP::DATE) AS days_inactive
       , MIN(CASE WHEN COALESCE(type, event) IN ('ui_marketplace_download', 'api_install_marketplace_plugin') THEN timestamp::date ELSE NULL END) as first_plugin_install_date
       , COUNT(DISTINCT CASE WHEN COALESCE(type, event) IN ('ui_marketplace_download') THEN plugin_id ELSE NULL END) AS plugins_downloaded
+      , MAX(CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '24 HOURS' AND sdd.first_active_date + INTERVAL '48 HOURS' 
+                    THEN TRUE ELSE FALSE END) AS retention_1day_flag
       , COUNT(DISTINCT CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '24 HOURS' AND sdd.first_active_date + INTERVAL '48 HOURS' 
                     THEN user_events_telemetry.user_actual_id ELSE NULL END) AS retention_1day_users
       , MAX(CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '672 HOURS' AND sdd.first_active_date + INTERVAL '696 HOURS' 
@@ -398,6 +400,7 @@ WITH sdd AS (
         , MAX(lsd.plugins_downloaded) AS plugins_downloaded
         , MAX(server_details.first_active_user_date) AS first_active_user_date
         , MAX(server_details.last_active_user_date) AS last_active_user_date
+        , MAX(lsd.retention_1day_flag) AS retention_1day_flag
         , MAX(lsd.retention_1day_users) AS retention_1day_users
         , MAX(lsd.retention_28day_flag) AS retention_28day_flag
         , MAX(lsd.retention_28day_users) AS retention_28day_users
