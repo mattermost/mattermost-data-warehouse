@@ -1,0 +1,52 @@
+{{config({
+    "materialized": "incremental",
+    "schema": "mattermost",
+    "tags":"union",
+    "snowflake_warehouse": "transform_m",
+    "unique_key":"id"
+  })
+}}
+
+WITH first_active AS (
+    SELECT
+        uet.user_actual_id
+      , sf.server_id
+      , {{ dbt_utils.surrogate_key(['uet.user_actual_id', 'sf.server_id'])}} AS id
+      , sf.installation_id
+      , sf.first_server_edition
+      , MIN(uet.timestamp) AS first_active_timestamp
+    FROM {{ ref('user_events_telemetry') }} uet
+         JOIN {{ ref('server_fact') }}  sf
+              ON COALESCE(uet.user_id, IFF(LENGTH(uet.context_server) < 26, NULL, uet.context_server),
+                          IFF(LENGTH(uet.context_traits_userid) < 26, NULL, uet.context_traits_userid),
+                          IFF(LENGTH(uet.context_server) < 26, NULL, uet.context_server)) = sf.server_id
+            AND uet.timestamp::date >= sf.first_active_date::date
+            AND sf.first_active_date::date >= '2020-02-01'
+    {% if is_incremental() %}
+    WHERE uet.timestamp < CURRENT_TIMESTAMP
+      AND {{ dbt_utils.surrogate_key(['uet.user_actual_id', 'sf.server_id'])}} NOT IN (SELECT id FROM {{this}} group by 1)
+      AND uet.user_actual_id IS NOT NULL
+    {% else %}
+    WHERE uet.timestamp < CURRENT_TIMESTAMP
+      AND uet.user_actual_id IS NOT NULL
+    {% endif %}
+    GROUP BY 1, 2, 3, 4, 5
+)
+SELECT
+      first_active.first_active_timestamp
+  ,   first_active.server_id
+  ,   first_active.user_actual_id AS user_id
+  ,   first_active.installation_id AS installation_id
+  ,   first_active.first_server_edition AS first_server_edition
+  ,   first_active.id
+  ,   CASE WHEN uet2.timestamp between first_active.first_active_timestamp + INTERVAL '24 HOURS' AND first_active.first_active_timestamp + INTERVAL '48 HOURS'
+                    THEN TRUE ELSE FALSE END AS retention_1day_flag
+  ,   CASE WHEN uet2.timestamp between first_active.first_active_timestamp + INTERVAL '168 HOURS' AND first_active.first_active_timestamp + INTERVAL '192 HOURS'
+                    THEN TRUE ELSE FALSE END AS retention_7day_flag
+  ,   CASE WHEN uet2.timestamp between first_active.first_active_timestamp + INTERVAL '336 HOURS' AND first_active.first_active_timestamp + INTERVAL '360 HOURS'
+                    THEN TRUE ELSE FALSE END AS retention_14day_flag
+  ,   CASE WHEN uet2.timestamp between first_active.first_active_timestamp + INTERVAL '672 HOURS' AND first_active.first_active_timestamp + INTERVAL '696 HOURS'
+                    THEN TRUE ELSE FALSE END AS retention_28day_flag
+FROM first_active
+     LEFT JOIN {{ ref('user_events_telemetry') }} uet2
+          ON uet2.user_actual_id = first_active.user_actual_id
