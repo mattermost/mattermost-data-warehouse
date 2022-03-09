@@ -63,3 +63,9 @@ models:
 
   - name: user_28day_retention
     description: Contains all users from 2020-02-01 onward with a first active timestamp, server id, and boolean indicating whether they were active on the 28th day from initial first activity.
+
+  - name: user_retention
+    description: Contains all users from 2020-02-01 onward with a first active timestamp, server id, and boolean indicating whether they were active from initial first activity.
+
+  - name: focalboard_user_retention
+    description: Contains all Focalboard users from 2021-10-11 onward with a first active timestamp, server id, and boolean indicating whether they were active from initial first activity.
