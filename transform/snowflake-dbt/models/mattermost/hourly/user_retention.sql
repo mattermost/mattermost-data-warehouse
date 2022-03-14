@@ -32,7 +32,7 @@ WITH first_active AS (
     {% endif %}
     GROUP BY 1, 2, 3, 4, 5
 )
-SELECT
+SELECT DISTINCT 
       first_active.first_active_timestamp
   ,   first_active.server_id
   ,   first_active.user_actual_id AS user_id
