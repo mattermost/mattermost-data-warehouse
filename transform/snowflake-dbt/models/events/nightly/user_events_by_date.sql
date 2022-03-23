@@ -8,7 +8,8 @@
 
 WITH mobile_events AS (
     SELECT
-        m.timestamp::DATE                                                                         AS date
+    cast({{ dbt_utils.string_literal(source('mattermost_rn_mobile_release_builds_v2', 'event')) }} as {{ dbt_utils.type_string() }}) as _DBT_SOURCE_RELATION
+      , m.timestamp::DATE                                                                         AS date
       , TRIM(m.user_id)                                                                           AS server_id
       , COALESCE(TRIM(m.user_actual_id), NULL)                                                    AS user_id
       , MIN(m.user_actual_role)                                                                   AS user_role
@@ -43,15 +44,17 @@ WITH mobile_events AS (
     WHERE m.timestamp::DATE < CURRENT_DATE
     {% if is_incremental() %}
 
-      AND m.timestamp > (SELECT MAX(max_timestamp) from {{this}})
+      AND m.timestamp > (SELECT MAX(max_timestamp) from {{this}}
+      where _dbt_source_relation = {{ dbt_utils.string_literal(source('mattermost_rn_mobile_release_builds_v2', 'event')) }})
 
     {% endif %}
-    GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
+    GROUP BY 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 13, 17, 18
 ),
 
 mobile_events2 AS (
     SELECT
-        m.timestamp::DATE                                                                         AS date
+        cast({{ dbt_utils.string_literal(ref('mobile_events')) }} as {{ dbt_utils.type_string() }}) as _DBT_SOURCE_RELATION
+      , m.timestamp::DATE                                                                         AS date
       , TRIM(m.user_id)                                                                           AS server_id
       , COALESCE(TRIM(m.user_actual_id), NULL)                                                    AS user_id
       , MIN(m.user_actual_role)                                                                   AS user_role
@@ -86,14 +89,16 @@ mobile_events2 AS (
     WHERE m.timestamp::DATE < CURRENT_DATE
     {% if is_incremental() %}
 
-      AND m.timestamp > (SELECT MAX(max_timestamp) from {{this}})
+      AND m.timestamp > (SELECT MAX(max_timestamp) from {{this}}
+            where _dbt_source_relation = {{ dbt_utils.string_literal(ref('mobile_events')) }})
     
     {% endif %}
-    GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
+    GROUP BY 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 13, 17, 18
 ),
      events AS (
          SELECT
-             e.timestamp::DATE                                                                         AS date
+           cast({{ dbt_utils.string_literal(source('mattermost2', 'event')) }} as {{ dbt_utils.type_string() }}) as _DBT_SOURCE_RELATION
+           , e.timestamp::DATE                                                                         AS date
            , TRIM(e.user_id)                                                                           AS server_id
            , COALESCE(TRIM(e.user_actual_id), NULL)                                                    AS user_id
            , min(e.user_actual_role)                                                                   AS user_role
@@ -164,86 +169,89 @@ mobile_events2 AS (
                         ON e.timestamp::date >= rudder.MIN_DATE
                         AND e.user_id = rudder.user_id
          WHERE rudder.user_id IS NULL
-         AND e.timestamp::DATE < CURRENT_DATE
+         AND e.timestamp::DATE < CURRENT_DATE 
          {% if is_incremental() %}
 
-          AND e.timestamp > (SELECT MAX(max_timestamp) from {{this}})
+          AND e.timestamp > (SELECT MAX(max_timestamp) from {{this}} 
+                where _dbt_source_relation = {{ dbt_utils.string_literal(source('mattermost2', 'event')) }})
 
          {% endif %}
-         GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
+         GROUP BY 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 13, 17, 18
      ), 
      events2 AS (
          SELECT
-             e.timestamp::DATE                                                                         AS date
+             cast({{ dbt_utils.string_literal(source('mm_telemetry_prod', 'event')) }} as {{ dbt_utils.type_string() }}) as _DBT_SOURCE_RELATION
+            ,  e.timestamp::DATE                                                                         AS date
            , TRIM(e.user_id)                                                                           AS server_id
            , COALESCE(TRIM(e.user_actual_id), NULL)                                                    AS user_id
            , min(e.user_actual_role)                                                                   AS user_role
            , CASE
-              WHEN context_useragent LIKE '%iPhone%'    THEN 'iPhone'
-              WHEN context_useragent LIKE '%iPad%'      THEN 'iPad'
-              WHEN context_useragent LIKE '%Android%'   THEN 'Android'
-              WHEN context_useragent LIKE '%Electron/%' THEN 'Electron'
-              WHEN context_useragent LIKE '%Edge/%'     THEN 'Edge'
-              WHEN context_useragent LIKE '%Edg/%'      THEN 'Edge'
-              WHEN context_useragent LIKE '%MSIE%'      THEN 'IE'
-              WHEN context_useragent LIKE '%Trident/%'  THEN 'IE'
-              WHEN context_useragent LIKE '%Firefox/%'  THEN 'Firefox'
-              WHEN context_useragent LIKE '%Chrome/%'   THEN 'Chrome'
-              WHEN context_useragent LIKE '%Safari/%'   THEN 'Safari'
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%iPhone%'    THEN 'iPhone'
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%iPad%'      THEN 'iPad'
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%Android%'   THEN 'Android'
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%Electron/%' THEN 'Electron'
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%Edge/%'     THEN 'Edge'
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%Edg/%'      THEN 'Edge'
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%MSIE%'      THEN 'IE'
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%Trident/%'  THEN 'IE'
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%Firefox/%'  THEN 'Firefox'
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%Chrome/%'   THEN 'Chrome'
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%Safari/%'   THEN 'Safari'
               ELSE 'Other'
               END                                                                                        AS browser
            , CASE
-              WHEN context_useragent LIKE '%iPhone%'    THEN 'iPhone'
-              WHEN context_useragent LIKE '%iPad%'      THEN 'iPad'
-              WHEN context_useragent LIKE '%CrOS%'      THEN 'Chrome OS'
-              WHEN context_useragent LIKE '%Android%'   THEN 'Android'
-              WHEN context_useragent LIKE '%Macintosh%' THEN 'Mac'
-              WHEN context_useragent LIKE '%Windows%'   THEN 'Windows'
-              WHEN context_useragent LIKE '%Linux%'     THEN 'Linux'
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%iPhone%'    THEN 'iPhone'
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%iPad%'      THEN 'iPad'
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%CrOS%'      THEN 'Chrome OS'
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%Android%'   THEN 'Android'
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%Macintosh%' THEN 'Mac'
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%Windows%'   THEN 'Windows'
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%Linux%'     THEN 'Linux'
               ELSE 'Other'
               END                                                                                      AS os
            , CASE
-              WHEN context_useragent LIKE '%Electron/%'
-                                                        THEN split_part(split_part(context_useragent, 'Mattermost/', 2), ' ', 1)
-              WHEN context_useragent LIKE '%Edge/%'    THEN split_part(split_part(context_useragent, 'Edge/', 2), ' ', 1)
-              WHEN context_useragent LIKE '%Edg/%'     THEN split_part(split_part(context_useragent, 'Edg/', 2), ' ', 1)
-              WHEN context_useragent LIKE '%Trident/%' THEN split_part(split_part(context_useragent, 'Trident/', 2), ' ', 1)
-              WHEN context_useragent LIKE '%Chrome/%'  THEN split_part(split_part(context_useragent, 'Chrome/', 2), ' ', 1)
-              WHEN context_useragent LIKE '%Firefox/%' THEN split_part(split_part(context_useragent, 'Firefox/', 2), ' ', 1)
-              WHEN context_useragent LIKE '%Safari/%'  THEN split_part(split_part(context_useragent, 'Version/', 2), ' ', 1)
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%Electron/%'
+                                                        THEN split_part(split_part(coalesce(context_useragent, context_user_agent), 'Mattermost/', 2), ' ', 1)
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%Edge/%'    THEN split_part(split_part(coalesce(context_useragent, context_user_agent), 'Edge/', 2), ' ', 1)
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%Edg/%'     THEN split_part(split_part(coalesce(context_useragent, context_user_agent), 'Edg/', 2), ' ', 1)
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%Trident/%' THEN split_part(split_part(coalesce(context_useragent, context_user_agent), 'Trident/', 2), ' ', 1)
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%Chrome/%'  THEN split_part(split_part(coalesce(context_useragent, context_user_agent), 'Chrome/', 2), ' ', 1)
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%Firefox/%' THEN split_part(split_part(coalesce(context_useragent, context_user_agent), 'Firefox/', 2), ' ', 1)
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%Safari/%'  THEN split_part(split_part(coalesce(context_useragent, context_user_agent), 'Version/', 2), ' ', 1)
               ELSE 'Other'
               END                                                                                      AS version
            , CASE
-              WHEN context_useragent LIKE '%iPhone%'    THEN split_part(split_part(context_useragent, 'iPhone OS ', 2), ' ', 1)
-              WHEN context_useragent LIKE '%iPad%'      THEN split_part(split_part(context_useragent, 'CPU OS ', 2), ' ', 1)
-              WHEN context_useragent LIKE '%CrOS%'      THEN split_part(
-                split_part(split_part(context_useragent, 'CrOS ', 2), ')', 1), 'CS', 1)
-              WHEN context_useragent LIKE '%Android%'
-                                                   THEN split_part(split_part(context_useragent, 'Android ', 2), ';', 1)
-              WHEN context_useragent LIKE '%Macintosh%'
-                                                   THEN split_part(split_part(context_useragent, 'Mac OS X ', 2), ')', 1)
-              WHEN context_useragent LIKE '%Windows%'   THEN split_part(
-                split_part(split_part(context_useragent, 'Windows ', 2), ')', 1), ';', 1)
-              WHEN context_useragent LIKE '%Linux%'     THEN split_part(split_part(context_useragent, 'Linux ', 2), ')', 1)
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%iPhone%'    THEN split_part(split_part(coalesce(context_useragent, context_user_agent), 'iPhone OS ', 2), ' ', 1)
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%iPad%'      THEN split_part(split_part(coalesce(context_useragent, context_user_agent), 'CPU OS ', 2), ' ', 1)
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%CrOS%'      THEN split_part(
+                split_part(split_part(coalesce(context_useragent, context_user_agent), 'CrOS ', 2), ')', 1), 'CS', 1)
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%Android%'
+                                                   THEN split_part(split_part(coalesce(context_useragent, context_user_agent), 'Android ', 2), ';', 1)
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%Macintosh%'
+                                                   THEN split_part(split_part(coalesce(context_useragent, context_user_agent), 'Mac OS X ', 2), ')', 1)
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%Windows%'   THEN split_part(
+                split_part(split_part(coalesce(context_useragent, context_user_agent), 'Windows ', 2), ')', 1), ';', 1)
+              WHEN coalesce(context_useragent, context_user_agent) LIKE '%Linux%'     THEN split_part(split_part(coalesce(context_useragent, context_user_agent), 'Linux ', 2), ')', 1)
               ELSE 'Unknown'
               END                                                                                      AS os_version
            , LOWER(e.type)                                                                             AS event_name
-           , CASE WHEN LOWER(e.context_useragent) LIKE '%electron%' THEN 'desktop' ELSE 'web_app' END AS event_type
+           , CASE WHEN LOWER(coalesce(e.context_useragent, context_user_agent)) LIKE '%electron%' THEN 'desktop' ELSE 'web_app' END AS event_type
            , COUNT(e.timestamp)                                                                                  AS num_events
-           , context_useragent                                                                         AS context_user_agent
+           , coalesce(context_useragent, context_user_agent)                                                                         AS context_user_agent
            , MAX(e.timestamp)                                                                          AS max_timestamp
            , MIN(e.timestamp)                                                                          AS min_timestamp
            , MAX(NULL::TIMESTAMP)                                                                       AS max_uuid_ts
            , e.category
-           , {{ dbt_utils.surrogate_key(['e.timestamp::date', 'e.user_actual_id', 'e.user_id', 'e.context_useragent', 'lower(e.type)', 'e.category']) }}                       AS id
+           , {{ dbt_utils.surrogate_key(['e.timestamp::date', 'e.user_actual_id', 'e.user_id', 'coalesce(e.context_useragent, context_user_agent)', 'lower(e.type)', 'e.category']) }}                       AS id
          FROM {{ source('mm_telemetry_prod', 'event') }} e
          WHERE e.timestamp::DATE < CURRENT_DATE
          {% if is_incremental() %}
 
-          AND timestamp > (SELECT MAX(max_timestamp) from {{this}})
+          AND timestamp > (SELECT MAX(max_timestamp) from {{this}} 
+                where _dbt_source_relation = {{ dbt_utils.string_literal(source('mm_telemetry_prod', 'event')) }})
 
          {% endif %}
-         GROUP BY 1, 2, 3, 5, 6, 7, 8, 9, 10, 12, 16, 17
+         GROUP BY 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 13, 17, 18
      ), 
      all_events AS (
          SELECT *
@@ -261,7 +269,8 @@ mobile_events2 AS (
 
      all_events_chronological   AS (
          SELECT
-             e.date
+           E._DBT_SOURCE_RELATION 
+           ,  e.date
            , e.server_id
            , e.user_id
            , e.event_type
@@ -287,10 +296,11 @@ mobile_events2 AS (
                    AND e.category = r.event_category
          {% if is_incremental() %}
 
-          WHERE e.max_timestamp > (SELECT MAX(max_timestamp) from {{this}})
+          WHERE e.max_timestamp > (SELECT MAX(max_timestamp) from {{this}} )
 
          {% endif %}
-         GROUP BY 1, 2, 3, 4, 8, 9, 10, 11, 12, 13, 18
+         where e.max_timestamp::date > '2020-12-31'
+         GROUP BY 1, 2, 3, 4, 5, 9, 10, 11, 12, 13, 14, 19
      ),
 
      user_events_by_date AS  (
@@ -325,6 +335,7 @@ mobile_events2 AS (
         , WEB_APP_EVENTS
         , MOBILE_EVENTS
         , CONTEXT_USER_AGENT
+        , _DBT_SOURCE_RELATION
         , MAX_TIMESTAMP
         , MIN_TIMESTAMP
         , {{ dbt_utils.surrogate_key(['DATE', 
