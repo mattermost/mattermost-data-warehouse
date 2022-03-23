@@ -299,7 +299,6 @@ mobile_events2 AS (
           WHERE e.max_timestamp > (SELECT MAX(max_timestamp) from {{this}} )
 
          {% endif %}
-         where e.max_timestamp::date > '2020-12-31'
          GROUP BY 1, 2, 3, 4, 5, 9, 10, 11, 12, 13, 14, 19
      ),
 
