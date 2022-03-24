@@ -294,11 +294,7 @@ mobile_events2 AS (
               LEFT JOIN {{ ref('events_registry') }} r
                    ON e.event_name = r.event_name
                    AND e.category = r.event_category
-         {% if is_incremental() %}
 
-          WHERE e.max_timestamp > (SELECT MAX(max_timestamp) from {{this}} )
-
-         {% endif %}
          GROUP BY 1, 2, 3, 4, 5, 9, 10, 11, 12, 13, 14, 19
      ),
 
