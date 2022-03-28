@@ -1,8 +1,7 @@
 {{config({
-    "materialized": "incremental",
+    "materialized": "table",
     "schema": "mattermost",
-    "tags":"union",
-    "snowflake_warehouse": "transform_m",
+    "tags":"nightly",
     "unique_key":"id"
   })
 }}
@@ -20,14 +19,8 @@ WITH first_active AS (
               ON fet.user_id = sf.server_id
             AND fet.original_timestamp::date >= sf.first_active_date::date
             AND fet.original_timestamp::date >= '2021-10-11'
-    {% if is_incremental() %}
-    WHERE fet.timestamp < CURRENT_TIMESTAMP
-      AND {{ dbt_utils.surrogate_key(['fet.user_actual_id', 'sf.server_id'])}} NOT IN (SELECT id FROM {{this}} group by 1)
-      AND fet.user_actual_id IS NOT NULL
-    {% else %}
     WHERE fet.timestamp < CURRENT_TIMESTAMP
       AND fet.user_actual_id IS NOT NULL
-    {% endif %}
     GROUP BY 1, 2, 3, 4, 5
 )
 SELECT DISTINCT
