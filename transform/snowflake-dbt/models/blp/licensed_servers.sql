@@ -40,10 +40,3 @@ GROUP BY 1, 2, 3, 7, 16, 17
 )
 select * from licensed_servers
 
-{% if is_incremental() %}
-WHERE 
-  issued_date >= (SELECT MAX(issued_date)::date - INTERVAL '1 DAY' FROM {{this}})
-  OR 
-  last_active_date::date >= (SELECT MAX(last_active_date::date) - INTERVAL '1 DAY' FROM {{this}})
-
-{% endif %}

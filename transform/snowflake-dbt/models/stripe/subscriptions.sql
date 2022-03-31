@@ -26,6 +26,7 @@ WITH subscriptions AS (
         ,subscriptions.metadata:"billing-type"::varchar as billing_type
         ,subscriptions.metadata:"cws-renewed-from-stripe-id"::varchar as renewed_from_sub_id
         ,subscriptions.metadata:"cws-license-id"::varchar as license_id
+        ,subscriptions.plan:"name"::varchar as edition
         ,subscriptions.metadata:"sfdc-migrated-opportunity-sfid"::varchar as sfdc_migrated_opportunity_sfid
         ,subscriptions.metadata:"internal_purchase_order"::varchar as purchase_order_num
         ,TO_TIMESTAMP_NTZ(subscriptions.metadata:"cws-license-end-date"::int) as license_end_date

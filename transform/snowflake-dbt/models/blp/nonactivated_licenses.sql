@@ -40,11 +40,3 @@ with nonactivated_licenses as (
 )
 select * from nonactivated_licenses
 
-{% if is_incremental() %}
-
-WHERE 
-  issued_date >= (SELECT MAX(issued_date)::date - INTERVAL '1 DAY' FROM {{this}})
-  OR 
-  last_active_date::date >= (SELECT MAX(last_active_date::date) - INTERVAL '1 DAY' FROM {{this}})
-
-{% endif %}
