@@ -42,4 +42,11 @@ subscriptions AS (
 
 SELECT 
     *
-FROM subscriptions
+FROM subscriptions s
+
+{% if is_incremental() %}
+
+    WHERE s.created_at >= (SELECT MAX(created_at) FROM {{ this }})
+
+{% endif %}
+
