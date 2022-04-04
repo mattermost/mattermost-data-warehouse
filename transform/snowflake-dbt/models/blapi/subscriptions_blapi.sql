@@ -46,7 +46,7 @@ FROM subscriptions s
 
 {% if is_incremental() %}
 
-    WHERE s.created_at >= (SELECT MAX(created_at) FROM {{ this }})
+    WHERE s.created_at::date >= (SELECT MAX(created_at::date) FROM {{ this }})
 
 {% endif %}
 
