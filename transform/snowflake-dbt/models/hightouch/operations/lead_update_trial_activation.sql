@@ -10,8 +10,7 @@ with lead_update_trial_activation as (
   left join {{ ref('license_server_fact') }} lsf on lsf.LICENSE_ID = l.Trial_License_Id__c -- on lsf.LICENSE_EMAIL = l.Email
   where lsf.LICENSE_ACTIVATION_DATE is not null and 
   l.Trial_License_Id__c is not null and
-  l.Trial_Activation_Date__c is null and
-  DATEDIFF(day, lsf.START_DATE, current_timestamp) < 14
+  l.Trial_Activation_Date__c is null
 )
 
-select Id, Trial_License_Id__c, Activation_Date from lead_update_trial_activation
+select distinct Id, Trial_License_Id__c, Activation_Date from lead_update_trial_activation
