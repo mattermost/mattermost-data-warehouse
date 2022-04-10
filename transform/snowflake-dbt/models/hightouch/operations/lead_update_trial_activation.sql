@@ -5,7 +5,7 @@
 }}
 
 with lead_update_trial_activation as (
-  select l.Id, l.Email, l.Trial_License_Id__c, lsf.LICENSE_ACTIVATION_DATE as Activation_Date
+  select l.Id, l.Trial_License_Id__c, lsf.LICENSE_ACTIVATION_DATE as Activation_Date
   from {{ ref('lead') }} l 
   left join {{ ref('license_server_fact') }} lsf on lsf.LICENSE_ID = l.Trial_License_Id__c -- on lsf.LICENSE_EMAIL = l.Email
   where lsf.LICENSE_ACTIVATION_DATE is not null and 
