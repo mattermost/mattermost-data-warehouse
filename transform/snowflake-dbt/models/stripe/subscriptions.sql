@@ -34,6 +34,8 @@ WITH subscriptions AS (
         ,subscriptions."START"
         ,subscriptions.status
         ,subscriptions.updated
+        ,subscriptions.plan
+        ,subscriptions.metadata
     FROM {{ source('stripe_raw','subscriptions') }}
     {% if is_incremental() %}
 
