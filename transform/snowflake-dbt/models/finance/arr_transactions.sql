@@ -202,8 +202,10 @@ select
     ,coalesce(l.end_date, master.license_end) as license_end_date
     ,min(license_start_date) over (partition by master.account_id) as account_start
     ,term.license_term as max_license
+    --tenure yr for ltv is based on the license anniversary beg date
+    ,datediff('year',account_start,license_start_date) as beg_tenure_yr
     --tenure yr for ltv is based on the license anniversary end date
-    ,datediff('year',account_start,license_end_date) as tenure_yr
+    ,datediff('year',account_start,license_end_date) as end_tenure_yr
     --when renewal expired close date is null
     ,coalesce(l.close_date,license_start_date) as closing_date
     ,dense_rank() over (partition by master.account_id order by closing_date) as trans_no
