@@ -29,14 +29,12 @@ WITH sdd AS (
             , MIN(CASE WHEN in_mm2_server THEN timestamp ELSE NULL END)                           AS first_mm2_telemetry_date
             , MAX(CASE WHEN in_mm2_server THEN timestamp ELSE NULL END)                           AS last_mm2_telemetry_date
             FROM {{ ref('server_daily_details') }} SDD
-            WHERE timestamp <= CURRENT_TIMESTAMP
-            {% if is_incremental() %}
-            AND ((CASE WHEN in_security OR in_mm2_server THEN timestamp ELSE NULL END) > (SELECT MAX(last_active_date) - INTERVAL '2 HOURS' FROM {{this}})
-            OR NOT EXISTS (select 1 FROM {{this}} SF WHERE SF.SERVER_ID = SDD.SERVER_ID)
-            )
-            {% endif %}
+            WHERE timestamp <= CURRENT_TIMESTAMP 
+            OR NOT EXISTS (SELECT 1 FROM {{this}} SF WHERE SF.SERVER_ID = SDD.SERVER_ID AND SDD.timestamp <= CURRENT_TIMESTAMP)
             GROUP BY 1
-
+            {% if is_incremental() %}
+            HAVING MAX(CASE WHEN in_security OR in_mm2_server THEN timestamp ELSE NULL END) > (SELECT MAX(last_active_date) - INTERVAL '2 HOURS' FROM {{this}})
+            {% endif %}
           ),
 
     server_details AS (
