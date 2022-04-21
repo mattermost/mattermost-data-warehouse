@@ -36,6 +36,7 @@ SELECT DISTINCT
   WHEN (MAX(fet2.ORIGINAL_TIMESTAMP::DATE) - first_active.first_active_timestamp::DATE) >=7 
   AND (MAX(fet2.ORIGINAL_TIMESTAMP::DATE) - first_active.first_active_timestamp::DATE) < 28 THEN 'AGE 7 - 27'
   WHEN (MAX(fet2.ORIGINAL_TIMESTAMP::DATE) - first_active.first_active_timestamp::DATE) >= 28 THEN 'AGE 28+' END as AGE
+   , MAX(fet2.ORIGINAL_TIMESTAMP::DATE) as MAX_ORIGINAL_TIMESTAMP
 FROM first_active
      LEFT JOIN {{ ref('focalboard_event_telemetry') }} fet2
           ON fet2.user_actual_id = first_active.user_actual_id
