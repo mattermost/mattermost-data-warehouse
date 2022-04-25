@@ -6,7 +6,6 @@
 }}
 
 
---subquery limits population to arr salesserve customers
 with 
 pop as (
     select
@@ -14,6 +13,7 @@ pop as (
     ,count(distinct id) as opportunities
     ,sum(coalesce(ending_arr__c,0)) as arr
     from  {{ ref( 'opportunity') }} opp
+    --from analytics.orgm.opportunity opp
     WHERE opp.iswon in (true,false)
     and opp.isclosed = true
     and opp.isdeleted = false
@@ -43,29 +43,33 @@ pop as (
       ,A.INDUSTRY
       ,A.ACCOUNTSOURCE 
     FROM     {{ ref( 'account') }} A
+    --FROM ANALYTICS.ORGM.ACCOUNT A
     where  ISDELETED = FALSE
     ORDER BY PARENT_ID, account_id
 )
 --master data query
 ,d as (
     select
-    acct.name as account_name
-    ,opp.accountid as account_id
-    ,opp.id as opportunity_id
-    ,last_day(iff(opp.closedate>opp.license_start_date__c,opp.closedate,opp.license_start_date__c)::date) as report_month
-    ,closedate::date as close_date
-    ,opp.license_start_date__c::date as license_start_date
-    --override for data input error
-    ,case 
-        when opp.id = '0063p00000zBnnuAAC' then date '2022-03-31' else opp.license_end_date__c::date end as license_end_date
-    ,opp.license_active__c as license_active_sf
-    ,datediff('month',license_start_date,license_end_date)+1 as term
-    ,opp.iswon
-    ,opp.type as opp_type
-    ,round(coalesce(opp.ending_arr__c,0),0) as opportunity_arr
-    ,round(coalesce(opp.amount,0),0) as bill_amt
-    ,opp.name as description
-    ,opp.original_opportunityid__c as original_id_renewed
+      acct.name as account_name
+      ,opp.accountid as account_id
+      ,opp.id as opportunity_id
+      ,last_day(iff(opp.closedate>opp.license_start_date__c,opp.closedate,opp.license_start_date__c)::date) as report_month
+      ,closedate::date as close_date
+      ,opp.license_start_date__c::date as license_start_date
+      --override for data input error
+      ,case 
+          when opp.id = '0063p00000zBnnuAAC' then date '2022-03-31' else opp.license_end_date__c::date end as license_end_date
+      ,opp.license_active__c as license_active_sf
+      ,datediff('month',license_start_date,license_end_date)+1 as term
+      ,opp.iswon
+      ,opp.type as opp_type
+      ,case when opp.new_logo__c is null then 'No' else opp.new_logo__c end as new_logo
+      ,round(coalesce(opp.ending_arr__c,0),0) as opportunity_arr
+      ,round(coalesce(opp.amount,0),0) as bill_amt
+      ,opp.name as description
+      ,opp.original_opportunityid__c as original_id_renewed
+    --from analytics.orgm.opportunity opp
+	  --left join ANALYTICS.ORGM.ACCOUNT acct
     from {{ ref( 'opportunity') }} opp
     left join   {{ ref( 'account') }} acct 
         on acct.sfid = opp.accountid
@@ -183,8 +187,8 @@ order by account_id, match_key asc
 --subquery to determine max license excluding expired 
 term as (
 select
-account_id
-,max(license_end) as license_term
+    account_id
+    ,max(license_end) as license_term
 from master
 where opp_type != 'Expired'
 group by 1
@@ -210,6 +214,8 @@ select
     ,coalesce(l.close_date,license_start_date) as closing_date
     ,dense_rank() over (partition by master.account_id order by closing_date) as trans_no
     ,last_day(iff(closing_date>license_start_date,closing_date,license_start_date)) as report_month
+    ,dateadd('month',1,last_day(dateadd('month',2,date_trunc('quarter',dateadd('month',-1,report_month))))) as fiscal_quarter
+    ,dateadd('month',1,last_day(dateadd('month',11,date_trunc('year',dateadd('month',-1,report_month))))) as fiscal_year
     ,case
       when opp_type != 'Expired' and license_end_date >= last_day(current_date) and license_start_date <= last_day(current_date) then true 
       else false 
@@ -218,6 +224,7 @@ select
     ,iff(license_active_calc=license_activesf,true,false) as status_aligned
     ,is_won
     ,opp_type
+    ,l.new_logo
     ,case when term in (11,13) then 12 else term end as term_months
     ,billing_amt
     ,opportunity_arr
@@ -254,7 +261,7 @@ select
     ,current_date as date_refreshed
     from master
     left join 
-      (select distinct opportunity_id, close_date, license_start_date as start_date, license_end_date as end_date, license_active_sf, description from d) l 
+      (select distinct opportunity_id, close_date, license_start_date as start_date, license_end_date as end_date, license_active_sf, description, new_logo from d) l 
       on l.opportunity_id = master.opportunity_id
     left join acct on acct.account_id = master.account_id
     left join term on term.account_id = master.account_id
