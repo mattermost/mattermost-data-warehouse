@@ -214,8 +214,8 @@ select
     ,coalesce(l.close_date,license_start_date) as closing_date
     ,dense_rank() over (partition by master.account_id order by closing_date) as trans_no
     ,last_day(iff(closing_date>license_start_date,closing_date,license_start_date)) as report_month
-    ,last_day(dateadd('month',1,last_day(dateadd('month',2,date_trunc('quarter',dateadd('month',-1,report_month)))))) as fiscal_quarter
-    ,last_day(dateadd('month',1,last_day(dateadd('month',11,date_trunc('year',dateadd('month',-1,report_month)))))) as fiscal_year
+    ,dateadd('month',1,last_day(dateadd('month',2,date_trunc('quarter',dateadd('month',-1,report_month))))) as fiscal_quarter
+    ,dateadd('month',1,last_day(dateadd('month',11,date_trunc('year',dateadd('month',-1,report_month))))) as fiscal_year
     ,case
       when opp_type != 'Expired' and license_end_date >= last_day(current_date) and license_start_date <= last_day(current_date) then true 
       else false 
