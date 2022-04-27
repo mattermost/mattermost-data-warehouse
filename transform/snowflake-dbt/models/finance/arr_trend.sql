@@ -11,7 +11,7 @@
 
 with t as (
 select
-		distinct report_month, fiscal_year, fiscal_quarter
+		distinct report_month, last_day(fiscal_year) as fiscal_year, last_day(fiscal_quarter) as fiscal_quarter
 from analytics.finance_dev.arr_transactions
 where report_month <= last_day(current_date)
 order by 1 asc
