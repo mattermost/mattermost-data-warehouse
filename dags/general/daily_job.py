@@ -38,7 +38,7 @@ default_args = {
 }
 
 # Create the DAG
-dag = DAG("post_nps_feedback_job", default_args=default_args, schedule_interval="0 12 * * *")
+dag = DAG("daily_job", default_args=default_args, schedule_interval="0 12 * * *")
 
 
 def get_container_operator(task_name):
@@ -51,7 +51,7 @@ def get_container_operator(task_name):
     return KubernetesPodOperator(
         **pod_defaults,
         image=DATA_IMAGE,
-        task_id=f"snowflake-post-nps-feedback",
+        task_id=task_name,
         name=task_name,
         secrets=[
             SNOWFLAKE_ACCOUNT,
