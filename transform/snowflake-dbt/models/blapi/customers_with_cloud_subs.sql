@@ -29,14 +29,18 @@ WITH latest_credit_card_address AS (
                 (addresses.country = 'GB' AND postal_code_mapping.postal_code like left(addresses.postal_code, 4) || '%')
         )
     WHERE addresses.address_type = 'billing'
-), subs_with_nonzero_invoices AS (
+    -- when first non-zero invoice is generated or when they subscribe to paid version of cloud
+), subs_with_nonzero_invoices_or_stripe AS (
     SELECT DISTINCT
         cloud_subscriptions.*
     FROM
         {{ ref('cloud_subscriptions') }}
         JOIN {{ ref('invoices_blapi') }} ON cloud_subscriptions.id = invoices.subscription_id
-    WHERE invoices.total > 0
-    AND cloud_subscriptions.sku not like '%professional%'
+        JOIN {{ source('stripe', 'subscriptions')}} AS stripe_subscriptions ON cloud_subscriptions.id = subscriptions.id
+    WHERE 
+    (invoices.total > 0 AND cloud_subscriptions.sku not like '%professional%')
+    OR 
+    stripe_subscriptions.confirmed_purchase is not null
 ), customers_with_cloud_subs AS (
     SELECT
         customers.id as customer_id,
@@ -79,10 +83,10 @@ WITH latest_credit_card_address AS (
         end as country_code,
         cloud_subscriptions.updated_at >= '2021-08-18' as hightouch_sync_eligible
     FROM {{ ref('customers_blapi') }} customers
-        JOIN subs_with_nonzero_invoices AS cloud_subscriptions ON customers.id = cloud_subscriptions.customer_id
+        JOIN subs_with_nonzero_invoices_or_stripe AS cloud_subscriptions ON customers.id = cloud_subscriptions.customer_id
         JOIN {{ ref('dates') }} ON cloud_subscriptions.start_date = dates.date
         JOIN {{ source('blapi', 'products') }} ON cloud_subscriptions.sku = products.sku
-        JOIN latest_credit_card_address
+        LEFT JOIN latest_credit_card_address
             ON customers.id = latest_credit_card_address.customer_id
             AND latest_credit_card_address.row_num = 1
 ), customers_account AS (
