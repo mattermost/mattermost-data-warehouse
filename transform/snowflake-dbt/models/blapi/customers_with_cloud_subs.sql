@@ -29,7 +29,7 @@ WITH latest_credit_card_address AS (
                 (addresses.country = 'GB' AND postal_code_mapping.postal_code like left(addresses.postal_code, 4) || '%')
         )
     WHERE addresses.address_type = 'billing'
-    -- when first non-zero invoice is generated or when they subscribe to paid version of cloud
+    -- when first non-zero invoice is generated or when they subscribe to paid version of cloud (freemium)
 ), subs_with_nonzero_invoices_or_stripe AS (
     SELECT DISTINCT
         cloud_subscriptions.*
@@ -40,7 +40,7 @@ WITH latest_credit_card_address AS (
     WHERE 
     (invoices.total > 0 AND cloud_subscriptions.sku not like '%professional%')
     OR 
-    stripe_subscriptions.confirmed_purchase is not null
+    stripe_subscriptions.date_converted_to_paid is not null
 ), customers_with_cloud_subs AS (
     SELECT
         customers.id as customer_id,

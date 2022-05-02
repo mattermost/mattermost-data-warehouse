@@ -36,3 +36,10 @@ sources:
       - name: usage_events
       - name: usage_events_version
       - name: contact_us_requests
+
+  - name: stripe
+    database: ANALYTICS
+    schema: stripe
+
+    tables:
+    - name: subscriptions
