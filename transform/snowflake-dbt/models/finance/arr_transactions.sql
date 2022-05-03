@@ -8,7 +8,6 @@
 
 --as discussed with Jim Ketaily main fields he uses in opportunity table are tcv = amount
 --license dates as license_start_date__c and license_end_date__c
-create or replace table analytics.finance_dev.arr_transactions3 as (
 --cte to limit report to paying customers and exclude trial customers that did not convert to paying
 --finding that ending_arr__c is a calculated field and is not always populated in sfdc
 with 
@@ -294,4 +293,4 @@ select
     left join licterm on licterm.account_id = master.account_id
     left join analytics.orgm.user u on u.sfid=l.ownerid
     order by master.account_name,trans_no
-)
+
