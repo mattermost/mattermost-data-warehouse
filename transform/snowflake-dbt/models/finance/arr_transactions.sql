@@ -5,7 +5,10 @@
   })
 }}
 
---removed dll
+
+
+--as discussed with Jim Ketaily main fields he uses in opportunity table are tcv = amount
+--license dates as license_start_date__c and license_end_date__c
 --as discussed with Jim Ketaily main fields he uses in opportunity table are tcv = amount
 --license dates as license_start_date__c and license_end_date__c
 --cte to limit report to paying customers and exclude trial customers that did not convert to paying
