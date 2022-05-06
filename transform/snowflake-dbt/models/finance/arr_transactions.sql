@@ -5,26 +5,48 @@
   })
 }}
 
+--v4 of arr transactions 
+--this query reflects arr transactions during the lifecycle of a paying self serve customer 
+--based on key input fields by sales ops on license_start_date__c license_end_date__c and amount 
+--in the salesforce opportunity table
+--logic then calculates corresponding opportunity transactions to create an ending arr balance by report month and rollfoward of activities
+--ending arr balance is validated by the aggreement of active licenses and ending arr per account id as of run date
+--this query also corrects for the new customer count which raw data incorrectly reports because of migration cutoff
+--opportunities closed are recognized at the later of close date or license start date
+--license expiry is recognized at license end date even though early cancellation notice is received
+--to identify cloud and monthly billing customers to be excluded from selfserve ARR
+--currently account owner in accounts table is not reflective of the true account owner thus using the latest account owner of the opportunity
+--structure of queries below are funnel data to selfserve arr then gather demographic info then pull master data set and add expiry and renewal information 
 
 
---as discussed with Jim Ketaily main fields he uses in opportunity table are tcv = amount
---license dates as license_start_date__c and license_end_date__c
---as discussed with Jim Ketaily main fields he uses in opportunity table are tcv = amount
---license dates as license_start_date__c and license_end_date__c
+with cloud as (
+   select 
+        accountid,
+        sum(case when lower(name) like '%cloud billing%' or lower(name) like '%monthly billing%' then 1 else 0 end) as cloud
+    from  {{ ref( 'opportunity') }} opp
+    --from analytics.orgm.opportunity opp
+    where 
+        opp.iswon in (true,false)
+        and opp.isclosed = true
+        and opp.isdeleted = false
+    group by 1
+    having cloud > 0
+    order by 1 asc
+)
+
 --cte to limit report to paying customers and exclude trial customers that did not convert to paying
---finding that ending_arr__c is a calculated field and is not always populated in sfdc
-with 
-pop as (
+,pop as (
     select
-    opp.accountid
-    ,count(distinct id) as opportunities
-    ,sum(coalesce(opp.amount,0)) as arr
+        opp.accountid
+        ,count(distinct id) as opportunities
+        --,sum(coalesce(ending_arr__c,0)) as arr
+        ,sum(coalesce(opp.amount,0)) as arr
     from  {{ ref( 'opportunity') }} opp
     --from analytics.orgm.opportunity opp
     WHERE opp.iswon in (true,false)
-    and opp.isclosed = true
-    and opp.isdeleted = false
-    and opp.type != 'Monthly Billing'
+        and opp.isclosed = true
+        and opp.isdeleted = false
+        and opp.accountid not in (select distinct accountid from cloud )
     group by 1
     having arr >=1
     order by 1
@@ -55,7 +77,6 @@ pop as (
       COALESCE(A.PARENTID,A.SFID) AS PARENT_ID
       ,A.SFID AS ACCOUNT_ID
       ,coalesce(parent_s_parent_acount__c,a.name) as parent_name
-      --,A.ACCOUNT_OWNER_ZD__C AS ACCOUNT_OWNER
       ,A.GOVERNMENT__C AS GOVERNMENT
       ,A.CUSTOMER_SEGMENTATION_TIER__C AS CUSTOMER_TIER
       ,COALESCE(A.GEO__C,A.TERRITORY_GEO__C) AS GEO
@@ -86,15 +107,16 @@ pop as (
       ,case 
           when opp.id = '0063p00000zBnnuAAC' then date '2022-03-31' else opp.license_end_date__c::date end as license_end_date
       ,opp.license_active__c as license_active_sf
-      ,datediff('month',license_start_date,license_end_date) as term
+      --snowflake does not calculate date diff for months with decimals thus calculating on days 
+      --common to see license periods adjusted for co terminating deals
+      ,round(datediff('day',license_start_date,license_end_date)/(365/12),0) as term
       ,opp.iswon
       ,opp.type as opp_type
       ,case when opp.new_logo__c is null then 'No' else opp.new_logo__c end as new_logo
       ,round(coalesce(opp.amount,2),0) as bill_amt
-      ,case when opp.ending_arr__c is null or opp.ending_arr__c = 0 then round(div0(bill_amt,term)*12,2)
-            else round(opp.ending_arr__c,2)
-            end as opportunity_arr
+      ,case when term = 12 then bill_amt else round(div0(bill_amt,term)*12,2) end as opportunity_arr
       ,opp.name as description
+      --this field is not consistently populated and could be overwritten
       ,opp.original_opportunityid__c as original_id_renewed
     --from analytics.orgm.opportunity opp
 	  --left join ANALYTICS.ORGM.ACCOUNT acct
@@ -114,24 +136,24 @@ pop as (
 ,r as (
 --subquery for expiring licenses up to current month_end
 select
-  d.account_name
-  ,d.account_id
-  ,null as opportunity_id
-  ,null as close_date
-  ,dateadd('day',1,license_end_date) as lic_start_date
-  ,dateadd('year',1,license_end_date) as lic_end_date
-  ,12 as term
-  ,false as iswon
-  ,0 as bill_amt
-  ,0 as opportunity_arr
-  ,d.opportunity_arr *-1 as expired_arr
-  ,0 as renewed_arr
-  ,date_part('year',d.license_end_date)||'-'
-    ||rank() over (partition by account_id, date_trunc('year',d.license_end_date)
-    order by date_trunc('month',d.license_end_date)) 
-    ||'-'||account_id 
-    as match_key
-  ,opportunity_id as original_id_renewed
+    d.account_name
+    ,d.account_id
+    ,null as opportunity_id
+    ,null as close_date
+    ,dateadd('day',1,license_end_date) as lic_start_date
+    ,dateadd('year',1,license_end_date) as lic_end_date
+    ,12 as term
+    ,false as iswon
+    ,0 as bill_amt
+    ,0 as opportunity_arr
+    ,d.opportunity_arr *-1 as expired_arr
+    ,0 as renewed_arr
+    ,date_part('year',d.license_end_date)||'-'
+      ||rank() over (partition by account_id, date_trunc('year',d.license_end_date)
+      order by date_trunc('month',d.license_end_date)) 
+      ||'-'||account_id 
+      as match_key
+    ,opportunity_id as original_id_renewed
 from d
 where license_end_date <= last_day(current_date)
 
@@ -162,7 +184,7 @@ from d
 order by account_id, match_key asc
 )  
  
---unites renewal and expiring data with other opportunity transactions
+--unites renewal and expiring data with the main opportunity transactions
 ,master as (
     select
       account_name
@@ -231,9 +253,9 @@ select
     ,coalesce(l.end_date, master.license_end) as license_end_date
     ,min(license_start_date) over (partition by master.account_id) as account_start
     ,licterm.license_term as max_license
-    --tenure yr for ltv is based on the license anniversary beg date
+    --tenure yr for ltv when based on the license anniversary beg date
     ,datediff('year',account_start,license_start_date) as beg_tenure_yr
-    --tenure yr for ltv is based on the license anniversary end date
+    --tenure yr for ltv when based on the license anniversary end date
     ,datediff('year',account_start,license_end_date) as end_tenure_yr
     --when renewal expired close date is null
     ,coalesce(l.close_date,license_start_date) as closing_date
@@ -251,7 +273,7 @@ select
     ,is_won
     ,opp_type
     ,coalesce(l.new_logo,'No') as newlogo
-    ,case when term in (11,13) then 12 else term end as term_months
+    ,term as term_months
     ,billing_amt
     ,opportunity_arr
     ,new_arr
@@ -285,7 +307,7 @@ select
     --below is the sales rep of the latest closed deal
     ,b.name as account_owner
     ,u.name as opportunity_owner
-    ,case when ending_arr = 0 then 0 else latest_seats end as current_seats
+    --,case when ending_arr = 0 then 0 else latest_seats end as current_seats
     ,current_date as date_refreshed
     from master
     left join 
