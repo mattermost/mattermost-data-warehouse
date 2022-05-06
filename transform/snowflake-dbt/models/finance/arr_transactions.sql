@@ -6,12 +6,19 @@
 }}
 
 
+
+--as discussed with Jim Ketaily main fields he uses in opportunity table are tcv = amount
+--license dates as license_start_date__c and license_end_date__c
+--as discussed with Jim Ketaily main fields he uses in opportunity table are tcv = amount
+--license dates as license_start_date__c and license_end_date__c
+--cte to limit report to paying customers and exclude trial customers that did not convert to paying
+--finding that ending_arr__c is a calculated field and is not always populated in sfdc
 with 
 pop as (
     select
     opp.accountid
     ,count(distinct id) as opportunities
-    ,sum(coalesce(ending_arr__c,0)) as arr
+    ,sum(coalesce(opp.amount,0)) as arr
     from  {{ ref( 'opportunity') }} opp
     --from analytics.orgm.opportunity opp
     WHERE opp.iswon in (true,false)
@@ -22,15 +29,33 @@ pop as (
     having arr >=1
     order by 1
 )
+--cte to determine who is the latest sales rep of an account based on last opportunity closed   
+,o as (
+    select 
+      distinct o.accountid
+      ,last_value(o.ownerid) over (partition by o.accountid order by o.closedate asc) as last_owner
+    from {{ ref( 'opportunity') }} o
+    --from analytics.orgm.opportunity o
+      where o.isclosed = true
+      and o.iswon = true
+)
+--cte that references name to ownerid found above on o
+,b as (
+    select
+      o.accountid
+      ,o.last_owner
+      ,u.name
+    from o
+    left join analytics.orgm.user u on u.sfid = o.last_owner
+)    
+  
 --subquery to gather account demographics
 ,ACCT AS (
     SELECT
       COALESCE(A.PARENTID,A.SFID) AS PARENT_ID
       ,A.SFID AS ACCOUNT_ID
       ,coalesce(parent_s_parent_acount__c,a.name) as parent_name
-      --,A.NAME as account_name
-      --,IFF(A.PARENTID!=A.SFID,'CHILD','PARENT') AS HIERARCHY
-      ,A.ACCOUNT_OWNER_ZD__C AS ACCOUNT_OWNER
+      --,A.ACCOUNT_OWNER_ZD__C AS ACCOUNT_OWNER
       ,A.GOVERNMENT__C AS GOVERNMENT
       ,A.CUSTOMER_SEGMENTATION_TIER__C AS CUSTOMER_TIER
       ,COALESCE(A.GEO__C,A.TERRITORY_GEO__C) AS GEO
@@ -53,6 +78,7 @@ pop as (
       acct.name as account_name
       ,opp.accountid as account_id
       ,opp.id as opportunity_id
+      ,opp.ownerid 
       ,last_day(iff(opp.closedate>opp.license_start_date__c,opp.closedate,opp.license_start_date__c)::date) as report_month
       ,closedate::date as close_date
       ,opp.license_start_date__c::date as license_start_date
@@ -60,12 +86,14 @@ pop as (
       ,case 
           when opp.id = '0063p00000zBnnuAAC' then date '2022-03-31' else opp.license_end_date__c::date end as license_end_date
       ,opp.license_active__c as license_active_sf
-      ,datediff('month',license_start_date,license_end_date)+1 as term
+      ,datediff('month',license_start_date,license_end_date) as term
       ,opp.iswon
       ,opp.type as opp_type
       ,case when opp.new_logo__c is null then 'No' else opp.new_logo__c end as new_logo
-      ,round(coalesce(opp.ending_arr__c,0),0) as opportunity_arr
-      ,round(coalesce(opp.amount,0),0) as bill_amt
+      ,round(coalesce(opp.amount,2),0) as bill_amt
+      ,case when opp.ending_arr__c is null or opp.ending_arr__c = 0 then round(div0(bill_amt,term)*12,2)
+            else round(opp.ending_arr__c,2)
+            end as opportunity_arr
       ,opp.name as description
       ,opp.original_opportunityid__c as original_id_renewed
     --from analytics.orgm.opportunity opp
@@ -152,7 +180,6 @@ order by account_id, match_key asc
       ,sum(0) as new_arr
       ,sum(expired_arr) as expire_arr
       ,sum(renewed_arr) as renew_arr
-      --,renew_arr + expire_arr as net_renewal
       ,sum(0) as contract_expand
       ,sum(0) as account_expand
     from r
@@ -176,7 +203,6 @@ order by account_id, match_key asc
       ,case when lower(opp_type) like 'new%' then opportunity_arr else 0 end as new_arr
       ,0 as expire_arr
       ,0 as renew_arr
-      --,0 as net_renewal
       ,case when opp_type = 'Contract Expansion' then opportunity_arr else 0 end as contract_expand
       ,case when opp_type = 'Account Expansion' then opportunity_arr else 0 end as account_expand
       from d
@@ -185,7 +211,7 @@ order by account_id, match_key asc
 ) 
 ,
 --subquery to determine max license excluding expired 
-term as (
+licterm as (
 select
     account_id
     ,max(license_end) as license_term
@@ -195,8 +221,7 @@ group by 1
 order by 1
 )  
 
-
---aggregating table
+--aggregating table to output
 select
     master.account_name
     ,master.account_id
@@ -205,17 +230,18 @@ select
     ,coalesce(l.start_date, master.license_start) as license_start_date
     ,coalesce(l.end_date, master.license_end) as license_end_date
     ,min(license_start_date) over (partition by master.account_id) as account_start
-    ,term.license_term as max_license
+    ,licterm.license_term as max_license
     --tenure yr for ltv is based on the license anniversary beg date
     ,datediff('year',account_start,license_start_date) as beg_tenure_yr
     --tenure yr for ltv is based on the license anniversary end date
     ,datediff('year',account_start,license_end_date) as end_tenure_yr
     --when renewal expired close date is null
     ,coalesce(l.close_date,license_start_date) as closing_date
-    ,dense_rank() over (partition by master.account_id order by closing_date) as trans_no
+    ,dense_rank() over (partition by master.account_id order by closing_date,master.opportunity_id) as trans_no
     ,last_day(iff(closing_date>license_start_date,closing_date,license_start_date)) as report_month
-    ,dateadd('month',1,last_day(dateadd('month',2,date_trunc('quarter',dateadd('month',-1,report_month))))) as fiscal_quarter
-    ,dateadd('month',1,last_day(dateadd('month',11,date_trunc('year',dateadd('month',-1,report_month))))) as fiscal_year
+    ,iff(closing_date>license_start_date,closing_date,license_start_date) as report_date
+    ,last_day(dateadd('month',1,last_day(dateadd('month',2,date_trunc('quarter',dateadd('month',-1,report_month)))))) as fiscal_quarter
+    ,last_day(dateadd('month',1,last_day(dateadd('month',11,date_trunc('year',dateadd('month',-1,report_month)))))) as fiscal_year
     ,case
       when opp_type != 'Expired' and license_end_date >= last_day(current_date) and license_start_date <= last_day(current_date) then true 
       else false 
@@ -224,7 +250,7 @@ select
     ,iff(license_active_calc=license_activesf,true,false) as status_aligned
     ,is_won
     ,opp_type
-    ,l.new_logo
+    ,coalesce(l.new_logo,'No') as newlogo
     ,case when term in (11,13) then 12 else term end as term_months
     ,billing_amt
     ,opportunity_arr
@@ -256,13 +282,18 @@ select
     ,country
     ,type
     ,health_score 
-    ,acct.account_owner
+    --below is the sales rep of the latest closed deal
+    ,b.name as account_owner
+    ,u.name as opportunity_owner
     ,case when ending_arr = 0 then 0 else latest_seats end as current_seats
     ,current_date as date_refreshed
     from master
     left join 
-      (select distinct opportunity_id, close_date, license_start_date as start_date, license_end_date as end_date, license_active_sf, description, new_logo from d) l 
+      (select distinct opportunity_id, ownerid, close_date, license_start_date as start_date, license_end_date as end_date, license_active_sf, description, new_logo from d) l 
       on l.opportunity_id = master.opportunity_id
     left join acct on acct.account_id = master.account_id
-    left join term on term.account_id = master.account_id
-    order by master.account_name,closing_date
+    left join b on b.accountid = master.account_id
+    left join licterm on licterm.account_id = master.account_id
+    left join analytics.orgm.user u on u.sfid=l.ownerid
+    order by master.account_name,trans_no
+

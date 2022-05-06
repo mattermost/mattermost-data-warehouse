@@ -30,3 +30,9 @@ models:
       - name: account_sfid
         tests:
           - not_null
+  - name: arr_transactions
+    description: Monthly account activity at account id level
+    columns:
+      - name: account_id
+        tests:
+          - not_null
