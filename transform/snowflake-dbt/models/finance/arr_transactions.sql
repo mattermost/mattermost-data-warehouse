@@ -18,6 +18,7 @@
 --currently account owner in accounts table is not reflective of the true account owner thus using the latest account owner of the opportunity
 --structure of queries below are funnel data to selfserve arr then gather demographic info then pull master data set and add expiry and renewal information 
 
+
 with cloud as (
    select 
         accountid,
@@ -32,6 +33,7 @@ with cloud as (
     having cloud > 0
     order by 1 asc
 )
+
 --cte to limit report to paying customers and exclude trial customers that did not convert to paying
 ,pop as (
     select
