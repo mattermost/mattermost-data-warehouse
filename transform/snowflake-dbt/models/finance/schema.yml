@@ -37,23 +37,10 @@ models:
         tests:
           - not_null
 
-    - name: arr_rollfoward
-    description: Grouping arr_transaction opportunities at a monthly level to calculate resurrection and churn
+  - name: arr_rollfoward
+    description: Grouping arr_transaction opportunities at a monthly level to calculate resurrection and churn and explain changes
     columns:
       - name: account_id
         tests:
           - not_null
 
-    - name: arr_trend
-    description: Presenting arr balance and cnt over time 
-    columns:
-      - name: report_month
-        tests:
-          - not_null
-
-    - name: arr_ltv
-    description: arr_transactions formatted to be friendly for ltv calculations 
-    columns:
-      - name: account_id
-        tests:
-          - not_null
