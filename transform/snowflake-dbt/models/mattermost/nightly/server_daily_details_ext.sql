@@ -607,6 +607,8 @@ WITH server_daily_details_ext AS (
       , sc.group_count
       , sc.group_synced_channel_count
       , sc.group_count_with_allow_reference
+      , sc.ldap_group_count
+      , sc.custom_group_count
       , sc.enable_legacy_sidebar
       , sc.managed_resource_paths
       , sc.openid_google
