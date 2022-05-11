@@ -631,7 +631,7 @@ WITH server_daily_details_ext AS (
                    ON s.server_id = sc.server_id
                        AND s.date = sc.date
     WHERE s.date >= '2016-04-01'
-    {{ dbt_utils.group_by(n=598) }}
+    {{ dbt_utils.group_by(n=600) }}
 )
 
 SELECT *
