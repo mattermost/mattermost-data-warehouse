@@ -701,7 +701,7 @@ JOIN max_date
     LEFT JOIN {{ ref('server_group_details') }}       sgroup
     ON s.server_id = sgroup.server_id AND s.date =  sgroup.date
 WHERE s.date >= '2016-04-01'
-{{ dbt_utils.group_by(n=579)}}
+{{ dbt_utils.group_by(n=581)}}
 )
 SELECT *
 FROM server_config_details
