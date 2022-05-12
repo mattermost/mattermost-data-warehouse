@@ -36,3 +36,11 @@ models:
       - name: account_id
         tests:
           - not_null
+
+  - name: arr_rollfoward
+    description: Grouping arr_transaction opportunities at a monthly level to calculate resurrection and churn and explain changes
+    columns:
+      - name: account_id
+        tests:
+          - not_null
+
