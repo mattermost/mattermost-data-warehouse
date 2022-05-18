@@ -29,13 +29,13 @@ WITH latest_credit_card_address AS (
                 (addresses.country = 'GB' AND postal_code_mapping.postal_code like left(addresses.postal_code, 4) || '%')
         )
     WHERE addresses.address_type = 'billing'
-    -- when first non-zero invoice is generated or when they subscribe to paid version of cloud (freemium)
+    -- when they subscribe to paid version of cloud (freemium)
 ), freemium_subscriptions AS (
     SELECT DISTINCT
         freemium_subscriptions.*
     FROM
         {{ ref('freemium_subscriptions') }}
-), customers_with_cloud_subs AS (
+), customers_with_freemium_subs AS (
     SELECT
         customers.id as customer_id,
         customers.email,
@@ -47,7 +47,7 @@ WITH latest_credit_card_address AS (
         freemium_subscriptions.previous_subscription_version_id,
         freemium_subscriptions.cloud_dns,
         to_varchar(freemium_subscriptions.start_date, 'yyyy-mm-dd"T"hh24:mi:ss"Z"') as start_date,
-        to_varchar(dates.last_day_of_fiscal_year, 'yyyy-mm-dd"T"hh24:mi:ss"Z"') as end_date,
+        to_varchar(DATEADD(year, -1, freemium_subscriptions.start_date), 'yyyy-mm-dd"T"hh24:mi:ss"Z"') as end_date,
         to_varchar(freemium_subscriptions.updated_at, 'yyyy-mm-dd"T"hh24:mi:ss"Z"') as updated_at,
         true as true_boolean,
         freemium_subscriptions.invoice_number,
@@ -78,63 +78,64 @@ WITH latest_credit_card_address AS (
         freemium_subscriptions.updated_at >= '2021-08-18' as hightouch_sync_eligible
     FROM {{ ref('customers_blapi') }} customers
         JOIN freemium_subscriptions AS freemium_subscriptions ON customers.id = freemium_subscriptions.customer_id
-        LEFT JOIN {{ ref('dates') }} ON freemium_subscriptions.start_date = dates.date
         JOIN {{ source('blapi', 'products') }} ON freemium_subscriptions.sku = products.sku
+        LEFT JOIN {{ source('salesforce','lead')}} on lead.email = customers.email
         LEFT JOIN latest_credit_card_address
             ON customers.id = latest_credit_card_address.customer_id
             AND latest_credit_card_address.row_num = 1
+        WHERE lead.email is not null -- filtering out accounts that do not have leads.
 ), customers_account AS (
     SELECT
-        customers_with_cloud_subs.subscription_id,
+        customers_with_freemium_subs.subscription_id,
         COALESCE(
             COALESCE(account.dwh_external_id__c, account_domain_mapping.account_external_id),
             UUID_STRING(
                 '78157189-82de-4f4d-9db3-88c601fbc22e',
-                customers_with_cloud_subs.customer_id)
+                customers_with_freemium_subs.customer_id)
         ) AS account_external_id,
         COALESCE(account.sfid, account_domain_mapping.accountid) as account_sfid,
-        ROW_NUMBER() OVER (PARTITION BY customers_with_cloud_subs.subscription_id ORDER BY account.lastmodifieddate DESC) as row_num
-    FROM customers_with_cloud_subs
+        ROW_NUMBER() OVER (PARTITION BY customers_with_freemium_subs.subscription_id ORDER BY account.lastmodifieddate DESC) as row_num
+    FROM customers_with_freemium_subs
     LEFT JOIN {{ ref('account') }}
-        ON customers_with_cloud_subs.domain = account.cbit__clearbitdomain__c
+        ON customers_with_freemium_subs.domain = account.cbit__clearbitdomain__c
     LEFT JOIN {{ source('orgm', 'account_domain_mapping') }}
-        ON customers_with_cloud_subs.domain = account_domain_mapping.domain
+        ON customers_with_freemium_subs.domain = account_domain_mapping.domain
 ), customers_contact AS (
     SELECT
-        customers_with_cloud_subs.subscription_id,
+        customers_with_freemium_subs.subscription_id,
         COALESCE(
             contact.dwh_external_id__c,
             UUID_STRING(
                 '78157189-82de-4f4d-9db3-88c601fbc22e',
-                customers_with_cloud_subs.customer_id || customers_with_cloud_subs.email)
+                customers_with_freemium_subs.customer_id || customers_with_freemium_subs.email)
         ) AS contact_external_id,
         contact.sfid as contact_sfid,
         account.id as account_sfid,
         account.dwh_external_id__c as contact_account_external_id,
-        ROW_NUMBER() OVER (PARTITION BY customers_with_cloud_subs.subscription_id ORDER BY contact.lastmodifieddate DESC) as row_num
-    FROM customers_with_cloud_subs
+        ROW_NUMBER() OVER (PARTITION BY customers_with_freemium_subs.subscription_id ORDER BY contact.lastmodifieddate DESC) as row_num
+    FROM customers_with_freemium_subs
     LEFT JOIN {{ ref('contact') }}
-       ON customers_with_cloud_subs.email = contact.email
+       ON customers_with_freemium_subs.email = contact.email
     LEFT JOIN {{ ref('account') }}
         ON contact.accountid = account.id
 ), customers_opportunity AS (
     SELECT
-        customers_with_cloud_subs.subscription_id,
+        customers_with_freemium_subs.subscription_id,
         COALESCE(
             opportunity.dwh_external_id__c,
             UUID_STRING(
                 '78157189-82de-4f4d-9db3-88c601fbc22e',
-                customers_with_cloud_subs.subscription_id)
+                customers_with_freemium_subs.subscription_id)
         ) AS opportunity_external_id,
         opportunity.sfid as opportunity_sfid,
-        ROW_NUMBER() OVER (PARTITION BY customers_with_cloud_subs.subscription_id ORDER BY opportunity.lastmodifieddate DESC) as row_num
-    FROM customers_with_cloud_subs
+        ROW_NUMBER() OVER (PARTITION BY customers_with_freemium_subs.subscription_id ORDER BY opportunity.lastmodifieddate DESC) as row_num
+    FROM customers_with_freemium_subs
     LEFT JOIN {{ ref('opportunity') }}
-        ON customers_with_cloud_subs.subscription_id = opportunity.subs_id__c
-            AND customers_with_cloud_subs.end_date = opportunity.closedate
+        ON customers_with_freemium_subs.subscription_id = opportunity.subs_id__c
+            AND customers_with_freemium_subs.end_date = opportunity.closedate
 )
 SELECT
-    customers_with_cloud_subs.*,
+    customers_with_freemium_subs.*,
     case
         when customers_account.account_sfid is null and customers_contact.account_sfid is not null
         then customers_contact.contact_account_external_id
@@ -145,13 +146,13 @@ SELECT
     customers_contact.contact_sfid,
     customers_opportunity.opportunity_external_id,
     customers_opportunity.opportunity_sfid
-FROM customers_with_cloud_subs
+FROM customers_with_freemium_subs
 JOIN customers_account
-    ON customers_with_cloud_subs.subscription_id = customers_account.subscription_id
+    ON customers_with_freemium_subs.subscription_id = customers_account.subscription_id
     AND customers_account.row_num = 1
 JOIN customers_contact
-    ON customers_with_cloud_subs.subscription_id = customers_contact.subscription_id
+    ON customers_with_freemium_subs.subscription_id = customers_contact.subscription_id
     AND customers_contact.row_num = 1
 JOIN customers_opportunity
-    ON customers_with_cloud_subs.subscription_id = customers_opportunity.subscription_id
+    ON customers_with_freemium_subs.subscription_id = customers_opportunity.subscription_id
     AND customers_opportunity.row_num = 1

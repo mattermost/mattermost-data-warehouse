@@ -6,5 +6,5 @@
 }}
 
 select *
-from {{ ref('blapi_freemium_opportunitylineitem') }}
+from {{ ref('freemium_opportunitylineitem') }}
 where opportunitylineitem_sfid is not null

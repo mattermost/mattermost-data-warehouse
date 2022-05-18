@@ -42,4 +42,13 @@ sources:
     schema: stripe
 
     tables:
-    - name: subscriptions
+    - name: subscriptions_stripe
+    - name: charge
+    - name: invoices
+
+  - name: salesforce
+    database: ANALYTICS
+    schema: ORGM
+
+    tables:
+    - name: lead
