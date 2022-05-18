@@ -42,7 +42,7 @@ sources:
     schema: stripe
 
     tables:
-    - name: subscriptions_stripe
+    - name: subscriptions
     - name: charge
     - name: invoices
 
