@@ -588,6 +588,8 @@ SELECT
   , sgroup.group_count
   , sgroup.group_synced_channel_count
   , sgroup.group_count_with_allow_reference
+  , sgroup.ldap_group_count
+  , sgroup.custom_group_count
   , sservice.enable_legacy_sidebar
   , sservice.managed_resource_paths
   , soauth.openid_google
@@ -699,7 +701,7 @@ JOIN max_date
     LEFT JOIN {{ ref('server_group_details') }}       sgroup
     ON s.server_id = sgroup.server_id AND s.date =  sgroup.date
 WHERE s.date >= '2016-04-01'
-{{ dbt_utils.group_by(n=579)}}
+{{ dbt_utils.group_by(n=581)}}
 )
 SELECT *
 FROM server_config_details

@@ -5,6 +5,7 @@
   })
 }}
 
+
 --create or replace table analytics.finance_dev.arr_rollforward as (
 --cte to gather master arr transaction data and collapse by report month and thru lastest month end
 --this data will then be grouped to identify resurrection churn expansion and contraction at a higher level
@@ -16,7 +17,6 @@ with a as (
       ,fiscal_quarter
       ,fiscal_year
       ,account_owner
-      ,max(opportunity_owner) as opp_owner
       ,max(newlogo) as new_logo
       ,date_trunc('month',min(account_start)) as cohort_month
       ,last_day(dateadd('month',1,last_day(dateadd('month',2,date_trunc('quarter',dateadd('month',-1,cohort_month)))))) as cohort_fiscal_quarter
@@ -49,7 +49,7 @@ with a as (
 )
 
 ,output as (
---query needed to calculate separately resurrection arr and churn_arr
+--query needed to calculate separately resurrection arr and churn_arr on cte a
 select
     a.account_name
     ,a.account_id
@@ -86,7 +86,6 @@ select
         else 0 
         end as contract_expansion
     ,renewal_expand + contract_expansion as annual_expansion
-    
     ,case 
         when trans_no !=1 and account_expand > 0 and resurrect_arr = 0 then account_expand + new
         when trans_no !=1 and account_expand = 0 and a.new_logo = 'Yes' and resurrect_arr=0 then new 
@@ -118,7 +117,7 @@ select
     ,cnt_annual_expand + cnt_account_expand as cnt_total_expand
     ,case when contraction <0 then 1 else 0 end as cnt_contraction
     ,current_date as refresh_date
-    ,a.account_id||' '||report_month as unique_key
+    ,a.account_id||'-'||report_month as unique_key
     ,a.tier
     ,a.co_type
     ,a.industry
@@ -135,6 +134,14 @@ select
     o.account_name,
     o.account_id,
     case when c.customer_type is null then 'secure_messaging' else c.customer_type end as customer_usage,
+    trans_no,
+    tier,
+    co_type,
+    industry,
+    geography,
+    nation,
+    gov,
+    new_logo,
     cohort_month,
     cohort_fiscal_year,
     cohort_fiscal_quarter,
@@ -162,6 +169,7 @@ select
 from output o
 left join analytics.finance.arr_customertype c on o.account_id = c.account_id
 order by account_name, cohort_month, report_month
+
 
 
 

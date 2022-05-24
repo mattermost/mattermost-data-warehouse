@@ -64,6 +64,8 @@ max_rudder_timestamp       AS (
             , MAX(COALESCE(r.CONTEXT_TRAITS_INSTALLATIONID,  NULL)) AS context_traits_installationid
             , MAX(COALESCE(r.CONTEXT_REQUEST_IP,  NULL)) AS context_request_ip
             , MAX(COALESCE(r.CONTEXT_TRAITS_INSTALLATION_ID,  NULL)) AS context_traits_installation_id
+            , MAX(COALESCE(r.LDAP_GROUP_COUNT,  NULL)) AS ldap_group_count
+            , MAX(COALESCE(r.CUSTOM_GROUP_COUNT,  NULL)) AS custom_group_count
             , {{ dbt_utils.surrogate_key(['COALESCE(s.timestamp::DATE, r.timestamp::date)', 'COALESCE(s.user_id, r.user_id)']) }} AS id
          FROM 
             (
@@ -83,7 +85,7 @@ max_rudder_timestamp       AS (
             ) r
             ON s.timestamp::date = r.timestamp::date
             AND s.user_id = r.user_id
-         GROUP BY 1, 2, 26
+         GROUP BY 1, 2, 28
      )
 
      SELECT *

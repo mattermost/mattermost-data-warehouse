@@ -16,6 +16,7 @@ WITH invoices AS (
         ,invoices.billing_reason
         ,invoices.charge
         ,invoices.closed
+        ,invoices.created
         ,invoices.currency
         ,invoices.customer
         ,invoices.date
