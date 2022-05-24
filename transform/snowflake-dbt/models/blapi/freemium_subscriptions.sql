@@ -13,7 +13,7 @@ WITH freemium_subscriptions AS (
         invoices.id as invoice_number,
         ROW_NUMBER() OVER (PARTITION BY s.id ORDER BY s.transaction_id DESC) as row_num
     FROM {{ source('blapi', 'subscriptions_version') }} s
-    JOIN {{ source('stripe', 'subscriptions_stripe') }} su on su.id = s.stripe_id
+    JOIN {{ source('stripe', 'subscriptions') }} su on su.id = s.stripe_id
     JOIN {{ source('blapi', 'products') }} p ON s.product_id = p.id
     LEFT JOIN {{ source('stripe', 'invoices') }} on invoices.subscription = su.id
     WHERE
