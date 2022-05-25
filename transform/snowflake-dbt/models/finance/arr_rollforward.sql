@@ -60,7 +60,6 @@ select
     ,a.cohort_month 
     ,a.cohort_fiscal_quarter
     ,a.cohort_fiscal_year
-    ,a.opp_owner as opportunity_owner
     ,datediff('year',a.cohort_fiscal_year,a.fiscal_year) as fiscal_year_no
     ,round((datediff('day',a.cohort_month,fiscal_quarter))/30,0) as fiscal_month_no
     ,round((datediff('day',a.cohort_fiscal_quarter,fiscal_quarter))/90,0) as fiscal_quarter_no
