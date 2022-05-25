@@ -17,6 +17,7 @@ with a as (
       ,fiscal_quarter
       ,fiscal_year
       ,account_owner
+      ,opportunity_owner
       ,max(newlogo) as new_logo
       ,date_trunc('month',min(account_start)) as cohort_month
       ,last_day(dateadd('month',1,last_day(dateadd('month',2,date_trunc('quarter',dateadd('month',-1,cohort_month)))))) as cohort_fiscal_quarter
@@ -44,16 +45,16 @@ with a as (
     from {{ ref( 'arr_transactions') }}
     --from analytics.finance_dev.arr_transactions
         where report_month <= last_day(current_date)
-    group by 1,2,3,4,5,6
+    group by 1,2,3,4,5,6,7
     order by report_month, account_id
 )
 
-,output as (
 --query needed to calculate separately resurrection arr and churn_arr on cte a
 select
     a.account_name
     ,a.account_id
     ,a.account_owner
+    ,a.opportunity_owner
     ,a.report_month
     ,a.fiscal_quarter
     ,a.fiscal_year
@@ -63,7 +64,7 @@ select
     ,datediff('year',a.cohort_fiscal_year,a.fiscal_year) as fiscal_year_no
     ,round((datediff('day',a.cohort_month,fiscal_quarter))/30,0) as fiscal_month_no
     ,round((datediff('day',a.cohort_fiscal_quarter,fiscal_quarter))/90,0) as fiscal_quarter_no
-    ,dense_rank() over (partition by account_id order by report_month) as trans_no 
+    ,dense_rank() over (partition by a.account_id order by report_month) as trans_no 
     ,a.license_beg
     ,a.license_end
     ,round((datediff('day',a.license_beg,a.license_end)+1)/360,0) as term
@@ -71,8 +72,8 @@ select
     ,arr
     ,expire
     ,arr_delta
-    ,coalesce(sum(arr_delta) over (partition by account_id order by report_month rows between unbounded preceding and 1 preceding),0) as beg_arr
-    ,sum(arr_delta) over (partition by account_id order by report_month) as end_arr
+    ,coalesce(sum(arr_delta) over (partition by a.account_id order by report_month rows between unbounded preceding and 1 preceding),0) as beg_arr
+    ,sum(arr_delta) over (partition by a.account_id order by report_month) as end_arr
     --finding that salesforce does not consistently classify arr deals into the proper category
     --discovered that because of sfdc migration not all first transactions are new subscription
     ,case when trans_no = 1 then arr_delta else 0 end as new_arr
@@ -124,50 +125,11 @@ select
     ,a.nation
     ,a.gov
     ,a.new_logo
+    ,case when c.customer_type is null then 'secure_messaging' else c.customer_type end as customer_usage
 from a
-order by cohort_month, account_id, report_month asc
-)
+    left join analytics.finance.arr_customertype c on a.account_id = c.account_id
+order by cohort_month, a.account_id, report_month asc
 
-
-select
-    o.account_name,
-    o.account_id,
-    case when c.customer_type is null then 'secure_messaging' else c.customer_type end as customer_usage,
-    trans_no,
-    tier,
-    co_type,
-    industry,
-    geography,
-    nation,
-    gov,
-    new_logo,
-    cohort_month,
-    cohort_fiscal_year,
-    cohort_fiscal_quarter,
-    fiscal_year,
-    fiscal_year_no,
-    fiscal_quarter_no,
-    fiscal_month_no,
-    report_month,
-    license_beg,
-    license_end,
-    term,
-    new_arr,
-    resurrect_arr,
-    total_expansion,
-    contraction,
-    churn,
-    arr_delta,
-    beg_arr,
-    end_arr,
-    cnt_new_account,
-    cnt_resurrect,
-    cnt_churn,
-    cnt_change,
-    cnt_active_customer
-from output o
-left join analytics.finance.arr_customertype c on o.account_id = c.account_id
-order by account_name, cohort_month, report_month
 
 
 
