@@ -40,8 +40,8 @@ with a as (
       ,sum(account_expansion) as account_expand
       ,sum(arr_change) as arr_delta
       ,new+expire+renew+reduce+contract_expand+account_expand - arr_delta as check_amt
-    --from {{ ref( 'arr_transactions') }}
-    from analytics.finance_dev.arr_transactions
+    from {{ ref( 'arr_transactions') }}
+    --from analytics.finance_dev.arr_transactions
         where report_month < date_trunc('month',current_date)
     group by 1,2,3,4,5,6
     order by cohort_month, account_id, report_month
