@@ -16,6 +16,7 @@ with a as (
       ,fiscal_quarter
       ,fiscal_year
       ,account_owner
+      ,opportunity_owner
       ,max(newlogo) as new_logo
       ,date_trunc('month',min(account_start)) as cohort_month
       ,last_day(dateadd('month',1,last_day(dateadd('month',2,date_trunc('quarter',dateadd('month',-1,cohort_month)))))) as cohort_fiscal_quarter
@@ -48,10 +49,12 @@ with a as (
 )
 
 --query needed to calculate separately resurrection arr and churn_arr on cte a
-,output as (select
+,output as (
+  select
     a.account_name
     ,a.account_id
     ,a.account_owner
+    ,a.opportunity_owner
     ,a.report_month
     ,a.fiscal_quarter
     ,a.fiscal_year
@@ -125,6 +128,7 @@ with a as (
     ,case when c.customer_type is null then 'secure_messaging' else c.customer_type end as customer_usage
 from a
     left join analytics.finance.arr_customertype c on a.account_id = c.account_id
+
 )
 --categorize arr customers according to average arr size as of most recent elapsed month for purposes of ltv
 ,bins as (
@@ -143,7 +147,6 @@ select
     end as bin_avg_arr
     from output
     group by 1,2
-
 )
 
 select
