@@ -65,6 +65,10 @@ with signup_pages as (
         customer_facts.portal_customer_id,
         max(last_active_date) as last_active_date,
         max(posts) as cloud_posts_total,
+        max(boards_cards) as cards_total,
+        max(plugins_downloaded) as plugins_total,
+        -- total_storage,
+        -- installation_state,
         max(monthly_active_users) as cloud_mau,
         max(active_users) as cloud_dau,
         max(posts_previous_day) as cloud_posts_daily
@@ -96,7 +100,11 @@ select
     server_facts.cloud_posts_total,
     server_facts.cloud_mau,
     server_facts.cloud_dau,
-    server_facts.cloud_posts_daily
+    server_facts.cloud_posts_daily,
+    -- server_fact.total_storage,
+    -- server_fact.installation_state,
+    server_facts.cards_total,
+    server_facts.plugins_total
 from signup_pages
     left join created_workspace on signup_pages.portal_customer_id = created_workspace.portal_customer_id
     left join completed_signup on signup_pages.portal_customer_id = completed_signup.portal_customer_id
