@@ -22,7 +22,7 @@ WITH existing_lead AS (
         coalesce(existing_lead.LEAD_SOURCE_DETAIL__C,'Mattermost Cloud') as lead_source_detail
     FROM {{ ref('customers_with_freemium_subs') }}
     LEFT JOIN existing_lead ON customers_with_freemium_subs.email = existing_lead.email
-    WHERE existing_lead.id is not null
+    WHERE existing_lead.id is null
     AND sku = 'cloud-enterprise' 
     AND status = 'trialing'
     AND customers_with_freemium_subs.hightouch_sync_eligible
