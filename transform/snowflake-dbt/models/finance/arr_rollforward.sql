@@ -5,7 +5,6 @@
   })
 }}
 
-
 --create or replace table analytics.finance_dev.arr_rollforward as (
 --cte to gather master arr transaction data and collapse by report month and thru lastest month end
 --this data will then be grouped to identify resurrection churn expansion and contraction at a higher level
@@ -41,15 +40,15 @@ with a as (
       ,sum(account_expansion) as account_expand
       ,sum(arr_change) as arr_delta
       ,new+expire+renew+reduce+contract_expand+account_expand - arr_delta as check_amt
-    from {{ ref( 'arr_transactions') }}
-    --from analytics.finance_dev.arr_transactions
-        where report_month <= last_day(current_date)
+    --from {{ ref( 'arr_transactions') }}
+    from analytics.finance_dev.arr_transactions
+        where report_month < date_trunc('month',current_date)
     group by 1,2,3,4,5,6
-    order by report_month, account_id
+    order by cohort_month, account_id, report_month
 )
 
 --query needed to calculate separately resurrection arr and churn_arr on cte a
-select
+,output as (select
     a.account_name
     ,a.account_id
     ,a.account_owner
@@ -126,9 +125,30 @@ select
     ,case when c.customer_type is null then 'secure_messaging' else c.customer_type end as customer_usage
 from a
     left join analytics.finance.arr_customertype c on a.account_id = c.account_id
-order by cohort_month, a.account_id, report_month asc
+)
+--categorize arr customers according to average arr size as of most recent elapsed month for purposes of ltv
+,bins as (
+select
+    account_name
+    ,account_id
+    ,round(sum(arr_delta),0) as current_arr
+    ,round(avg(end_arr),0) as average_arr
+    ,sum(new_arr) as starting_arr
+    ,case 
+        when average_arr <=10000 then '4_AvgARR_upto10K'
+        when average_arr >10000 and average_arr <=100000 then '3_AvgARR_10Kupto100K'
+        when average_arr >100000 and average_arr <=500000 then '2_AvgARR_100Kupto500K'
+        when average_arr >500000 then '1_AvgARR_above500K'
+        else null
+    end as bin_avg_arr
+    from output
+    group by 1,2
 
+)
 
-
-
+select
+output.*
+,bins.bin_avg_arr
+from output
+left join bins on bins.account_id = output.account_id
 
