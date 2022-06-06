@@ -68,7 +68,7 @@ with signup_pages as (
         max(boards_cards) as cards_total,
         max(plugins_downloaded) as plugins_total,
         -- total_storage,
-        -- installation_state,
+        CASE WHEN installation_id = null then 'Self Hosted' else 'Cloud' end as installation_state,
         max(monthly_active_users) as cloud_mau,
         max(active_users) as cloud_dau,
         max(posts_previous_day) as cloud_posts_daily
