@@ -29,7 +29,6 @@ WITH subscriptions AS (
         ,subscriptions.plan:"name"::varchar as edition
         ,subscriptions.metadata:"sfdc-migrated-opportunity-sfid"::varchar as sfdc_migrated_opportunity_sfid
         ,subscriptions.metadata:"internal_purchase_order"::varchar as purchase_order_num
-        ,subscriptions.metadata:"cws-date-converted-to-paid"::varchar as date_converted_to_paid
         ,TO_TIMESTAMP_NTZ(subscriptions.metadata:"cws-license-end-date"::int) as license_end_date
         ,TO_TIMESTAMP_NTZ(subscriptions.metadata:"cws-actual-renewal-date"::int / 1000) as actual_renewal_date
         ,subscriptions."START"
