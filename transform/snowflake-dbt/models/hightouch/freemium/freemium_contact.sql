@@ -9,7 +9,7 @@ WITH existing_lead AS (
     SELECT
         lead.id,
         lead.email
-    FROM {{ ref('freemium_leads') }}
+    FROM {{ ref('lead') }}
     WHERE converteddate IS NULL
     QUALIFY ROW_NUMBER() OVER (PARTITION BY lead.email ORDER BY lead.createddate DESC) = 1
 ), freemium_contacts_to_sync as (
