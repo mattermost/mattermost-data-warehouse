@@ -20,7 +20,7 @@ WITH freemium_opportunity_to_sync AS (
         ON customers_with_freemium_subs.opportunity_external_id = opportunity.dwh_external_id__c
     LEFT JOIN {{ ref('account') }}
         ON customers_with_freemium_subs.account_external_id = account.dwh_external_id__c
-    WHERE opportunity.id IS NULL
+    WHERE opportunity.sfid IS NULL
         AND customers_with_freemium_subs.hightouch_sync_eligible
 )
 SELECT * FROM freemium_opportunity_to_sync
