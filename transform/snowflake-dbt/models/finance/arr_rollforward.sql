@@ -16,7 +16,6 @@ with a as (
       ,fiscal_quarter
       ,fiscal_year
       ,account_owner
-      ,opportunity_owner
       ,max(newlogo) as new_logo
       ,date_trunc('month',min(account_start)) as cohort_month
       ,last_day(dateadd('month',1,last_day(dateadd('month',2,date_trunc('quarter',dateadd('month',-1,cohort_month)))))) as cohort_fiscal_quarter
@@ -54,7 +53,6 @@ with a as (
     a.account_name
     ,a.account_id
     ,a.account_owner
-    ,a.opportunity_owner
     ,a.report_month
     ,a.fiscal_quarter
     ,a.fiscal_year
