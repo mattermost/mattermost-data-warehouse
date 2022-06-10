@@ -9,6 +9,8 @@ WITH freemium_subscriptions AS (
     SELECT
         s.*,
         p.sku,
+        su.status,
+        INITCAP(SPLIT_PART(replace(su.cws_dns, '-', ' '), '.', 1)) as company,
         charge as stripe_charge_id,
         invoices.id as invoice_number,
         ROW_NUMBER() OVER (PARTITION BY s.id ORDER BY s.transaction_id DESC) as row_num
@@ -17,7 +19,6 @@ WITH freemium_subscriptions AS (
     JOIN {{ source('blapi', 'products') }} p ON s.product_id = p.id
     LEFT JOIN {{ source('stripe', 'invoices') }} on invoices.subscription = su.id
     WHERE
-        -- p.name in ('Mattermost Cloud', 'Cloud Enterprise', 'Cloud Starter', 'Cloud Professional')
         s.cloud_dns is not null
         AND su.date_converted_to_paid is not null
 )

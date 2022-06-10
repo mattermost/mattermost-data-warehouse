@@ -8,19 +8,23 @@ WITH existing_lead AS (
     SELECT
         lead.id,
         lead.email,
+        lead.LEAD_SOURCE_TEXT__C,
+        lead.LEAD_SOURCE_DETAIL__C,
         ROW_NUMBER() OVER (PARTITION BY lead.email ORDER BY lead.createddate DESC) as row_num
     FROM {{ ref('lead') }}
     WHERE converteddate IS NULL
-),WITH freemium_leads_to_sync as (
+), freemium_leads_to_sync as (
     SELECT
+        UUID_STRING('78157189-82de-4f4d-9db3-88c601fbc22e', customers_with_freemium_subs.email ) AS campaignmember_external_id,
         customers_with_freemium_subs.email,
         customers_with_freemium_subs.domain,
         customers_with_freemium_subs.last_name,
+        customers_with_freemium_subs.company,
         'Trial Request' as most_recent_action,
         'Cloud Enterprise' as most_recent_action_detail,
         coalesce(existing_lead.LEAD_SOURCE_TEXT__C,'Referral') as lead_source,
         coalesce(existing_lead.LEAD_SOURCE_DETAIL__C,'Mattermost Cloud') as lead_source_detail
-    FROM {{ ref('customers_with_freemium_subs') }}
+    FROM {{ ref('customers_with_freemium_subs_without_filter') }} as customers_with_freemium_subs
     LEFT JOIN existing_lead ON customers_with_freemium_subs.email = existing_lead.email
     WHERE existing_lead.id is null
     AND sku = 'cloud-enterprise' 
