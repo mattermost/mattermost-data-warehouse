@@ -76,7 +76,17 @@ WITH sdd AS (
       where activity.user_id in (SELECT server_id from sdd GROUP BY 1)
       group by 1
     ),
-
+    max_blocks_time AS (
+      select  
+          fs.server_id
+        , fb.user_id
+        , max(fb.timestamp)       as max_time
+        , max(fb.timestamp::date) as max_date 
+      from {{ ref('focalboard_blocks') }} fb JOIN {{ ref('focalboard_server') }} fs 
+      ON fb.user_id = fs.user_id
+      where fs.server_id in (SELECT server_id from sdd GROUP BY 1)
+      group by 1,2
+    ),
     max_segment_time AS (
       select 
           activity.user_id              as server_id
@@ -148,6 +158,20 @@ WITH sdd AS (
           AND s1.timestamp = s2.max_time 
     ),
 
+        focalboard_blocks_activity AS (
+         SELECT 
+        server_id
+        , board
+        , _view
+        , card       
+        , max_time
+        , max_date
+        FROM {{ ref('focalboard_blocks') }} s1
+        JOIN max_blocks_time s2
+          ON s1.user_id = s2.user_id 
+          AND s1.timestamp = s2.max_time 
+    ),
+
     server_activity as (
       SELECT 
         COALESCE(r.user_id, s.user_id) as user_id
@@ -169,9 +193,14 @@ WITH sdd AS (
         , max(COALESCE(r.outgoing_webhooks, s.outgoing_webhooks)) as outgoing_webhooks
         , max(COALESCE(r.max_time, s.max_time)) AS max_timestamp
         , MAX(COALESCE(r.context_ip, r.context_request_ip)) AS last_ip_address
+        , MAX(board) AS boards
+        , MAX(_view) AS boards_views
+        , MAX(card) AS boards_cards
       FROM rudder_activity r
       FULL OUTER JOIN segment_activity s
         ON r.user_id = s.user_id and r.max_date = s.max_date
+      FULL OUTER JOIN focalboard_blocks_activity fb
+        ON r.user_id = fb.server_id and r.max_date = fb.max_date
       GROUP BY 1
     ),
     
@@ -399,6 +428,9 @@ WITH sdd AS (
         , max(server_activity.guest_accounts) as guest_accounts
         , max(server_activity.incoming_webhooks) as incoming_webhooks
         , max(server_activity.outgoing_webhooks) as outgoing_webhooks
+        , max(server_activity.boards) as boards
+        , max(server_activity.boards_views) as boards_views
+        , max(server_activity.boards_cards) as boards_cards
         , MAX(server_details.max_registered_users) as max_registered_users
         , MAX(server_details.max_registered_deactivated_users) as max_registered_deactivated_users
         , MAX(server_details.max_enabled_plugins)              as max_enabled_plugins

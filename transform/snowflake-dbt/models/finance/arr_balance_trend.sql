@@ -12,7 +12,7 @@
 
 with a as (
   select
-        last_day(dateadd('month',1,last_day(dateadd('month',11,date_trunc('year',dateadd('month',-1,cohort)))))) as fiscal_year
+        last_day(dateadd('month',1,last_day(dateadd('month',11,date_trunc('year',dateadd('month',-1,cohort_month)))))) as fiscal_year
         ,report_month
         ,sum(tcv) as tcv_signed
         ,sum(arr) as arr_signed

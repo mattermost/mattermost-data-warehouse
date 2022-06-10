@@ -5,7 +5,7 @@
   })
 }}
 
-
+--create or replace table analytics.finance_dev.arr_rollforward as (
 --cte to gather master arr transaction data and collapse by report month and thru lastest month end
 --this data will then be grouped to identify resurrection churn expansion and contraction at a higher level
 with a as (
@@ -16,9 +16,10 @@ with a as (
       ,fiscal_quarter
       ,fiscal_year
       ,account_owner
-      ,max(opportunity_owner) as opp_owner
       ,max(newlogo) as new_logo
-      ,min(account_start) as cohort
+      ,date_trunc('month',min(account_start)) as cohort_month
+      ,last_day(dateadd('month',1,last_day(dateadd('month',2,date_trunc('quarter',dateadd('month',-1,cohort_month)))))) as cohort_fiscal_quarter
+      ,last_day(dateadd('month',1,last_day(dateadd('month',11,date_trunc('year',dateadd('month',-1,cohort_month)))))) as cohort_fiscal_year
       ,max(customer_tier) as tier
       ,max(company_type) as co_type
       ,max(industry) as industry
@@ -40,34 +41,39 @@ with a as (
       ,sum(arr_change) as arr_delta
       ,new+expire+renew+reduce+contract_expand+account_expand - arr_delta as check_amt
     from {{ ref( 'arr_transactions') }}
-    --from analytics.finance.arr_transactions
-        where report_month <= last_day(current_date)
+    --from analytics.finance_dev.arr_transactions
+        where report_month < date_trunc('month',current_date)
     group by 1,2,3,4,5,6
-    order by report_month, account_id
+    order by cohort_month, account_id, report_month
 )
 
---query needed to calculate separately resurrection arr and churn_arr
-select
+--query needed to calculate separately resurrection arr and churn_arr on cte a
+,output as (
+  select
     a.account_name
     ,a.account_id
     ,a.account_owner
     ,a.report_month
     ,a.fiscal_quarter
     ,a.fiscal_year
-    ,a.opp_owner as opportunity_owner
-    ,datediff('year',cohort,a.fiscal_year) as fiscal_year_no
-    ,dense_rank() over (partition by account_id order by report_month) as trans_no 
+    ,a.cohort_month 
+    ,a.cohort_fiscal_quarter
+    ,a.cohort_fiscal_year
+    ,datediff('year',a.cohort_fiscal_year,a.fiscal_year) as fiscal_year_no
+    ,round((datediff('day',a.cohort_month,fiscal_quarter))/30,0) as fiscal_month_no
+    ,round((datediff('day',a.cohort_fiscal_quarter,fiscal_quarter))/90,0) as fiscal_quarter_no
+    ,dense_rank() over (partition by a.account_id order by report_month) as trans_no 
     ,a.license_beg
     ,a.license_end
+    ,round((datediff('day',a.license_beg,a.license_end)+1)/360,0) as term
     ,tcv
     ,arr
     ,expire
     ,arr_delta
-    ,coalesce(sum(arr_delta) over (partition by account_id order by report_month rows between unbounded preceding and 1 preceding),0) as beg_arr
-    ,sum(arr_delta) over (partition by account_id order by report_month) as end_arr
+    ,coalesce(sum(arr_delta) over (partition by a.account_id order by report_month rows between unbounded preceding and 1 preceding),0) as beg_arr
+    ,sum(arr_delta) over (partition by a.account_id order by report_month) as end_arr
     --finding that salesforce does not consistently classify arr deals into the proper category
     --discovered that because of sfdc migration not all first transactions are new subscription
-  
     ,case when trans_no = 1 then arr_delta else 0 end as new_arr
     ,case when trans_no !=1 and beg_arr = 0 and arr_delta >0 then arr_delta else 0 end as resurrect_arr
   
@@ -78,7 +84,6 @@ select
         else 0 
         end as contract_expansion
     ,renewal_expand + contract_expansion as annual_expansion
-    
     ,case 
         when trans_no !=1 and account_expand > 0 and resurrect_arr = 0 then account_expand + new
         when trans_no !=1 and account_expand = 0 and a.new_logo = 'Yes' and resurrect_arr=0 then new 
@@ -110,8 +115,7 @@ select
     ,cnt_annual_expand + cnt_account_expand as cnt_total_expand
     ,case when contraction <0 then 1 else 0 end as cnt_contraction
     ,current_date as refresh_date
-    ,a.account_id||' '||report_month as unique_key
-    ,a.cohort
+    ,a.account_id||'-'||report_month as unique_key
     ,a.tier
     ,a.co_type
     ,a.industry
@@ -119,8 +123,33 @@ select
     ,a.nation
     ,a.gov
     ,a.new_logo
+    ,case when c.customer_type is null then 'secure_messaging' else c.customer_type end as customer_usage
 from a
-order by cohort, account_id, report_month asc
+    left join analytics.finance.arr_customertype c on a.account_id = c.account_id
 
+)
+--categorize arr customers according to average arr size as of most recent elapsed month for purposes of ltv
+,bins as (
+select
+    account_name
+    ,account_id
+    ,round(sum(arr_delta),0) as current_arr
+    ,round(avg(end_arr),0) as average_arr
+    ,sum(new_arr) as starting_arr
+    ,case 
+        when average_arr <=10000 then '4_AvgARR_upto10K'
+        when average_arr >10000 and average_arr <=100000 then '3_AvgARR_10Kupto100K'
+        when average_arr >100000 and average_arr <=500000 then '2_AvgARR_100Kupto500K'
+        when average_arr >500000 then '1_AvgARR_above500K'
+        else null
+    end as bin_avg_arr
+    from output
+    group by 1,2
+)
 
+select
+output.*
+,bins.bin_avg_arr
+from output
+left join bins on bins.account_id = output.account_id
 
