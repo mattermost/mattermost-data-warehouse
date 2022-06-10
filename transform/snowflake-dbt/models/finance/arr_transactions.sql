@@ -134,7 +134,7 @@ with cloud as (
 --matching keys of expiring and renewals using for expiring the license end date and for renewals the start date won renewals
 --expiration net of renewals
 ,r as (
---subquery for expiring licenses up to current month_end
+--subquery for expiring licenses 
 select
     d.account_name
     ,d.account_id
@@ -155,7 +155,7 @@ select
       as match_key
     ,opportunity_id as original_id_renewed
 from d
-where license_end_date <= last_day(current_date)
+--where license_end_date <= last_day(current_date)
 
 union
 

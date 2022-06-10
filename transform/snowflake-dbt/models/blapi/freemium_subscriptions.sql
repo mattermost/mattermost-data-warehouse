@@ -18,9 +18,8 @@ WITH freemium_subscriptions AS (
     JOIN {{ source('stripe', 'subscriptions') }} su on su.id = s.stripe_id
     JOIN {{ source('blapi', 'products') }} p ON s.product_id = p.id
     LEFT JOIN {{ source('stripe', 'invoices') }} on invoices.subscription = su.id
-    WHERE
-        s.cloud_dns is not null
-        AND su.date_converted_to_paid is not null
+    WHERE s.cloud_dns is not null
+    AND su.date_converted_to_paid is not null
 )
 
 SELECT * FROM freemium_subscriptions
