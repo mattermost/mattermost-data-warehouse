@@ -23,6 +23,7 @@ WITH subscriptions AS (
         ,subscriptions.metadata:"cws-dns"::varchar as cws_dns
         ,subscriptions.metadata:"cws-blapi-subscription"::varchar as cws_blapi_subscription
         ,subscriptions.metadata:"cws-installation"::varchar as cws_installation
+        ,subscriptions.metadata:"cws-installation-state"::varchar as cws_installation_state
         ,subscriptions.metadata:"billing-type"::varchar as billing_type
         ,subscriptions.metadata:"cws-renewed-from-stripe-id"::varchar as renewed_from_sub_id
         ,subscriptions.metadata:"cws-license-id"::varchar as license_id
