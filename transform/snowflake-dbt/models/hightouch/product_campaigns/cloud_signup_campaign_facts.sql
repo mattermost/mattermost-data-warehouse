@@ -67,7 +67,7 @@ with signup_pages as (
         max(last_active_date) as last_active_date,
         max(posts) as cloud_posts_total,
         max(boards_cards) as cloud_cards_total,
-        max(plugins_downloaded) as cloud_plugins_total,
+        max(max_enabled_plugins) as cloud_plugins_total,
         -- total_storage,
         max(monthly_active_users) as cloud_mau,
         max(active_users) as cloud_dau,
