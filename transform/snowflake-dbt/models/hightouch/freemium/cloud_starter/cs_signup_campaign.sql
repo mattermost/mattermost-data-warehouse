@@ -56,6 +56,8 @@ select
     '7013p000001U28AAAS' as campaign_id,
     '7016u0000002Q5zAAE' as sandbox_campaign_id,
     campaignmember.sfid as campaignmember_sfid,
+    case when sso_provider is not null then true else false end as is_sso,
+    coalesce(sso_provider, 'Email') as signup_method,
     lead.sfid as lead_sfid,
     contact.sfid as contact_sfid,
     case

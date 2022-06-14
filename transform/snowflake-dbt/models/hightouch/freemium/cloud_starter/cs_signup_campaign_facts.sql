@@ -9,8 +9,7 @@ with signup_pages as (
         daily_website_traffic.context_traits_portal_customer_id as portal_customer_id,
         min(case when name = 'pageview_verify_email' then timestamp else null end) as submitted_form_at,
         min(case when name = 'pageview_company_name' then timestamp else null end) as verified_email_at,
-        min(case when name = 'pageview_create_workspace' then timestamp else null end) as entered_company_name_at,
-        case when path like '%sso%' then true else false end as is_sso
+        min(case when name = 'pageview_create_workspace' then timestamp else null end) as entered_company_name_at
     from
         {{ ref('daily_website_traffic') }}
     where daily_website_traffic.name in
@@ -23,11 +22,24 @@ with signup_pages as (
 ), created_workspace as (
     select
         portal_events.context_traits_portal_customer_id as portal_customer_id,
+        portal_events.use_auth as is_sso,
+        portal_events.sso_provider as sso_provider,
         min(timestamp) as workspace_provisioning_started_at
     from
         {{ ref('portal_events') }}
     where event = 'workspace_provisioning_started'
     group by 1
+), sso_providers as (
+    select context_traits_portal_customer_id as portal_customer_id,
+    sso_provider,
+    row_number() over (partition by portal_customer_id order by sent_at desc) as row_num
+        from
+        (
+            select * from 
+        {{ ref('portal_events') }}
+        where event = 'srv_oauth_complete_success'
+        )
+        where row_num = 1
 ), completed_signup as (
     select
         customers.cws_customer as portal_customer_id,
@@ -52,13 +64,13 @@ with signup_pages as (
         subscriptions.trial_end,
         customers.name as company_name,
         customers.email,
-        products.sku,
         row_number() over (partition by customers.cws_customer order by subscriptions.created desc) as row_num
     from {{ ref('customers') }}
         left join {{ ref('subscriptions') }}
             on customers.id = subscriptions.customer
                 and subscriptions.cws_installation is not null
         left join {{ source('blapi', 'products') }} p ON subscriptions.product_id = products.id
+        where products.sku = 'cloud-starter'
 ), customer_facts as (
     select *
     from customer_facts_pre
@@ -100,10 +112,12 @@ select
     server_facts.cloud_posts_total,
     server_facts.cloud_mau,
     server_facts.cloud_dau,
-    server_facts.cloud_posts_daily
+    server_facts.cloud_posts_daily,
+    sso_providers.sso_provider,
+
 from signup_pages
     left join created_workspace on signup_pages.portal_customer_id = created_workspace.portal_customer_id
     left join completed_signup on signup_pages.portal_customer_id = completed_signup.portal_customer_id
     left join customer_facts on signup_pages.portal_customer_id = customer_facts.portal_customer_id
     left join server_facts on signup_pages.portal_customer_id = server_facts.portal_customer_id
-    where customer_facts.sku = 'cloud-starter'
+    left join sso_providers on signup_pages.portal_customer_id = sso_providers.portal_customer_id
