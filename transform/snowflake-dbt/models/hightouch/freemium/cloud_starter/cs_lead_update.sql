@@ -5,7 +5,7 @@
 }}
 
 with campaign_with_leads as (
-    select * from {{ ref('freemium_signup_campaign') }}
-    where lead_exists and not contact_exists
+    select * from {{ ref('cs_signup_campaign') }}
+    where lead_exists 
 )
 select * from campaign_with_leads

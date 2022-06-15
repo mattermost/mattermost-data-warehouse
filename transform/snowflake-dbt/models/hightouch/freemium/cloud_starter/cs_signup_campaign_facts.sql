@@ -22,24 +22,22 @@ with signup_pages as (
 ), created_workspace as (
     select
         portal_events.context_traits_portal_customer_id as portal_customer_id,
-        portal_events.use_auth as is_sso,
-        portal_events.sso_provider as sso_provider,
         min(timestamp) as workspace_provisioning_started_at
     from
         {{ ref('portal_events') }}
     where event = 'workspace_provisioning_started'
     group by 1
-), sso_providers as (
-    select context_traits_portal_customer_id as portal_customer_id,
-    sso_provider,
-    row_number() over (partition by portal_customer_id order by sent_at desc) as row_num
-        from
-        (
-            select * from 
-        {{ ref('portal_events') }}
-        where event = 'srv_oauth_complete_success'
-        )
-        where row_num = 1
+-- ), sso_providers as (
+--     select context_traits_portal_customer_id as portal_customer_id,
+--     sso_provider,
+--     row_number() over (partition by portal_customer_id order by sent_at desc) as row_num
+--         from
+--         (
+--             select * from 
+--         {{ ref('portal_events') }}
+--         where event = 'srv_oauth_complete_success'
+--         )
+--         where row_num = 1
 ), completed_signup as (
     select
         customers.cws_customer as portal_customer_id,
@@ -62,20 +60,22 @@ with signup_pages as (
         subscriptions.created,
         subscriptions.trial_start,
         subscriptions.trial_end,
+        subscriptions.edition,
         customers.name as company_name,
         customers.email,
+        customers.updated >= '2022-06-14' as lead_sync_eligible,
         row_number() over (partition by customers.cws_customer order by subscriptions.created desc) as row_num
     from {{ ref('customers') }}
         left join {{ ref('subscriptions') }}
             on customers.id = subscriptions.customer
                 and subscriptions.cws_installation is not null
-        left join {{ source('blapi', 'products') }} p ON subscriptions.product_id = products.id
-        where products.sku = 'cloud-starter'
+        -- where lower(subscriptions.edition) = 'cloud starter' 
 ), customer_facts as (
     select *
     from customer_facts_pre
     where row_num = 1
-), server_facts as (
+)
+, server_facts as (
     select
         customer_facts.portal_customer_id,
         max(last_active_date) as last_active_date,
@@ -94,7 +94,6 @@ select
     signup_pages.submitted_form_at,
     signup_pages.verified_email_at,
     signup_pages.entered_company_name_at,
-    signup_pages.is_sso,
     created_workspace.workspace_provisioning_started_at,
     completed_signup.completed_signup_at,
     customer_facts.stripe_customer_id,
@@ -108,16 +107,18 @@ select
     customer_facts.trial_end,
     customer_facts.company_name,
     customer_facts.email,
+    customer_facts.edition,
     server_facts.last_active_date,
     server_facts.cloud_posts_total,
     server_facts.cloud_mau,
     server_facts.cloud_dau,
-    server_facts.cloud_posts_daily,
-    sso_providers.sso_provider,
+    server_facts.cloud_posts_daily
+    -- sso_providers.sso_provider,
 
 from signup_pages
     left join created_workspace on signup_pages.portal_customer_id = created_workspace.portal_customer_id
     left join completed_signup on signup_pages.portal_customer_id = completed_signup.portal_customer_id
     left join customer_facts on signup_pages.portal_customer_id = customer_facts.portal_customer_id
     left join server_facts on signup_pages.portal_customer_id = server_facts.portal_customer_id
-    left join sso_providers on signup_pages.portal_customer_id = sso_providers.portal_customer_id
+    -- left join sso_providers on signup_pages.portal_customer_id = sso_providers.portal_customer_id
+    where lead_sync_eligible
