@@ -52,6 +52,7 @@ with existing_leads as (
     'Cloud Starter Signup' as most_recent_action,
     false as marketing_suspend,
     lead.sfid as lead_sfid,
+    'SSO' as signup_method,
     case
         when subscriptions.cws_dns is not null then 'Completed Signup'
         else 'Account Created' 
