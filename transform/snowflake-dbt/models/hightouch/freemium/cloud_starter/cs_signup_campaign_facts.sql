@@ -7,9 +7,9 @@
 with signup_pages as (
     select
         daily_website_traffic.context_traits_portal_customer_id as portal_customer_id,
-        min(case when name = 'pageview_verify_email' then timestamp else null end) as submitted_form_at,
+        min(case when name = 'pageview_verify_email' then timestamp else null end) as account_created_at,
         min(case when name = 'pageview_company_name' then timestamp else null end) as verified_email_at,
-        min(case when name = 'pageview_create_workspace' then timestamp else null end) as entered_company_name_at
+        min(case when name = 'pageview_create_workspace' then timestamp else null end) as workspace_created_at
     from
         {{ ref('daily_website_traffic') }}
     where daily_website_traffic.name in
@@ -60,7 +60,7 @@ with signup_pages as (
         subscriptions.created,
         subscriptions.trial_start,
         subscriptions.trial_end,
-        subscriptions.edition,
+        coalesce(subscriptions.edition, products.name) as edition,
         customers.name as company_name,
         customers.email,
         customers.updated >= '2022-06-14' as lead_sync_eligible,
@@ -69,6 +69,7 @@ with signup_pages as (
         left join {{ ref('subscriptions') }}
             on customers.id = subscriptions.customer
                 and subscriptions.cws_installation is not null
+        left join {{ ref('products') }} on products.id = coalesce(subscriptions.plan:"product"::varchar, subscriptions.metadata:"current_product_id"::varchar)
         -- where lower(subscriptions.edition) = 'cloud starter' 
 ), customer_facts as (
     select *
@@ -91,9 +92,9 @@ with signup_pages as (
 )
 select
     signup_pages.portal_customer_id,
-    signup_pages.submitted_form_at,
+    signup_pages.account_created_at,
     signup_pages.verified_email_at,
-    signup_pages.entered_company_name_at,
+    signup_pages.workspace_created_at,
     created_workspace.workspace_provisioning_started_at,
     completed_signup.completed_signup_at,
     customer_facts.stripe_customer_id,

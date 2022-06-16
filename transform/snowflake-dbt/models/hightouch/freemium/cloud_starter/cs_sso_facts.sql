@@ -40,6 +40,7 @@ with existing_leads as (
     subscriptions.created,
     subscriptions.trial_start,
     subscriptions.trial_end,
+    coalesce(subscriptions.edition, products.name) as edition,
     coalesce(campaignmember.dwh_external_id__c, UUID_STRING('78157189-82de-4f4d-9db3-88c601fbc22e', '7013p000001TxBuAAK' || customers.email)) AS campaignmember_external_id,
     coalesce(contact.dwh_external_id__c, UUID_STRING('78157189-82de-4f4d-9db3-88c601fbc22e', customers.email)) AS contact_external_id,
     coalesce(lead.dwh_external_id__c, UUID_STRING('78157189-82de-4f4d-9db3-88c601fbc22e', customers.email)) AS lead_external_id,
@@ -53,17 +54,19 @@ with existing_leads as (
     false as marketing_suspend,
     lead.sfid as lead_sfid,
     'SSO' as signup_method,
+    coalesce(lead.LEAD_SOURCE_TEXT__C,'Referral') as lead_source,
+    coalesce(lead.LEAD_SOURCE_DETAIL__C,'Mattermost Cloud') as lead_source_detail,
     case
-        when subscriptions.cws_dns is not null then 'Completed Signup'
+        when subscriptions.cws_dns is not null then 'Workspace Created'
         else 'Account Created' 
     end as campaign_status
     from 
         {{ ref('customers') }}
         left join {{ ref('subscriptions') }} on customers.id = subscriptions.customer
+        left join {{ ref('products') }} on products.id = coalesce(subscriptions.plan:"product"::varchar, subscriptions.metadata:"current_product_id"::varchar)
         left join existing_leads as lead on customers.email = lead.email and lead.row_num = 1
         left join existing_contacts as contact on customers.email = contact.email and contact.row_num = 1
         left join existing_members as campaignmember on customers.email = campaignmember.email and campaignmember.row_num = 1
-        where customers.email not in ( select email from {{ ref('cs_signup_campaign')}} )
-        and lower(subscriptions.edition) = 'cloud starter' and lead_sync_eligible 
+        where customers.email not in ( select email from {{ ref('cs_signup_campaign_dev')}} ) and lead_sync_eligible 
 )
-select * from sso_facts_pre
+select * from sso_facts_pre where lower(edition) = 'cloud starter' 
