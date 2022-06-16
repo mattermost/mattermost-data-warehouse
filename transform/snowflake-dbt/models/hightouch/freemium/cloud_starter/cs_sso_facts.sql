@@ -67,6 +67,6 @@ with existing_leads as (
         left join existing_leads as lead on customers.email = lead.email and lead.row_num = 1
         left join existing_contacts as contact on customers.email = contact.email and contact.row_num = 1
         left join existing_members as campaignmember on customers.email = campaignmember.email and campaignmember.row_num = 1
-        where customers.email not in ( select email from {{ ref('cs_signup_campaign_dev')}} ) and lead_sync_eligible 
+        where customers.email not in ( select email from {{ ref('cs_signup_campaign')}} ) and lead_sync_eligible 
 )
 select * from sso_facts_pre where lower(edition) = 'cloud starter' 
