@@ -65,19 +65,17 @@ select
     lead.sfid as lead_sfid,
     contact.sfid as contact_sfid,
     case
-        when facts.dns is not null then 'Completed Signup'
-        when facts.completed_signup_at is not null then 'Completed Signup'
-        when facts.workspace_provisioning_started_at is not null then 'Created Workspace'
-        when facts.entered_company_name_at is not null then 'Entered Company Name'
-        when facts.verified_email_at is not null then 'Verified Email'
-        when facts.submitted_form_at is not null then 'Submitted Form'
+        when facts.dns is not null then 'Workspace Created'
+        when facts.account_created_at is not null then 'Account Created'
+        when facts.verified_email_at is not null then 'Email Verified'
+        when facts.workspace_created_at is not null then 'Workspace Created'
     end as campaign_status,
     coalesce(
-        facts.completed_signup_at,
-        facts.workspace_provisioning_started_at,
-        facts.entered_company_name_at,
+        facts.account_created_at,
         facts.verified_email_at,
-        facts.submitted_form_at) as last_action_date
+        facts.workspace_created_at,
+        facts.workspace_provisioning_started_at
+        ) as last_action_date
 from
     {{ ref('cs_signup_campaign_facts') }} facts
     left join existing_members as campaignmember
