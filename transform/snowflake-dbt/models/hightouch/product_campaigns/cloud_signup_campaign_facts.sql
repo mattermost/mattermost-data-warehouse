@@ -46,6 +46,7 @@ with signup_pages as (
         customers.id as stripe_customer_id,
         subscriptions.cws_dns as dns,
         subscriptions.cws_installation as installation_id,
+        subscriptions.cws_installation_state as cloud_installation_state,
         subscriptions.created,
         subscriptions.trial_start,
         subscriptions.trial_end,
@@ -65,6 +66,9 @@ with signup_pages as (
         customer_facts.portal_customer_id,
         max(last_active_date) as last_active_date,
         max(posts) as cloud_posts_total,
+        max(boards_cards) as cloud_cards_total,
+        max(max_enabled_plugins) as cloud_plugins_total,
+        -- total_storage,
         max(monthly_active_users) as cloud_mau,
         max(active_users) as cloud_dau,
         max(posts_previous_day) as cloud_posts_daily
@@ -92,11 +96,15 @@ select
     customer_facts.trial_end,
     customer_facts.company_name,
     customer_facts.email,
+    coalesce(customer_facts.installation_state, 'hibernating') as installation_state,
     server_facts.last_active_date,
     server_facts.cloud_posts_total,
     server_facts.cloud_mau,
     server_facts.cloud_dau,
-    server_facts.cloud_posts_daily
+    server_facts.cloud_posts_daily,
+    -- server_facts.total_storage, 
+    server_facts.cloud_cards_total,
+    server_facts.cloud_plugins_total
 from signup_pages
     left join created_workspace on signup_pages.portal_customer_id = created_workspace.portal_customer_id
     left join completed_signup on signup_pages.portal_customer_id = completed_signup.portal_customer_id
