@@ -49,19 +49,16 @@ select
     coalesce(lead.dwh_external_id__c, UUID_STRING('78157189-82de-4f4d-9db3-88c601fbc22e', facts.portal_customer_id || facts.email)) AS lead_external_id,
     '0051R00000GnvhhQAB' as lead_ownerid,
     'Cloud Starter Signup' as most_recent_action,
-    -- CASE is_sso then 'SSO' else 'Email' END as most_recent_action_detail,
-    'Email' as most_recent_action_detail,
+    CASE when sso_provider is not null then 'SSO' else 'Email' END as most_recent_action_detail,
     'Cloud Workspace Creation' as action_detail,
     coalesce(lead.LEAD_SOURCE_TEXT__C,'Referral') as lead_source,
     coalesce(lead.LEAD_SOURCE_DETAIL__C,'Mattermost Cloud') as lead_source_detail,
-    -- 'TBD' as signup_method,
     false as marketing_suspend,
     '7013p000001U28AAAS' as campaign_id,
     '7016u0000002Q5zAAE' as sandbox_campaign_id,
     campaignmember.sfid as campaignmember_sfid,
-    -- case when sso_provider is not null then true else false end as is_sso,
-    -- coalesce(sso_provider, 'Email') as signup_method,
-    'Email' as signup_method,
+    case when facts.sso_provider is not null then true else false end as is_sso,
+    coalesce(facts.sso_provider, 'Email') as signup_method,
     lead.sfid as lead_sfid,
     contact.sfid as contact_sfid,
     case
@@ -84,4 +81,3 @@ from
         on facts.email = lead.email and lead.row_num = 1
     left join existing_contacts as contact
         on facts.email = contact.email and contact.row_num = 1
-        where lower(facts.edition) = 'cloud starter'
