@@ -4,7 +4,7 @@
   })
 }}
 
-with signup_pages as (
+with signup_pages_pre as (
     select
         daily_website_traffic.context_traits_portal_customer_id as portal_customer_id,
         min(case when name = 'pageview_verify_email' then timestamp else null end) as account_created_at,
@@ -38,6 +38,40 @@ with signup_pages as (
 --         where event = 'srv_oauth_complete_success'
 --         )
 --         where row_num = 1
+), sso_signins_pre as (
+    select 
+        coalesce(context_traits_portal_customer_id, portal_customer_id) as portal_customer_id,
+        sso_provider,
+        row_number() over (partition by portal_customer_id order by timestamp desc) as row_num
+        from {{ source('raw', 'identifies') }}
+        where sso_provider is not null and coalesce(context_traits_portal_customer_id, portal_customer_id) is not null
+), sso_signins as (
+    select * from sso_signins_pre where row_num = 1 
+), sso_customers as (
+    select
+        portal_customer_id,
+        max(sso_provider) as sso_provider,
+        min(customers.created) as account_created_at,
+        min(customers.created) as verified_email_at,
+        min(subscriptions.created) as workspace_created_at
+    from sso_signins
+    join {{ ref('customers') }} on sso_signins.portal_customer_id = customers.cws_customer
+    left join {{ ref('subscriptions') }} on customers.id = subscriptions.customer
+    where subscriptions.cws_installation is not null
+    group by 1
+), signup_pages as (
+    select *,
+    null as sso_provider
+    from signup_pages_pre where portal_customer_id not in 
+    (select portal_customer_id from sso_customers)
+        union
+    select 
+    portal_customer_id,
+    to_timestamp_ntz(account_created_at),
+    to_timestamp_ntz(verified_email_at),
+    to_timestamp_ntz(workspace_created_at),
+    sso_provider
+    from sso_customers
 ), completed_signup as (
     select
         customers.cws_customer as portal_customer_id,
@@ -95,6 +129,7 @@ select
     signup_pages.account_created_at,
     signup_pages.verified_email_at,
     signup_pages.workspace_created_at,
+    signup_pages.sso_provider,
     created_workspace.workspace_provisioning_started_at,
     completed_signup.completed_signup_at,
     customer_facts.stripe_customer_id,
@@ -114,7 +149,6 @@ select
     server_facts.cloud_mau,
     server_facts.cloud_dau,
     server_facts.cloud_posts_daily
-    -- sso_providers.sso_provider,
 
 from signup_pages
     left join created_workspace on signup_pages.portal_customer_id = created_workspace.portal_customer_id
