@@ -21,7 +21,7 @@ with existing_leads as (
         customers.name as company_name,
         row_number() over (partition by customers.cws_customer order by subscriptions.created desc) as row_num
     from {{ ref('customers') }}
-        left join {{ ref('subscriptions_stripe') }} as subscriptions
+        left join {{ ref('subscriptions') }} as subscriptions
             on customers.id = subscriptions.customer
                 and subscriptions.cws_installation is not null
 ), customer_facts as (
