@@ -17,7 +17,7 @@ with existing_leads as (
         customers.cws_customer as portal_customer_id,
         customers.email,
         subscriptions.cws_installation as installation_id,
-        subscriptions.cws_installation_state as cloud_installation_state,
+        coalesce(subscriptions.installation_state, 'hibernating') as cloud_installation_state,
         customers.name as company_name,
         row_number() over (partition by customers.cws_customer order by subscriptions.created desc) as row_num
     from {{ ref('customers') }}
