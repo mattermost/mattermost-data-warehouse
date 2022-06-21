@@ -96,7 +96,7 @@ select
     customer_facts.trial_end,
     customer_facts.company_name,
     customer_facts.email,
-    coalesce(customer_facts.installation_state, 'hibernating') as installation_state,
+    coalesce(customer_facts.cloud_installation_state, 'hibernating') as cloud_installation_state,
     server_facts.last_active_date,
     server_facts.cloud_posts_total,
     server_facts.cloud_mau,
