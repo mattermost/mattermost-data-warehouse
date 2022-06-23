@@ -45,6 +45,8 @@ sources:
     - name: subscriptions
     - name: charge
     - name: invoices
+    - name: customers
+    - name: products
 
   - name: salesforce
     database: ANALYTICS
