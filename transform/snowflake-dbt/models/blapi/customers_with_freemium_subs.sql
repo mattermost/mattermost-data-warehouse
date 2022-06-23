@@ -75,6 +75,7 @@ WITH latest_credit_card_address AS (
             then latest_credit_card_address.country_code
             else null
         end as country_code,
+        freemium_subscriptions.status,
         freemium_subscriptions.updated_at >= '2021-08-18' as hightouch_sync_eligible
     FROM {{ ref('customers_blapi') }} customers
         JOIN freemium_subscriptions AS freemium_subscriptions ON customers.id = freemium_subscriptions.customer_id

@@ -4,7 +4,7 @@
     "tags":["hourly","blapi"]
   })
 }}
--- lead or contact already exists
+-- create contact
 WITH existing_lead AS (
     SELECT
         lead.id,
@@ -27,7 +27,7 @@ WITH existing_lead AS (
     FROM {{ ref('customers_with_freemium_subs') }}
     LEFT JOIN {{ ref('contact') }} ON customers_with_freemium_subs.email = contact.email
     LEFT JOIN existing_lead ON customers_with_freemium_subs.email = existing_lead.email
-    WHERE contact.sfid IS NOT NULL
+    WHERE contact.id IS NULL
     AND customers_with_freemium_subs.hightouch_sync_eligible
 )
 SELECT * FROM freemium_contacts_to_sync
