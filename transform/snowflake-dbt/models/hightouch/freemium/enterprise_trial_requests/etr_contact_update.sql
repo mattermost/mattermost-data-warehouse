@@ -16,6 +16,7 @@ WITH existing_lead AS (
 ), freemium_contacts_to_sync as (
     SELECT
         UUID_STRING('78157189-82de-4f4d-9db3-88c601fbc22e', customers_with_free_subs.email ) AS campaignmember_external_id,
+        contact.id as contact_sfid,
         customers_with_free_subs.email,
         customers_with_free_subs.domain,
         customers_with_free_subs.last_name,

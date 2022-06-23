@@ -29,7 +29,8 @@ with existing_members as (
     from {{ ref('contact') }}
 ), campaignmembers_to_sync as (
     SELECT
-        existing_leads.sfid,
+        existing_leads.sfid as lead_sfid,
+        existing_contacts.sfid as contact_sfid,
         customers_with_free_subs.email,
         customers_with_free_subs.company_name,
         COALESCE(
