@@ -63,9 +63,9 @@ select
     contact.sfid as contact_sfid,
     case
         when facts.dns is not null then 'Workspace Created'
-        when facts.account_created_at is not null then 'Account Created'
-        when facts.verified_email_at is not null then 'Email Verified'
         when facts.workspace_created_at is not null then 'Workspace Created'
+        when facts.verified_email_at is not null then 'Email Verified'
+        when facts.account_created_at is not null then 'Account Created'
     end as campaign_status,
     coalesce(
         facts.account_created_at,
