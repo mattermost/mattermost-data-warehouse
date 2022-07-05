@@ -1,7 +1,6 @@
 import snowflake.connector
 import requests
 from tabulate import tabulate
-from airflow.models import Variable
 
 def format_row(row):
     row = list(row)
@@ -37,12 +36,10 @@ try:
     out = cur.fetchall()
     out = tuple(map(lambda x: format_row(x) , out))
     out = tabulate(out, headers=['Feedback','Category','Score','Server Version','Installation Type','User Role','Customer Name'], tablefmt='github')
-
-    webhook_url = Variable.get("mattermost-nps-feedback-webhook")
     payload='{"text": "%s", "channel": "mattermost-nps-feedback"}' % out
 
     response = requests.post(
-            webhook_url, data=payload.encode('utf-8'),
+            NPS_WEBHOOK_URL, data=payload.encode('utf-8'),
             headers={'Content-Type': 'application/json'}
         )
     if response.status_code != 200:
