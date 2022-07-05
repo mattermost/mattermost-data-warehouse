@@ -5,7 +5,7 @@ from airflow.models import Variable
 
 def format_row(row):
     row = list(row)
-    row[3] = row[3].replace('\n',' ')
+    row[4] = row[4].replace('\n',' ')
     return tuple(row)
 
 conn = snowflake.connector.connect(
@@ -20,14 +20,15 @@ conn = snowflake.connector.connect(
 try:
     cur = conn.cursor()
 
-    sql = f'''select distinct user_role, server_version, score, feedback, lsf.customer_name,
-    --nps.server_id, nps.user_id, 
+    sql = f'''select distinct user_role, server_version, subcategory as category, score, feedback, lsf.customer_name, 
     case when sf.installation_id is null then 'Self-Hosted' 
     when sf.installation_id is not null then 'Cloud' end as INSTALLATION_TYPE
     from ANALYTICS.MATTERMOST.NPS_USER_DAILY_SCORE nps
     left join mattermost.server_fact sf on nps.server_id = sf.server_id
-    left join blp.license_server_fact lsf on nps.server_id = lsf.server_id WHERE 
-    last_feedback_DATE = CURRENT_DATE - 1 and 
+    left join blp.license_server_fact lsf on nps.server_id = lsf.server_id 
+    left join analytics.mattermost.nps_feedback_classification fc on nps.user_id = fc.user_id and nps.server_id = fc.server_id and nps.last_feedback_date = fc.last_feedback_date
+    WHERE 
+    nps.last_feedback_DATE = CURRENT_DATE - 1 and subcategory <> 'Invalid' and 
     feedback <> ''
     '''
 
