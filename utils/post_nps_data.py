@@ -5,7 +5,7 @@ from airflow.models import Variable
 
 def format_row(row):
     row = list(row)
-    row[4] = row[4].replace('\n',' ')
+    row[0] = row[0].replace('\n',' ')
     return tuple(row)
 
 conn = snowflake.connector.connect(
