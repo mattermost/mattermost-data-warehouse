@@ -20,9 +20,10 @@ conn = snowflake.connector.connect(
 try:
     cur = conn.cursor()
 
-    sql = f'''select distinct user_role, server_version, subcategory as category, score, feedback, lsf.customer_name, 
+    sql = f'''select distinct feedback, subcategory as category, score, server_version, 
     case when sf.installation_id is null then 'Self-Hosted' 
-    when sf.installation_id is not null then 'Cloud' end as INSTALLATION_TYPE
+    when sf.installation_id is not null then 'Cloud' end as INSTALLATION_TYPE,
+    user_role, lsf.customer_name
     from ANALYTICS.MATTERMOST.NPS_USER_DAILY_SCORE nps
     left join mattermost.server_fact sf on nps.server_id = sf.server_id
     left join blp.license_server_fact lsf on nps.server_id = lsf.server_id 
@@ -35,7 +36,7 @@ try:
     cur.execute(sql)
     out = cur.fetchall()
     out = tuple(map(lambda x: format_row(x) , out))
-    out = tabulate(out, headers=['User Role', 'Server Version', 'Score','Feedback', 'Customer Name', 'Installation Type'], tablefmt='github')
+    out = tabulate(out, headers=['Feedback','Category','Score','Server Version','Installation Type','User Role','Customer Name'], tablefmt='github')
 
     webhook_url = Variable.get("mattermost-nps-feedback-webhook")
     payload='{"text": "%s", "channel": "mattermost-nps-feedback"}' % out
