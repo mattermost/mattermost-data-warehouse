@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+from airflow.models import Variable
 from dags.airflow_utils import (
     DATA_IMAGE,
     clone_repo_cmd,
@@ -20,6 +21,8 @@ from dags.kube_secrets import (
     SNOWFLAKE_TRANSFORM_WAREHOUSE,
     SNOWFLAKE_TRANSFORM_DATABASE,
 )
+
+NPS_WEBHOOK_URL = Variable.get("mattermost-nps-feedback-webhook")
 
 # Load the env vars into a dict and set Secrets
 env = os.environ.copy()
@@ -61,6 +64,7 @@ def get_container_operator(task_name):
             SNOWFLAKE_TRANSFORM_WAREHOUSE,
             SNOWFLAKE_TRANSFORM_SCHEMA,
             SNOWFLAKE_TRANSFORM_DATABASE,
+            NPS_WEBHOOK_URL
         ],
         arguments=[cmd],
         dag=dag,
