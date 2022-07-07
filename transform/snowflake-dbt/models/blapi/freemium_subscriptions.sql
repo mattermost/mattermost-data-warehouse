@@ -4,7 +4,7 @@
     "tags":["hourly","blapi"]
   })
 }}
--- cloud subscriptions that have payment information added by the customer
+
 WITH freemium_subscriptions AS (
     SELECT
         s.*,
@@ -19,7 +19,6 @@ WITH freemium_subscriptions AS (
     JOIN {{ source('blapi', 'products') }} p ON s.product_id = p.id
     LEFT JOIN {{ source('stripe', 'invoices') }} on invoices.subscription = su.id
     WHERE s.cloud_dns is not null
-        AND p.name in ('Mattermost Cloud', 'Cloud Enterprise', 'Cloud Starter', 'Cloud Professional')
     AND su.date_converted_to_paid is not null
 )
 
