@@ -15,7 +15,7 @@ with subscriptions AS (
     JOIN {{ source('stripe', 'products') }} on products.id = coalesce(subscriptions.plan:"product"::varchar, subscriptions.metadata:"current_product_id"::varchar)
     WHERE subscriptions.cws_dns is not null
     AND products.name in ('Cloud Enterprise', 'Cloud Professional')
-    AND su.date_converted_to_paid is not null
+    AND subscriptions.date_converted_to_paid is not null
 )
 
 SELECT * FROM subscriptions
