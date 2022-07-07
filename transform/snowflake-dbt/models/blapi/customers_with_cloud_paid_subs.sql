@@ -28,7 +28,7 @@ with current_subscriptions AS(
         customers_blapi.first_name,
         coalesce(NULLIF(TRIM(customers_blapi.last_name), ''), customers.email) as last_name,
         SPLIT_PART(customers.email, '@', 2) as domain,
-        -- invoices.id as invoice_id,
+        invoices.id as invoice_id,
         current_subscriptions.id as subscription_id,
         current_subscriptions.cws_dns as cloud_dns,
         current_subscriptions.name as sku,
@@ -37,10 +37,11 @@ with current_subscriptions AS(
         current_subscriptions.status,
         to_varchar(current_subscriptions.start_date, 'yyyy-MM-dd HH:mm:ss.SSS Z') as start_date,
         to_varchar(DATEADD(month, 1, current_subscriptions.start_date), 'yyyy-MM-dd HH:mm:ss.SSS Z') as end_date, -- only for cloud professional subscriptions
-        current_subscriptions.created >= '2022-06-14' as hightouch_sync_eligible
+        current_subscriptions.created >= '2022-06-14' as hightouch_sync_eligible,
+        ROW_NUMBER() OVER (PARTITION BY current_subscriptions.id ORDER BY invoices.created DESC) as row_num
     FROM {{ source('stripe','customers') }} 
         JOIN current_subscriptions ON customers.id = current_subscriptions.customer
-        -- LEFT JOIN {{ source('stripe', 'invoices') }} ON invoices.subscription = current_subscriptions.id
+        LEFT JOIN {{ source('stripe', 'invoices') }} ON invoices.subscription = current_subscriptions.id
         LEFT JOIN {{ source('blapi', 'customers') }} customers_blapi ON customers_blapi.stripe_id = customers.id
 )
-select * from customers_with_paid_subs
+select * from customers_with_paid_subs where row_num = 1

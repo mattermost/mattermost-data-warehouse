@@ -11,7 +11,7 @@ WITH opportunitylineitems_to_sync AS (
         opportunitylineitem.sfid as opportunitylineitem_sfid,
         COALESCE(
             opportunitylineitem.dwh_external_id__c,
-            UUID_STRING('78157189-82de-4f4d-9db3-88c601fbc22e', customers_with_cloud_paid_subs.invoice_number)
+            UUID_STRING('78157189-82de-4f4d-9db3-88c601fbc22e', customers_with_cloud_paid_subs.invoice_id)
         ) AS opportunitylineitem_external_id,
         '6. Closed Won' as stagename,
         '01t3p00000RcfjJAAR' as product_id,
@@ -21,8 +21,7 @@ WITH opportunitylineitems_to_sync AS (
         1 as quantity,
         'Discount' as pricing_method,
         0 as discount_calc,
-        false as sales_price_needs_to_be_updated,
-        customers_with_cloud_paid_subs.subscription_id
+        false as sales_price_needs_to_be_updated
     FROM {{ ref('customers_with_cloud_paid_subs') }}
     LEFT JOIN {{ ref('opportunity') }} 
         ON customers_with_cloud_paid_subs.opportunity_external_id = opportunity.dwh_external_id__c
