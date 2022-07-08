@@ -8,8 +8,8 @@
 WITH freemium_opportunity_to_sync AS (
     SELECT
         customers_with_cloud_paid_subs.*,
-        SPLIT_PART(cloud_dns, '.', 0 ||
-            ' New Subscription') AS opportunity_name,
+        SPLIT_PART(cloud_dns, '.', 0) ||
+            ' Cloud Subscription FY' || RIGHT(SPLIT_PART(customers_with_cloud_paid_subs.end_date, '-', 0),2) AS opportunity_name,
         'New Subscription' AS opportunity_type,
         0 as new_new_arr_override,
         '0053p0000064nt8AAA' AS ownerid,
