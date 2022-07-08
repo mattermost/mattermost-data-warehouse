@@ -14,7 +14,8 @@ with a as (
         ,sum(cnt_change) delta_cnt
     from {{ ref( 'arr_rollforward') }}
     --from analytics.finance.arr_rollforward
-    --where cohort_month >= date '2017-01-31'
+        where cohort_month >= date '2017-01-31'
+        and industry != 'Non-Profit'
     group by 1,2,3
     order by 1,2,3
 )
