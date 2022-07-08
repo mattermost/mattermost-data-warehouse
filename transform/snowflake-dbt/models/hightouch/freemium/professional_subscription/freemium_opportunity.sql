@@ -15,7 +15,8 @@ WITH freemium_opportunity_to_sync AS (
         '0053p0000064nt8AAA' AS ownerid,
         '0056u0000010szhAAA' AS sandbox_ownerid,
         '6. Closed Won' as stage,
-        'Online' as order_type
+        'Online' as order_type,
+        '01s36000004DZvHAAW' as pricebook_id
     FROM {{ ref('customers_with_cloud_paid_subs') }}
     LEFT JOIN {{ ref('opportunity') }}
         ON customers_with_cloud_paid_subs.opportunity_external_id = opportunity.dwh_external_id__c
