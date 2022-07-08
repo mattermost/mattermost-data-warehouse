@@ -9,6 +9,7 @@ WITH opportunitylineitems_to_sync AS (
     SELECT DISTINCT
         customers_with_cloud_paid_subs.*,
         opportunitylineitem.sfid as opportunitylineitem_sfid,
+        opportunity.sfid as opportunity_sfid,
         COALESCE(
             opportunitylineitem.dwh_external_id__c,
             UUID_STRING('78157189-82de-4f4d-9db3-88c601fbc22e', customers_with_cloud_paid_subs.invoice_id)
@@ -28,6 +29,7 @@ WITH opportunitylineitems_to_sync AS (
     LEFT JOIN {{ ref('opportunitylineitem') }} 
         ON opportunitylineitem.opportunityid = opportunity.sfid
     WHERE customers_with_cloud_paid_subs.hightouch_sync_eligible
+    AND opportunity.sfid is not null -- opportunity should exist for opportunitylineitem
     AND customers_with_cloud_paid_subs.sku = 'Cloud Professional'
     AND customers_with_cloud_paid_subs.status in ('active','canceled')
 )
