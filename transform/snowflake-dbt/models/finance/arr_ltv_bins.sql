@@ -64,4 +64,3 @@ from d
 where fiscal_quarter_no in (0,4,8,12,16,20,24)
 group by 1,2
 order by 1,2 asc
-);
