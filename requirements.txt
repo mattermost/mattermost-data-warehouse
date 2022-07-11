@@ -39,3 +39,5 @@ toolz
 user-agents==2.1
 urllib3<1.25
 xenon==0.7
+tabulate==0.8.9
+snowflake-connector-python==2.7.6
