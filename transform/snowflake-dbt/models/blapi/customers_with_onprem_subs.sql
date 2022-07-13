@@ -36,7 +36,11 @@ WITH latest_credit_card_address AS (
         onprem_subscriptions.previous_subscription_version_id,
         to_varchar(onprem_subscriptions.start_date, 'yyyy-mm-dd"T"hh24:mi:ss"Z"') as start_date,
         to_varchar(onprem_subscriptions.end_date, 'yyyy-mm-dd"T"hh24:mi:ss"Z"') as end_date,
-        onprem_subscriptions.total_in_cents / 100.0 as total,
+        CASE 
+            WHEN subscriptions.renewed_from_sub_id is not null 
+            THEN invoices.total / 100.0
+            ELSE onprem_subscriptions.total_in_cents / 100.0
+        END as total,
         to_varchar(onprem_subscriptions.updated_at, 'yyyy-mm-dd"T"hh24:mi:ss"Z"') as updated_at,
         onprem_subscriptions.invoice_number,
         onprem_subscriptions.stripe_charge_id,
@@ -47,7 +51,13 @@ WITH latest_credit_card_address AS (
         dateadd(day, 1, subscriptions.actual_renewal_date::date) as renewal_start_date,
         dateadd(year, 1, subscriptions.actual_renewal_date::date) as renewal_end_date,
         renewed_from_subscription.sfdc_migrated_opportunity_sfid,
-        coalesce(renewed_from_subscription.total_in_cents, 0) / 100.0 as renewed_from_total,
+        coalesce(
+        CASE 
+            WHEN subscriptions.renewed_from_sub_id is not null 
+            THEN invoices.total
+            ELSE onprem_subscriptions.total_in_cents
+            END
+            , 0) / 100.0 as renewed_from_total,
         COALESCE(subscriptions.license_id, onprem_subscriptions.id) as license_key,
         subscriptions.purchase_order_num,
         latest_credit_card_address.line1,
@@ -78,6 +88,7 @@ WITH latest_credit_card_address AS (
         JOIN {{ source('blapi', 'products') }} ON onprem_subscriptions.sku = products.sku
         LEFT JOIN {{ ref('subscriptions') }} renewed_from_subscription
             ON subscriptions.renewed_from_sub_id = renewed_from_subscription.id
+        LEFT JOIN {{ ref('invoices') }} ON onprem_subscriptions.stripe_invoice_number = invoices.number
         JOIN latest_credit_card_address
             ON customers.id = latest_credit_card_address.customer_id
             AND latest_credit_card_address.row_num = 1
