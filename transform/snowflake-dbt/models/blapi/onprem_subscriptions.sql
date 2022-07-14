@@ -10,6 +10,7 @@ WITH latest_payment AS (
         payments.stripe_charge_id,
         payments.subscription_id,
         'ONL' || payments.invoice_number AS invoice_number,
+        payments.invoice_number as stripe_invoice_number,
         ROW_NUMBER() OVER (PARTITION BY payments.subscription_id ORDER BY payments.created_at DESC) as row_num
     FROM {{ ref('payments') }}
 ), subscriptions AS (
@@ -18,6 +19,7 @@ WITH latest_payment AS (
         p.sku,
         latest_payment.stripe_charge_id,
         latest_payment.invoice_number,
+        latest_payment.stripe_invoice_number,
         ROW_NUMBER() OVER (PARTITION BY s.id ORDER BY s.transaction_id DESC) as row_num
     FROM {{ source('blapi', 'subscriptions_version') }} s
     JOIN {{ source('blapi', 'products') }} p ON s.product_id = p.id
