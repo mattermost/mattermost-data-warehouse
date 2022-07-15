@@ -51,6 +51,11 @@ WITH latest_credit_card_address AS (
         dateadd(day, 1, subscriptions.actual_renewal_date::date) as renewal_start_date,
         dateadd(year, 1, subscriptions.actual_renewal_date::date) as renewal_end_date,
         renewed_from_subscription.sfdc_migrated_opportunity_sfid,
+        CASE 
+            WHEN renewed_from_subscription.id is not null 
+            THEN true
+            ELSE false
+        END as is_renewed,
         coalesce(
         CASE 
             WHEN subscriptions.renewed_from_sub_id is not null 
