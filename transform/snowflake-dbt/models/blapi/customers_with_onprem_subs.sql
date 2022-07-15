@@ -41,6 +41,7 @@ WITH latest_credit_card_address AS (
             THEN invoices.total / 100.0
             ELSE onprem_subscriptions.total_in_cents / 100.0
         END as total,
+        onprem_subscriptions.total_in_cents / 100.0 as listed_total,
         to_varchar(onprem_subscriptions.updated_at, 'yyyy-mm-dd"T"hh24:mi:ss"Z"') as updated_at,
         onprem_subscriptions.invoice_number,
         onprem_subscriptions.stripe_charge_id,
