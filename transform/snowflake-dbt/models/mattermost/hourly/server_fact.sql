@@ -444,6 +444,8 @@ WITH sdd AS (
         , MAX(lsd.plugins_downloaded) AS plugins_downloaded
         , MAX(server_details.first_active_user_date) AS first_active_user_date
         , MAX(server_details.last_active_user_date) AS last_active_user_date
+        , MAX(lsd.retention_0day_flag) AS retention_0day_flag
+        , MAX(lsd.retention_0day_users) AS retention_0day_users
         , MAX(lsd.retention_1day_flag) AS retention_1day_flag
         , MAX(lsd.retention_1day_users) AS retention_1day_users
         , MAX(lsd.retention_7day_flag) AS retention_7day_flag
