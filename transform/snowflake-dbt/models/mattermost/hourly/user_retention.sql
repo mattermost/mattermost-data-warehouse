@@ -32,6 +32,8 @@ SELECT DISTINCT
   ,   first_active.installation_id AS installation_id
   ,   first_active.first_server_edition AS first_server_edition
   ,   first_active.id
+    ,   CASE WHEN uet2.timestamp between first_active.first_active_timestamp AND first_active.first_active_timestamp + INTERVAL '24 HOURS'
+                    THEN TRUE ELSE FALSE END AS retention_0day_flag
   ,   CASE WHEN uet2.timestamp between first_active.first_active_timestamp + INTERVAL '24 HOURS' AND first_active.first_active_timestamp + INTERVAL '48 HOURS'
                     THEN TRUE ELSE FALSE END AS retention_1day_flag
   ,   CASE WHEN uet2.timestamp between first_active.first_active_timestamp + INTERVAL '168 HOURS' AND first_active.first_active_timestamp + INTERVAL '192 HOURS'
