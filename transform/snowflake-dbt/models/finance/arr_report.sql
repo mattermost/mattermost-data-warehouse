@@ -65,11 +65,24 @@ GROUP BY 1,2
 ORDER BY 1,2
 )
 
+,inv as (
+select
+report_month,
+round(sum(iff(term_months < 12, billing_amt, billing_amt/term_months*12)),2) as year1_inv_amt
+--from finance.arr_transactions
+from {{ ref( 'arr_transactions') }}
+where is_won = true
+and report_month <= last_day(current_date,month)
+group by 1
+order by report_month desc
+)
+
 SELECT
     a.* 
-    ,round(sum(arr_change) over (order by report_month asc),2) as end_arr
-    ,sum(change_cnt) over (order by report_month asc) as end_customers
-    ,sum(change_cnt) over (order by report_month asc rows between unbounded preceding and 1 preceding) as beg_customers
+    ,inv.year1_inv_amt
+    ,round(sum(arr_change) over (order by a.report_month asc),2) as end_arr
+    ,sum(change_cnt) over (order by a.report_month asc) as end_customers
+    ,sum(change_cnt) over (order by a.report_month asc rows between unbounded preceding and 1 preceding) as beg_customers
     ,div0(new,new_cnt)::int as avg_new
     ,div0(expanded,expand_cnt)::int as avg_expand
     ,div0(contracted,contract_cnt)::int as avg_contract
@@ -77,3 +90,4 @@ SELECT
     ,round(div0(renew_cnt,expire_cnt*-1),2) as renew_rate
     ,round(div0(churn_cnt,beg_customers),2) as churn_rate
 FROM A
+LEFT JOIN INV ON INV.REPORT_MONTH = A.REPORT_MONTH
