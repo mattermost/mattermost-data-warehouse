@@ -16,7 +16,7 @@
 {% set rudder_relations = get_rudder_relations(schema=["events"], database='ANALYTICS', 
                           table_inclusions="'portal_events','mobile_events','rudder_webapp_events','segment_webapp_events',
                                             'segment_mobile_events', 'cloud_pageview_events', 'cloud_portal_pageview_events'") %}
-{{ union_relations(relations = rudder_relations[0], tgt_relation = rudder_relations[1], exclude=["CHANNELSIDS_49","CHANNELSIDS_48","CHANNEL_IDS_2","MMCSRF"
+{{ union_relations(relations = rudder_relations[0], tgt_relation = rudder_relations[1], exclude=["CHANNEL_IDS_0","CHANNELSIDS_0","CHANNELSIDS_1","CHANNELSIDS_49","CHANNELSIDS_48","CHANNEL_IDS_2","MMCSRF"
 "CHANNEL_IDS_0","CHANNEL_IDS_1","CHANNELSIDS_32","CHANNELSIDS_7","CHANNELSIDS_45","CHANNELSIDS_44","CHANNELSIDS_14","CHANNELSIDS_16","CHANNELSIDS_13","CHANNELSIDS_29","CHANNELSIDS_46","CHANNELSIDS_2",
 "CHANNELSIDS_21","CHANNELSIDS_3","CHANNELSIDS_10","CHANNELSIDS_6","CHANNELSIDS_27","CHANNELSIDS_39","CHANNELSIDS_34","CHANNELSIDS_31","CHANNELSIDS_36","CHANNELSIDS_28","CHANNELSIDS_4","CHANNELSIDS_30",
 "CHANNELSIDS_11","CHANNELSIDS_23","CHANNELSIDS_41","CHANNELSIDS_37","CHANNELSIDS_19","CHANNELSIDS_9","CHANNELSIDS_47","CHANNELSIDS_12","CHANNELSIDS_15","CHANNELSIDS_20","CHANNELSIDS_35","CHANNELSIDS_24","CHANNELSIDS_40",
