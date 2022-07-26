@@ -169,7 +169,7 @@ WITH sdd AS (
         FROM {{ ref('focalboard_blocks') }} s1
         JOIN max_blocks_time s2
           ON s1.user_id = s2.user_id 
-          AND s1.timestamp = s2.max_time 
+          AND s1.logging_date = s2.max_date 
     ),
 
     server_activity as (
