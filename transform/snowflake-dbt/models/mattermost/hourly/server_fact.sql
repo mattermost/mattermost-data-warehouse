@@ -161,9 +161,9 @@ WITH sdd AS (
         focalboard_blocks_activity AS (
          SELECT 
         server_id
-        , board
-        , _view
-        , card       
+        , board as boards
+        , _view as boards_views
+        , card as boards_cards
         , max_time
         , max_date
         FROM {{ ref('focalboard_blocks') }} s1
@@ -193,14 +193,9 @@ WITH sdd AS (
         , max(COALESCE(r.outgoing_webhooks, s.outgoing_webhooks)) as outgoing_webhooks
         , max(COALESCE(r.max_time, s.max_time)) AS max_timestamp
         , MAX(COALESCE(r.context_ip, r.context_request_ip)) AS last_ip_address
-        , MAX(board) AS boards
-        , MAX(_view) AS boards_views
-        , MAX(card) AS boards_cards
       FROM rudder_activity r
       FULL OUTER JOIN segment_activity s
         ON r.user_id = s.user_id and r.max_date = s.max_date
-      FULL OUTER JOIN focalboard_blocks_activity fb
-        ON r.user_id = fb.server_id and r.max_date = fb.max_date
       GROUP BY 1
     ),
     
@@ -432,9 +427,9 @@ WITH sdd AS (
         , max(server_activity.guest_accounts) as guest_accounts
         , max(server_activity.incoming_webhooks) as incoming_webhooks
         , max(server_activity.outgoing_webhooks) as outgoing_webhooks
-        , max(server_activity.boards) as boards
-        , max(server_activity.boards_views) as boards_views
-        , max(server_activity.boards_cards) as boards_cards
+        , max(fba.boards) as boards
+        , max(fba.boards_views) as boards_views
+        , max(fba.boards_cards) as boards_cards
         , MAX(server_details.max_registered_users) as max_registered_users
         , MAX(server_details.max_registered_deactivated_users) as max_registered_deactivated_users
         , MAX(server_details.max_enabled_plugins)              as max_enabled_plugins
@@ -482,6 +477,8 @@ WITH sdd AS (
             ON sdd.server_id = im.server_id
         LEFT JOIN cloud_payment_method cpm
             ON sdd.installation_id = cpm.cloud_installation_id
+        LEFT JOIN focalboard_blocks_activity fba
+            ON sdd.server_id = fba.server_id            
         {{ dbt_utils.group_by(n=1) }}
     )
       SELECT 
