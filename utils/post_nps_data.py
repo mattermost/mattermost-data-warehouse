@@ -4,7 +4,7 @@ from tabulate import tabulate
 
 def format_row(row):
     row = list(row)
-    row[0] = row[0].replace('\n',' ')
+    row[0] = row[0].replace('\n',' ').replace('"','')
     return tuple(row)
 
 conn = snowflake.connector.connect(
