@@ -23,9 +23,7 @@ WITH onprem_opportunities_to_sync AS (
                 customers_with_onprem_subs.sku || ' qty:' ||
                 customers_with_onprem_subs.num_seats || ' inv:' ||
                 customers_with_onprem_subs.invoice_number
-        END AS opportunity_name,
-        customers_with_onprem_subs.previous_opportunity_sfid,
-        customers_with_onprem_subs.up_for_renewal_arr
+        END AS opportunity_name
     FROM {{ ref('customers_with_onprem_subs') }}
     LEFT JOIN {{ ref('opportunity') }}
         ON customers_with_onprem_subs.opportunity_external_id = opportunity.dwh_external_id__c
