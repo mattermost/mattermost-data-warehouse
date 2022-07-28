@@ -8,7 +8,7 @@
 WITH onprem_opportunities_to_sync AS (
     SELECT
         customers_with_onprem_subs.*,
-        'New Subscription' AS opportunity_type,
+        'Renewal' AS opportunity_type,
         'Online' as order_type,
         '0053p0000064nt8AAA' AS ownerid,
         '6. Closed Won' as stagename,
@@ -23,7 +23,9 @@ WITH onprem_opportunities_to_sync AS (
                 customers_with_onprem_subs.sku || ' qty:' ||
                 customers_with_onprem_subs.num_seats || ' inv:' ||
                 customers_with_onprem_subs.invoice_number
-        END AS opportunity_name
+        END AS opportunity_name,
+        customers_with_onprem_subs.previous_opportunity_sfid,
+        customers_with_onprem_subs.up_for_renewal_arr
     FROM {{ ref('customers_with_onprem_subs') }}
     LEFT JOIN {{ ref('opportunity') }}
         ON customers_with_onprem_subs.opportunity_external_id = opportunity.dwh_external_id__c
@@ -31,8 +33,9 @@ WITH onprem_opportunities_to_sync AS (
     LEFT JOIN {{ ref('account') }}
         ON customers_with_onprem_subs.account_external_id = account.dwh_external_id__c
     WHERE opportunity.id IS NULL
-        AND NOT customers_with_onprem_subs.is_renewed 
-        AND (customers_with_onprem_subs.account_sfid is null OR customers_with_onprem_subs.account_type <> 'Customer') -- removing renewals which are part of another model
+        AND customers_with_onprem_subs.is_renewed 
+        AND customers_with_onprem_subs.account_sfid is not null 
+        AND  customers_with_onprem_subs.account_type <> 'Customer'
         AND customers_with_onprem_subs.hightouch_sync_eligible
 )
 SELECT * FROM onprem_opportunities_to_sync
