@@ -20,6 +20,7 @@ from dags.kube_secrets import (
     SNOWFLAKE_TRANSFORM_SCHEMA,
     SNOWFLAKE_TRANSFORM_WAREHOUSE,
     SNOWFLAKE_TRANSFORM_DATABASE,
+    NPS_WEBHOOK_URL
 )
 
 # Load the env vars into a dict and set Secrets
