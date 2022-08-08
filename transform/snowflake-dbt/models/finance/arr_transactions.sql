@@ -99,17 +99,22 @@ with cloud as (
       acct.name as account_name
       ,opp.accountid as account_id
       ,opp.id as opportunity_id
+      ,opp.license_key__c as license_id
       ,opp.ownerid 
-      ,last_day(iff(opp.closedate>opp.license_start_date__c,opp.closedate,opp.license_start_date__c)::date) as report_month
-      ,closedate::date as close_date
-      ,opp.license_start_date__c::date as license_start_date
+      --salesforce has null data bug with respect to license start and end
+      --adding coalesce with stripe data to complement missing data
+      ,coalesce(opp.license_start_date__c::date,s.current_period_start::date) as license_start
       --override for data input error
       ,case 
-          when opp.id = '0063p00000zBnnuAAC' then date '2022-03-31' else opp.license_end_date__c::date end as license_end_date
+          when opp.id = '0063p00000zBnnuAAC' then date '2022-03-31' 
+          else coalesce(opp.license_end_date__c::date,s.current_period_end::date) 
+          end as license_end
+      ,last_day(iff(opp.closedate>license_start,opp.closedate,license_start)::date) as report_month
+      ,opp.closedate::date as close_date
       ,opp.license_active__c as license_active_sf
       --snowflake does not calculate date diff for months with decimals thus calculating on days 
       --common to see license periods adjusted for co terminating deals
-      ,round(datediff('day',license_start_date,license_end_date)/(365/12),0) as term
+      ,round(datediff('day',license_start,license_end)/(365/12),0) as term
       ,opp.iswon
       ,opp.type as opp_type
       ,case when opp.new_logo__c is null then 'No' else opp.new_logo__c end as new_logo
@@ -119,8 +124,10 @@ with cloud as (
       --this field is not consistently populated and could be overwritten
       ,opp.original_opportunityid__c as original_id_renewed
     --from analytics.orgm.opportunity opp
-	  --left join ANALYTICS.ORGM.ACCOUNT acct
     from {{ ref( 'opportunity') }} opp
+    left join (select * from analytics.stripe.subscriptions where status = 'active') s 
+        on s.license_id = opp.license_key__c
+    --left join ANALYTICS.ORGM.ACCOUNT acct
     left join   {{ ref( 'account') }} acct 
         on acct.sfid = opp.accountid
     WHERE opp.iswon =true
@@ -140,22 +147,21 @@ select
     ,d.account_id
     ,null as opportunity_id
     ,null as close_date
-    ,dateadd('day',1,license_end_date) as lic_start_date
-    ,dateadd('year',1,license_end_date) as lic_end_date
+    ,dateadd('day',1,license_end) as lic_start_date
+    ,dateadd('year',1,license_end) as lic_end_date
     ,12 as term
     ,false as iswon
     ,0 as bill_amt
     ,0 as opportunity_arr
     ,d.opportunity_arr *-1 as expired_arr
     ,0 as renewed_arr
-    ,date_part('year',d.license_end_date)||'-'
-      ||rank() over (partition by account_id, date_trunc('year',d.license_end_date)
-      order by date_trunc('month',d.license_end_date)) 
+    ,date_part('year',d.license_end)||'-'
+      ||rank() over (partition by account_id, date_trunc('year',d.license_end)
+      order by date_trunc('month',d.license_end)) 
       ||'-'||account_id 
       as match_key
     ,opportunity_id as original_id_renewed
 from d
---where license_end_date <= last_day(current_date)
 
 union
 
@@ -165,17 +171,17 @@ select
   ,d.account_id
   ,d.opportunity_id as opportunity_id
   ,close_date
-  ,license_start_date as lic_start_date
-  ,license_end_date as lic_end_date
+  ,license_start as lic_start_date
+  ,license_end as lic_end_date
   ,term
   ,iswon
   ,bill_amt
   ,opportunity_arr
   ,0 as expired_arr
   ,d.opportunity_arr as renewed_arr
-  ,date_part('year',d.license_start_date)||'-'
-    ||rank() over (partition by account_id, date_trunc('year',d.license_start_date) 
-    order by date_trunc('month',d.license_start_date)) 
+  ,date_part('year',d.license_start)||'-'
+    ||rank() over (partition by account_id, date_trunc('year',d.license_start) 
+    order by date_trunc('month',d.license_start)) 
     ||'-'||account_id
     as match_key
    ,original_id_renewed
@@ -215,8 +221,8 @@ order by account_id, match_key asc
       ,account_id
       ,opportunity_id
       ,close_date
-      ,license_start_date as license_start 
-      ,license_end_date as license_end
+      ,license_start 
+      ,license_end
       ,iswon as is_won
       ,opp_type 
       ,term
@@ -260,6 +266,7 @@ select
     --when renewal expired close date is null
     ,coalesce(l.close_date,license_start_date) as closing_date
     ,dense_rank() over (partition by master.account_id order by closing_date,master.opportunity_id) as trans_no
+    ,master.account_id||'-'||trans_no as unique_key
     ,last_day(iff(closing_date>license_start_date,closing_date,license_start_date)) as report_month
     ,iff(closing_date>license_start_date,closing_date,license_start_date) as report_date
     ,last_day(dateadd('month',1,last_day(dateadd('month',2,date_trunc('quarter',dateadd('month',-1,report_month)))))) as fiscal_quarter
@@ -292,6 +299,7 @@ select
         else 0 
      end as active_arr
     ,l.description
+    ,iff(description like '%inv:ONL%','SelfServeOnPrem','SalesServe') as product
     ,acct.parent_id
     ,acct.parent_name
     ,government
@@ -307,11 +315,10 @@ select
     --below is the sales rep of the latest closed deal
     ,b.name as account_owner
     ,u.name as opportunity_owner
-    --,case when ending_arr = 0 then 0 else latest_seats end as current_seats
     ,current_date as date_refreshed
     from master
     left join 
-      (select distinct opportunity_id, ownerid, close_date, license_start_date as start_date, license_end_date as end_date, license_active_sf, description, new_logo from d) l 
+      (select distinct opportunity_id, ownerid, close_date, license_start as start_date, license_end as end_date, license_active_sf, description, new_logo from d) l 
       on l.opportunity_id = master.opportunity_id
     left join acct on acct.account_id = master.account_id
     left join b on b.accountid = master.account_id
