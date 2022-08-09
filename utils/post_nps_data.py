@@ -8,13 +8,13 @@ def format_row(row):
     return tuple(row)
 
 conn = snowflake.connector.connect(
-    user = SNOWFLAKE_USER,
-    password = SNOWFLAKE_PASSWORD,
-    account = SNOWFLAKE_ACCOUNT,
-    warehouse = SNOWFLAKE_TRANSFORM_WAREHOUSE,
-    database = SNOWFLAKE_TRANSFORM_DATABASE,
-    schema = SNOWFLAKE_TRANSFORM_SCHEMA
-            )
+    user = os.getenv("SNOWFLAKE_USER"),
+    password = os.getenv("SNOWFLAKE_PASSWORD"),
+    account = os.getenv("SNOWFLAKE_ACCOUNT"),
+    warehouse = os.getenv("SNOWFLAKE_TRANSFORM_WAREHOUSE"),
+    database = os.getenv("SNOWFLAKE_TRANSFORM_DATABASE"),
+    schema = os.getenv("SNOWFLAKE_TRANSFORM_SCHEMA")
+    )
 
 try:
     cur = conn.cursor()
@@ -39,7 +39,7 @@ try:
     payload='{"text": "%s", "channel": "mattermost-nps-feedback"}' % out
 
     response = requests.post(
-            NPS_WEBHOOK_URL, data=payload.encode('utf-8'),
+            os.getenv("NPS_WEBHOOK_URL"), data=payload.encode('utf-8'),
             headers={'Content-Type': 'application/json'}
         )
     if response.status_code != 200:
