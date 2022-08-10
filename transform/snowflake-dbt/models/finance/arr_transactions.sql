@@ -5,7 +5,7 @@
   })
 }}
 
---v4 of arr transactions 
+--v5 of arr transactions 
 --this query reflects arr transactions during the lifecycle of a paying self serve customer 
 --based on key input fields by sales ops on license_start_date__c license_end_date__c and amount 
 --in the salesforce opportunity table
@@ -17,36 +17,43 @@
 --to identify cloud and monthly billing customers to be excluded from selfserve ARR
 --currently account owner in accounts table is not reflective of the true account owner thus using the latest account owner of the opportunity
 --structure of queries below are funnel data to selfserve arr then gather demographic info then pull master data set and add expiry and renewal information 
+--modified to have parent child relationship as deployed by Jim K
 
-
-with cloud as (
+--identify mrr population as tracked by stripe and product type
+with mrr as (
    select 
-        accountid,
-        sum(case when lower(name) like '%cloud billing%' or lower(name) like '%monthly billing%' then 1 else 0 end) as cloud
-    from  {{ ref( 'opportunity') }} opp
-    --from analytics.orgm.opportunity opp
-    where 
-        opp.iswon in (true,false)
-        and opp.isclosed = true
-        and opp.isdeleted = false
-    group by 1
-    having cloud > 0
-    order by 1 asc
+        es.server_id,
+        ls.server_id as ls_server_id,
+        ls.license_id,
+        ls.customer_id,
+        ls.id,
+        ls.customer_name,
+        ls.edition,
+        ls.account_sfid,
+        ls.opportunity_sfid,
+        ls.stripeid,
+        ls.issued_date,
+        sub.status,
+        sub.sfdc_migrated_opportunity_sfid
+   from analytics.blp.license_server_fact ls
+   left join  analytics.mattermost.excludable_servers es  on ls.server_id = es.server_id
+   left join analytics.stripe.subscriptions sub on sub.license_id = ls.license_id 
+        where ls.issued_date is not null
+        and ls.edition in ('Cloud Professional')
+        and es.reason is null
 )
 
---cte to limit report to paying customers and exclude trial customers that did not convert to paying
+--cte to limit report to paying arr customers and exclude trial customers that did not convert to paying
 ,pop as (
     select
         opp.accountid
-        ,count(distinct id) as opportunities
-        --,sum(coalesce(ending_arr__c,0)) as arr
         ,sum(coalesce(opp.amount,0)) as arr
     from  {{ ref( 'opportunity') }} opp
     --from analytics.orgm.opportunity opp
     WHERE opp.iswon in (true,false)
         and opp.isclosed = true
         and opp.isdeleted = false
-        and opp.accountid not in (select distinct accountid from cloud )
+        and opp.license_key__c not in (select distinct license_id from mrr)
     group by 1
     having arr >=1
     order by 1
@@ -72,22 +79,20 @@ with cloud as (
 )    
   
 --subquery to gather account demographics
+--modified to extend population to null values as a result of child ids created 
 ,ACCT AS (
     SELECT
       COALESCE(A.PARENTID,A.SFID) AS PARENT_ID
       ,A.SFID AS ACCOUNT_ID
       ,coalesce(parent_s_parent_acount__c,a.name) as parent_name
       ,A.GOVERNMENT__C AS GOVERNMENT
-      ,A.CUSTOMER_SEGMENTATION_TIER__C AS CUSTOMER_TIER
-      ,COALESCE(A.GEO__C,A.TERRITORY_GEO__C) AS GEO
+      ,coalesce(a.customer_segmentation_tier__c,max(A.CUSTOMER_SEGMENTATION_TIER__C) over (partition by parentid)) AS CUSTOMER_TIER
+      ,coalesce(A.GEO__C,A.TERRITORY_GEO__C,max(a.geo__c) over (partition by parentid)) as geo
       ,A.BILLINGCOUNTRY AS COUNTRY
       ,A.COMPANY_TYPE__C AS COMPANY_TYPE
-      ,A.SEATS_ACTIVE_LATEST__C as latest_seats
       ,A.HEALTH_SCORE__C AS HEALTH_SCORE
-      ,A.TYPE
-      ,A.COSIZE__C AS COSIZE
+      ,coalesce(A.COSIZE__C,max(a.cosize__c) over (partition by parent_id)) AS COSIZE
       ,A.INDUSTRY
-      ,A.ACCOUNTSOURCE 
     FROM     {{ ref( 'account') }} A
     --FROM ANALYTICS.ORGM.ACCOUNT A
     where  ISDELETED = FALSE
@@ -119,10 +124,14 @@ with cloud as (
       ,opp.type as opp_type
       ,case when opp.new_logo__c is null then 'No' else opp.new_logo__c end as new_logo
       ,round(coalesce(opp.amount,2),0) as bill_amt
-      ,case when term = 12 then bill_amt else round(div0(bill_amt,term)*12,2) end as opportunity_arr
+      ,case when term = 12 then bill_amt 
+            --else round(div0(bill_amt,term)*12,2) 
+            else round(div0(bill_amt,datediff('day',license_start,license_end))*365,0)
+            end as opportunity_arr
       ,opp.name as description
       --this field is not consistently populated and could be overwritten
       ,opp.original_opportunityid__c as original_id_renewed
+      ,s.edition
     --from analytics.orgm.opportunity opp
     from {{ ref( 'opportunity') }} opp
     left join (select * from analytics.stripe.subscriptions where status = 'active') s 
@@ -142,52 +151,56 @@ with cloud as (
 --expiration net of renewals
 ,r as (
 --subquery for expiring licenses 
-select
-    d.account_name
-    ,d.account_id
-    ,null as opportunity_id
-    ,null as close_date
-    ,dateadd('day',1,license_end) as lic_start_date
-    ,dateadd('year',1,license_end) as lic_end_date
-    ,12 as term
-    ,false as iswon
-    ,0 as bill_amt
-    ,0 as opportunity_arr
-    ,d.opportunity_arr *-1 as expired_arr
-    ,0 as renewed_arr
-    ,date_part('year',d.license_end)||'-'
-      ||rank() over (partition by account_id, date_trunc('year',d.license_end)
-      order by date_trunc('month',d.license_end)) 
-      ||'-'||account_id 
-      as match_key
-    ,opportunity_id as original_id_renewed
-from d
+
+    select
+      d.account_name
+      ,d.account_id
+      ,null as opportunity_id
+      ,null as close_date
+      ,dateadd('day',1,license_end) as lic_start_date
+      ,dateadd('year',1,license_end) as lic_end_date
+      ,12 as term
+      ,false as iswon
+      ,0 as bill_amt
+      ,0 as opportunity_arr
+      ,d.opportunity_arr *-1 as expired_arr
+      ,0 as renewed_arr
+      ,date_part('year',d.license_end)||'-'
+        ||rank() over (partition by account_id, date_trunc('year',d.license_end)
+        order by date_trunc('month',d.license_end)) 
+        ||'-'||account_id 
+        as match_key
+      ,opportunity_id as original_id_renewed
+    
+    from d
 
 union
 
 --renewals won subquery
-select
-  d.account_name
-  ,d.account_id
-  ,d.opportunity_id as opportunity_id
-  ,close_date
-  ,license_start as lic_start_date
-  ,license_end as lic_end_date
-  ,term
-  ,iswon
-  ,bill_amt
-  ,opportunity_arr
-  ,0 as expired_arr
-  ,d.opportunity_arr as renewed_arr
-  ,date_part('year',d.license_start)||'-'
-    ||rank() over (partition by account_id, date_trunc('year',d.license_start) 
-    order by date_trunc('month',d.license_start)) 
-    ||'-'||account_id
-    as match_key
-   ,original_id_renewed
-from d
-    where opp_type = 'Renewal' 
-order by account_id, match_key asc
+    select
+      d.account_name
+      ,d.account_id
+      ,d.opportunity_id as opportunity_id
+      ,close_date
+      ,license_start as lic_start_date
+      ,license_end as lic_end_date
+      ,term
+      ,iswon
+      ,bill_amt
+      ,opportunity_arr
+      ,0 as expired_arr
+      ,d.opportunity_arr as renewed_arr
+      ,date_part('year',d.license_start)||'-'
+        ||rank() over (partition by account_id, date_trunc('year',d.license_start) 
+        order by date_trunc('month',d.license_start)) 
+        ||'-'||account_id
+        as match_key
+      ,original_id_renewed
+      
+    from d
+        where opp_type = 'Renewal' 
+    order by account_id, match_key asc
+
 )  
  
 --unites renewal and expiring data with the main opportunity transactions
@@ -205,11 +218,8 @@ order by account_id, match_key asc
       ,max(case when iswon = true then term else 0 end) as term
       ,sum(bill_amt) as billing_amt
       ,sum(opportunity_arr) as opportunity_arr
-      ,sum(0) as new_arr
       ,sum(expired_arr) as expire_arr
-      ,sum(renewed_arr) as renew_arr
-      ,sum(0) as contract_expand
-      ,sum(0) as account_expand
+      ,sum(renewed_arr) as renewal_arr
     from r
     group by 1,2,3,4
 
@@ -228,11 +238,8 @@ order by account_id, match_key asc
       ,term
       ,bill_amt as billing_amt
       ,opportunity_arr 
-      ,case when lower(opp_type) like 'new%' then opportunity_arr else 0 end as new_arr
       ,0 as expire_arr
-      ,0 as renew_arr
-      ,case when opp_type = 'Contract Expansion' then opportunity_arr else 0 end as contract_expand
-      ,case when opp_type = 'Account Expansion' then opportunity_arr else 0 end as account_expand
+      ,0 as renewal_arr
       from d
     where opp_type != 'Renewal'
     order by account_name, license_start, close_date
@@ -240,19 +247,23 @@ order by account_id, match_key asc
 ,
 --subquery to determine max license excluding expired 
 licterm as (
-select
-    account_id
-    ,max(license_end) as license_term
-from master
-where opp_type != 'Expired'
-group by 1
-order by 1
+    select
+        account_id
+        ,max(license_end) as license_term
+    from master
+    where opp_type != 'Expired'
+    group by 1
+    order by 1
 )  
 
+,final as (
 --aggregating table to output
-select
+--separate subquery to avoid nested window functions    
+  select
     master.account_name
+    ,acct.parent_name
     ,master.account_id
+    ,acct.parent_id
     ,master.opportunity_id
     --use actual dates for won renewals and calc dates for expired renewals
     ,coalesce(l.start_date, master.license_start) as license_start_date
@@ -283,46 +294,101 @@ select
     ,term as term_months
     ,billing_amt
     ,opportunity_arr
-    ,new_arr
     ,expire_arr
-    ,renew_arr
-    ,case 
-        when opp_type = 'Reduction' then opportunity_arr
-        else 0 end as reduction_arr
-    ,contract_expand as contract_expansion
-    ,account_expand as account_expansion
-    ,case when report_month > last_day(current_date) then 0 else
-        new_arr + expire_arr + renew_arr + reduction_arr + contract_expansion + account_expansion end as arr_change
-    ,sum(arr_change) over (partition by master.account_id order by closing_date) as ending_arr
-    ,case when license_active_calc = true and is_won = true
-        then opportunity_arr 
-        else 0 
-     end as active_arr
+    ,renewal_arr
     ,l.description
     ,iff(description like '%inv:ONL%','SelfServeOnPrem','SalesServe') as product
-    ,acct.parent_id
-    ,acct.parent_name
     ,government
     ,customer_tier
     ,company_type
     ,cosize
     ,industry
-    ,accountsource
+    --,accountsource
     ,geo
     ,country
-    ,type
+    --,type
     ,health_score 
     --below is the sales rep of the latest closed deal
     ,b.name as account_owner
     ,u.name as opportunity_owner
     ,current_date as date_refreshed
+    ,l.edition
     from master
     left join 
-      (select distinct opportunity_id, ownerid, close_date, license_start as start_date, license_end as end_date, license_active_sf, description, new_logo from d) l 
+
+      (select distinct opportunity_id, ownerid, close_date, license_start as start_date, license_end as end_date, license_active_sf, description, new_logo,edition from d) l 
+
       on l.opportunity_id = master.opportunity_id
     left join acct on acct.account_id = master.account_id
     left join b on b.accountid = master.account_id
     left join licterm on licterm.account_id = master.account_id
     left join analytics.orgm.user u on u.sfid=l.ownerid
     order by master.account_name,trans_no
+)
 
+select
+    unique_key
+    ,parent_name
+    ,account_name
+    ,parent_id
+    ,account_id
+    ,product
+    --new field for looker
+    ,coalesce(edition,split_part(description,'-',2)) as plan
+    ,opportunity_id
+    ,fiscal_year
+    ,fiscal_quarter
+    ,report_month
+    ,report_date
+    --new field for looker
+    ,date_trunc('week',report_date)+4 as report_week
+    ,closing_date
+    ,license_start_date
+    ,license_end_date
+    ,newlogo
+    ,trans_no
+    ,opp_type
+    ,term_months
+    ,billing_amt
+    ,iff(term_months<=12,billing_amt,round(div0(billing_amt,term_months)*12,2)) as first_yr_bill
+    ,opportunity_arr
+    ,expire_arr
+    ,iff(trans_no = 1, 0,renewal_arr) as renew_arr
+    ,case when report_month > last_day(current_date) then 0 else
+        opportunity_arr + expire_arr end as arr_change
+    ,sum(arr_change) over (partition by account_id order by trans_no) as ending_arr
+    ,iff(trans_no = 1, opportunity_arr,0) as new_arr
+    --new looker fields
+    ,iff(arr_change>0,arr_change - new_arr,0) as expansion
+    ,iff(arr_change<0,arr_change - new_arr,0) as expire_and_contract
+    ,case when license_active_calc = true and is_won = true and report_month <= last_day(current_date)
+        then opportunity_arr 
+        else 0 
+     end as active_arr
+    ,description
+    ,government
+    ,customer_tier
+    ,company_type
+    ,cosize
+    ,industry
+    ,geo
+    ,country
+    ,health_score
+    ,account_owner
+    ,opportunity_owner
+    ,account_start
+    ,max_license
+    ,beg_tenure_yr
+    ,end_tenure_yr
+    ,license_active_calc
+    ,license_activesf
+    ,status_aligned
+    ,is_won
+    ,date_refreshed
+    --dormant fields to be removed from looker
+    ,expire_and_contract as reduction_arr
+    ,expansion as contract_expansion
+    ,0 as account_expansion
+    ,null as accountsource
+    ,null as type
+from final
