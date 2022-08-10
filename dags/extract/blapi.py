@@ -44,6 +44,9 @@ volume_mount = VolumeMount(
 if "cmds" in pod_defaults:
     del pod_defaults["cmds"]
 
+
+pod_defaults['is_delete_operator_pod'] = False
+
 blapi = KubernetesPodOperator(
     **pod_defaults,
     image=PIPELINEWISE_IMAGE,

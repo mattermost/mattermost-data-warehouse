@@ -20,8 +20,9 @@ from dags.kube_secrets import (
     SNOWFLAKE_TRANSFORM_SCHEMA,
     SNOWFLAKE_TRANSFORM_WAREHOUSE,
     SNOWFLAKE_TRANSFORM_DATABASE,
-    NPS_WEBHOOK_URL
 )
+
+NPS_WEBHOOK_URL = Variable.get("mattermost-nps-feedback-webhook")
 
 # Load the env vars into a dict and set Secrets
 env = os.environ.copy()
