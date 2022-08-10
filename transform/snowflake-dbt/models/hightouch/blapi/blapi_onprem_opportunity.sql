@@ -35,8 +35,6 @@ WITH onprem_opportunities_to_sync AS (
     LEFT JOIN {{ ref('account') }}
         ON customers_with_onprem_subs.account_external_id = account.dwh_external_id__c
     WHERE opportunity.id IS NULL
-        AND NOT customers_with_onprem_subs.is_renewed 
-        AND (customers_with_onprem_subs.account_sfid is null OR customers_with_onprem_subs.account_type <> 'Customer') -- removing renewals which are part of another model
         AND customers_with_onprem_subs.hightouch_sync_eligible
 )
 SELECT * FROM onprem_opportunities_to_sync

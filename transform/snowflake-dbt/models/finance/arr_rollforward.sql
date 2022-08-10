@@ -12,7 +12,6 @@ with a as (
     select
       account_name
       ,account_id
-      ,parent_id
       ,report_month
       ,fiscal_quarter
       ,fiscal_year
@@ -44,7 +43,7 @@ with a as (
     from {{ ref( 'arr_transactions') }}
     --from analytics.finance_dev.arr_transactions
         where report_month < date_trunc('month',current_date)
-    group by 1,2,3,4,5,6,7
+    group by 1,2,3,4,5,6
     order by cohort_month, account_id, report_month
 )
 
@@ -53,7 +52,6 @@ with a as (
   select
     a.account_name
     ,a.account_id
-    ,a.parent_id
     ,a.account_owner
     ,a.report_month
     ,a.fiscal_quarter
@@ -134,8 +132,7 @@ from a
 ,bins as (
 select
     account_name
-    --,account_id
-    ,parent_id
+    ,account_id
     ,round(sum(arr_delta),0) as current_arr
     ,round(avg(end_arr),0) as average_arr
     ,sum(new_arr) as starting_arr
@@ -153,8 +150,6 @@ select
 select
 output.*
 ,bins.bin_avg_arr
-,iff(arr>tcv,tcv,arr) as yr1_billing
 from output
---left join bins on bins.account_id = output.account_id
-left join bins on bins.parent_id = output.parent_id
+left join bins on bins.account_id = output.account_id
 
