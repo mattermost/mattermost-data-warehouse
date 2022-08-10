@@ -57,13 +57,7 @@ WITH latest_credit_card_address AS (
             THEN true
             ELSE false
         END as is_renewed,
-        coalesce(
-        CASE 
-            WHEN subscriptions.renewed_from_sub_id is not null 
-            THEN invoices.total
-            ELSE onprem_subscriptions.total_in_cents
-            END
-            , 0) / 100.0 as renewed_from_total,
+        COALESCE(onprem_subscriptions.total_in_cents, 0) as renewed_from_total,
         COALESCE(subscriptions.license_id, onprem_subscriptions.id) as license_key,
         subscriptions.purchase_order_num,
         latest_credit_card_address.line1,
@@ -108,6 +102,7 @@ WITH latest_credit_card_address AS (
                 customers_with_onprem_subs.customer_id)
         ) AS account_external_id,
         account.sfid as account_sfid,
+        account.type as account_type,
         ROW_NUMBER() OVER (PARTITION BY customers_with_onprem_subs.stripe_charge_id ORDER BY account.lastmodifieddate DESC) as row_num
     FROM customers_with_onprem_subs
     LEFT JOIN {{ ref('account') }}
@@ -144,6 +139,17 @@ WITH latest_credit_card_address AS (
     FROM customers_with_onprem_subs
     LEFT JOIN {{ ref('opportunity') }}
         ON customers_with_onprem_subs.stripe_charge_id = opportunity.stripe_id__c
+),  customers_previous_opportunity AS (
+    SELECT 
+        customers_with_onprem_subs.subscription_id, 
+        customers_with_onprem_subs.previous_subscription_version_id,
+        opportunity.sfid as previous_opportunity_sfid,
+        opportunity.amount as up_for_renewal_arr
+    FROM customers_with_onprem_subs
+    JOIN {{ ref('opportunity') }}
+        ON  UUID_STRING(
+                '78157189-82de-4f4d-9db3-88c601fbc22e',
+                customers_with_onprem_subs.subscription_version_id) = opportunity.dwh_external_id__c
 ), customers_oli AS (
     SELECT
         customers_with_onprem_subs.stripe_charge_id,
@@ -166,13 +172,16 @@ SELECT
         then customers_contact.contact_account_external_id
         else customers_account.account_external_id
     end as account_external_id,
+    customers_account.account_type,
     coalesce(customers_account.account_sfid, customers_contact.account_sfid) as account_sfid,
     customers_contact.contact_external_id,
     customers_contact.contact_sfid,
     customers_opportunity.opportunity_external_id,
     customers_opportunity.opportunity_sfid,
     customers_oli.opportunitylineitem_external_id,
-    customers_oli.opportunitylineitem_sfid
+    customers_oli.opportunitylineitem_sfid,
+    customers_previous_opportunity.previous_opportunity_sfid,
+    customers_previous_opportunity.up_for_renewal_arr
 FROM customers_with_onprem_subs
 JOIN customers_account
     ON customers_with_onprem_subs.stripe_charge_id = customers_account.stripe_charge_id
@@ -186,3 +195,5 @@ JOIN customers_opportunity
 JOIN customers_oli
     ON customers_with_onprem_subs.stripe_charge_id = customers_oli.stripe_charge_id
     AND customers_oli.row_num = 1
+LEFT JOIN customers_previous_opportunity
+    ON customers_with_onprem_subs.subscription_id = customers_previous_opportunity.subscription_id

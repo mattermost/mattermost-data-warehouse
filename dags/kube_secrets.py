@@ -68,6 +68,9 @@ SNOWFLAKE_PASSWORD = Secret(
 MATTERMOST_WEBHOOK_URL = Secret(
     "env", "MATTERMOST_WEBHOOK_URL", "airflow", "MATTERMOST_WEBHOOK_URL"
 )
+NPS_WEBHOOK_URL = Secret(
+    "env", "NPS_WEBHOOK_URL", "airflow", "NPS_WEBHOOK_URL"
+)
 
 # Permission Bot
 PERMISSION_BOT_USER = Secret(
