@@ -106,7 +106,7 @@ with mrr as (
       ,opp.id as opportunity_id
       ,opp.license_key__c as license_id
       ,opp.ownerid 
-      --salesforce has null data bug with respect to license start and end date where portal is not synching with sfdc
+      --salesforce has null data bug with respect to license start and end
       --adding coalesce with stripe data to complement missing data
       ,coalesce(opp.license_start_date__c::date,s.current_period_start::date) as license_start
       --override for data input error
@@ -151,6 +151,7 @@ with mrr as (
 --expiration net of renewals
 ,r as (
 --subquery for expiring licenses 
+
     select
       d.account_name
       ,d.account_id
@@ -199,6 +200,7 @@ union
     from d
         where opp_type = 'Renewal' 
     order by account_id, match_key asc
+
 )  
  
 --unites renewal and expiring data with the main opportunity transactions
@@ -313,7 +315,9 @@ licterm as (
     ,l.edition
     from master
     left join 
+
       (select distinct opportunity_id, ownerid, close_date, license_start as start_date, license_end as end_date, license_active_sf, description, new_logo,edition from d) l 
+
       on l.opportunity_id = master.opportunity_id
     left join acct on acct.account_id = master.account_id
     left join b on b.accountid = master.account_id
