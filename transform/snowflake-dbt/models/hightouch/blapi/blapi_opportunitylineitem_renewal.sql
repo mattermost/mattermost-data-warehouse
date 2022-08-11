@@ -24,4 +24,5 @@ WITH onprem_olis_to_sync AS (
     AND customers_with_onprem_subs.opportunity_sfid is not null
     AND customers_with_onprem_subs.hightouch_sync_eligible
 )
+
 SELECT * FROM onprem_olis_to_sync
