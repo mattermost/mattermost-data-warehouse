@@ -38,9 +38,10 @@ try:
     out = tuple(map(lambda x: format_row(x) , out))
     out = tabulate(out, headers=['Feedback','Category','Score','Server Version','Installation Type','User Role','Customer Name'], tablefmt='github')
     payload='{"text": "%s", "channel": "mattermost-nps-feedback"}' % out
-
+    nps_webhook_url = os.getenv("NPS_WEBHOOK_URL")
+    print('Value of webhook - ', nps_webhook_url[-4:] + '-' + nps_webhook_url[:4])
     response = requests.post(
-            os.getenv("NPS_WEBHOOK_URL"), data=payload.encode('utf-8'),
+            nps_webhook_url, data=payload.encode('utf-8'),
             headers={'Content-Type': 'application/json'}
         )
     if response.status_code != 200:
