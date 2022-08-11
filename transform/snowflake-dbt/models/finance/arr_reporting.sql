@@ -35,10 +35,10 @@ with a as (
     ,sum(arr_delta) over (partition by account_id order by report_mo) as acct_end_arr
     ,sum(new_arr) as new
     ,iff(arr_delta - new > 0 and acct_beg_arr =0,arr_delta - new,0) as resurrected
-    ,iff(arr_delta - new <0 and acct_end_arr >0,arr_delta-new,0) as contracted
-    ,iff(arr_delta - new <0 and acct_end_arr = 0,arr_delta-new,0) as churned
+    ,iff(arr_delta - new <0 and acct_end_arr != 0,arr_delta-new-resurrected,0) as contracted
+    ,iff(arr_delta - new <0 and acct_end_arr = 0,arr_delta-new-resurrected,0) as churned
     ,iff(datediff('day',report_mo,current_date)>30,churned,0) as above30days_expired
-    ,iff(arr_delta - new >0,arr_delta-new,0) as expanded
+    ,iff(arr_delta - new >0,arr_delta-new-resurrected,0) as expanded
     ,sum(arr_delta) over (order by report_mo||report_day||account_id rows between unbounded preceding and 1 preceding) as total_beg_arr
     ,sum(arr_delta) over (order by report_mo||report_day||account_id) as total_end_arr
     ,total_end_arr - total_beg_arr as total_change
