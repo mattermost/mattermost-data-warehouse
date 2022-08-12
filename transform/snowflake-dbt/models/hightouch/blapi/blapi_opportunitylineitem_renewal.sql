@@ -11,11 +11,12 @@ WITH onprem_olis_to_sync AS (
         'Recurring' AS product_type,
         'Mixed' AS product_line_type,
         'Discount' AS pricing_method,
-        customers_with_onprem_subs.listed_total/customers_with_onprem_subs.num_seats as unit_price,
+        customers_with_onprem_subs.listed_total/customers_with_onprem_subs.num_seats as list_price,
         customers_with_onprem_subs.listed_total - customers_with_onprem_subs.total as discount,
+        (customers_with_onprem_subs.listed_total - customers_with_onprem_subs.total)/customers_with_onprem_subs.listed_total as discount_percent,
+        customers_with_onprem_subs.listed_total/customers_with_onprem_subs.num_seats * (1 - (customers_with_onprem_subs.listed_total - customers_with_onprem_subs.total)/customers_with_onprem_subs.listed_total) as unit_price,
         0 AS zero_amount,
-        customers_with_onprem_subs.total - customers_with_onprem_subs.renewed_from_total as expansion_amount,
-        customers_with_onprem_subs.total / customers_with_onprem_subs.num_seats AS list_price
+        customers_with_onprem_subs.total - customers_with_onprem_subs.renewed_from_total as expansion_amount
     FROM {{ ref('customers_with_onprem_subs') }}
     LEFT JOIN {{ ref('opportunitylineitem') }}
         ON customers_with_onprem_subs.subscription_version_id = opportunitylineitem.subs_version_id__c
