@@ -357,7 +357,7 @@ select
     ,case when report_month > last_day(current_date) then 0 else
         opportunity_arr + expire_arr end as arr_change
     ,sum(arr_change) over (partition by account_id order by trans_no) as ending_arr
-    ,iff(trans_no = 1, opportunity_arr,0) as new_arr
+    ,iff(trans_no = 1 and newlogo = 'Yes', opportunity_arr,0) as new_arr
     --new looker fields
     ,iff(arr_change>0,arr_change - new_arr,0) as expansion
     ,iff(arr_change<0,arr_change - new_arr,0) as expire_and_contract
