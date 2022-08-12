@@ -150,8 +150,7 @@ WITH latest_credit_card_address AS (
         customers_with_onprem_subs.subscription_id, 
         customers_with_onprem_subs.previous_subscription_version_id,
         opportunity.sfid as previous_opportunity_sfid,
-        opportunity.amount as up_for_renewal_arr,
-        customers_oli.opportunitylineitem_sfid
+        opportunity.amount as up_for_renewal_arr
     FROM customers_with_onprem_subs
     JOIN {{ ref('opportunity') }}
         ON  UUID_STRING(
