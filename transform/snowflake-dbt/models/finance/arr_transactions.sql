@@ -353,11 +353,12 @@ select
     ,iff(term_months<=12,billing_amt,round(div0(billing_amt,term_months)*12,2)) as first_yr_bill
     ,opportunity_arr
     ,expire_arr
+    --renew_arr below includes expansion amount
     ,iff(trans_no = 1, 0,renewal_arr) as renew_arr
     ,case when report_month > last_day(current_date) then 0 else
         opportunity_arr + expire_arr end as arr_change
     ,sum(arr_change) over (partition by account_id order by trans_no) as ending_arr
-    ,iff(trans_no = 1 and newlogo = 'Yes', opportunity_arr,0) as new_arr
+    ,iff(trans_no = 1, opportunity_arr,0) as new_arr
     --new looker fields
     ,iff(arr_change>0,arr_change - new_arr,0) as expansion
     ,iff(arr_change<0,arr_change - new_arr,0) as expire_and_contract
@@ -385,10 +386,12 @@ select
     ,status_aligned
     ,is_won
     ,date_refreshed
+    /*
     --dormant fields to be removed from looker
     ,expire_and_contract as reduction_arr
     ,expansion as contract_expansion
     ,0 as account_expansion
     ,null as accountsource
     ,null as type
+    */
 from final
