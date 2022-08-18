@@ -99,6 +99,7 @@ with mrr as (
     ORDER BY PARENT_ID, account_id
 )
 --master data query
+--opportunity arr is calculated here
 ,d as (
     select
       acct.name as account_name
@@ -146,6 +147,7 @@ with mrr as (
     order by opp.accountid, opp.closedate asc
 )
 
+--calculates fields for expired arr and renewed arr where renewed arr may have expansion or contraction
 --determining expiring renewals against the won renewals
 --matching keys of expiring and renewals using for expiring the license end date and for renewals the start date won renewals
 --expiration net of renewals
@@ -303,10 +305,8 @@ licterm as (
     ,company_type
     ,cosize
     ,industry
-    --,accountsource
     ,geo
     ,country
-    --,type
     ,health_score 
     --below is the sales rep of the latest closed deal
     ,b.name as account_owner
@@ -346,6 +346,8 @@ select
     ,license_start_date
     ,license_end_date
     ,newlogo
+    ,account_start
+    ,dense_rank() over (partition by parent_id order by account_start) as child_no 
     ,trans_no
     ,opp_type
     ,term_months
@@ -377,7 +379,6 @@ select
     ,health_score
     ,account_owner
     ,opportunity_owner
-    ,account_start
     ,max_license
     ,beg_tenure_yr
     ,end_tenure_yr
@@ -386,12 +387,4 @@ select
     ,status_aligned
     ,is_won
     ,date_refreshed
-    /*
-    --dormant fields to be removed from looker
-    ,expire_and_contract as reduction_arr
-    ,expansion as contract_expansion
-    ,0 as account_expansion
-    ,null as accountsource
-    ,null as type
-    */
 from final
