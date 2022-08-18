@@ -13,6 +13,7 @@ with a as (
     report_month as report_mo
     ,account_name
     ,account_id
+    ,min(child_no) as child_no
     ,max(fiscal_year) as fiscal_yr
     ,max(fiscal_quarter) as fiscal_qtr
     ,max(report_week) as report_wk
@@ -50,7 +51,7 @@ with a as (
     ,iff(arr_renewed>0,1,0) as cnt_renewed
     ,iff(churned<0,-1,0) as cnt_churned
     ,iff(above30days_expired<0,-1,0) as cnt_above30_expired
-    ,cnt_new + cnt_resurrected + cnt_expired + cnt_renewed as cnt_changed   
+    ,cnt_new + cnt_resurrected + cnt_churned as cnt_changed   
 	,min(product) as product
 	,min(plan) as plan
 	,min(government) as government
