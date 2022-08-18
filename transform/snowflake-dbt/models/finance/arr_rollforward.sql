@@ -24,7 +24,6 @@ with a as (
       ,max(customer_tier) as tier
       ,max(company_type) as co_type
       ,max(industry) as industry
-      ,max(accountsource) as account_source
       ,max(country) as nation
       ,max(health_score) as healthscore
       ,max(geo) as geography
