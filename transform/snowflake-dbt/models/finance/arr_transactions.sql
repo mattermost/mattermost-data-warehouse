@@ -5,7 +5,7 @@
   })
 }}
 
---v5 of arr transactions 
+--v5 of arr transactions 20220819
 --this query reflects arr transactions during the lifecycle of a paying self serve customer 
 --based on key input fields by sales ops on license_start_date__c license_end_date__c and amount 
 --in the salesforce opportunity table
@@ -360,7 +360,9 @@ select
     ,case when report_month > last_day(current_date) then 0 else
         opportunity_arr + expire_arr end as arr_change
     ,sum(arr_change) over (partition by account_id order by trans_no) as ending_arr
-    ,iff(trans_no = 1 and newlogo = 'Yes', opportunity_arr,0) as new_arr
+    --updated to reflect new arr for the first transaction of any child account or parent account in absence of child
+    --does not rely on new logo field
+    ,iff(trans_no = 1, opportunity_arr,0) as new_arr
     --new looker fields
     ,iff(arr_change>0,arr_change - new_arr,0) as expansion
     ,iff(arr_change<0,arr_change - new_arr,0) as expire_and_contract
@@ -387,5 +389,4 @@ select
     ,status_aligned
     ,is_won
     ,date_refreshed
-
 from final
