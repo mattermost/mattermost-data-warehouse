@@ -364,8 +364,8 @@ select
     --does not rely on new logo field
     ,iff(trans_no = 1, opportunity_arr,0) as new_arr
     --new looker fields
-    ,iff(arr_change>0,arr_change - new_arr,0) as expansion
-    ,iff(arr_change<0,arr_change - new_arr,0) as expire_and_contract
+    --,iff(arr_change>0,arr_change - new_arr,0) as expansion
+    --,iff(arr_change<0,arr_change - new_arr,0) as expire_and_contract
     ,case when license_active_calc = true and is_won = true and report_month <= last_day(current_date)
         then opportunity_arr 
         else 0 
