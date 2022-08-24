@@ -82,7 +82,7 @@ select
     ,round((datediff('day',a.cohort_fiscal_qtr,fiscal_qtr))/90,0) as fiscal_quarter_no
     ,dense_rank() over (partition by a.account_id order by report_mo) as trans_no 
     ,sum(cnt_changed) over (order by report_mo||report_day||account_id) as active_customers
-    ,round(avg(acct_end_arr) over (partition by a.parent_id,2)) as average_arr
+    ,round(avg(acct_end_arr) over (partition by a.account_id),2) as average_arr
     ,case 
         when average_arr <=10000 then '4_AvgARR_upto10K'
         when average_arr >10000 and average_arr <=100000 then '3_AvgARR_10Kupto100K'
