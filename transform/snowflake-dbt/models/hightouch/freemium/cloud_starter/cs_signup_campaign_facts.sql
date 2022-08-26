@@ -4,11 +4,11 @@
   })
 }}
 
-with signup_pages_pre as (
+with signup_pages_dwt_pre as (
     select
         daily_website_traffic.context_traits_portal_customer_id as portal_customer_id,
         min(case when name = 'pageview_verify_email' then timestamp else null end) as account_created_at,
-        min(case when name = 'pageview_company_name' then timestamp else null end) as verified_email_at,
+        min(case when name = 'pageview_company_workspace_name' then timestamp else null end) as verified_email_at,
         min(case when name = 'pageview_create_workspace' then timestamp else null end) as workspace_created_at
     from
         {{ ref('daily_website_traffic') }}
@@ -19,6 +19,29 @@ with signup_pages_pre as (
                 'pageview_create_workspace'
             )
     group by 1
+), signup_pages_pre_uet as (
+    select
+        uet.portal_customer_id as portal_customer_id,
+        min(case when name = 'pageview_verify_email' then timestamp else null end) as account_created_at,
+        min(case when name = 'pageview_company_workspace_name' then timestamp else null end) as verified_email_at,
+        min(case when name = 'pageview_create_workspace' then timestamp else null end) as workspace_created_at
+    from
+        {{ ref('user_events_telemetry') }} uet
+    where uet.name in
+            (
+                'pageview_verify_email',
+                'pageview_company_name',
+                'pageview_create_workspace'
+            ) and uet.portal_customer_id not in (select portal_customer_id from signup_pages_dwt_pre)
+    group by 1
+), signup_pages_pre as (
+    select 
+        *
+    from signup_pages_dwt_pre
+    union
+    select 
+        *
+    from signup_pages_pre_uet
 ), created_workspace as (
     select
         portal_events.context_traits_portal_customer_id as portal_customer_id,
