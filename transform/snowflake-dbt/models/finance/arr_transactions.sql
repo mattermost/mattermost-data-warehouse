@@ -5,7 +5,7 @@
   })
 }}
 
---v5 of arr transactions 
+--v5 of arr transactions 20220819
 --this query reflects arr transactions during the lifecycle of a paying self serve customer 
 --based on key input fields by sales ops on license_start_date__c license_end_date__c and amount 
 --in the salesforce opportunity table
@@ -99,6 +99,7 @@ with mrr as (
     ORDER BY PARENT_ID, account_id
 )
 --master data query
+--opportunity arr is calculated here
 ,d as (
     select
       acct.name as account_name
@@ -146,6 +147,7 @@ with mrr as (
     order by opp.accountid, opp.closedate asc
 )
 
+--calculates fields for expired arr and renewed arr where renewed arr may have expansion or contraction
 --determining expiring renewals against the won renewals
 --matching keys of expiring and renewals using for expiring the license end date and for renewals the start date won renewals
 --expiration net of renewals
@@ -303,10 +305,8 @@ licterm as (
     ,company_type
     ,cosize
     ,industry
-    --,accountsource
     ,geo
     ,country
-    --,type
     ,health_score 
     --below is the sales rep of the latest closed deal
     ,b.name as account_owner
@@ -346,6 +346,8 @@ select
     ,license_start_date
     ,license_end_date
     ,newlogo
+    ,account_start
+    ,dense_rank() over (partition by parent_id order by account_start) as child_no 
     ,trans_no
     ,opp_type
     ,term_months
@@ -353,14 +355,17 @@ select
     ,iff(term_months<=12,billing_amt,round(div0(billing_amt,term_months)*12,2)) as first_yr_bill
     ,opportunity_arr
     ,expire_arr
+    --renew_arr below includes expansion amount
     ,iff(trans_no = 1, 0,renewal_arr) as renew_arr
     ,case when report_month > last_day(current_date) then 0 else
         opportunity_arr + expire_arr end as arr_change
     ,sum(arr_change) over (partition by account_id order by trans_no) as ending_arr
+    --updated to reflect new arr for the first transaction of any child account or parent account in absence of child
+    --does not rely on new logo field
     ,iff(trans_no = 1, opportunity_arr,0) as new_arr
     --new looker fields
-    ,iff(arr_change>0,arr_change - new_arr,0) as expansion
-    ,iff(arr_change<0,arr_change - new_arr,0) as expire_and_contract
+    --,iff(arr_change>0,arr_change - new_arr,0) as expansion
+    --,iff(arr_change<0,arr_change - new_arr,0) as expire_and_contract
     ,case when license_active_calc = true and is_won = true and report_month <= last_day(current_date)
         then opportunity_arr 
         else 0 
@@ -376,7 +381,6 @@ select
     ,health_score
     ,account_owner
     ,opportunity_owner
-    ,account_start
     ,max_license
     ,beg_tenure_yr
     ,end_tenure_yr
@@ -385,10 +389,4 @@ select
     ,status_aligned
     ,is_won
     ,date_refreshed
-    --dormant fields to be removed from looker
-    ,expire_and_contract as reduction_arr
-    ,expansion as contract_expansion
-    ,0 as account_expansion
-    ,null as accountsource
-    ,null as type
 from final

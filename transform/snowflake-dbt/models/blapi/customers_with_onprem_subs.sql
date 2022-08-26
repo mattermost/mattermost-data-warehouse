@@ -57,7 +57,13 @@ WITH latest_credit_card_address AS (
             THEN true
             ELSE false
         END as is_renewed,
-        COALESCE(onprem_subscriptions.total_in_cents, 0) as renewed_from_total,
+        coalesce(
+        CASE 
+            WHEN subscriptions.renewed_from_sub_id is not null 
+            THEN invoices.total
+            ELSE onprem_subscriptions.total_in_cents
+            END
+            , 0) / 100.0 as renewed_from_total,
         COALESCE(subscriptions.license_id, onprem_subscriptions.id) as license_key,
         subscriptions.purchase_order_num,
         latest_credit_card_address.line1,
