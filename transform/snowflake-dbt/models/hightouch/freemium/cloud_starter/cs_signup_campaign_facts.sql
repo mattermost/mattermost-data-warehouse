@@ -7,14 +7,16 @@
 with signup_pages_account_created as (
     select
         daily_website_traffic.context_traits_portal_customer_id as portal_customer_id,
-        min(case when name = 'pageview_verify_email' then timestamp else null end) as account_created_at,
-        min(case when name = 'pageview_create_workspace' then timestamp else null end) as workspace_created_at
+        min(case when name = 'pageview_verify_email' or name = 'verify_email' then timestamp else null end) as account_created_at,
+        min(case when name = 'pageview_create_workspace' or name = 'create_workspace' then timestamp else null end) as workspace_created_at
     from
         {{ ref('daily_website_traffic') }}
     where daily_website_traffic.name in
             (
                 'pageview_verify_email',
-                'pageview_create_workspace'
+                'pageview_create_workspace',
+                'verify_email',
+                'create_workspace'
             )
     group by 1
 ), signup_pages_enter_code as (
