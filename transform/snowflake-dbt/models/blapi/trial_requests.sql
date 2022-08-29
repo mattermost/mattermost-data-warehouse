@@ -40,4 +40,4 @@ WITH lead AS (
     {% endif %}
 )
 
-SELECT * FROM trial_requests
+SELECT distinct(*) FROM trial_requests
