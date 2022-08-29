@@ -41,4 +41,4 @@ WITH lead AS (
     QUALIFY ROW_NUMBER() OVER (PARTITION BY trial_requests.id ORDER BY trial_requests.license_issued_at) = 1
 )
 
-SELECT distinct * FROM trial_requests
+SELECT * FROM trial_requests
