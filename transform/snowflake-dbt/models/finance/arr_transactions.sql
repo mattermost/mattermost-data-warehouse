@@ -340,8 +340,7 @@ select
     ,fiscal_quarter
     ,report_month
     ,report_date
-    --new field for looker
-    ,date_trunc('week',report_date)+4 as report_week
+    ,last_day(date_trunc('week',report_date),'week') as report_week
     ,closing_date
     ,license_start_date
     ,license_end_date
