@@ -59,8 +59,8 @@ with a as (
 ,d as (
     select 
         account_id, geo, company_type, company_size, industry,cohort_month, max(product) as product
-    
-    from arr_reporting  
+    --from arr_reporting  
+    from {{ ref( 'arr_reporting') }}
         group by 1,2,3,4,5,6
 )
 
