@@ -53,7 +53,7 @@ with mrr as (
     WHERE opp.iswon in (true,false)
         and opp.isclosed = true
         and opp.isdeleted = false
-        and opp.license_key__c not in (select distinct license_id from mrr)
+        and coalesce(opp.license_key__c,'null') not in (select distinct license_id from mrr)
     group by 1
     having arr >=1
     order by 1
