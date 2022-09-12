@@ -174,3 +174,4 @@ from signup_pages
     left join server_facts on signup_pages.portal_customer_id = server_facts.portal_customer_id
     -- left join sso_providers on signup_pages.portal_customer_id = sso_providers.portal_customer_id
     where lead_sync_eligible
+    and customer_facts.installation_id is not null
