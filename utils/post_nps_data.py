@@ -41,7 +41,10 @@ try:
     print("Out length: ", len(out))
     payload='{"text": "%s", "channel": "mattermost-nps-feedback"}' % out
     nps_webhook_url = os.getenv("NPS_WEBHOOK_URL")
-    print(nps_webhook_url)
+    print('DOES IT HAVE \\n')
+    print('\n' in nps_webhook_url)
+    print('|'+nps_webhook_url+'|')
+    print('|'+nps_webhook_url[:-1]+'|')
     print(payload)
     response = requests.post(
             nps_webhook_url, data=payload.encode('utf-8'),
