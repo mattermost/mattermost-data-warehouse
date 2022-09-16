@@ -44,8 +44,11 @@ try:
     print('DOES IT HAVE \\n')
     print('\n' in nps_webhook_url)
     print('|'+nps_webhook_url+'|')
-    print('|'+nps_webhook_url[:-1]+'|')
     print(payload)
+    print('DOES IT HAVE \\n AFTER STRIP')
+    print('\n' in nps_webhook_url)
+    nps_webhook_url = nps_webhook_url.strip('\n')
+    print(nps_webhook_url)
     response = requests.post(
             nps_webhook_url, data=payload.encode('utf-8'),
             headers={'Content-Type': 'application/json'}
