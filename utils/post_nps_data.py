@@ -40,18 +40,7 @@ try:
     out = tabulate(out, headers=['Feedback','Category','Score','Server Version','Installation Type','User Role','Customer Name'], tablefmt='github')
     payload='{"text": "%s", "channel": "mattermost-nps-feedback"}' % out
     nps_webhook_url = os.getenv("NPS_WEBHOOK_URL")
-<<<<<<< HEAD
     nps_webhook_url = nps_webhook_url.strip('\n')
-=======
-    print('DOES IT HAVE \\n')
-    print('\n' in nps_webhook_url)
-    print('|'+nps_webhook_url+'|')
-    print(payload)
-    print('DOES IT HAVE \\n AFTER STRIP')
-    print('\n' in nps_webhook_url)
-    nps_webhook_url = nps_webhook_url.strip('\n')
-    print(nps_webhook_url)
->>>>>>> master
     response = requests.post(
             nps_webhook_url, data=payload.encode('utf-8'),
             headers={'Content-Type': 'application/json'}
