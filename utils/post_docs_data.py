@@ -9,12 +9,12 @@ def format_row(row):
     return tuple(row)
 
 conn = snowflake.connector.connect(
-    user = # os.getenv("SNOWFLAKE_USER"),
-    password = # os.getenv("SNOWFLAKE_PASSWORD"),
-    account = # os.getenv("SNOWFLAKE_ACCOUNT"),
-    warehouse = # os.getenv("SNOWFLAKE_TRANSFORM_WAREHOUSE"),
-    database = # os.getenv("SNOWFLAKE_TRANSFORM_DATABASE"),
-    schema = # os.getenv("SNOWFLAKE_TRANSFORM_SCHEMA")
+    user = os.getenv("SNOWFLAKE_USER"),
+    password = os.getenv("SNOWFLAKE_PASSWORD"),
+    account = os.getenv("SNOWFLAKE_ACCOUNT"),
+    warehouse = os.getenv("SNOWFLAKE_TRANSFORM_WAREHOUSE"),
+    database = os.getenv("SNOWFLAKE_TRANSFORM_DATABASE"),
+    schema = os.getenv("SNOWFLAKE_TRANSFORM_SCHEMA")
     )
 
 try:
@@ -22,29 +22,26 @@ try:
 
     sql = f'''
     select distinct
-        mm_docs.timestamp::date as date,
-        mm_docs.rating as rating,
-        mm_docs.feedback as feedback,
+        coalesce(mm_docs.feedback, 'null') as feedback,
         mm_docs.context_page_path as path,
-        mm_docs.anonymous_id as anon_id
+        mm_docs.rating as rating
     from 
         ANALYTICS.WEB.MATTERMOST_DOCS_FEEDBACK as mm_docs
     where
-        date = current_date() - 1
+        mm_docs.timestamp::date = current_date() - 1
     order by
-        date desc
+        rating desc
     limit 500
     '''
 
     cur.execute(sql)
     out = cur.fetchall()
     out = tuple(map(lambda x: format_row(x) , out))
-    out = tabulate(out, headers=['Timestamp Date','User Id','Context Page Path','Rating','Feedback'], tablefmt='github')
-    payload='{"text": "%s", "channel": "town-square"}' % out
-    nps_webhook_url = "https://henryxuworkspace.cloud.mattermost.com/hooks/wdi7ajmz9tbxb8xqqcnxb15ter"
-    print('Value of webhook - ', nps_webhook_url[-4:] + '-' + nps_webhook_url[:4])
+    out = tabulate(out, headers=['Feedback','Path','Rating'], tablefmt='github')
+    payload='{"text": "%s", "channel": "mattermost-documentation-feedback"}' % out
+    docs_webhook_url = os.getenv("DOCS_WEBHOOK_URL")
     response = requests.post(
-            nps_webhook_url, data=payload.encode('utf-8'),
+            docs_webhook_url, data=payload.encode('utf-8'),
             headers={'Content-Type': 'application/json'}
         )
     if response.status_code != 200:
