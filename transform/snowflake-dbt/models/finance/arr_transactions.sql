@@ -53,7 +53,7 @@ with mrr as (
     WHERE opp.iswon in (true,false)
         and opp.isclosed = true
         and opp.isdeleted = false
-        and opp.license_key__c not in (select distinct license_id from mrr)
+        and coalesce(opp.license_key__c,'null') not in (select distinct license_id from mrr)
     group by 1
     having arr >=1
     order by 1
@@ -214,7 +214,9 @@ union
       ,opportunity_id
       ,max(case when iswon = true then close_date else null end) as close_date
       ,max(lic_start_date) as license_start
-      ,max(lic_end_date) as license_end
+      --min logic takes into account that some renewals are made for less than a year
+      ,min(lic_end_date) as license_end
+      --,max(lic_end_date) as license_end
       ,max(iswon) as is_won
       ,max(case when iswon = true then 'Renewal' else 'Expired' end) as opp_type
       ,max(case when iswon = true then term else 0 end) as term
