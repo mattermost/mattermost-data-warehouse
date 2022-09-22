@@ -42,12 +42,12 @@ default_args = {
 # Create the DAG
 dag = DAG("daily_job", default_args=default_args, schedule_interval="0 12 * * 1")
 
-def get_container_operator(task_name):
+def get_container_operator(task_name, task_path):
     cmd = f"""
         {clone_repo_cmd} &&
         cd mattermost-data-warehouse &&
         export PYTHONPATH="/opt/bitnami/airflow/dags/git/mattermost-data-warehouse/:$PYTHONPATH" &&
-        python utils/post_docs_data.py
+        python {task_path}
     """
     return KubernetesPodOperator(
         **pod_defaults,
@@ -69,7 +69,7 @@ def get_container_operator(task_name):
     )
 
 post_docs_feedback = get_container_operator(
-    "post-docs-feedback"
+    "post-docs-feedback", "utils/post_docs_data.py"
 )
 
 post_docs_feedback 
