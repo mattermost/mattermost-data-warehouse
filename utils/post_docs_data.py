@@ -19,7 +19,7 @@ conn = snowflake.connector.connect(
 
 try:
     cur = conn.cursor()
-
+    docs_webhook_url = os.getenv("DOCS_WEBHOOK_URL").strip('\n')
     sql = f'''
     select distinct
         coalesce(mm_docs.feedback, 'null') as feedback,
@@ -37,12 +37,11 @@ try:
     # airflow request run weekly 
     cur.execute(sql)
     out = cur.fetchall()
-    out = tuple(map(lambda x: format_row(x) , out))
     if len(out) == 0:
         payload = '{"text": "There were no reviews this week.", "channel": "mattermost-documentation-feedback"}'
     else:
+        out = tuple(map(lambda x: format_row(x) , out))
         out = tabulate(out, headers=['Feedback','Path','Rating'], tablefmt='github')
-        docs_webhook_url = os.getenv("DOCS_WEBHOOK_URL")
         payload='{"text": "%s", "channel": "mattermost-documentation-feedback"}' % out
     
     response = requests.post(
