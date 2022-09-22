@@ -20,7 +20,7 @@ from dags.kube_secrets import (
     SNOWFLAKE_TRANSFORM_SCHEMA,
     SNOWFLAKE_TRANSFORM_WAREHOUSE,
     SNOWFLAKE_TRANSFORM_DATABASE,
-    docs_WEBHOOK_URL
+    DOCS_WEBHOOK_URL
 )
 
 # Load the env vars into a dict and set Secrets
@@ -62,7 +62,7 @@ def get_container_operator(task_name):
             SNOWFLAKE_TRANSFORM_WAREHOUSE,
             SNOWFLAKE_TRANSFORM_SCHEMA,
             SNOWFLAKE_TRANSFORM_DATABASE,
-            docs_WEBHOOK_URL
+            DOCS_WEBHOOK_URL
         ],
         arguments=[cmd],
         dag=dag,
