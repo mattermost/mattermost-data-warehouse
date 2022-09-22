@@ -71,6 +71,9 @@ MATTERMOST_WEBHOOK_URL = Secret(
 NPS_WEBHOOK_URL = Secret(
     "env", "NPS_WEBHOOK_URL", "airflow", "NPS_WEBHOOK_URL"
 )
+DOCS_WEBHOOK_URL = Secret(
+    "env", "DOCS_WEBHOOK_URL", "airflow", "DOCS_WEBHOOK_URL"
+)
 
 # Permission Bot
 PERMISSION_BOT_USER = Secret(
