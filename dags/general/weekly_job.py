@@ -40,7 +40,7 @@ default_args = {
 }
 
 # Create the DAG
-dag = DAG("daily_job", default_args=default_args, schedule_interval="0 12 * * 1")
+dag = DAG("weekly_job", default_args=default_args, schedule_interval="0 12 * * 1")
 
 def get_container_operator(task_name, task_path):
     cmd = f"""
