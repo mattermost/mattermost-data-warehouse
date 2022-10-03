@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: netsuite_analytics
+    database: analytics
+    schema: netsuite_analytics
+    tables:
+      - name: transaction
+        description: 'Netsuite Main Transaction Table'
+      - name: transactionline
+      - name: customer
+      - name: accountingperiod
+      - name: accountingperiodfiscalcalendars
+      - name: account
+      - name: classification
+      - name: department
+      - name: expensecategory
+      - name: expensecategorysubsidiarymap
+      - name: item
+      - name: vendor
+      - name: vendorcategory
+
