@@ -24,7 +24,7 @@ try:
     sql = f'''select distinct feedback, subcategory as category, score, server_version, 
     case when sf.installation_id is null then 'Self-Hosted' 
     when sf.installation_id is not null then 'Cloud' end as INSTALLATION_TYPE,
-    user_role, lsf.customer_name
+    user_role, lsf.customer_name, lsf.license_email
     from ANALYTICS.MATTERMOST.NPS_USER_DAILY_SCORE nps
     left join mattermost.server_fact sf on nps.server_id = sf.server_id
     left join blp.license_server_fact lsf on nps.server_id = lsf.server_id 
@@ -37,7 +37,7 @@ try:
     cur.execute(sql)
     out = cur.fetchall()
     out = tuple(map(lambda x: format_row(x) , out))
-    out = tabulate(out, headers=['Feedback','Category','Score','Server Version','Installation Type','User Role','Customer Name'], tablefmt='github')
+    out = tabulate(out, headers=['Feedback','Category','Score','Server Version','Installation Type','User Role','Customer Name', 'License Email'], tablefmt='github')
     payload='{"text": "%s", "channel": "mattermost-nps-feedback"}' % out
     nps_webhook_url = os.getenv("NPS_WEBHOOK_URL")
     nps_webhook_url = nps_webhook_url.strip('\n')
