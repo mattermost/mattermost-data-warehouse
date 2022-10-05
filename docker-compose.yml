@@ -3,10 +3,12 @@ version: '3.7'
 services:
     dbt_image:
       image: fishtownanalytics/dbt:1.0.0
+      env_file:
+        - .dbt.env
       environment:
         DBT_PROFILES_DIR: /usr/local/dbt_profiles/
         SNOWFLAKE_LOAD_DATABASE: "RAW"
-        SNOWFLAKE_TRANSFORM_WAREHOUSE: "TRANSFORM_XS"
+        SNOWFLAKE_TRANSFORM_WAREHOUSE: "TRANSFORM_L"
         SNOWFLAKE_TRANSFORM_DATABASE: "ANALYTICS"
       restart: always
       command: bash -c "/bin/bash"
