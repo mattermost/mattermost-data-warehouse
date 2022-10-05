@@ -33,7 +33,7 @@ cloud_subscriptions AS (
     , COALESCE(am.account_sfid, c.cws_customer)                                               AS customer_id
     , COALESCE(am.account_name, INITCAP(SPLIT_PART(replace(s.cws_dns, '-', ' '), '.', 1)))    AS customer_name
     , INITCAP(SPLIT_PART(replace(s.cws_dns, '-', ' '), '.', 1))    AS company
-    , COALESCE(am.edition, ms.plan_name, 'Mattermost Cloud')       AS edition
+    , COALESCE(s.edition, am.edition, ms.plan_name, 'Mattermost Cloud')       AS edition
     , s.quantity                                                   AS users
     , FALSE                                                        AS trial
     , MIN(s.created::DATE)                                         AS issued_date
