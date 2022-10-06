@@ -33,7 +33,8 @@ WITH latest_credit_card_address AS (
         SPLIT_PART(customers.email, '@', 2) as domain,
         onprem_subscriptions.id as subscription_id,
         onprem_subscriptions.subscription_version_id,
-        onprem_subscriptions.previous_subscription_version_id,
+        renewed_from_blapi_subscription.subscription_version_id as previous_subscription_version_id,
+        renewed_from_blapi_subscription.stripe_charge_id as previous_stripe_charge_id,
         to_varchar(onprem_subscriptions.start_date, 'yyyy-mm-dd"T"hh24:mi:ss"Z"') as start_date,
         to_varchar(onprem_subscriptions.end_date, 'yyyy-mm-dd"T"hh24:mi:ss"Z"') as end_date,
         CASE 
@@ -94,6 +95,7 @@ WITH latest_credit_card_address AS (
         JOIN {{ source('blapi', 'products') }} ON onprem_subscriptions.sku = products.sku
         LEFT JOIN {{ ref('subscriptions') }} renewed_from_subscription
             ON subscriptions.renewed_from_sub_id = renewed_from_subscription.id
+        LEFT JOIN {{ ref('onprem_subscriptions') }} renewed_from_blapi_subscription ON subscriptions.id = renewed_from_blapi_subscription.stripe_id
         LEFT JOIN {{ ref('invoices') }} ON onprem_subscriptions.stripe_invoice_number = invoices.number
         JOIN latest_credit_card_address
             ON customers.id = latest_credit_card_address.customer_id
@@ -155,7 +157,10 @@ WITH latest_credit_card_address AS (
     JOIN {{ ref('opportunity') }}
         ON  UUID_STRING(
                 '78157189-82de-4f4d-9db3-88c601fbc22e',
-                customers_with_onprem_subs.subscription_version_id) = opportunity.dwh_external_id__c
+                customers_with_onprem_subs.previous_subscription_version_id) = opportunity.dwh_external_id__c
+                OR
+                customers_with_onprem_subs.previous_stripe_charge_id = opportunity.stripe_id__c
+
 ), customers_oli AS (
     SELECT
         customers_with_onprem_subs.stripe_charge_id,
