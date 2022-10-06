@@ -6,7 +6,7 @@
 }}
 
 --v5 of arr transactions 20220819
---this query reflects arr transactions during the lifecycle of a paying self serve customer 
+--this query reflects arr transactions during the lifecycle of a paying sales serve customer 
 --based on key input fields by sales ops on license_start_date__c license_end_date__c and amount 
 --in the salesforce opportunity table
 --logic then calculates corresponding opportunity transactions to create an ending arr balance by report month and rollfoward of activities
@@ -35,10 +35,15 @@ with mrr as (
         ls.issued_date,
         sub.status,
         sub.sfdc_migrated_opportunity_sfid
-   from analytics.blp.license_server_fact ls
-   left join  analytics.mattermost.excludable_servers es  on ls.server_id = es.server_id
-   left join analytics.stripe.subscriptions sub on sub.license_id = ls.license_id 
-        where ls.issued_date is not null
+   from {{ref('license_server_fact')}} ls 
+   --from analytics.blp.license_server_fact ls
+   left join {{ref('excludable_servers')}} es 
+   --left join  analytics.mattermost.excludable_servers es  
+        on ls.server_id = es.server_id
+   left join {{ref('subscriptions')}} sub
+   --left join analytics.stripe.subscriptions sub 
+        on sub.license_id = ls.license_id 
+    where ls.issued_date is not null
         and ls.edition in ('Cloud Professional')
         and es.reason is null
 )
@@ -133,12 +138,14 @@ with mrr as (
       --this field is not consistently populated and could be overwritten
       ,opp.original_opportunityid__c as original_id_renewed
       ,s.edition
-    --from analytics.orgm.opportunity opp
+      ,active_licenses__c as active_licenses
     from {{ ref( 'opportunity') }} opp
-    left join (select * from analytics.stripe.subscriptions where status = 'active') s 
+    --from analytics.orgm.opportunity opp
+    left join (select * from {{ref('subscriptions')}} where status = 'active') s 
+    --left join (select * from analytics.stripe.subscriptions where status = 'active') s 
         on s.license_id = opp.license_key__c
-    --left join ANALYTICS.ORGM.ACCOUNT acct
     left join   {{ ref( 'account') }} acct 
+    --left join ANALYTICS.ORGM.ACCOUNT acct
         on acct.sfid = opp.accountid
     WHERE opp.iswon =true
         and opp.isclosed = true
@@ -315,16 +322,20 @@ licterm as (
     ,u.name as opportunity_owner
     ,current_date as date_refreshed
     ,l.edition
+    ,l.active_licenses
     from master
     left join 
-
-      (select distinct opportunity_id, ownerid, close_date, license_start as start_date, license_end as end_date, license_active_sf, description, new_logo,edition from d) l 
-
+      (select distinct opportunity_id, ownerid, close_date, license_start as start_date, license_end as end_date, license_active_sf, description, new_logo,edition, active_licenses from d) l 
       on l.opportunity_id = master.opportunity_id
-    left join acct on acct.account_id = master.account_id
-    left join b on b.accountid = master.account_id
-    left join licterm on licterm.account_id = master.account_id
-    left join analytics.orgm.user u on u.sfid=l.ownerid
+    left join acct 
+      on acct.account_id = master.account_id
+    left join b 
+      on b.accountid = master.account_id
+    left join licterm 
+      on licterm.account_id = master.account_id
+    left join {{ref('user')}} u
+    --left join analytics.orgm.user u 
+      on u.sfid=l.ownerid
     order by master.account_name,trans_no
 )
 
@@ -352,6 +363,7 @@ select
     ,trans_no
     ,opp_type
     ,term_months
+    ,active_licenses
     ,billing_amt
     ,iff(term_months<=12,billing_amt,round(div0(billing_amt,term_months)*12,2)) as first_yr_bill
     ,opportunity_arr
