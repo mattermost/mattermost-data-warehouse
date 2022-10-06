@@ -75,7 +75,7 @@ Airflow DAGs that orchestrate ETL pipelines.
 ### Prerequisites
 
 - Docker & docker compose
-- Snowflake access with role `TRANSFORMER`
+- Snowflake access with proper roles (ask the team which role to use)
 
 ### Setup
 
