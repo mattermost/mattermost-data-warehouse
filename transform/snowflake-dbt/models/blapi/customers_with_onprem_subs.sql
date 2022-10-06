@@ -95,7 +95,7 @@ WITH latest_credit_card_address AS (
         JOIN {{ source('blapi', 'products') }} ON onprem_subscriptions.sku = products.sku
         LEFT JOIN {{ ref('subscriptions') }} renewed_from_subscription
             ON subscriptions.renewed_from_sub_id = renewed_from_subscription.id
-        LEFT JOIN {{ ref('onprem_subscriptions') }} renewed_from_blapi_subscription ON subscriptions.id = renewed_from_blapi_subscription.stripe_id
+        LEFT JOIN {{ ref('onprem_subscriptions') }} renewed_from_blapi_subscription ON subscriptions.renewed_from_sub_id = renewed_from_blapi_subscription.stripe_id
         LEFT JOIN {{ ref('invoices') }} ON onprem_subscriptions.stripe_invoice_number = invoices.number
         JOIN latest_credit_card_address
             ON customers.id = latest_credit_card_address.customer_id
