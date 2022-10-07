@@ -7,6 +7,10 @@
 
 --tested on snowflake for consistency of arr by month week and day
 --tested for parent child relationships with amounts matching salesforce
+--late renewal starts when renewal closes in the next month after expiry
+--added logic for late renewal when close date is <=90 later that license start 
+--and resurrection for cases when close date > license start
+--Expansion and contraction calculated for late renewals but not for resurrections
 
 with a as (
     select
@@ -35,24 +39,56 @@ with a as (
     ,sum(arr_delta) over (partition by account_id order by report_mo rows between unbounded preceding and 1 preceding) as acct_beg_arr
     ,sum(arr_delta) over (partition by account_id order by report_mo) as acct_end_arr
     ,sum(new_arr) as new
-    ,iff(arr_delta - new > 0 and acct_beg_arr =0,arr_delta - new,0) as resurrected
-    ,iff(arr_delta - new <0 and acct_end_arr != 0,arr_delta-new-resurrected,0) as contracted
+    ,case 
+        --resurrection or late renewal is a possibility
+        when
+            iff(arr_delta - new > 0 and acct_beg_arr =0,arr_delta - new,0) > 0 
+            and 
+        --but elapsed time is under 90 days
+            iff(arr_renewed>0,datediff('day',license_beg,close_day),0) <=90 
+        --value is arr opportunity above new and only if previous arr was zero
+        then iff(arr_delta - new > 0 and acct_beg_arr =0,arr_delta - new,0)
+        else 0
+     end as gross_late_renewal
+    ,iff(gross_late_renewal>0,last_value(arr_delta) over (partition by account_id order by report_mo rows between 2 preceding and 1 preceding),0) as previous_expire
+    ,previous_expire*-1 as late_renewal
+    ,case 
+        --resurrection is a possibility
+        when
+            iff(arr_delta - new > 0 and acct_beg_arr =0,arr_delta - new,0) > 0 
+            and 
+        --but elapsed time is over 90 days
+            iff(arr_renewed>0,datediff('day',license_beg,close_day),0) >90 
+        --value is arr opportunity above new and only if previous arr was zero
+        then iff(arr_delta - new > 0 and acct_beg_arr =0,arr_delta - new,0)
+        else 0
+     end as resurrected
+    ,case 
+        when gross_late_renewal > 0 and gross_late_renewal + previous_expire < 0
+        then gross_late_renewal + previous_expire 
+        else iff(arr_delta - new <0 and acct_end_arr != 0,arr_delta-new-resurrected,0) 
+        end as contracted
     ,iff(arr_delta - new <0 and acct_end_arr = 0,arr_delta-new-resurrected,0) as churned
+    --on time renewals based on original renewal amount
     ,iff(arr_renewed>0,(expire - churned -  contracted)*-1,0) as renewed
-    ,iff(datediff('day',report_mo,current_date)>30,churned,0) as above30days_expired
-    ,iff(arr_delta - new >0,arr_delta-new-resurrected,0) as expanded
+    ,case 
+        when gross_late_renewal > 0 and gross_late_renewal + previous_expire > 0
+        then gross_late_renewal + previous_expire 
+        else iff(arr_delta - new - late_renewal >0,arr_delta-new-resurrected-late_renewal,0) 
+     end as expanded
     ,sum(arr_delta) over (order by report_mo||report_day||account_id rows between unbounded preceding and 1 preceding) as total_beg_arr
     ,sum(arr_delta) over (order by report_mo||report_day||account_id) as total_end_arr
     ,total_end_arr - total_beg_arr as total_change
     ,iff(new>0,1,0) as cnt_new
+    --new
+    ,iff(late_renewal>0,1,0) as cnt_late_renewal
     ,iff(resurrected>0,1,0) as cnt_resurrected
     ,iff(contracted<0,1,0) as cnt_contracted
     ,iff(expanded>0,1,0) as cnt_expanded
     ,iff(expire<0,-1,0) as cnt_expired
     ,iff(arr_renewed>0,1,0) as cnt_renewed
     ,iff(churned<0,-1,0) as cnt_churned
-    ,iff(above30days_expired<0,-1,0) as cnt_above30_expired
-    ,cnt_new + cnt_resurrected + cnt_churned as cnt_changed   
+    ,cnt_new + cnt_late_renewal + cnt_resurrected + cnt_churned as cnt_changed   
 	,min(product) as product
 	,min(plan) as plan
 	,min(government) as government
@@ -73,15 +109,17 @@ from {{ ref( 'arr_transactions') }}
 order by report_mo,close_day,account_id
 )
 
-
 --append with calculations and dimensions separately to avoid window nesting
 select
 	a.account_id||'-'||report_mo as unique_key
+    --new 
+    ,dense_rank() over (partition by account_id order by license_beg, close_day) as trans_no
+    ,datediff('day',license_beg,close_day) as closing_delay
     ,a.*
     ,datediff('year',a.cohort_fiscal_yr,a.fiscal_yr) as fiscal_year_no
     ,round((datediff('day',a.cohort_month,fiscal_qtr))/30,0) as fiscal_month_no
     ,round((datediff('day',a.cohort_fiscal_qtr,fiscal_qtr))/90,0) as fiscal_quarter_no
-    ,dense_rank() over (partition by a.account_id order by report_mo) as trans_no 
+    --,dense_rank() over (partition by a.account_id order by report_mo) as trans_no 
     ,sum(cnt_changed) over (order by report_mo||report_day||account_id) as active_customers
     ,round(avg(acct_end_arr) over (partition by a.account_id),2) as average_arr
     ,case 
@@ -90,7 +128,6 @@ select
         when average_arr >100000 and average_arr <=500000 then '2_AvgARR_100Kupto500K'
         when average_arr >500000 then '1_AvgARR_above500K'
         else null
-    end as bin_avg_arr
+     end as bin_avg_arr
 from a
-
 order by report_mo desc, report_day desc, account_id desc
