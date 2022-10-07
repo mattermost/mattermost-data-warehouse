@@ -152,7 +152,8 @@ WITH latest_credit_card_address AS (
         customers_with_onprem_subs.subscription_id, 
         customers_with_onprem_subs.previous_subscription_version_id,
         opportunity.sfid as previous_opportunity_sfid,
-        opportunity.amount as up_for_renewal_arr
+        opportunity.amount as up_for_renewal_arr,
+        ROW_NUMBER() OVER (PARTITION BY customers_with_onprem_subs.stripe_charge_id ORDER BY opportunity.lastmodifieddate DESC) as row_num
     FROM customers_with_onprem_subs
     JOIN {{ ref('opportunity') }}
         ON  UUID_STRING(
@@ -208,3 +209,4 @@ JOIN customers_oli
     AND customers_oli.row_num = 1
 LEFT JOIN customers_previous_opportunity
     ON customers_with_onprem_subs.subscription_id = customers_previous_opportunity.subscription_id
+    AND customers_previous_opportunity.row_num = 1
