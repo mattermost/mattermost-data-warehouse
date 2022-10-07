@@ -33,8 +33,16 @@ WITH latest_credit_card_address AS (
         SPLIT_PART(customers.email, '@', 2) as domain,
         onprem_subscriptions.id as subscription_id,
         onprem_subscriptions.subscription_version_id,
-        renewed_from_blapi_subscription.subscription_version_id as previous_subscription_version_id,
-        renewed_from_blapi_subscription.stripe_charge_id as previous_stripe_charge_id,
+        CASE 
+            WHEN renewed_from_subscription.id is not null 
+            THEN coalesce(renewed_from_blapi_subscription.subscription_version_id, lag(onprem_subscriptions.subscription_version_id,1) over (partition by customers.id order by onprem_subscriptions.created_at))
+            ELSE NULL
+        END as previous_subscription_version_id,
+        CASE 
+            WHEN renewed_from_subscription.id is not null 
+            THEN coalesce(renewed_from_blapi_subscription.stripe_charge_id, lag(onprem_subscriptions.stripe_charge_id,1) over (partition by customers.id order by onprem_subscriptions.created_at))
+            ELSE NULL
+        END as previous_stripe_charge_id,
         to_varchar(onprem_subscriptions.start_date, 'yyyy-mm-dd"T"hh24:mi:ss"Z"') as start_date,
         to_varchar(onprem_subscriptions.end_date, 'yyyy-mm-dd"T"hh24:mi:ss"Z"') as end_date,
         CASE 
@@ -96,7 +104,7 @@ WITH latest_credit_card_address AS (
         LEFT JOIN {{ ref('subscriptions') }} renewed_from_subscription
             ON subscriptions.renewed_from_sub_id = renewed_from_subscription.id
         LEFT JOIN {{ ref('onprem_subscriptions') }} renewed_from_blapi_subscription ON subscriptions.renewed_from_sub_id = renewed_from_blapi_subscription.stripe_id
-        LEFT JOIN {{ ref('invoices') }} ON onprem_subscriptions.stripe_invoice_number = invoices.number
+        LEFT JOIN {{ ref('invoices') }} ON onprem_subscriptions.stripe_invoice_number = invoices.number 
         JOIN latest_credit_card_address
             ON customers.id = latest_credit_card_address.customer_id
             AND latest_credit_card_address.row_num = 1
@@ -161,6 +169,7 @@ WITH latest_credit_card_address AS (
                 customers_with_onprem_subs.previous_subscription_version_id) = opportunity.dwh_external_id__c
                 OR
                 customers_with_onprem_subs.previous_stripe_charge_id = opportunity.stripe_id__c
+        WHERE customers_with_onprem_subs.is_renewed
 
 ), customers_oli AS (
     SELECT
