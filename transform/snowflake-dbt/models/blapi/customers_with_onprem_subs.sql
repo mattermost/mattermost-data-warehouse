@@ -33,7 +33,16 @@ WITH latest_credit_card_address AS (
         SPLIT_PART(customers.email, '@', 2) as domain,
         onprem_subscriptions.id as subscription_id,
         onprem_subscriptions.subscription_version_id,
-        onprem_subscriptions.previous_subscription_version_id,
+        CASE 
+            WHEN renewed_from_subscription.id is not null 
+            THEN coalesce(renewed_from_blapi_subscription.subscription_version_id, lag(onprem_subscriptions.subscription_version_id,1) over (partition by customers.id order by onprem_subscriptions.created_at))
+            ELSE NULL
+        END as previous_subscription_version_id,
+        CASE 
+            WHEN renewed_from_subscription.id is not null 
+            THEN coalesce(renewed_from_blapi_subscription.stripe_charge_id, lag(onprem_subscriptions.stripe_charge_id,1) over (partition by customers.id order by onprem_subscriptions.created_at))
+            ELSE NULL
+        END as previous_stripe_charge_id,
         to_varchar(onprem_subscriptions.start_date, 'yyyy-mm-dd"T"hh24:mi:ss"Z"') as start_date,
         to_varchar(onprem_subscriptions.end_date, 'yyyy-mm-dd"T"hh24:mi:ss"Z"') as end_date,
         CASE 
@@ -94,7 +103,8 @@ WITH latest_credit_card_address AS (
         JOIN {{ source('blapi', 'products') }} ON onprem_subscriptions.sku = products.sku
         LEFT JOIN {{ ref('subscriptions') }} renewed_from_subscription
             ON subscriptions.renewed_from_sub_id = renewed_from_subscription.id
-        LEFT JOIN {{ ref('invoices') }} ON onprem_subscriptions.stripe_invoice_number = invoices.number
+        LEFT JOIN {{ ref('onprem_subscriptions') }} renewed_from_blapi_subscription ON subscriptions.renewed_from_sub_id = renewed_from_blapi_subscription.stripe_id
+        LEFT JOIN {{ ref('invoices') }} ON onprem_subscriptions.stripe_invoice_number = invoices.number 
         JOIN latest_credit_card_address
             ON customers.id = latest_credit_card_address.customer_id
             AND latest_credit_card_address.row_num = 1
@@ -150,12 +160,17 @@ WITH latest_credit_card_address AS (
         customers_with_onprem_subs.subscription_id, 
         customers_with_onprem_subs.previous_subscription_version_id,
         opportunity.sfid as previous_opportunity_sfid,
-        opportunity.amount as up_for_renewal_arr
+        opportunity.amount as up_for_renewal_arr,
+        ROW_NUMBER() OVER (PARTITION BY customers_with_onprem_subs.stripe_charge_id ORDER BY opportunity.lastmodifieddate DESC) as row_num
     FROM customers_with_onprem_subs
     JOIN {{ ref('opportunity') }}
         ON  UUID_STRING(
                 '78157189-82de-4f4d-9db3-88c601fbc22e',
-                customers_with_onprem_subs.subscription_version_id) = opportunity.dwh_external_id__c
+                customers_with_onprem_subs.previous_subscription_version_id) = opportunity.dwh_external_id__c
+                OR
+                customers_with_onprem_subs.previous_stripe_charge_id = opportunity.stripe_id__c
+        WHERE customers_with_onprem_subs.is_renewed
+
 ), customers_oli AS (
     SELECT
         customers_with_onprem_subs.stripe_charge_id,
@@ -203,3 +218,4 @@ JOIN customers_oli
     AND customers_oli.row_num = 1
 LEFT JOIN customers_previous_opportunity
     ON customers_with_onprem_subs.subscription_id = customers_previous_opportunity.subscription_id
+    AND customers_previous_opportunity.row_num = 1

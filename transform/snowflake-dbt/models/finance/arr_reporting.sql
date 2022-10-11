@@ -110,7 +110,7 @@ order by report_mo,close_day,account_id
 
 --append with calculations and dimensions separately to avoid window nesting
 select
-	a.account_id||'-'||report_mo as unique_key
+	  a.account_id||'-'||report_mo as unique_key
     ,dense_rank() over (partition by account_id order by license_beg, close_day) as trans_no
     ,datediff('day',license_beg,close_day) as closing_delay
     ,a.*
