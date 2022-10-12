@@ -127,7 +127,8 @@ with mrr as (
       --common to see license periods adjusted for co terminating deals
       ,round(datediff('day',license_start,license_end)/(365/12),0) as term
       ,opp.iswon
-      ,opp.type as opp_type
+      --logic for identifying renewals added as sales people do not necessarily tag opportunities correctly
+      ,iff(lower(opp.name) like '%renew%','Renewal',opp.type) as opp_type
       ,case when opp.new_logo__c is null then 'No' else opp.new_logo__c end as new_logo
       ,round(coalesce(opp.amount,2),0) as bill_amt
       ,case when term = 12 then bill_amt 
