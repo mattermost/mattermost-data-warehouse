@@ -24,6 +24,6 @@ WITH onprem_olis_to_sync AS (
     WHERE opportunity.id IS NULL AND opportunitylineitem.id IS NULL
     AND customers_with_onprem_subs.sfdc_migrated_opportunity_sfid IS NULL
     AND customers_with_onprem_subs.hightouch_sync_eligible
-    AND NOT customers_with_onprem_subs.is_renewed ## filtering out renewed from new subscriptions which are part of another model.
+    AND NOT customers_with_onprem_subs.is_renewed -- filtering out renewed from new subscriptions which are part of another model.
 )
 SELECT * FROM onprem_olis_to_sync
