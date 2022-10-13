@@ -1,0 +1,8 @@
+{
+  "status": {
+    "code": 404,
+    "is_success": true,
+    "user_message": "string",
+    "developer_message": "not found"
+  }
+}
