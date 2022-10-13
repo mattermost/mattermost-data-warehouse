@@ -17,6 +17,10 @@ data to other tools.
   * [Setup](#setup)
   * [Starting a bash shell with DBT](#starting-a-bash-shell-with-dbt)
   * [Building docs and serving them locally](#building-docs-and-serving-them-locally)
+* [Developing](#developing)
+  * [Requirements](#requirements)
+  * [Install dependencies](#install-dependencies)
+  * [Running tests](#running-tests)
 <!-- TOC -->
 
 ## Repository structure
@@ -31,8 +35,12 @@ data to other tools.
 ├── k8s                     <--- Pod definitions for Pipelinewise
 ├── load        
 │  └── snowflake            <--- Snowflake role definitions
+├── poetry.lock             <--- Pinned dependency versions
+├── pyproject.toml          <--- PEP-518 build system requirements
+├── requirements.txt        <--- Dependencies (deprecated)
 ├── README.md               <--- This file
-├── requirements.txt        <--- Dependencies
+├── requirements.txt        <--- Dependencies (deprecated)
+├── tests                   <--- Unit tests
 ├── transform
 │  ├── snowflake-dbt        <--- Snowflake DBT models
 │  └── sql                  <--- SQL scripts that get executed by DAGs
@@ -122,3 +130,27 @@ DBT_PROFILE_PATH=./transform/snowflake-dbt/profile make dbt-docs
 ```
 
 This command will generate the docs and serve them at [http://localhost:8081](http://localhost:8081).
+
+## Developing
+
+### Requirements
+
+- [Poetry](https://python-poetry.org/docs/#installation)
+
+### Install dependencies
+
+Run the following commands:
+```bash
+poetry install
+
+# Clearbit cannot be installed as part of poetry dependencies, as it's a really old dependency.
+poetry run pip install clearbit==0.1.7
+```
+
+### Running tests
+
+Tests are implemented using [pytest](https://docs.pytest.org/en/7.1.x/). Tests can be executed using poetry:
+
+```bash
+poetry run pytest
+```

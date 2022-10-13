@@ -1,0 +1,8 @@
+{
+  "status": {
+    "code": 200,
+    "is_success": true,
+    "user_message": "error",
+    "developer_message": "bad input"
+  }
+}

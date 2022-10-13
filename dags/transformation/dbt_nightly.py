@@ -31,6 +31,8 @@ from dags.kube_secrets import (
     TWITTER_ACCESS_SECRET,
     TWITTER_CONSUMER_KEY,
     TWITTER_CONSUMER_SECRET,
+    DBT_CLOUD_API_ACCOUNT_ID,
+    DBT_CLOUD_API_KEY,
 )
 
 # Load the env vars into a dict and set Secrets
@@ -72,12 +74,6 @@ dbt_seed_unscheduled = KubernetesPodOperator(
     arguments=[dbt_install_deps_and_seed_cmd],
     dag=seed_dag,
 )
-
-# dbt-run
-dbt_run_cmd = f"""
-    {dbt_install_deps_cmd} &&
-    SNOWFLAKE_TRANSFORM_WAREHOUSE=transform_l dbt run --profiles-dir profile --models tag:nightly
-"""
 
 dbt_seed_nightly = KubernetesPodOperator(
     **pod_defaults,
@@ -146,12 +142,19 @@ update_github_contributors = KubernetesPodOperator(
 )
 
 
-dbt_run = KubernetesPodOperator(
+dbt_run_cloud_nightly_cmd = f"""
+    {clone_and_setup_extraction_cmd} &&
+    python utils/run_dbt_cloud_job.py 19427 "Airflow dbt nightly"
+"""
+
+dbt_run_cloud_nightly = KubernetesPodOperator(
     **pod_defaults,
-    image=DBT_IMAGE,
-    task_id="dbt-run",
-    name="dbt-run",
+    image=DATA_IMAGE,
+    task_id="dbt-cloud-run-nightly",
+    name="dbt-cloud-run-nightly",
     secrets=[
+        DBT_CLOUD_API_ACCOUNT_ID,
+        DBT_CLOUD_API_KEY,
         SNOWFLAKE_ACCOUNT,
         SNOWFLAKE_USER,
         SNOWFLAKE_PASSWORD,
@@ -160,10 +163,14 @@ dbt_run = KubernetesPodOperator(
         SNOWFLAKE_TRANSFORM_SCHEMA,
         SSH_KEY,
     ],
-    env_vars=env_vars,
-    arguments=[dbt_run_cmd],
+    env_vars={
+        **env_vars,
+        "DBT_JOB_TIMEOUT": "3600"
+    },
+    arguments=[dbt_run_cloud_nightly_cmd],
     dag=dag,
 )
 
+
 # dbt_seed_nightly >> update_twitter >> dbt_run
-dbt_seed_nightly
+dbt_seed_nightly >> dbt_run_cloud_nightly

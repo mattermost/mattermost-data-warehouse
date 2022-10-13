@@ -1,0 +1,103 @@
+{
+  "data": {
+    "id": 10000,
+    "trigger_id": 0,
+    "account_id": 10001,
+    "project_id": 20001,
+    "job_definition_id": 0,
+    "status": 1,
+    "git_branch": "develop",
+    "git_sha": "#abcd123",
+    "status_message": "Success",
+    "dbt_version": "0.17.0",
+    "created_at": "2019-08-24T14:15:22Z",
+    "updated_at": "2019-08-24T14:15:22Z",
+    "dequeued_at": "2019-08-24T14:15:22Z",
+    "started_at": "2019-08-24T14:15:22Z",
+    "finished_at": "2019-08-24T14:15:22Z",
+    "last_checked_at": "2019-08-24T14:15:22Z",
+    "last_heartbeat_at": "2019-08-24T14:15:22Z",
+    "owner_thread_id": "string",
+    "executed_by_thread_id": "string",
+    "artifacts_saved": true,
+    "artifact_s3_path": "string",
+    "has_docs_generated": true,
+    "trigger": {
+      "id": 0,
+      "cause": "string",
+      "job_definition_id": 0,
+      "git_branch": "string",
+      "git_sha": "string",
+      "github_pull_request_id": 0,
+      "schema_override": "string",
+      "dbt_version_override": "0.18.0",
+      "threads_override": 8,
+      "target_name_override": "CI",
+      "generate_docs_override": true,
+      "timeout_seconds_override": 60,
+      "steps_override": [
+        "dbt run",
+        "dbt test",
+        "dbt source snapshot-freshness"
+      ],
+      "created_at": "2019-08-24T14:15:22Z"
+    },
+    "job": {
+      "id": 0,
+      "account_id": 1,
+      "project_id": 100,
+      "environment_id": 10,
+      "name": "Nightly run",
+      "dbt_version": "0.17.1",
+      "triggers": {
+        "github_webhook": true,
+        "git_provider_webhook": true,
+        "schedule": true,
+        "custom_branch_only": true
+      },
+      "execute_steps": [
+        "dbt run",
+        "dbt test",
+        "dbt source snapshot-freshness"
+      ],
+      "settings": {
+        "threads": 4,
+        "target_name": "prod"
+      },
+      "state": 0,
+      "generate_docs": true,
+      "schedule": {
+        "cron": "0 7 * * 1",
+        "date": {
+          "type": "every_day",
+          "days": [
+            0
+          ],
+          "cron": "string"
+        },
+        "time": {
+          "type": "every_hour",
+          "interval": 0,
+          "hours": [
+            0
+          ]
+        }
+      }
+    },
+    "duration": "00:00:12",
+    "queued_duration": "00:00:12",
+    "run_duration": "00:00:12",
+    "duration_humanized": "string",
+    "queued_duration_humanized": "string",
+    "run_duration_humanized": "string",
+    "finished_at_humanized": "string",
+    "status_humanized": "Queued",
+    "created_at_humanized": "string"
+  },
+  "status": {
+    "code": 200,
+    "is_success": true,
+    "user_message": "string",
+    "developer_message": "string"
+  }
+}

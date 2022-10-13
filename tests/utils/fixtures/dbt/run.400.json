@@ -1,0 +1,8 @@
+{
+  "status": {
+    "code": 400,
+    "is_success": false,
+    "user_message": "string",
+    "developer_message": "bad request"
+  }
+}
