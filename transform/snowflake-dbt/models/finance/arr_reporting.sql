@@ -80,7 +80,6 @@ with a as (
     ,sum(arr_delta) over (order by report_mo||report_day||account_id) as total_end_arr
     ,total_end_arr - total_beg_arr as total_change
     ,iff(new>0,1,0) as cnt_new
-    --new
     ,iff(late_renewal>0,1,0) as cnt_late_renewal
     ,iff(resurrected>0,1,0) as cnt_resurrected
     ,iff(contracted<0,1,0) as cnt_contracted
@@ -111,15 +110,13 @@ order by report_mo,close_day,account_id
 
 --append with calculations and dimensions separately to avoid window nesting
 select
-	a.account_id||'-'||report_mo as unique_key
-    --new 
+	  a.account_id||'-'||report_mo as unique_key
     ,dense_rank() over (partition by account_id order by license_beg, close_day) as trans_no
     ,datediff('day',license_beg,close_day) as closing_delay
     ,a.*
     ,datediff('year',a.cohort_fiscal_yr,a.fiscal_yr) as fiscal_year_no
     ,round((datediff('day',a.cohort_month,fiscal_qtr))/30,0) as fiscal_month_no
     ,round((datediff('day',a.cohort_fiscal_qtr,fiscal_qtr))/90,0) as fiscal_quarter_no
-    --,dense_rank() over (partition by a.account_id order by report_mo) as trans_no 
     ,sum(cnt_changed) over (order by report_mo||report_day||account_id) as active_customers
     ,round(avg(acct_end_arr) over (partition by a.account_id),2) as average_arr
     ,case 
@@ -129,5 +126,11 @@ select
         when average_arr >500000 then '1_AvgARR_above500K'
         else null
      end as bin_avg_arr
+    --positive when tcv is for more than a year
+    --negative when tcv is for less than a year 
+    ,(tcv-arr) as multi_yr
+    ,(tcv) as gross_booking
+    --netbooking also equal to new + resurrected + expanded + multi_yr
+    ,(tcv-renewed-late_renewal) as net_booking
 from a
 order by report_mo desc, report_day desc, account_id desc
