@@ -1,0 +1,73 @@
+[tool.poetry]
+name = "mattermost-data-warehouse"
+version = "0.1.0"
+description = "A set of tools for managing data at Mattermost's data warehouse"
+authors = ["Munish Sharma <munish.sharma@mattermost.com>", "Ioannis Foukarakis <ioannis.foukarakis@mattermost.com>"]
+readme = "README.md"
+packages = [
+    {include = "billing"},
+    {include = "extract"},
+    {include = "transform"},
+    {include = "utils"},
+]
+exclude = [
+    ".",
+    "dags",
+    "dags/billing/*"
+]
+
+[tool.poetry.dependencies]
+python = "^3.7.10"
+boto3 = "1.7.84"
+certifi = "2018.8.24"
+chardet = "3.0.4"
+configparser = "5.0.2"
+fire = "0.1.3"
+henry = "0.1.1"
+idna = "2.7"
+ipwhois = "1.2.0"
+ipython = "7.23.1"
+keyrings-alt = "4.0.2"
+lxml = "4.6.3"
+jinja2 = "2.10.3"
+oauth2client = "4.1.3"
+pandas = "1.2.1"
+pyasn1-modules = "^0.2.8"
+pybamboohr = "0.7.1"
+python-dateutil = "2.8.1"
+pytz = "2018.4"
+pyyaml = "5.1"
+remarshal = "0.10.0"
+requests = "2.20"
+singer-python = "5.0.15"
+user-agents = "2.1"
+simple-salesforce = "0.75.3"
+salesforce-bulk = "2.1.0"
+six = "1.12.0"
+snowflake-sqlalchemy = "1.2.0"
+target-stitch = "1.8.1"
+tldextract = "3.1.0"
+toolz = "0.11.1"
+tweepy = "3.9.0"
+xenon = "0.7"
+zeep = "4.0.0"
+snowflake-connector-python = {extras = ["pandas"], version = "^2.8.0"}
+gitlabdata = { git = "https://gitlab.com/gitlab-data/gitlab-data-utils.git", tag = "v0.0.2" }
+numpy = "1.21.1"
+setuptools = "57.5.0"
+
+psycopg2-binary = "^2.9.4"
+urllib3 = "1.23"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.1.3"
+pylint = "^2.15.4"
+pytest-responses = "^0.5.1"
+pytest-mock = "^3.10.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+addopts = "--ignore=dags"
