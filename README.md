@@ -143,3 +143,10 @@ poetry install
 # Clearbit cannot be installed as part of poetry dependencies, as it's a really old dependency.
 poetry run pip install clearbit==0.1.7
 ```
+
+### Adding dependencies
+
+Additional dependencies can be specified at `pyproject.toml`. [Poetry's documentation](https://python-poetry.org/docs/basic-usage/#specifying-dependencies) 
+provides examples. Please prefer using `poetry` CLI, as it also updates `poetry.lock` file and "pins" any new dependencies.
+
+> Note that currently there's a `requirements.txt` file. This file will be deprecated.
