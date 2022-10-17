@@ -3,16 +3,13 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+
 from dags.airflow_utils import (
     DATA_IMAGE,
-    DBT_IMAGE,
-    dbt_install_deps_and_seed_cmd,
-    dbt_install_deps_cmd,
     clone_and_setup_extraction_cmd,
     mm_failed_task,
     pod_defaults,
     pod_env_vars,
-    xs_warehouse,
 )
 from dags.kube_secrets import (
     SNOWFLAKE_ACCOUNT,
@@ -21,16 +18,10 @@ from dags.kube_secrets import (
     SNOWFLAKE_TRANSFORM_SCHEMA,
     SNOWFLAKE_TRANSFORM_WAREHOUSE,
     SNOWFLAKE_USER,
-    AWS_ACCESS_KEY_ID,
-    AWS_SECRET_ACCESS_KEY,
     GITHUB_TOKEN,
-    PG_IMPORT_BUCKET,
-    HEROKU_POSTGRESQL_URL,
     SSH_KEY,
-    TWITTER_ACCESS_KEY,
-    TWITTER_ACCESS_SECRET,
-    TWITTER_CONSUMER_KEY,
-    TWITTER_CONSUMER_SECRET,
+    DBT_CLOUD_API_ACCOUNT_ID,
+    DBT_CLOUD_API_KEY,
 )
 
 # Load the env vars into a dict and set Secrets
@@ -49,79 +40,20 @@ default_args = {
     "start_date": datetime(2019, 1, 1, 0, 0, 0),
 }
 
-# Create the DAG
-dag = DAG("dbt_nightly", default_args=default_args, schedule_interval="0 7 * * *")
+doc_md = """
+### Nightly DBT dag
 
-seed_dag = DAG("dbt_seeds", default_args=default_args, schedule_interval=None)
+#### Purpose
+This DAG triggers nightly tasks:
+- Trigger DBT models with `nightly` tag.
+- Update github contributors. 
 
-dbt_seed_unscheduled = KubernetesPodOperator(
-    **pod_defaults,
-    image=DBT_IMAGE,
-    task_id="dbt-seed-unscheduled",
-    name="dbt-seed-unscheduled",
-    secrets=[
-        SNOWFLAKE_ACCOUNT,
-        SNOWFLAKE_USER,
-        SNOWFLAKE_PASSWORD,
-        SNOWFLAKE_TRANSFORM_ROLE,
-        SNOWFLAKE_TRANSFORM_WAREHOUSE,
-        SNOWFLAKE_TRANSFORM_SCHEMA,
-        SSH_KEY,
-    ],
-    env_vars=env_vars,
-    arguments=[dbt_install_deps_and_seed_cmd],
-    dag=seed_dag,
-)
-
-# dbt-run
-dbt_run_cmd = f"""
-    {dbt_install_deps_cmd} &&
-    SNOWFLAKE_TRANSFORM_WAREHOUSE=transform_l dbt run --profiles-dir profile --models tag:nightly
+#### Notes
+- DAG was previously running dbt seed. This option has been removed.
 """
 
-dbt_seed_nightly = KubernetesPodOperator(
-    **pod_defaults,
-    image=DBT_IMAGE,
-    task_id="dbt-seed",
-    name="dbt-seed",
-    secrets=[
-        SNOWFLAKE_ACCOUNT,
-        SNOWFLAKE_USER,
-        SNOWFLAKE_PASSWORD,
-        SNOWFLAKE_TRANSFORM_ROLE,
-        SNOWFLAKE_TRANSFORM_WAREHOUSE,
-        SNOWFLAKE_TRANSFORM_SCHEMA,
-        SSH_KEY,
-    ],
-    env_vars=env_vars,
-    arguments=[dbt_install_deps_and_seed_cmd],
-    dag=dag,
-)
-
-# update_twitter_cmd = f"""
-#     {clone_and_setup_extraction_cmd} &&
-#     python utils/twitter_mentions.py
-# """
-
-# update_twitter = KubernetesPodOperator(
-#     **pod_defaults,
-#     image=DATA_IMAGE,
-#     task_id="update-twitter",
-#     name="update-twitter",
-#     secrets=[
-#         SNOWFLAKE_USER,
-#         SNOWFLAKE_PASSWORD,
-#         SNOWFLAKE_ACCOUNT,
-#         SNOWFLAKE_TRANSFORM_WAREHOUSE,
-#         TWITTER_ACCESS_KEY,
-#         TWITTER_ACCESS_SECRET,
-#         TWITTER_CONSUMER_KEY,
-#         TWITTER_CONSUMER_SECRET,
-#     ],
-#     env_vars=env_vars,
-#     arguments=[update_twitter_cmd],
-#     dag=dag,
-# )
+# Create the DAG
+dag = DAG("dbt_nightly", default_args=default_args, schedule_interval="0 7 * * *", doc_md=doc_md)
 
 update_github_contributors_cmd = f"""
     {clone_and_setup_extraction_cmd} &&
@@ -146,12 +78,19 @@ update_github_contributors = KubernetesPodOperator(
 )
 
 
-dbt_run = KubernetesPodOperator(
+dbt_run_cloud_nightly_cmd = f"""
+    {clone_and_setup_extraction_cmd} &&
+    python utils/run_dbt_cloud_job.py 19427 "Airflow dbt nightly"
+"""
+
+dbt_run_cloud_nightly = KubernetesPodOperator(
     **pod_defaults,
-    image=DBT_IMAGE,
-    task_id="dbt-run",
-    name="dbt-run",
+    image=DATA_IMAGE,
+    task_id="dbt-cloud-run-nightly",
+    name="dbt-cloud-run-nightly",
     secrets=[
+        DBT_CLOUD_API_ACCOUNT_ID,
+        DBT_CLOUD_API_KEY,
         SNOWFLAKE_ACCOUNT,
         SNOWFLAKE_USER,
         SNOWFLAKE_PASSWORD,
@@ -160,10 +99,13 @@ dbt_run = KubernetesPodOperator(
         SNOWFLAKE_TRANSFORM_SCHEMA,
         SSH_KEY,
     ],
-    env_vars=env_vars,
-    arguments=[dbt_run_cmd],
+    env_vars={
+        **env_vars,
+        "DBT_JOB_TIMEOUT": "3600"
+    },
+    arguments=[dbt_run_cloud_nightly_cmd],
     dag=dag,
 )
 
-# dbt_seed_nightly >> update_twitter >> dbt_run
-dbt_seed_nightly
+
+dbt_run_cloud_nightly
