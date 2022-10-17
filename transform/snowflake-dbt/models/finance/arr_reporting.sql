@@ -70,7 +70,7 @@ with a as (
         end as contracted
     ,iff(arr_delta - new <0 and acct_end_arr = 0,arr_delta-new-resurrected,0) as churned
     --on time renewals based on original renewal amount
-    ,iff(arr_renewed>0,(expire - churned -  contracted)*-1,0) as renewed
+    ,iff(arr_renewed>0 and expire <0,(expire - churned -  contracted)*-1,0) as renewed
     ,case 
         when gross_late_renewal > 0 and gross_late_renewal + previous_expire > 0
         then gross_late_renewal + previous_expire 
