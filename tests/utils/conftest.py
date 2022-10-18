@@ -4,6 +4,7 @@ import pandas as pd
 import json
 import pytest
 
+
 from responses import Response
 
 
@@ -72,3 +73,9 @@ def load_dataset():
             return pd.DataFrame(json.load(fp))
 
     return _load_dataset
+
+
+@pytest.fixture()
+def user_agent_df():
+    with open(Path(__file__).parent / 'fixtures' / 'user_agent' / 'dataset.json') as fp:
+        return pd.DataFrame(json.load(fp))
