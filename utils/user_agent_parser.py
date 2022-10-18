@@ -5,14 +5,7 @@ import sys
 from extract.utils import snowflake_engine_factory, execute_query, execute_dataframe
 import math
 
-
-def parse_user_agent():
-    engine = snowflake_engine_factory(os.environ, "TRANSFORMER", "util")
-    """ This function searches for and parses all available user agents received via telemetry data that are
-    not currently in the analytics.mattermost.user_agent_registry table."""
-
-    # CREATE USER_AGENT_REGISTRY IF IT DOES NOT ALREADY EXIST.
-    query = f"""
+CREATE_TABLE_QUERY = f"""
     CREATE TABLE IF NOT EXISTS analytics.WEB.user_agent_registry
 (
     context_useragent VARCHAR,
@@ -25,10 +18,7 @@ def parse_user_agent():
     device_model      VARCHAR
 );"""
 
-    execute_query(engine, query)
-
-    # UNION ALL SOURCES OF CONTEXT_USERAGENT DATA THAT ARE NOT CURRENTLY IN THE USER_AGENT_REGISTRY TABLE.
-    query = f"""
+GET_USER_AGENT_STRINGS_QUERY = f"""
     SELECT *
     FROM (
         SELECT COALESCE(ANALYTICS.EVENTS.USER_EVENTS_TELEMETRY.CONTEXT_USER_AGENT, ANALYTICS.EVENTS.USER_EVENTS_TELEMETRY.CONTEXT_USERAGENT) AS CONTEXT_USERAGENT
@@ -65,7 +55,17 @@ def parse_user_agent():
     GROUP BY 1;
     """
 
-    df = execute_dataframe(engine, query)
+
+def parse_user_agent():
+    engine = snowflake_engine_factory(os.environ, "TRANSFORMER", "util")
+    """ This function searches for and parses all available user agents received via telemetry data that are
+    not currently in the analytics.mattermost.user_agent_registry table."""
+
+    # CREATE USER_AGENT_REGISTRY IF IT DOES NOT ALREADY EXIST.
+    execute_query(engine, CREATE_TABLE_QUERY)
+
+    # UNION ALL SOURCES OF CONTEXT_USERAGENT DATA THAT ARE NOT CURRENTLY IN THE USER_AGENT_REGISTRY TABLE.
+    df = execute_dataframe(engine, GET_USER_AGENT_STRINGS_QUERY)
 
     if (
         len(df) == 0

@@ -1,6 +1,10 @@
 from pathlib import Path
 
+import json
+
+import pandas as pd
 import pytest
+
 
 from responses import Response
 
@@ -26,3 +30,9 @@ def given_request_to(responses):
             responses.add(rsp)
 
     return _given_request_to
+
+
+@pytest.fixture()
+def user_agent_df():
+    with open(Path(__file__).parent / 'fixtures' / 'user_agent' / 'dataset.json') as fp:
+        return pd.DataFrame(json.load(fp))
