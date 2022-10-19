@@ -1,0 +1,17 @@
+{
+  "data": {
+    "organization": {
+      "repositories": {
+        "pageInfo": {
+          "endCursor": "cursor-value",
+          "hasNextPage": false
+        },
+        "nodes": [
+          {
+            "name": "focalboard"
+          }
+        ]
+      }
+    }
+  }
+}

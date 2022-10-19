@@ -7,6 +7,12 @@ from utils.run_dbt_cloud_job import trigger_dbt_run, poll_dbt_run
 EXPECTED_RUN_TRIGGER_URL = "https://cloud.getdbt.com/api/v2/accounts/1001/jobs/101/run/"
 EXPECTED_RUN_POLL_URL = "https://cloud.getdbt.com/api/v2/accounts/1001/runs/42/"
 
+# Customize defaults for given_request_to
+__MOCK_REQUEST_DEFAULTS = {
+    'dir': 'dbt',
+    'headers': {"Authorization": f"Token test-dbt-key", "Content-Type": "application/json"}
+}
+
 
 def test_should_trigger_run(responses, given_request_to):
     # GIVEN: DBT cloud ready to accept job

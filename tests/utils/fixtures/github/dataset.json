@@ -1,0 +1,62 @@
+[
+  {
+    "PR_NUMBER": 1,
+    "MERGED_AT": "2015-06-15T18:01:11Z",
+    "AUTHOR": "user-a",
+    "REPO": "mattermost-server"
+  },
+  {
+    "PR_NUMBER": 2,
+    "MERGED_AT": "2015-06-15T18:01:37Z",
+    "AUTHOR": "user-a",
+    "REPO": "mattermost-server"
+  },
+  {
+    "PR_NUMBER": 3,
+    "MERGED_AT": "2015-06-15T18:02:24Z",
+    "AUTHOR": "user-b",
+    "REPO": "mattermost-server"
+  },
+  {
+    "PR_NUMBER": 4,
+    "MERGED_AT": "2015-07-07T12:44:29Z",
+    "AUTHOR": "user-a",
+    "REPO": "mattermost-server"
+  },
+  {
+    "PR_NUMBER": 5,
+    "MERGED_AT": "2015-07-07T19:51:03Z",
+    "AUTHOR": "user-c",
+    "REPO": "mattermost-server"
+  },
+  {
+    "PR_NUMBER": 6,
+    "MERGED_AT": "2015-07-08T07:12:08Z",
+    "AUTHOR": "user-d",
+    "REPO": "mattermost-server"
+  },
+  {
+    "PR_NUMBER": 1,
+    "MERGED_AT": "2015-06-15T18:01:11Z",
+    "AUTHOR": "user-a",
+    "REPO": "docs"
+  },
+  {
+    "PR_NUMBER": 2,
+    "MERGED_AT": "2015-06-15T18:01:37Z",
+    "AUTHOR": "user-k",
+    "REPO": "docs"
+  },
+  {
+    "PR_NUMBER": 1,
+    "MERGED_AT": "2015-06-15T18:01:11Z",
+    "AUTHOR": "user-b",
+    "REPO": "focalboard"
+  },
+  {
+    "PR_NUMBER": 2,
+    "MERGED_AT": "2015-06-15T18:01:37Z",
+    "AUTHOR": "user-q",
+    "REPO": "focalboard"
+  }
+]

@@ -138,8 +138,9 @@ def contributors():
         )
     except Exception as e:
         print(e)
-        connection.close()
         return
+    finally:
+        connection.close()
 
 
 if __name__ == "__main__":
