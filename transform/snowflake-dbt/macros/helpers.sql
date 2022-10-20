@@ -457,16 +457,3 @@ select get_sys_var({{ var_name }})
         AND o._sdc_sequence = oo.seq
         AND o._sdc_batched_at = oo.batch
 {%- endmacro %}
-
-{% macro convert_bytes(bytes, output, precision=2)%}
-    {%- if {output} == 'b' %}
-        {%- set return_bytes = {{bytes}} -%}
-    {%- elif {output} == 'kb' %}
-        {%- set return_bytes = {{({{ bytes }} / 1024)::numeric(16, {{ precision }})}} -%}
-    {%- elif {output} == 'mb' %}
-        {%- set return_bytes = {{({{ bytes }} / 1048576)::numeric(16, {{ precision }})}} -%}
-    {%- elif {output} == 'gb' %}
-        {%- set return_bytes = {{({{ bytes }} / 1073741824)::numeric(16, {{ precision }})}} -%}
-    {% end if -%}
-    {{ return(return_bytes) }}
-{% endmacro%}
