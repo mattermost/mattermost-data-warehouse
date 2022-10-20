@@ -48,6 +48,7 @@ with existing_leads as (
     group by 1
 ), server_facts as(
     select 
+        {{convert_bytes('server_facts_pre.storage_bytes', 'gb', 3)}} as storage,
         server_facts_pre.*, 
         existing_leads.sfid, 
         existing_leads.dwh_external_id__c 
