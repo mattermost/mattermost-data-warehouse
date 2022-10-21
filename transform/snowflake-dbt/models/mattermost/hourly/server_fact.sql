@@ -121,7 +121,8 @@ WITH sdd AS (
         , max_time
         , max_date
         , context_ip
-        , context_request_ip  
+        , context_request_ip
+        , storage_bytes  
         FROM {{ source('mm_telemetry_prod', 'activity') }} s1 
         JOIN max_rudder_time s2
           ON s1.user_id = s2.server_id 
@@ -193,6 +194,7 @@ WITH sdd AS (
         , max(COALESCE(r.outgoing_webhooks, s.outgoing_webhooks)) as outgoing_webhooks
         , max(COALESCE(r.max_time, s.max_time)) AS max_timestamp
         , MAX(COALESCE(r.context_ip, r.context_request_ip)) AS last_ip_address
+        , MAX(r.storage_bytes) as storage_bytes
       FROM rudder_activity r
       FULL OUTER JOIN segment_activity s
         ON r.user_id = s.user_id and r.max_date = s.max_date
@@ -427,6 +429,7 @@ WITH sdd AS (
         , max(server_activity.guest_accounts) as guest_accounts
         , max(server_activity.incoming_webhooks) as incoming_webhooks
         , max(server_activity.outgoing_webhooks) as outgoing_webhooks
+        , max(server_activity.storage_bytes) as storage_bytes
         , max(fba.boards) as boards
         , max(fba.boards_views) as boards_views
         , max(fba.boards_cards) as boards_cards
