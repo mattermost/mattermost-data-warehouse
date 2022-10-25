@@ -137,7 +137,7 @@ dates as (
       , CASE WHEN s1.server_id IS NULL AND s2.server_id IS NULL THEN TRUE ELSE FALSE END AS tracking_disabled
       , CASE WHEN s1.occurrences > 1 OR s2.occurrences > 1 THEN TRUE ELSE FALSE END      AS has_dupes
       , CASE WHEN coalesce(s1.ip_count, NULL) > 1 THEN TRUE ELSE FALSE END               AS has_multi_ips
-      , coalesce(s2.timestamp, s1.timestamp)                                                     AS timestamp
+      , coalesce(s1.timestamp, s2.timestamp)                                                     AS timestamp
       , {{ dbt_utils.surrogate_key(['d.date', 'd.server_id']) }}                           AS id
       , CASE WHEN COALESCE(s2.database_version, NULL) IS NULL THEN
           MAX(COALESCE(s2.database_version, NULL)) OVER (PARTITION BY d.server_id ORDER BY d.date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)
