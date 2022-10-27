@@ -1,7 +1,7 @@
 import pytest
 from mock import call
 from extract.s3_extract.stage_import import extract_from_stage, diagnostics_import, get_diagnostics_pattern, \
-    push_proxy_import, get_path, get_push_proxy_pattern
+    push_proxy_import, get_path, get_push_proxy_pattern, licenses_import
 
 
 def test_extract_from_stage(mock_snowflake):
@@ -78,6 +78,18 @@ def test_push_proxy_import(mocker, mock_environment, location, table, stage, zon
 
     # THEN: expect extract to have been called once
     mock_extract.assert_called_once_with(table, stage, "push_proxy", f"AWSLogs/test-aws-account-id/elasticloadbalancing/{zone}", ".*2022\\/10\\/01\\/.*", mock_environment)
+
+
+def test_licenses_import(mocker, mock_environment):
+    # GIVEN: environment configured for handling two diagnostic imports -- see mock_environment
+    # GIVEN: calls to extract from stage are captured
+    mock_extract = mocker.patch("extract.s3_extract.stage_import.extract_from_stage")
+
+    # WHEN: license job is triggered for a specific date
+    licenses_import("2022-10-01")
+
+    # THEN: expect extract to have been called once
+    mock_extract.assert_called_once_with("licenses", "licenses_stage", "licenses", "2022-10-01", ".*2022-10-01.csv", mock_environment)
 
 
 def _flatten_whitespaces(text):
