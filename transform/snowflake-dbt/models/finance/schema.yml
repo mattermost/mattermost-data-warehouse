@@ -44,3 +44,14 @@ models:
         tests:
           - not_null
 
+  - name: arr_vintages
+    description: Grouping of arr_reporting into a shape friendly for vintage reporting without gaps on months
+
+  - name: arr_ltv
+    description: Grouping of arr_vintages into shape friendly for ltv calculations
+    columns:
+      - name: unique_key
+        tests:
+          - not_null
+
+
