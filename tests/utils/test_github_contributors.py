@@ -10,7 +10,7 @@ __MOCK_REQUEST_DEFAULTS = {
 GITHUB_GRAPHQL_URL = "https://api.github.com/graphql"
 
 
-def test_contributors(responses, given_request_to, mock_snowflake, load_dataset):
+def test_contributors(responses, given_request_to, mock_snowflake, mock_snowflake_pandas, load_dataset):
     # GIVEN: repo query returns two pages of results
     given_request_to(GITHUB_GRAPHQL_URL, "repo.page.1.json", method="POST")
     given_request_to(GITHUB_GRAPHQL_URL, "repo.page.2.json", method="POST")
@@ -20,7 +20,8 @@ def test_contributors(responses, given_request_to, mock_snowflake, load_dataset)
     given_request_to(GITHUB_GRAPHQL_URL, "focalboard.page.1.json", method="POST")
 
     # GIVEN: mock snowflake connection
-    _, mock_connection, _, mock_to_sql = mock_snowflake("utils.github_contributors")
+    _, mock_connection, _ = mock_snowflake("utils.github_contributors")
+    _, mock_to_sql = mock_snowflake_pandas("utils.github_contributors")
 
     # WHEN: request to load contributors
     contributors()
@@ -42,12 +43,14 @@ def test_contributors(responses, given_request_to, mock_snowflake, load_dataset)
     mock_connection.close.assert_called_once()
 
 
-def test_contributors_fail_to_get_repos(responses, given_request_to, mock_snowflake, load_dataset):
+def test_contributors_fail_to_get_repos(responses, given_request_to, mock_snowflake, mock_snowflake_pandas,
+                                        load_dataset):
     # GIVEN: repo query fails due to authentication error
     given_request_to(GITHUB_GRAPHQL_URL, "auth.error.json", method="POST", status=401)
 
     # GIVEN: mock snowflake connection
-    _, mock_connection, _, mock_to_sql = mock_snowflake("utils.github_contributors")
+    _, mock_connection, _ = mock_snowflake("utils.github_contributors")
+    _, mock_to_sql = mock_snowflake_pandas("utils.github_contributors")
 
     # WHEN: request to load contributors
     contributors()
@@ -61,7 +64,8 @@ def test_contributors_fail_to_get_repos(responses, given_request_to, mock_snowfl
     mock_connection.close.assert_not_called()
 
 
-def test_contributors_fail_to_get_repo_details(responses, given_request_to, mock_snowflake, load_dataset):
+def test_contributors_fail_to_get_repo_details(responses, given_request_to, mock_snowflake, mock_snowflake_pandas,
+                                               load_dataset):
     # GIVEN: repo query returns two pages of results
     given_request_to(GITHUB_GRAPHQL_URL, "repo.page.1.json", method="POST")
     given_request_to(GITHUB_GRAPHQL_URL, "repo.page.2.json", method="POST")
@@ -69,7 +73,8 @@ def test_contributors_fail_to_get_repo_details(responses, given_request_to, mock
     given_request_to(GITHUB_GRAPHQL_URL, "auth.error.json", method="POST", status=401)
 
     # GIVEN: mock snowflake connection
-    _, mock_connection, _, mock_to_sql = mock_snowflake("utils.github_contributors")
+    _, mock_connection, _ = mock_snowflake("utils.github_contributors")
+    _, mock_to_sql = mock_snowflake_pandas("utils.github_contributors")
 
     # WHEN: request to load contributors
     contributors()
