@@ -1,0 +1,36 @@
+{
+  "data": {
+    "repository": {
+      "name": "mattermost-server",
+      "pullRequests": {
+        "pageInfo": {
+          "endCursor": "mattermost-server-cursor",
+          "hasNextPage": true
+        },
+        "nodes": [
+          {
+            "number": 1,
+            "mergedAt": "2015-06-15T18:01:11Z",
+            "author": {
+              "login": "user-a"
+            }
+          },
+          {
+            "number": 2,
+            "mergedAt": "2015-06-15T18:01:37Z",
+            "author": {
+              "login": "user-a"
+            }
+          },
+          {
+            "number": 3,
+            "mergedAt": "2015-06-15T18:02:24Z",
+            "author": {
+              "login": "user-b"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

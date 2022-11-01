@@ -1,0 +1,20 @@
+{
+  "data": {
+    "organization": {
+      "repositories": {
+        "pageInfo": {
+          "endCursor": "cursor-value",
+          "hasNextPage": true
+        },
+        "nodes": [
+          {
+            "name": "mattermost-server"
+          },
+          {
+            "name": "docs"
+          }
+        ]
+      }
+    }
+  }
+}
