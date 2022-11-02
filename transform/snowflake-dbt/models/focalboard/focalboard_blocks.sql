@@ -63,7 +63,7 @@ focalboard_blocks AS (
 
       {%- endif -%}
     {% endif %}
-    QUALIFY ROW_NUMBER() OVER (PARTITION BY blocks.anonymous_id ORDER BY blocks.timestamp) = 1
+   -- QUALIFY ROW_NUMBER() OVER (PARTITION BY blocks.anonymous_id ORDER BY blocks.timestamp) = 1
 )
 
 SELECT *
