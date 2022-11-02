@@ -35,12 +35,12 @@ SELECT DISTINCT
     ,   CASE WHEN uet2.timestamp between first_active.first_active_timestamp AND first_active.first_active_timestamp + INTERVAL '1 DAY'
                     THEN TRUE ELSE FALSE END AS retention_0day_flag
   ,   CASE WHEN uet2.timestamp between first_active.first_active_timestamp + INTERVAL '1 DAY' 
-  AND first_active.first_active_timestamp + INTERVAL '2 DAY'
+  AND first_active.first_active_timestamp + INTERVAL '2 DAYS'
                     THEN TRUE ELSE FALSE END AS retention_1day_flag
-  ,   CASE WHEN uet2.timestamp between first_active.first_active_timestamp + INTERVAL '2 DAY' 
-  AND first_active.first_active_timestamp + INTERVAL '7 DAY'
+  ,   CASE WHEN uet2.timestamp between first_active.first_active_timestamp + INTERVAL '2 DAYS' 
+  AND first_active.first_active_timestamp + INTERVAL '7 DAYS'
                     THEN TRUE ELSE FALSE END AS retention_7day_flag
-  ,   CASE WHEN uet2.timestamp between first_active.first_active_timestamp + INTERVAL '7 DAY' 
+  ,   CASE WHEN uet2.timestamp between first_active.first_active_timestamp + INTERVAL '7 DAYS' 
   AND first_active.first_active_timestamp + INTERVAL '14 DAYS'
                     THEN TRUE ELSE FALSE END AS retention_14day_flag
   ,   CASE WHEN uet2.timestamp between first_active.first_active_timestamp + INTERVAL '14 DAYS' 
