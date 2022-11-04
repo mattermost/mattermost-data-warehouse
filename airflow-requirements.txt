@@ -1,2 +1,4 @@
+markupsafe==2.0.1
 apache-airflow==1.10.12
 pytest
+responses
