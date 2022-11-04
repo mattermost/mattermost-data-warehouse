@@ -1,4 +1,6 @@
 markupsafe==2.0.1
 apache-airflow==1.10.12
-pytest
-responses
+pytest==7.2.0
+pytest-mock==3.10.0
+pytest-responses==0.5.1
+responses==0.22.0
