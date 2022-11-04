@@ -38,7 +38,7 @@ class MattermostOperator(SimpleHttpOperator):
         props=None,
         **kwargs,
     ) -> None:
-        super().__init__(**kwargs)
+        super().__init__(endpoint=None,**kwargs)
         self.mattermost_conn_id = mattermost_conn_id
         self.text = text
         self.channel = channel
