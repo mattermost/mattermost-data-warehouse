@@ -29,7 +29,6 @@ data to other tools.
 
 ```
 .
-├── billing                 
 ├── dags                    <--- Airflow DAGs. DAGs mostly use KubernetesOperator to run a job.
 ├── extract                 <--- Python scripts that extract data from various locations.
 │  ├── pg_import            <--- Generic utility that copies data from Snowflake to Postgres
