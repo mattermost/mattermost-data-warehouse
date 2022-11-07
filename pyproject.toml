@@ -5,7 +5,6 @@ description = "A set of tools for managing data at Mattermost's data warehouse"
 authors = ["Munish Sharma <munish.sharma@mattermost.com>", "Ioannis Foukarakis <ioannis.foukarakis@mattermost.com>"]
 readme = "README.md"
 packages = [
-    {include = "billing"},
     {include = "extract"},
     {include = "transform"},
     {include = "utils"},
