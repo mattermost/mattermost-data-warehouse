@@ -2,7 +2,7 @@ import pandas as pd
 from utils.user_agent_parser import parse_user_agent, CREATE_TABLE_QUERY, GET_USER_AGENT_STRINGS_QUERY
 
 
-def test_parse_user_agent(mocker, user_agent_df):
+def test_parse_user_agent(mocker, user_agent_input, user_agent_df):
     # GIVEN: mock operations to snowflake
     mock_engine_factory = mocker.patch("utils.user_agent_parser.snowflake_engine_factory")
     mock_engine = mocker.MagicMock()
@@ -12,11 +12,7 @@ def test_parse_user_agent(mocker, user_agent_df):
     mock_execute_query = mocker.patch("utils.user_agent_parser.execute_query")
     mock_execute_df = mocker.patch("utils.user_agent_parser.execute_dataframe")
     mock_execute_df.return_value = pd.DataFrame({
-        "CONTEXT_USERAGENT": [
-            "Mozilla/5.0 (Linux; Android 7.0; Nexus 6 Build/NBD90Z) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.124 Mobile Safari/537.36",
-            "Mozilla/5.0 (Linux; Android 9; S20_EEA Build/PPR1.180610.011; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/95.0.4638.74 Safari/537.36",
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36"
-        ]
+        "CONTEXT_USERAGENT": user_agent_input
     })
     # Capture calls to pandas' to_sql. This is a trick to capture the dataframe that is created internally.
     # TODO: separate processing and storing logic in user_agent_parser.py

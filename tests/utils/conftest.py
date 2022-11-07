@@ -79,3 +79,12 @@ def load_dataset():
 def user_agent_df():
     with open(Path(__file__).parent / 'fixtures' / 'user_agent' / 'dataset.json') as fp:
         return pd.DataFrame(json.load(fp))
+
+
+@pytest.fixture()
+def user_agent_input():
+    """
+    Reads a list of user agents from fixtures.
+    """
+    with open(Path(__file__).parent / 'fixtures' / 'user_agent' / 'agents.txt') as fp:
+        return fp.read().splitlines()
