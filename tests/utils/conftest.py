@@ -1,10 +1,10 @@
-from pathlib import Path
-import os
-import pandas as pd
 import json
+import os
+
+import pandas as pd
 import pytest
 
-
+from pathlib import Path
 from responses import Response
 
 
@@ -21,7 +21,8 @@ def mock_settings_env_vars(mocker):
 
     # Mock items loaded using os.environ in method calls
     mock_env_vars = {
-        'GITHUB_TOKEN': 'token'
+        'GITHUB_TOKEN': 'token',
+        'CLEARBIT_KEY': 'clearbit-test-key'
     }
     mocker.patch.dict(os.environ, mock_env_vars, clear=True)
 
@@ -51,6 +52,7 @@ def given_request_to(request, responses):
 
 @pytest.fixture()
 def mock_snowflake(mocker):
+
     def _mock_snowflake(module_name):
         mock_engine_factory = mocker.patch(f"{module_name}.snowflake_engine_factory")
         mock_engine = mocker.MagicMock()
@@ -59,11 +61,21 @@ def mock_snowflake(mocker):
         mock_engine.connect.return_value = mock_connection
         mock_execute_query = mocker.patch(f"{module_name}.execute_query")
 
-        # Mock pandas' to_sql
-        mock_to_sql = mocker.patch("pandas.io.sql.to_sql")
-        return mock_engine, mock_connection, mock_execute_query, mock_to_sql
+        return mock_engine, mock_connection, mock_execute_query
 
     return _mock_snowflake
+
+
+@pytest.fixture()
+def mock_snowflake_pandas(mocker):
+    def _mock_snowflake_pandas(module_name):
+        # Mock execute_dataframe method
+        mock_execute_dataframe = mocker.patch(f"{module_name}.execute_dataframe")
+        # Mock pandas' to_sql
+        mock_to_sql = mocker.patch("pandas.io.sql.to_sql")
+        return mock_execute_dataframe, mock_to_sql
+
+    return _mock_snowflake_pandas
 
 
 @pytest.fixture()
@@ -88,3 +100,33 @@ def user_agent_input():
     """
     with open(Path(__file__).parent / 'fixtures' / 'user_agent' / 'agents.txt') as fp:
         return fp.read().splitlines()
+
+@pytest.fixture()
+def mock_clearbit(mocker):
+    def _mock_clearbit(module_name):
+        count = 0
+        # Mock clearbit client
+        mock_clearbit = mocker.patch(f"{module_name}.clearbit")
+        return mock_clearbit
+
+    return _mock_clearbit
+
+
+@pytest.fixture()
+def mock_clearbit_enrichments():
+    def _load_enrichments(*args):
+        """
+        Lazily loads each file defined as args. The files are loaded from fixture/enrichments.
+
+        Not found responses can be simulated by specifying None. For example if args is
+        ['a.json', None], then the first simulated call to clearbit will return the contents of a.json, while the second
+        will return None.
+        """
+        for filename in args:
+            if filename is None:
+                yield None
+            else:
+                with open(Path(__file__).parent / 'fixtures' / 'clearbit' / 'enrichments' / filename) as fp:
+                    yield json.load(fp)
+
+    return _load_enrichments
