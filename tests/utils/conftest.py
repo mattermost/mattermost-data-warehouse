@@ -113,9 +113,21 @@ def mock_clearbit(mocker):
 
 @pytest.fixture()
 def mock_clearbit_enrichments():
-    def _load_enrichments(*args):
+    return _mock_clearbit_factory('enrichments')
+
+
+@pytest.fixture()
+def mock_clearbit_reveal():
+    return _mock_clearbit_factory('reveal')
+
+
+def _mock_clearbit_factory(api):
+    """
+    Creates a loader for returning responses from provided clearbit {api}.
+    """
+    def _load_responses(*args):
         """
-        Lazily loads each file defined as args. The files are loaded from fixture/enrichments.
+        Lazily loads each file defined as args. The files are loaded from fixture/{api}.
 
         Not found responses can be simulated by specifying None. For example if args is
         ['a.json', None], then the first simulated call to clearbit will return the contents of a.json, while the second
@@ -125,10 +137,11 @@ def mock_clearbit_enrichments():
             if filename is None:
                 yield None
             else:
-                with open(Path(__file__).parent / 'fixtures' / 'clearbit' / 'enrichments' / filename) as fp:
+                with open(Path(__file__).parent / 'fixtures' / 'clearbit' / 'api' / api / filename) as fp:
                     yield json.load(fp)
 
-    return _load_enrichments
+    return _load_responses
+
 
 @pytest.fixture
 def mock_snowflake_connector(mocker):
