@@ -121,7 +121,8 @@ WITH sdd AS (
         , max_time
         , max_date
         , context_ip
-        , context_request_ip  
+        , context_request_ip
+        , storage_bytes  
         FROM {{ source('mm_telemetry_prod', 'activity') }} s1 
         JOIN max_rudder_time s2
           ON s1.user_id = s2.server_id 
@@ -193,6 +194,7 @@ WITH sdd AS (
         , max(COALESCE(r.outgoing_webhooks, s.outgoing_webhooks)) as outgoing_webhooks
         , max(COALESCE(r.max_time, s.max_time)) AS max_timestamp
         , MAX(COALESCE(r.context_ip, r.context_request_ip)) AS last_ip_address
+        , MAX(r.storage_bytes) as storage_bytes
       FROM rudder_activity r
       FULL OUTER JOIN segment_activity s
         ON r.user_id = s.user_id and r.max_date = s.max_date
@@ -284,25 +286,25 @@ WITH sdd AS (
       , DATEDIFF(DAY, MIN(TIMESTAMP::DATE), CURRENT_DATE) - COUNT(DISTINCT TIMESTAMP::DATE) AS days_inactive
       , MIN(CASE WHEN COALESCE(type, event) IN ('ui_marketplace_download', 'api_install_marketplace_plugin') THEN timestamp::date ELSE NULL END) as first_plugin_install_date
       , COUNT(DISTINCT CASE WHEN COALESCE(type, event) IN ('ui_marketplace_download') THEN plugin_id ELSE NULL END) AS plugins_downloaded
-            , MAX(CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date AND sdd.first_active_date + INTERVAL '24 HOURS'
+            , MAX(CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date AND sdd.first_active_date + INTERVAL '1 DAY'
                     THEN TRUE ELSE FALSE END) AS retention_0day_flag
-      , COUNT(DISTINCT CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date AND sdd.first_active_date + INTERVAL '24 HOURS' 
+      , COUNT(DISTINCT CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date AND sdd.first_active_date + INTERVAL '1 DAY' 
                     THEN user_events_telemetry.user_actual_id ELSE NULL END) AS retention_0day_users
-      , MAX(CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '24 HOURS' AND sdd.first_active_date + INTERVAL '48 HOURS'
+      , MAX(CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '1 DAY' AND sdd.first_active_date + INTERVAL '2 DAYS'
                     THEN TRUE ELSE FALSE END) AS retention_1day_flag
-      , COUNT(DISTINCT CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '24 HOURS' AND sdd.first_active_date + INTERVAL '48 HOURS' 
+      , COUNT(DISTINCT CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '1 DAY' AND sdd.first_active_date + INTERVAL '2 DAY' 
                     THEN user_events_telemetry.user_actual_id ELSE NULL END) AS retention_1day_users
-      , MAX(CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '168 HOURS' AND sdd.first_active_date + INTERVAL '192 HOURS'  
+      , MAX(CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '2 DAYS' AND sdd.first_active_date + INTERVAL '7 DAYS'  
                     THEN TRUE ELSE FALSE END) AS retention_7day_flag
-      , COUNT(DISTINCT CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '168 HOURS' AND sdd.first_active_date + INTERVAL '192 HOURS' 
+      , COUNT(DISTINCT CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '2 DAYS' AND sdd.first_active_date + INTERVAL '7 DAYS' 
                     THEN user_events_telemetry.user_actual_id ELSE NULL END) AS retention_7day_users
-      , MAX(CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '336 HOURS' AND sdd.first_active_date + INTERVAL '360 HOURS'  
+      , MAX(CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '7 DAYS' AND sdd.first_active_date + INTERVAL '14 DAYS'  
                     THEN TRUE ELSE FALSE END) AS retention_14day_flag
-      , COUNT(DISTINCT CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '336 HOURS' AND sdd.first_active_date + INTERVAL '360 HOURS' 
+      , COUNT(DISTINCT CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '7 DAYS' AND sdd.first_active_date + INTERVAL '14 DAYS' 
                     THEN user_events_telemetry.user_actual_id ELSE NULL END) AS retention_14day_users
-      , MAX(CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '672 HOURS' AND sdd.first_active_date + INTERVAL '696 HOURS' 
+      , MAX(CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '14 DAYS' AND sdd.first_active_date + INTERVAL '28 DAYS' 
                     THEN TRUE ELSE FALSE END) AS retention_28day_flag
-      , COUNT(DISTINCT CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '672 HOURS' AND sdd.first_active_date + INTERVAL '696 HOURS' 
+      , COUNT(DISTINCT CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '14 DAYS' AND sdd.first_active_date + INTERVAL '28 DAYS' 
                     THEN user_events_telemetry.user_actual_id ELSE NULL END) AS retention_28day_users
       , COUNT(DISTINCT user_events_telemetry.user_actual_id) as active_users_alltime
     FROM sdd 
@@ -427,6 +429,7 @@ WITH sdd AS (
         , max(server_activity.guest_accounts) as guest_accounts
         , max(server_activity.incoming_webhooks) as incoming_webhooks
         , max(server_activity.outgoing_webhooks) as outgoing_webhooks
+        , max(server_activity.storage_bytes) as storage_bytes
         , max(fba.boards) as boards
         , max(fba.boards_views) as boards_views
         , max(fba.boards_cards) as boards_cards

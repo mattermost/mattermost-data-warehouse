@@ -103,4 +103,5 @@ def execute_dataframe(engine, query):
         return df
     except Exception as e:
         return print(f"Oh no! There was an error executing your query: {e}")
-    cur.close()
+    finally:
+        cur.close()

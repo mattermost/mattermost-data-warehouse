@@ -21,23 +21,32 @@ conn = snowflake.connector.connect(
 try:
     cur = conn.cursor()
 
-    sql = f'''select distinct feedback, subcategory as category, score, server_version, 
-    case when sf.installation_id is null then 'Self-Hosted' 
-    when sf.installation_id is not null then 'Cloud' end as INSTALLATION_TYPE,
-    user_role, lsf.customer_name, lsf.license_email
+    sql = f'''
+    select distinct 
+        feedback, 
+        subcategory as category, 
+        score, 
+        server_version, 
+        case 
+            when sf.installation_id is null then 'Self-Hosted' 
+            when sf.installation_id is not null then 'Cloud' end as INSTALLATION_TYPE,
+        user_role, 
+        lsf.customer_name,
+        lsf.license_email,
+        sf.max_active_user_count as user_count
     from ANALYTICS.MATTERMOST.NPS_USER_DAILY_SCORE nps
     left join mattermost.server_fact sf on nps.server_id = sf.server_id
     left join blp.license_server_fact lsf on nps.server_id = lsf.server_id 
     left join analytics.mattermost.nps_feedback_classification fc on nps.user_id = fc.user_id and nps.server_id = fc.server_id and nps.last_feedback_date = fc.last_feedback_date
-    WHERE 
-    nps.last_feedback_DATE = CURRENT_DATE - 1 and subcategory <> 'Invalid' and 
-    feedback <> ''
+    where
+        nps.last_feedback_DATE = CURRENT_DATE - 1 and subcategory <> 'Invalid' and 
+        feedback <> ''
     '''
 
     cur.execute(sql)
     out = cur.fetchall()
     out = tuple(map(lambda x: format_row(x) , out))
-    out = tabulate(out, headers=['Feedback','Category','Score','Server Version','Installation Type','User Role','Customer Name', 'License Email'], tablefmt='github')
+    out = tabulate(out, headers=['Feedback','Category','Score','Server Version','Installation Type','User Role','Customer Name', 'License Email', 'User Count'], tablefmt='github')
     payload='{"text": "%s", "channel": "mattermost-nps-feedback"}' % out
     nps_webhook_url = os.getenv("NPS_WEBHOOK_URL")
     nps_webhook_url = nps_webhook_url.strip('\n')

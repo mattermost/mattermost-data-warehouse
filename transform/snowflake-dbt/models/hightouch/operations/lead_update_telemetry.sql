@@ -37,7 +37,7 @@ with existing_leads as (
         max(boards_cards) as cloud_cards_total,
         max(max_enabled_plugins) as cloud_plugins_total,
         max(cloud_installation_state) as cloud_installation_state,
-        -- add total_storage here, 
+        max(storage_bytes) as storage_bytes,
         max(monthly_active_users) as cloud_mau,
         max(active_users) as cloud_dau,
         max(posts_previous_day) as cloud_posts_daily
@@ -48,6 +48,7 @@ with existing_leads as (
     group by 1
 ), server_facts as(
     select 
+        {{convert_bytes('server_facts_pre.storage_bytes', 'gb', 3)}} as storage,
         server_facts_pre.*, 
         existing_leads.sfid, 
         existing_leads.dwh_external_id__c 

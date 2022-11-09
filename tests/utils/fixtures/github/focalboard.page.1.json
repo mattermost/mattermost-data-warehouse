@@ -1,0 +1,29 @@
+{
+  "data": {
+    "repository": {
+      "name": "focalboard",
+      "pullRequests": {
+        "pageInfo": {
+          "endCursor": "focalboard-cursor",
+          "hasNextPage": false
+        },
+        "nodes": [
+          {
+            "number": 1,
+            "mergedAt": "2015-06-15T18:01:11Z",
+            "author": {
+              "login": "user-b"
+            }
+          },
+          {
+            "number": 2,
+            "mergedAt": "2015-06-15T18:01:37Z",
+            "author": {
+              "login": "user-q"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

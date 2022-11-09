@@ -1,0 +1,15 @@
+version: 2
+
+macros:
+  - name: convert_bytes
+    description: A macro to convert bytes with precision
+    arguments:
+      - name: bytes
+        type: integer
+        description: The bytes column you want to convert
+      - name: output
+        type: string
+        description: The unit you want to convert to eg - b,mb,gb
+      - name: precision
+        type: integer
+        description: Number of decimal places. Defaults to 2.
