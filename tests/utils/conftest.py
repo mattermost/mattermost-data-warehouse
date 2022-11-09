@@ -130,3 +130,43 @@ def mock_clearbit_enrichments():
                     yield json.load(fp)
 
     return _load_enrichments
+
+@pytest.fixture
+def mock_snowflake_connector(mocker):
+
+    def _mock_snowflake_connector(module_name):
+        snowflake_connector_factory = mocker.patch(f"{module_name}.snowflake.connector.connect")
+        mock_connection = mocker.Mock()
+        snowflake_connector_factory.return_value = mock_connection
+        mock_execute = mocker.Mock()
+        mock_fetchall = [('test row 1 column 1', 'test row 1 column 2'), ('test row 2 column 1', 'test row 2 column 2')]
+        mock_cursor = mocker.Mock()
+        mock_connection.cursor.return_value = mock_cursor
+        mock_cursor.execute.return_value = mock_execute
+        mock_cursor.fetchall.return_value = mock_fetchall
+
+        return mock_cursor, mock_connection, mock_execute, mock_fetchall
+    
+    return _mock_snowflake_connector
+
+@pytest.fixture
+def post_nps_ok(responses):
+    response = Response(method="POST", url="https://mattermost.example.com/hooks/hookid", status=200, content_type='application/json')
+    responses.add(response)
+
+@pytest.fixture
+def post_nps_error(responses):
+    response = Response(method="POST", url="https://mattermost.example.com/hooks/hookid", status=401, content_type='application/json')
+    responses.add(response)
+
+@pytest.fixture
+def config_nps(monkeypatch, mocker):
+
+    # mocking loading k8 secrets to environment variables
+    monkeypatch.setenv("NPS_WEBHOOK_URL", "https://mattermost.example.com/hooks/hookid")
+    monkeypatch.setenv("SNOWFLAKE_PASSWORD", "test password")
+    monkeypatch.setenv("SNOWFLAKE_USER", "test user")
+    monkeypatch.setenv("SNOWFLAKE_ACCOUNT", "test account")
+    monkeypatch.setenv("SNOWFLAKE_TRANSFORM_WAREHOUSE", "test warehouse")
+    monkeypatch.setenv("SNOWFLAKE_TRANSFORM_DATABASE", "test database")
+    monkeypatch.setenv("SNOWFLAKE_TRANSFORM_SCHEMA", "test schema")
