@@ -1,7 +1,6 @@
 from airflow.plugins_manager import AirflowPlugin
 import json
 from airflow import AirflowException
-# from airflow.providers.http.hooks.http import HttpHook -> airflow 2
 from airflow.hooks.http_hook import HttpHook
 
 
@@ -11,7 +10,7 @@ class MattermostWebhookHook(HttpHook):
     Send messages to Mattermost using webhooks. For more details on the parameters, please check
     `Incoming webhooks <https://developers.mattermost.com/integrate/webhooks/incoming/#parameters>_` documentation.
 
-    :param http_conn_id: :ref:`http connection<howto/connection:http>` that has the base
+    :param mattermost_conn_id: :ref:`http connection<howto/connection:http>` that has the base
         url i.e https://mattermost.example.com/ and webhook's id under password.
     :param text: The message to send.
     :param channel:	Overrides the channel the message posts in. Use the channel’s name and not the display name, e.g.
