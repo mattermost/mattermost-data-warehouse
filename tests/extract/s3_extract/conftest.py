@@ -24,7 +24,8 @@ def mock_environment(mocker):
     mock_env_vars = {
         'GITHUB_TOKEN': 'token',
         'DIAGNOSTIC_LOCATION_ONE': 'location-one',
-        'DIAGNOSTIC_LOCATION_TWO': 'location-two'
+        'DIAGNOSTIC_LOCATION_TWO': 'location-two',
+        'AWS_ACCOUNT_ID': 'test-aws-account-id'
     }
     mocker.patch.dict(os.environ, mock_env_vars, clear=True)
     mock_env_copy = mocker.patch('os.environ.copy')

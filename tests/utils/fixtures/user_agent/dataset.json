@@ -1,0 +1,32 @@
+[
+  {
+    "CONTEXT_USERAGENT": "Mozilla\/5.0 (Linux; Android 7.0; Nexus 6 Build\/NBD90Z) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/53.0.2785.124 Mobile Safari\/537.36",
+    "browser": "Chrome Mobile",
+    "browser_version": "53.0.2785",
+    "operating_system": "Android",
+    "os_version": "7.0",
+    "device_type": "Nexus 6",
+    "device_brand": "Generic_Android",
+    "device_model": "Nexus 6"
+  },
+  {
+    "CONTEXT_USERAGENT": "Mozilla\/5.0 (Linux; Android 9; S20_EEA Build\/PPR1.180610.011; wv) AppleWebKit\/537.36 (KHTML, like Gecko) Version\/4.0 Chrome\/95.0.4638.74 Safari\/537.36",
+    "browser": "Chrome Mobile WebView",
+    "browser_version": "95.0.4638",
+    "operating_system": "Android",
+    "os_version": "9",
+    "device_type": "S20_EEA",
+    "device_brand": "Generic_Android_Tablet",
+    "device_model": "S20_EEA"
+  },
+  {
+    "CONTEXT_USERAGENT": "Mozilla\/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/106.0.0.0 Safari\/537.36",
+    "browser": "Chrome",
+    "browser_version": "106.0.0",
+    "operating_system": "Mac OS X",
+    "os_version": "10.15.7",
+    "device_type": "Mac",
+    "device_brand": "Apple",
+    "device_model": "Mac"
+  }
+]
