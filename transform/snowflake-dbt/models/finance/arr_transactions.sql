@@ -5,7 +5,7 @@
   })
 }}
 
---v5 of arr transactions 20220819
+--v6 of arr transactions 20220819
 --this query reflects arr transactions during the lifecycle of a paying sales serve customer 
 --based on key input fields by sales ops on license_start_date__c license_end_date__c and amount 
 --in the salesforce opportunity table
@@ -88,8 +88,9 @@ with mrr as (
 ,ACCT AS (
     SELECT
       COALESCE(A.PARENTID,A.SFID) AS PARENT_ID
+      ,p.name as parent_name
       ,A.SFID AS ACCOUNT_ID
-      ,coalesce(parent_s_parent_acount__c,a.name) as parent_name
+      ,a.name as account_name
       ,A.GOVERNMENT__C AS GOVERNMENT
       ,coalesce(a.customer_segmentation_tier__c,max(A.CUSTOMER_SEGMENTATION_TIER__C) over (partition by parentid)) AS CUSTOMER_TIER
       ,coalesce(A.GEO__C,A.TERRITORY_GEO__C,max(a.geo__c) over (partition by parentid)) as geo
@@ -99,6 +100,14 @@ with mrr as (
       ,coalesce(A.COSIZE__C,max(a.cosize__c) over (partition by parent_id)) AS COSIZE
       ,A.INDUSTRY
     FROM     {{ ref( 'account') }} A
+    LEFT JOIN (select 
+          distinct sfid 
+          ,name 
+        from {{ ref( 'account') }}  
+        where 
+          parentid is null
+          and isdeleted = FALSE 
+        ) p on p.sfid = parentid
     --FROM ANALYTICS.ORGM.ACCOUNT A
     where  ISDELETED = FALSE
     ORDER BY PARENT_ID, account_id
@@ -376,10 +385,12 @@ select
     ,sum(arr_change) over (partition by account_id order by trans_no) as ending_arr
     --updated to reflect new arr for the first transaction of any child account or parent account in absence of child
     --does not rely on new logo field
-    ,iff(trans_no = 1, opportunity_arr,0) as new_arr
-    --new looker fields
-    --,iff(arr_change>0,arr_change - new_arr,0) as expansion
-    --,iff(arr_change<0,arr_change - new_arr,0) as expire_and_contract
+    ,case 
+        --manually declare dr technologies as not a new account and falling under wintermute by opportunity id
+        --manual exclusion necessary as business combines or merges and no logic can anticipate this
+        when opportunity_id not in ('0063p00000z2b8LAAQ') and trans_no = 1 then opportunity_arr
+        else 0 
+        end as new_arr
     ,case when license_active_calc = true and is_won = true and report_month <= last_day(current_date)
         then opportunity_arr 
         else 0 
