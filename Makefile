@@ -33,15 +33,37 @@ DOCKER_FILE             += ./build/Dockerfile
 # Docker compose DBT file
 DOCKER_COMPOSE_DBT_FILE += ./build/docker-compose.dbt.yml
 
+# Docker options to inherit for all docker run commands
+DOCKER_OPTS             += --rm -u $$(id -u):$$(id -g) --platform "linux/amd64"
+# Registry to upload images
+DOCKER_REGISTRY         ?= docker.io
+DOCKER_REGISTRY_REPO    ?= mattermost/${APP_NAME}-daily
+# Registry credentials
+DOCKER_USER             ?= user
+DOCKER_PASSWORD         ?= password
+## Docker Images
+DOCKER_IMAGE_PYTHON     += "python:3.8.15-slim@sha256:fc2f284772a4443ce7238930ba9a8d5e3c720926616fca074b99213484a3820f"
+DOCKER_IMAGE_DOCKERLINT += "hadolint/hadolint:v2.9.2@sha256:d355bd7df747a0f124f3b5e7b21e9dafd0cb19732a276f901f0fdee243ec1f3b"
+DOCKER_IMAGE_COSIGN     += "bitnami/cosign:1.8.0@sha256:8c2c61c546258fffff18b47bb82a65af6142007306b737129a7bd5429d53629a"
+
+## Cosign Variables
+# The public key
+COSIGN_PUBLIC_KEY       ?= akey
+# The private key
+COSIGN_KEY              ?= akey
+# The passphrase used to decrypt the private key
+COSIGN_PASSWORD         ?= password
+
 ## Python Variables
 # Python executable
 PYTHON                       := $(shell which python)
 # Poetry executable
 POETRY                       := $(shell which poetry)
+# Poetry options
+POETRY_OPTS                  ?=
 # Virtualenv executable and config
 VIRTUALENV				     := $(shell which virtualenv)
 VIRTUALENV_AIRFLOW			 := ./.venv-airflow
-
 # Extract Python Version
 PYTHON_VERSION               ?= $(shell ${PYTHON} --version | cut -d ' ' -f 2 )
 # Temporary folder to output generated artifacts
@@ -105,7 +127,7 @@ python-test: ## to run python tests
 .PHONY: python-update-dependencies
 python-update-dependencies: ## to update python dependencies
 	$(AT)$(INFO) updating python dependencies...
-	$(AT)$(POETRY) install && \
+	$(AT)$(POETRY) install ${POETRY_OPTS} && \
 	    $(POETRY) run pip install clearbit==0.1.7 || ${FAIL}
 	$(AT)$(OK) updating python dependencies
 
@@ -121,13 +143,118 @@ airflow-update-dependencies: 	## to update airflow dev dependencies
 	$(AT)$(VIRTUALENV_AIRFLOW)/bin/pip install -r build/requirements-airflow-dev.txt || ${FAIL}
 	$(AT)$(OK) updating python dependencies
 
-$(VIRTUALENV_AIRFLOW): airflow-update-dependencies
-
 .PHONY: airflow-test
 airflow-test: $(VIRTUALENV_AIRFLOW)  ## to run airflow tests
 	@$(INFO) testing airflow...
 	$(AT)$(VIRTUALENV_AIRFLOW)/bin/pytest dags plugins || ${FAIL}
 	@$(OK) testing airflow
+
+.PHONY: docker-build
+docker-build: ## to build the docker image
+	@$(INFO) Performing Docker build ${APP_NAME}:${APP_VERSION}
+	$(AT)$(DOCKER) build \
+	--build-arg PYTHON_IMAGE=${DOCKER_IMAGE_PYTHON} \
+	-f ${DOCKER_FILE} . \
+	-t ${APP_NAME}:${APP_VERSION} || ${FAIL}
+	@$(OK) Performing Docker build ${APP_NAME}:${APP_VERSION}
+
+.PHONY: docker-push
+docker-push: ## to push the docker image
+	@$(INFO) Pushing to registry...
+	$(AT)$(DOCKER) tag ${APP_NAME}:${APP_VERSION} $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:${APP_VERSION} || ${FAIL}
+	$(AT)$(DOCKER) push $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:${APP_VERSION} || ${FAIL}
+# if we are on a latest semver APP_VERSION tag, also push latest
+ifneq ($(shell echo $(APP_VERSION) | egrep '^v([0-9]+\.){0,2}(\*|[0-9]+)'),)
+  ifeq ($(shell git tag -l --sort=v:refname | tail -n1),$(APP_VERSION))
+	$(AT)$(DOCKER) tag ${APP_NAME}:${APP_VERSION} $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:latest || ${FAIL}
+	$(AT)$(DOCKER) push $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:latest || ${FAIL}
+  endif
+endif
+	@$(OK) Pushing to registry $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:${APP_VERSION}
+
+.PHONY: docker-sign
+docker-sign: ## to sign the docker image
+	@$(INFO) Signing the docker image...
+	$(AT)echo "$${COSIGN_KEY}" > cosign.key && \
+	$(DOCKER) run ${DOCKER_OPTS} \
+	--entrypoint '/bin/sh' \
+        -v $(PWD):/app -w /app \
+	-e COSIGN_PASSWORD=${COSIGN_PASSWORD} \
+	-e HOME="/tmp" \
+    ${DOCKER_IMAGE_COSIGN} \
+	-c \
+	"echo Signing... && \
+	cosign login $(DOCKER_REGISTRY) -u ${DOCKER_USER} -p ${DOCKER_PASSWORD} && \
+	cosign sign --key cosign.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:${APP_VERSION}" || ${FAIL}
+# if we are on a latest semver APP_VERSION tag, also sign latest tag
+ifneq ($(shell echo $(APP_VERSION) | egrep '^v([0-9]+\.){0,2}(\*|[0-9]+)'),)
+  ifeq ($(shell git tag -l --sort=v:refname | tail -n1),$(APP_VERSION))
+	$(DOCKER) run ${DOCKER_OPTS} \
+	--entrypoint '/bin/sh' \
+        -v $(PWD):/app -w /app \
+	-e COSIGN_PASSWORD=${COSIGN_PASSWORD} \
+	-e HOME="/tmp" \
+	${DOCKER_IMAGE_COSIGN} \
+	-c \
+	"echo Signing... && \
+	cosign login $(DOCKER_REGISTRY) -u ${DOCKER_USER} -p ${DOCKER_PASSWORD} && \
+	cosign sign --key cosign.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:latest" || ${FAIL}
+  endif
+endif
+	$(AT)rm -f cosign.key || ${FAIL}
+	@$(OK) Signing the docker image: $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:${APP_VERSION}
+
+.PHONY: docker-verify
+docker-verify: ## to verify the docker image
+	@$(INFO) Verifying the published docker image...
+	$(AT)echo "$${COSIGN_PUBLIC_KEY}" > cosign_public.key && \
+	$(DOCKER) run ${DOCKER_OPTS} \
+	--entrypoint '/bin/sh' \
+	-v $(PWD):/app -w /app \
+	${DOCKER_IMAGE_COSIGN} \
+	-c \
+	"echo Verifying... && \
+	cosign verify --key cosign_public.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:${APP_VERSION}" || ${FAIL}
+# if we are on a latest semver APP_VERSION tag, also verify latest tag
+ifneq ($(shell echo $(APP_VERSION) | egrep '^v([0-9]+\.){0,2}(\*|[0-9]+)'),)
+  ifeq ($(shell git tag -l --sort=v:refname | tail -n1),$(APP_VERSION))
+	$(DOCKER) run ${DOCKER_OPTS} \
+	--entrypoint '/bin/sh' \
+	-v $(PWD):/app -w /app \
+	${DOCKER_IMAGE_COSIGN} \
+	-c \
+	"echo Verifying... && \
+	cosign verify --key cosign_public.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:latest" || ${FAIL}
+  endif
+endif
+	$(AT)rm -f cosign_public.key || ${FAIL}
+	@$(OK) Verifying the published docker image: $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:${APP_VERSION}
+
+.PHONY: docker-sbom
+docker-sbom: ## to print a sbom report
+	@$(INFO) Performing Docker sbom report...
+	$(AT)$(DOCKER) sbom ${APP_NAME}:${APP_VERSION} || ${FAIL}
+	@$(OK) Performing Docker sbom report
+
+.PHONY: docker-scan
+docker-scan: ## to print a vulnerability report
+	@$(INFO) Performing Docker scan report...
+	$(AT)$(DOCKER) scan ${APP_NAME}:${APP_VERSION} || ${FAIL}
+	@$(OK) Performing Docker scan report
+
+.PHONY: docker-lint
+docker-lint: ## to lint the Dockerfile
+	@$(INFO) Dockerfile linting...
+	$(AT)$(DOCKER) run -i ${DOCKER_OPTS} \
+	${DOCKER_IMAGE_DOCKERLINT} \
+	< ${DOCKER_FILE} || ${FAIL}
+	@$(OK) Dockerfile linting
+
+.PHONY: docker-login
+docker-login: ## to login to a container registry
+	@$(INFO) Dockerd login to container registry ${DOCKER_REGISTRY}...
+	$(AT) echo "${DOCKER_PASSWORD}" | $(DOCKER) login --password-stdin -u ${DOCKER_USER} $(DOCKER_REGISTRY) || ${FAIL}
+	@$(OK) Dockerd login to container registry ${DOCKER_REGISTRY}...
 
 .PHONY: dbt-docs
 dbt-docs: ## to generate and serve dbt docs
