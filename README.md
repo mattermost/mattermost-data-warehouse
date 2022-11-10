@@ -18,7 +18,7 @@ data to other tools.
   * [Starting a bash shell with DBT](#starting-a-bash-shell-with-dbt)
   * [Building docs and serving them locally](#building-docs-and-serving-them-locally)
 * [Developing](#developing)
-  * [Requirements](#requirements)err
+  * [Requirements](#requirements)
   * [Install dependencies](#install-dependencies)
   * [Adding dependencies](#adding-dependencies)
 * [Configuration](#configuration)

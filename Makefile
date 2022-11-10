@@ -46,14 +46,6 @@ PYTHON_OUT_BIN_DIR           := ./dist
 # Docker compose specific environment configuration file
 DOCKER_COMPOSE_ENV_FILE      := .dbt.env
 
-## Github Variables
-# A github access token that provides access to upload artifacts under releases
-GITHUB_TOKEN                 ?= a_token
-# Github organization
-GITHUB_ORG                   := mattermost
-# Most probably the name of the repo
-GITHUB_REPO                  := ${APP_NAME}
-
 # ====================================================================================
 # Colors
 
@@ -117,25 +109,29 @@ python-update-dependencies: ## to update python dependencies
 dbt-docs: ## to generate and serve dbt docs
 	$(AT)$(INFO) Generating docs and spinning up the a webserver on port 8081...
 	$(AT)export DBT_PROFILE_PATH=".";\
-	$(DOCKER) compose run -p "8081:8081" dbt_image bash -c "dbt deps && dbt docs generate -t prod && dbt docs serve --port 8081"
+	$(DOCKER) compose run -d -p "8081:8081" dbt_image bash -c "dbt deps && dbt docs generate -t prod && dbt docs serve --port 8081"  || ${FAIL}
+	$(AT)$(OK) Server started, visit http://localhost:8081 to view the docs
 
 .PHONY: dbt-generate-docs
 dbt-generate-docs: ## to generate dbt docs
-	$(AT)$(INFO) Generating docs
+	$(AT)$(INFO) Generating docs...
 	$(AT)export DBT_PROFILE_PATH=".";\
-	$(DOCKER) compose run dbt_image bash -c "dbt deps && dbt docs generate -t prod"
+	$(DOCKER) compose run dbt_image bash -c "dbt deps && dbt docs generate -t prod" } || ${FAIL}
+	$(AT)$(OK) Generated docs
 
 .PHONY: dbt-bash
 dbt-bash: ## to start a bash shell with DBT
 	$(AT)$(INFO) Running bash with dbt...
 	$(AT)export DBT_PROFILE_PATH=".";\
-	$(DOCKER) compose -f ${DOCKER_COMPOSE_DBT_FILE} run dbt_image bash -c "dbt deps && /bin/bash"
+	$(DOCKER) compose -f ${DOCKER_COMPOSE_DBT_FILE} run dbt_image bash -c "dbt deps && /bin/bash" || ${FAIL}
+	$(AT)$(OK) Exited dbt bash
 
 .PHONY: data-image
 data-image: ## to start a bash shell on the data image
 	$(AT)$(INFO) Attaching to data-image and mounting repo...
 	$(AT)export DBT_PROFILE_PATH=".";\
-	$(DOCKER) compose -f ${DOCKER_COMPOSE_DBT_FILE} run data_image bash
+	$(DOCKER) compose -f ${DOCKER_COMPOSE_DBT_FILE} run data_image bash || ${FAIL}
+	$(AT)$(OK) Exited data-image
 
 .PHONY: clean
 clean: ## to clean-up
