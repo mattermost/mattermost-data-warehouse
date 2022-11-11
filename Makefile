@@ -137,4 +137,4 @@ data-image: ## to start a bash shell on the data image
 clean: ## to clean-up
 	@$(INFO) cleaning ${PYTHON_OUT_BIN_DIR} folder...
 	$(AT)rm -rf ${PYTHON_OUT_BIN_DIR} || ${FAIL}
-	@$(OK) cleaning ${PYTHON_OUT_BIN_DIR} folder
+	$(AT)$(OK) cleaning ${PYTHON_OUT_BIN_DIR} folder
