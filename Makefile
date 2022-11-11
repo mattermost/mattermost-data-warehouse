@@ -38,6 +38,10 @@ DOCKER_COMPOSE_DBT_FILE += ./build/docker-compose.dbt.yml
 PYTHON                       := $(shell which python)
 # Poetry executable
 POETRY                       := $(shell which poetry)
+# Virtualenv executable and config
+VIRTUALENV				     := $(shell which virtualenv)
+VIRTUALENV_AIRFLOW			 := ./.venv-airflow
+
 # Extract Python Version
 PYTHON_VERSION               ?= $(shell ${PYTHON} --version | cut -d ' ' -f 2 )
 # Temporary folder to output generated artifacts
@@ -105,6 +109,26 @@ python-update-dependencies: ## to update python dependencies
 	    $(POETRY) run pip install clearbit==0.1.7 || ${FAIL}
 	$(AT)$(OK) updating python dependencies
 
+.PHONY: airflow-create-virtualenv
+airflow-create-virtualenv: 	## to create airflow virtualenv
+	$(AT)$(INFO) creating airflow virtualenv...
+	$(AT)$(VIRTUALENV) ${VIRTUALENV_AIRFLOW} || ${FAIL}
+	$(AT)$(OK) created airflow virtualenv
+
+.PHONY: airflow-update-dependencies
+airflow-update-dependencies: 	## to update airflow dev dependencies
+	$(AT)$(INFO) updating python dependencies...
+	$(AT)$(VIRTUALENV_AIRFLOW)/bin/pip install -r build/requirements-airflow-dev.txt || ${FAIL}
+	$(AT)$(OK) updating python dependencies
+
+$(VIRTUALENV_AIRFLOW): airflow-update-dependencies
+
+.PHONY: airflow-test
+airflow-test: $(VIRTUALENV_AIRFLOW)  ## to run airflow tests
+	@$(INFO) testing airflow...
+	$(AT)$(VIRTUALENV_AIRFLOW)/bin/pytest dags plugins || ${FAIL}
+	@$(OK) testing airflow
+
 .PHONY: dbt-docs
 dbt-docs: ## to generate and serve dbt docs
 	$(AT)$(INFO) Generating docs and spinning up the a webserver on port 8081...
@@ -135,6 +159,7 @@ data-image: ## to start a bash shell on the data image
 
 .PHONY: clean
 clean: ## to clean-up
-	@$(INFO) cleaning ${PYTHON_OUT_BIN_DIR} folder...
-	$(AT)rm -rf ${PYTHON_OUT_BIN_DIR} || ${FAIL}
-	$(AT)$(OK) cleaning ${PYTHON_OUT_BIN_DIR} folder
+	@$(INFO) cleaning...
+	$(AT)rm -rf ${PYTHON_OUT_BIN_DIR}  \
+		 rm -rf ${VIRTUALENV_AIRFLOW} || ${FAIL}
+	$(AT)$(OK) cleaning completed
