@@ -88,7 +88,7 @@ with mrr as (
 ,ACCT AS (
     SELECT
       COALESCE(A.PARENTID,A.SFID) AS PARENT_ID
-      ,p.name as parent_name
+      ,coalesce(p.name,a.name) as parent_name
       ,A.SFID AS ACCOUNT_ID
       ,a.name as account_name
       ,A.GOVERNMENT__C AS GOVERNMENT
