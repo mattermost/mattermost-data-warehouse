@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from utils.run_dbt_cloud_job import trigger_dbt_run, poll_dbt_run
+from utils.run_dbt_cloud_job import poll_dbt_run, trigger_dbt_run
 
 EXPECTED_RUN_TRIGGER_URL = "https://cloud.getdbt.com/api/v2/accounts/1001/jobs/101/run/"
 EXPECTED_RUN_POLL_URL = "https://cloud.getdbt.com/api/v2/accounts/1001/runs/42/"

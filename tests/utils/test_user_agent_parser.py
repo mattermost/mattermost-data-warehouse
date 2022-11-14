@@ -1,5 +1,6 @@
 import pandas as pd
-from utils.user_agent_parser import parse_user_agent, CREATE_TABLE_QUERY, GET_USER_AGENT_STRINGS_QUERY
+
+from utils.user_agent_parser import CREATE_TABLE_QUERY, GET_USER_AGENT_STRINGS_QUERY, parse_user_agent
 
 
 def test_parse_user_agent(mocker, user_agent_input, user_agent_df):
