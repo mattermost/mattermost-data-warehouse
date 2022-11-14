@@ -20,7 +20,8 @@ conn = snowflake.connector.connect(
 
 try:
     cur = conn.cursor()
-
+    nps_webhook_url = os.getenv("NPS_WEBHOOK_URL")
+    nps_webhook_url = nps_webhook_url.strip('\n')
     sql = f'''
     select distinct 
         feedback, 
@@ -45,11 +46,14 @@ try:
 
     cur.execute(sql)
     out = cur.fetchall()
-    out = tuple(map(lambda x: format_row(x) , out))
-    out = tabulate(out, headers=['Feedback','Category','Score','Server Version','Installation Type','User Role','Customer Name', 'License Email', 'User Count'], tablefmt='github')
-    payload='{"text": "%s", "channel": "mattermost-nps-feedback"}' % out
-    nps_webhook_url = os.getenv("NPS_WEBHOOK_URL")
-    nps_webhook_url = nps_webhook_url.strip('\n')
+
+    if len(out) == 0:
+        payload = '{"text": "There were no reviews yesterday.", "channel": "mattermost-nps-feedback"}'
+    else:
+        out = tuple(map(lambda x: format_row(x) , out))
+        out = tabulate(out, headers=['Feedback','Category','Score','Server Version','Installation Type','User Role','Customer Name', 'License Email', 'User Count'], tablefmt='github')
+        payload='{"text": "%s", "channel": "mattermost-nps-feedback"}' % out
+    
     response = requests.post(
             nps_webhook_url, data=payload.encode('utf-8'),
             headers={'Content-Type': 'application/json'}
