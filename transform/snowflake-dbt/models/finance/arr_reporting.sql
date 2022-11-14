@@ -42,7 +42,7 @@ with a as (
     ,case 
         --resurrection or late renewal is a possibility
         when
-            iff(arr_delta - new > 0 and acct_beg_arr =0,arr_delta - new,0) > 0 
+            iff(arr_delta - new > 0 and acct_beg_arr =0 and account_id != '0013p00002AdrNFAAZ' ,arr_delta - new,0) > 0 
             and 
         --but elapsed time is under 90 days
             iff(arr_renewed>0,datediff('day',license_beg,close_day),0) <=90 
