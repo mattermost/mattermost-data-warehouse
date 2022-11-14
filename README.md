@@ -23,6 +23,7 @@ data to other tools.
   * [Adding dependencies](#adding-dependencies)
 * [Configuration](#configuration)
   * [Snowflake connections](#snowflake-connections)
+* [Airflow](#airflow)
 <!-- TOC -->
 
 ## Repository structure
@@ -282,3 +283,7 @@ different set of environment variables. The following table describes the requir
     </tr>
   </tbody>
 </table>
+
+## Airflow
+
+Please see the [separate documentation file](docs/Airflow.md).
