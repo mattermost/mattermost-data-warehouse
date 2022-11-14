@@ -169,11 +169,9 @@ def create_alert_body(context):
     dag_link = f"{base_url}/tree?dag_id={dag_id}"
 
     # TODO create templates for other alerts
-    body = f"""
-    :red_circle: {error_message}
-    **Dag**: [{dag_name}]({dag_link})
-    **Task**: [{task_name}]({task_link})
-    """
+    body = f""":red_circle: {error_message}\n
+            **Dag**: [{dag_name}]({dag_link})\n
+            **Task**: [{task_name}]({task_link})"""
     return body
 
 def send_alert(context):
