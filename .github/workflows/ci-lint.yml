@@ -1,0 +1,47 @@
+name: Python Linter
+
+on:
+  push:
+    paths:
+      - '.github/**'
+      - 'dags/**'
+      - 'extract/**'
+      - 'plugins/**'
+      - 'tests/**'
+      - 'utils/**'
+      - 'poetry.lock'
+      - 'pyproject.toml'
+
+jobs:
+  tests:
+    name: Check code style for all python code
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Install Poetry
+        run: pipx install poetry
+
+      - uses: actions/setup-python@v4
+        id: setup-python
+        with:
+          python-version: ${{ matrix.python }}
+          cache: 'poetry'
+
+      - name: Install dependencies
+        run: poetry install && poetry run pip install clearbit==0.1.7
+
+      - name: Run isort
+        run: poetry run isort . --check
+
+      - name: Run black
+        run: poetry run black . --check
+
+      - name: Run flake8
+        run: poetry run flake8 --config build/.flake8 .

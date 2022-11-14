@@ -65,6 +65,13 @@ pylint = "^2.15.4"
 pytest-responses = "^0.5.1"
 pytest-mock = "^3.10.0"
 pytest-cov = "^4.0.0"
+black = "^22.10.0"
+flake8 = "^5.0.4"
+isort = "^5.10.1"
+flake8-bugbear = "^22.10.27"
+flake8-comprehensions = "^3.10.1"
+flake8-simplify = "^0.19.3"
+flake8-eradicate = "^1.4.0"
 
 [build-system]
 requires = ["poetry-core"]
@@ -82,3 +89,17 @@ branch = true
 [tool.coverage.report]
 show_missing = true
 precision = 2
+
+[tool.black]
+line-length = 120
+target-version = ['py37', 'py38', 'py39', 'py310']
+skip-string-normalization = true
+
+[tool.isort]
+append_only = true
+line_length = 120
+combine_as_imports = true
+default_section = "THIRDPARTY"
+skip = ["build", "k8s", "load", "transform", ".tox", ".venv", ".venv-airflow"]
+skip_glob = ["*.pyi"]
+profile = "black"
