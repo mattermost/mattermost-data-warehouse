@@ -73,3 +73,13 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
 addopts = "--ignore=dags --ignore=plugins"
+testpaths = [ "tests" ]
+
+[tool.coverage.run]
+omit = [".*", "*/site-packages/*", "tests/*"]
+source = ["extract", "utils", "tests"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+precision = 2
