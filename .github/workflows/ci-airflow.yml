@@ -1,0 +1,43 @@
+name: Aiflow Tests
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/ci-airflow.yml'
+      - 'dags/**'
+      - 'plugins/**'
+      - 'build/requirements-airflow-dev.txt'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/ci-airflow.yml'
+      - 'dags/**'
+      - 'plugins/**'
+      - 'build/requirements-airflow-dev.txt'
+
+jobs:
+  tests:
+    name: Testing Plugins and DAGs
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+            fetch-depth: 1
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.6.12'   # This is the python version in the airflow docker image currently used
+          cache: 'pip'               # caching pip dependencies
+
+      - name: Install dependencies
+        run: pip install -r build/requirements-airflow-dev.txt
+
+      - name: Run tests
+        run: pytest dags plugins

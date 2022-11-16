@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - '.github/**'
+      - '.github/workflows/ci-python.yml'
       - 'extract/**'
       - 'tests/**'
       - 'utils/**'
@@ -15,7 +15,7 @@ on:
     branches:
       - master
     paths:
-      - '.github/**'
+      - '.github/workflows/ci-python.yml'
       - 'extract/**'
       - 'tests/**'
       - 'utils/**'
