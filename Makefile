@@ -131,6 +131,14 @@ python-update-dependencies: ## to update python dependencies
 	    $(POETRY) run pip install clearbit==0.1.7 || ${FAIL}
 	$(AT)$(OK) updating python dependencies
 
+.PHONY: python-lint
+python-lint: ## to run linter on python code
+	$(AT)$(INFO) python lint...
+	$(AT)$(POETRY) run isort . --check || ${FAIL}
+	$(AT)$(POETRY) run black . --check || ${FAIL}
+	$(AT)$(POETRY) run flake8 --config build/.flake8 . || ${FAIL}
+	$(AT)$(OK) python lint
+
 .PHONY: airflow-create-virtualenv
 airflow-create-virtualenv: 	## to create airflow virtualenv
 	$(AT)$(INFO) creating airflow virtualenv...
