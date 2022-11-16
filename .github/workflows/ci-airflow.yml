@@ -40,8 +40,7 @@ jobs:
         run: pip install -r build/requirements-airflow-dev.txt
 
       - name: Run dag tests
-        run: pytest .
-        working-directory: dags
+        run: pytest dags/
 
       - name: Run plugin tests
         run: pytest .
