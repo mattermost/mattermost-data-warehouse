@@ -6,7 +6,8 @@ from datetime import date, timedelta
 from typing import List
 
 from airflow.contrib.kubernetes.pod import Resources
-from operators.mattermost_operator import MattermostOperator
+if "PYTEST_CURRENT_TEST" in os.environ: from plugins.operators.mattermost_operator import MattermostOperator
+else: from operators.mattermost_operator import MattermostOperator
 from airflow.models import Variable
 
 DATA_IMAGE = "docker.io/adovenmm/data-image:v1.23.1"

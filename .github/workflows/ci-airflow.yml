@@ -41,6 +41,7 @@ jobs:
 
       - name: Run dag tests
         run: pytest dags/
+        working-directory: dags
 
       - name: Run plugin tests
         run: pytest .
