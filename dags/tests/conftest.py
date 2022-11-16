@@ -1,4 +1,3 @@
-from responses import Response
 from airflow import DAG
 from airflow.models.taskinstance import TaskInstance
 from airflow.exceptions import AirflowException

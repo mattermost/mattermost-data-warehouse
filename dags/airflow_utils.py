@@ -144,11 +144,9 @@ dbt_install_deps_and_seed_cmd = f"""
     dbt seed --profiles-dir profile --target prod"""
 
 def create_alert_body(context):
-
     """
     Creates post body to be sent to mattermost channel.
     """
-
     base_url = os.getenv("AIRFLOW_BASE_URL")
     execution_date = context["ts"]
     dag_context = context["dag"]
@@ -173,11 +171,9 @@ def create_alert_body(context):
     return body
 
 def send_alert(context):
-
     """
     Function to be used as a callable for on_failure_callback.
     Sends a post to mattermost channel using mattermost operator
     """
-
     task_id = str(context["task_instance"].task_id) + '_failed_alert'
     MattermostOperator(mattermost_conn_id='mattermost', text=create_alert_body(context), username='Airflow', task_id=task_id).execute(context)
