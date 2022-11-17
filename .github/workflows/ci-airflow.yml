@@ -39,10 +39,11 @@ jobs:
       - name: Install dependencies
         run: pip install -r build/requirements-airflow-dev.txt
 
+      - name: Run plugin tests
+        run: pytest plugins
+
       - name: Run dag tests
         run: pytest .
-        working-directory: dags
-
-      - name: Run plugin tests
-        run: pytest .
-        working-directory: plugins
+        env:
+          # DAGs require plugins package
+          PYTHONPATH: ./plugins

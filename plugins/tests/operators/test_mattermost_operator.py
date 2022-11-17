@@ -1,6 +1,3 @@
-import sys
-sys.path.append('../plugins')
-
 from operators.mattermost_operator import MattermostOperator
 
 def test_create_full_config(dag, full_config):

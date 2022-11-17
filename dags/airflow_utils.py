@@ -6,11 +6,7 @@ from datetime import date, timedelta
 from typing import List
 
 from airflow.contrib.kubernetes.pod import Resources
-# adding parent directory for imports to work
-if "PYTEST_CURRENT_TEST" in os.environ: 
-    import sys
-    sys.path.append('../')
-    sys.path.append('../plugins')
+
 from operators.mattermost_operator import MattermostOperator
 from airflow.models import Variable
 

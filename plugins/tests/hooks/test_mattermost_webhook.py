@@ -2,8 +2,6 @@ import pytest
 
 from airflow import AirflowException
 from airflow.models import Connection
-import sys
-sys.path.append('../plugins')
 
 from hooks.mattermost_webhook_hook import MattermostWebhookHook
 
