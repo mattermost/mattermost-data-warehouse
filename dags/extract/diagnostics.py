@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
-from dags.airflow_utils import DATA_IMAGE, clone_and_setup_extraction_cmd, pod_defaults, mm_failed_task
+from dags.airflow_utils import DATA_IMAGE, clone_and_setup_extraction_cmd, pod_defaults, send_alert
 from dags.kube_secrets import (
     DIAGNOSTIC_LOCATION_ONE,
     DIAGNOSTIC_LOCATION_TWO,
@@ -21,7 +21,7 @@ env = os.environ.copy()
 default_args = {
     "catchup": False,
     "depends_on_past": False,
-    "on_failure_callback": mm_failed_task,
+    "on_failure_callback": send_alert,
     "owner": "airflow",
     "retries": 0,
     "retry_delay": timedelta(minutes=1),
