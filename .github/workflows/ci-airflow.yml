@@ -46,4 +46,4 @@ jobs:
         run: pytest dags
         env:
           # DAGs require plugins package
-          PYTHONPATH: ./plugins
+          PYTHONPATH: .
