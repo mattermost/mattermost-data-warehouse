@@ -7,7 +7,7 @@ from typing import List
 
 from airflow.contrib.kubernetes.pod import Resources
 
-from operators.mattermost_operator import MattermostOperator
+from plugins.operators.mattermost_operator import MattermostOperator
 from airflow.models import Variable
 
 DATA_IMAGE = "docker.io/adovenmm/data-image:v1.23.1"
