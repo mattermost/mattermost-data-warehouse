@@ -4,7 +4,7 @@ import pytest
 import snowflake.connector
 from utils import post_nps_data
 import responses
-import requests
+
 class TestPostNpsJob():
 
     @pytest.mark.parametrize("input_row, output_row",
@@ -20,7 +20,19 @@ class TestPostNpsJob():
         # function returns output after removing newline and string quotes
         assert post_nps_data.format_row(input_row) == output_row
 
-    def test_post_to_channel_success(self, config_nps, responses, post_nps_ok, mock_snowflake_connector):
+    def test_feedback_generate_success(self, config_nps, mock_snowflake_connector, mocker):
+
+        mock_snowflake_connector('utils.post_nps_data')
+        requests_mock = mocker.patch('utils.post_nps_data.requests.post')
+        requests_mock.return_value = mocker.Mock()
+        # Expected to give error since mock object methods cant be called
+        with pytest.raises(ValueError):
+            post_nps_data.post_nps()
+        data = b'{"text": "| Feedback            | Category            |\n|---------------------|---------------------|\n| test row 1 column 1 | test row 1 column 2 |\n| test row 2 column 1 | test row 2 column 2 |", "channel": "mattermost-nps-feedback"}'
+        # Validate post data sent to the mattermost webhook 
+        requests_mock.assert_called_once_with( "https://mattermost.example.com/hooks/hookid", data=data, headers={'Content-Type': 'application/json'})
+
+    def test_post_to_channel_success(self, config_nps, responses, post_nps_ok, mock_snowflake_connector, mocker):
 
         mock_snowflake_connector('utils.post_nps_data')
         post_nps_data.post_nps()
