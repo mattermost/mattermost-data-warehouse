@@ -36,13 +36,13 @@ with a as (
     ,sum(expire_arr) as expire
 	,sum(renew_arr) as arr_renewed
 	,sum(arr_change) as arr_delta
-    ,sum(arr_delta) over (partition by account_id order by report_mo rows between unbounded preceding and 1 preceding) as acct_beg_arr
-    ,sum(arr_delta) over (partition by account_id order by report_mo) as acct_end_arr
+    ,coalesce(sum(arr_delta) over (partition by account_id order by license_beg, close_day rows between unbounded preceding and 1 preceding),0) as acct_beg_arr
+    ,coalesce(sum(arr_delta) over (partition by account_id order by license_beg, close_day),0) as acct_end_arr
     ,sum(new_arr) as new
     ,case 
         --resurrection or late renewal is a possibility
         when
-            iff(arr_delta - new > 0 and acct_beg_arr =0,arr_delta - new,0) > 0 
+            iff(arr_delta - new > 0 and acct_beg_arr =0 and account_id != '0013p00002AdrNFAAZ' ,arr_delta - new,0) > 0 
             and 
         --but elapsed time is under 90 days
             iff(arr_renewed>0,datediff('day',license_beg,close_day),0) <=90 
@@ -119,12 +119,13 @@ select
     ,round((datediff('day',a.cohort_fiscal_qtr,fiscal_qtr))/90,0) as fiscal_quarter_no
     ,sum(cnt_changed) over (order by report_mo||report_day||account_id) as active_customers
     ,round(avg(acct_end_arr) over (partition by a.account_id),2) as average_arr
+    ,iff(acct_beg_arr>acct_end_arr,acct_beg_arr,acct_end_arr) as ref_arr
+    ,last_value(ref_arr) over (partition by a.account_id order by license_beg,close_day ) as latest_arr
     ,case 
-        when average_arr <=10000 then '4_AvgARR_upto10K'
-        when average_arr >10000 and average_arr <=100000 then '3_AvgARR_10Kupto100K'
-        when average_arr >100000 and average_arr <=500000 then '2_AvgARR_100Kupto500K'
-        when average_arr >500000 then '1_AvgARR_above500K'
-        else null
+        when latest_arr >500000 then '1_AvgARR_above500K'
+        when latest_arr <=500000 and latest_arr >100000 then '2_AvgARR_100Kupto500K'
+        when latest_arr >10000 and latest_arr <=100000 then '3_AvgARR_10Kupto100K'
+        else '4_AvgARR_upto10K'
      end as bin_avg_arr
     --positive when tcv is for more than a year
     --negative when tcv is for less than a year 

@@ -4,7 +4,7 @@ services:
     dbt_image:
       image: fishtownanalytics/dbt:1.0.0
       env_file:
-        - .dbt.env
+        - ../.dbt.env
       environment:
         DBT_PROFILES_DIR: /usr/local/dbt_profiles/
         SNOWFLAKE_LOAD_DATABASE: "RAW"
@@ -16,7 +16,7 @@ services:
       entrypoint: [ "" ]
       volumes:
         - type: bind
-          source: ./transform/snowflake-dbt/
+          source: ../transform/snowflake-dbt/
           target: /usr/app
         - type: bind
           source: ${DBT_PROFILE_PATH}
@@ -26,7 +26,7 @@ services:
     data_image:
       image: docker.io/adovenmm/data-image:v01.21.1
       env_file:
-        - .env
+        - ../.dbt.env
       restart: always
       command: bash -c "/bin/bash"
       working_dir: /usr/local/analytics/
@@ -38,7 +38,7 @@ services:
     permifrost:
       image: docker.io/adovenmm/permifrost:latest
       env_file:
-        - .env
+        - ../.env
       restart: always
       command: /bin/bash -c "permifrost grant roles.yaml"
       volumes:

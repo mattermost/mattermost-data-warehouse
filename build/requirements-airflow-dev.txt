@@ -1,0 +1,6 @@
+markupsafe==1.1.1
+apache-airflow==1.10.12
+pytest-mock==3.6.1
+pytest-responses==0.5.1
+pendulum==1.4.4
+kubernetes==25.3.0

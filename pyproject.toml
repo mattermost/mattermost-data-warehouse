@@ -6,13 +6,12 @@ authors = ["Munish Sharma <munish.sharma@mattermost.com>", "Ioannis Foukarakis <
 readme = "README.md"
 packages = [
     {include = "extract"},
-    {include = "transform"},
     {include = "utils"},
 ]
 exclude = [
-    ".",
     "dags",
-    "dags/billing/*"
+    "dags/billing/*",
+    "plugins",
 ]
 
 [tool.poetry.dependencies]
@@ -72,4 +71,4 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
-addopts = "--ignore=dags"
+addopts = "--ignore=dags --ignore=plugins"

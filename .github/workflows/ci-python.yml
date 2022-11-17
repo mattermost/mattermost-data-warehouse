@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - '.github/**'
+      - '.github/workflows/ci-python.yml'
       - 'extract/**'
       - 'tests/**'
       - 'utils/**'
@@ -15,7 +15,7 @@ on:
     branches:
       - master
     paths:
-      - '.github/**'
+      - '.github/workflows/ci-python.yml'
       - 'extract/**'
       - 'tests/**'
       - 'utils/**'
@@ -37,7 +37,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 1
-
 
       - name: Install Poetry
         run: pipx install poetry

@@ -7,6 +7,9 @@ from typing import List
 
 from airflow.contrib.kubernetes.pod import Resources
 
+from plugins.operators.mattermost_operator import MattermostOperator
+from airflow.models import Variable
+
 DATA_IMAGE = "docker.io/adovenmm/data-image:v1.23.1"
 DBT_IMAGE = "docker.io/adovenmm/dbt-image:v0.18.1"
 PERMIFROST_IMAGE = "docker.io/adovenmm/permifrost-image:latest"
@@ -140,3 +143,38 @@ dbt_install_deps_cmd = f"""
 dbt_install_deps_and_seed_cmd = f"""
     {dbt_install_deps_cmd} &&
     dbt seed --profiles-dir profile --target prod"""
+
+def create_alert_body(context):
+    """
+    Creates post body to be sent to mattermost channel.
+    """
+    base_url = os.getenv("AIRFLOW_BASE_URL")
+    execution_date = context["ts"]
+    dag_context = context["dag"]
+    dag_name = dag_context.dag_id
+    dag_id = context["dag"].dag_id
+    task_name = context["task"].task_id
+    task_id = context["task_instance"].task_id
+    execution_date_pretty = context["execution_date"].strftime(
+        "%a, %b %d, %Y at %-I:%M %p UTC"
+    )
+    error_message = str(context["exception"])
+
+    # Generate the link to the task
+    task_params = urllib.parse.urlencode(
+        {"dag_id": dag_id, "task_id": task_id, "execution_date": execution_date}
+    )
+    task_link = f"{base_url}/task?{task_params}"
+    dag_link = f"{base_url}/tree?dag_id={dag_id}"
+
+    # TODO create templates for other alerts
+    body = f""":red_circle: {error_message}\n**Dag**: [{dag_name}]({dag_link})\n**Task**: [{task_name}]({task_link})"""
+    return body
+
+def send_alert(context):
+    """
+    Function to be used as a callable for on_failure_callback.
+    Sends a post to mattermost channel using mattermost operator
+    """
+    task_id = str(context["task_instance"].task_id) + '_failed_alert'
+    MattermostOperator(mattermost_conn_id='mattermost', text=create_alert_body(context), username='Airflow', task_id=task_id).execute(context)

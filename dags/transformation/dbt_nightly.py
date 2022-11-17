@@ -7,7 +7,7 @@ from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOpera
 from dags.airflow_utils import (
     DATA_IMAGE,
     clone_and_setup_extraction_cmd,
-    mm_failed_task,
+    send_alert,
     pod_defaults,
     pod_env_vars,
 )
@@ -33,7 +33,7 @@ default_args = {
     "catchup": False,
     "depends_on_past": False,
     "owner": "airflow",
-    "on_failure_callback": mm_failed_task,
+    "on_failure_callback": send_alert,
     "retries": 0,
     "retry_delay": timedelta(minutes=1),
     "sla": timedelta(hours=8),
