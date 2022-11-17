@@ -64,9 +64,9 @@ def post_nps():
             % (response.status_code, response.text)
         )
 
-        finally:
-            cur.close()
-            conn.close()
+    finally:
+        cur.close()
+        conn.close()
 
 if __name__ == '__main__':
     post_nps()
