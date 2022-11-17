@@ -2,8 +2,10 @@ import pytest
 
 from airflow import AirflowException
 from airflow.models import Connection
-from plugins.hooks.mattermost_webhook_hook import MattermostWebhookHook
+from hooks.mattermost_webhook_hook import MattermostWebhookHook
 
+import sys
+sys.path.append('../plugins')
 def test_execute_simple_message(responses, ok_response, mock_connection):
     hook = MattermostWebhookHook(mattermost_conn_id='some_conn_id', text='Test message')
     hook.execute()
