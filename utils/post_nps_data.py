@@ -60,7 +60,6 @@ def post_nps():
                 headers={'Content-Type': 'application/json'}
             )
         if response.status_code != 200:
-            print('response is ',response.text)
             raise ValueError(
             'Request to Mattermost returned an error %s, the response is:\n%s'
             % (response.status_code, response.text)
