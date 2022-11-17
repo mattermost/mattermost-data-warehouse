@@ -4,6 +4,7 @@ import pytest
 import snowflake.connector
 from utils import post_nps_data
 import responses
+import requests
 class TestPostNpsJob():
 
     @pytest.mark.parametrize("input_row, output_row",
@@ -29,7 +30,8 @@ class TestPostNpsJob():
     def test_post_to_channel_error(self, config_nps, responses, post_nps_error, mock_snowflake_connector):
 
         mock_snowflake_connector('utils.post_nps_data')
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as error:
             post_nps_data.post_nps()
+        assert 'Request to Mattermost returned an error' in str(error.value)
         snowflake.connector.connect.assert_called_once()
         responses.assert_call_count("https://mattermost.example.com/hooks/hookid", 1)
