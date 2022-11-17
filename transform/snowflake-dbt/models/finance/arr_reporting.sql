@@ -50,7 +50,7 @@ with a as (
         then iff(arr_delta - new > 0 and acct_beg_arr =0,arr_delta - new,0)
         else 0
      end as gross_late_renewal
-    ,iff(gross_late_renewal>0,last_value(arr_delta) over (partition by account_id order by report_mo rows between 2 preceding and 1 preceding),0) as previous_expire
+    ,iff(gross_late_renewal>0,coalesce(last_value(arr_delta) over (partition by account_id order by report_mo rows between 2 preceding and 1 preceding),0),0) as previous_expire
     ,previous_expire*-1 as late_renewal
     ,case 
         --resurrection is a possibility
