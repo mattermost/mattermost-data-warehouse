@@ -40,8 +40,7 @@ jobs:
         run: pip install -r build/requirements-airflow-dev.txt
 
       - name: Run plugin tests
-        # Ugly hack to get tests running, will be fixed soon
-        run: rm plugins/__init__.py && pytest plugins
+        run: pytest plugins
 
       - name: Run dag tests
         run: pytest dags
