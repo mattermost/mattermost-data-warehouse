@@ -24,6 +24,7 @@ WITH customers AS (
         ,customers.updated
         ,customers.cards
         ,customers.currency
+        ,customers.metadata
     FROM {{ source('stripe_raw','customers') }}
     {% if is_incremental() %}
 
