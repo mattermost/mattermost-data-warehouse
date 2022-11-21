@@ -164,6 +164,7 @@ def config_feedback(monkeypatch, mocker):
 
     # mocking loading k8 secrets to environment variables
     monkeypatch.setenv("NPS_WEBHOOK_URL", "https://mattermost.example.com/hooks/hookid")
+    monkeypatch.setenv("DOCS_WEBHOOK_URL", "https://mattermost.example.com/hooks/hookid")
     monkeypatch.setenv("SNOWFLAKE_PASSWORD", "test password")
     monkeypatch.setenv("SNOWFLAKE_USER", "test user")
     monkeypatch.setenv("SNOWFLAKE_ACCOUNT", "test account")
