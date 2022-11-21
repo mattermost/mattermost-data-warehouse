@@ -16,11 +16,11 @@ class TestPostNpsJob():
                                     (('sample feedback""""\n""""5','untouched string goes here\n\n""'),('sample feedback 5','untouched string goes here\n\n""'))
                                 ]
                             )
-    def test_format_row(self, config_nps, input_row, output_row):
+    def test_format_row(self, config_feedback, input_row, output_row):
         # function returns output after removing newline and string quotes
         assert post_nps_data.format_row(input_row) == output_row
 
-    def test_feedback_generate_success(self, config_nps, mock_snowflake_connector, mocker):
+    def test_feedback_generate_success(self, config_feedback, mock_snowflake_connector, mocker):
 
         mock_snowflake_connector('utils.post_nps_data')
         requests_mock = mocker.patch('utils.post_nps_data.requests.post')
@@ -32,14 +32,14 @@ class TestPostNpsJob():
         # Validate post data sent to the mattermost webhook 
         requests_mock.assert_called_once_with( "https://mattermost.example.com/hooks/hookid", data=data, headers={'Content-Type': 'application/json'})
 
-    def test_post_to_channel_success(self, config_nps, responses, post_nps_ok, mock_snowflake_connector, mocker):
+    def test_post_to_channel_success(self, config_feedback, responses, post_mattermost_ok, mock_snowflake_connector, mocker):
 
         mock_snowflake_connector('utils.post_nps_data')
         post_nps_data.post_nps()
         snowflake.connector.connect.assert_called_once()
         responses.assert_call_count("https://mattermost.example.com/hooks/hookid", 1)
 
-    def test_post_to_channel_error(self, config_nps, responses, post_nps_error, mock_snowflake_connector):
+    def test_post_to_channel_error(self, config_feedback, responses, post_mattermost_error, mock_snowflake_connector):
 
         mock_snowflake_connector('utils.post_nps_data')
         with pytest.raises(ValueError) as error:
