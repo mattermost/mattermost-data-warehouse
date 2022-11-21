@@ -80,7 +80,8 @@ with mrr as (
       ,o.last_owner
       ,u.name
     from o
-    left join analytics.orgm.user u on u.sfid = o.last_owner
+    left join {{ref('user')}} u on u.sfid = o.last_owner
+    --left join analytics.orgm.user u on u.sfid = o.last_owner
 )    
   
 --subquery to gather account demographics
@@ -160,6 +161,7 @@ with mrr as (
     WHERE opp.iswon =true
         and opp.isclosed = true
         and opp.isdeleted = false
+        and type != 'Monthly Billing'
         and opp.accountid in (select distinct accountid from pop)
     order by opp.accountid, opp.closedate asc
 )
