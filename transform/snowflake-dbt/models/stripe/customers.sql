@@ -24,7 +24,9 @@ WITH customers AS (
         ,customers.updated
         ,customers.cards
         ,customers.currency
-        ,customers.metadata
+        ,replace(customers.metadata:"cws-first-purchase-intent-wire-transfer",'/','') as cws_first_purchase_intent_wire_transfer
+        ,replace(customers.metadata:"cws-renewal-self-intent-wire-transfer",'/','') as cws_renewal_self_intent_wire_transfer
+        ,replace(customers.metadata:"cws-monthly-sub-intent-wire-transfer",'/','') as cws_monthly_sub_intent_wire_transfer
     FROM {{ source('stripe_raw','customers') }}
     {% if is_incremental() %}
 
