@@ -161,7 +161,7 @@ with mrr as (
     WHERE opp.iswon =true
         and opp.isclosed = true
         and opp.isdeleted = false
-        and type != 'Monthly Billing'
+        and opp.type != 'Monthly Billing'
         and opp.accountid in (select distinct accountid from pop)
     order by opp.accountid, opp.closedate asc
 )
