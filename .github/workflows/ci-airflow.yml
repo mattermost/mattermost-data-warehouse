@@ -34,16 +34,14 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.6.12'   # This is the python version in the airflow docker image currently used
+          architecture: x64          # See https://github.com/actions/setup-python/issues/162
           cache: 'pip'               # caching pip dependencies
 
       - name: Install dependencies
         run: pip install -r build/requirements-airflow-dev.txt
 
-      # - name: Run plugin tests
-      #   run: pytest plugins
-
-      - name: Run dag tests
-        run: pytest dags
+      # - name: Run tests
+      - name: Run plugin tests
+        run: pytest plugins dags
         env:
-          # DAGs require plugins package
           PYTHONPATH: .
