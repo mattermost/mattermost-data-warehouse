@@ -94,7 +94,7 @@ Copy `.dbt.env.example` to `.dbt.env`. Edit the file and replace placeholder wit
 At the home of the repo run:
 
 ```bash
-DBT_PROFILE_PATH=./transform/snowflake-dbt/profile make dbt-bash
+make dbt-bash
 ```
 
 This command creates a container with `dbt` pre-installed and connects you to the bash shell.
@@ -126,10 +126,22 @@ then the setup is working.
 At the home of the repo run:
 
 ```bash
-DBT_PROFILE_PATH=./transform/snowflake-dbt/profile make dbt-docs
+make dbt-docs
 ```
 
 This command will generate the docs and serve them at [http://localhost:8081](http://localhost:8081).
+
+### Overriding profile
+
+All dbt commands that are part of the `Makefile` use by default profiles under [transform/snowflake-dbt/profile](transform/snowflake-dbt/profile).
+This directory can be overriden by setting `DBT_PROFILE_PATH` environment variable:
+
+```bash
+DBT_PROFILE_PATH=/path/to/profile make dbt-bash
+```
+
+> Note that `DBT_PROFILE_PATH` can use either absolute or relative paths. For relative paths, the base is the [build](build) 
+> directory of this project.
 
 ## Developing
 
@@ -153,7 +165,6 @@ Additional dependencies can be specified at `pyproject.toml`. [Poetry's document
 provides examples. Please prefer using `poetry` CLI, as it also updates `poetry.lock` file and "pins" any new dependencies.
 
 > Note that currently there's a `requirements.txt` file. This file will be deprecated.
-
 
 ## Configuration
 

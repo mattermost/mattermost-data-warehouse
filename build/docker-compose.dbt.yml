@@ -19,7 +19,7 @@ services:
           source: ../transform/snowflake-dbt/
           target: /usr/app
         - type: bind
-          source: ${DBT_PROFILE_PATH}
+          source: ${DBT_PROFILE_PATH:-../transform/snowflake-dbt/profile}
           target: /usr/local/dbt_profiles/
           read_only: True
 
@@ -38,7 +38,7 @@ services:
     permifrost:
       image: docker.io/adovenmm/permifrost:latest
       env_file:
-        - ../.env
+        - ../.dbt.env
       restart: always
       command: /bin/bash -c "permifrost grant roles.yaml"
       volumes:
