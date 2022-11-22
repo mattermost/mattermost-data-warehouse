@@ -132,29 +132,25 @@ airflow-test: $(VIRTUALENV_AIRFLOW)  ## to run airflow tests
 .PHONY: dbt-docs
 dbt-docs: ## to generate and serve dbt docs
 	$(AT)$(INFO) Generating docs and spinning up the a webserver on port 8081...
-	$(AT)export DBT_PROFILE_PATH=".";\
-	$(DOCKER) compose run -d -p "8081:8081" dbt_image bash -c "dbt deps && dbt docs generate -t prod && dbt docs serve --port 8081"  || ${FAIL}
+	$(AT)$(DOCKER) compose run -d -p "8081:8081" dbt_image bash -c "dbt deps && dbt docs generate -t prod && dbt docs serve --port 8081"  || ${FAIL}
 	$(AT)$(OK) Server started, visit http://localhost:8081 to view the docs
 
 .PHONY: dbt-generate-docs
 dbt-generate-docs: ## to generate dbt docs
 	$(AT)$(INFO) Generating docs...
-	$(AT)export DBT_PROFILE_PATH=".";\
-	$(DOCKER) compose run dbt_image bash -c "dbt deps && dbt docs generate -t prod" } || ${FAIL}
+	$(AT)$(DOCKER) compose run dbt_image bash -c "dbt deps && dbt docs generate -t prod" } || ${FAIL}
 	$(AT)$(OK) Generated docs
 
 .PHONY: dbt-bash
 dbt-bash: ## to start a bash shell with DBT
 	$(AT)$(INFO) Running bash with dbt...
-	$(AT)export DBT_PROFILE_PATH=".";\
-	$(DOCKER) compose -f ${DOCKER_COMPOSE_DBT_FILE} run dbt_image bash -c "dbt deps && /bin/bash" || ${FAIL}
+	$(AT)$(DOCKER) compose -f ${DOCKER_COMPOSE_DBT_FILE} run dbt_image bash -c "dbt deps && /bin/bash" || ${FAIL}
 	$(AT)$(OK) Exited dbt bash
 
 .PHONY: data-image
 data-image: ## to start a bash shell on the data image
 	$(AT)$(INFO) Attaching to data-image and mounting repo...
-	$(AT)export DBT_PROFILE_PATH=".";\
-	$(DOCKER) compose -f ${DOCKER_COMPOSE_DBT_FILE} run data_image bash || ${FAIL}
+	$(AT)$(DOCKER) compose -f ${DOCKER_COMPOSE_DBT_FILE} run data_image bash || ${FAIL}
 	$(AT)$(OK) Exited data-image
 
 .PHONY: clean
