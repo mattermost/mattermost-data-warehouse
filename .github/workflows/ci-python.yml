@@ -69,7 +69,7 @@ jobs:
         run: make docker-lint
 
       - name: Build & push docker image
-        run: make docker-login && make docker-build && make docker-sign && make docker-push
+        run: make docker-login && make docker-build && make docker-push && make docker-sign
         env:
           COSIGN_KEY: ${{ secrets.COSIGN_KEY }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
