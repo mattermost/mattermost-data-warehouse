@@ -68,14 +68,10 @@ jobs:
       - name: Lint docker image
         run: make docker-lint
 
-      - name: Docker login
-        run: make docker-login
-        env:
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-
       - name: Build & push docker image
-        run: make docker-build && make docker-sign && make docker-push
+        run: make docker-login && make docker-build && make docker-sign && make docker-push
         env:
           COSIGN_KEY: ${{ secrets.COSIGN_KEY }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
