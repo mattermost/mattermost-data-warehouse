@@ -11,6 +11,7 @@
 --added logic for late renewal when close date is <=90 later that license start 
 --and resurrection for cases when close date > license start
 --Expansion and contraction calculated for late renewals but not for resurrections
+--Revised late renewal and resurrection logic to remove waiting period 
 
 with a as (
     select
@@ -34,33 +35,52 @@ with a as (
     ,sum(first_yr_bill) as yr1_billing
     ,sum(opportunity_arr) as arr
     ,sum(expire_arr) as expire
+    --renew_arr is based on the opportunity arr that is related to opportunity names with the word renewal 
+	--renew_arr includes expansion amount if any
 	,sum(renew_arr) as arr_renewed
 	,sum(arr_change) as arr_delta
     ,coalesce(sum(arr_delta) over (partition by account_id order by license_beg, close_day rows between unbounded preceding and 1 preceding),0) as acct_beg_arr
     ,coalesce(sum(arr_delta) over (partition by account_id order by license_beg, close_day),0) as acct_end_arr
     ,sum(new_arr) as new
     ,case 
-        --resurrection or late renewal is a possibility
-        when
+
+        --logic to specifically characterize DR technologies as an expansion and not a late renewal based on business combination with Wintermute
+        when 
+            arr_delta - new > 0 and acct_beg_arr =0 and account_id = '0013p00002AdrNFAAZ' 
+            then 0
+        --logic to specifically treat Bank of America transaction as late renewal as general logic does not accomodate multiple contracts due to lack of recording consistency
+        when 
+            account_id = '00136000015uBxoAAE' and report_month = date '2020-04-30' then arr_delta 
+        --late renewal identifier
+        --when arr delta is greater than new and acct beg balance is zero reflecting previous period churn with no renewal and no expiry in the same month
+        when 
+            arr_delta - new > 0 and acct_beg_arr = 0 and expire = 0 and datediff('day',license_beg,close_day) <=90
+            then arr_delta - new 
+        --retire previous logic
+        /*when
             iff(arr_delta - new > 0 and acct_beg_arr =0 and account_id != '0013p00002AdrNFAAZ' ,arr_delta - new,0) > 0 
             and 
         --but elapsed time is under 90 days
             iff(arr_renewed>0,datediff('day',license_beg,close_day),0) <=90 
         --value is arr opportunity above new and only if previous arr was zero
-        then iff(arr_delta - new > 0 and acct_beg_arr =0,arr_delta - new,0)
+        then iff(arr_delta - new > 0 and acct_beg_arr =0,arr_delta - new,0)*/
         else 0
      end as gross_late_renewal
     ,iff(gross_late_renewal>0,coalesce(last_value(arr_delta) over (partition by account_id order by report_mo rows between 2 preceding and 1 preceding),0),0) as previous_expire
     ,previous_expire*-1 as late_renewal
     ,case 
         --resurrection is a possibility
-        when
+        when 
+            arr_delta - new > 0 and acct_beg_arr =0 and expire = 0  and datediff('day',license_beg,close_day) >90
+            then arr_delta - new 
+        --retire previous logic to make symmetric with with late renewals
+        /*when
             iff(arr_delta - new > 0 and acct_beg_arr =0,arr_delta - new,0) > 0 
             and 
         --but elapsed time is over 90 days
             iff(arr_renewed>0,datediff('day',license_beg,close_day),0) >90 
         --value is arr opportunity above new and only if previous arr was zero
-        then iff(arr_delta - new > 0 and acct_beg_arr =0,arr_delta - new,0)
+        then iff(arr_delta - new > 0 and acct_beg_arr =0,arr_delta - new,0)*/
         else 0
      end as resurrected
     ,case 
@@ -110,7 +130,7 @@ order by report_mo,close_day,account_id
 
 --append with calculations and dimensions separately to avoid window nesting
 select
-	  a.account_id||'-'||report_mo as unique_key
+	a.account_id||'-'||report_mo as unique_key
     ,dense_rank() over (partition by account_id order by license_beg, close_day) as trans_no
     ,datediff('day',license_beg,close_day) as closing_delay
     ,a.*
