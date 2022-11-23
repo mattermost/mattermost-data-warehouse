@@ -75,4 +75,4 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build & push docker image
-        run: make docker-build && make docker-push
+        run: make docker-build && make docker-sign && make docker-push

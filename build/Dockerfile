@@ -44,7 +44,7 @@ RUN pip install "poetry==${POETRY_VERSION}" && \
 
 # Copy dependency definitions
 WORKDIR /src
-COPY Makefile pyproject.toml poetry.lock /src/
+COPY .git Makefile pyproject.toml poetry.lock /src/
 
 # Activate virtualenv in a shellcheck friendly way
 ENV VIRTUAL_ENV=/venv
