@@ -37,7 +37,7 @@ DOCKER_COMPOSE_DBT_FILE += ./build/docker-compose.dbt.yml
 DOCKER_OPTS             += --rm -u $$(id -u):$$(id -g) --platform "linux/amd64"
 # Registry to upload images
 DOCKER_REGISTRY         ?= docker.io
-DOCKER_REGISTRY_REPO    ?= mattermost/${APP_NAME}-daily
+DOCKER_REGISTRY_REPO    ?= mattermost/${APP_NAME}
 # Registry credentials
 DOCKER_USER             ?= user
 DOCKER_PASSWORD         ?= password

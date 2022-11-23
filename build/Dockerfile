@@ -75,7 +75,7 @@ RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 ## Install package
-RUN pip install *.whl
+RUN pip install --no-cache-dir ./*.whl
 
 # We should refrain from running as privileged user
 # Run as UID for nobody
