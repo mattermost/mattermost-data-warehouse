@@ -99,7 +99,7 @@ python-build: ## to build python package
 .PHONY: python-test
 python-test: ## to run python tests
 	$(AT)$(INFO) testing python...
-	$(AT)$(POETRY) run pytest || ${FAIL}
+	$(AT)$(POETRY) run pytest --cov || ${FAIL}
 	$(AT)$(OK) testing python
 
 .PHONY: python-update-dependencies

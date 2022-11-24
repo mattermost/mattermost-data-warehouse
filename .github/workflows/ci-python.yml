@@ -51,4 +51,4 @@ jobs:
         run: poetry install && poetry run pip install clearbit==0.1.7
 
       - name: Run tests
-        run: poetry run pytest
+        run: poetry run pytest --cov
