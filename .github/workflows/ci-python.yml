@@ -69,7 +69,13 @@ jobs:
         run: make docker-lint
 
       - name: Build & push docker image
-        run: make docker-login && make docker-build && make docker-push && make docker-sign && make docker-verify
+        run: make docker-login && make docker-build && make docker-push
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Sign docker image
+        run: make docker-sign && make docker-verify
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
