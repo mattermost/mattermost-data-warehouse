@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - '.github/workflows/ci-python.yml'
+      - 'build/Dockerfile'
       - 'extract/**'
       - 'tests/**'
       - 'utils/**'
@@ -16,6 +17,7 @@ on:
       - master
     paths:
       - '.github/workflows/ci-python.yml'
+      - 'build/Dockerfile'
       - 'extract/**'
       - 'tests/**'
       - 'utils/**'
@@ -52,3 +54,31 @@ jobs:
 
       - name: Run tests
         run: poetry run pytest --cov
+
+  docker:
+    name: Build docker image
+    runs-on: ubuntu-latest
+    needs: tests
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Lint docker image
+        run: make docker-lint
+
+      - name: Build & push docker image
+        run: make docker-login && make docker-build && make docker-push
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Sign docker image
+        run: make docker-sign && make docker-verify
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          COSIGN_KEY: ${{ secrets.COSIGN_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          COSIGN_PUBLIC_KEY: ${{ secrets.COSIGN_PUBLIC_KEY }}

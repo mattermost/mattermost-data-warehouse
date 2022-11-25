@@ -50,7 +50,6 @@ tweepy = "3.9.0"
 xenon = "0.7"
 zeep = "4.0.0"
 snowflake-connector-python = {extras = ["pandas"], version = "^2.8.0"}
-gitlabdata = { git = "https://gitlab.com/gitlab-data/gitlab-data-utils.git", tag = "v0.0.2" }
 numpy = "1.23.0"
 setuptools = "57.5.0"
 

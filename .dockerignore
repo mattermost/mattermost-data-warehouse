@@ -1,0 +1,8 @@
+.github
+.venv
+build
+dags
+k8s
+load
+plugins
+transform
