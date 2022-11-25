@@ -143,6 +143,25 @@ def _mock_clearbit_factory(api):
     return _load_responses
 
 
+@pytest.fixture()
+def expect_data():
+    def _expect_data(type, filename):
+        with open(Path(__file__).parent / "fixtures" / "clearbit" / type / "setup" / "dataframe-schema.json") as fp:
+            schema = json.load(fp)
+            target = Path(__file__).parent / "fixtures" / "clearbit" / type / "expectations" / filename
+            df = pd.read_json(target, orient="records", dtype=False)
+            # There are some column type manipulations in cloud_clearbit.py and onprem_clearbit.py. This makes the data
+            # types of the dataframe under test different to the datatypes inferred by pandas when loading from json.
+            # To solve this, a schema file contains pinned data type of each column.
+            df = df.convert_dtypes()
+            for col, _type in schema.items():
+                if col in df.columns:
+                    df[col] = df[col].astype(_type)
+            return df
+
+    return _expect_data
+
+
 @pytest.fixture
 def mock_snowflake_connector(mocker):
 

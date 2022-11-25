@@ -8,7 +8,14 @@ from sqlalchemy.exc import ProgrammingError
 from utils.onprem_clearbit import onprem_clearbit
 
 # Load setup configuration
-with open(Path(__file__).parent / "fixtures" / "clearbit" / "onprem" / "setup" / "clearbit_columns.csv") as fp:
+with open(
+    Path(__file__).parent
+    / "fixtures"
+    / "clearbit"
+    / "onprem"
+    / "setup"
+    / "clearbit_columns.csv"
+) as fp:
     # List of columns in cloud_clearbit table
     CLEARBIT_COLUMNS = [line.strip() for line in fp.readlines()]
 
@@ -24,17 +31,23 @@ with open(Path(__file__).parent / "fixtures" / "clearbit" / "onprem" / "setup" /
             # GIVEN: No exception data
             None,
             # GIVEN: one item to update
-            pd.DataFrame.from_dict([
-                {"SERVER_ID": "server-1", "INSTALLATION_ID": None, "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
-                 "LAST_IP_ADDRESS": "42.42.42.42"},
-            ]),
+            pd.DataFrame.from_dict(
+                [
+                    {
+                        "SERVER_ID": "server-1",
+                        "INSTALLATION_ID": None,
+                        "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
+                        "LAST_IP_ADDRESS": "42.42.42.42",
+                    },
+                ]
+            ),
             # GIVEN: clearbit returns data for response
             ["42.42.42.42.json"],
             # THEN: expect one item to have been updated
             "42.42.42.42.json",
             # THEN: expect no exceptions,
             None,
-            id="table exists - contains data but not exceptions - one item to be updated - clearbit returns data"
+            id="table exists - contains data but not exceptions - one item to be updated - clearbit returns data",
         ),
         pytest.param(
             # GIVEN: table exists
@@ -44,19 +57,29 @@ with open(Path(__file__).parent / "fixtures" / "clearbit" / "onprem" / "setup" /
             # GIVEN: No exception data
             None,
             # GIVEN: two items to update
-            pd.DataFrame.from_dict([
-                {"SERVER_ID": "server-1", "INSTALLATION_ID": None, "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
-                 "LAST_IP_ADDRESS": "42.42.42.42"},
-                {"SERVER_ID": "server-2", "INSTALLATION_ID": None, "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
-                 "LAST_IP_ADDRESS": "1.1.1.1"},
-            ]),
+            pd.DataFrame.from_dict(
+                [
+                    {
+                        "SERVER_ID": "server-1",
+                        "INSTALLATION_ID": None,
+                        "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
+                        "LAST_IP_ADDRESS": "42.42.42.42",
+                    },
+                    {
+                        "SERVER_ID": "server-2",
+                        "INSTALLATION_ID": None,
+                        "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
+                        "LAST_IP_ADDRESS": "1.1.1.1",
+                    },
+                ]
+            ),
             # GIVEN: clearbit returns data for item
             ["42.42.42.42.json", "1.1.1.1.json"],
             # THEN: expect one item to have been updated
             "all.json",
             # THEN: expect no exceptions,
             None,
-            id="table exists - contains data but not exceptions - two items to be updated - clearbit returns data"
+            id="table exists - contains data but not exceptions - two items to be updated - clearbit returns data",
         ),
         pytest.param(
             # GIVEN: table exists
@@ -66,19 +89,29 @@ with open(Path(__file__).parent / "fixtures" / "clearbit" / "onprem" / "setup" /
             # GIVEN: exception data
             pd.DataFrame(),
             # GIVEN: two items to update
-            pd.DataFrame.from_dict([
-                {"SERVER_ID": "server-1", "INSTALLATION_ID": None, "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
-                 "LAST_IP_ADDRESS": "42.42.42.42"},
-                {"SERVER_ID": "server-2", "INSTALLATION_ID": None, "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
-                 "LAST_IP_ADDRESS": "1.1.1.1"},
-            ]),
+            pd.DataFrame.from_dict(
+                [
+                    {
+                        "SERVER_ID": "server-1",
+                        "INSTALLATION_ID": None,
+                        "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
+                        "LAST_IP_ADDRESS": "42.42.42.42",
+                    },
+                    {
+                        "SERVER_ID": "server-2",
+                        "INSTALLATION_ID": None,
+                        "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
+                        "LAST_IP_ADDRESS": "1.1.1.1",
+                    },
+                ]
+            ),
             # GIVEN: clearbit returns data for both items
             ["42.42.42.42.json", "1.1.1.1.json"],
             # THEN: expect one item to have been updated
             "all.json",
             # THEN: expect no exceptions,
             None,
-            id="table exists - contains data and exceptions - two items to be updated - clearbit returns data"
+            id="table exists - contains data and exceptions - two items to be updated - clearbit returns data",
         ),
         pytest.param(
             # GIVEN: table exists
@@ -88,19 +121,29 @@ with open(Path(__file__).parent / "fixtures" / "clearbit" / "onprem" / "setup" /
             # GIVEN: No exception data
             None,
             # GIVEN: two items to update
-            pd.DataFrame.from_dict([
-                {"SERVER_ID": "server-1", "INSTALLATION_ID": None, "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
-                 "LAST_IP_ADDRESS": "42.42.42.42"},
-                {"SERVER_ID": "server-2", "INSTALLATION_ID": None, "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
-                 "LAST_IP_ADDRESS": "1.1.1.1"},
-            ]),
+            pd.DataFrame.from_dict(
+                [
+                    {
+                        "SERVER_ID": "server-1",
+                        "INSTALLATION_ID": None,
+                        "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
+                        "LAST_IP_ADDRESS": "42.42.42.42",
+                    },
+                    {
+                        "SERVER_ID": "server-2",
+                        "INSTALLATION_ID": None,
+                        "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
+                        "LAST_IP_ADDRESS": "1.1.1.1",
+                    },
+                ]
+            ),
             # GIVEN: clearbit returns data for one item
             ["42.42.42.42.json", None],
             # THEN: expect one item to have been updated
             "all-with-failures.json",
             # THEN: expect no exceptions,
             None,
-            id="table exists - contains data but not exceptions - two items to be updated - clearbit returns data on one"
+            id="table exists - contains data but not exceptions - two items to be updated - clearbit returns data on one",
         ),
         pytest.param(
             # GIVEN: table doesn't exist
@@ -110,10 +153,16 @@ with open(Path(__file__).parent / "fixtures" / "clearbit" / "onprem" / "setup" /
             # GIVEN: No exception data
             sqlalchemy.exc.ProgrammingError("SELECT 1", {}, None),
             # GIVEN: one item to update
-            pd.DataFrame.from_dict([
-                {"SERVER_ID": "server-1", "INSTALLATION_ID": None, "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
-                 "LAST_IP_ADDRESS": "42.42.42.42"}
-            ]),
+            pd.DataFrame.from_dict(
+                [
+                    {
+                        "SERVER_ID": "server-1",
+                        "INSTALLATION_ID": None,
+                        "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
+                        "LAST_IP_ADDRESS": "42.42.42.42",
+                    }
+                ]
+            ),
             # GIVEN: clearbit returns data for one item
             ["42.42.42.42.json"],
             # THEN: expect one item to have been updated
@@ -121,7 +170,9 @@ with open(Path(__file__).parent / "fixtures" / "clearbit" / "onprem" / "setup" /
             # THEN: expect no exceptions,
             None,
             id="table not exists - no data or exceptions - two items to be updated - clearbit returns data",
-            marks=pytest.mark.xfail(reason="onprem expects column cloud but it's not there - todo: fix")
+            marks=pytest.mark.xfail(
+                reason="onprem expects column cloud but it's not there - todo: fix"
+            ),
         ),
         pytest.param(
             # GIVEN: table exists
@@ -131,24 +182,46 @@ with open(Path(__file__).parent / "fixtures" / "clearbit" / "onprem" / "setup" /
             # GIVEN: No exception table
             sqlalchemy.exc.ProgrammingError("SELECT 1", {}, None),
             # GIVEN: two items to update
-            pd.DataFrame.from_dict([
-                {"SERVER_ID": "server-1", "INSTALLATION_ID": None, "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
-                 "LAST_IP_ADDRESS": "42.42.42.42"},
-                {"SERVER_ID": "server-2", "INSTALLATION_ID": None, "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
-                 "LAST_IP_ADDRESS": "1.1.1.1"},
-            ]),
+            pd.DataFrame.from_dict(
+                [
+                    {
+                        "SERVER_ID": "server-1",
+                        "INSTALLATION_ID": None,
+                        "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
+                        "LAST_IP_ADDRESS": "42.42.42.42",
+                    },
+                    {
+                        "SERVER_ID": "server-2",
+                        "INSTALLATION_ID": None,
+                        "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
+                        "LAST_IP_ADDRESS": "1.1.1.1",
+                    },
+                ]
+            ),
             # GIVEN: clearbit returns data for one item
             ["42.42.42.42.json", "1.1.1.1.json"],
             # THEN: expect one item to have been updated
             "all.json",
             # THEN: expect no exceptions,
             None,
-            id="table exists - data but not exceptions - two items to be updated - clearbit returns data"
+            id="table exists - data but not exceptions - two items to be updated - clearbit returns data",
         ),
-    ])
-def test_onprem_clearbit(mock_snowflake, mock_snowflake_pandas, mock_clearbit, mock_clearbit_reveal, expect_data,
-                         column_names, table_data, exception_data, items_to_update, clearbit_responses, expected_data,
-                         expected_exceptions):
+    ],
+)
+def test_onprem_clearbit(
+    mock_snowflake,
+    mock_snowflake_pandas,
+    mock_clearbit,
+    mock_clearbit_reveal,
+    expect_data,
+    column_names,
+    table_data,
+    exception_data,
+    items_to_update,
+    clearbit_responses,
+    expected_data,
+    expected_exceptions,
+):
     # GIVEN: snowflake engine and connection are mocked
     _, _, mock_execute_query = mock_snowflake("utils.onprem_clearbit")
     # GIVEN: snowflake pandas interactions are mocked
@@ -164,7 +237,7 @@ def test_onprem_clearbit(mock_snowflake, mock_snowflake_pandas, mock_clearbit, m
         # GIVEN: clearbit exception table contains data? (second request to load dataframe)
         exception_data,
         # GIVEN: items to update
-        items_to_update
+        items_to_update,
     ]
 
     # GIVEN: clearbit returns provided reveal responses
@@ -177,15 +250,16 @@ def test_onprem_clearbit(mock_snowflake, mock_snowflake_pandas, mock_clearbit, m
     pd.testing.assert_frame_equal(
         mock_to_sql.call_args_list[0][0][0].sort_index(axis=1),
         expect_data(expected_data).sort_index(axis=1),
-        check_dtype=False
+        check_dtype=False,
     )
     # THEN: compare expected clearbit exception data vs data loaded to snowflake
     pd.testing.assert_frame_equal(
         mock_to_sql.call_args_list[1][0][0].sort_index(axis=1),
         # Load data if expected exceptions otherwise expect empty dataframe
-        expect_data(expected_exceptions).sort_index(axis=1) if expected_exceptions else pd.DataFrame(
-            columns=['server_id']),
-        check_dtype=False
+        expect_data(expected_exceptions).sort_index(axis=1)
+        if expected_exceptions
+        else pd.DataFrame(columns=["server_id"]),
+        check_dtype=False,
     )
 
     # THEN: expect calls to clearbit to be equal to number of items to update
@@ -203,15 +277,25 @@ def test_onprem_clearbit(mock_snowflake, mock_snowflake_pandas, mock_clearbit, m
             # GIVEN: No exception data
             None,
             # GIVEN: two items to update
-            pd.DataFrame.from_dict([
-                {"SERVER_ID": "server-1", "INSTALLATION_ID": None, "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
-                 "LAST_IP_ADDRESS": "42.42.42.42"},
-                {"SERVER_ID": "server-2", "INSTALLATION_ID": None, "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
-                 "LAST_IP_ADDRESS": "1.1.1.1"},
-            ]),
+            pd.DataFrame.from_dict(
+                [
+                    {
+                        "SERVER_ID": "server-1",
+                        "INSTALLATION_ID": None,
+                        "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
+                        "LAST_IP_ADDRESS": "42.42.42.42",
+                    },
+                    {
+                        "SERVER_ID": "server-2",
+                        "INSTALLATION_ID": None,
+                        "FIRST_ACTIVE_DATE": "2022-11-08 09:18:04.076",
+                        "LAST_IP_ADDRESS": "1.1.1.1",
+                    },
+                ]
+            ),
             # GIVEN: clearbit returns no data
             [None, None],
-            id="two items to be updated - clearbit does not return data"
+            id="two items to be updated - clearbit does not return data",
         ),
         pytest.param(
             # GIVEN: table exists
@@ -224,13 +308,22 @@ def test_onprem_clearbit(mock_snowflake, mock_snowflake_pandas, mock_clearbit, m
             pd.DataFrame(),
             # GIVEN: clearbit is not called
             [],
-            id="no items to be updated"
+            id="no items to be updated",
         ),
-    ]
+    ],
 )
-def test_onprem_clearbit_no_data_to_update(mock_snowflake, mock_snowflake_pandas, mock_clearbit, mock_clearbit_reveal,
-                                           expect_data, column_names, table_data, exception_data, items_to_update,
-                                           clearbit_responses):
+def test_onprem_clearbit_no_data_to_update(
+    mock_snowflake,
+    mock_snowflake_pandas,
+    mock_clearbit,
+    mock_clearbit_reveal,
+    expect_data,
+    column_names,
+    table_data,
+    exception_data,
+    items_to_update,
+    clearbit_responses,
+):
     # GIVEN: snowflake engine and connection are mocked
     _, _, mock_execute_query = mock_snowflake("utils.onprem_clearbit")
     # GIVEN: snowflake pandas interactions are mocked
@@ -246,7 +339,7 @@ def test_onprem_clearbit_no_data_to_update(mock_snowflake, mock_snowflake_pandas
         # GIVEN: clearbit exception table contains data? (second request to load dataframe)
         exception_data,
         # GIVEN: items to update
-        items_to_update
+        items_to_update,
     ]
 
     # GIVEN: clearbit returns provided reveal responses
@@ -267,4 +360,5 @@ def test_onprem_clearbit_no_data_to_update(mock_snowflake, mock_snowflake_pandas
 @pytest.fixture()
 def expect_data(expect_data):
     from functools import partial
+
     return partial(expect_data, "onprem")
