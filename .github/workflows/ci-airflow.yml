@@ -21,7 +21,7 @@ on:
 jobs:
   tests:
     name: Testing Plugins and DAGs
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
 
@@ -39,11 +39,8 @@ jobs:
       - name: Install dependencies
         run: pip install -r build/requirements-airflow-dev.txt
 
-      # - name: Run plugin tests
-      #   run: pytest plugins
-
-      - name: Run dag tests
-        run: pytest dags
+      # - name: Run tests
+      - name: Run plugin tests
+        run: pytest plugins dags
         env:
-          # DAGs require plugins package
           PYTHONPATH: .
