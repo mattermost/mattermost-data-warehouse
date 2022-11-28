@@ -3,8 +3,8 @@ def test_create_alert_body(config_alert_context):
     from airflow_utils import create_alert_body
     body = create_alert_body(config_alert_context)
     assert ':red_circle: Test Exception message' in body
-    assert '**Dag**: [test_utils_dag](https://test.airflow.mattermost.com/tree?dag_id=test_utils_dag)' in body
-    assert '**Task**: [test_task](https://test.airflow.mattermost.com/task?dag_id=test_utils_dag&task_id=test_task&execution_date=2022-11-15T00%3A00%3A00%2B00%3A00)' in body
+    assert '**Dag**: [test_utils_dag](https://airflow.internal.mattermost.com/tree?dag_id=test_utils_dag)' in body
+    assert '**Task**: [test_task](https://airflow.internal.mattermost.com/task?dag_id=test_utils_dag&task_id=test_task&execution_date=2022-11-15T00%3A00%3A00%2B00%3A00)' in body
         
 def test_send_alert(config_alert_context, mocker):
 
