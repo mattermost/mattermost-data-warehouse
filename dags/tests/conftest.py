@@ -11,7 +11,6 @@ def config_utils(monkeypatch):
 
         # patching environment variables used in airflow_utils
         monkeypatch.setenv("NAMESPACE", "test_namespace")
-        monkeypatch.setenv("AIRFLOW_BASE_URL", "https://test.airflow.mattermost.com")
 
 @pytest.fixture
 def config_alert_context(mocker):
