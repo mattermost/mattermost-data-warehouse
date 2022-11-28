@@ -286,25 +286,25 @@ WITH sdd AS (
       , DATEDIFF(DAY, MIN(TIMESTAMP::DATE), CURRENT_DATE) - COUNT(DISTINCT TIMESTAMP::DATE) AS days_inactive
       , MIN(CASE WHEN COALESCE(type, event) IN ('ui_marketplace_download', 'api_install_marketplace_plugin') THEN timestamp::date ELSE NULL END) as first_plugin_install_date
       , COUNT(DISTINCT CASE WHEN COALESCE(type, event) IN ('ui_marketplace_download') THEN plugin_id ELSE NULL END) AS plugins_downloaded
-            , MAX(CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date AND sdd.first_active_date + INTERVAL '1 DAY'
+            , MAX(CASE WHEN user_events_telemetry.category not in ('performance') and user_events_telemetry.timestamp between sdd.first_active_date AND sdd.first_active_date + INTERVAL '1 DAY'
                     THEN TRUE ELSE FALSE END) AS retention_0day_flag
-      , COUNT(DISTINCT CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date AND sdd.first_active_date + INTERVAL '1 DAY' 
+      , COUNT(DISTINCT CASE WHEN user_events_telemetry.category not in ('performance') and user_events_telemetry.timestamp between sdd.first_active_date AND sdd.first_active_date + INTERVAL '1 DAY' 
                     THEN user_events_telemetry.user_actual_id ELSE NULL END) AS retention_0day_users
-      , MAX(CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '1 DAY' AND sdd.first_active_date + INTERVAL '2 DAYS'
+      , MAX(CASE WHEN user_events_telemetry.category not in ('performance') and user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '1 DAY' AND sdd.first_active_date + INTERVAL '2 DAYS'
                     THEN TRUE ELSE FALSE END) AS retention_1day_flag
-      , COUNT(DISTINCT CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '1 DAY' AND sdd.first_active_date + INTERVAL '2 DAY' 
+      , COUNT(DISTINCT CASE WHEN user_events_telemetry.category not in ('performance') and user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '1 DAY' AND sdd.first_active_date + INTERVAL '2 DAY' 
                     THEN user_events_telemetry.user_actual_id ELSE NULL END) AS retention_1day_users
-      , MAX(CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '2 DAYS' AND sdd.first_active_date + INTERVAL '7 DAYS'  
+      , MAX(CASE WHEN user_events_telemetry.category not in ('performance') and user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '2 DAYS' AND sdd.first_active_date + INTERVAL '7 DAYS'  
                     THEN TRUE ELSE FALSE END) AS retention_7day_flag
-      , COUNT(DISTINCT CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '2 DAYS' AND sdd.first_active_date + INTERVAL '7 DAYS' 
+      , COUNT(DISTINCT CASE WHEN user_events_telemetry.category not in ('performance') and user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '2 DAYS' AND sdd.first_active_date + INTERVAL '7 DAYS' 
                     THEN user_events_telemetry.user_actual_id ELSE NULL END) AS retention_7day_users
-      , MAX(CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '7 DAYS' AND sdd.first_active_date + INTERVAL '14 DAYS'  
+      , MAX(CASE WHEN user_events_telemetry.category not in ('performance') and user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '7 DAYS' AND sdd.first_active_date + INTERVAL '14 DAYS'  
                     THEN TRUE ELSE FALSE END) AS retention_14day_flag
-      , COUNT(DISTINCT CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '7 DAYS' AND sdd.first_active_date + INTERVAL '14 DAYS' 
+      , COUNT(DISTINCT CASE WHEN user_events_telemetry.category not in ('performance') and user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '7 DAYS' AND sdd.first_active_date + INTERVAL '14 DAYS' 
                     THEN user_events_telemetry.user_actual_id ELSE NULL END) AS retention_14day_users
-      , MAX(CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '14 DAYS' AND sdd.first_active_date + INTERVAL '28 DAYS' 
+      , MAX(CASE WHEN user_events_telemetry.category not in ('performance') and user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '14 DAYS' AND sdd.first_active_date + INTERVAL '28 DAYS' 
                     THEN TRUE ELSE FALSE END) AS retention_28day_flag
-      , COUNT(DISTINCT CASE WHEN user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '14 DAYS' AND sdd.first_active_date + INTERVAL '28 DAYS' 
+      , COUNT(DISTINCT CASE WHEN user_events_telemetry.category not in ('performance') and user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '14 DAYS' AND sdd.first_active_date + INTERVAL '28 DAYS' 
                     THEN user_events_telemetry.user_actual_id ELSE NULL END) AS retention_28day_users
       , COUNT(DISTINCT user_events_telemetry.user_actual_id) as active_users_alltime
     FROM sdd 
