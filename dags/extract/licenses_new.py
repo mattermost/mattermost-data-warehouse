@@ -39,6 +39,6 @@ KubernetesPodOperator(
         SNOWFLAKE_LOAD_WAREHOUSE,
     ],
     env_vars={},
-    arguments=["extract.s3_extract.licenses_job {{{{ next_ds }}}}"],
+    arguments=["extract.s3_extract.licenses_job {{ next_ds }}"],
     dag=dag,
 )
