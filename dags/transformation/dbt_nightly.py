@@ -1,31 +1,23 @@
-import os
 from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 
-from dags.airflow_utils import (
-    DATA_IMAGE,
-    clone_and_setup_extraction_cmd,
-    send_alert,
-    pod_defaults,
-    pod_env_vars,
-)
+from dags.airflow_utils import pod_defaults, pod_env_vars, send_alert
 from dags.kube_secrets import (
+    DBT_CLOUD_API_ACCOUNT_ID,
+    DBT_CLOUD_API_KEY,
+    GITHUB_TOKEN,
     SNOWFLAKE_ACCOUNT,
     SNOWFLAKE_PASSWORD,
     SNOWFLAKE_TRANSFORM_ROLE,
     SNOWFLAKE_TRANSFORM_SCHEMA,
     SNOWFLAKE_TRANSFORM_WAREHOUSE,
     SNOWFLAKE_USER,
-    GITHUB_TOKEN,
     SSH_KEY,
-    DBT_CLOUD_API_ACCOUNT_ID,
-    DBT_CLOUD_API_KEY,
 )
 
 # Load the env vars into a dict and set Secrets
-env = os.environ.copy()
 env_vars = {**pod_env_vars, **{}}
 
 # Default arguments for the DAG
@@ -46,7 +38,7 @@ doc_md = """
 #### Purpose
 This DAG triggers nightly tasks:
 - Trigger DBT models with `nightly` tag.
-- Update github contributors. 
+- Update github contributors.
 
 #### Notes
 - DAG was previously running dbt seed. This option has been removed.
@@ -55,14 +47,9 @@ This DAG triggers nightly tasks:
 # Create the DAG
 dag = DAG("dbt_nightly", default_args=default_args, schedule_interval="0 7 * * *", doc_md=doc_md)
 
-update_github_contributors_cmd = f"""
-    {clone_and_setup_extraction_cmd} &&
-    python utils/github_contributors.py
-"""
-
 update_github_contributors = KubernetesPodOperator(
     **pod_defaults,
-    image=DATA_IMAGE,
+    image="mattermost/mattermost-data-warehouse:master",  # Uses latest build from master
     task_id="github-contributors",
     name="github-contributors",
     secrets=[
@@ -73,19 +60,13 @@ update_github_contributors = KubernetesPodOperator(
         GITHUB_TOKEN,
     ],
     env_vars=env_vars,
-    arguments=[update_github_contributors_cmd],
+    arguments=["python -m utils.github_contributors"],
     dag=dag,
 )
 
-
-dbt_run_cloud_nightly_cmd = f"""
-    {clone_and_setup_extraction_cmd} &&
-    python utils/run_dbt_cloud_job.py 19427 "Airflow dbt nightly"
-"""
-
 dbt_run_cloud_nightly = KubernetesPodOperator(
     **pod_defaults,
-    image=DATA_IMAGE,
+    image="mattermost/mattermost-data-warehouse:master",  # Uses latest build from master
     task_id="dbt-cloud-run-nightly",
     name="dbt-cloud-run-nightly",
     secrets=[
@@ -99,11 +80,8 @@ dbt_run_cloud_nightly = KubernetesPodOperator(
         SNOWFLAKE_TRANSFORM_SCHEMA,
         SSH_KEY,
     ],
-    env_vars={
-        **env_vars,
-        "DBT_JOB_TIMEOUT": "3600"
-    },
-    arguments=[dbt_run_cloud_nightly_cmd],
+    env_vars={**env_vars, "DBT_JOB_TIMEOUT": "3600"},
+    arguments=["python -m utils.run_dbt_cloud_job 19427 \"Airflow dbt nightly\""],
     dag=dag,
 )
 
