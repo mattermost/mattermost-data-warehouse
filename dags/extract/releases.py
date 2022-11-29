@@ -45,6 +45,6 @@ KubernetesPodOperator(
         SNOWFLAKE_LOAD_WAREHOUSE,
     ],
     env_vars={},
-    arguments=["python -m extract.s3_extract.release_job.py {{ ds }}"],
+    arguments=["python -m extract.s3_extract.release_job {{ ds }}"],
     dag=dag,
 )
