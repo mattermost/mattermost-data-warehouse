@@ -24,7 +24,7 @@ default_args = {
 }
 
 # Create the DAG
-dag = DAG("licenses", default_args=default_args, schedule_interval="0 3 * * *")
+dag = DAG("licenses-new", default_args=default_args, schedule_interval="0 3 * * *")
 
 KubernetesPodOperator(
     **pod_defaults,
