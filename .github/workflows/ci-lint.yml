@@ -1,0 +1,52 @@
+name: Python Linter
+
+on:
+  pull_request:
+    paths:
+      - '.github/**'
+      - 'dags/**'
+      - 'extract/**'
+      - 'plugins/**'
+      - 'tests/**'
+      - 'utils/**'
+      - 'poetry.lock'
+      - 'pyproject.toml'
+
+jobs:
+  tests:
+    name: Check code style for all python code
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Install Poetry
+        run: pipx install poetry
+
+      - uses: actions/setup-python@v4
+        id: setup-python
+        with:
+          python-version: '3.10'
+          cache: 'poetry'
+
+      - name: Install dependencies
+        run: poetry install && poetry run pip install clearbit==0.1.7
+
+      # Lint checks will print output but will continue. This should be stricter as soon as
+      # code is updated to defined coding standards.
+      - name: Run isort
+        run: poetry run isort . --check
+        continue-on-error: true
+
+      - name: Run black
+        run: poetry run black . --check
+        continue-on-error: true
+
+      - name: Run flake8
+        run: poetry run flake8 --config build/.flake8 .
+        continue-on-error: true

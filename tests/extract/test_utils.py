@@ -1,10 +1,10 @@
-import pytest
 import pandas as pd
-
-from extract.utils import snowflake_engine_factory, execute_query, execute_dataframe
+import pytest
 from pandas.testing import assert_frame_equal
 from snowflake.sqlalchemy import URL
 from sqlalchemy.exc import SQLAlchemyError
+
+from extract.utils import execute_dataframe, execute_query, snowflake_engine_factory
 
 
 @pytest.mark.parametrize("environment,role,schema,url", [

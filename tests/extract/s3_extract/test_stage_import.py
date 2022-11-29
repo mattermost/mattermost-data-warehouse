@@ -1,7 +1,15 @@
 import pytest
 from mock import call
-from extract.s3_extract.stage_import import extract_from_stage, diagnostics_import, get_diagnostics_pattern, \
-    push_proxy_import, get_path, get_push_proxy_pattern, licenses_import
+
+from extract.s3_extract.stage_import import (
+    diagnostics_import,
+    extract_from_stage,
+    get_diagnostics_pattern,
+    get_path,
+    get_push_proxy_pattern,
+    licenses_import,
+    push_proxy_import,
+)
 
 
 def test_extract_from_stage(mock_snowflake):
