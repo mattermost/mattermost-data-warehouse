@@ -2,15 +2,15 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+
 from dags.airflow_utils import pod_defaults, send_alert
 from dags.kube_secrets import (
-    SNOWFLAKE_LOAD_USER,
-    SNOWFLAKE_LOAD_PASSWORD,
     SNOWFLAKE_ACCOUNT,
     SNOWFLAKE_LOAD_DATABASE,
+    SNOWFLAKE_LOAD_PASSWORD,
+    SNOWFLAKE_LOAD_USER,
     SNOWFLAKE_LOAD_WAREHOUSE,
 )
-
 
 # Default arguments for the DAG
 default_args = {
@@ -24,9 +24,7 @@ default_args = {
 }
 
 # Create the DAG
-dag = DAG(
-    "licenses", default_args=default_args, schedule_interval="0 3 * * *"
-)
+dag = DAG("licenses", default_args=default_args, schedule_interval="0 3 * * *")
 
 KubernetesPodOperator(
     **pod_defaults,
