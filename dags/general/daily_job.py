@@ -45,7 +45,7 @@ post_nps_feedback = KubernetesPodOperator(
         SNOWFLAKE_TRANSFORM_DATABASE,
         NPS_WEBHOOK_URL,
     ],
-    arguments=["python -m utils.post_nps_data.py"],
+    arguments=["python -m utils.post_nps_data"],
     dag=dag,
 )
 
