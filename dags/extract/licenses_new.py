@@ -1,9 +1,10 @@
+import os
 from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 
-from dags.airflow_utils import pod_defaults, send_alert
+from dags.airflow_utils import send_alert
 from dags.kube_secrets import (
     SNOWFLAKE_ACCOUNT,
     SNOWFLAKE_LOAD_DATABASE,
@@ -23,12 +24,20 @@ default_args = {
     "start_date": datetime(2019, 1, 1),
 }
 
+
 # Create the DAG
 dag = DAG("licenses-new", default_args=default_args, schedule_interval="0 3 * * *")
 
+
 KubernetesPodOperator(
-    **pod_defaults,
-    image="mattermost/mattermost-data-warehouse:master",
+    # Sensible pod defaults
+    get_logs=True,
+    image_pull_policy="IfNotPresent",
+    in_cluster=True,
+    is_delete_operator_pod=True,
+    namespace=os.environ["NAMESPACE"],
+    image="mattermost/mattermost-data-warehouse:master",  # Uses latest build from master
+    # Task specific information
     task_id="licenses_new",
     name="license-import-new",
     secrets=[
@@ -38,7 +47,6 @@ KubernetesPodOperator(
         SNOWFLAKE_LOAD_DATABASE,
         SNOWFLAKE_LOAD_WAREHOUSE,
     ],
-    env_vars={},
-    arguments=["python -m extract.s3_extract.licenses_job {{ next_ds }}"],
+    arguments=["extract.s3_extract.licenses_job {{ next_ds }}"],
     dag=dag,
 )
