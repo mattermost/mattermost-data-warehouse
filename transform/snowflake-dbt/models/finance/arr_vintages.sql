@@ -105,6 +105,11 @@ with a as (
 
 select
     output.*,
+    first_value (output.arr_os) over (partition by output.account_id order by output.report_mo) as first_arr,
+    case 
+        when date_part('month',output.report_mo) = 1 then 12
+        else date_part('month',output.report_mo)::number -1
+        end as orderbymonth,
     datediff('quarter',output.cohort_month,report_mo) as cohort_qtr_no,
     d.geo,
     d.company_type,
