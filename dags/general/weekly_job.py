@@ -1,31 +1,19 @@
-import os
 from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
-from airflow.models import Variable
-from dags.airflow_utils import (
-    DATA_IMAGE,
-    clone_repo_cmd,
-    send_alert,
-    pod_defaults,
-    pod_env_vars,
-    xs_warehouse,
-)
+
+from dags.airflow_utils import pod_defaults, send_alert
 from dags.kube_secrets import (
+    DOCS_WEBHOOK_URL,
     SNOWFLAKE_ACCOUNT,
-    SNOWFLAKE_USER,
     SNOWFLAKE_PASSWORD,
+    SNOWFLAKE_TRANSFORM_DATABASE,
     SNOWFLAKE_TRANSFORM_ROLE,
     SNOWFLAKE_TRANSFORM_SCHEMA,
     SNOWFLAKE_TRANSFORM_WAREHOUSE,
-    SNOWFLAKE_TRANSFORM_DATABASE,
-    DOCS_WEBHOOK_URL
+    SNOWFLAKE_USER,
 )
-
-# Load the env vars into a dict and set Secrets
-env = os.environ.copy()
-env_vars = {**pod_env_vars, **{}}
 
 # Default arguments for the DAG
 default_args = {
@@ -42,34 +30,23 @@ default_args = {
 # Create the DAG
 dag = DAG("weekly_job", default_args=default_args, schedule_interval="0 12 * * 1")
 
-def get_container_operator(task_name, task_path):
-    cmd = f"""
-        {clone_repo_cmd} &&
-        cd mattermost-data-warehouse &&
-        export PYTHONPATH="/opt/bitnami/airflow/dags/git/mattermost-data-warehouse/:$PYTHONPATH" &&
-        python {task_path}
-    """
-    return KubernetesPodOperator(
-        **pod_defaults,
-        image=DATA_IMAGE,
-        task_id=task_name,
-        name=task_name,
-        secrets=[
-            SNOWFLAKE_ACCOUNT,
-            SNOWFLAKE_USER,
-            SNOWFLAKE_PASSWORD,
-            SNOWFLAKE_TRANSFORM_ROLE,
-            SNOWFLAKE_TRANSFORM_WAREHOUSE,
-            SNOWFLAKE_TRANSFORM_SCHEMA,
-            SNOWFLAKE_TRANSFORM_DATABASE,
-            DOCS_WEBHOOK_URL
-        ],
-        arguments=[cmd],
-        dag=dag,
-    )
-
-post_docs_feedback = get_container_operator(
-    "post-docs-feedback", "utils/post_docs_data.py"
+post_docs_feedback = KubernetesPodOperator(
+    **pod_defaults,
+    image="mattermost/mattermost-data-warehouse:master",  # Uses latest build from master
+    task_id="post-docs-feedback",
+    name="post-docs-feedback",
+    secrets=[
+        SNOWFLAKE_ACCOUNT,
+        SNOWFLAKE_USER,
+        SNOWFLAKE_PASSWORD,
+        SNOWFLAKE_TRANSFORM_ROLE,
+        SNOWFLAKE_TRANSFORM_WAREHOUSE,
+        SNOWFLAKE_TRANSFORM_SCHEMA,
+        SNOWFLAKE_TRANSFORM_DATABASE,
+        DOCS_WEBHOOK_URL,
+    ],
+    arguments=["python -m utils.post_docs_data"],
+    dag=dag,
 )
 
-post_docs_feedback 
+post_docs_feedback
