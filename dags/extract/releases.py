@@ -3,13 +3,14 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
-from dags.airflow_utils import DATA_IMAGE, clone_and_setup_extraction_cmd, pod_defaults, send_alert
+
+from dags.airflow_utils import pod_defaults, send_alert
 from dags.kube_secrets import (
     RELEASE_LOCATION,
-    SNOWFLAKE_LOAD_USER,
-    SNOWFLAKE_LOAD_PASSWORD,
     SNOWFLAKE_ACCOUNT,
     SNOWFLAKE_LOAD_DATABASE,
+    SNOWFLAKE_LOAD_PASSWORD,
+    SNOWFLAKE_LOAD_USER,
     SNOWFLAKE_LOAD_WAREHOUSE,
 )
 
@@ -27,21 +28,12 @@ default_args = {
     "start_date": datetime(2019, 1, 1),
 }
 
-# Set the command for the container
-# Note the {{{{ }}}} is because we format this string but want the resulting string to just have {{ ds }}
-container_cmd = f"""
-    {clone_and_setup_extraction_cmd} &&
-    python extract/s3_extract/release_job.py {{{{ ds }}}}
-"""
-
 # Create the DAG
-dag = DAG(
-    "releases", default_args=default_args, schedule_interval="0 3 * * *"
-)
+dag = DAG("releases", default_args=default_args, schedule_interval="0 3 * * *")
 
 KubernetesPodOperator(
     **pod_defaults,
-    image=DATA_IMAGE,
+    image="mattermost/mattermost-data-warehouse:master",  # Uses latest build from master
     task_id="release",
     name="release",
     secrets=[
@@ -53,6 +45,6 @@ KubernetesPodOperator(
         SNOWFLAKE_LOAD_WAREHOUSE,
     ],
     env_vars={},
-    arguments=[container_cmd],
+    arguments=["python -m extract.s3_extract.release_job {{ ds }}"],
     dag=dag,
 )
