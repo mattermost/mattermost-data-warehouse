@@ -42,6 +42,6 @@ KubernetesPodOperator(
         SNOWFLAKE_LOAD_DATABASE,
         SNOWFLAKE_LOAD_WAREHOUSE,
     ],
-    arguments=["python -m extract.s3_extract.diagnostics_job.py {{ ds }}"],
+    arguments=["python -m extract.s3_extract.diagnostics_job {{ ds }}"],
     dag=dag,
 )
