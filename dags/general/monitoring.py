@@ -68,7 +68,7 @@ def resolve_stitch(**kwargs):
     else:
         status = ':red_circle:'
         message = f"**STITCH**: {status}\nFailed extractions: {failed_extractions}\nFailed loads: {failed_loads}"
-        MattermostOperator(mattermost_conn_id='mattermost',text=message, task_id='resolve_stitch_message')
+        MattermostOperator(mattermost_conn_id='mattermost',text=message, task_id='resolve_stitch_message').execute(None)
 
 # To clean up Xcom after dag finished run.
 @provide_session
