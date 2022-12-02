@@ -78,6 +78,9 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 ## Install package
 RUN pip install --no-cache-dir ./*.whl
 
+# Copy files required for transformations
+COPY transform/sql /app/transform/sql
+
 # We should refrain from running as privileged user
 # Run as UID for nobody
 USER 65534
