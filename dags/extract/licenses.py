@@ -24,13 +24,13 @@ default_args = {
 }
 
 # Create the DAG
-dag = DAG("licenses-new", default_args=default_args, schedule_interval="0 3 * * *")
+dag = DAG("licenses", default_args=default_args, schedule_interval="0 3 * * *")
 
 KubernetesPodOperator(
     **pod_defaults,
     image="mattermost/mattermost-data-warehouse:master",
-    task_id="licenses_new",
-    name="license-import-new",
+    task_id="licenses",
+    name="license-import",
     secrets=[
         SNOWFLAKE_LOAD_USER,
         SNOWFLAKE_LOAD_PASSWORD,
