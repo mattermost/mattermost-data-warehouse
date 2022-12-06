@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 
 import pandas as pd
@@ -9,7 +8,7 @@ from sqlalchemy.exc import ProgrammingError
 from utils.cloud_clearbit import cloud_clearbit
 
 # Load setup configuration
-with open(Path(__file__).parent / "fixtures" / "clearbit" / "setup" / "cloud_clearbit_columns.csv") as fp:
+with open(Path(__file__).parent / "fixtures" / "clearbit" / "cloud" / "setup" / "clearbit_columns.csv") as fp:
     # List of columns in cloud_clearbit table
     CLEARBIT_COLUMNS = [line.strip() for line in fp.readlines()]
 
@@ -109,7 +108,7 @@ with open(Path(__file__).parent / "fixtures" / "clearbit" / "setup" / "cloud_cle
         "example-new-table.json",
         id="table doesn't exist - no data - one item to be updated - clearbit returns one"
     ), ])
-def test_cloud_clearbit(mock_snowflake, mock_snowflake_pandas, mock_clearbit, mock_clearbit_enrichments,
+def test_cloud_clearbit(mock_snowflake, mock_snowflake_pandas, mock_clearbit, mock_clearbit_enrichments, expect_data,
                         column_names, table_data, items_to_update, clearbit_responses, expected):
     # GIVEN: snowflake engine and connection are mocked
     mock_snowflake("utils.cloud_clearbit")
@@ -206,15 +205,8 @@ def test_cloud_clearbit_nothing_to_store(mock_snowflake, mock_snowflake_pandas, 
     mock_to_sql.assert_not_called()
 
 
-def expect_data(filename):
-    with open(Path(__file__).parent / "fixtures" / "clearbit" / "setup" / "dataframe-schema.json") as fp:
-        schema = json.load(fp)
-        target = Path(__file__).parent / "fixtures" / "clearbit" / "expectations" / filename
-        df = pd.read_json(target, orient="records", dtype=False)
-        # There are some column type manipulations in cloud_clearbit.py. This makes the data types of the dataframe under
-        # test different to the datatypes inferred by pandas when loading from json. To solve this, dataframe-schema.json
-        # contains pinned data type of each column.
-        for col, _type in schema.items():
-            if col in df.columns:
-                df[col] = df[col].astype(_type)
-        return df
+@pytest.fixture()
+def expect_data(expect_data):
+    from functools import partial
+    return partial(expect_data, "cloud")
+
