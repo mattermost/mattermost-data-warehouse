@@ -16,7 +16,7 @@ with open(
     / "setup"
     / "clearbit_columns.csv"
 ) as fp:
-    # List of columns in cloud_clearbit table
+    # List of columns in onprem_clearbit table
     CLEARBIT_COLUMNS = [line.strip() for line in fp.readlines()]
 
 
@@ -171,7 +171,7 @@ with open(
             None,
             id="table not exists - no data or exceptions - two items to be updated - clearbit returns data",
             marks=pytest.mark.xfail(
-                reason="onprem expects column cloud but it's not there - todo: fix"
+                reason="onprem expects column but it's not there - todo: fix"
             ),
         ),
         pytest.param(
@@ -243,7 +243,7 @@ def test_onprem_clearbit(
     # GIVEN: clearbit returns provided reveal responses
     mock_clearbit.Reveal.find.side_effect = mock_clearbit_reveal(*clearbit_responses)
 
-    # WHEN: request to cloud clearbit
+    # WHEN: request to onprem clearbit
     onprem_clearbit()
 
     # THEN: compare expected clearbit data vs data loaded to snowflake
@@ -345,7 +345,7 @@ def test_onprem_clearbit_no_data_to_update(
     # GIVEN: clearbit returns provided reveal responses
     mock_clearbit.Reveal.find.side_effect = mock_clearbit_reveal(*clearbit_responses)
 
-    # WHEN: request to cloud clearbit
+    # WHEN: request to onprem clearbit
     onprem_clearbit()
 
     # THEN: expect no call to store the data
