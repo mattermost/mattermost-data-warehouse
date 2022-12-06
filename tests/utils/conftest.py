@@ -58,7 +58,9 @@ def mock_snowflake(mocker):
         mock_engine_factory.return_value = mock_engine
         mock_connection = mocker.MagicMock()
         mock_engine.connect.return_value = mock_connection
-        mock_execute_query = mocker.patch(f"{module_name}.execute_query")
+        # Handle engine.begin() context manager as well
+        mock_engine.begin.return_value.__enter__.return_value = mock_connection
+        mock_execute_query = mocker.patch(f"{module_name}.execute_query", create=True)
 
         return mock_engine, mock_connection, mock_execute_query
 
