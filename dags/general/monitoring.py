@@ -24,7 +24,7 @@ def stitch_check_extractions(response):
     try:
         extractions = json.loads(response)['data']
         for extraction in extractions:
-            if extraction['tap_exit_status'] is 1:
+            if extraction['tap_exit_status'] == 1:
                 failed_extractions[extraction['source_id']] = extraction['tap_description']
     except Exception as e:
         task_logger.error('error in getting extractions from stitch ', str(e))
