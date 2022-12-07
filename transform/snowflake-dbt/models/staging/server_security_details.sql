@@ -127,7 +127,7 @@ WITH security                AS (
                       )
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
      ),
-     server_security_details    AS (
+     server_security_details_tmp AS (
          SELECT
              s.id                                 AS server_id
            , s.date
@@ -166,6 +166,14 @@ WITH security                AS (
 
          {% endif %}
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 19, 20, 21, 22
-     )
+     ),
+    server_security_details AS (
+        -- Handle case where duplicate data exist for max entry.
+        SELECT
+            *
+        FROM
+            server_security_details_tmp
+        QUALIFY ROW_NUMBER() OVER (PARTITION BY id ORDER BY edition DESC) = 1
+    )
 SELECT *
 FROM server_security_details
