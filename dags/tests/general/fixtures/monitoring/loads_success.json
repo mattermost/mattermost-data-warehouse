@@ -1,0 +1,18 @@
+{
+    "data": [
+        {
+            "stitch_client_id": 99999,
+            "source_name": "raw_source_1",
+            "stream_name": "source_stream_1",
+            "last_batch_loaded_at": "2022-12-07T12:59:20Z",
+            "error_state": null
+        },
+        {
+            "stitch_client_id": 99999,
+            "source_name": "raw_source_2",
+            "stream_name": "test_stream_2",
+            "last_batch_loaded_at": "2022-12-07T12:59:22Z",
+            "error_state": null
+        }
+    ]
+}
