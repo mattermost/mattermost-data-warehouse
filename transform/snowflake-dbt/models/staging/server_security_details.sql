@@ -37,7 +37,7 @@ WITH security                AS (
     {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND date >= (SELECT MAX(date) FROM {{ this }})
+        AND date > (SELECT MAX(date) FROM {{ this }})
 
     {% endif %}
 ),
@@ -162,7 +162,7 @@ WITH security                AS (
         {% if is_incremental() %}
 
         -- this filter will only be applied on an incremental run
-        AND s.date >= (SELECT MAX(date) FROM {{ this }})
+        AND s.date > (SELECT MAX(date) FROM {{ this }})
 
          {% endif %}
          GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 19, 20, 21, 22
