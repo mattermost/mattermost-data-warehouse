@@ -62,7 +62,7 @@ def stitch_check_loads(response):
 This method fetches failed stitch extractions from xcom
 triggers a mattermost alert in case of failure
 """ 
-def resolve_stitch(**kwargs):
+def resolve_stitch(ti = None, **kwargs):
     ti = kwargs['ti']
     extractions,loads = ti.xcom_pull(task_ids=['check_stitch_extractions','check_stitch_loads'])
     if not (extractions or loads):
@@ -89,13 +89,11 @@ default_args={
     'on_failure_callback': send_alert
 }
 
-dag = DAG('monitoring', 
+with DAG('monitoring', 
         default_args=default_args,
         start_date=datetime(2017, 3, 20), 
-        schedule_interval='@hourly',
-        catchup=False)
-
-with dag:
+        schedule_interval='@hourly'
+        catchup=False):
     check_stitch_extractions = SimpleHttpOperator(
                 task_id="check_stitch_extractions",
                 #TODO add to airflow variables
