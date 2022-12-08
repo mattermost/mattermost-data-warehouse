@@ -24,6 +24,7 @@ def test_stitch_check_extractions_error():
 def test_stitch_check_loads_pass(load_data):
     global stitch_check_loads
     from general.monitoring import stitch_check_loads
+    
     response = load_data('monitoring/loads_success.json')
     failed_loads = stitch_check_loads(response)
     # Expected to return empty dict as no loads failed

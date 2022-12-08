@@ -1,6 +1,6 @@
 from airflow import DAG
 import json
-from operators.mattermost_operator import MattermostOperator
+from plugins.operators.mattermost_operator import MattermostOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.http_operator import SimpleHttpOperator
 from datetime import datetime
