@@ -306,6 +306,25 @@ WITH sdd AS (
                     THEN TRUE ELSE FALSE END) AS retention_28day_flag
       , COUNT(DISTINCT CASE WHEN user_events_telemetry.category not in ('performance') and user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '14 DAYS' AND sdd.first_active_date + INTERVAL '28 DAYS' 
                     THEN user_events_telemetry.user_actual_id ELSE NULL END) AS retention_28day_users
+
+      , MAX(CASE WHEN user_events_telemetry.category not in ('performance') and user_events_telemetry.timestamp between sdd.first_active_date AND sdd.first_active_date + INTERVAL '7 DAYS'
+                    THEN TRUE ELSE FALSE END) AS retention_1week_flag
+      , COUNT(DISTINCT CASE WHEN user_events_telemetry.category not in ('performance') and user_events_telemetry.timestamp between sdd.first_active_date AND sdd.first_active_date + INTERVAL '7 DAYS' 
+                    THEN user_events_telemetry.user_actual_id ELSE NULL END) AS retention_1week_users
+      , MAX(CASE WHEN user_events_telemetry.category not in ('performance') and user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '7 DAYS'  AND sdd.first_active_date + INTERVAL '14 DAYS'  
+                    THEN TRUE ELSE FALSE END) AS retention_2week_flag
+      , COUNT(DISTINCT CASE WHEN user_events_telemetry.category not in ('performance') and user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '7 DAYS' AND sdd.first_active_date + INTERVAL '14 DAYS' 
+                    THEN user_events_telemetry.user_actual_id ELSE NULL END) AS retention_2week_users
+      , MAX(CASE WHEN user_events_telemetry.category not in ('performance') and user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '14 DAYS' AND sdd.first_active_date + INTERVAL '21 DAYS'  
+                    THEN TRUE ELSE FALSE END) AS retention_3week_flag
+      , COUNT(DISTINCT CASE WHEN user_events_telemetry.category not in ('performance') and user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '14 DAYS' AND sdd.first_active_date + INTERVAL '21 DAYS' 
+                    THEN user_events_telemetry.user_actual_id ELSE NULL END) AS retention_3week_users
+      , MAX(CASE WHEN user_events_telemetry.category not in ('performance') and user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '21 DAYS' AND sdd.first_active_date + INTERVAL '28 DAYS' 
+                    THEN TRUE ELSE FALSE END) AS retention_4week_flag
+      , COUNT(DISTINCT CASE WHEN user_events_telemetry.category not in ('performance') and user_events_telemetry.timestamp between sdd.first_active_date + INTERVAL '21 DAYS' AND sdd.first_active_date + INTERVAL '28 DAYS' 
+                    THEN user_events_telemetry.user_actual_id ELSE NULL END) AS retention_4week_users
+
+
       , COUNT(DISTINCT user_events_telemetry.user_actual_id) as active_users_alltime
     FROM sdd 
     JOIN {{ ref('user_events_telemetry') }}
@@ -452,6 +471,16 @@ WITH sdd AS (
         , MAX(lsd.retention_14day_users) AS retention_14day_users
         , MAX(lsd.retention_28day_flag) AS retention_28day_flag
         , MAX(lsd.retention_28day_users) AS retention_28day_users
+
+        , MAX(lsd.retention_1week_flag) AS retention_1week_flag
+        , MAX(lsd.retention_1week_users) AS retention_1week_users
+        , MAX(lsd.retention_2week_flag) AS retention_2week_flag
+        , MAX(lsd.retention_2week_users) AS retention_2week_users
+        , MAX(lsd.retention_3week_flag) AS retention_3week_flag
+        , MAX(lsd.retention_3week_users) AS retention_3week_users
+        , MAX(lsd.retention_4week_flag) AS retention_4week_flag
+        , MAX(lsd.retention_4week_users) AS retention_4week_users
+
         , MAX(COALESCE(nullif(TRIM(server_activity.last_ip_address), ''), NULLIF(fse.last_ip_address, ''))) AS last_ip_address
         , MIN(cpm.first_payment_method_date) AS cloud_payment_method_added
         , MAX(server_details.dev_testing_enabled) AS dev_testing_enabled
