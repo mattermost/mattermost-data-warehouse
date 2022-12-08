@@ -92,7 +92,7 @@ default_args={
 dag = DAG('monitoring', 
         default_args=default_args,
         start_date=datetime(2017, 3, 20), 
-        schedule_interval='@hourly'
+        schedule_interval='@hourly',
         catchup=False)
 
 with dag:
