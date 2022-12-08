@@ -92,6 +92,7 @@ default_args={
 dag = DAG('monitoring', 
         default_args=default_args,
         start_date=datetime(2017, 3, 20), 
+        schedule_interval='@hourly'
         catchup=False)
 
 with dag:
@@ -105,9 +106,7 @@ with dag:
                         'Content-Type': 'application/json',
                         'Authorization': Variable.get('stitch_secret')
                         },
-                response_check=lambda x: True,
                 xcom_push=True,
-                dag=dag,
             )
     check_stitch_loads = SimpleHttpOperator(
                 task_id="check_stitch_loads",
@@ -119,9 +118,7 @@ with dag:
                         'Content-Type': 'application/json',
                         'Authorization': Variable.get('stitch_secret')
                         },
-                response_check=lambda x: True,
                 xcom_push=True,
-                dag=dag,
             )
     resolve_stitch_status = PythonOperator(
                 task_id='resolve_stitch_status', 
@@ -132,7 +129,6 @@ with dag:
                 task_id="clean_xcom",
                 python_callable = cleanup_xcom,
                 provide_context=True, 
-                dag=dag
 )
 
 [check_stitch_extractions, check_stitch_loads] >> resolve_stitch_status
