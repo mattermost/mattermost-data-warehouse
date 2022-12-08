@@ -12,6 +12,10 @@ import logging
 task_logger = logging.getLogger('airflow.task')
 
 
+# creating an exception class for handling Stitch API response
+class StitchApiException(Exception):
+    pass
+
 """
 This method returns list of extractions that are failing
 tap_exit_status = 1, failing
@@ -22,13 +26,14 @@ def stitch_check_extractions(response):
     task_logger.info('Got extractions response from stitch api, checking for errors')
     failed_extractions={}
     try:
-        extractions = json.loads(response)['data']
-        for extraction in extractions:
-            if extraction['tap_exit_status'] == 1:
-                failed_extractions[extraction['source_id']] = extraction['tap_description']
-    except Exception as e:
-        task_logger.error('error in getting extractions from stitch ', str(e))
-        raise(e)
+        extractions = json.loads(response)
+        if ('data' not in extractions) or len(extractions) == 0:
+            raise StitchApiException('Error in response from stitch extractions api')
+        failed_extractions = {extraction['source_id']: extraction['tap_description'] for extraction in extractions.get('data') if extraction['tap_exit_status'] == 1}
+    except KeyError as e:
+        task_logger.error('error in ...', exc_info=True)
+    except StitchApiException as e:
+       task_logger.error('error in ...', exc_info=True)
     return failed_extractions
 
 
@@ -41,13 +46,16 @@ def stitch_check_loads(response):
     task_logger.info('Got loads response from stitch api, checking for errors')
     failed_loads={}
     try:
-        loads = json.loads(response)['data']
-        for load in loads:
+        loads = json.loads(response)
+        if ('data' not in loads) or len(loads) == 0:
+            raise StitchApiException('Error in response from stitch loads api')
+        for load in loads['data']:
             if load['error_state'] is not None:
                 failed_loads[load['source_name']] = load['error_state']['notification_data']['error']
-    except Exception as e:
-        task_logger.error('error in getting loads from stitch ', str(e))
-        raise(e)
+    except KeyError as e:
+        task_logger.error('error in ...', exc_info=True)
+    except StitchApiException as e:
+       task_logger.error('error in ...', exc_info=True)
     return failed_loads
 
 """
@@ -59,7 +67,6 @@ def resolve_stitch(**kwargs):
     extractions,loads = ti.xcom_pull(task_ids=['check_stitch_extractions','check_stitch_loads'])
     if not (extractions or loads):
         raise ValueError('No value found for stitch status in XCom')
-    # task_logger.info('loads are', loads)
     failed_loads = stitch_check_loads(loads)
     failed_extractions = stitch_check_extractions(extractions)
 
@@ -128,6 +135,5 @@ with dag:
                 dag=dag
 )
 
-check_stitch_extractions >> check_stitch_loads
-check_stitch_loads >> resolve_stitch_status
+[check_stitch_extractions, check_stitch_loads] >> resolve_stitch_status
 resolve_stitch_status >> clean_xcom
