@@ -1,9 +1,9 @@
 import pytest
-from unittest import mock
+from airflow.models import Variable
 
-mock.patch.dict('os.environ', AIRFLOW_VAR_STITCH_SECRET="test")
-mock.patch.dict('os.environ', AIRFLOW_VAR_STITCH_LOADS_ENDPOINT="test")
-mock.patch.dict('os.environ', AIRFLOW_VAR_STITCH_EXTRACTIONS_ENDPOINT="test")
+Variable.set("stitch_secret", "test_secret_value")
+Variable.set("stitch_loads_endpoint", "test_loads_endpoint")
+Variable.set("stitch_extractions_endpoint", "test_extractions_endpoint")
 
 from general.monitoring import stitch_check_extractions, stitch_check_loads
 
