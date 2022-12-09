@@ -39,6 +39,9 @@ jobs:
       - name: Install dependencies
         run: pip install -r build/requirements-airflow-dev.txt
 
+      - name: Initialize airflow database for loading variables
+        run: airflow db init
+        
       # - name: Run tests
       - name: Run plugin tests
         run: pytest plugins dags
