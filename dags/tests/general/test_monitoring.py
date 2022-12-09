@@ -1,10 +1,10 @@
 import pytest
+from airflow.models import Variable
 from general.monitoring import stitch_check_extractions, stitch_check_loads
 
-""" First test loads imports into global variables used by other tests,
-    to prevent reloading of imports
-"""
-
+Variable.set("stitch_secret", "test_secret_value")
+Variable.set("stitch_loads_endpoint", "test_loads_endpoint")
+Variable.set("stitch_extractions_endpoint", "test_extractions_endpoint")
 
 def test_stitch_check_extractions_pass(load_data):
 
