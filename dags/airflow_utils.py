@@ -17,7 +17,7 @@ PSQL_IMAGE = "docker.io/adovenmm/data-warehouse-psql:latest"
 PIPELINEWISE_IMAGE = "docker.io/adovenmm/pipelinewise:latest"
 
 mm_webhook_url = os.getenv("MATTERMOST_WEBHOOK_URL")
-
+DEFAULT_AIRFLOW_NAMESPACE = "airflow-dev" # to prevent tests from failing
 
 def mm_failed_task(context):
     """
@@ -106,7 +106,7 @@ pod_defaults = dict(
     image_pull_policy="IfNotPresent",
     in_cluster=True,
     is_delete_operator_pod=True,
-    namespace=os.environ["NAMESPACE"],
+    namespace=os.environ.get('NAMESPACE', DEFAULT_AIRFLOW_NAMESPACE),
     cmds=["/bin/bash", "-c"],
 )
 

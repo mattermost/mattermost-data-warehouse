@@ -1,14 +1,12 @@
 import pytest
-
+from general.monitoring import stitch_check_extractions, stitch_check_loads
 
 """ First test loads imports into global variables used by other tests,
-to prevent reloading of imports
+    to prevent reloading of imports
 """
 
 
 def test_stitch_check_extractions_pass(load_data):
-    global stitch_check_extractions
-    from general.monitoring import stitch_check_extractions
 
     response = load_data('monitoring/extractions_success.json')
     failed_extrations = stitch_check_extractions(response)
@@ -30,8 +28,6 @@ def test_stitch_check_extractions_error():
 
 
 def test_stitch_check_loads_pass(load_data):
-    global stitch_check_loads
-    from general.monitoring import stitch_check_loads
 
     response = load_data('monitoring/loads_success.json')
     failed_loads = stitch_check_loads(response)

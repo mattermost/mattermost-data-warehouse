@@ -41,9 +41,9 @@ def stitch_check_extractions(response):
             if extraction['tap_exit_status'] == 1
         }
     except KeyError:
-        task_logger.error('error in ...', exc_info=True)
+        task_logger.error('Error in check extractions ...', exc_info=True)
     except StitchApiException:
-        task_logger.error('error in ...', exc_info=True)
+        task_logger.error('Error in ...', exc_info=True)
     return failed_extractions
 
 
@@ -62,15 +62,14 @@ def stitch_check_loads(response):
         if ('data' not in loads) or len(loads) == 0:
             raise StitchApiException('Invalid response from loads api')
         failed_loads = {
-            load['source_name']: load['error_state']
-            ['notification_data']['error']
+            load['source_name']: load['error_state']['notification_data']['error']
             for load in loads.get('data')
             if load['error_state'] is not None
         }
     except KeyError:
-        task_logger.error('error in ...', exc_info=True)
+        task_logger.error('Error in check loads ...', exc_info=True)
     except StitchApiException:
-        task_logger.error('error in ...', exc_info=True)
+        task_logger.error('Error in ...', exc_info=True)
     return failed_loads
 
 
@@ -82,8 +81,7 @@ triggers a mattermost alert in case of failure
 
 def resolve_stitch(ti=None, **kwargs):
     ti = kwargs['ti']
-    extractions, loads = ti.xcom_pull(task_ids=['check_stitch_extractions',
-                                                'check_stitch_loads'])
+    extractions, loads = ti.xcom_pull(task_ids=['check_stitch_extractions', 'check_stitch_loads'])
     if not (extractions or loads):
         raise ValueError('No value found for stitch status in XCom')
     failed_loads = stitch_check_loads(loads)
@@ -93,13 +91,10 @@ def resolve_stitch(ti=None, **kwargs):
         task_logger.info('There are no failed loads or extractions')
     else:
         status = ':red_circle:'
-        message = f"**STITCH**: {status}\nFailed extractions: " \
-            "{failed_extractions}\nFailed loads: {failed_loads}"
-        MattermostOperator(
-            mattermost_conn_id='mattermost',
-            text=message,
-            task_id='resolve_stitch_message'
-        ).execute(None)
+        message = f"**STITCH**: {status}\nFailed extractions: " "{failed_extractions}\nFailed loads: {failed_loads}"
+        MattermostOperator(mattermost_conn_id='mattermost', text=message, task_id='resolve_stitch_message').execute(
+            None
+        )
 
 
 # To clean up Xcom after dag finished run.
@@ -126,10 +121,7 @@ with DAG(
         http_conn_id="stitch",
         method="GET",
         endpoint=Variable.get('stitch_extractions_endpoint'),
-        headers={
-            'Content-Type': 'application/json',
-            'Authorization': Variable.get('stitch_secret')
-        },
+        headers={'Content-Type': 'application/json', 'Authorization': Variable.get('stitch_secret')},
         xcom_push=True,
     )
     check_stitch_loads = SimpleHttpOperator(
@@ -138,16 +130,11 @@ with DAG(
         http_conn_id="stitch",
         method="GET",
         endpoint=Variable.get('stitch_loads_endpoint'),
-        headers={
-            'Content-Type': 'application/json',
-            'Authorization': Variable.get('stitch_secret')
-        },
+        headers={'Content-Type': 'application/json', 'Authorization': Variable.get('stitch_secret')},
         xcom_push=True,
     )
     resolve_stitch_status = PythonOperator(
-        task_id='resolve_stitch_status',
-        provide_context=True,
-        python_callable=resolve_stitch
+        task_id='resolve_stitch_status', provide_context=True, python_callable=resolve_stitch
     )
 
     clean_xcom = PythonOperator(
