@@ -1,0 +1,38 @@
+version: 2
+
+models:
+  - name: dq_daily_activity
+    description: Daily information about activity data from Rudderstack.
+
+    columns:
+      - name: daily_activity_id
+        description: Primary key for server activity
+        tests:
+          - not_null
+          - unique
+
+      - name: server_id
+        description: The id of the server
+        tests:
+          - not_null
+
+      - name: date
+        description: The date of the activity
+        tests:
+          - not_null
+
+      - name: cnt_activities
+        description: The total number of activities for the given server and date
+        tests:
+          - not_null
+
+      - name: is_missing
+        description: Whether there's missing activity data for the given server and date
+        tests:
+          - not_null
+
+      - name: is_cloud
+        description: True if it's a cloud server
+        tests:
+          - not_null
+
