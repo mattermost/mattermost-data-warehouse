@@ -150,7 +150,7 @@ def cloud_clearbit():
                                         else:
                                             clearbit_df.loc[index, k.lower() + '_' + k1.lower() + '_' + k2.lower()] = v2
                                 else:
-                                    clearbit_df.loc[index, k.lower() + '_' + k1.lower()] = v1
+                                    clearbit_df.loc[index, k.lower() + '_' + k1.lower()] = str(v1) if type(v1) == list else v1
                         else:
                             clearbit_df.loc[index, k.lower()] = v
 
