@@ -1,0 +1,76 @@
+{
+  "person": {
+    "id": "9e73ba97-eb5a-4ae5-9aa9-811d24f8bdc6",
+    "name": {
+      "fullName": "Test User",
+      "givenName": "Test",
+      "familyName": "User"
+    },
+    "email": "test@example.com",
+    "location": "GR",
+    "timeZone": "Europe/Athens",
+    "utcOffset": 3,
+    "geo": {
+      "city": "Athens",
+      "state": null,
+      "stateCode": null,
+      "country": "Greece",
+      "countryCode": "GR",
+      "lat": 39.074208,
+      "lng": 21.824312
+    },
+    "bio": null,
+    "site": null,
+    "avatar": "https://d1ts43dypk8bqh.cloudfront.net/v1/avatars/cool-user",
+    "employment": {
+      "domain": "example.com",
+      "name": "Example",
+      "title": "Data Engineer",
+      "role": "information_technology",
+      "subRole": "data_it",
+      "seniority": "director"
+    },
+    "facebook": {
+      "handle": null
+    },
+    "github": {
+      "handle": "testuser",
+      "avatar": "https://avatars.githubusercontent.com/u/22222222222?v=2",
+      "company": null,
+      "blog": "",
+      "followers": 6,
+      "following": 1
+    },
+    "twitter": {
+      "handle": null,
+      "id": null,
+      "bio": null,
+      "followers": null,
+      "following": null,
+      "location": null,
+      "site": null,
+      "avatar": null
+    },
+    "linkedin": {
+      "handle": "in/testuser"
+    },
+    "googleplus": {
+      "handle": null
+    },
+    "gravatar": {
+      "handle": "testuser",
+      "urls":  [],
+      "avatar": "http://2.gravatar.com/avatar/42",
+      "avatars": [
+        {
+          "url": "http://2.gravatar.com/avatar/42",
+          "type": "thumbnail"
+        }
+      ]
+    },
+    "fuzzy": false,
+    "emailProvider": false,
+    "indexedAt": "2022-10-26T07:15:45.360Z"
+  },
+  "company": null
+  }
