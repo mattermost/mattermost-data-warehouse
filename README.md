@@ -292,6 +292,10 @@ different set of environment variables. The following table describes the requir
         <td>PERMISSION_BOT_WAREHOUSE</td>
         <td>Warehouse to store transformed data to</td>
     </tr>
+    <tr>
+      <td>RELEASE_LOCATION</td>
+      <td>Location to load release data from</td>
+    </tr>
   </tbody>
 </table>
 

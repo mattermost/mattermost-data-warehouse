@@ -112,6 +112,7 @@ select
         else date_part('month',output.cohort_month)::number -1
         end as orderbymonth,
     datediff('month',output.cohort_month,output.report_mo) as month_since_purchase,
+    iff(month_since_purchase = 0,output.active_cnt,0) as initial_cohort_size,
     datediff('quarter',output.cohort_month,report_mo) as cohort_qtr_no,
     d.geo,
     d.company_type,
