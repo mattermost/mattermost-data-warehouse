@@ -40,10 +40,12 @@ def stitch_check_extractions(response):
             for extraction in extractions.get('data')
             if extraction['tap_exit_status'] == 1
         }
-    except KeyError:
+    except KeyError as e:
         task_logger.error('Error in check extractions ...', exc_info=True)
-    except StitchApiException:
+        raise e
+    except StitchApiException as e:
         task_logger.error('Error in ...', exc_info=True)
+        raise e
     return failed_extractions
 
 
@@ -66,10 +68,12 @@ def stitch_check_loads(response):
             for load in loads.get('data')
             if load['error_state'] is not None
         }
-    except KeyError:
+    except KeyError as e:
         task_logger.error('Error in check loads ...', exc_info=True)
-    except StitchApiException:
+        raise e
+    except StitchApiException as e:
         task_logger.error('Error in ...', exc_info=True)
+        raise e
     return failed_loads
 
 
@@ -80,7 +84,6 @@ triggers a mattermost alert in case of failure
 
 
 def resolve_stitch(ti=None, **kwargs):
-    ti = kwargs['ti']
     extractions, loads = ti.xcom_pull(task_ids=['check_stitch_extractions', 'check_stitch_loads'])
     if not (extractions or loads):
         raise ValueError('No value found for stitch status in XCom')
