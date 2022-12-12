@@ -107,7 +107,28 @@ with open(Path(__file__).parent / "fixtures" / "clearbit" / "cloud" / "setup" / 
         # THEN: expect one item to have been updated
         "example-new-table.json",
         id="table doesn't exist - no data - one item to be updated - clearbit returns one"
-    ), ])
+    ),
+    pytest.param(
+        # GIVEN: table exists
+        pd.DataFrame.from_dict({"COLUMN_NAME": CLEARBIT_COLUMNS}),
+        # GIVEN: table contains some data
+        pd.DataFrame(),
+        # GIVEN: two items to update
+        pd.DataFrame.from_dict([
+            {"LICENSE_EMAIL": "test1@example.com", "EMAIL_DOMAIN": "example.com", "SERVER_ID": "server-0010",
+             "INSTALLATION_ID": "installation-1042", "FIRST_ACTIVE_DATE": "2022-11-01",
+             "LAST_UP_ADDRESS": "42.42.42.42"},
+            {"LICENSE_EMAIL": "test2@example.com", "EMAIL_DOMAIN": "example.com", "SERVER_ID": "server-0011",
+             "INSTALLATION_ID": "installation-1042", "FIRST_ACTIVE_DATE": "2022-11-01",
+             "LAST_UP_ADDRESS": "42.42.42.42"},
+        ]),
+        # GIVEN: clearbit returns data for both responses, first response doesn't contain company info
+        ["person-only.json", "company-only.json"],
+        # THEN: expect two items to have been updated
+        "person-company.json",
+        id="table exists - contains data - three items to be updated - clearbit returns all"
+    ),
+])
 def test_cloud_clearbit(mock_snowflake, mock_snowflake_pandas, mock_clearbit, mock_clearbit_enrichments, expect_data,
                         column_names, table_data, items_to_update, clearbit_responses, expected):
     # GIVEN: snowflake engine and connection are mocked

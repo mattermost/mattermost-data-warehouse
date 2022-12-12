@@ -136,7 +136,7 @@ def cloud_clearbit():
                 for index, row in clearbit_df[clearbit_df['server_id'] == key].iterrows():
                     for k, v in value.items():
                         if isinstance(v,dict):
-                            for k1, v1 in v.items():
+                            for k1, v1 in v.items() :
                                 if isinstance(v1, dict):
                                     for k2, v2 in v1.items():
                                         if isinstance(v2, dict):
@@ -150,7 +150,7 @@ def cloud_clearbit():
                                         else:
                                             clearbit_df.loc[index, k.lower() + '_' + k1.lower() + '_' + k2.lower()] = v2
                                 else:
-                                    clearbit_df.loc[index, k.lower() + '_' + k1.lower()] = v1
+                                    clearbit_df.loc[index, k.lower() + '_' + k1.lower()] = str(v1) if type(v1) == list and len(v1) > 0 else v1
                         else:
                             clearbit_df.loc[index, k.lower()] = v
 
@@ -160,6 +160,8 @@ def cloud_clearbit():
             # CAST REMAINING CLEARBIT OBJECT COLUMNS TO STRINGS
             columns = ['company_site_phonenumbers','company_techcategories','company_domainaliases','company_tech','person_gravatar_urls','person_gravatar_avatars',\
                     'company_tags','company_site_emailaddresses']
+            # Ugly fix to handle exceptions consistently with how they are currently stored in the database
+            clearbit_df2[columns] = clearbit_df2[columns].fillna('nan')
             clearbit_df2[columns] = clearbit_df2[columns].astype(str)
 
             # CONVERT COLUMN NAMES TO LOWERCASE FOR LOADING PURPOSES
