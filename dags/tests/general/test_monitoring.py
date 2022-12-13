@@ -1,11 +1,6 @@
 import pytest
-from airflow.models import Variable
 
-Variable.set("stitch_secret", "test_secret_value")
-Variable.set("stitch_loads_endpoint", "test_loads_endpoint")
-Variable.set("stitch_extractions_endpoint", "test_extractions_endpoint")
-
-from general.monitoring import stitch_check_extractions, stitch_check_loads
+from general._helpers import stitch_check_extractions, stitch_check_loads
 
 def test_stitch_check_extractions_pass(load_data):
 

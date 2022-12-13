@@ -13,6 +13,19 @@ def config_utils(monkeypatch):
         "AIRFLOW_BASE_URL",
         "https://test.airflow.mattermost.com"
         )
+    monkeypatch.setenv(
+        "AIRFLOW_VAR_STITCH_SECRET",
+        "test_secret_value"
+    )
+    monkeypatch.setenv(
+        "AIRFLOW_VAR_STITCH_LOADS_ENDPOINT",
+        "test_loads_endpoint"
+    )
+    monkeypatch.setenv(
+        "AIRFLOW_VAR_STITCH_EXTRACTIONS_ENDPOINT",
+        "test_extractions_endpoint"
+    )
+
 
 
 @pytest.fixture
