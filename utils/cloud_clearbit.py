@@ -167,6 +167,10 @@ def cloud_clearbit():
             # CONVERT COLUMN NAMES TO LOWERCASE FOR LOADING PURPOSES
             clearbit_df2.columns = clearbit_df2.columns.str.lower()
 
+            # If the list of columns is known (table already exists), then don't add new columns.
+            if clearbit_cols:
+                clearbit_df2 = clearbit_df2[clearbit_cols]
+
             engine = snowflake_engine_factory(os.environ, "TRANSFORMER", "util")
             with engine.connect() as connection:
 
