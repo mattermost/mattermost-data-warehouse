@@ -128,8 +128,7 @@
     "person": null,
     "company": null,
     "server_id": "server-0010",
-    "company_geo_streetaddress": null,
-    "company_metrics_trafficrank": null
+    "company_geo_streetaddress": null
   },
   {
     "column_name": null,
@@ -260,7 +259,6 @@
     "person": null,
     "company": null,
     "server_id": "server-0011",
-    "company_geo_streetaddress": null,
-    "company_metrics_trafficrank": "medium"
+    "company_geo_streetaddress": null
   }
 ]
