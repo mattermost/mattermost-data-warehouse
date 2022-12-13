@@ -1,14 +1,5 @@
 import json
 import logging
-from datetime import datetime
-
-
-from airflow.models import Variable
-from airflow.models.xcom import XCom
-from airflow.operators.http_operator import SimpleHttpOperator
-from airflow.operators.python_operator import PythonOperator
-from airflow.utils.db import provide_session
-from airflow_utils import send_alert
 
 from plugins.operators.mattermost_operator import MattermostOperator
 
@@ -18,6 +9,7 @@ task_logger = logging.getLogger('airflow.task')
 # creating an exception class for handling Stitch API response
 class StitchApiException(Exception):
     pass
+
 
 def stitch_check_extractions(response):
     """
@@ -45,6 +37,7 @@ def stitch_check_extractions(response):
         raise e
     return failed_extractions
 
+
 def stitch_check_loads(response):
     """
     This method returns object of loads that are failing
@@ -71,13 +64,11 @@ def stitch_check_loads(response):
     return failed_loads
 
 
-"""
-This method fetches failed stitch extractions from xcom
-triggers a mattermost alert in case of failure
-"""
-
-
 def resolve_stitch(ti=None, **kwargs):
+    """
+    This method fetches failed stitch extractions from xcom
+    triggers a mattermost alert in case of failure
+    """
     extractions, loads = ti.xcom_pull(task_ids=['check_stitch_extractions', 'check_stitch_loads'])
     if not (extractions or loads):
         raise ValueError('No value found for stitch status in XCom')
@@ -92,6 +83,3 @@ def resolve_stitch(ti=None, **kwargs):
         MattermostOperator(mattermost_conn_id='mattermost', text=message, task_id='resolve_stitch_message').execute(
             None
         )
-
-
-

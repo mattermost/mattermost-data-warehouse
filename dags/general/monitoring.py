@@ -1,4 +1,3 @@
-import json
 import logging
 from datetime import datetime
 
@@ -9,9 +8,7 @@ from airflow.operators.http_operator import SimpleHttpOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.db import provide_session
 from airflow_utils import send_alert
-from ._helpers import stitch_check_extractions, stitch_check_loads, resolve_stitch
-
-from plugins.operators.mattermost_operator import MattermostOperator
+from ._helpers import resolve_stitch
 
 task_logger = logging.getLogger('airflow.task')
 
@@ -19,6 +16,7 @@ task_logger = logging.getLogger('airflow.task')
 # creating an exception class for handling Stitch API response
 class StitchApiException(Exception):
     pass
+
 
 # To clean up Xcom after dag finished run.
 @provide_session
