@@ -1,6 +1,6 @@
 import pytest
 
-from general._helpers import stitch_check_extractions, stitch_check_loads
+from dags.general._helpers import stitch_check_extractions, stitch_check_loads
 
 def test_stitch_check_extractions_pass(load_data):
 
