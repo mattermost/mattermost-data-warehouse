@@ -1,0 +1,32 @@
+{
+    "data": [
+        {
+            "target_exit_status": null,
+            "job_name": "test_job_name_1",
+            "start_time": null,
+            "stitch_client_id": 99999,
+            "tap_exit_status": 1,
+            "source_type": "tap-postgres",
+            "target_description": "Terminated",
+            "discovery_exit_status": null,
+            "discovery_description": "Terminated",
+            "tap_description": "Terminated",
+            "completion_time": "2020-05-27T23:24:43Z",
+            "source_id": 99999
+        },
+        {
+            "target_exit_status": 0,
+            "job_name": "test_job_name_1",
+            "start_time": "2022-12-07T13:11:23Z",
+            "stitch_client_id": 99999,
+            "tap_exit_status": 0,
+            "source_type": "tap-zendesk",
+            "target_description": null,
+            "discovery_exit_status": 0,
+            "discovery_description": null,
+            "tap_description": null,
+            "completion_time": "2022-12-07T13:11:54Z",
+            "source_id": 99999
+        }
+    ]
+}
