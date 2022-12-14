@@ -1,6 +1,6 @@
 def test_create_alert_body(config_alert_context):
 
-    from airflow_utils import create_alert_body
+    from dags.airflow_utils import create_alert_body
     body = create_alert_body(config_alert_context)
     assert ':red_circle: Test Exception message' in body
     assert '**Dag**: [test_utils_dag](https://airflow.internal.mattermost.com/tree?dag_id=test_utils_dag)' in body
@@ -8,7 +8,7 @@ def test_create_alert_body(config_alert_context):
         
 def test_send_alert(config_alert_context, mocker):
 
-    from airflow_utils import send_alert
+    from dags.airflow_utils import send_alert
     mattermost_operator = mocker.patch("airflow_utils.MattermostOperator")
     create_alert_body = mocker.patch("airflow_utils.create_alert_body")
     mattermost_operator.return_value = mocker.Mock()
