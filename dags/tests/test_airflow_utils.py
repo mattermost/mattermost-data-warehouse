@@ -9,8 +9,8 @@ def test_create_alert_body(config_alert_context):
 def test_send_alert(config_alert_context, mocker):
 
     from dags.airflow_utils import send_alert
-    mattermost_operator = mocker.patch("airflow_utils.MattermostOperator")
-    create_alert_body = mocker.patch("airflow_utils.create_alert_body")
+    mattermost_operator = mocker.patch("dags.airflow_utils.MattermostOperator")
+    create_alert_body = mocker.patch("dags.airflow_utils.create_alert_body")
     mattermost_operator.return_value = mocker.Mock()
     create_alert_body.return_value = 'test message'
     send_alert(config_alert_context)
