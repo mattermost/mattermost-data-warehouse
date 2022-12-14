@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 
-from dags.airflow_utils import pod_defaults, send_alert
+from dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, pod_defaults, send_alert
 from dags.kube_secrets import (
     SNOWFLAKE_ACCOUNT,
     SNOWFLAKE_LOAD_DATABASE,
@@ -14,7 +14,6 @@ from dags.kube_secrets import (
 
 # Default arguments for the DAG
 default_args = {
-    "catchup": False,
     "depends_on_past": False,
     "on_failure_callback": send_alert,
     "owner": "airflow",
@@ -24,11 +23,17 @@ default_args = {
 }
 
 # Create the DAG
-dag = DAG("licenses", default_args=default_args, schedule_interval="0 3 * * *")
+dag = DAG(
+    "licenses",
+    default_args=default_args,
+    schedule_interval="0 3 * * *",
+    catchup=False,
+    max_active_runs=1,  # Don't allow multiple concurrent dag executions
+)
 
 KubernetesPodOperator(
     **pod_defaults,
-    image="mattermost/mattermost-data-warehouse:master",
+    image=MATTERMOST_DATAWAREHOUSE_IMAGE,
     task_id="licenses",
     name="license-import",
     secrets=[

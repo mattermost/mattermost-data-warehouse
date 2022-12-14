@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 
-from dags.airflow_utils import pod_defaults, pod_env_vars, send_alert
+from dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, pod_defaults, pod_env_vars, send_alert
 from dags.kube_secrets import (
     DBT_CLOUD_API_ACCOUNT_ID,
     DBT_CLOUD_API_KEY,
@@ -22,7 +22,6 @@ env_vars = {**pod_env_vars, **{}}
 
 # Default arguments for the DAG
 default_args = {
-    "catchup": False,
     "depends_on_past": False,
     "owner": "airflow",
     "on_failure_callback": send_alert,
@@ -45,11 +44,18 @@ This DAG triggers nightly tasks:
 """
 
 # Create the DAG
-dag = DAG("dbt_nightly", default_args=default_args, schedule_interval="0 7 * * *", doc_md=doc_md)
+dag = DAG(
+    "dbt_nightly",
+    default_args=default_args,
+    schedule_interval="0 7 * * *",
+    catchup=False,
+    max_active_runs=1,  # Don't allow multiple concurrent dag executions
+    doc_md=doc_md,
+)
 
 update_github_contributors = KubernetesPodOperator(
     **pod_defaults,
-    image="mattermost/mattermost-data-warehouse:master",  # Uses latest build from master
+    image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
     task_id="github-contributors",
     name="github-contributors",
     secrets=[
@@ -66,7 +72,7 @@ update_github_contributors = KubernetesPodOperator(
 
 dbt_run_cloud_nightly = KubernetesPodOperator(
     **pod_defaults,
-    image="mattermost/mattermost-data-warehouse:master",  # Uses latest build from master
+    image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
     task_id="dbt-cloud-run-nightly",
     name="dbt-cloud-run-nightly",
     secrets=[

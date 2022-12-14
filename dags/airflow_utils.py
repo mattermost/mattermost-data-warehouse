@@ -8,13 +8,12 @@ from typing import List
 from airflow.contrib.kubernetes.pod import Resources
 
 from plugins.operators.mattermost_operator import MattermostOperator
-from airflow.models import Variable
 
-DATA_IMAGE = "docker.io/adovenmm/data-image:v1.23.1"
-DBT_IMAGE = "docker.io/adovenmm/dbt-image:v0.18.1"
 PERMIFROST_IMAGE = "docker.io/adovenmm/permifrost-image:latest"
 PSQL_IMAGE = "docker.io/adovenmm/data-warehouse-psql:latest"
 PIPELINEWISE_IMAGE = "docker.io/adovenmm/pipelinewise:latest"
+
+MATTERMOST_DATAWAREHOUSE_IMAGE = "mattermost/mattermost-data-warehouse:master"
 
 mm_webhook_url = os.getenv("MATTERMOST_WEBHOOK_URL")
 
@@ -103,7 +102,7 @@ pod_resources = Resources(request_memory="500Mi", request_cpu="500m")
 # Default settings for all DAGs
 pod_defaults = dict(
     get_logs=True,
-    image_pull_policy="IfNotPresent",
+    image_pull_policy="Always",
     in_cluster=True,
     is_delete_operator_pod=True,
     namespace=os.environ["NAMESPACE"],

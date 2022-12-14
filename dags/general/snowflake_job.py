@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 
-from dags.airflow_utils import pod_defaults, pod_env_vars, send_alert
+from dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, pod_defaults, pod_env_vars, send_alert
 from dags.kube_secrets import (
     SNOWFLAKE_ACCOUNT,
     SNOWFLAKE_PASSWORD,
@@ -21,7 +21,6 @@ env_vars = {**pod_env_vars, **{}}
 
 # Default arguments for the DAG
 default_args = {
-    "catchup": False,
     "depends_on_past": False,
     "owner": "airflow",
     "on_failure_callback": send_alert,
@@ -32,13 +31,19 @@ default_args = {
 }
 
 # Create the DAG
-dag = DAG("snowflake_job", default_args=default_args, schedule_interval="*/5 * * * *")
+dag = DAG(
+    "snowflake_job",
+    default_args=default_args,
+    schedule_interval="*/5 * * * *",
+    catchup=False,
+    max_active_runs=1,  # Don't allow multiple concurrent dag executions
+)
 
 
 def get_container_operator(task_name, job_name, schema):
     return KubernetesPodOperator(
         **pod_defaults,
-        image="mattermost/mattermost-data-warehouse:master",  # Uses latest build from master
+        image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
         task_id=f"snowflake-{task_name}",
         name=task_name,
         secrets=[
