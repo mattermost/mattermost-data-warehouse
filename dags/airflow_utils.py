@@ -102,7 +102,7 @@ pod_resources = Resources(request_memory="500Mi", request_cpu="500m")
 # Default settings for all DAGs
 pod_defaults = dict(
     get_logs=True,
-    image_pull_policy="Always",
+    image_pull_policy="IfNotPresent",
     in_cluster=True,
     is_delete_operator_pod=True,
     namespace=os.environ["NAMESPACE"],
