@@ -35,7 +35,7 @@ with DAG(
     start_date=datetime(2017, 3, 20),
     schedule_interval='@hourly',
     catchup=False,
-) as dag:
+):
     check_stitch_extractions = SimpleHttpOperator(
         task_id="check_stitch_extractions",
         # TODO add to airflow variables
