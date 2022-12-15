@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 
-from dags.airflow_utils import pod_defaults, send_alert
+from dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, pod_defaults, send_alert
 from dags.kube_secrets import (
     AWS_ACCOUNT_ID,
     SNOWFLAKE_ACCOUNT,
@@ -15,7 +15,6 @@ from dags.kube_secrets import (
 
 # Default arguments for the DAG
 default_args = {
-    "catchup": False,
     "depends_on_past": False,
     "on_failure_callback": send_alert,
     "owner": "airflow",
@@ -31,13 +30,19 @@ CMD_TEMPLATE = """
 """
 
 # Create the DAG
-dag = DAG("push_proxy", default_args=default_args, schedule_interval="0 3 * * *")
+dag = DAG(
+    "push_proxy",
+    default_args=default_args,
+    schedule_interval="0 3 * * *",
+    catchup=False,
+    max_active_runs=1,  # Don't allow multiple concurrent dag executions
+)
 
 
 def get_push_proxy_job(log_type, cmd):
     return KubernetesPodOperator(
         **pod_defaults,
-        image="mattermost/mattermost-data-warehouse:master",  # Uses latest build from master
+        image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
         task_id=f"push-proxy-{log_type}",
         name=f"push-proxy-{log_type}",
         secrets=[
