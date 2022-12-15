@@ -31,8 +31,8 @@ services:
       - NAMESPACE=airflow
     volumes:
       - airflow_scheduler_data:/bitnami
-      - ./dags:/opt/bitnami/airflow/dags/dags
-      - ./plugins:/opt/bitnami/airflow/plugins
+      - ../dags:/opt/bitnami/airflow/dags/dags
+      - ../plugins:/opt/bitnami/airflow/dags/plugins
 
   airflow-worker:
     depends_on:
@@ -48,8 +48,8 @@ services:
       - NAMESPACE=airflow
     volumes:
       - airflow_worker_data:/bitnami
-      - ./dags:/opt/bitnami/airflow/dags/dags
-      - ./plugins:/opt/bitnami/airflow/plugins
+      - ../dags:/opt/bitnami/airflow/dags/dags
+      - ../plugins:/opt/bitnami/airflow/dags/plugins
 
   airflow:
     depends_on:
@@ -67,8 +67,8 @@ services:
       - '8080:8080'
     volumes:
       - airflow_data:/bitnami
-      - ./dags:/opt/bitnami/airflow/dags/dags
-      - ./plugins:/opt/bitnami/airflow/plugins
+      - ../dags:/opt/bitnami/airflow/dags/dags
+      - ../plugins:/opt/bitnami/airflow/dags/plugins
 
 volumes:
   airflow_scheduler_data:

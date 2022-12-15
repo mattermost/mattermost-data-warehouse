@@ -19,7 +19,7 @@ restart!).
 At the root of the project run 
 
 ```bash
-docker compose -f docker-compose-airflow.yml up
+docker compose -f build/docker-compose-airflow.yml up
 ```
 
 After a while you can access airflow at [http://localhost:8080](http://localhost:8080), with username/password `user`/`bitnami`.
