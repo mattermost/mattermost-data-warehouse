@@ -22,9 +22,9 @@ doc_md = """
 
 #### Purpose
 
-This DAG attempts to load the latest `master` version of the image on each run. 
+This DAG attempts to load the latest `master` version of the image on each run.
 
-> This is a workaround in order to reduce the load from pulling new images. The trick is that this is the only 
+> This is a workaround in order to reduce the load from pulling new images. The trick is that this is the only
 > DAG that will `Always` try to download the new image.
  """
 
