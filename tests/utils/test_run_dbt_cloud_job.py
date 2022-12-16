@@ -10,7 +10,7 @@ EXPECTED_RUN_POLL_URL = "https://cloud.getdbt.com/api/v2/accounts/1001/runs/42/"
 # Customize defaults for given_request_to
 __MOCK_REQUEST_DEFAULTS = {
     'dir': 'dbt',
-    'headers': {"Authorization": f"Token test-dbt-key", "Content-Type": "application/json"}
+    'headers': {"Authorization": "Token test-dbt-key", "Content-Type": "application/json"},
 }
 
 
@@ -93,7 +93,7 @@ def test_poll_dbt_run_poll_timeout(responses, given_request_to):
 
 
 @pytest.mark.parametrize("status,content", [(400, 'run.400.json'), (404, 'run.404.json')])
-def test_should_handle_failure(responses, given_request_to, status, content):
+def test_should_handle_non_2xx_responses(responses, given_request_to, status, content):
     # GIVEN: DBT cloud returns a non-200 response
     given_request_to(EXPECTED_RUN_POLL_URL, content, status=status)
 
@@ -104,4 +104,3 @@ def test_should_handle_failure(responses, given_request_to, status, content):
 
     # THEN: expect request to have been sent
     responses.assert_call_count(EXPECTED_RUN_POLL_URL, 3)
-
