@@ -27,7 +27,7 @@ def mock_environment(mocker):
         'DIAGNOSTIC_LOCATION_ONE': 'location-one',
         'DIAGNOSTIC_LOCATION_TWO': 'location-two',
         'RELEASE_LOCATION': 'test-release-location',
-        'AWS_ACCOUNT_ID': 'test-aws-account-id'
+        'AWS_ACCOUNT_ID': 'test-aws-account-id',
     }
     mocker.patch.dict(os.environ, mock_env_vars, clear=True)
     mock_env_copy = mocker.patch('os.environ.copy')
