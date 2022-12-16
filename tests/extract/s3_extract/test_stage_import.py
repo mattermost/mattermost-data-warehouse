@@ -22,9 +22,7 @@ def test_extract_from_stage(mock_snowflake):
 
     # THEN: expect query to have been executed once
     mock_execute_query.assert_called_once()
-    assert _flatten_whitespaces(
-        mock_execute_query.call_args_list[0][0][1]
-    ) == _flatten_whitespaces(
+    assert _flatten_whitespaces(mock_execute_query.call_args_list[0][0][1]) == _flatten_whitespaces(
         """
         COPY INTO raw.test-schema.test-table
         FROM @dev/data/valuable
