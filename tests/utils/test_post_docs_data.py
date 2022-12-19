@@ -1,16 +1,20 @@
 import pytest
-import responses as test_responses
+
+import responses as test_responses  # importing as test_responses, due to conflict with import in conftest.py
 import snowflake.connector
 
 from utils import post_docs_data
 
 """
 This file contains unit tests for utils.post_data_job.py
-In case of change in `test_format_row`, make changes in utils.post_nps_job.py as well.
+In case of change in `test_format_row`, make changes in utils.post_nps_job.py as well
 """
 
 
 class TestPostDocsJob:
+
+    # This test validates output from method `format_row`
+
     @pytest.mark.parametrize(
         "input_row, output_row",
         [
@@ -28,6 +32,8 @@ class TestPostDocsJob:
         # function returns output after removing newline and string quotes
         assert post_docs_data.format_row(input_row) == output_row
 
+    # This test validates that script runs and data is post successfully to mattermost channel
+
     def test_post_to_channel_success(self, config_data, responses, post_data_ok, mock_snowflake_connector):
 
         mock_snowflake_connector('utils.post_docs_data')
@@ -43,6 +49,8 @@ class TestPostDocsJob:
         post_docs_data.post_docs()
         snowflake.connector.connect.assert_called_once()
         responses.assert_call_count("https://mattermost.example.com/hooks/hookid", 1)
+
+    # This test validates that script runs but data is not post to mattermost channel due to some error
 
     def test_post_to_channel_error(self, config_data, responses, post_data_error, mock_snowflake_connector):
 
