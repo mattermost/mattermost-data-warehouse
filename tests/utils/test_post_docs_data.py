@@ -9,28 +9,35 @@ This file contains unit tests for utils.post_data_job.py
 In case of change in `test_format_row`, make changes in utils.post_nps_job.py as well.
 """
 
-class TestPostDocsJob():
 
-    @pytest.mark.parametrize("input_row, output_row",
-                                [
-                                    (('sample feedback 1',''),('sample feedback 1','')),
-                                    (('sample\nfeedback2',''),('sample feedback2','')),
-                                    (('sample\n\nfeedback ""3',''),('sample  feedback 3','')),
-                                    (('sample feedback""""\n""""4',''),('sample feedback 4','')),
-                                    (('sample feedback""""\n""""5','untouched string goes here\n\n""'),('sample feedback 5','untouched string goes here\n\n""'))
-                                ]
-                            )
+class TestPostDocsJob:
+    @pytest.mark.parametrize(
+        "input_row, output_row",
+        [
+            (('sample feedback 1', ''), ('sample feedback 1', '')),
+            (('sample\nfeedback2', ''), ('sample feedback2', '')),
+            (('sample\n\nfeedback ""3', ''), ('sample  feedback 3', '')),
+            (('sample feedback""""\n""""4', ''), ('sample feedback 4', '')),
+            (
+                ('sample feedback""""\n""""5', 'untouched string goes here\n\n""'),
+                ('sample feedback 5', 'untouched string goes here\n\n""'),
+            ),
+        ],
+    )
     def test_format_row(self, config_data, input_row, output_row):
         # function returns output after removing newline and string quotes
         assert post_docs_data.format_row(input_row) == output_row
-    
+
     def test_post_to_channel_success(self, config_data, responses, post_data_ok, mock_snowflake_connector):
 
         mock_snowflake_connector('utils.post_docs_data')
-        data = {"text": "| Feedback            | Path                |\n|---------------------|---------------------|\n| test row 1 column 1 | test row 1 column 2 |\n| test row 2 column 1 | test row 2 column 2 |", "channel": "mattermost-documentation-feedback"}
+        data = {
+            "text": "| Feedback            | Path                |\n|---------------------|---------------------|\n| test row 1 column 1 | test row 1 column 2 |\n| test row 2 column 1 | test row 2 column 2 |",
+            "channel": "mattermost-documentation-feedback",
+        }
         test_responses.post(
-            url = "https://mattermost.example.com/hooks/hookid",
-            body = "",
+            url="https://mattermost.example.com/hooks/hookid",
+            body="",
             match=[test_responses.matchers.json_params_matcher(data)],
         )
         post_docs_data.post_docs()
