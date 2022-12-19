@@ -1,9 +1,13 @@
-import os
-import importlib
 import pytest
-import snowflake.connector
 import responses as test_responses
+import snowflake.connector
+
 from utils import post_docs_data
+
+"""
+This file contains unit tests for utils.post_data_job.py
+In case of change in `test_format_row`, make changes in utils.post_nps_job.py as well.
+"""
 
 class TestPostDocsJob():
 
