@@ -181,7 +181,7 @@ def mock_snowflake_connector(mocker):
 
 
 @pytest.fixture
-def post_nps_ok(responses):
+def post_data_ok(responses):
     response = Response(
         method="POST", url="https://mattermost.example.com/hooks/hookid", status=200, content_type='application/json'
     )
@@ -189,7 +189,7 @@ def post_nps_ok(responses):
 
 
 @pytest.fixture
-def post_nps_error(responses):
+def post_data_error(responses):
     response = Response(
         method="POST", url="https://mattermost.example.com/hooks/hookid", status=401, content_type='application/json'
     )
@@ -197,10 +197,11 @@ def post_nps_error(responses):
 
 
 @pytest.fixture
-def config_nps(monkeypatch, mocker):
+def config_data(monkeypatch, mocker):
 
     # mocking loading k8 secrets to environment variables
     monkeypatch.setenv("NPS_WEBHOOK_URL", "https://mattermost.example.com/hooks/hookid")
+    monkeypatch.setenv("DOCS_WEBHOOK_URL", "https://mattermost.example.com/hooks/hookid")
     monkeypatch.setenv("SNOWFLAKE_PASSWORD", "test password")
     monkeypatch.setenv("SNOWFLAKE_USER", "test user")
     monkeypatch.setenv("SNOWFLAKE_ACCOUNT", "test account")
