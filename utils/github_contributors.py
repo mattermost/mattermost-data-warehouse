@@ -1,26 +1,20 @@
-import json as jsonlib
+import os
+
 import pandas as pd
 import requests
-import snowflake.connector
-from snowflake.connector.pandas_tools import pd_writer
-import sys
-import os
 from jinja2 import Template
+from snowflake.connector.pandas_tools import pd_writer
 
-from extract.utils import snowflake_engine_factory, execute_query, execute_dataframe
+from extract.utils import snowflake_engine_factory
 
 
 def graphql_query(query):
     github_token = os.getenv("GITHUB_TOKEN")
     headers = {"Authorization": "Bearer {}".format(github_token)}
-    request = requests.post(
-        "https://api.github.com/graphql", json={"query": query}, headers=headers
-    )
+    request = requests.post("https://api.github.com/graphql", json={"query": query}, headers=headers)
     if request.status_code == 200:
         return request.json()
-    raise Exception(
-        "Query failed to run by returning code of {}.".format(request.status_code)
-    )
+    raise Exception("Query failed to run by returning code of {}.".format(request.status_code))
 
 
 def gen_query(org, repo, cursor=""):
@@ -70,8 +64,6 @@ def gen_repo_query(org, cursor=""):
 
 def contributors():
     org = "mattermost"
-    data = []
-
     repo = []
     records = []
     has_next = True
@@ -84,9 +76,7 @@ def contributors():
             return
 
         repo_results = result["data"]["organization"]["repositories"]["nodes"]
-        has_next = result["data"]["organization"]["repositories"]["pageInfo"][
-            "hasNextPage"
-        ]
+        has_next = result["data"]["organization"]["repositories"]["pageInfo"]["hasNextPage"]
         cursor = result["data"]["organization"]["repositories"]["pageInfo"]["endCursor"]
 
         for i in repo_results:
