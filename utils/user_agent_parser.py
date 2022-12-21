@@ -1,11 +1,12 @@
-from user_agents import parse
-import os
-import pandas as pd
-import sys
-from extract.utils import snowflake_engine_factory, execute_query, execute_dataframe
 import math
+import os
 
-CREATE_TABLE_QUERY = f"""
+import pandas as pd
+from user_agents import parse
+
+from extract.utils import execute_dataframe, execute_query, snowflake_engine_factory
+
+CREATE_TABLE_QUERY = """
     CREATE TABLE IF NOT EXISTS analytics.WEB.user_agent_registry
 (
     context_useragent VARCHAR,
@@ -18,14 +19,23 @@ CREATE_TABLE_QUERY = f"""
     device_model      VARCHAR
 );"""
 
-GET_USER_AGENT_STRINGS_QUERY = f"""
+GET_USER_AGENT_STRINGS_QUERY = """
     SELECT *
     FROM (
-        SELECT COALESCE(ANALYTICS.EVENTS.USER_EVENTS_TELEMETRY.CONTEXT_USER_AGENT, ANALYTICS.EVENTS.USER_EVENTS_TELEMETRY.CONTEXT_USERAGENT) AS CONTEXT_USERAGENT
+        SELECT COALESCE(
+            ANALYTICS.EVENTS.USER_EVENTS_TELEMETRY.CONTEXT_USER_AGENT,
+             ANALYTICS.EVENTS.USER_EVENTS_TELEMETRY.CONTEXT_USERAGENT
+         ) AS CONTEXT_USERAGENT
         FROM ANALYTICS.EVENTS.USER_EVENTS_TELEMETRY
         LEFT JOIN (SELECT CONTEXT_USERAGENT as JOIN_KEY FROM analytics.WEB.user_agent_registry GROUP BY 1) a
-            ON COALESCE(ANALYTICS.EVENTS.USER_EVENTS_TELEMETRY.CONTEXT_USER_AGENT, ANALYTICS.EVENTS.USER_EVENTS_TELEMETRY.CONTEXT_USERAGENT) = a.JOIN_KEY
-        WHERE COALESCE(ANALYTICS.EVENTS.USER_EVENTS_TELEMETRY.CONTEXT_USER_AGENT, ANALYTICS.EVENTS.USER_EVENTS_TELEMETRY.CONTEXT_USERAGENT) IS NOT NULL
+            ON COALESCE(
+                ANALYTICS.EVENTS.USER_EVENTS_TELEMETRY.CONTEXT_USER_AGENT,
+                ANALYTICS.EVENTS.USER_EVENTS_TELEMETRY.CONTEXT_USERAGENT
+            ) = a.JOIN_KEY
+        WHERE COALESCE(
+                ANALYTICS.EVENTS.USER_EVENTS_TELEMETRY.CONTEXT_USER_AGENT,
+                ANALYTICS.EVENTS.USER_EVENTS_TELEMETRY.CONTEXT_USERAGENT
+            ) IS NOT NULL
             AND a.JOIN_KEY IS NULL
         GROUP BY 1
         UNION ALL
@@ -67,9 +77,7 @@ def parse_user_agent():
     # UNION ALL SOURCES OF CONTEXT_USERAGENT DATA THAT ARE NOT CURRENTLY IN THE USER_AGENT_REGISTRY TABLE.
     df = execute_dataframe(engine, GET_USER_AGENT_STRINGS_QUERY)
 
-    if (
-        len(df) == 0
-    ):  # CHECKS TO SEE IF THERE ARE ANY NEW CONTEXT_USERAGENTS TO INSERT INTO THE TABLE
+    if len(df) == 0:  # CHECKS TO SEE IF THERE ARE ANY NEW CONTEXT_USERAGENTS TO INSERT INTO THE TABLE
         print("Nothing to do.")
     else:  # PARSES USERAGENT COMPONENTS AND APPENDS EACH COMPONENT AS A COLUMN TO THE EXISTING DATAFRAME.
         browser = []
@@ -85,7 +93,7 @@ def parse_user_agent():
         device_brand = []
         device_model = []
 
-        for index, row in df.iterrows():
+        for _index, row in df.iterrows():
             ua_string = row["CONTEXT_USERAGENT"]
             user_agent = parse(ua_string)
 
@@ -128,7 +136,8 @@ def parse_user_agent():
 
         connection = engine.connect()
 
-        # 16,384 is Snowflake Insert statement row limit. To ensure the job executes successfully we use the below code to check that the data being inserted
+        # 16,384 is Snowflake Insert statement row limit. To ensure the job executes successfully we use the below code
+        # to check that the data being inserted
         # is not more than the allowed row limit. If it is, we incrementally load the dataframe.
         df[0 : 16384 if len(df) > 16384 else len(df)].to_sql(
             "user_agent_registry",
@@ -140,13 +149,17 @@ def parse_user_agent():
         i = 2  # The default number of times to increment. Will autoincrement if more than 2 inserts are required.
 
         if i <= math.ceil(len(df) / 16384):
-            x = 16384  # The start row of the dataframe slice to be inserted. Will autoincrement if more than 2 inserts are required.
+            # The start row of the dataframe slice to be inserted. Will autoincrement if more than 2 inserts
+            # are required.
+            x = 16384
+            # The end row of the dataframe slice to be inserted. Will autoincrement if more than 2 inserts are required.
             y = (
                 16384 * 2
-            )  # The end row of the dataframe slice to be inserted. Will autoincrement if more than 2 inserts are required.
+            )
 
-            # Loops through the remaining insert statements required to finish the job i.e. load all new user agents found in the mattermostcom.pages table.
-            for n in range(math.ceil(len(df) / 16384) - 1):
+            # Loops through the remaining insert statements required to finish the job i.e. load all new user agents
+            # found in the mattermostcom.pages table.
+            for _n in range(math.ceil(len(df) / 16384) - 1):
                 df[x : y if y < len(df) else len(df)].to_sql(
                     "user_agent_registry",
                     con=connection,
@@ -157,9 +170,7 @@ def parse_user_agent():
                 x = y
                 y += 16384
                 i += 1
-        return print(
-            f"""Successfully uploaded {len(df)} records to mattermost.user_agent_registry!"""
-        )
+        return print(f"""Successfully uploaded {len(df)} records to mattermost.user_agent_registry!""")
 
 
 if __name__ == "__main__":

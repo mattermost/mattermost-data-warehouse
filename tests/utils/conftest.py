@@ -68,7 +68,7 @@ def mock_snowflake(mocker):
 def mock_snowflake_pandas(mocker):
     def _mock_snowflake_pandas(module_name):
         # Mock execute_dataframe method
-        mock_execute_dataframe = mocker.patch(f"{module_name}.execute_dataframe")
+        mock_execute_dataframe = mocker.patch(f"{module_name}.execute_dataframe", create=True)
         # Mock pandas' to_sql
         mock_to_sql = mocker.patch("pandas.io.sql.to_sql")
         return mock_execute_dataframe, mock_to_sql
