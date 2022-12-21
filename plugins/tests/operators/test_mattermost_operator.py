@@ -1,5 +1,6 @@
 from plugins.operators.mattermost_operator import MattermostOperator
 
+
 def test_create_full_config(dag, full_config):
     op = MattermostOperator(task_id="mattermost_task", dag=dag, **full_config)
 
