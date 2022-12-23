@@ -53,6 +53,7 @@ models:
           Boolean flag to indicate if there was a previous subscription. If yes, then this record is considered a
           renewal and value is true.
       - name: renewed_from_total
+        description: Price paid for the subscription including discount.
       - name: license_key
         description: The id of the license if not null. Otherwise the subscription ID.
       - name: purchase_order_num
@@ -88,8 +89,12 @@ models:
       - name: contact_sfid
         description: Salesforce ID of the contact for the Salesforce account related to this customer.
       - name: opportunity_external_id
+        description: > 
+          Calculated in DBT models and synced to salesforce. Enables correlating data between Snowflake and data from 
+          Salesforce synced back to Snowflake. Helps identifying if the current row already exists in Salesforce.
       - name: opportunity_sfid
       - name: opportunitylineitem_external_id
+        description: Similar to `opportunity_external_id`, but for referring to opportunity's line item.
       - name: opportunitylineitem_sfid
       - name: previous_opportunity_sfid
       - name: up_for_renewal_arr
