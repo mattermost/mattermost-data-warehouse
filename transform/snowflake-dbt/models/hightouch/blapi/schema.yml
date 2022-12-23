@@ -1,0 +1,230 @@
+version: 2
+models:
+  - name: customers_with_onprem_subs
+    description: Customers with On Premise subscriptions.
+    columns:
+      - name: customer_id
+        description: Blapi Customer ID
+      - name: email
+        description: The customer's email, as stored in BLAPI.
+      - name: first_name
+        description: The customer's first name, as stored in BLAPI.
+      - name: last_name
+        description: The customer's last name or email, as stored in BLAPI.
+      - name: domain
+        description: The customer's email domain. I.e. for `user@example.com`, domain is `example.com`.
+      - name: subscription_id
+        description: The ID of the subscription, taken from BLAPI onprem subscription.
+      - name: subscription_version_id
+        description: The version of the subscription, taken from BLAPI onprem subscription.
+      - name: previous_subscription_version_id
+        description: The id of the previous subscription (if any), taken from BLAPI on prem subscription.
+      - name: previous_stripe_charge_id
+        description: The id of the previous stripe charge (if any), taken from BLAPI on prem subscription.
+      - name: start_date
+        description: Start date of the subscription, as string.
+      - name: end_date
+        description: End date of the subscription, as string.
+      - name: total
+        description: The total amount of the subscription as float.
+      - name: listed_total
+      - name: updated_at
+        description: Date that the subscription was updated at BLAPI.
+      - name: invoice_number
+        description: The invoice number from BLAPI.
+      - name: stripe_charge_id
+        description: Stripe's charge ID, taken from BLAPI.
+      - name: num_seats
+        description: Number of seats purchased.
+      - name: sku
+        description: The SKU of the subscription purchased.
+      - name: pricebookentryid
+        description: ID of price book entry, taken from BLAPI.
+      - name: actual_renewal_date
+        description: The date that the renewal happened (?), taken from Stripe
+      - name: renewal_start_date
+        description: Renewal start date. Always 1 day after actual renewal date.
+      - name: renewal_end_date
+        description: Renewal end date. Always 1 year after actual renewal date.
+      - name: sfdc_migrated_opportunity_sfid
+        description: Migrated opportunity ID from Salesforce.
+      - name: is_renewed
+        description: >
+          Boolean flag to indicate if there was a previous subscription. If yes, then this record is considered a
+          renewal and value is true.
+      - name: renewed_from_total
+        description: Price paid for the subscription including discount.
+      - name: license_key
+        description: The id of the license if not null. Otherwise the subscription ID.
+      - name: purchase_order_num
+      - name: line1
+        description: Line 1 of address from BLAPI address.
+      - name: line2
+        description: Line 2 of address from BLAPI address.
+      - name: street_address
+        description: Line 1 and line 2 of address from BLAPI address joined in a single string.
+      - name: postal_code
+        description: Postal codefrom BLAPI address.
+      - name: city
+        description: City from BLAPI address.
+      - name: state
+        description: State from BLAPI address.
+      - name: country
+        description: Country name from postal code mapping or country from BLAPI address.
+      - name: state_code
+        description: State code from postal code mapping or state from BLAPI address.
+      - name: country_code
+        description: Country code from postal code mapping or country from BLAPI address.
+      - name: hightouch_sync_eligible
+        description: >
+          Boolean flag used for filtering which rows to sync with hightouch. True if subscription was updated at 
+          2021-08-18 or later.
+      - name: account_external_id
+        description: The Salesforce ID of the customer's contact or the custommer's account.
+      - name: account_type
+        description: The account's type, as taken from Salesforce account.
+      - name: account_sfid
+        description: The account's Salesforce ID, as taken from Salesforce account.
+      - name: contact_external_id
+      - name: contact_sfid
+        description: Salesforce ID of the contact for the Salesforce account related to this customer.
+      - name: opportunity_external_id
+        description: > 
+          Calculated in DBT models and synced to salesforce. Enables correlating data between Snowflake and data from 
+          Salesforce synced back to Snowflake. Helps identifying if the current row already exists in Salesforce.
+      - name: opportunity_sfid
+      - name: opportunitylineitem_external_id
+        description: Similar to `opportunity_external_id`, but for referring to opportunity's line item.
+      - name: opportunitylineitem_sfid
+      - name: previous_opportunity_sfid
+      - name: up_for_renewal_arr
+
+  - name: blapi_onprem_opportunity
+    description: >
+      Generates `Closed Won` opportunities for new subscriptions. All columns without description are loaded from
+      customers_with_onprem_subs table.
+    columns:
+      - name: opportunity_type
+        description: The type of the opportunity. Always `New Subscription`.
+      - name: order_type
+        description: The type of the order. Always `Online`.
+      - name: ownerid
+        description: The id of the owner of the opportunity. Always `0053p0000064nt8AAA` (Ghost Sales).
+      - name: stagename
+        description: The name current stage of the current stage of the opportunity. Always `6. Closed Won`
+      - name: opportunity_name
+        description: >
+          The name of the opportunity. Derived from user/account domain, KSU, number of seats and invoice number.
+      - name: customer_id
+      - name: email
+      - name: first_name
+      - name: last_name
+      - name: domain
+      - name: subscription_id
+      - name: subscription_version_id
+      - name: previous_subscription_version_id
+      - name: previous_stripe_charge_id
+      - name: start_date
+      - name: end_date
+      - name: total
+      - name: listed_total
+      - name: updated_at
+      - name: invoice_number
+      - name: stripe_charge_id
+      - name: num_seats
+      - name: sku
+      - name: pricebookentryid
+      - name: actual_renewal_date
+      - name: renewal_start_date
+      - name: renewal_end_date
+      - name: sfdc_migrated_opportunity_sfid
+      - name: is_renewed
+      - name: renewed_from_total
+      - name: license_key
+      - name: purchase_order_num
+      - name: line1
+      - name: line2
+      - name: street_address
+      - name: postal_code
+      - name: city
+      - name: state
+      - name: country
+      - name: state_code
+      - name: country_code
+      - name: hightouch_sync_eligible
+      - name: account_external_id
+      - name: account_type
+      - name: account_sfid
+      - name: contact_external_id
+      - name: contact_sfid
+      - name: opportunity_external_id
+      - name: opportunity_sfid
+      - name: opportunitylineitem_external_id
+      - name: opportunitylineitem_sfid
+      - name: previous_opportunity_sfid
+      - name: up_for_renewal_arr
+
+  - name: blapi_onprem_opportunity_renewal
+    description: >
+      Generates `Closed Won` opportunities for renewals. Every payment where a previous subscription exists is 
+      considered a renewal. All columns without description are loaded from customers_with_onprem_subs table.
+    columns:
+      - name: opportunity_type
+        description: The type of the opportunity. Always `Renewal`.
+      - name: order_type
+        description: The type of the order. Always `Online`.
+      - name: ownerid
+        description: The id of the owner of the opportunity. Always `0053p0000064nt8AAA` (Ghost Sales).
+      - name: stagename
+        description: The name current stage of the current stage of the opportunity. Always `6. Closed Won`
+      - name: opportunity_name
+        description: >
+          The name of the opportunity. Derived from user/account domain, KSU, number of seats and invoice number.
+      - name: customer_id
+      - name: email
+      - name: first_name
+      - name: last_name
+      - name: domain
+      - name: subscription_id
+      - name: subscription_version_id
+      - name: previous_subscription_version_id
+      - name: previous_stripe_charge_id
+      - name: start_date
+      - name: end_date
+      - name: total
+      - name: listed_total
+      - name: updated_at
+      - name: invoice_number
+      - name: stripe_charge_id
+      - name: num_seats
+      - name: sku
+      - name: pricebookentryid
+      - name: actual_renewal_date
+      - name: renewal_start_date
+      - name: renewal_end_date
+      - name: sfdc_migrated_opportunity_sfid
+      - name: is_renewed
+      - name: renewed_from_total
+      - name: license_key
+      - name: purchase_order_num
+      - name: line1
+      - name: line2
+      - name: street_address
+      - name: postal_code
+      - name: city
+      - name: state
+      - name: country
+      - name: state_code
+      - name: country_code
+      - name: hightouch_sync_eligible
+      - name: account_external_id
+      - name: account_type
+      - name: account_sfid
+      - name: contact_external_id
+      - name: contact_sfid
+      - name: opportunity_external_id
+      - name: opportunity_sfid
+      - name: opportunitylineitem_external_id
+      - name: opportunitylineitem_sfid
+      - name: previous_opportunity_sfid
+      - name: up_for_renewal_arr
