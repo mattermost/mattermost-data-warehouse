@@ -53,5 +53,30 @@ models:
       - name: unique_key
         tests:
           - not_null
+  - name: arr_ltv_amer
+    description: For Americas grouping of arr_vintages into shape friendly for ltv calculations
+    columns:
+      - name: unique_key
+        tests:
+          - not_null
+  - name: arr_ltv_emea
+    description: For EMEA grouping of arr_vintages into shape friendly for ltv calculations
+    columns:
+      - name: unique_key
+        tests:
+          - not_null
+  - name: arr_ltv_apac
+    description: For APAC grouping of arr_vintages into shape friendly for ltv calculations
+    columns:
+      - name: unique_key
+        tests:
+          - not_null
+  - name: arr_ltv_row
+    description: For ROW grouping of arr_vintages into shape friendly for ltv calculations
+    columns:
+      - name: unique_key
+        tests:
+          - not_null
+      
 
 
