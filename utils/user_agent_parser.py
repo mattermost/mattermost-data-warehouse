@@ -153,9 +153,7 @@ def parse_user_agent():
             # are required.
             x = 16384
             # The end row of the dataframe slice to be inserted. Will autoincrement if more than 2 inserts are required.
-            y = (
-                16384 * 2
-            )
+            y = 16384 * 2
 
             # Loops through the remaining insert statements required to finish the job i.e. load all new user agents
             # found in the mattermostcom.pages table.
