@@ -1,6 +1,6 @@
 import pytest
 
-from dags.general._helpers import hightouch_check_syncs, stitch_check_extractions, stitch_check_loads
+from dags.general._helpers import hightouch_check_syncs, stitch_check_extractions, stitch_check_loads, HightouchApiException
 
 
 def test_stitch_check_extractions_pass(load_data):
@@ -61,5 +61,5 @@ def test_hightouch_check_syncs_fail(load_data):
 
 def test_hightouch_check_syncs_error(load_data):
     # Expected to raise exception since response body is empty
-    with pytest.raises(TypeError):
+    with pytest.raises(HightouchApiException):
         hightouch_check_syncs("{}")
