@@ -43,4 +43,4 @@ SELECT
 FROM
     sso_installations i
     LEFT JOIN sso_cloud_servers cs ON i.INSTALLATION_ID = cs.INSTALLATION_ID
-    LEFT JOIN {{source('mattermost', 'cloud_clearbit')}} CB ON cs.server_id = cb.server_id
+    LEFT JOIN {{source('mattermost', 'cloud_clearbit')}} cb ON cs.server_id = cb.server_id
