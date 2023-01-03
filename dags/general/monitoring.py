@@ -7,15 +7,11 @@ from airflow.models.xcom import XCom
 from airflow.operators.http_operator import SimpleHttpOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.db import provide_session
+
 from dags.airflow_utils import send_alert
-from dags.general._helpers import resolve_stitch
+from dags.general._helpers import resolve_hightouch, resolve_stitch
 
 task_logger = logging.getLogger('airflow.task')
-
-
-# creating an exception class for handling Stitch API response
-class StitchApiException(Exception):
-    pass
 
 
 # To clean up Xcom after dag finished run.
@@ -38,7 +34,6 @@ with DAG(
 ) as dag:
     check_stitch_extractions = SimpleHttpOperator(
         task_id="check_stitch_extractions",
-        # TODO add to airflow variables
         http_conn_id="stitch",
         method="GET",
         endpoint=Variable.get('stitch_extractions_endpoint'),
@@ -47,7 +42,6 @@ with DAG(
     )
     check_stitch_loads = SimpleHttpOperator(
         task_id="check_stitch_loads",
-        # TODO add to airflow variables
         http_conn_id="stitch",
         method="GET",
         endpoint=Variable.get('stitch_loads_endpoint'),
@@ -56,6 +50,17 @@ with DAG(
     )
     resolve_stitch_status = PythonOperator(
         task_id='resolve_stitch_status', provide_context=True, python_callable=resolve_stitch
+    )
+    hightouch_check_syncs = SimpleHttpOperator(
+        task_id="check_hightouch_syncs",
+        http_conn_id="hightouch",
+        method="GET",
+        endpoint=Variable.get('hightouch_syncs_endpoint'),
+        headers={'Content-Type': 'application/json', 'Authorization': Variable.get('hightouch_secret')},
+        xcom_push=True,
+    )
+    resolve_hightouch_status = PythonOperator(
+        task_id='resolve_hightouch_status', provide_context=True, python_callable=resolve_hightouch
     )
 
     clean_xcom = PythonOperator(
