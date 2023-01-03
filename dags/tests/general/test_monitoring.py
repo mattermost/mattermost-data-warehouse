@@ -1,6 +1,7 @@
 import pytest
 
-from dags.general._helpers import stitch_check_extractions, stitch_check_loads
+from dags.general._helpers import hightouch_check_syncs, stitch_check_extractions, stitch_check_loads
+
 
 def test_stitch_check_extractions_pass(load_data):
 
@@ -42,3 +43,23 @@ def test_stitch_check_loads_error(load_data):
     # Expected to raise exception since response body is empty
     with pytest.raises(TypeError):
         stitch_check_loads({})
+
+
+def test_hightouch_check_syncs_pass(load_data):
+    response = load_data('monitoring/syncs_pass.json')
+    failed_syncs = hightouch_check_syncs(response)
+    # Expected to return empty dict as no loads failed
+    assert failed_syncs == {}
+
+
+def test_hightouch_check_syncs_fail(load_data):
+    response = load_data('monitoring/syncs_fail.json')
+    failed_syncs = hightouch_check_syncs(response)
+    # Expected to return dict containing failed loads
+    assert failed_syncs == {'test_sync_1': 'warning'}
+
+
+def test_hightouch_check_loads_error(load_data):
+    # Expected to raise exception since response body is empty
+    with pytest.raises(TypeError):
+        hightouch_check_syncs({})

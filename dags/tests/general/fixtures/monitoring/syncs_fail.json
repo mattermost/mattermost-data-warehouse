@@ -1,0 +1,16 @@
+{
+    "data": [
+        {
+            "id": 99999,
+            "slug": "test_sync_1",
+            "status": "warning",
+            "updatedAt": "2022-12-07T12:59:20Z"
+        },
+        {
+            "id": 99999,
+            "slug": "test_sync_2",
+            "status": "success",
+            "updatedAt": "2022-12-07T12:59:22Z"
+        }
+    ]
+}
