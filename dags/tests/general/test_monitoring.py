@@ -59,7 +59,7 @@ def test_hightouch_check_syncs_fail(load_data):
     assert failed_syncs == {'test_sync_1': 'warning'}
 
 
-def test_hightouch_check_loads_error(load_data):
+def test_hightouch_check_syncs_error(load_data):
     # Expected to raise exception since response body is empty
     with pytest.raises(TypeError):
         hightouch_check_syncs({})
