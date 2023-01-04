@@ -70,4 +70,5 @@ with DAG(
     )
 
 [check_stitch_extractions, check_stitch_loads] >> resolve_stitch_status
-resolve_stitch_status >> clean_xcom
+hightouch_check_syncs >> resolve_hightouch_status
+[resolve_hightouch_status,resolve_stitch_status] >> clean_xcom
