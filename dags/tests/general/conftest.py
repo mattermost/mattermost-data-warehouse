@@ -17,8 +17,8 @@ def config_utils(monkeypatch):
 def load_data():
     # loads data from a file
     def _load_data(filename):
-        file = open(Path(__file__).parent / 'fixtures' / filename, encoding='utf-8')
-        return file.read()
+        with open(Path(__file__).parent / 'fixtures' / filename, encoding='utf-8') as f:
+            return f.read()
 
     return _load_data
 
