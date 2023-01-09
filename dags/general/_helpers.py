@@ -1,5 +1,6 @@
 import json
 import logging
+from datetime import datetime, timedelta
 
 from plugins.operators.mattermost_operator import MattermostOperator
 
@@ -27,7 +28,7 @@ def stitch_check_extractions(response):
         failed_extractions = {
             extraction['source_id']: extraction['tap_description']
             for extraction in extractions.get('data')
-            if extraction['tap_exit_status'] == 1
+            if extraction['tap_exit_status'] == 1 and time_filter(extraction['completion_time'], 1)
         }
     except KeyError as e:
         task_logger.error('Error in check extractions ...', exc_info=True)
@@ -53,7 +54,7 @@ def stitch_check_loads(response):
         failed_loads = {
             load['source_name']: load['error_state']['notification_data']['error']
             for load in loads.get('data')
-            if load['error_state'] is not None
+            if load['error_state'] is not None and time_filter(load['last_batch_loaded_at'], 1)
         }
     except KeyError as e:
         task_logger.error('Error in check loads ...', exc_info=True)
@@ -83,3 +84,7 @@ def resolve_stitch(ti=None, **kwargs):
         MattermostOperator(mattermost_conn_id='mattermost', text=message, task_id='resolve_stitch_message').execute(
             None
         )
+
+
+def time_filter(target_time=None, delta_hours=None):
+    return datetime.strptime(target_time, "%Y-%m-%dT%H:%M:%SZ") + timedelta(hours=delta_hours) <= datetime.utcnow()
