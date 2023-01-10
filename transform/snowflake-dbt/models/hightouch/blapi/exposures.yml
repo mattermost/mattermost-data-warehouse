@@ -1,0 +1,48 @@
+version: 2
+
+exposures:
+  - name: onprem_opportunity_exposures
+    type: application
+    description: >
+      Export opportunities to Salesforce via Hightouch. There are two type of opportunities created:
+      
+      ### Case 1: BLAPI Onprem Opportunities
+      
+      Creates new opportunities for each BLAPI customer if all the following apply:
+      - There is a stripe charge.
+      - There is no opportunity assigned to the stripe charge.
+      - The BLAPI customer also has a Salesforce account connected to it.
+      - Customer's account type is neither `Customer` nor `Customer(Attrited)`.
+      - There wasn't a previous subscription.
+
+      The opportunity has the following attributes:
+      - opportunity type `New Subscription`,
+      - order type `Online` and
+      - stage name `6. Closed Won`. 
+
+      ### Case 2: BLAPI OnPrem opportunity renewal
+      
+      Creates new opportunities for each BLAPI customer if all the following apply:
+      - There is a stripe charge.
+      - There is no opportunity assigned to the stripe charge.
+      - The BLAPI customer also has a Salesforce account connected to it.
+      - Customer's account type is either Customer or Customer(Attrited).
+      - There was a previous subscription.
+      - The subscription was updated after Aug 18th, 2021.
+
+      The opportunity has the following attributes:
+      - opportunity type `Renewal`,
+      - order type `Online` and
+      - stage name `6. Closed Won`. 
+
+    url: https://app.hightouch.com/mattermost-com/syncs?search=opportunit
+    tags:
+      - hightouch
+      - salesforce
+    maturity: low
+    owner:
+      name: Ioannis Foukarakis
+      email: ioannis.foukarakis@mattermost.com
+    depends_on:
+      - ref('blapi_onprem_opportunity')
+      - ref('blapi_onprem_opportunity_renewal')

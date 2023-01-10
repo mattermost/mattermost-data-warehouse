@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 
-from dags.airflow_utils import pod_defaults, pod_env_vars, send_alert
+from dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, pod_defaults, pod_env_vars, send_alert
 from dags.kube_secrets import (
     CLEARBIT_KEY,
     DBT_CLOUD_API_ACCOUNT_ID,
@@ -22,7 +22,6 @@ env_vars = {**pod_env_vars, **{}}
 
 # Default arguments for the DAG
 default_args = {
-    "catchup": False,
     "depends_on_past": False,
     "owner": "airflow",
     "on_failure_callback": send_alert,
@@ -33,11 +32,17 @@ default_args = {
 }
 
 # Create the DAG
-dag = DAG("dbt", default_args=default_args, schedule_interval="5 * * * *")
+dag = DAG(
+    "dbt",
+    default_args=default_args,
+    schedule_interval="5 * * * *",
+    catchup=False,
+    max_active_runs=1,  # Don't allow multiple concurrent dag executions
+)
 
 user_agent = KubernetesPodOperator(
     **pod_defaults,
-    image="mattermost/mattermost-data-warehouse:master",  # Uses latest build from master
+    image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
     task_id="user-agent",
     name="user-agent",
     secrets=[
@@ -53,7 +58,7 @@ user_agent = KubernetesPodOperator(
 
 dbt_run_cloud = KubernetesPodOperator(
     **pod_defaults,
-    image="mattermost/mattermost-data-warehouse:master",  # Uses latest build from master
+    image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
     task_id="dbt-cloud-run",
     name="dbt-cloud-run",
     secrets=[
@@ -75,7 +80,7 @@ dbt_run_cloud = KubernetesPodOperator(
 
 update_clearbit = KubernetesPodOperator(
     **pod_defaults,
-    image="mattermost/mattermost-data-warehouse:master",  # Uses latest build from master
+    image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
     task_id="update-clearbit",
     name="update-clearbit",
     secrets=[
@@ -92,7 +97,7 @@ update_clearbit = KubernetesPodOperator(
 
 update_onprem_clearbit = KubernetesPodOperator(
     **pod_defaults,
-    image="mattermost/mattermost-data-warehouse:master",  # Uses latest build from master
+    image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
     task_id="update-onprem-clearbit",
     name="update-onprem-clearbit",
     secrets=[

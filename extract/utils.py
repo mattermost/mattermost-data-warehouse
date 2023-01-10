@@ -1,17 +1,13 @@
 import logging
-import sys
-import pandas as pd
-from time import time
 from typing import Any, Dict, List, Tuple
 
+import pandas as pd
 from snowflake.sqlalchemy import URL as snowflake_URL
 from sqlalchemy import create_engine
 from sqlalchemy.engine.base import Engine
 
 
-def snowflake_engine_factory(
-    args: Dict[str, str], role: str, schema: str = ""
-) -> Engine:
+def snowflake_engine_factory(args: Dict[str, str], role: str, schema: str = "") -> Engine:
     """
     Create a database engine from a dictionary of database info.
     """
@@ -91,15 +87,13 @@ def execute_query(engine: Engine, query: str) -> List[Tuple[Any]]:
 
 
 def execute_dataframe(engine, query):
-    """ Takes a query as a string argument and executes it.
-        Results stored in dataframe if as_df = True. """
+    """Takes a query as a string argument and executes it.
+    Results stored in dataframe if as_df = True."""
     cur = engine.raw_connection().cursor()
 
     try:
         results = cur.execute(query)
-        df = pd.DataFrame.from_records(
-            iter(results), columns=[x[0] for x in cur.description]
-        )
+        df = pd.DataFrame.from_records(iter(results), columns=[x[0] for x in cur.description])
         return df
     except Exception as e:
         return print(f"Oh no! There was an error executing your query: {e}")

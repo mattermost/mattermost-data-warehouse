@@ -79,7 +79,7 @@ def resolve_stitch(ti=None, **kwargs):
         task_logger.info('There are no failed loads or extractions')
     else:
         status = ':red_circle:'
-        message = f"**STITCH**: {status}\nFailed extractions: " "{failed_extractions}\nFailed loads: {failed_loads}"
+        message = f"**STITCH**: {status}\nFailed extractions:{failed_extractions}\nFailed loads: {failed_loads}"
         MattermostOperator(mattermost_conn_id='mattermost', text=message, task_id='resolve_stitch_message').execute(
             None
         )

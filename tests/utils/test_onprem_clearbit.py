@@ -3,19 +3,11 @@ from pathlib import Path
 import pandas as pd
 import pytest
 import sqlalchemy
-from sqlalchemy.exc import ProgrammingError
 
 from utils.onprem_clearbit import onprem_clearbit
 
 # Load setup configuration
-with open(
-    Path(__file__).parent
-    / "fixtures"
-    / "clearbit"
-    / "onprem"
-    / "setup"
-    / "clearbit_columns.csv"
-) as fp:
+with open(Path(__file__).parent / "fixtures" / "clearbit" / "onprem" / "setup" / "clearbit_columns.csv") as fp:
     # List of columns in onprem_clearbit table
     CLEARBIT_COLUMNS = [line.strip() for line in fp.readlines()]
 
@@ -143,7 +135,7 @@ with open(
             "all-with-failures.json",
             # THEN: expect no exceptions,
             None,
-            id="table exists - contains data but not exceptions - two items to be updated - clearbit returns data on one",
+            id="table exists - contains data, no exceptions - two items to be updated - clearbit returns data on one",
         ),
         pytest.param(
             # GIVEN: table doesn't exist
@@ -170,9 +162,7 @@ with open(
             # THEN: expect no exceptions,
             None,
             id="table not exists - no data or exceptions - two items to be updated - clearbit returns data",
-            marks=pytest.mark.xfail(
-                reason="onprem expects column but it's not there - todo: fix"
-            ),
+            marks=pytest.mark.xfail(reason="onprem expects column but it's not there - todo: fix"),
         ),
         pytest.param(
             # GIVEN: table exists
@@ -306,7 +296,7 @@ def test_onprem_clearbit(
             None,
             # GIVEN: no items to update
             pd.DataFrame(),
-            # GIVEN: clearbit is not called
+            # GIVEN: clearbit is not called  # noqa: E800
             [],
             id="no items to be updated",
         ),

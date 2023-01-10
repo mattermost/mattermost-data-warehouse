@@ -1,0 +1,63 @@
+version: 2
+
+models:
+  - name: dq_on_prem_clearbit
+    description: Daily information about clearbit enriched on prem servers.
+
+    columns:
+      - name: server_id
+        description: Primary key for each server
+        tests:
+          - not_null
+          - unique
+
+      - name: first_active_date
+        description: The first date that the server was active
+        tests:
+          - not_null
+
+      - name: is_missing
+        description: Whether the server is missing clearbit data (1) or not (0).
+        tests:
+          - not_null
+
+      - name: has_exception
+        description: Whether there was an exception retrieving clearbit data (1) or not (0).
+        tests:
+          - not_null
+
+  - name: dq_cloud_clearbit
+    description: Daily information about clearbit enriched cloud servers.
+
+    columns:
+      - name: server_id
+        description: Primary key for each server
+        tests:
+          - not_null
+          - unique
+
+      - name: installation_id
+        description: Unique key for each cloud server
+        tests:
+          - not_null
+          - unique
+
+      - name: first_active_date
+        description: The first date that the server was active
+        tests:
+          - not_null
+
+      - name: email_domain
+        description: The domain of the email of the user who registered the server.
+        tests:
+          - not_null
+
+      - name: is_enriched
+        description: Whether the server has been enriched with clearbit data (1) or not (0).
+        tests:
+          - not_null
+
+      - name: is_missing
+        description: Whether there are missing clearbit data (1) or not (0).
+        tests:
+          - not_null

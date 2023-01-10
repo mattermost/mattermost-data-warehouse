@@ -1,6 +1,6 @@
-import time
 import os
 import sys
+import time
 
 import requests
 
@@ -16,7 +16,12 @@ def trigger_dbt_run(job_id: int, job_description: str) -> int:
     data = {"cause": f"Airflow run - {job_description}"}
     url = f"{BASE_URL}/accounts/{account_id}/jobs/{job_id}/run/"
     print(f"Calling dbt cloud API with URL {url}")
-    resp = requests.request("POST", url, json=data, headers=headers,)
+    resp = requests.request(
+        "POST",
+        url,
+        json=data,
+        headers=headers,
+    )
 
     if resp.status_code == 200:
         run_id = resp.json()["data"]["id"]
@@ -34,9 +39,7 @@ def poll_dbt_run(run_id: int):
     status = "running"
 
     while current_time <= timeout_time and status == "running":
-        resp = requests.get(
-            f"{BASE_URL}/accounts/{account_id}/runs/{run_id}/", headers=headers
-        )
+        resp = requests.get(f"{BASE_URL}/accounts/{account_id}/runs/{run_id}/", headers=headers)
 
         print(f"Checking dbt cloud run {run_id} status: {status}")
 
@@ -45,9 +48,7 @@ def poll_dbt_run(run_id: int):
             print(payload)
             if payload["is_complete"]:
                 if payload["is_error"]:
-                    raise Exception(
-                        f"Error running dbt cloud job -- make this link to dbt cloud"
-                    )
+                    raise Exception("Error running dbt cloud job -- make this link to dbt cloud")
                 status = "finished"
 
         current_time = int(time.time())

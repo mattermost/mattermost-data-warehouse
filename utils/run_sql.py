@@ -1,8 +1,6 @@
 import argparse
 import logging
-from pathlib import Path
 import subprocess
-
 
 parser = argparse.ArgumentParser()
 parser.add_argument("sql_file", help="Name of file in the transform/sql folder")

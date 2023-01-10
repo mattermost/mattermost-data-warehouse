@@ -19,10 +19,7 @@ def mock_settings_env_vars(mocker):
     mocker.patch("utils.run_dbt_cloud_job.timeout", 35)
 
     # Mock items loaded using os.environ in method calls
-    mock_env_vars = {
-        'GITHUB_TOKEN': 'token',
-        'CLEARBIT_KEY': 'clearbit-test-key'
-    }
+    mock_env_vars = {'GITHUB_TOKEN': 'token', 'CLEARBIT_KEY': 'clearbit-test-key'}
     mocker.patch.dict(os.environ, mock_env_vars, clear=True)
 
 
@@ -37,13 +34,14 @@ def given_request_to(request, responses):
     """
 
     def _given_request_to(url, response_file, method="GET", status=200):
-        config = getattr(request.module, '__MOCK_REQUEST_DEFAULTS') or {}
-        target = Path(__file__).parent / 'fixtures' / config.get('dir') / response_file if config.get('dir') \
+        config = getattr(request.module, '__MOCK_REQUEST_DEFAULTS', {})
+        target = (
+            Path(__file__).parent / 'fixtures' / config.get('dir') / response_file
+            if config.get('dir')
             else Path(__file__).parent / 'fixtures' / response_file
+        )
         with open(target) as fp:
-            rsp = Response(method=method, url=url,
-                           status=status, headers=config.get('headers', {}),
-                           body=fp.read())
+            rsp = Response(method=method, url=url, status=status, headers=config.get('headers', {}), body=fp.read())
             responses.add(rsp)
 
     return _given_request_to
@@ -51,7 +49,6 @@ def given_request_to(request, responses):
 
 @pytest.fixture()
 def mock_snowflake(mocker):
-
     def _mock_snowflake(module_name):
         mock_engine_factory = mocker.patch(f"{module_name}.snowflake_engine_factory")
         mock_engine = mocker.MagicMock()
@@ -71,7 +68,7 @@ def mock_snowflake(mocker):
 def mock_snowflake_pandas(mocker):
     def _mock_snowflake_pandas(module_name):
         # Mock execute_dataframe method
-        mock_execute_dataframe = mocker.patch(f"{module_name}.execute_dataframe")
+        mock_execute_dataframe = mocker.patch(f"{module_name}.execute_dataframe", create=True)
         # Mock pandas' to_sql
         mock_to_sql = mocker.patch("pandas.io.sql.to_sql")
         return mock_execute_dataframe, mock_to_sql
@@ -102,10 +99,10 @@ def user_agent_input():
     with open(Path(__file__).parent / 'fixtures' / 'user_agent' / 'agents.txt') as fp:
         return fp.read().splitlines()
 
+
 @pytest.fixture()
 def mock_clearbit(mocker):
     def _mock_clearbit(module_name):
-        count = 0
         # Mock clearbit client
         mock_clearbit = mocker.patch(f"{module_name}.clearbit")
         return mock_clearbit
@@ -127,6 +124,7 @@ def _mock_clearbit_factory(api):
     """
     Creates a loader for returning responses from provided clearbit {api}.
     """
+
     def _load_responses(*args):
         """
         Lazily loads each file defined as args. The files are loaded from fixture/{api}.
@@ -166,7 +164,6 @@ def expect_data():
 
 @pytest.fixture
 def mock_snowflake_connector(mocker):
-
     def _mock_snowflake_connector(module_name):
         snowflake_connector_factory = mocker.patch(f"{module_name}.snowflake.connector.connect")
         mock_connection = mocker.Mock()
@@ -179,24 +176,32 @@ def mock_snowflake_connector(mocker):
         mock_cursor.fetchall.return_value = mock_fetchall
 
         return mock_cursor, mock_connection, mock_execute, mock_fetchall
-    
+
     return _mock_snowflake_connector
 
-@pytest.fixture
-def post_nps_ok(responses):
-    response = Response(method="POST", url="https://mattermost.example.com/hooks/hookid", status=200, content_type='application/json')
-    responses.add(response)
 
 @pytest.fixture
-def post_nps_error(responses):
-    response = Response(method="POST", url="https://mattermost.example.com/hooks/hookid", status=401, content_type='application/json')
+def post_data_ok(responses):
+    response = Response(
+        method="POST", url="https://mattermost.example.com/hooks/hookid", status=200, content_type='application/json'
+    )
     responses.add(response)
 
+
 @pytest.fixture
-def config_nps(monkeypatch, mocker):
+def post_data_error(responses):
+    response = Response(
+        method="POST", url="https://mattermost.example.com/hooks/hookid", status=401, content_type='application/json'
+    )
+    responses.add(response)
+
+
+@pytest.fixture
+def config_data(monkeypatch, mocker):
 
     # mocking loading k8 secrets to environment variables
     monkeypatch.setenv("NPS_WEBHOOK_URL", "https://mattermost.example.com/hooks/hookid")
+    monkeypatch.setenv("DOCS_WEBHOOK_URL", "https://mattermost.example.com/hooks/hookid")
     monkeypatch.setenv("SNOWFLAKE_PASSWORD", "test password")
     monkeypatch.setenv("SNOWFLAKE_USER", "test user")
     monkeypatch.setenv("SNOWFLAKE_ACCOUNT", "test account")

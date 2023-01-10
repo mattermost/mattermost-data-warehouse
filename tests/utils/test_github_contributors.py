@@ -3,10 +3,7 @@ import pandas as pd
 from utils.github_contributors import contributors
 
 # Customize defaults for given_request_to
-__MOCK_REQUEST_DEFAULTS = {
-    "dir": "github",
-    "headers": {"Authorization": "Bearer token"}
-}
+__MOCK_REQUEST_DEFAULTS = {"dir": "github", "headers": {"Authorization": "Bearer token"}}
 
 GITHUB_GRAPHQL_URL = "https://api.github.com/graphql"
 
@@ -36,15 +33,16 @@ def test_contributors(responses, given_request_to, mock_snowflake, mock_snowflak
     # THEN: expect proper data to be loaded to snowflake table
     mock_to_sql.assert_called_once()
     pd.testing.assert_frame_equal(
-        mock_to_sql.call_args_list[0][0][0],
-        pd.DataFrame(data=load_dataset('github/dataset.json'))
+        mock_to_sql.call_args_list[0][0][0], pd.DataFrame(data=load_dataset('github/dataset.json'))
     )
 
     # THEN: expect connection to snowflake to be closed
     mock_connection.close.assert_called_once()
 
 
-def test_contributors_fail_to_get_repos(responses, given_request_to, mock_snowflake, mock_snowflake_pandas, load_dataset):
+def test_contributors_fail_to_get_repos(
+    responses, given_request_to, mock_snowflake, mock_snowflake_pandas, load_dataset
+):
     # GIVEN: repo query fails due to authentication error
     given_request_to(GITHUB_GRAPHQL_URL, "auth.error.json", method="POST", status=401)
 
@@ -64,7 +62,9 @@ def test_contributors_fail_to_get_repos(responses, given_request_to, mock_snowfl
     mock_connection.close.assert_not_called()
 
 
-def test_contributors_fail_to_get_repo_details(responses, given_request_to, mock_snowflake, mock_snowflake_pandas, load_dataset):
+def test_contributors_fail_to_get_repo_details(
+    responses, given_request_to, mock_snowflake, mock_snowflake_pandas, load_dataset
+):
     # GIVEN: repo query returns two pages of results
     given_request_to(GITHUB_GRAPHQL_URL, "repo.page.1.json", method="POST")
     given_request_to(GITHUB_GRAPHQL_URL, "repo.page.2.json", method="POST")
