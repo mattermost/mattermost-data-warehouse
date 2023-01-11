@@ -1,0 +1,24 @@
+version: 2
+
+exposures:
+  - name: cloud_starter_lead_exposures
+    type: application
+    description: |
+      Insert or update Cloud Starter leads to Salesforce via Hightouch. Uses portal signup data submitted via
+      Rudderstack. Portal data are merged with Salesforce lead data from salesforce (if any). 
+      
+      There are two hightouch syncs configured:
+      - Leads from portal data without matching salesforce leads are stored in `cs_lead_insert` view and inserted in Salesforce ([hightouch sync](https://app.hightouch.com/mattermost-com/syncs/42125)). 
+      - Leads from portal data with matching salesforce leads are stored in `cs_lead_update` view and updated in Salesforce ([hightouch sync](https://app.hightouch.com/mattermost-com/syncs/42133)).
+
+    url: https://app.hightouch.com/mattermost-com/syncs?search=lead
+    tags:
+      - hightouch
+      - salesforce
+    maturity: low
+    owner:
+      name: Ioannis Foukarakis
+      email: ioannis.foukarakis@mattermost.com
+    depends_on:
+      - ref('cs_lead_insert')
+      - ref('cs_lead_update')
