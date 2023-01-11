@@ -4,6 +4,11 @@ sources:
   - name: portal_prod
     database: 'RAW'
     schema: portal_prod
+    description: |
+      Portal data stored using Rudderstack. Rudderstack documentation offers an in-depth documentation of the
+      [warehouse schema](https://www.rudderstack.com/docs/destinations/warehouse-destinations/warehouse-schema/).
+      The code that performs the tracking [is available here](https://github.com/mattermost/customer-web-server/blob/master/webapp/src/utils/rudder.tsx).
+    tags: ['rudderstack']
 
     tables:
       - name: pages
@@ -12,3 +17,5 @@ sources:
         description: 'User identifying information from users visiting Customer Web Portal Mattermost Web Property.'
       - name: subscription_purchased
         description: 'Information pertaining to the user and purchased license (subscription_id) for users that successfully purchased a license via the Mattermost Customer Portal (customers.mattermost.com).'
+      - name: tracks
+        description: Events tracked using Rudderstack. Note that for each event type, data are also stored in a separate table.

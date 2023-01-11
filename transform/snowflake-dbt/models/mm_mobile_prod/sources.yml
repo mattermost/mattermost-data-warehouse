@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: mm_mobile_prod
+    database: 'RAW'
+    schema: mm_mobile_prod
+    description: |
+      Mobile app data stored using Rudderstack. Rudderstack documentation offers an in-depth documentation of the
+      [warehouse schema](https://www.rudderstack.com/docs/destinations/warehouse-destinations/warehouse-schema/).
+      The code that performs the tracking [is available here](https://github.com/mattermost/mattermost-mobile/blob/main/app/managers/analytics.ts#L105).
+    tags: ['rudderstack']
+
+    tables:
+      - name: identifies
+        description: User identifying information from users using the mobile app.
+      - name: users
+        description: User information from users using the mobile app.
+      - name: tracks
+        description: Telemetry data for user actions.
+      - name: screens
+        description: Telemetry data whenever user views their mobile screen with any additional relevant information about the screen.
+
