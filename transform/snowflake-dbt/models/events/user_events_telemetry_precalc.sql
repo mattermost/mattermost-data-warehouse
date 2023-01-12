@@ -95,29 +95,6 @@ user_events_telemetry_precalc AS (
         -- , CASE WHEN nullif(SPLIT_PART(${context_os_version}, '.', 2), '') IS NULL THEN ${context_os_version} ELSE SPLIT_PART(${context_os_version}, '.',1) || '.' || SPLIT_PART(${context_os_version}, '.',2) END AS os_version_major
         , coalesce(uet.context_app_build, uet.context_traits_app_build) AS context_app_build
         , uet.name AS name
-        -- Fixed typo - renamed to sign_up_sequence from sign_up_seqence
-        , CASE
-            WHEN COALESCE(uet.type, uet.event) IN ('cloud_signup_b_page_visit','cloud_signup_page_visit') THEN 1
-            WHEN COALESCE(uet.type, uet.event) = 'click_start_trial' THEN 2
-            WHEN COALESCE(uet.type, uet.event) = 'pageview_verify_email' THEN 3
-            WHEN COALESCE(uet.type, uet.event) = 'enter_valid_code' THEN 4
-            WHEN COALESCE(uet.type, uet.event) = 'pageview_create_workspace' AND uet.name = 'pageview_company_name' THEN 5
-            WHEN COALESCE(uet.type, uet.event) = 'workspace_name_valid' THEN 6
-            WHEN COALESCE(uet.type, uet.event) = 'workspace_provisioning_started' THEN 7
-            WHEN COALESCE(uet.type, uet.event) = 'workspace_provisioning_ended' THEN 8
-            ELSE NULL
-          END AS sign_up_sequence
-        , CASE
-            WHEN COALESCE(uet.type, uet.event) IN ('cloud_signup_b_page_visit','cloud_signup_page_visit') THEN 'Sign-Up Page'
-            WHEN COALESCE(uet.type, uet.event) = 'click_start_trial' THEN 'Click Start Trial'
-            WHEN COALESCE(uet.type, uet.event) = 'pageview_verify_email' THEN 'Verify Email'
-            WHEN COALESCE(uet.type, uet.event) = 'enter_valid_code' THEN 'Enter Valid Code'
-            WHEN COALESCE(uet.type, uet.event) = 'pageview_create_workspace' AND uet.name = 'pageview_company_name' THEN 'Enter Company Name'
-            WHEN COALESCE(uet.type, uet.event) = 'workspace_name_valid' THEN 'Workspace Name Valid'
-            WHEN COALESCE(uet.type, uet.event) = 'workspace_provisioning_started' THEN 'Workspace Creation Started'
-            WHEN COALESCE(uet.type, uet.event) = 'workspace_provisioning_ended' THEN 'Workspace Creation Ended'
-            ELSE NULL
-          END AS sign_up_events_sequence
         , uet.context_traits_server AS context_traits_server
         , COALESCE(uet.context_traits_device_istablet, uet.context_device_is_tablet, false) AS context_traits_device_istablet
         , uet.context_traits_app_build AS context_traits_app_build
