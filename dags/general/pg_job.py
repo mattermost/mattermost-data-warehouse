@@ -1,13 +1,10 @@
-import os
 from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+
 from dags.airflow_utils import PSQL_IMAGE, clone_repo_cmd, pod_defaults, send_alert
 from dags.kube_secrets import HEROKU_POSTGRESQL_URL
-
-# Load the env vars into a dict and set Secrets
-env = os.environ.copy()
 
 # Default arguments for the DAG
 default_args = {
@@ -33,7 +30,9 @@ def get_container_operator(task_name, job_name):
         image=PSQL_IMAGE,
         task_id=f"pg-{task_name}",
         name=task_name,
-        secrets=[HEROKU_POSTGRESQL_URL,],
+        secrets=[
+            HEROKU_POSTGRESQL_URL,
+        ],
         arguments=[cmd],
         dag=dag,
     )

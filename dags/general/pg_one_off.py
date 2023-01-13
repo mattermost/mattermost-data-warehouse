@@ -1,15 +1,10 @@
-import os
 from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
-from dags.airflow_utils import PSQL_IMAGE, clone_repo_cmd, pod_defaults, send_alert
-from dags.kube_secrets import (
-    HEROKU_POSTGRESQL_URL,
-)
 
-# Load the env vars into a dict and set Secrets
-env = os.environ.copy()
+from dags.airflow_utils import PSQL_IMAGE, clone_repo_cmd, pod_defaults, send_alert
+from dags.kube_secrets import HEROKU_POSTGRESQL_URL
 
 # Default arguments for the DAG
 default_args = {
@@ -21,6 +16,7 @@ default_args = {
     "retry_delay": timedelta(minutes=1),
     "start_date": datetime(2019, 1, 1),
 }
+
 
 def get_container_operator(task_name, job_name):
     cmd = f"""
@@ -43,6 +39,4 @@ def get_container_operator(task_name, job_name):
 
 
 # Create the DAG
-dag = DAG(
-    "pg_one_off", default_args=default_args, schedule_interval="@daily"
-)
+dag = DAG("pg_one_off", default_args=default_args, schedule_interval="@daily")

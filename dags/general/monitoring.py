@@ -7,6 +7,7 @@ from airflow.models.xcom import XCom
 from airflow.operators.http_operator import SimpleHttpOperator
 from airflow.operators.python_operator import PythonOperator
 from airflow.utils.db import provide_session
+
 from dags.airflow_utils import send_alert
 from dags.general._helpers import resolve_stitch
 
