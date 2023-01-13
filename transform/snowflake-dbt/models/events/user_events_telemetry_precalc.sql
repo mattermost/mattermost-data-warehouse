@@ -195,6 +195,8 @@ user_events_telemetry_precalc AS (
         , EXTRACT(dayofweek FROM uet.timestamp)::int AS event_day
         , WEEKISO(uet.timestamp)::int AS event_week_of_year
         -- Extra columns compared to original user_events_telemetry
+        -- Used for joining with BLAPI license_server_fact
+        , COALESCE(uet.portal_customer_id, uet.context_traits_portal_customer_id) AS context_portal_customer_id
         -- Keep only date from event. Useful for date range operations. Can be used as the clustering key.
         , uet.timestamp::date AS event_date
         -- To be used for incremental update
