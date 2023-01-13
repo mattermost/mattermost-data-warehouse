@@ -1,10 +1,9 @@
-import os
 from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 
-from dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, pod_defaults, pod_env_vars, send_alert
+from dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, pod_defaults, send_alert
 from dags.kube_secrets import (
     SNOWFLAKE_ACCOUNT,
     SNOWFLAKE_PASSWORD,
@@ -14,10 +13,6 @@ from dags.kube_secrets import (
     SNOWFLAKE_TRANSFORM_WAREHOUSE,
     SNOWFLAKE_USER,
 )
-
-# Load the env vars into a dict and set Secrets
-env = os.environ.copy()
-env_vars = {**pod_env_vars, **{}}
 
 # Default arguments for the DAG
 default_args = {

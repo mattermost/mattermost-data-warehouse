@@ -28,7 +28,8 @@ def stitch_check_extractions(response):
         failed_extractions = {
             extraction['source_id']: extraction['tap_description']
             for extraction in extractions.get('data')
-            if extraction['tap_exit_status'] == 1 and time_filter(extraction['completion_time'], "%Y-%m-%dT%H:%M:%SZ", 1)
+            if extraction['tap_exit_status'] == 1
+            and time_filter(extraction['completion_time'], "%Y-%m-%dT%H:%M:%SZ", 1)
         }
     except KeyError as e:
         task_logger.error('Error in check extractions ...', exc_info=True)
