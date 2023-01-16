@@ -12,6 +12,11 @@ class StitchApiException(Exception):
     pass
 
 
+# creating an exception class for handling hightouch API response
+class HightouchApiException(Exception):
+    pass
+
+
 def stitch_check_extractions(response):
     """
     This method returns list of extractions that are failing
@@ -83,6 +88,49 @@ def resolve_stitch(ti=None, **kwargs):
         status = ':red_circle:'
         message = f"**STITCH**: {status}\nFailed extractions:{failed_extractions}\nFailed loads: {failed_loads}"
         MattermostOperator(mattermost_conn_id='mattermost', text=message, task_id='resolve_stitch_message').execute(
+            None
+        )
+
+
+def hightouch_check_syncs(response):
+    """
+    This method returns object of sync that have status
+    status = success or disabled, success
+    status = fail or warning, fail
+    """
+    syncs = json.loads(''.join(response))
+    failed_syncs = {}
+    try:
+        if ('data' not in syncs) or len(syncs) == 0:
+            raise HightouchApiException('Invalid response from syncs api')
+        failed_syncs = {
+            sync['slug']: sync['status'] for sync in syncs.get('data') if sync['status'] not in ('success', 'disabled')
+        }
+    except KeyError as e:
+        task_logger.error('Error in check syncs ...', exc_info=True)
+        raise e
+    except HightouchApiException as e:
+        task_logger.error('Error in ...', exc_info=True)
+        raise e
+    return failed_syncs
+
+
+def resolve_hightouch(ti=None, **kwargs):
+    """
+    This method fetches failed hightouch syncs from xcom
+    triggers a mattermost alert in case of failure
+    """
+    syncs = ti.xcom_pull(task_ids=['check_hightouch_syncs'])
+    if not syncs:
+        raise ValueError('No value found for hightouch status in XCom')
+    failed_syncs = hightouch_check_syncs(syncs)
+
+    if len(failed_syncs) == 0:
+        task_logger.info('There are no failed syncs')
+    else:
+        status = ':red_circle:'
+        message = f"**HIGHTOUCH**: {status}\nFailed syncs: {failed_syncs}"
+        MattermostOperator(mattermost_conn_id='mattermost', text=message, task_id='resolve_hightouch_message').execute(
             None
         )
 
