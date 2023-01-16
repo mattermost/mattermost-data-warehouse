@@ -1,0 +1,17 @@
+version: 2
+
+exposures:
+  - name: clearbit_exposures
+    type: dashboard
+    description: Display Clearbit data available on Looker dashboards.
+    url: https://mattermost.looker.com/explore/data_warehouse/server_fact
+    tags:
+      - clearbit
+      - looker
+    maturity: low
+    owner:
+      name: Ioannis Foukarakis
+      email: ioannis.foukarakis@mattermost.com
+    depends_on:
+      - source('mattermost', 'cloud_clearbit')
+      - source('mattermost', 'onprem_clearbit')
