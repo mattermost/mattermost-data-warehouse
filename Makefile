@@ -267,13 +267,13 @@ docker-login: ## to login to a container registry
 .PHONY: dbt-docs
 dbt-docs: ## to generate and serve dbt docs
 	$(AT)$(INFO) Generating docs and spinning up the a webserver on port 8081...
-	$(AT)$(DOCKER) compose run -d -p "8081:8081" dbt_image bash -c "dbt deps && dbt docs generate -t prod && dbt docs serve --port 8081"  || ${FAIL}
+	$(AT)$(DOCKER) compose -f ${DOCKER_COMPOSE_DBT_FILE} run -d -p "8081:8081" dbt_image bash -c "dbt deps && dbt docs generate -t prod && dbt docs serve --port 8081"  || ${FAIL}
 	$(AT)$(OK) Server started, visit http://localhost:8081 to view the docs
 
 .PHONY: dbt-generate-docs
 dbt-generate-docs: ## to generate dbt docs
 	$(AT)$(INFO) Generating docs...
-	$(AT)$(DOCKER) compose run dbt_image bash -c "dbt deps && dbt docs generate -t prod" } || ${FAIL}
+	$(AT)$(DOCKER) compose -f ${DOCKER_COMPOSE_DBT_FILE} run dbt_image bash -c "dbt deps && dbt docs generate -t prod" } || ${FAIL}
 	$(AT)$(OK) Generated docs
 
 .PHONY: dbt-bash

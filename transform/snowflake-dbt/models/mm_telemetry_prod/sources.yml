@@ -4,6 +4,14 @@ sources:
   - name: mm_telemetry_prod
     database: 'RAW'
     schema: mm_telemetry_prod
+    description: |
+      Mattermost server and webapp telemetry data. Stored using Rudderstack. Rudderstack documentations offers an
+      in-depth documentation of the [warehouse schema](https://www.rudderstack.com/docs/destinations/warehouse-destinations/warehouse-schema/).
+      
+      The code that sends the events is available at:
+      - [Server](https://github.com/mattermost/mattermost-server/blob/master/services/telemetry/telemetry.go)
+      - [Webapp](https://github.com/mattermost/mattermost-webapp/blob/master/packages/mattermost-redux/src/client/rudder.ts)
+    tags: ['rudderstack']
 
     tables:
       - name: server
@@ -139,10 +147,15 @@ sources:
         description: Contains raw server-level activity at a given point in time/on a specific date. Includes number of posts, channels, slash commands, api calls, bot accounts, etc.
 
       - name: event
-        description: Contains raw user-level event data as a single row per event.
+        description: >
+          Contains raw user-level event data as a single row per event.
+          Source is mattermost webapp ([code](https://github.com/mattermost/mattermost-webapp/blob/master/packages/mattermost-redux/src/client/rudder.ts#L35))
+        tags: ['tracks', 'mattermost-webapp']
 
       - name: tracks
-        description: Contains raw user-level data from rudderstack track method.
+        description: > 
+          Contains raw user-level data from rudderstack track method. Note that for every `track` call, RudderStack
+          creates a record in both the `tracks` and `<event_name>` tables.
 
       - name: identifies
         description: Contains raw user-level data from rudderstack identifies method.
@@ -164,3 +177,21 @@ sources:
 
       - name: config_feature_flags
         description: Contains raw server-level split.io feature flag data as a single row per server per timestamp.
+
+      - name: inactive_server
+        description: |
+          Tracks inactive servers if inactivity job is enabled at the servers. Populated via Rudderstack `track`.
+          Note that in order for inactivity check to take place, the following conditions must apply:
+          
+          - Server **MUST NOT** be in developer mode.
+          - Inactivity email **MUST** be enabled.
+          - `EnableInactivityCheckJob` feature flag **MUST** be enabled.
+          Source is mattermost server ([code](https://github.com/mattermost/mattermost-server/blob/master/app/server_inactivity.go#L81))
+        tags: [ 'mattermost-server']
+
+      - name: inactive_server_emails_sent
+        description: |
+          Tracks whether email has been sent to the admin for notifying them of server inactivity. Populated via
+          Rudderstack `track`. The same rules as in `inactive_server` apply for events to be sent via Rudderstack. 
+          Source is mattermost server ([code](https://github.com/mattermost/mattermost-server/blob/master/app/server_inactivity.go#L118)).
+        tags: ['mattermost-server']

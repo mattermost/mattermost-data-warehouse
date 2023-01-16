@@ -12,3 +12,9 @@ sources:
 
       - name: version_release_dates
         description: The server version and associated release date (i.e. GA date).
+
+      - name: onprem_clearbit
+        description: Enriched data for on prem servers. Enrichment done using clearbit data.
+
+      - name: cloud_clearbit
+        description: Enriched data for cloud servers. Enrichment done using clearbit data.

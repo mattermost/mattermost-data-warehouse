@@ -2,17 +2,15 @@ version: '3.7'
 
 services:
     dbt_image:
-      image: fishtownanalytics/dbt:1.0.0
+      image: ghcr.io/dbt-labs/dbt-snowflake:1.1.0@sha256:26b63ed21a1d534439fa9cd2b107a873e14ae9021153dca2f13ec104fd518754
       env_file:
         - ../.dbt.env
       environment:
-        DBT_PROFILES_DIR: /usr/local/dbt_profiles/
         SNOWFLAKE_LOAD_DATABASE: "RAW"
         SNOWFLAKE_TRANSFORM_WAREHOUSE: "TRANSFORM_XS"
         SNOWFLAKE_TRANSFORM_DATABASE: "ANALYTICS"
       restart: always
       command: bash -c "/bin/bash"
-      #working_dir: /usr/local/analytics/transform/snowflake-dbt/
       entrypoint: [ "" ]
       volumes:
         - type: bind
@@ -20,7 +18,7 @@ services:
           target: /usr/app
         - type: bind
           source: ${DBT_PROFILE_PATH:-../transform/snowflake-dbt/profile}
-          target: /usr/local/dbt_profiles/
+          target: /root/.dbt/
           read_only: True
 
     data_image:

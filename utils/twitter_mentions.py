@@ -1,14 +1,10 @@
-from tweepy import OAuthHandler
-from tweepy.streaming import StreamListener
-import tweepy
-import pandas as pd
-import string
 import os
-import psycopg2
-import snowflake.connector
-import sys
-from datetime import datetime
-from extract.utils import snowflake_engine_factory, execute_query, execute_dataframe
+
+import pandas as pd
+import tweepy
+from tweepy import OAuthHandler
+
+from extract.utils import execute_query, snowflake_engine_factory
 
 
 def get_twitter_mentions():
@@ -58,9 +54,9 @@ def get_twitter_mentions():
     )
 
     # Fetch latest data from existing ANALYTICS.SOCIAL_MENTIONS.TWITTER relation
-    query = f"""
-    SELECT MAX(CREATED_AT - interval '1 day')::date::varchar AS DATE, 
-    MAX(CREATED_AT)::VARCHAR AS TIMESTAMP 
+    query = """
+    SELECT MAX(CREATED_AT - interval '1 day')::date::varchar AS DATE,
+    MAX(CREATED_AT)::VARCHAR AS TIMESTAMP
     FROM analytics.social_mentions.twitter
     """
 
@@ -70,13 +66,11 @@ def get_twitter_mentions():
         print(f"""Oh no! There was an error executing your query: {e}""")
 
     # Retrieve all tweets >= Max Created At in ANALYTICS.SOCIAL_MENTIONS.TWITTER relation
-    tweets = tweepy.Cursor(api.search, q="mattermost", since=f"{results[0][0]}").items(
-        5000
-    )
+    tweets = tweepy.Cursor(api.search, q="mattermost", since=f"{results[0][0]}").items(5000)
 
     # Loop through new tweets and extract relevant fields to populate dataframe.
     for tweet in tweets:
-        is_tweet_reply = True if tweet.in_reply_to_screen_name != None else False
+        is_tweet_reply = tweet.in_reply_to_screen_name is not None
         username = tweet.user.screen_name
         full_name = tweet.user.name
         user_url = tweet.user.url
@@ -85,12 +79,9 @@ def get_twitter_mentions():
         verified = tweet.user.verified
         user_id = tweet.user.id
         favorite_count = tweet.favorite_count
-        acctdesc = tweet.user.description
         location = tweet.user.location
         following = tweet.user.friends_count
         followers = tweet.user.followers_count
-        totaltweets = tweet.user.statuses_count
-        usercreatedts = tweet.user.created_at
         created_at = tweet.created_at.strftime("%Y-%m-%d %H:%M:%S")
         lang = tweet.lang
         hashtags = str(tweet.entities["hashtags"])
@@ -100,10 +91,8 @@ def get_twitter_mentions():
         try:
             text = tweet.text
             retweet_text = tweet.retweeted_status.text
-            original_tweet_date = tweet.retweeted_status.created_at.strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-            is_retweet = True if tweet.retweeted_status.text != None else False
+            original_tweet_date = tweet.retweeted_status.created_at.strftime("%Y-%m-%d %H:%M:%S")
+            is_retweet = tweet.retweeted_status.text is not None
         except AttributeError:  # Not a Retweet
             text = tweet.text
             original_tweet_date = None

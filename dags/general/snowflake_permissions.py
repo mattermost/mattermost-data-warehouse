@@ -1,8 +1,8 @@
-import os
 from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+
 from dags.airflow_utils import PERMIFROST_IMAGE, clone_repo_cmd, pod_defaults, send_alert
 from dags.kube_secrets import (
     PERMISSION_BOT_ACCOUNT,
@@ -31,9 +31,7 @@ container_cmd = f"""
 """
 
 # Create the DAG
-dag = DAG(
-    "snowflake_permissions", default_args=default_args, schedule_interval="0 0 * * *"
-)
+dag = DAG("snowflake_permissions", default_args=default_args, schedule_interval="0 0 * * *")
 
 # Task 1
 snowflake_load = KubernetesPodOperator(

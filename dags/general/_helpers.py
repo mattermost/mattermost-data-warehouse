@@ -1,5 +1,6 @@
 import json
 import logging
+from datetime import datetime, timedelta
 
 from plugins.operators.mattermost_operator import MattermostOperator
 
@@ -33,6 +34,7 @@ def stitch_check_extractions(response):
             extraction['source_id']: extraction['tap_description']
             for extraction in extractions.get('data')
             if extraction['tap_exit_status'] == 1
+            and time_filter(extraction['completion_time'], "%Y-%m-%dT%H:%M:%SZ", 1)
         }
     except KeyError as e:
         task_logger.error('Error in check extractions ...', exc_info=True)
@@ -58,7 +60,7 @@ def stitch_check_loads(response):
         failed_loads = {
             load['source_name']: load['error_state']['notification_data']['error']
             for load in loads.get('data')
-            if load['error_state'] is not None
+            if load['error_state'] is not None and time_filter(load['last_batch_loaded_at'], "%Y-%m-%dT%H:%M:%SZ", 1)
         }
     except KeyError as e:
         task_logger.error('Error in check loads ...', exc_info=True)
@@ -131,3 +133,14 @@ def resolve_hightouch(ti=None, **kwargs):
         MattermostOperator(mattermost_conn_id='mattermost', text=message, task_id='resolve_hightouch_message').execute(
             None
         )
+
+
+def time_filter(target_time, format, delta_hours):
+    """
+    This method returns True if target_time + delta_hours >= current time.
+    False otherwise.
+    :param target_time: The UTC datetime string of target.
+    :param format: Format of datetime string.
+    :param delta_hours: Number of hours to be added to target_time for comparison.
+    """
+    return datetime.strptime(target_time, format) + timedelta(hours=delta_hours) >= datetime.utcnow()

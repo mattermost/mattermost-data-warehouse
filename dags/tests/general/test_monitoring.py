@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 
 from dags.general._helpers import (
@@ -6,6 +8,7 @@ from dags.general._helpers import (
     resolve_hightouch,
     stitch_check_extractions,
     stitch_check_loads,
+    time_filter
 )
 
 
@@ -20,8 +23,8 @@ def test_stitch_check_extractions_pass(load_data):
 def test_stitch_check_extractions_fail(load_data):
     response = load_data('monitoring/extractions_fail.json')
     failed_extractions = stitch_check_extractions(response)
-    # Expected to return dict containing failed extractions
-    assert failed_extractions == {99999: 'Terminated'}
+    # Expected to return dict containing failed extractions, returning empty dict due to date filter
+    assert failed_extractions == {}
 
 
 def test_stitch_check_extractions_error():
@@ -41,8 +44,8 @@ def test_stitch_check_loads_pass(load_data):
 def test_stitch_check_loads_fail(load_data):
     response = load_data('monitoring/loads_fail.json')
     failed_loads = stitch_check_loads(response)
-    # Expected to return dict containing failed loads
-    assert failed_loads == {'raw_source_2': 'some_error_value'}
+    # Expected to return dict containing failed loads, returning empty dict due to date filter
+    assert failed_loads == {}
 
 
 def test_stitch_check_loads_error(load_data):
@@ -89,3 +92,21 @@ def test_resolve_hightouch_error(task_instance):
     # Expected to raise exception since Xcom does not contain dict
     with pytest.raises(ValueError):
         resolve_hightouch(ti=task_instance(None))
+
+
+@pytest.mark.parametrize(
+    "target_time, format, delta_hours, output",
+    [
+        (str(datetime.utcnow()), "%Y-%m-%d %H:%M:%S.%f", 1, True),
+        (str(datetime.utcnow()), "%Y-%m-%d %H:%M:%S.%f", 2, True),
+        (str(datetime.utcnow()), "%Y-%m-%d %H:%M:%S.%f", 0, False),
+    ],
+)
+def test_time_filter(target_time, format, delta_hours, output):
+    assert time_filter(target_time, format, delta_hours) == output
+
+
+def test_time_filter_error():
+    # Expected to raise exception since time format is incorrect
+    with pytest.raises(ValueError):
+        time_filter(str(datetime.utcnow()), "%Y-%m-%d %H:%M:%S", 2)

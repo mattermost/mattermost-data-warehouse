@@ -1,5 +1,4 @@
 import argparse
-import sys
 
 from extract.s3_extract.stage_import import releases_import
 

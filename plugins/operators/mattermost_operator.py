@@ -1,6 +1,6 @@
-from airflow.plugins_manager import AirflowPlugin
 from airflow.operators.http_operator import SimpleHttpOperator
-from plugins.hooks.mattermost_webhook_hook import *
+
+from plugins.hooks.mattermost_webhook_hook import MattermostWebhookHook
 
 
 class MattermostOperator(SimpleHttpOperator):
@@ -37,7 +37,7 @@ class MattermostOperator(SimpleHttpOperator):
         props=None,
         **kwargs,
     ) -> None:
-        super().__init__(endpoint=None,**kwargs)
+        super().__init__(endpoint=None, **kwargs)
         self.mattermost_conn_id = mattermost_conn_id
         self.text = text
         self.channel = channel

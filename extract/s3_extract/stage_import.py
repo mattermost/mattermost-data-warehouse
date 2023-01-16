@@ -1,7 +1,6 @@
-from datetime import datetime
 import os
 
-from extract.utils import snowflake_engine_factory, execute_query
+from extract.utils import execute_query, snowflake_engine_factory
 
 
 def extract_from_stage(import_table, stage, schema, path, pattern, env):
@@ -17,26 +16,12 @@ def extract_from_stage(import_table, stage, schema, path, pattern, env):
 
 
 PUSH_PROXY_LOCATIONS = {
-    'US': {
-        'table': 'logs',
-        'stage': 'push_proxy_stage',
-        'az': 'us-east-1'
-    },
-    'TEST': {
-        'table': 'test_logs',
-        'stage': 'push_proxy_test_stage',
-        'az': 'us-east-1'
-    },
-    'DE': {
-        'table': 'de_logs',
-        'stage': 'push_proxy_de_stage',
-        'az': 'eu-central-1'
-    }
+    'US': {'table': 'logs', 'stage': 'push_proxy_stage', 'az': 'us-east-1'},
+    'TEST': {'table': 'test_logs', 'stage': 'push_proxy_test_stage', 'az': 'us-east-1'},
+    'DE': {'table': 'de_logs', 'stage': 'push_proxy_de_stage', 'az': 'eu-central-1'},
 }
 
-DIAGNOSTICS_LOCATIONS = [
-    'DIAGNOSTIC_LOCATION_ONE', 'DIAGNOSTIC_LOCATION_TWO'
-]
+DIAGNOSTICS_LOCATIONS = ['DIAGNOSTIC_LOCATION_ONE', 'DIAGNOSTIC_LOCATION_TWO']
 
 
 def licenses_import(import_date):
@@ -46,13 +31,27 @@ def licenses_import(import_date):
 def releases_import(import_date):
     loc = os.getenv('RELEASE_LOCATION')
     # Releases and diagnostics S3 folders have the same format so we re-use the pattern
-    extract_from_stage('log_entries', 'releases_stage', 'releases', f'releases.mattermost.com-cloudfront/{loc}', get_diagnostics_pattern(loc, import_date), os.environ.copy())
+    extract_from_stage(
+        'log_entries',
+        'releases_stage',
+        'releases',
+        f'releases.mattermost.com-cloudfront/{loc}',
+        get_diagnostics_pattern(loc, import_date),
+        os.environ.copy(),
+    )
 
 
 def diagnostics_import(import_date):
     for env_loc in DIAGNOSTICS_LOCATIONS:
         loc = os.getenv(env_loc)
-        extract_from_stage('log_entries', 'diagnostics_stage', 'diagnostics', loc, get_diagnostics_pattern(loc, import_date), os.environ.copy())
+        extract_from_stage(
+            'log_entries',
+            'diagnostics_stage',
+            'diagnostics',
+            loc,
+            get_diagnostics_pattern(loc, import_date),
+            os.environ.copy(),
+        )
 
 
 def push_proxy_import(log_type, import_date):
@@ -67,7 +66,14 @@ def push_proxy_import(log_type, import_date):
     aws_account_id = os.getenv('AWS_ACCOUNT_ID')
     az = loc['az']
 
-    extract_from_stage(loc['table'], loc['stage'], 'push_proxy', get_path(aws_account_id, az), get_push_proxy_pattern(import_date), os.environ.copy())
+    extract_from_stage(
+        loc['table'],
+        loc['stage'],
+        'push_proxy',
+        get_path(aws_account_id, az),
+        get_push_proxy_pattern(import_date),
+        os.environ.copy(),
+    )
 
 
 def get_push_proxy_pattern(import_date):
