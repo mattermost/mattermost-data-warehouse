@@ -9,7 +9,7 @@
 with current_subscriptions AS(
     SELECT 
         *,
-        cloud_paid_subscriptions."START" as start_date
+        cloud_paid_subscriptions."DATE_CONVERTED_TO_PAID" as start_date
     FROM       
         {{ ref('cloud_paid_subscriptions') }}
         WHERE row_num = 1
