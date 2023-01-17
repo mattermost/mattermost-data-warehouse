@@ -1,0 +1,20 @@
+version: 2
+
+exposures:
+  - name: all_leads_update_telemetry_exposure
+    type: application
+    description: |
+      Update Salesforce leads with telemetry data. Combines Salesforce lead data with telemetry data to produce table
+      `lead_update_telemetry`. The result is synced with Salesforce via
+      [hightouch sync](https://app.hightouch.com/mattermost-com/syncs/42606).
+
+    url: https://app.hightouch.com/mattermost-com/syncs?search=lead
+    tags:
+      - hightouch
+      - salesforce
+    maturity: low
+    owner:
+      name: Ioannis Foukarakis
+      email: ioannis.foukarakis@mattermost.com
+    depends_on:
+      - ref('lead_update_telemetry')
