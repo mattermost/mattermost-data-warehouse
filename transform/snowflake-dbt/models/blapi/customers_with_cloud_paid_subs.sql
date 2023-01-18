@@ -35,7 +35,7 @@ with current_subscriptions AS(
         current_subscriptions.company,
         left(coalesce(current_subscriptions.company, customers.email), 40) as company_name,
         current_subscriptions.status,
-        to_varchar(current_subscriptions.start_date, 'yyyy-MM-dd HH:mm:ss.SSS Z') as start_date,
+        TO_DATE(current_subscriptions.date_converted_to_paid) as start_date,
         to_varchar(DATEADD(month, 1, current_subscriptions.start_date), 'yyyy-MM-dd HH:mm:ss.SSS Z') as end_date, -- only for cloud professional subscriptions
         current_subscriptions.created >= '2022-06-14' as hightouch_sync_eligible,
         ROW_NUMBER() OVER (PARTITION BY current_subscriptions.id ORDER BY invoices.created DESC) as row_num
