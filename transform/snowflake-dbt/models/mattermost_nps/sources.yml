@@ -4,7 +4,9 @@ sources:
   - name: mattermost_nps
     database: 'RAW'
     schema: mattermost_nps
-
+    description: |
+      Product telemetry data for RC builds. Telemetry is added via Segment (see [source](https://app.segment.com/smarttotem/sources/mattermost_nps/settings/sql)).
+      
     tables: 
       - name: nps_score
         description: 'NPS score data'
