@@ -8,6 +8,7 @@
 WITH customers_with_cloud_paid_subs as (
     SELECT
         customers_with_cloud_paid_subs.*,
+        "Customer" as account_type,
         '0053p0000064nt8AAA' AS ownerid
     FROM {{ ref('customers_with_cloud_paid_subs') }}
     LEFT JOIN {{ ref('account') }}
