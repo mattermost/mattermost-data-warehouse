@@ -4,8 +4,14 @@ sources:
   - name: mattermost2
     database: 'RAW'
     schema: mattermost2
+    loader: Segment
     description: |
-      Product telemetry data. Telemetry is added via Segment (see [source](https://app.segment.com/smarttotem/sources/mattermost2/settings/sql)).
+      Product telemetry data. 
+      Telemetry for older versions of Mattermost (up to 5.x). Telemetry is pushed via Segment
+      (see [source](https://app.segment.com/smarttotem/sources/mattermost2/settings/sql)).
+
+    tags:
+      - segment
 
     tables: 
       - name: server
