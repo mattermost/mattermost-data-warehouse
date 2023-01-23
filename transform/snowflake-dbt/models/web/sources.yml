@@ -59,6 +59,12 @@ sources:
   - name: user_agent_registry
     database: ANALYTICS
     schema: web
+    loader: Python
+    tags:
+      - python
 
     tables:
       - name: user_agent_registry
+        description: |
+          Extracts details of user agent strings and breaks them to multiple columns. Implemented with python script.
+          [Source code](https://github.com/mattermost/mattermost-data-warehouse/blob/master/utils/user_agent_parser.py).

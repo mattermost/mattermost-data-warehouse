@@ -4,8 +4,11 @@ sources:
   - name: mattermost
     database: ANALYTICS
     schema: mattermost
+    loader: Python
+    tags:
+      - python
 
-    tables: 
+    tables:
       - name: github_repo_categorization
       
       - name: licenses
@@ -14,7 +17,13 @@ sources:
         description: The server version and associated release date (i.e. GA date).
 
       - name: onprem_clearbit
-        description: Enriched data for on prem servers. Enrichment done using clearbit data.
+        description: |
+          Enriched data for on prem servers. Enrichment done using clearbit data and custom python script.
+
+          [Source code](https://github.com/mattermost/mattermost-data-warehouse/blob/master/utils/onprem_clearbit.py)
 
       - name: cloud_clearbit
-        description: Enriched data for cloud servers. Enrichment done using clearbit data.
+        description: |
+          Enriched data for cloud servers. Enrichment done using clearbit data and custom python script.
+
+          [Source code](https://github.com/mattermost/mattermost-data-warehouse/blob/master/utils/cloud_clearbit.py)
