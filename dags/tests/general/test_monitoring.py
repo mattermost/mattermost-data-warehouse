@@ -8,7 +8,7 @@ from dags.general._helpers import (
     resolve_hightouch,
     stitch_check_extractions,
     stitch_check_loads,
-    time_filter
+    time_filter,
 )
 
 

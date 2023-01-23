@@ -2,15 +2,11 @@ import os
 from datetime import datetime, timedelta
 
 from airflow import DAG
-from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 from airflow.contrib.kubernetes.volume import Volume
 from airflow.contrib.kubernetes.volume_mount import VolumeMount
-from dags.airflow_utils import (
-    PIPELINEWISE_IMAGE,
-    send_alert,
-    pod_defaults,
-    pod_env_vars,
-)
+from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+
+from dags.airflow_utils import PIPELINEWISE_IMAGE, pod_defaults, pod_env_vars, send_alert
 from dags.kube_secrets import PIPELINEWISE_SECRETS
 
 # Load the env vars into a dict and set Secrets
