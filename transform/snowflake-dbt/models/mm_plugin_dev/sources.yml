@@ -1,0 +1,101 @@
+version: 2
+
+sources:
+  - name: mm_plugin_dev
+    database: raw
+    schema: mm_plugin_dev
+    loader: Rudderstack
+    description: |
+      Plugin telemetry pushed via Rudderstack. Please check related plugin repo for telemetry.
+      
+      This schema contains dev data.
+    tags:
+      - rudderstack
+
+    tables:
+      - name: activity
+      - name: apps_framework_call
+      - name: apps_framework_install
+      - name: apps_framework_oauth_complete
+      - name: apps_framework_uninstall
+      - name: blocks
+      - name: change_stage
+      - name: com_mattermost_mscalendar_automatic_status_update
+      - name: com_mattermost_mscalendar_user_deauthenticated
+      - name: config
+      - name: create_incident
+      - name: create_playbook
+      - name: end_incident
+      - name: event
+      - name: gcal_automatic_status_update
+      - name: gcal_user_authenticated
+      - name: gcal_user_deauthenticated
+      - name: gcal_welcome_flow_completion
+      - name: github_stats
+      - name: gitlab_stats
+      - name: identifies
+      - name: jiomeet_start_meeting
+      - name: jira_migrate_user_disconnected
+      - name: jira_setup_wizard_announcement_complete
+      - name: jira_setup_wizard_announcement_start
+      - name: jira_setup_wizard_jira_config_complete
+      - name: jira_setup_wizard_jira_config_start
+      - name: jira_setup_wizard_start
+      - name: jira_setup_wizard_user_connect_complete
+      - name: jira_setup_wizard_user_connect_start
+      - name: jira_setup_wizard_webhook_complete
+      - name: jira_setup_wizard_webhook_start
+      - name: jira_user_connected
+      - name: jira_user_disconnected
+      - name: jira_v2revert_submitted
+      - name: jitsi_start_meeting
+      - name: ktalk_start_meeting
+      - name: modify_state_checklist_item
+      - name: mscalendar_automatic_status_update
+      - name: mscalendar_daily_summary_sent
+      - name: mscalendar_user_authenticated
+      - name: mscalendar_user_deauthenticated
+      - name: mscalendar_welcome_flow_completion
+      - name: msteamsmeetings_connect
+      - name: msteamsmeetings_disconnect
+      - name: msteamsmeetings_meeting_duplicated
+      - name: msteamsmeetings_meeting_forced
+      - name: msteamsmeetings_meeting_started
+      - name: nps_nps_disable
+      - name: nps_nps_feedback
+      - name: nps_nps_score
+      - name: pages
+      - name: restart_incident
+      - name: rudder_discards
+      - name: server
+      - name: todo_accept_issue
+      - name: todo_add_issue
+      - name: todo_bump_issue
+      - name: todo_command
+      - name: todo_complete_issue
+      - name: todo_daily_summary_sent
+      - name: todo_edit_issue
+      - name: todo_frontend_click_lhs_in
+      - name: todo_frontend_click_lhs_my
+      - name: todo_frontend_click_lhs_out
+      - name: todo_frontend_custom_post_accept
+      - name: todo_frontend_custom_post_complete
+      - name: todo_frontend_custom_post_remove
+      - name: todo_frontend_rhs_add
+      - name: todo_frontend_rhs_edit
+      - name: todo_frontend_toggle_inbox
+      - name: todo_frontend_toggle_my
+      - name: todo_remove_issue
+      - name: todo_send_issue
+      - name: todo_update_issue
+      - name: tracks
+      - name: update_playbook
+      - name: users
+      - name: workspaces
+      - name: zoom_connect
+      - name: zoom_disconnect
+      - name: zoom_meeting_duplicated
+      - name: zoom_meeting_forced
+      - name: zoom_oauth_mode_change
+      - name: zoom_start_meeting
+      - name: zoom_stats

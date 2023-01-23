@@ -1,0 +1,24 @@
+version: 2
+
+sources:
+  - name: incident_response_dev
+    database: 'RAW'
+    schema: incident_response_dev
+    loader: Rudderstack
+    description: |
+      Playbook plugin telemetry dev data. Published via Rudderstack Go client.
+      
+      [Source code](https://github.com/mattermost/mattermost-plugin-playbooks/blob/master/server/telemetry/rudder.go#L578)
+    tags:
+      - rudderstack
+
+    tables:
+      - name: frontend
+      - name: incident
+      - name: incident_created
+      - name: playbook
+      - name: rudder_discards
+        description: Stores records that rudder failed to store to the warehouse.
+      - name: tasks
+      - name: tracks
+        description: Stores all events capture via rudderstack's `track` functionality.

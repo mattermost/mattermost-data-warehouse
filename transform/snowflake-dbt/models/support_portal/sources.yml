@@ -4,6 +4,10 @@ sources:
   - name: support_portal
     database: 'RAW'
     schema: support_portal
+    loader: Rudderstack
+    description: Support portal events pushed via Rudderstack.
+    tags:
+      - rudderstack
 
     tables:
       - name: pages

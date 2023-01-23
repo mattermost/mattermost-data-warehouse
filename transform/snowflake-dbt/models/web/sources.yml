@@ -4,6 +4,12 @@ sources:
   - name: mattermost_docs
     database: RAW
     schema: mattermost_docs
+    loader: Rudderstack
+    description: |
+      Telemetry data for [Mattermost Docs](https://docs.mattermost.com/). Pushed via Rudderstack.
+    tags:
+      - rudderstack
+
 
   - name: web
     database: ANALYTICS

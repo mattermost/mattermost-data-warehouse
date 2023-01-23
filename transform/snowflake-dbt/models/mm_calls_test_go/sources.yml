@@ -1,0 +1,31 @@
+version: 2
+
+sources:
+  - name: mm_calls_test_go
+    database: raw
+    schema: mm_calls_test_go
+    loader: Rudderstack
+    description: |
+      Telemetry data for calls plugin.
+      
+      [Source code - Backend](https://github.com/mattermost/mattermost-plugin-calls/blob/main/server/telemetry/telemetry.go)
+      [Source code - Frontend](https://github.com/mattermost/mattermost-plugin-calls/blob/main/webapp/src/types/telemetry.ts)
+    tags:
+      - rudderstack
+
+    tables:
+      - name: call_ended
+      - name: call_notify_admin
+      - name: call_started
+      - name: call_user_joined
+      - name: call_user_left
+      - name: tracks
+      - name: user_close_expanded_view
+      - name: user_close_participants_list
+      - name: user_lower_hand
+      - name: user_open_channel_link
+      - name: user_open_expanded_view
+      - name: user_open_participants_list
+      - name: user_raise_hand
+      - name: user_share_screen
+      - name: user_unshare_screen

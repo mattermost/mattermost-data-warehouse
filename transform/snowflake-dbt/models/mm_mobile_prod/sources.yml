@@ -4,10 +4,11 @@ sources:
   - name: mm_mobile_prod
     database: 'RAW'
     schema: mm_mobile_prod
+    loader: Rudderstack
     description: |
-      Mobile app data stored using Rudderstack. Rudderstack documentation offers an in-depth documentation of the
-      [warehouse schema](https://www.rudderstack.com/docs/destinations/warehouse-destinations/warehouse-schema/).
-      The code that performs the tracking [is available here](https://github.com/mattermost/mattermost-mobile/blob/main/app/managers/analytics.ts#L105).
+      Mobile app telemetry pushed using Rudderstack. This schema is for production releases. 
+      
+      [Source code](https://github.com/mattermost/mattermost-mobile/blob/main/app/managers/analytics.ts)
     tags: ['rudderstack']
 
     tables:

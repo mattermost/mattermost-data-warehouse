@@ -4,6 +4,13 @@ sources:
   - name: hacktoberboard_prod
     database: 'RAW'
     schema: hacktoberboard_prod
+    loader: Rudderstack
+    description: |
+      Focalboard telemetry data, pushed via Rudderstack.
+
+      [Source code](https://github.com/mattermost/focalboard/blob/main/server/services/telemetry/telemetry.go)
+    tags:
+      - rudderstack
 
     tables:
       - name: activity

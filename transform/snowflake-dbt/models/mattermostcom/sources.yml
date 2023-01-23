@@ -4,6 +4,11 @@ sources:
   - name: mattermostcom
     database: 'RAW'
     schema: mattermostcom
+    loader: Rudderstack
+    description: |
+      Mattermost.com events captured using Rudderstack's JS framework.
+    tags:
+      - rudderstack
 
     tables:
       - name: pages
