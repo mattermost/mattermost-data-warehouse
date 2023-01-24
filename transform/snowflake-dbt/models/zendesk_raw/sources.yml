@@ -4,6 +4,10 @@ sources:
   - name: zendesk_raw
     database: ANALYTICS
     schema: zendesk_raw
+    loader: Stitch
+    description: Zendesk database mirrored in the data warehouse.
+    tags:
+      - stitch
 
     tables: 
       - name: tickets

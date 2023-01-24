@@ -19,6 +19,10 @@ sources:
     schema: orgm_raw
     loader: Stitch
     loaded_at_field: _sdc_batched_at
+    description: |
+      Salesforce data, synced to warehouse via Stitch.
+    tags:
+      - stitch
 
     quoting:
       database: true

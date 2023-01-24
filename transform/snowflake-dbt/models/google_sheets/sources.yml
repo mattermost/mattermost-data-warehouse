@@ -4,6 +4,9 @@ sources:
   - name: sales_and_cs_gsheets
     database: ANALYTICS
     schema: sales_and_cs_gsheets
+    loader: Stitch
+    tags:
+      - stitch
 
     tables:
       - name: available_renewals_current_fy
@@ -18,6 +21,10 @@ sources:
   - name: finance_gsheets
     database: ANALYTICS
     schema: finance_gsheets
+    description: Copies data from Finance team's Google Sheets to data warehouse. Copying is implemented using Stitch.
+    loader: Stitch
+    tags:
+      - stitch
 
     tables:
       - name: arr_by_qtr
@@ -27,6 +34,10 @@ sources:
   - name: marketing_gsheets
     database: ANALYTICS
     schema: marketing_gsheets
+    loader: Stitch
+    description: Copies data from Marketing team's Google Sheets to data warehouse. Copying is implemented using Stitch.
+    tags:
+      - stitch
 
     tables:
       - name: fy22_bottoms_up_targets
