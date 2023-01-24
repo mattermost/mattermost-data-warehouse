@@ -4,8 +4,12 @@ sources:
   - name: mattermost_rn_mobile_release_builds_v2
     database: 'RAW'
     schema: mattermost_rn_mobile_release_builds_v2
+    loader: Segment
     description: |
-      Product telemetry data for RC builds. Telemetry is added via Segment (see [source](https://app.segment.com/smarttotem/sources/mattermost_rn_mobile_release_builds_v2/settings/sql)).
+      Telemetry for older versions of Mattermost Mobile app. Telemetry is added via Segment
+      (see [source](https://app.segment.com/smarttotem/sources/mattermost_rn_mobile_release_builds_v2/settings/sql)).
+    tags:
+      - segment
 
     tables: 
       - name: event
