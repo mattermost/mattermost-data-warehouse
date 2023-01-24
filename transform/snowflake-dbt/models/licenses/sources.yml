@@ -4,6 +4,9 @@ sources:
   - name: licenses
     database: 'RAW'
     schema: licenses
+    loader: Snowflake Stage
+    tags:
+      - stage
 
     tables:
       - name: licenses
