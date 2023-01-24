@@ -20,6 +20,7 @@ WITH opportunitylineitems_to_sync AS (
         'Monthly Billing' as product_type,
         'New' as product_line_type,
         1 as quantity,
+        10 * quantity as total_price, -- (price of 1 sub = 10 USD) there should be another way of updating the total_price instead of hard code.
         'Discount' as pricing_method,
         0 as discount_calc,
         false as sales_price_needs_to_be_updated
