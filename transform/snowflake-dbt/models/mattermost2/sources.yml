@@ -4,6 +4,8 @@ sources:
   - name: mattermost2
     database: 'RAW'
     schema: mattermost2
+    description: |
+      Product telemetry data. Telemetry is added via Segment (see [source](https://app.segment.com/smarttotem/sources/mattermost2/settings/sql)).
 
     tables: 
       - name: server
