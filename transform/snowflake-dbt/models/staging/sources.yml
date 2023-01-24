@@ -4,10 +4,22 @@ sources:
   - name: staging
     database: ANALYTICS
     schema: staging
+    loader: Python
+    tags:
+      - python
 
     tables: 
       - name: contributor_map_data
       - name: hist_license_mapping
       - name: github_contributions_all
+        description: |
+          List of github contributions. Updated using custom ingestion script.
+          
+          [Source code](https://github.com/mattermost/mattermost-data-warehouse/blob/master/utils/github_contributors.py)
+
       - name: activities_fill_out_form
       - name: clearbit_onprem_exceptions
+        description: |
+          Exceptions happening during on prem clearbit enrichment.
+          
+          [Source code](https://github.com/mattermost/mattermost-data-warehouse/blob/master/utils/onprem_clearbit.py)
