@@ -10,6 +10,10 @@ sources:
     tags:
       - rudderstack
 
+    tables:
+      - name: tracks
+
+
 
   - name: web
     database: ANALYTICS

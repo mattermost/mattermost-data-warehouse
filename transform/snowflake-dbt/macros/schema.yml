@@ -13,3 +13,10 @@ macros:
       - name: precision
         type: integer
         description: Number of decimal places. Defaults to 2.
+
+  - name: rudder_tracks_summary
+    description: Summarizes a `tracks` table by calculating daily count of each event.
+    arguments:
+      - name: schema
+        type: string
+        description: The schema containing the `tracks` table.

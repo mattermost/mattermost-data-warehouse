@@ -19,3 +19,4 @@ sources:
         description: 'Information pertaining to the user and purchased license (subscription_id) for users that successfully purchased a license via the Mattermost Customer Portal (customers.mattermost.com).'
       - name: marketo_form_submit
         description: 'Raw Marketo Form Submit data.'
+      - name: tracks

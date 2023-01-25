@@ -1,0 +1,76 @@
+version: 2
+
+models:
+  - name: base_tracks
+    description: >
+      Daily event information. Doesn't contain rows for events on dates where 
+      no events of that type were submitted.
+
+    columns:
+      - name: id
+        description: A unique id for each event/date/source combination.
+        tests:
+          - unique
+          - not_null
+      - name: date_received_at
+        description: The date that events of the current type were received.
+        tests:
+          - not_null
+      - name: event
+        description: The name of the corresponding event table.
+        tests:
+          - not_null
+      - name: event_text
+        description: The name of the event.
+        tests:
+          - not_null
+      - name: source
+        description: The name of the source that the event are submitted from.
+        tests:
+          - not_null
+      - name: event_count
+        description: The total number of events submitted for the current date.
+        tests:
+          - not_null
+
+  - name: event_registry
+    description: |
+      Provides a list of events captured using Rudderstack's 
+      [track](https://www.rudderstack.com/docs/event-spec/standard-events/track/) API call. 
+
+    columns:
+      - name: id
+        description: A unique id for each event.
+        tests:
+          - unique
+          - not_null
+      - name: event
+        description: The name of the corresponding event table.
+        tests:
+          - not_null
+      - name: event_text
+        description: The name of the event.
+        tests:
+          - not_null
+      - name: source
+        description: The name of the source that the event are submitted from.
+        tests:
+          - not_null
+      - name: first_triggered_at
+        description: The first date that the event was triggered at.
+        tests:
+          - not_null
+      - name: last_triggered_at
+        description: The last date that the event was triggered at.
+        tests:
+          - not_null
+      - name: event_total_count
+        description: The total number of events
+        tests:
+          - not_null
+      - name: event_daily_average
+        description: >
+          Average number of events per day. Calculated as the total number of events divided by the number of days 
+          between first triggered date and today.
+        tests:
+          - not_null
