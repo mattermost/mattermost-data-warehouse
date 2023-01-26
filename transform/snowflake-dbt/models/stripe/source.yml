@@ -4,6 +4,10 @@ sources:
   - name: stripe_raw
     database: ANALYTICS
     schema: stripe_raw
+    loader: Stitch
+    description: Stripe raw data to warehouse, loaded using stitch.
+    tags:
+      - stitch
 
     tables:
       - name: subscriptions
