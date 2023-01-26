@@ -4,10 +4,14 @@ sources:
   - name: portal_prod
     database: 'RAW'
     schema: portal_prod
+    loader: Rudderstack
     description: |
       Portal data stored using Rudderstack. Rudderstack documentation offers an in-depth documentation of the
       [warehouse schema](https://www.rudderstack.com/docs/destinations/warehouse-destinations/warehouse-schema/).
-      The code that performs the tracking [is available here](https://github.com/mattermost/customer-web-server/blob/master/webapp/src/utils/rudder.tsx).
+      
+      This schema contains production data.
+      
+      [Source code](https://github.com/mattermost/customer-web-server/blob/master/webapp/src/utils/rudder.tsx).
     tags: ['rudderstack']
 
     tables:

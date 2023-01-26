@@ -1,0 +1,25 @@
+version: 2
+
+sources:
+  - name: mm_telemetry_rc
+    database: raw
+    schema: mm_telemetry_rc
+    loader: Rudderstack
+    description: |
+      Mattermost server and webapp telemetry data. Stored using Rudderstack. Rudderstack documentations offers an
+      in-depth documentation of the [warehouse schema](https://www.rudderstack.com/docs/destinations/warehouse-destinations/warehouse-schema/).
+      
+      This schema contains RC data.
+      
+      [Server source](https://github.com/mattermost/mattermost-server/blob/master/services/telemetry/telemetry.go)
+      [Webapp source](https://github.com/mattermost/mattermost-webapp/blob/master/packages/mattermost-redux/src/client/rudder.ts)
+    tags:
+      - rudderstack
+
+    tables:
+      - name: activity
+      - name: identifies
+      - name: pages
+      - name: rudder_discards
+      - name: tracks
+      - name: users

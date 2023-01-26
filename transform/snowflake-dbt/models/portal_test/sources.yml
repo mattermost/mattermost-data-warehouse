@@ -1,0 +1,16 @@
+version: 2
+
+sources:
+  - name: portal_test
+    database: 'RAW'
+    schema: portal_test
+    loader: Rudderstack
+    description: |
+      Portal data stored using Rudderstack. Rudderstack documentation offers an in-depth documentation of the
+      [warehouse schema](https://www.rudderstack.com/docs/destinations/warehouse-destinations/warehouse-schema/).
+      
+      This schema contains test data.
+      
+      [Source code](https://github.com/mattermost/customer-web-server/blob/master/webapp/src/utils/rudder.tsx).
+    tags:
+      - rudderstack

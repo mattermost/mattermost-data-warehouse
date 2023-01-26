@@ -1,0 +1,69 @@
+version: 2
+
+sources:
+  - name: mm_telemetry_qa
+    database: raw
+    schema: mm_telemetry_qa
+    loader: Rudderstack
+    description: |
+      Mattermost server and webapp telemetry data. Stored using Rudderstack. Rudderstack documentations offers an
+      in-depth documentation of the [warehouse schema](https://www.rudderstack.com/docs/destinations/warehouse-destinations/warehouse-schema/).
+      
+      This schema contains QA data.
+      
+      [Server source](https://github.com/mattermost/mattermost-server/blob/master/services/telemetry/telemetry.go)
+      [Webapp source](https://github.com/mattermost/mattermost-webapp/blob/master/packages/mattermost-redux/src/client/rudder.ts)
+    tags:
+      - rudderstack
+
+    tables:
+      - name: _groups
+      - name: activity
+      - name: channel_moderation
+      - name: config_analytics
+      - name: config_announcement
+      - name: config_audit
+      - name: config_bleve
+      - name: config_client_requirements
+      - name: config_cluster
+      - name: config_compliance
+      - name: config_data_retention
+      - name: config_display
+      - name: config_elasticsearch
+      - name: config_email
+      - name: config_experimental
+      - name: config_file
+      - name: config_guest_accounts
+      - name: config_image_proxy
+      - name: config_ldap
+      - name: config_localization
+      - name: config_log
+      - name: config_message_export
+      - name: config_metrics
+      - name: config_nativeapp
+      - name: config_notifications_log
+      - name: config_oauth
+      - name: config_password
+      - name: config_plugin
+      - name: config_privacy
+      - name: config_rate
+      - name: config_saml
+      - name: config_service
+      - name: config_sql
+      - name: config_support
+      - name: config_team
+      - name: config_theme
+      - name: elasticsearch
+      - name: event
+      - name: identifies
+      - name: license
+      - name: pages
+      - name: permissions_general
+      - name: permissions_system_scheme
+      - name: permissions_team_schemes
+      - name: plugins
+      - name: rudder_discards
+      - name: server
+      - name: tracks
+      - name: users
+      - name: warn_metrics

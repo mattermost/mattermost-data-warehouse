@@ -4,13 +4,15 @@ sources:
   - name: mm_telemetry_prod
     database: 'RAW'
     schema: mm_telemetry_prod
+    loader: Rudderstack
     description: |
       Mattermost server and webapp telemetry data. Stored using Rudderstack. Rudderstack documentations offers an
       in-depth documentation of the [warehouse schema](https://www.rudderstack.com/docs/destinations/warehouse-destinations/warehouse-schema/).
       
-      The code that sends the events is available at:
-      - [Server](https://github.com/mattermost/mattermost-server/blob/master/services/telemetry/telemetry.go)
-      - [Webapp](https://github.com/mattermost/mattermost-webapp/blob/master/packages/mattermost-redux/src/client/rudder.ts)
+      This schema contains production data.
+      
+      [Server source](https://github.com/mattermost/mattermost-server/blob/master/services/telemetry/telemetry.go)
+      [Webapp source](https://github.com/mattermost/mattermost-webapp/blob/master/packages/mattermost-redux/src/client/rudder.ts)
     tags: ['rudderstack']
 
     tables:
