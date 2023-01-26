@@ -4,6 +4,12 @@ sources:
   - name: blapi
     database: 'RAW'
     schema: blapi
+    loader: Pipelinewise
+    description: |
+      Copy of BLAPI database using [PipelineWise](https://transferwise.github.io/pipelinewise/). See relevant Airflow 
+      DAG for more details.
+    tags:
+      - pipelinewise
 
     tables:
       - name: trial_requests
