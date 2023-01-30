@@ -24,7 +24,7 @@ exposures:
     tags:
       - hightouch
       - salesforce
-    maturity: medium
+    maturity: low
     owner:
       name: Munish Sharma
       email: munish.sharma@mattermost.com
