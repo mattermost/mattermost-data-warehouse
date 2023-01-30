@@ -23,7 +23,7 @@ with existing_contacts as (
 ), customers_with_cloud_paid_subs as (
     SELECT
         customers_with_cloud_paid_subs.*,
-        COALESCE(existing_lead.ownerid, existing_contacts.ownerid, '0053p0000064nt8AAA') AS ownerid
+        COALESCE(existing_leads.ownerid, existing_contacts.ownerid, '0053p0000064nt8AAA') AS ownerid
     FROM {{ ref('customers_with_cloud_paid_subs') }}
     LEFT JOIN {{ ref('account') }}
         ON customers_with_cloud_paid_subs.domain = account.cbit__clearbitdomain__c
