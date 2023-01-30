@@ -21,7 +21,7 @@ WITH existing_lead AS (
         existing_lead.id AS duplicate_lead_id,
         -- existing_lead.email AS duplicate_lead_email,
         customers_with_cloud_paid_subs.account_external_id,
-        COALESCE(existing_lead.ownerid, '0053p0000064nt8AAA') AS ownerid
+        COALESCE(existing_lead.ownerid, '0053p0000064nt8AAA') AS ownerid,
         'Cloud Purchase' AS most_recent_action,
         'Cloud Professional' AS most_recent_action_detail,
         'Referral' AS lead_source,
