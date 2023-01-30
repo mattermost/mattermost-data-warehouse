@@ -8,7 +8,7 @@
 WITH customers_with_cloud_paid_subs as (
     SELECT
         customers_with_cloud_paid_subs.*,
-        "Customer" as account_type
+        'Customer' as account_type
     FROM {{ ref('customers_with_cloud_paid_subs') }}
     LEFT JOIN {{ ref('account') }}
         ON customers_with_cloud_paid_subs.domain = account.cbit__clearbitdomain__c
