@@ -4,8 +4,8 @@ WITH tmp AS (
     SELECT
         -- Surrogate key required as it's both a good practice, as well as allows merge incremental strategy.
         CAST(received_at AS date) AS date_received_at
-        , event
-        , event_text
+        , event AS event_table
+        , event_text AS event_name
         , COUNT(*) AS event_count
     FROM
         {{ source(schema, 'tracks') }}
@@ -20,10 +20,10 @@ WITH tmp AS (
 )
 SELECT
     -- Surrogate key required as it's both a good practice, as well as allows merge incremental strategy.
-    {{ dbt_utils.surrogate_key(['date_received_at', 'event']) }} AS id
+    {{ dbt_utils.surrogate_key(['date_received_at', 'event_table']) }} AS id
     , date_received_at
-    , event
-    , event_text
+    , event_table
+    , event_name
     , event_count
 FROM
     tmp

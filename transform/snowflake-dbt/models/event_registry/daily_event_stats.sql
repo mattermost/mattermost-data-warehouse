@@ -3,7 +3,7 @@
         "materialized": "table",
         "tags":"hourly",
         "schema": "event_registry",
-        "cluster_by": ['date_received_at', 'source'],
+        "cluster_by": ['event_date', 'source'],
     })
 }}
 -- depends_on: {{ ref('base_portal_prod') }}
@@ -33,11 +33,11 @@ WITH
 {% for schema_ in schemas %}
     base_{{schema_}} AS (
     SELECT
-        date_received_at
-        , event
-        , event_text
-        , event_count
+        date_received_at AS event_date
+        , event_table
+        , event_name
         , '{{schema_}}' AS source
+        , event_count
     FROM
         {{ ref('base_' + schema_) }}
     )
@@ -50,7 +50,7 @@ WITH
 -- - Columns that are useful for internal functionality have _ as a prefix
 SELECT
     -- Surrogate key required as it's both a good practice, as well as allows merge incremental strategy.
-    {{ dbt_utils.surrogate_key(['date_received_at', 'event', 'source']) }} AS id
+    {{ dbt_utils.surrogate_key(['event_date', 'event_table', 'source']) }} AS id
     , *
 FROM
     base_{{schema_}}
