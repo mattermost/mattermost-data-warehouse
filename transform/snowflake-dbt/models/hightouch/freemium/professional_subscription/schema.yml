@@ -1,0 +1,86 @@
+version: 2
+
+models:
+  - name: freemium_account
+    description: Accounts having current subscription as `Cloud Professional`, to be inserted into salesforce.
+    columns:
+      - name: account_external_id
+        tests:
+          - not_null
+          - unique
+      - name: ownerid
+        tests: 
+          - not_null
+  - name: freemium_account_update
+    description: Accounts having current subscription as `Cloud Professional` already existing in salesforce, to be updated with new fields.
+    columns:
+      - name: account_external_id
+        tests:
+          - not_null
+          - unique
+      - name: ownerid
+        tests: 
+          - not_null
+  - name: freemium_contact
+    description: Contacts having current subscription as `Cloud Professional`, to be inserted into salesforce.
+    columns:
+      - name: contact_external_id
+        tests:
+          - not_null
+          - unique
+      - name: ownerid
+        tests: 
+          - not_null
+      - name: duplicate_lead_id
+        tests:
+          - not_null
+  - name: freemium_contact_update
+    description: Contacts having current subscription as `Cloud Professional` already existing in salesforce, to be updated with new fields.
+    columns:
+      - name: contact_external_id
+        tests:
+          - not_null
+          - unique
+      - name: ownerid
+        tests: 
+          - not_null
+      - name: duplicate_lead_id
+        tests:
+          - not_null
+  - name: freemium_opportunity
+    description: Opportunities having current subscription as `Cloud Professional`, to be inserted into salesforce.
+    columns:
+      - name: opportunity_external_id
+        tests:
+          - not_null
+          - unique
+      - name: account_lookup_id
+        tests:
+          - not_null
+      - name: email
+        tests:
+          - not_null
+  - name: freemium_opportunitylineitem_for_update
+    description:  Opportunitylineitems having current subscription as `Cloud Professional`, to be updated into salesforce.
+    columns:
+      - name: product_id
+        tests:
+          - not_null
+      - name: opportunity_external_id
+        tests:
+          - not_null
+  - name: cancelled_account_update
+    description: Accounts that cancelled subscription for `Cloud Professional`, to be updated into salesforce.
+    columns:
+      - name: account_external_id
+        tests:
+          - not_null
+          - unique
+  - name: cancelled_opportunity_update
+    description: Opportunity that cancelled subscription for `Cloud Professional`, to be updated into salesforce.
+    columns:
+      - name: opportunity_sfid
+        tests:
+          - not_null
+          - unique
+
