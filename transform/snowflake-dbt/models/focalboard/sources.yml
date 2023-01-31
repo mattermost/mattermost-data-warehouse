@@ -18,3 +18,4 @@ sources:
       - name: server
       - name: workspaces
       - name: blocks
+      - name: tracks
