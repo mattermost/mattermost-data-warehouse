@@ -19,7 +19,7 @@ exposures:
         7. Existing cloud professional opportunitylineitem are stored in view `freemium_opportunitylineitem_for_update`, currently not updating to salesforce.
       Cancelled subscriptions
         1. Cancelled cloud professional accounts are stored in view `cancelled_account_update`, updated into salesforce via ([hightouch sync](https://app.hightouch.com/mattermost-com/syncs/44320)).
-        2. Cancelled cloud professional opportunities are stored in view `cancelled_update_opportunity`, updated into salesforce via ([hightouch sync](https://app.hightouch.com/mattermost-com/syncs/44318)).
+        2. Cancelled cloud professional opportunities are stored in view `cancelled_opportunity_update`, updated into salesforce via ([hightouch sync](https://app.hightouch.com/mattermost-com/syncs/44318)).
     url: https://app.hightouch.com/mattermost-com/syncs?search=Cloud+Professional
     tags:
       - hightouch
