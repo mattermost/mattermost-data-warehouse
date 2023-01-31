@@ -75,4 +75,3 @@ models:
         description: The domain of the customer i.e substring of email in most cases
         tests:
           - not_null
-          
