@@ -71,6 +71,7 @@ models:
         tests:
           - not_null
           - unique
+          
       - name: domain
         description: The domain of the customer i.e substring of email in most cases
         tests:
