@@ -61,3 +61,18 @@ models:
         description: Whether there are missing clearbit data (1) or not (0).
         tests:
           - not_null
+
+  - name: dq_cloud_professional
+    description: Information about paid customers with `Cloud Professional` subscription.
+
+    columns:
+      - name: email
+        description:  The email of the customer who subscribed for cloud professional subscription.
+        tests:
+          - not_null
+          - unique
+          
+      - name: domain
+        description: The domain of the customer i.e substring of email in most cases
+        tests:
+          - not_null
