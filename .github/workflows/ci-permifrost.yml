@@ -6,14 +6,16 @@ on:
       - master
     paths:
       - '.github/workflows/ci-permifrost.yml'
-      - 'build/permiforst.Dockerfile'
+      - 'build/permifrost.Dockerfile'
+      - 'build/.yamllint.yml'
       - 'load/**'
   pull_request:
     branches:
       - master
     paths:
       - '.github/workflows/ci-permifrost.yml'
-      - 'build/permiforst.Dockerfile'
+      - 'build/permifrost.Dockerfile'
+      - 'build/.yamllint.yml'
       - 'load/**'
 
 jobs:
@@ -44,7 +46,7 @@ jobs:
           fetch-depth: 1
 
       - name: Lint docker image
-        run: make docker-permifrost-lint
+        run: make permifrost-docker-lint
 
       - name: Build & push docker image
         run: make docker-login && make permifrost-docker-build && make permifrost-docker-push
@@ -53,7 +55,7 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Sign docker image
-        run: make docker-permifrost-sign && make docker-permifrost-verify
+        run: make permifrost-docker-sign && make permifrost-docker-verify
         env:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
