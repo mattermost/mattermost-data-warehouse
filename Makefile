@@ -280,7 +280,7 @@ permifrost-docker-build: ## to build the docker image
 .PHONY: permifrost-docker-push
 permifrost-docker-push: ## to push the docker image
 	@$(INFO) Pushing permifrost to registry...
-	$(AT)$(DOCKER) tag ${PERMIFROST}:${APP_VERSION} $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:${APP_VERSION} || ${FAIL}
+	$(AT)$(DOCKER) tag ${PERMIFROST_NAME}:${APP_VERSION} $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:${APP_VERSION} || ${FAIL}
 	$(AT)$(DOCKER) push $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:${APP_VERSION} || ${FAIL}
 # if we are on a latest semver APP_VERSION tag, also push latest
 ifneq ($(shell echo $(APP_VERSION) | egrep '^v([0-9]+\.){0,2}(\*|[0-9]+)'),)
