@@ -7,6 +7,7 @@ PROTECTED_BRANCH := master
 CURRENT_BRANCH   := $(shell git rev-parse --abbrev-ref HEAD)
 # Use repository name as application name
 APP_NAME    := $(shell basename -s .git `git config --get remote.origin.url`)
+PERMIFROST_NAME := mattermost-permifrost
 # Get current commit
 APP_COMMIT  := $(shell git log --pretty=format:'%h' -n 1)
 # Check if we are in protected branch, if yes use `protected_branch_name-sha` as app version.
@@ -30,14 +31,16 @@ MAKEFLAGS     += --warn-undefined-variables
 DOCKER                  := $(shell which docker)
 # Dockerfile's location
 DOCKER_FILE             += ./build/Dockerfile
+PERMIFROST_DOCKER_FILE  += ./build/permifrost.Dockerfile
 # Docker compose DBT file
 DOCKER_COMPOSE_DBT_FILE += ./build/docker-compose.dbt.yml
 
 # Docker options to inherit for all docker run commands
 DOCKER_OPTS             += --rm -u $$(id -u):$$(id -g) --platform "linux/amd64"
 # Registry to upload images
-DOCKER_REGISTRY         ?= docker.io
-DOCKER_REGISTRY_REPO    ?= mattermost/${APP_NAME}
+DOCKER_REGISTRY                    ?= docker.io
+DOCKER_REGISTRY_REPO               ?= mattermost/${APP_NAME}
+DOCKER_REGISTRY_PERMIFROST_REPO    ?= mattermost/${PERMIFROST_NAME}
 # Registry credentials
 DOCKER_USER             ?= user
 DOCKER_PASSWORD         ?= password
@@ -263,6 +266,109 @@ docker-login: ## to login to a container registry
 	@$(INFO) Dockerd login to container registry ${DOCKER_REGISTRY}...
 	$(AT) echo "${DOCKER_PASSWORD}" | $(DOCKER) login --password-stdin -u ${DOCKER_USER} $(DOCKER_REGISTRY) || ${FAIL}
 	@$(OK) Dockerd login to container registry ${DOCKER_REGISTRY}...
+
+
+.PHONY: permifrost-docker-build
+permifrost-docker-build: ## to build the docker image
+	@$(INFO) Performing Permifrost Docker build ${PERMIFROST_NAME}:${APP_VERSION}
+	$(AT)$(DOCKER) build \
+	--build-arg PYTHON_IMAGE=${DOCKER_IMAGE_PYTHON} \
+	-f ${PERMIFROST_DOCKER_FILE} . \
+	-t ${PERMIFROST_NAME}:${APP_VERSION} || ${FAIL}
+	@$(OK) Performing Permifrost Docker build ${PERMIFROST_NAME}:${APP_VERSION}
+
+.PHONY: permifrost-docker-push
+permifrost-docker-push: ## to push the docker image
+	@$(INFO) Pushing permifrost to registry...
+	$(AT)$(DOCKER) tag ${PERMIFROST}:${APP_VERSION} $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:${APP_VERSION} || ${FAIL}
+	$(AT)$(DOCKER) push $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:${APP_VERSION} || ${FAIL}
+# if we are on a latest semver APP_VERSION tag, also push latest
+ifneq ($(shell echo $(APP_VERSION) | egrep '^v([0-9]+\.){0,2}(\*|[0-9]+)'),)
+  ifeq ($(shell git tag -l --sort=v:refname | tail -n1),$(APP_VERSION))
+	$(AT)$(DOCKER) tag ${APP_NAME}:${APP_VERSION} $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:latest || ${FAIL}
+	$(AT)$(DOCKER) push $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:latest || ${FAIL}
+  endif
+endif
+	@$(OK) Pushing to registry $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:${APP_VERSION}
+
+.PHONY: permifrost-docker-sign
+permifrost-docker-sign: ## to sign the permifrost docker image
+	@$(INFO) Signing the Permifrost Docker image...
+	$(AT)echo "$${COSIGN_KEY}" > cosign.key && \
+	$(DOCKER) run ${DOCKER_OPTS} \
+	--entrypoint '/bin/sh' \
+        -v $(PWD):/app -w /app \
+	-e COSIGN_PASSWORD=${COSIGN_PASSWORD} \
+	-e HOME="/tmp" \
+    ${DOCKER_IMAGE_COSIGN} \
+	-c \
+	"echo Signing... && \
+	cosign login $(DOCKER_REGISTRY) -u ${DOCKER_USER} -p ${DOCKER_PASSWORD} && \
+	cosign sign --key cosign.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:${APP_VERSION}" || ${FAIL}
+# if we are on a latest semver APP_VERSION tag, also sign latest tag
+ifneq ($(shell echo $(APP_VERSION) | egrep '^v([0-9]+\.){0,2}(\*|[0-9]+)'),)
+  ifeq ($(shell git tag -l --sort=v:refname | tail -n1),$(APP_VERSION))
+	$(DOCKER) run ${DOCKER_OPTS} \
+	--entrypoint '/bin/sh' \
+        -v $(PWD):/app -w /app \
+	-e COSIGN_PASSWORD=${COSIGN_PASSWORD} \
+	-e HOME="/tmp" \
+	${DOCKER_IMAGE_COSIGN} \
+	-c \
+	"echo Signing... && \
+	cosign login $(DOCKER_REGISTRY) -u ${DOCKER_USER} -p ${DOCKER_PASSWORD} && \
+	cosign sign --key cosign.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:latest" || ${FAIL}
+  endif
+endif
+	$(AT)rm -f cosign.key || ${FAIL}
+	@$(OK) Signing the Permifrost Docker image: $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:${APP_VERSION}
+
+.PHONY: permifrost-docker-verify
+permifrost-docker-verify: ## to verify the Permifrost Docker image
+	@$(INFO) Verifying the published Permifrost Docker image...
+	$(AT)echo "$${COSIGN_PUBLIC_KEY}" > cosign_public.key && \
+	$(DOCKER) run ${DOCKER_OPTS} \
+	--entrypoint '/bin/sh' \
+	-v $(PWD):/app -w /app \
+	${DOCKER_IMAGE_COSIGN} \
+	-c \
+	"echo Verifying... && \
+	cosign verify --key cosign_public.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:${APP_VERSION}" || ${FAIL}
+# if we are on a latest semver APP_VERSION tag, also verify latest tag
+ifneq ($(shell echo $(APP_VERSION) | egrep '^v([0-9]+\.){0,2}(\*|[0-9]+)'),)
+  ifeq ($(shell git tag -l --sort=v:refname | tail -n1),$(APP_VERSION))
+	$(DOCKER) run ${DOCKER_OPTS} \
+	--entrypoint '/bin/sh' \
+	-v $(PWD):/app -w /app \
+	${DOCKER_IMAGE_COSIGN} \
+	-c \
+	"echo Verifying... && \
+	cosign verify --key cosign_public.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:latest" || ${FAIL}
+  endif
+endif
+	$(AT)rm -f cosign_public.key || ${FAIL}
+	@$(OK) Verifying the published docker image: $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:${APP_VERSION}
+
+.PHONY: permifrost-docker-sbom
+permifrost-docker-sbom: ## to print a sbom report for Permifrost Docker image
+	@$(INFO) Performing Permifrost Docker sbom report...
+	$(AT)$(DOCKER) sbom ${PERMIFROST_NAME}:${APP_VERSION} || ${FAIL}
+	@$(OK) Performing Permifrost Docker sbom report
+
+
+.PHONY: permifrost-docker-scan
+permifrost-docker-scan: ## to print a vulnerability report  for Permifrost Docker image
+	@$(INFO) Performing Permifrost Docker scan report...
+	$(AT)$(DOCKER) scan ${PERMIFROST_NAME}:${APP_VERSION} || ${FAIL}
+	@$(OK) Performing Docker scan report
+
+.PHONY: permifrost-docker-lint
+permifrost-docker-lint: ## to lint the Permifrost Dockerfile
+	@$(INFO) Dockerfile linting...
+	$(AT)$(DOCKER) run -i ${DOCKER_OPTS} \
+	${DOCKER_IMAGE_DOCKERLINT} \
+	< ${PERMIFROST_DOCKER_FILE} || ${FAIL}
+	@$(OK) Dockerfile linting
 
 .PHONY: dbt-docs
 dbt-docs: ## to generate and serve dbt docs

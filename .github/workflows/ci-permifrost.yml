@@ -1,0 +1,60 @@
+name: Permifrost Tests
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/ci-permifrost.yml'
+      - 'build/permiforst.Dockerfile'
+      - 'load/**'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - '.github/workflows/ci-permifrost.yml'
+      - 'build/permiforst.Dockerfile'
+      - 'load/**'
+
+jobs:
+  tests:
+    name: Lint YAML file
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Lint YAML file
+        uses: ibiqlik/action-yamllint@2576378a8e339169678f9939646ee3ee325e845c  #v3.1.1
+        with:
+          file_or_dir: load/snowflake/roles.yaml
+
+  docker:
+    name: Build docker image
+    runs-on: ubuntu-latest
+    needs: tests
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Lint docker image
+        run: make docker-permifrost-lint
+
+      - name: Build & push docker image
+        run: make docker-login && make permifrost-docker-build && make permifrost-docker-push
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Sign docker image
+        run: make docker-permifrost-sign && make docker-permifrost-verify
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          COSIGN_KEY: ${{ secrets.COSIGN_KEY }}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          COSIGN_PUBLIC_KEY: ${{ secrets.COSIGN_PUBLIC_KEY }}

@@ -3,5 +3,4 @@
 build
 dags
 k8s
-load
 plugins
