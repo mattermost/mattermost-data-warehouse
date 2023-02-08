@@ -7,3 +7,7 @@ rules:
     level: warning
 
   indentation: disable
+
+  truthy:
+    allowed-values: [ 'true', 'false', 'yes', 'no' ]
+    check-keys: true
