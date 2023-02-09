@@ -6,7 +6,7 @@ from airflow.contrib.kubernetes.pod import Resources
 
 from plugins.operators.mattermost_operator import MattermostOperator
 
-PERMIFROST_IMAGE = "docker.io/adovenmm/permifrost-image:latest"
+PERMIFROST_IMAGE = "mattermost/mattermost-permifrost:master"
 PSQL_IMAGE = "docker.io/adovenmm/data-warehouse-psql:latest"
 PIPELINEWISE_IMAGE = "docker.io/adovenmm/pipelinewise:latest"
 

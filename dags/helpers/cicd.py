@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 
-from dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, send_alert
+from dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, PERMIFROST_IMAGE, send_alert
 
 # Default arguments for the DAG
 default_args = {
@@ -38,8 +38,8 @@ dag = DAG(
     doc_md=doc_md,
 )
 
-# Dummy task that just runs a random command.
-dummy = KubernetesPodOperator(
+# Dummy tasks that just runs a random command in order to download the images if needed.
+download_warehouse_image = KubernetesPodOperator(
     get_logs=True,
     image_pull_policy="Always",
     in_cluster=True,
@@ -52,3 +52,20 @@ dummy = KubernetesPodOperator(
     arguments=["date"],
     dag=dag,
 )
+
+# Dummy tasks that just runs a random command in order to download the images if needed.
+download_permifrost_image = KubernetesPodOperator(
+    get_logs=True,
+    image_pull_policy="Always",
+    in_cluster=True,
+    is_delete_operator_pod=True,
+    namespace=os.environ["NAMESPACE"],
+    cmds=["/bin/bash", "-c"],
+    image=PERMIFROST_IMAGE,  # Uses latest build from master
+    task_id="download-permifrost-image",
+    name="download-permifrost-image",
+    arguments=["date"],
+    dag=dag,
+)
+
+download_warehouse_image >> download_permifrost_image
