@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 
-from dags.airflow_utils import PERMIFROST_IMAGE, clone_repo_cmd, pod_defaults, send_alert
+from dags.airflow_utils import PERMIFROST_IMAGE, pod_defaults, send_alert
 from dags.kube_secrets import (
     PERMISSION_BOT_ACCOUNT,
     PERMISSION_BOT_DATABASE,
@@ -26,8 +26,7 @@ default_args = {
 
 # Set the command for the container
 container_cmd = f"""
-    {clone_repo_cmd} &&
-    permifrost grant mattermost-data-warehouse/load/snowflake/roles.yaml
+    permifrost grant load/snowflake/roles.yaml
 """
 
 # Create the DAG
