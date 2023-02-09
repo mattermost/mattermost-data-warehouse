@@ -154,7 +154,7 @@ roles:
                 write:
                     - raw.*.*
 
-    - transformer: # For automated jobs
+    - transformer:  # For automated jobs
         warehouses:
             - transform_xs
             - transform_l
@@ -192,7 +192,7 @@ roles:
     # Object Roles
 
     # User Roles
-    
+
 
 # Users
 users:
@@ -272,6 +272,6 @@ warehouses:
 
     - reporting_m:
         size: medium
-    
+
     - transform_m:
         size: medium
