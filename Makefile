@@ -383,9 +383,15 @@ dbt-generate-docs: ## to generate dbt docs
 	$(AT)$(OK) Generated docs
 
 .PHONY: dbt-bash
-dbt-bash: ## to start a bash shell with DBT
-	$(AT)$(INFO) Running bash with dbt...
+dbt-bash: ## to start a bash shell with DBT for snowflake-dbt project
+	$(AT)$(INFO) Running bash with dbt in ${CYAN}snowflake-dbt${CNone}...
 	$(AT)$(DOCKER) compose -f ${DOCKER_COMPOSE_DBT_FILE} run dbt_image bash -c "dbt deps && /bin/bash" || ${FAIL}
+	$(AT)$(OK) Exited dbt bash
+
+.PHONY: dbt-mattermost-analytics
+dbt-mattermost-analytics: ## to start a bash shell with DBT for mattermost analytics project
+	$(AT)$(INFO) Running bash with dbt in ${CYAN}mattermost_analytics${CNone}...
+	$(AT)$(DOCKER) compose -f ${DOCKER_COMPOSE_DBT_FILE} run -p "8081:8081" mattermost_analytics bash -c "dbt deps && /bin/bash" || ${FAIL}
 	$(AT)$(OK) Exited dbt bash
 
 .PHONY: data-image

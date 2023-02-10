@@ -21,6 +21,26 @@ services:
           target: /root/.dbt/
           read_only: True
 
+    mattermost_analytics:
+      image: ghcr.io/dbt-labs/dbt-snowflake:1.4.0@sha256:055362057725989404fbbfb1ac27ead32f0392158d2363d09434a2bcfcd69bc5
+      env_file:
+        - ../.dbt.env
+      environment:
+        SNOWFLAKE_LOAD_DATABASE: "RAW"
+        SNOWFLAKE_TRANSFORM_WAREHOUSE: "TRANSFORM_XS"
+        SNOWFLAKE_TRANSFORM_DATABASE: "ANALYTICS"
+      restart: always
+      command: bash -c "/bin/bash"
+      entrypoint: [ "" ]
+      volumes:
+        - type: bind
+          source: ../transform/mattermost-analytics/
+          target: /usr/app
+        - type: bind
+          source: ${DBT_PROFILE_PATH:-../transform/mattermost-analytics/profile}
+          target: /root/.dbt/
+          read_only: True
+
     data_image:
       image: docker.io/adovenmm/data-image:v01.21.1
       env_file:
