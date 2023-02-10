@@ -9,10 +9,14 @@ services:
         SNOWFLAKE_LOAD_DATABASE: "RAW"
         SNOWFLAKE_TRANSFORM_WAREHOUSE: "TRANSFORM_XS"
         SNOWFLAKE_TRANSFORM_DATABASE: "ANALYTICS"
+        PROJECT_NAME: "snowflake-dbt"
       restart: always
       command: bash -c "/bin/bash"
       entrypoint: [ "" ]
       volumes:
+        - type: bind
+          source: dbt.bashrc
+          target: /root/.bashrc
         - type: bind
           source: ../transform/snowflake-dbt/
           target: /usr/app
@@ -29,10 +33,14 @@ services:
         SNOWFLAKE_LOAD_DATABASE: "RAW"
         SNOWFLAKE_TRANSFORM_WAREHOUSE: "TRANSFORM_XS"
         SNOWFLAKE_TRANSFORM_DATABASE: "ANALYTICS"
+        PROJECT_NAME: "mattermost-analytics"
       restart: always
       command: bash -c "/bin/bash"
       entrypoint: [ "" ]
       volumes:
+        - type: bind
+          source: dbt.bashrc
+          target: /root/.bashrc
         - type: bind
           source: ../transform/mattermost-analytics/
           target: /usr/app

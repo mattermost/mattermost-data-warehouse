@@ -27,7 +27,15 @@ This project follows the structure suggested in
 
 ## Conventions
 
-To be defined.
+### Schema names
+
+The [alternative pattern](https://docs.getdbt.com/docs/build/custom-schemas#an-alternative-pattern-for-generating-schema-names)
+is used. A frequently used pattern for generating schema names is to change the behavior based on dbt's environment:
+- In prod:
+  - If a custom schema is provided, a model's schema name should match the custom schema, rather than being concatenated to the target schema.
+  - If no custom schema is provided, a model's schema name should match the target schema.
+- In other environments (e.g. dev or qa):
+  - Build all models in the target schema, as in, ignore custom schema configurations.
 
 ## List of packages
 

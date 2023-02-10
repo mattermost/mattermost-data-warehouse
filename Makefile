@@ -391,7 +391,7 @@ dbt-bash: ## to start a bash shell with DBT for snowflake-dbt project
 .PHONY: dbt-mattermost-analytics
 dbt-mattermost-analytics: ## to start a bash shell with DBT for mattermost analytics project
 	$(AT)$(INFO) Running bash with dbt in ${CYAN}mattermost_analytics${CNone}...
-	$(AT)$(DOCKER) compose -f ${DOCKER_COMPOSE_DBT_FILE} run -p "8081:8081" mattermost_analytics bash -c "dbt deps && /bin/bash" || ${FAIL}
+	$(AT)$(DOCKER) compose -f ${DOCKER_COMPOSE_DBT_FILE} run -p "8081:8081" mattermost_analytics bash -c "dbt deps && /bin/bash" --force-recreate || ${FAIL}
 	$(AT)$(OK) Exited dbt bash
 
 .PHONY: data-image
