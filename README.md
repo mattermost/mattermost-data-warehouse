@@ -43,6 +43,7 @@ data to other tools.
 ├── requirements.txt        <--- Dependencies (deprecated)
 ├── transform
 │  ├── snowflake-dbt        <--- Snowflake DBT models
+│  ├── mattermost-analytics <--- New DBT project for Mattermost analytics.
 │  └── sql                  <--- SQL scripts that get executed by DAGs
 └── utils                   <--- Various Python scripts
 ```
@@ -120,6 +121,13 @@ If the output looks similar to:
 
 then the setup is working.
 
+Alternatively, you can run 
+
+```bash
+make dbt-mattermost-analytics
+```
+
+to start a bash shell for the new project. 
 
 ### Building docs and serving them locally
 

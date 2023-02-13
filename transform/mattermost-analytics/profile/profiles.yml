@@ -1,0 +1,18 @@
+config:
+    send_anonymous_usage_stats: False
+    use_colors: True
+
+snowflake:
+  target: prod
+  outputs:
+    prod:
+      type: snowflake
+      threads: 8
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+      database: "{{ env_var('SNOWFLAKE_TRANSFORM_DATABASE') }}"
+      role: "{{ env_var('SNOWFLAKE_TRANSFORM_ROLE') }}"
+      warehouse: "TRANSFORM_XS"
+      schema: "{{ env_var('SNOWFLAKE_TRANSFORM_SCHEMA') }}"
+      client_session_keep_alive: True

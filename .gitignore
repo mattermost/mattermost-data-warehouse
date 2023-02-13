@@ -8,6 +8,7 @@ __pycache__/
 # dbt_utils
 transform/snowflake-dbt/dbt_modules/
 transform/snowflake-dbt/dbt_packages/
+
 # C extensions
 *.so
 
@@ -84,7 +85,7 @@ target/
 
 # Logs
 transform/snowflake-dbt/logs/
-
+transform/mattermost-analytics/logs/
 # .vscode
 .vscode/
 Snowflake_Prod.session.sql
