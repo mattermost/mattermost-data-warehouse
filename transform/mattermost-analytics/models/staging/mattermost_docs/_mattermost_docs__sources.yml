@@ -10,7 +10,7 @@ sources:
 
     tables:
       - name: feedback_submitted
-        description: Holds a record for each `tracks` call where event name is similar to `feedback_submitted`.
+        description: Holds a record for each `tracks` call where event name is `feedback_submitted`.
 
       - name: pages
         description: Holds a record for every `page` call.
