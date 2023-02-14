@@ -9,9 +9,9 @@ models:
       - name: event_id
         description: The event's id.
       - name: event_name
-        description: The name of the event table.
-      - name: event_table
         description: The name of the event.
+      - name: event_table
+        description: The name of the event table.
       - name: category
         description: The event's category.
       - name: type
