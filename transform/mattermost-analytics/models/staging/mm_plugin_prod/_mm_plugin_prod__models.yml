@@ -12,7 +12,7 @@ models:
         description: The name of the event.
       - name: event_table
         description: The name of the event table.
-      - name: type
+      - name: event_type
         description: The type of the event.
       - name: user_id
         description: The ID of the user that sent the event.
