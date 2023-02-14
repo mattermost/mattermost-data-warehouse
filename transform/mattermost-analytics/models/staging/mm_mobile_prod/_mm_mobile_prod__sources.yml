@@ -1,0 +1,83 @@
+version: 2
+
+sources:
+  - name: mm_mobile_prod
+    database: 'RAW'
+    schema: mm_mobile_prod
+    loader: Rudderstack
+    description: |
+      Mobile app telemetry pushed using Rudderstack. This schema is for production releases. 
+      
+      [Source code](https://github.com/mattermost/mattermost-mobile/blob/main/app/managers/analytics.ts)
+    tags: ['rudderstack']
+
+    tables:
+      - name: action_channels_add_member
+      - name: action_channels_favorite
+      - name: action_channels_join
+      - name: action_channels_leave
+      - name: action_channels_remove_member
+      - name: action_channels_unfavorite
+      - name: action_posts_flag
+      - name: action_posts_unflag
+      - name: api_channel_get
+      - name: api_channel_get_by_name_and_team_name
+      - name: api_channels_add_member
+      - name: api_channels_convert_to_private
+      - name: api_channels_create
+      - name: api_channels_create_direct
+      - name: api_channels_create_group
+      - name: api_channels_delete
+      - name: api_channels_patch
+      - name: api_channels_remove_member
+      - name: api_channels_unarchive
+      - name: api_channels_update_privacy
+      - name: api_files_upload
+      - name: api_get_known_users
+      - name: api_integrations_used
+      - name: api_interactive_messages_button_clicked
+      - name: api_interactive_messages_dialog_submitted
+      - name: api_interactive_messages_menu_selected
+      - name: api_post_set_unread_post
+      - name: api_posts_create
+      - name: api_posts_delete
+      - name: api_posts_get_after
+      - name: api_posts_get_before
+      - name: api_posts_get_flagged
+      - name: api_posts_get_pinned
+      - name: api_posts_patch
+      - name: api_posts_pin
+      - name: api_posts_replied
+      - name: api_posts_search
+      - name: api_posts_search_mention
+      - name: api_posts_unpin
+      - name: api_profiles_get
+      - name: api_profiles_get_by_ids
+      - name: api_profiles_get_by_usernames
+      - name: api_profiles_get_in_channel
+      - name: api_profiles_get_in_team
+      - name: api_profiles_get_not_in_channel
+      - name: api_reactions_delete
+      - name: api_reactions_save
+      - name: api_search_users
+      - name: api_teams_get_team_by_name
+      - name: api_teams_invite_members
+      - name: api_teams_remove_members
+      - name: api_users_login
+      - name: api_users_logout
+      - name: api_users_send_password_reset
+      - name: api_users_set_default_profile_picture
+      - name: api_users_update_channel_notifications
+      - name: application_backgrounded
+      - name: application_installed
+      - name: application_opened
+      - name: application_updated
+      - name: complete_suggestion
+      - name: get_suggestions_failed
+      - name: get_suggestions_initiated
+      - name: get_suggestions_success
+      - name: identifies
+      - name: rudder_discards
+      - name: screens
+      - name: tracks
+      - name: users

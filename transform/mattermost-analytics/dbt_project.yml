@@ -36,7 +36,8 @@ models:
     # Config indicated by + and applies to all files under models/example/
     staging:
       +materialized: view
-      schema: staging
+      # Ideally this would have been named staging. Unfortunately there's already a schema with that name.
+      schema: dbt_staging
       tags: ['staging']
     intermediate:
       +materialized: ephemeral
@@ -49,3 +50,9 @@ models:
       schema: utilities
       tags: [ 'utilities' ]
 
+
+# Configuration variables
+
+vars:
+  # Common event columns to keep (if they are part of the table)
+  base_event_columns: ['ID', 'RECEIVED_AT', 'EVENT', 'EVENT_TEXT', 'CATEGORY', 'TYPE', 'USER_ID', 'USER_ACTUAL_ID' ]
