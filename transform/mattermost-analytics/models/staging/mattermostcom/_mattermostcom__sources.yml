@@ -1,0 +1,27 @@
+version: 2
+
+sources:
+  - name: mattermostcom
+    database: 'RAW'
+    schema: mattermostcom
+    loader: Rudderstack
+    description: |
+      Mattermost.com events captured using Rudderstack's JS framework.
+    tags:
+      - rudderstack
+
+    tables:
+      - name: aliases
+      - name: pages
+        description: 'The Integrations & WWW Mattermost Web Property User-Level Page Views.'
+      - name: identifies
+        description: 'User identifying information from users visiting Integrations & WWW Mattermost Web Property.'
+      - name: users
+        description: 'Information pertaining to the user and purchased license (subscription_id) for users that successfully purchased a license via the Mattermost Customer Portal (customers.mattermost.com).'
+      - name: marketo_form_submit
+        description: 'Raw Marketo Form Submit data.'
+      - name: tracks
+      - name: groups
+      - name: free_trial_clicked
+      - name: rudder_discards
+      - name: screens
