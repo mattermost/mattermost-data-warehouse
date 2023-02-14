@@ -1,0 +1,24 @@
+version: 2
+
+macros:
+  - name: join_tracks_event_tables
+    description: |
+      A macro that joins event tables to a single table, keeping the extra columns. 
+      
+      Rudderstack stores one row in two tables for each event. 
+      - `tracks`, which holds generic information about the event, and
+      - `event_name`, which holds the extra user defined properties. 
+      
+      This macro joins all tables except the default tables defined in
+      [warehouse schema](https://www.rudderstack.com/docs/destinations/warehouse-destinations/warehouse-schema). It also
+      allows for filtering which columns to keep. This can be useful in scenarios where events share properties (i.e. 
+      indicating event hierarchy, A/B test allocations etc).
+
+    arguments:
+      - name: schema
+        type: string
+        description: The schema that contains the event tables.
+      - name: columns
+        type: list
+        description: The list of columns to keep.
+
