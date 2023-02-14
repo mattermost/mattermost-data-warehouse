@@ -1,0 +1,132 @@
+version: 2
+
+sources:
+  - name: portal_prod
+    database: RAW
+    schema: portal_prod
+    loader: Rudderstack
+    description: |
+      Portal data stored using Rudderstack. Rudderstack documentation offers an in-depth documentation of the
+      [warehouse schema](https://www.rudderstack.com/docs/destinations/warehouse-destinations/warehouse-schema/).
+      
+      This schema contains production data.
+      
+      [Source code](https://github.com/mattermost/customer-web-server/blob/master/webapp/src/utils/rudder.tsx).
+    tags: ['rudderstack']
+
+    tables:
+      - name: click_access_workspace
+      - name: click_compare_plan
+      - name: click_connect_workspace
+      - name: click_contact_sales
+      - name: click_contact_support
+      - name: click_continue_button
+      - name: click_create_workspace
+      - name: click_edit_url_button
+      - name: click_goto_exisiting_workspace
+      - name: click_join_team_workspace_link
+      - name: click_join_team_workspace_link_b
+      - name: click_login
+      - name: click_login_billing
+      - name: click_logout
+      - name: click_next
+      - name: click_next_b
+      - name: click_open_payment_feedback_form_modal
+      - name: click_password_continue_button
+      - name: click_privacy_policy
+      - name: click_privacy_policy_b
+      - name: click_resend_code
+      - name: click_self_managed_trial_link
+      - name: click_self_managed_trial_link_b
+      - name: click_signup
+      - name: click_signup_password_continue_button
+      - name: click_start_trial
+      - name: click_status_page
+      - name: click_terms
+      - name: click_terms_b
+      - name: click_unknown_url
+      - name: clicked_contact_us_link
+      - name: clicked_faq_link
+      - name: clicked_terms_checkbox
+      - name: cloud_contact_us_submitted
+      - name: cloud_signup_a_page_visit
+      - name: cloud_signup_b_page_visit
+      - name: cloud_signup_error
+      - name: cloud_signup_page_visit
+      - name: cloud_signup_redirect_to_mattermost
+      - name: cloud_signup_success
+      - name: cloud_subscription_completed
+      - name: deployment_option_select
+      - name: email_address_already_associated_with_an_account
+      - name: enter_invalid_code
+      - name: enter_invalid_code_too_many_times
+      - name: enter_valid_code
+      - name: identifies
+        description: Holds one record for each `identify` call.
+
+      - name: non_business_email_blocked
+      - name: non_business_email_blocked_b
+      - name: page_load
+      - name: pages
+        description: Holds a record for every `page` call.
+
+      - name: pageview_admin_password
+      - name: pageview_cloud_landing_page
+      - name: pageview_create_signup_password
+      - name: pageview_create_workspace
+      - name: pageview_deployment_selection
+      - name: pageview_getting_started
+      - name: pageview_verify_email
+      - name: password_validation_error
+      - name: purchase_complete_create_portal_account
+      - name: purchase_fail_clicked_try_again
+      - name: renew_license_form_choose
+      - name: renew_license_form_choose_enterprise
+      - name: renew_license_form_choose_enterprise_e_10
+      - name: renew_license_form_choose_professional
+      - name: renew_license_form_choose_self_hosted_enterprise
+      - name: renew_license_form_choose_self_hosted_professional
+      - name: renew_license_form_clicked_compare_plans
+      - name: renew_license_form_clicked_complete_purchase
+      - name: rudder_discards
+        description: Holds data that were not added to a Rudderstack managed table due to invalid data type.
+
+      - name: see_how_billing_works
+      - name: signup_flow_email_invalidated
+      - name: signup_flow_email_validated
+      - name: srv_oauth_complete_success
+      - name: stripe_confirm_card_error
+      - name: subscription_purchased
+      - name: successful_url_redirect
+      - name: tracks
+        description: Holds a record for each `track` call.
+
+      - name: unknown_url
+      - name: users
+        description: Contains the properties from the latest `identify` call made for an user.
+
+      - name: utm_params
+      - name: workspace_name_taken
+      - name: workspace_name_unavailable
+      - name: workspace_name_valid
+      - name: workspace_provisioning_click_open_workspace
+      - name: workspace_provisioning_ended
+      - name: workspace_provisioning_error
+      - name: workspace_provisioning_error_unknown
+      - name: workspace_provisioning_in_progress
+      - name: workspace_provisioning_started
+      - name: workspace_provisioning_timeout
+      - name: workspace_provisioning_video_ended
+      - name: workspace_provisioning_video_enterfullscreen
+      - name: workspace_provisioning_video_paused
+      - name: workspace_provisioning_video_play
+      - name: workspace_provisioning_video_resume
+      - name: workspace_provisioning_video_unmuted
+      - name: workspace_reactivation_ended
+      - name: workspace_reactivation_error
+      - name: workspace_reactivation_error_unknown
+      - name: workspace_reactivation_no_dns
+      - name: workspace_reactivation_not_needed
+      - name: workspace_reactivation_started
+      - name: workspace_reactivation_timeout
+
