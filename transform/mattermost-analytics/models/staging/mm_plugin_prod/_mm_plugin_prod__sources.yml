@@ -1,0 +1,63 @@
+version: 2
+
+sources:
+  - name: mm_plugin_prod
+    database: raw
+    schema: mm_plugin_prod
+    loader: Rudderstack
+    description: |
+      Plugin telemetry pushed via Rudderstack. Please check related plugin repo for telemetry.
+      
+      This schema contains production data.
+    tags:
+      - rudderstack
+
+    tables:
+      - name: apps_framework_call
+      - name: apps_framework_install
+      - name: apps_framework_oauth_complete
+      - name: apps_framework_uninstall
+      - name: github_stats
+      - name: gitlab_stats
+      - name: mscalendar_automatic_status_update
+      - name: mscalendar_daily_summary_sent
+      - name: mscalendar_user_authenticated
+      - name: mscalendar_user_deauthenticated
+      - name: mscalendar_welcome_flow_completion
+      - name: msteamsmeetings_connect
+      - name: msteamsmeetings_disconnect
+      - name: msteamsmeetings_meeting_duplicated
+      - name: msteamsmeetings_meeting_forced
+      - name: msteamsmeetings_meeting_started
+      - name: nps_nps_disable
+      - name: nps_nps_feedback
+        description: 'NPS feedback data'
+      - name: nps_nps_score
+        description: 'NPS score data'
+      - name: rudder_discards
+      - name: todo_accept_issue
+      - name: todo_add_issue
+      - name: todo_bump_issue
+      - name: todo_change_issue_assignment
+      - name: todo_command
+      - name: todo_complete_issue
+      - name: todo_daily_summary_sent
+      - name: todo_edit_issue
+      - name: todo_frontend_click_lhs_in
+      - name: todo_frontend_click_lhs_my
+      - name: todo_frontend_click_lhs_out
+      - name: todo_frontend_custom_post_accept
+      - name: todo_frontend_custom_post_complete
+      - name: todo_frontend_custom_post_remove
+      - name: todo_frontend_rhs_add
+      - name: todo_frontend_toggle_inbox
+      - name: todo_frontend_toggle_my
+      - name: todo_remove_issue
+      - name: todo_send_issue
+      - name: tracks
+      - name: zoom_connect
+      - name: zoom_disconnect
+      - name: zoom_meeting_duplicated
+      - name: zoom_meeting_forced
+      - name: zoom_oauth_mode_change
+      - name: zoom_start_meeting
