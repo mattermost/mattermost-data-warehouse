@@ -1,0 +1,29 @@
+version: 2
+
+sources:
+  - name: hacktoberboard_prod
+    database: 'RAW'
+    schema: hacktoberboard_prod
+    loader: Rudderstack
+    description: |
+      Focalboard telemetry data, pushed via Rudderstack.
+
+      [Source code](https://github.com/mattermost/focalboard/blob/main/server/services/telemetry/telemetry.go)
+    tags:
+      - rudderstack
+
+    # Omitting event tables that seem to originate from non-Mattermost sources (i.e. pen tests)
+    tables:
+      - name: activity
+      - name: blocks
+      - name: boards
+      - name: config
+      - name: event
+      - name: identifies
+      - name: pages
+      - name: rudder_discards
+      - name: server
+      - name: teams
+      - name: tracks
+      - name: users
+      - name: workspaces
