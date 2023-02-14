@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: mattermost_docs
+    database: RAW
+    schema: mattermost_docs
+    loader: Rudderstack
+    description: |
+      Telemetry data for [Mattermost Docs](https://docs.mattermost.com/). Pushed via Rudderstack.
+
+    tables:
+      - name: feedback_submitted
+        description: Holds a record for each `tracks` call where event name is similar to `feedback_submitted`.
+
+      - name: pages
+        description: Holds a record for every `page` call.
+
+      - name: rudder_discards
+        description: Holds data that were not added to a Rudderstack managed table due to invalid data type.
+
+      - name: tracks
+        description: Holds a record for each `track` call.

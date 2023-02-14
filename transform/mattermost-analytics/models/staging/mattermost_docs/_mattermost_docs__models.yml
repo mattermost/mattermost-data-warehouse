@@ -1,0 +1,20 @@
+version: 2
+
+models:
+  - name: stg_mattermost_docs__tracks
+    description: |
+      Reconstructed `tracks` table using custom properties expected to be in the events.
+
+    columns:
+      - name: event_id
+        description: The event's id.
+      - name: event_table
+        description: The name of the event table.
+      - name: event_name
+        description: The name of the event.
+      - name: user_id
+        description: The ID of the user that sent the event.
+      - name: received_at
+        description: Timestamp registered by RudderStack when the event was ingested (received).
+
+
