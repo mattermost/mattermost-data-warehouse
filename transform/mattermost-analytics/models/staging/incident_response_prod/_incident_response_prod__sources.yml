@@ -1,0 +1,55 @@
+version: 2
+
+sources:
+  - name: incident_response_prod
+    database: 'RAW'
+    schema: incident_response_prod
+    loader: Rudderstack
+    description: |
+      Playbook plugin telemetry production data. Published via Rudderstack Go client.
+      
+      [Source code](https://github.com/mattermost/mattermost-plugin-playbooks/blob/master/server/telemetry/rudder.go#L578)
+    tags:
+      - rudderstack
+
+    tables:
+      - name: add_checklist_item
+      - name: change_commander
+      - name: change_stage
+      - name: channel_action
+      - name: check_checklist_item
+      - name: checklists
+      - name: create_incident
+      - name: create_playbook
+      - name: delete_playbook
+      - name: end_incident
+      - name: frontend
+      - name: incident
+      - name: lhs_category
+      - name: modify_state_checklist_item
+      - name: move_checklist_item
+      - name: notify_admins
+      - name: pages
+      - name: playbook
+      - name: playbookrun_action
+      - name: playbookrun_create
+      - name: playbookrun_follow
+      - name: playbookrun_leave
+      - name: playbookrun_participate
+      - name: playbookrun_unfollow
+      - name: playbookrun_update_actions
+      - name: remove_checklist_item
+      - name: rename_checklist_item
+      - name: restart_incident
+      - name: rudder_discards
+      - name: run_checklist_item_slash_command
+      - name: set_assignee
+      - name: settings
+      - name: start_trial
+      - name: taskactions_action_executed
+      - name: taskactions_triggered
+      - name: taskactions_updated
+      - name: tasks
+      - name: tracks
+      - name: uncheck_checklist_item
+      - name: update_playbook
