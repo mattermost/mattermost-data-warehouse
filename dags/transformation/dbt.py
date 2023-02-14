@@ -78,6 +78,28 @@ dbt_run_cloud = KubernetesPodOperator(
 )
 
 
+dbt_run_cloud_mattermost_analytics_hourly = KubernetesPodOperator(
+    **pod_defaults,
+    image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
+    task_id="dbt-cloud-mattermost-analytics-hourly",
+    name="dbt-cloud-mattermost-analytics-hourly",
+    secrets=[
+        DBT_CLOUD_API_ACCOUNT_ID,
+        DBT_CLOUD_API_KEY,
+        SNOWFLAKE_ACCOUNT,
+        SNOWFLAKE_USER,
+        SNOWFLAKE_PASSWORD,
+        SNOWFLAKE_TRANSFORM_ROLE,
+        SNOWFLAKE_TRANSFORM_WAREHOUSE,
+        SNOWFLAKE_TRANSFORM_SCHEMA,
+        SSH_KEY,
+    ],
+    env_vars=env_vars,
+    arguments=["python -m  utils.run_dbt_cloud_job 215330 \"Mattermost Analytics DBT hourly\""],
+    dag=dag,
+)
+
+
 update_clearbit = KubernetesPodOperator(
     **pod_defaults,
     image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
@@ -112,4 +134,4 @@ update_onprem_clearbit = KubernetesPodOperator(
     dag=dag,
 )
 
-user_agent >> dbt_run_cloud >> update_clearbit >> update_onprem_clearbit
+user_agent >> [dbt_run_cloud, dbt_run_cloud_mattermost_analytics_hourly] >> update_clearbit >> update_onprem_clearbit
