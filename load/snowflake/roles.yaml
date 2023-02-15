@@ -196,30 +196,6 @@ roles:
 
 # Users
 users:
-    - adovenmuehle:
-        can_login: yes
-        member_of:
-            - accountadmin
-            - securityadmin
-
-    - rachel:
-        can_login: yes
-        member_of:
-            - accountadmin
-            - securityadmin
-
-    - eric:
-        can_login: yes
-        member_of:
-            - accountadmin
-            - securityadmin
-
-    - schiff:
-        can_login: yes
-        member_of:
-            - accountadmin
-            - securityadmin
-
     - airflow:
         can_login: yes
         member_of:
