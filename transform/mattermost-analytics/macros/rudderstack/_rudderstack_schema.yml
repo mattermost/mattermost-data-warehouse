@@ -22,3 +22,17 @@ macros:
         type: list
         description: The list of columns to keep.
 
+  - name: get_event_relations
+    description: |
+      Returns a list of relations from the given schema that might be Rudderstack events. Offers functionality for 
+      filtering out tables with too few rows.
+    arguments:
+      - name: schema
+        type: string
+        description: The schema that contains the event tables.
+      - name: min_rows
+        type: integer
+        description: Keep only tables with rows greater or equal to this value (default 100).
+      - name: database
+        type: string
+        description: The database that contains the schema provided as the first argument.
