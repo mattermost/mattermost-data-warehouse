@@ -24,7 +24,7 @@ macros:
 
   - name: get_event_relations
     description: |
-      Returns a list of relations from the given schema that might be Rudderstack events. Offers functionality for 
+      Returns a list of tables from the given schema that might be Rudderstack events. Offers functionality for 
       filtering out tables with too few rows.
     arguments:
       - name: schema

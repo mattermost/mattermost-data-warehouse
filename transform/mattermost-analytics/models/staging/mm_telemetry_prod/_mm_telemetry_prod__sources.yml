@@ -13,21 +13,37 @@ sources:
       
       [Server source](https://github.com/mattermost/mattermost-server/blob/master/services/telemetry/telemetry.go)
       [Webapp source](https://github.com/mattermost/mattermost-webapp/blob/master/packages/mattermost-redux/src/client/rudder.ts)
-    tags: ['rudderstack']
+    tags: [ 'rudderstack' ]
 
     # Omitting tables with 20 or less rows.
     tables:
-      - name: server
-        description: 'Daily server data'
+      - name: _groups
+        description: Contains raw server-level group data as a single row per server per timestamp.
 
-      - name: license
-        description: 'Daily license data'
+      - name: activity
+        description: Contains raw server-level activity at a given point in time/on a specific date. Includes number of posts, channels,
+          slash commands, api calls, bot accounts, etc.
+
+      - name: blocks
+
+      - name: boards
+
+      - name: channel_moderation
+        description: Contains raw server-level channel data as a single row per server per timestamp.
+
+      - name: config
 
       - name: config_analytics
         description: The raw Server analytics configuration data sent to Mattermost by Telemetry-Enabled Servers.
 
       - name: config_announcement
         description: The raw Server announcements configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_audit
+        description: The raw Server Audit configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_bleve
+        description: The raw Server Bleve configuration data sent to Mattermost by Telemetry-Enabled Servers.
 
       - name: config_client_requirements
         description: The raw Server client requirements configuration data sent to Mattermost by Telemetry-Enabled Servers.
@@ -56,8 +72,8 @@ sources:
       - name: config_export
         description: The raw Server export configuration data sent to Mattermost by Telemetry-Enabled Servers.
 
-      - name: config_extension
-        description: The raw Server extension configuration data sent to Mattermost by Telemetry-Enabled Servers.
+      - name: config_feature_flags
+        description: Contains raw server-level split.io feature flag data as a single row per server per timestamp.
 
       - name: config_file
         description: The raw Server file configuration data sent to Mattermost by Telemetry-Enabled Servers.
@@ -122,64 +138,17 @@ sources:
       - name: config_theme
         description: The raw Server theme configuration data sent to Mattermost by Telemetry-Enabled Servers.
 
-      - name: config_timezone
-        description: The raw Server timezone configuration data sent to Mattermost by Telemetry-Enabled Servers.
-
-      - name: config_webrtc
-        description: The raw Server WebRTC configuration data sent to Mattermost by Telemetry-Enabled Servers.
-
-      - name: config_audit
-        description: The raw Server Audit configuration data sent to Mattermost by Telemetry-Enabled Servers.
-
-      - name: config_bleve
-        description: The raw Server Bleve configuration data sent to Mattermost by Telemetry-Enabled Servers.
-
-      - name: plugins
-        description: Contains the raw plugin configurations of a server at a given point in time. Represented by integer counts. No plugin names or details provided.
-
-      - name: permissions_general
-        description: Contains the raw general permissions for each server at a given point in time/on a specific date.
-
-      - name: permissions_system_scheme
-        description: Contains the raw system scheme permissions for each server's user type at a given point in time/on a specific date - system admin, team guest user, system user, team admin, channel admin, channel guest, and channel user
-
-      - name: permissions_team_schemes
-        description: Contains the raw team scheme permissions for each server's user type at a given point in time/on a specific date - team guest, channel admin, channel user, team admin, channel guest, and team user.
-
-      - name: activity
-        description: Contains raw server-level activity at a given point in time/on a specific date. Includes number of posts, channels, slash commands, api calls, bot accounts, etc.
+      - name: elasticsearch
+        description: Contains raw server-level ElasticSearch data as a single row per server per timestamp.
 
       - name: event
         description: >
           Contains raw user-level event data as a single row per event.
           Source is mattermost webapp ([code](https://github.com/mattermost/mattermost-webapp/blob/master/packages/mattermost-redux/src/client/rudder.ts#L35))
-        tags: ['tracks', 'mattermost-webapp']
-
-      - name: tracks
-        description: > 
-          Contains raw user-level data from rudderstack track method. Note that for every `track` call, RudderStack
-          creates a record in both the `tracks` and `<event_name>` tables.
+        tags: [ 'tracks', 'mattermost-webapp' ]
 
       - name: identifies
         description: Contains raw user-level data from rudderstack identifies method.
-
-      - name: pages
-        description: Contains raw user-level data from rudderstack pages method.
-
-      - name: _groups
-        description: Contains raw server-level group data as a single row per server per timestamp.
-
-      - name: channel_moderation
-        description: Contains raw server-level channel data as a single row per server per timestamp.
-
-      - name: elasticsearch
-        description: Contains raw server-level ElasticSearch data as a single row per server per timestamp.
-
-      - name: warn_metrics
-        description: Contains raw server-level warn metrics data as a single row per server per timestamp. Warn metrics are banner notifications when servers are reaching registered user thresholds.
-
-      - name: config_feature_flags
-        description: Contains raw server-level split.io feature flag data as a single row per server per timestamp.
 
       - name: inactive_server
         description: |
@@ -190,11 +159,56 @@ sources:
           - Inactivity email **MUST** be enabled.
           - `EnableInactivityCheckJob` feature flag **MUST** be enabled.
           Source is mattermost server ([code](https://github.com/mattermost/mattermost-server/blob/master/app/server_inactivity.go#L81))
-        tags: [ 'mattermost-server']
+        tags: [ 'mattermost-server' ]
 
       - name: inactive_server_emails_sent
         description: |
           Tracks whether email has been sent to the admin for notifying them of server inactivity. Populated via
           Rudderstack `track`. The same rules as in `inactive_server` apply for events to be sent via Rudderstack. 
           Source is mattermost server ([code](https://github.com/mattermost/mattermost-server/blob/master/app/server_inactivity.go#L118)).
-        tags: ['mattermost-server']
+        tags: [ 'mattermost-server' ]
+
+      - name: license
+        description: Daily license data
+
+      - name: pages
+        description: Contains raw user-level data from rudderstack pages method.
+
+      - name: permissions_general
+        description: Contains the raw general permissions for each server at a given point in time/on a specific date.
+
+      - name: permissions_system_scheme
+        description: Contains the raw system scheme permissions for each server's user type at a given point in time/on a specific
+          date - system admin, team guest user, system user, team admin, channel admin, channel guest, and channel user
+
+      - name: permissions_team_schemes
+        description: Contains the raw team scheme permissions for each server's user type at a given point in time/on a specific
+          date - team guest, channel admin, channel user, team admin, channel guest, and team user.
+
+      - name: plugins
+        description: Contains the raw plugin configurations of a server at a given point in time. Represented by integer counts.
+          No plugin names or details provided.
+
+      - name: products
+
+      - name: rudder_discards
+
+      - name: server
+        description: Daily server data
+
+      - name: teams
+
+      - name: track_invite_email_resend
+
+      - name: tracks
+        description: >
+          Contains raw user-level data from rudderstack track method. Note that for every `track` call, RudderStack
+          creates a record in both the `tracks` and `<event_name>` tables.
+
+      - name: users
+
+      - name: warn_metrics
+        description: Contains raw server-level warn metrics data as a single row per server per timestamp. Warn metrics are banner
+          notifications when servers are reaching registered user thresholds.
+
+      - name: welcome_message_sent
