@@ -1,0 +1,77 @@
+version: 2
+
+sources:
+  - name: mm_telemetry_rc
+    database: 'RAW'
+    schema: mm_telemetry_rc
+    loader: Rudderstack
+    description: |
+      Mattermost server and webapp telemetry data. Stored using Rudderstack. Rudderstack documentations offers an
+      in-depth documentation of the [warehouse schema](https://www.rudderstack.com/docs/destinations/warehouse-destinations/warehouse-schema/).
+      
+      This schema contains RC data.
+      
+      [Server source](https://github.com/mattermost/mattermost-server/blob/master/services/telemetry/telemetry.go)
+      [Webapp source](https://github.com/mattermost/mattermost-webapp/blob/master/packages/mattermost-redux/src/client/rudder.ts)
+    tags:
+      - rudderstack
+
+    # Omitting tables with 20 or less rows.
+    tables:
+      - name: tracks
+      - name: event
+      - name: pages
+      - name: identifies
+      - name: config_saml
+      - name: config_localization
+      - name: config_cluster
+      - name: config_compliance
+      - name: config_analytics
+      - name: config_ldap
+      - name: config_metrics
+      - name: config_elasticsearch
+      - name: config_nativeapp
+      - name: config_announcement
+      - name: config_privacy
+      - name: config_experimental
+      - name: config_support
+      - name: config_theme
+      - name: config_oauth
+      - name: config_file
+      - name: activity
+      - name: config_audit
+      - name: config_email
+      - name: config_notifications_log
+      - name: config_rate
+      - name: config_password
+      - name: config_team
+      - name: config_log
+      - name: config_service
+      - name: config_client_requirements
+      - name: config_sql
+      - name: config_data_retention
+      - name: config_guest_accounts
+      - name: config_message_export
+      - name: config_plugin
+      - name: config_display
+      - name: config_image_proxy
+      - name: server
+      - name: permissions_general
+      - name: config_bleve
+      - name: permissions_system_scheme
+      - name: elasticsearch
+      - name: _groups
+      - name: channel_moderation
+      - name: config_export
+      - name: config_feature_flags
+      - name: plugins
+      - name: license
+      - name: products
+      - name: users
+      - name: warn_metrics
+      - name: permissions_team_schemes
+      - name: welcome_message_sent
+      - name: track_invite_email_resend
+      - name: inactive_server
+      - name: inactive_server_emails_sent
+      - name: rudder_discards
