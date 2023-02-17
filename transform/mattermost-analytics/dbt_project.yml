@@ -42,9 +42,13 @@ models:
     intermediate:
       +materialized: ephemeral
       tags: ['intermediate']
+      data_eng:
+        schema: int_data_eng
     marts:
       +materialized: table
       tags: ['marts']
+      data_eng:
+        schema: mart_data_eng
     utilities:
       +materialized: table
       schema: utilities

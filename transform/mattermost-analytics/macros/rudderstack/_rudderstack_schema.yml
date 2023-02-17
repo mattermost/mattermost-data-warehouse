@@ -36,3 +36,20 @@ macros:
       - name: database
         type: string
         description: The database that contains the schema provided as the first argument.
+
+  - name: rudder_daily_event_count
+    description: |
+      Summarizes a table containing events by grouping and counting them. Grouping is done by date and user 
+      defined fields.
+    arguments:
+      - name: relation
+        type: string
+        description: The relation containing events that will be summarized.
+      - name: by_columns
+        type: list
+        description: |
+          An optional list of the names of additional columns to be used for summarizing events. Default value
+          is ['event_table', 'event_text'].
+      - name: source_name
+        type: string
+        description: An optional name for the source table. If not defined, the name of the relation will be used.

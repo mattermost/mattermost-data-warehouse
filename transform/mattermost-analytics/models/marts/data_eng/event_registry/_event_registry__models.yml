@@ -1,0 +1,78 @@
+version: 2
+
+models:
+  - name: fct_events_daily_snapshot
+    description: |
+      Snapshot fact table, containing metrics for each event on a daily granularity.
+
+    columns:
+      - name: id
+        description: A unique id for the current fact table row.
+        tests:
+          - unique
+          - not_null
+      - name: event_date
+        description: The date for the current event.
+        tests:
+          - not_null
+      - name: event_id
+        description: The id of the event. Used for joining with event dimension.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_events')
+              field: event_id
+      - name: event_count
+        description: The total number of events for the given date and event.
+        tests:
+          - not_null
+    tests:
+      # If an event doesn't exist for a specific date, then no row must exist for this event/date pair.
+      - dbt_utils.expression_is_true:
+          expression: "event_count > 0"
+      # An event should only appear once per day
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - event_date
+            - event_id
+
+  - name: dim_events
+    description: |
+      Dimensions table for events. Contains all textual information related to an event.
+
+    columns:
+      - name: event_id
+        description: A unique id for the current fact table row.
+        tests:
+          - unique
+          - not_null
+      - name: event_name
+        description: |
+          The name of the event, as submitted using Rudderstack's `track` function.
+        tests:
+          - not_null
+      - name: event_table
+        description: |
+          The name of the table where the event is stored by Rudderstack.
+        tests:
+          - not_null
+      - name: category
+        description: |
+          The category of the event. Present only on some events.
+      - name: event_type
+        description: |
+          The type of the event. Present only on some events.
+      - name: source
+        description: |
+          A user-friendly string describing the source system of the event.
+        tests:
+          - not_null
+    tests:
+      # Each event should appear once
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - event_name
+            - event_table
+            - category
+            - event_type
+            - source
