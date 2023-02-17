@@ -19,17 +19,29 @@ models:
         description: The id of the event. Used for joining with event dimension.
         tests:
           - not_null
+          - relationships:
+              to: ref('dim_events')
+              field: event_id
       - name: event_count
         description: The total number of events for the given date and event.
         tests:
           - not_null
+    tests:
+      # If an event doesn't exist for a specific date, then no row must exist for this event/date pair.
+      - dbt_utils.expression_is_true:
+          expression: "event_count > 0"
+      # An event should only appear once per day
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - event_date
+            - event_id
 
   - name: dim_events
     description: |
       Dimensions table for events. Contains all textual information related to an event.
 
     columns:
-      - name: id
+      - name: event_id
         description: A unique id for the current fact table row.
         tests:
           - unique
@@ -55,3 +67,12 @@ models:
           A user-friendly string describing the source system of the event.
         tests:
           - not_null
+    tests:
+      # Each event should appear once
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - event_name
+            - event_table
+            - category
+            - event_type
+            - source

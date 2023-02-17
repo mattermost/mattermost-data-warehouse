@@ -27,7 +27,8 @@ WITH tmp AS (
 )
 SELECT
     -- Surrogate key required as it's both a good practice, as well as allows merge incremental strategy.
-    {{ dbt_utils.generate_surrogate_key(['date_received_at'] + by_columns ) }} AS event_id
+    {{ dbt_utils.generate_surrogate_key(['date_received_at', 'source'] + by_columns ) }} AS daily_event_id
+    , {{ dbt_utils.generate_surrogate_key(['source'] + by_columns ) }} AS event_id
     , date_received_at
     , source
     {% for column_name in by_columns %}
