@@ -69,5 +69,5 @@ WITH MM_TELEMETRY_PROD AS
  , sent_at                        AS sent_at
  , uuid_ts                        AS uuid_ts
  , received_at                    AS received_at 
- FROM {{ ref ('events') }} WHERE category = 'performance')
+ FROM {{ source ('mm_telemetry_prod', 'events') }} WHERE category = 'performance')
  SELECT * FROM MM_TELEMETRY_PROD
