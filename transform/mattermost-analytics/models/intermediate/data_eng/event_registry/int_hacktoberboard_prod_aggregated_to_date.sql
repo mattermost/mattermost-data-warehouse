@@ -3,7 +3,7 @@
         "materialized": "incremental",
         "tags":"hourly",
         "incremental_strategy": "merge",
-        "unique_key": ['id'],
+        "unique_key": ['daily_event_id'],
         "merge_update_columns": ['event_count'],
         "cluster_by": ['date_received_at'],
     })
