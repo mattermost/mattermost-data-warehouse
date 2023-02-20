@@ -26,7 +26,7 @@ models:
         
   - name: stg_mm_telemetry_rc__performance_events
     description: |
-      Reconstructed `performance_events` table using only columns needed by looker.
+      Reconstructed `performance_events` table from schema `MM_TELEMETRY_RC` using only columns needed by looker.
 
     columns:
       - name: _dbt_source_relation
