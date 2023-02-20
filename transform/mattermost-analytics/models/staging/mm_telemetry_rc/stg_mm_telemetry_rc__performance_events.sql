@@ -20,7 +20,7 @@ WITH MM_TELEMETRY_RC AS
 , "role", "privacy", "scheme_id" , "warnmetricid"  , "metric" , "error"
 , "num_invitations_sent", "num_invitations" , "channel_sidebar" , "app" , "method" , "remaining" 
 , "screen" , "filter" , "version" , "uuid_ts", "id", "anonymous_id", "received_at", "sent_at", "original_timestamp", "timestamp", 
-        "context_ip", "event", "event_text"], where = "category = 'performance'",
+        "context_ip", "event", "event_text"], where = " CATEGORY = 'performance'",
   )}}
 
 SELECT * FROM MM_TELEMETRY_RC
