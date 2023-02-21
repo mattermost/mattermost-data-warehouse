@@ -1,6 +1,5 @@
 {{
     config({
-        "tags":"hourly",
         "snowflake_warehouse": "transform_l"
     })
 }}
