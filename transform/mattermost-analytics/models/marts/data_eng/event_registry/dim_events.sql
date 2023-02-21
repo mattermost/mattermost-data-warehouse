@@ -1,9 +1,3 @@
-{{
-    config({
-        "tags":"hourly",
-    })
-}}
-
 SELECT DISTINCT
     event_id
     , event_name

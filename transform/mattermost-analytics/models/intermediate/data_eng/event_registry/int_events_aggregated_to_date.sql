@@ -1,10 +1,4 @@
 {{
-    config({
-        "tags":"hourly",
-    })
-}}
-
-{{
     dbt_utils.union_relations(
         relations=[
             ref('int_hacktoberboard_prod_aggregated_to_date'),

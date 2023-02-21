@@ -1,7 +1,6 @@
 {{
     config({
-        "tags":"hourly",
-        "cluster_by": ['event_date'],
+        "cluster_by": ['event_date']
     })
 }}
 

@@ -1,8 +1,3 @@
-{{
-    config({
-        "tags":"hourly",
-    })
-}}
 
 {%- set relations = get_event_relations('mm_telemetry_rc', database='RAW') -%}
 
