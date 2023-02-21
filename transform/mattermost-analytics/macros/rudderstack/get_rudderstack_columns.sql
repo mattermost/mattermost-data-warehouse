@@ -6,7 +6,8 @@
     -%}
 
     {% for column in rudderstack_columns %}
-    , {{ column }} AS {{ column }}
+        {{ column }} AS {{ column }}
+        {% if not loop.last %},{% endif %}
     {% endfor %}
 
 {% endmacro %}
