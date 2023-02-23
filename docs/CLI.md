@@ -101,7 +101,6 @@ Options can also be set using environment variables. Here's the possible configu
 | `SNOWFLAKE_DATABASE`  | `RAW`               | Yes      | The database to use when connecting to snowflake |
 | `SNOWFLAKE_SCHEMA`    | `PUBLIC`            | Yes      | The schema to use when connecting to snowflake  |
 | `SNOWFLAKE_USER`      | `user@example.com`  | Yes      | The username to connect to snowflake with       |
-| `SNOWFLAKE_USER`      | `user@example.com`  | Yes      | The username to connect to snowflake with       |
 | `SNOWFLAKE_PASSWORD`  | `super-secret`      | Yes      | The password to connect to snowflake with       |
 | `SNOWFLAKE_WAREHOUSE` | `cca12345.us-east1` | No       | The snowflake warehouse to use                  |
 | `SNOWFLAKE_ROLE`      | `cca12345.us-east1` | No       | The snowflake role to use                       |
