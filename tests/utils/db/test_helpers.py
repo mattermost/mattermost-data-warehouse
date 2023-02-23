@@ -1,8 +1,9 @@
 from datetime import datetime, timezone
 
 import pytest
+from mock.mock import call
 
-from utils.db.helpers import TableStats, get_table_stats_for_schema, snowflake_engine
+from utils.db.helpers import TableStats, get_table_stats_for_schema, snowflake_engine, upload_csv_as_table
 
 
 @pytest.mark.parametrize(
@@ -90,3 +91,23 @@ def test_should_return_table_stats(mocker):
         TableStats('schema', 'table1', 3, datetime(2022, 12, 28, 23, 55, 59, tzinfo=timezone.utc)),
         TableStats('schema', 'table2', 20, datetime(2023, 1, 15, 12, 23, 45, tzinfo=timezone.utc)),
     ]
+
+
+def test_should_upload_file_to_table(mocker):
+    # GIVEN: mock engine and mock connection
+    mock_engine = mocker.MagicMock()
+    mock_connection = mocker.MagicMock()
+    mock_engine.begin.return_value.__enter__.return_value = mock_connection
+
+    # WHEN: request to get upload a file to a table
+    upload_csv_as_table(mock_engine, '/tmp/upload.csv', 'test-schema', 'a-table')
+
+    # THEN: expect the script to has been called.
+    mock_connection.execute.assert_has_calls(
+        [
+            call('TRUNCATE TABLE test-schema.a-table'),
+            call('CREATE TEMPORARY STAGE IF NOT EXISTS test-schema.a-table'),
+            call('PUT file:///tmp/upload.csv @test-schema.a-table OVERWRITE=TRUE'),
+            call('COPY INTO test-schema.a-table FROM @test-schema.a-table FILE_FORMAT = (TYPE = CSV SKIP_HEADER = 1)'),
+        ]
+    )
