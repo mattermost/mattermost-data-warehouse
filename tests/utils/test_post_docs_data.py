@@ -1,5 +1,4 @@
 import pytest
-
 import responses as test_responses  # importing as test_responses, due to conflict with import in conftest.py
 import snowflake.connector
 
