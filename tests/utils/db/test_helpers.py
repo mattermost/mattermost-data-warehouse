@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 import pytest
 from mock.mock import call
 
-from utils.db.helpers import TableStats, get_table_stats_for_schema, snowflake_engine, upload_csv_as_table
+from utils.db.helpers import TableStats, get_table_stats_for_schema, move_table, snowflake_engine, upload_csv_as_table
 
 
 @pytest.mark.parametrize(
@@ -110,4 +110,38 @@ def test_should_upload_file_to_table(mocker):
             call('PUT file:///tmp/upload.csv @test-schema.a-table OVERWRITE=TRUE'),
             call('COPY INTO test-schema.a-table FROM @test-schema.a-table FILE_FORMAT = (TYPE = CSV SKIP_HEADER = 1)'),
         ]
+    )
+
+
+def test_should_move_table(mocker):
+    # GIVEN: mock connection
+    mock_connection = mocker.MagicMock()
+    mock_connection.execute = mocker.MagicMock()
+
+    # WHEN: request to move table
+    move_table(mock_connection, "table", "source-db", "source-schema", "target-db", "target-schema")
+
+    # THEN: expect an alter table
+    mock_connection.execute.assert_called_once_with(
+        '''
+        ALTER TABLE source-db.source-schema.table
+        RENAME TO target-db.target-schema.table
+    '''
+    )
+
+
+def test_should_move_table_with_postfix(mocker):
+    # GIVEN: mock connection
+    mock_connection = mocker.MagicMock()
+    mock_connection.execute = mocker.MagicMock()
+
+    # WHEN: request to move table
+    move_table(mock_connection, "table", "source-db", "source-schema", "target-db", "target-schema", postfix="_old")
+
+    # THEN: expect an alter table
+    mock_connection.execute.assert_called_once_with(
+        '''
+        ALTER TABLE source-db.source-schema.table
+        RENAME TO target-db.target-schema.table_old
+    '''
     )

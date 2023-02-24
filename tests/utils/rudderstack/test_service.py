@@ -1,9 +1,10 @@
 from datetime import datetime, timezone
 
 import pytest
+from mock.mock import call
 
 from utils.db.helpers import TableStats
-from utils.rudderstack.service import list_event_tables
+from utils.rudderstack.service import list_event_tables, move_tables
 
 MOCK_TABLE_STATS = [
     TableStats('schema', 'table1', 3, datetime(2022, 12, 28, 23, 55, 59, tzinfo=timezone.utc)),
@@ -65,3 +66,30 @@ def test_list_event_tables(mocker, min_rows, max_rows, max_age, expected_tables)
 
     # THEN: expect result to match expected table names
     assert result == expected_tables
+
+
+def test_move_tables(mocker):
+    # GIVEN: a mock SQL engine
+    mock_engine = mocker.MagicMock()
+    mock_connection = mocker.MagicMock()
+    mock_engine.begin.return_value.__enter__.return_value = mock_connection
+    mock_move_table = mocker.patch('utils.rudderstack.service.move_table')
+
+    # WHEN: request to move tables
+    move_tables(
+        mock_engine,
+        ['table1', '   ', '  table2\n'],
+        'source-db',
+        'source-schema',
+        'target-db',
+        'target-schema',
+        postfix='_old',
+    )
+
+    # THEN: expect a request to move all non-empty string tables
+    mock_move_table.assert_has_calls(
+        [
+            call(mock_connection, 'table1', 'source-db', 'source-schema', 'target-db', 'target-schema', postfix='_old'),
+            call(mock_connection, 'table2', 'source-db', 'source-schema', 'target-db', 'target-schema', postfix='_old'),
+        ]
+    )

@@ -22,6 +22,7 @@ Options:
 
 Commands:
   list  List Rudderstack event tables for given database and schema.
+  move  Move tables to target database/schema.
 ```
 
 Help is available at any command/sub-command, simply by adding `-h`/`--help` at the end of the command.
@@ -32,14 +33,58 @@ Let's go over the subcommands.
 
 Simply run `rudder list ...` providing the proper arguments.
 
-Example:
+The following example will list all event tables in database `RAW`, schema `mattermost_docs`:
+
 ```bash
 $ rudder list RAW mattermost_docs -a cca12345.us-east-1 -u joe@doe.com -r role_name -w warehouse_small
 Password: 
 DOC_EVENT
+NEW_TABLE
+...
 ```
 
-Options can also be set using environment variables. Here's the possible configuration variables:
+The following example will list all event tables in database `RAW`, schema `mattermost_docs` that have been
+created in the past two days:
+
+```bash
+$ rudder list RAW mattermost_docs -a cca12345.us-east-1 -u joe@doe.com -r role_name -w warehouse_small --max-age 2
+Password: 
+NEW_TABLE
+...
+```
+
+### Move tables
+
+Move all tables listed in input file/stdin from source database/schema to target/database schema.
+
+Simply run `rudder move ...` providing the proper arguments.
+
+The following example will move all tables listed in `tables.txt` from `DEV.STAGING` to `ARCHIVE.OLD_STAGING`
+
+```bash
+$ rudder move DEV STAGING ARCHIVE OLD_STAGING tables.txt -a cca12345.us-east-1 -u joe@doe.com -r role_name -w warehouse_small 
+Password: 
+Moving DEV.STAGING.table_to_archive ✓
+...
+```
+
+If you want to use stdin rather than a file, you can specify `-` as input. Press  `[CTRL] + D` any time to stop.
+
+Example:
+
+```bash
+$ rudder move DEV STAGING ARCHIVE OLD_STAGING - -a cca12345.us-east-1 -u joe@doe.com -r role_name -w warehouse_small 
+Password: 
+
+table_to_archive
+Moving DEV.STAGING.table_to_archive ✓
+...
+```
+
+
+### Configuring using environment variables
+
+Options for all subcommands can also be set using environment variables. Here's the possible configuration variables:
 
 | Environment Variable  | Example value       | Required | Description                               |
 |-----------------------|---------------------|----------|-------------------------------------------|
@@ -49,7 +94,7 @@ Options can also be set using environment variables. Here's the possible configu
 | `SNOWFLAKE_WAREHOUSE` | `cca12345.us-east1` | No       | The snowflake warehouse to use            |
 | `SNOWFLAKE_ROLE`      | `cca12345.us-east1` | No       | The snowflake role to use                 |
 
- 
+
 ## Contributors
 
 Retrieves a list of contributors by iterating over all repos in the organization and checking merged PRs. The results
