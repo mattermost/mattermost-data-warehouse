@@ -1,8 +1,3 @@
-{{
-    config({
-        "tags":"hourly",
-    })
-}}
 
 WITH tracks AS (
     SELECT

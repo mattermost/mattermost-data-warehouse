@@ -42,22 +42,19 @@ macros:
         type: string
         description: The database that contains the schema provided as the first argument.
 
-  - name: union_relations
+  - name: rudder_daily_event_count
     description: |
-      This macro combines via union all an array of Relations, even when columns have 
-      differing orders in each Relation, and/or some columns are missing from some relations. 
-      Any columns exclusive to a subset of these relations will be filled with null where not present. 
-      A new column (_dbt_source_relation) is also added to indicate the source for each record.
+      Summarizes a table containing events by grouping and counting them. Grouping is done by date and user 
+      defined fields.
     arguments:
-      - name: relations (required)
-        description: An array of Relations.
-      - name: exclude (optional)
-        description: A list of column names that should be excluded from the final query.
-      - name: include (optional)
-        description:  A list of column names that should be included in the final query. Note the include and exclude arguments are mutually exclusive.
-      - name: column_override (optional)
-        description: A dictionary of explicit column type overrides.
-      - name: source_column_name (optional, default="_dbt_source_relation")
-        description: The name of the column that records the source of this row. Pass None to omit this column from the results.
-      - name: where (optional)
-        description: Filter conditions to include in the where clause.
+      - name: relation
+        type: string
+        description: The relation containing events that will be summarized.
+      - name: by_columns
+        type: list
+        description: |
+          An optional list of the names of additional columns to be used for summarizing events. Default value
+          is ['event_table', 'event_text'].
+      - name: source_name
+        type: string
+        description: An optional name for the source table. If not defined, the name of the relation will be used.

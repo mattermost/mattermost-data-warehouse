@@ -77,6 +77,9 @@ mock = "^4.0.3"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.poetry.scripts]
+rudder = "utils.rudderstack.__main__:rudder"
+
 [tool.pytest.ini_options]
 addopts = "--ignore=dags --ignore=plugins"
 testpaths = [ "tests" ]
