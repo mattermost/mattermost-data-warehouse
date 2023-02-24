@@ -12,7 +12,7 @@ config({
 , "longest_api_resource_duration" , "user_id", "userid", "root_id", "post_id", "sort" 
 , "team_id", "version", "keyword", "count", "gfyid", "field"
 , "plugin_id", "installed_version", "group_constrained", "value", "include_deleted" 
-, "role", "privacy", "scheme_id", "warnmetricid" , "metric", "error", "num_invitations_sent" 
+, "role", "privacy", "scheme_id", "metric", "error", "num_invitations_sent" 
 , "num_invitations", "channel_sidebar", "app", "method", "remaining", "screen" 
 , "filter", "version", "uuid_ts"] 
 -%}
@@ -24,6 +24,7 @@ WITH performance_event AS (
         {{ column }} AS {{ column }}
         {% if not loop.last %},{% endif %}
     {% endfor %}
+    , timestamp::date as event_date
     FROM
       {{ source('mm_telemetry_prod', 'event') }}
     WHERE CATEGORY = 'performance'

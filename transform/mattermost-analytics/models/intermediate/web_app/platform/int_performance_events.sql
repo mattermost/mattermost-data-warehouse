@@ -3,7 +3,5 @@
         relations=[
             ref('int_mm_telemetry_prod__performance_events'),
             ref('int_mm_telemetry_rc__performance_events'),
-        ],
-        source_column_name=None
-    )
+        ],)
 }}
