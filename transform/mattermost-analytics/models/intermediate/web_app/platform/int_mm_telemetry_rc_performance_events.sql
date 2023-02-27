@@ -1,7 +1,7 @@
 {{
     config({
         "materialized": "incremental",
-        "cluster_by": ['event_date'],
+        "cluster_by": ['date_received_at'],
     })
 }}
 
@@ -9,5 +9,5 @@ SELECT * FROM
 {{ ref('stg_mm_telemetry_rc__performance_events') }} 
 
 {% if is_incremental() %}
-    WHERE event_date >= (SELECT MAX(event_date) FROM {{ this }}) 
+    WHERE date_received_at >= (SELECT MAX(date_received_at) FROM {{ this }}) 
 {% endif %}
