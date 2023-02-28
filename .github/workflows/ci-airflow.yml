@@ -35,6 +35,7 @@ jobs:
         with:
           python-version: '3.6.12'   # This is the python version in the airflow docker image currently used
           cache: 'pip'               # caching pip dependencies
+          cache-dependency-path: 'build/requirements-airflow-dev.txt'
 
       - name: Install dependencies
         run: pip install -r build/requirements-airflow-dev.txt
