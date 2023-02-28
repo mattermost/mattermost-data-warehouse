@@ -19,7 +19,7 @@ WITH performance_event AS (
         {% if not loop.last %},{% endif %}
     {% endfor %}
     , timestamp::date as event_date
-    , received_at::date as date_received_at
+    , received_at::date as received_at_date
     FROM
       {{ source('mm_telemetry_rc', 'event') }}
     WHERE CATEGORY = 'performance'

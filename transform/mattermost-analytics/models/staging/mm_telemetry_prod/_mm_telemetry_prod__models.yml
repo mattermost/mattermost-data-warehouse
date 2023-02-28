@@ -89,4 +89,7 @@ models:
       - name: original_timestamp             
       - name: sent_at                        
       - name: uuid_ts                        
-      - name: received_at  
+      - name: received_at 
+      - name: event_date 
+      - name: received_at_date
+       
