@@ -1,34 +1,13 @@
 version: 2
 
 models:
-  - name: stg_mm_telemetry_rc__tracks
+  - name: eg_performance_events
     description: |
-      Reconstructed `tracks` table using custom properties expected to be in the events.
+      Events Group performance_events table containing metrics 
+      from web-app and web-app RC telemetry for category = performance.
 
     columns:
-      - name: event_id
-        description: The event's id.
-      - name: event_name
-        description: The name of the event.
-      - name: event_table
-        description: The name of the event table.
-      - name: category
-        description: The event's category.
-      - name: event_type
-        description: The type of the event.
-      - name: user_id
-        description: The ID of the user that sent the event.
-      - name: server_id
-        description: The ID of the server the event originated from.
-      - name: received_at
-        description: Timestamp registered by RudderStack when the event was ingested (received).
-
-        
-  - name: stg_mm_telemetry_rc__performance_events
-    description: |
-      Reconstructed `performance_events` table from schema `MM_TELEMETRY_RC` using only columns needed by looker.
-
-    columns:
+      - name: _source_relation
       - name: context_page_referrer          
       - name: channel                        
       - name: context_app_namespace          
@@ -90,4 +69,6 @@ models:
       - name: original_timestamp             
       - name: sent_at                        
       - name: uuid_ts                        
-      - name: received_at  
+      - name: received_at
+      - name: event_date
+      - name: date_received_at

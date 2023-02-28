@@ -28,7 +28,6 @@ models:
       Reconstructed `performance_events` table from schema `MM_TELEMETRY_PROD` using only columns needed by looker.
 
     columns:
-      - name: _dbt_source_relation
       - name: context_page_referrer          
       - name: channel                        
       - name: context_app_namespace          
@@ -76,7 +75,6 @@ models:
       - name: role                           
       - name: privacy                        
       - name: scheme_id                      
-      - name: warnmetricid                   
       - name: metric                         
       - name: error                          
       - name: num_invitations_sent           
