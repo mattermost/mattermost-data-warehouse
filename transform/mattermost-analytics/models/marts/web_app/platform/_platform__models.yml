@@ -71,4 +71,4 @@ models:
       - name: uuid_ts                        
       - name: received_at
       - name: event_date
-      - name: date_received_at
+      - name: received_at_date
