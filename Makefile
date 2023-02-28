@@ -400,6 +400,12 @@ data-image: ## to start a bash shell on the data image
 	$(AT)$(DOCKER) compose -f ${DOCKER_COMPOSE_DBT_FILE} run data_image bash || ${FAIL}
 	$(AT)$(OK) Exited data-image
 
+.PHONY: permifrost-image
+permifrost-image: ## to start a bash shell on the permifrost image
+	$(AT)$(INFO) Attaching to permifrost-image and mounting repo...
+	$(AT)$(DOCKER) compose -f ${DOCKER_COMPOSE_DBT_FILE} run permifrost bash || ${FAIL}
+	$(AT)$(OK) Exited permifrost-image
+
 .PHONY: clean
 clean: ## to clean-up
 	@$(INFO) cleaning...
