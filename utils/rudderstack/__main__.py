@@ -82,7 +82,8 @@ def list_tables(
         for table in result:
             click.echo(table)
         # Make sure that exit code is > 0 if tables are found
-        click.exit(len(result))
+        if result:
+            raise click.ClickException("New tables found...")
     except ValueError as e:
         raise UsageError(str(e))
     finally:
