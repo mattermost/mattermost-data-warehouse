@@ -64,8 +64,8 @@ with DAG(
         ],
         env_vars=pod_env_vars,
         arguments=[
-            "contributors mattermost { var.value.contributors_table }} "
-            " -s { var.value.contributors_schema }}"
+            "contributors mattermost {{ var.value.contributors_table }} "
+            " -s {{ var.value.contributors_schema }}"
             " -d ${SNOWFLAKE_LOAD_DATABASE}"
             " -w ${SNOWFLAKE_LOAD_WAREHOUSE}"
             " -r ${SNOWFLAKE_LOAD_ROLE}"
