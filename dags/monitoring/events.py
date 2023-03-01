@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 from airflow.models import Variable
+from airflow.utils.trigger_rule import TriggerRule
 
 from dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, pod_defaults, send_alert
 from dags.kube_secrets import (
@@ -67,6 +68,7 @@ def get_pod_operators(dag):
             username='Airflow',
             task_id=f"check-new-tables-{schema}-handle-failure",
             dag=dag,
+            trigger_rule=TriggerRule.ALL_FAILED,
         )
         op >> failure_op
         result.append(op)
