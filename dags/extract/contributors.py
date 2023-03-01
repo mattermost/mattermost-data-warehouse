@@ -48,7 +48,7 @@ with DAG(
         max_active_runs=1,  # Don't allow multiple concurrent dag executions
         doc_md=doc_md,
     ) as dag:
-    extract_contributors = KubernetesPodOperator(
+    extract_github_contributors = KubernetesPodOperator(
         **pod_defaults,
         image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
         task_id="extract-github-contributors",
@@ -73,4 +73,4 @@ with DAG(
         ]
     )
 
-extract_contributors
+extract_github_contributors
