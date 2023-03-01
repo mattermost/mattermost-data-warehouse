@@ -69,6 +69,7 @@ with DAG(
             " -d ${SNOWFLAKE_LOAD_DATABASE}"
             " -w ${SNOWFLAKE_LOAD_WAREHOUSE}"
             " -r ${SNOWFLAKE_LOAD_ROLE}"
+            " --token ${GITHUB_FINEGRAIN_TOKEN}"
         ]
     )
 
