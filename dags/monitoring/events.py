@@ -16,6 +16,21 @@ from dags.kube_secrets import (
 )
 from plugins.operators.mattermost_operator import MattermostOperator
 
+doc_md = """
+### Nightly DBT dag
+
+#### Purpose
+
+This DAG triggers nightly tasks that check for new tables created by Rudderstack.
+
+The following options can be configured using Airflow variables:
+
+- `rudder_schemas` (JSON array of strings) - list of schemas to check.
+- `rudder_max_age` (integer) - include tables created in the past number of days defined by this variable.
+
+"""
+
+
 # Default arguments for the DAG
 default_args = {
     "depends_on_past": False,
@@ -34,6 +49,7 @@ dag = DAG(
     schedule_interval="0 12 * * *",
     catchup=False,
     max_active_runs=1,  # Don't allow multiple concurrent dag executions
+    doc_md=doc_md,
 )
 
 

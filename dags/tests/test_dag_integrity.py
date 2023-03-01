@@ -17,8 +17,7 @@ DAG_PATHS = ALL_PATHS - EXCLUDED_PATHS
 @pytest.mark.parametrize("dag_path", [pytest.param(path, id=path.name) for path in DAG_PATHS])
 def test_dag_integrity(dag_path):
     """Import DAG files and check for a valid DAG instance."""
-    dag_name = dag_path.name
-    module = _import_file(dag_name, dag_path)
+    module = _import_file(dag_path.name, dag_path)
     # Validate if there is at least 1 DAG object in the file
     dag_objects = [var for var in vars(module).values() if isinstance(var, airflow_models.DAG)]
     assert dag_objects
