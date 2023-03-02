@@ -5,13 +5,13 @@ from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOpera
 
 from dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, pod_defaults, pod_env_vars, send_alert
 from dags.kube_secrets import (
-    SNOWFLAKE_USER,
-    SNOWFLAKE_ACCOUNT,
-    SNOWFLAKE_PASSWORD,
-    SNOWFLAKE_LOAD_DATABASE,
-    SNOWFLAKE_LOAD_WAREHOUSE,
-    SNOWFLAKE_LOAD_ROLE,
     GITHUB_FINEGRAIN_TOKEN,
+    SNOWFLAKE_ACCOUNT,
+    SNOWFLAKE_LOAD_DATABASE,
+    SNOWFLAKE_LOAD_ROLE,
+    SNOWFLAKE_LOAD_WAREHOUSE,
+    SNOWFLAKE_PASSWORD,
+    SNOWFLAKE_USER,
 )
 
 # Default arguments for the DAG
@@ -41,13 +41,13 @@ Configuration variables:
 
 # Create the DAG
 with DAG(
-        "contributors_nightly",
-        default_args=default_args,
-        schedule_interval="0 7 * * *",
-        catchup=False,
-        max_active_runs=1,  # Don't allow multiple concurrent dag executions
-        doc_md=doc_md,
-    ) as dag:
+    "contributors_nightly",
+    default_args=default_args,
+    schedule_interval="0 7 * * *",
+    catchup=False,
+    max_active_runs=1,  # Don't allow multiple concurrent dag executions
+    doc_md=doc_md,
+) as dag:
     extract_github_contributors = KubernetesPodOperator(
         **pod_defaults,
         image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
@@ -70,7 +70,7 @@ with DAG(
             " -w ${SNOWFLAKE_LOAD_WAREHOUSE}"
             " -r ${SNOWFLAKE_LOAD_ROLE}"
             " --token ${GITHUB_FINEGRAIN_TOKEN}"
-        ]
+        ],
     )
 
 extract_github_contributors
