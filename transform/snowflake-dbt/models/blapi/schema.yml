@@ -15,6 +15,11 @@ models:
     description: Contains all features provided by various skus (from blapi).
   - name: invoices_blapi
     description: Contains all Mattermost Cloud customer invoices (from blapi). Includes additional forecasted invoice total to provide current month forecasts.
+    columns:
+      - name: id
+        tests:
+          - not_null
+          - unique
   - name: payment_methods
     description: Contains all payment methods provided by Mattermost customers (from blapi).
   - name: payments
