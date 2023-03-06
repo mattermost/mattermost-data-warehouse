@@ -22,7 +22,7 @@ WITH first_active AS (
     WHERE fet.timestamp < CURRENT_TIMESTAMP
       AND fet.user_actual_id IS NOT NULL
     GROUP BY 1, 2, 3, 4, 5
-)
+), q2 as (
 SELECT DISTINCT
       first_active.first_active_timestamp
   ,   first_active.server_id
@@ -46,3 +46,16 @@ GROUP BY first_active.first_active_timestamp
   ,   first_active.installation_id 
   ,   first_active.first_server_edition 
   ,   first_active.id
+) SELECT DISTINCT
+      q2.first_active_timestamp
+  ,   q2.server_id
+  ,   q2.user_id
+  ,   q2.installation_id
+  ,   q2.first_server_edition
+  ,   q2.id
+  ,   q2.AGE
+  ,   q2.MAX_ORIGINAL_TIMESTAMP
+  ,   fet3.type as type
+FROM q2 q2
+     LEFT JOIN {{ ref('focalboard_event_telemetry') }} fet3
+          ON fet3.user_actual_id = q2.user_id
