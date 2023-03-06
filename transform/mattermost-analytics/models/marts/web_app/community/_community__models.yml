@@ -13,6 +13,7 @@ models:
       - name: event_type                             
       - name: server_id                 
       - name: user_id           
-      - name: received_at                           
+      - name: received_at
+      - name: timestamp                     
       - name: received_at_date   
       - name: event_date   
