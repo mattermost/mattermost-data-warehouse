@@ -61,4 +61,4 @@ models:
 
 vars:
   # Common event columns to keep (if they are part of the table)
-  base_event_columns: ['ID', 'RECEIVED_AT', 'EVENT', 'EVENT_TEXT', 'CATEGORY', 'TYPE', 'USER_ID', 'USER_ACTUAL_ID' ]
+  base_event_columns: ['ID', 'RECEIVED_AT', 'EVENT', 'EVENT_TEXT', 'CATEGORY', 'TYPE', 'USER_ID', 'USER_ACTUAL_ID','TIMESTAMP']
