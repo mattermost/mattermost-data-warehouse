@@ -11,7 +11,7 @@
 , "filter", "version", "uuid_ts"] 
 -%}
         
-WITH performance_event AS (
+WITH performance_events AS (
     SELECT
       {{ get_rudderstack_columns() }}
         , {% for column in include_columns %}
@@ -24,4 +24,4 @@ WITH performance_event AS (
       {{ source('mm_telemetry_prod', 'event') }}
     WHERE CATEGORY = 'performance'
 )
-SELECT * FROM performance_event
+SELECT * FROM performance_events
