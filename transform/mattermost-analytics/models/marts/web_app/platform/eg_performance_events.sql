@@ -26,7 +26,7 @@ performance_prod AS (
        {{ ref('int_mm_telemetry_prod_performance_events') }}
 {% if is_incremental() %}
     WHERE received_at_date >= (SELECT MAX(received_at_date) FROM {{ this }} 
-    AND _source_relation = 'int_mm_telemetry_prod_performance_events')  
+    WHERE _source_relation = 'int_mm_telemetry_prod_performance_events')  
 
 {% endif %}
 )
