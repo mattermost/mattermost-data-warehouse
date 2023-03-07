@@ -28,5 +28,5 @@ performance_prod AS (
 {% endif %}
 )
   SELECT * FROM performance_rc
-  UNION_ALL
+  UNION ALL
   SELECT * FROM performance_prod
