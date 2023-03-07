@@ -3,7 +3,7 @@ from typing import List
 
 from snowflake.sqlalchemy import URL
 from sqlalchemy import create_engine
-from sqlalchemy.engine import Engine
+from sqlalchemy.engine import Connection, Engine
 
 TableStats = namedtuple('TableStats', ['schema', 'name', 'rows', 'created_at'])
 
@@ -54,3 +54,49 @@ def get_table_stats_for_schema(engine: Engine, database: str, schema: str) -> Li
         '''
         )
         return [TableStats(*row) for row in result]
+
+
+def upload_csv_as_table(engine: Engine, file: str, schema: str, table: str) -> None:
+    """
+    Uploads a CSV file to target table in snowflake. Truncates data if table already exists.
+
+    CSV file must have a header.
+
+    :param engine: the engine to use for connecting to Snowflake.
+    :param file: the absolute filepath of the file to upload to Snowflake.
+    :param schema: the schema to upload the file to.
+    :param table: the name of the table to upload the data from the file to.
+    """
+    # Truncate table, upload file and replace table content's within a transaction.
+    with engine.begin() as conn:
+        conn.execute(f"TRUNCATE TABLE {schema}.{table}")
+        conn.execute(f"CREATE TEMPORARY STAGE IF NOT EXISTS {schema}.{table}")
+        conn.execute(f"PUT file://{file} @{schema}.{table} OVERWRITE=TRUE")
+        conn.execute(f"COPY INTO {schema}.{table} FROM @{schema}.{table} FILE_FORMAT = (TYPE = CSV SKIP_HEADER = 1)")
+
+
+def move_table(
+    conn: Connection,
+    table: str,
+    source_database: str,
+    source_schema: str,
+    target_database: str,
+    target_schema: str,
+    postfix: str = None,
+) -> None:
+    """
+    Moves table from source database/schema to target database/schema.
+
+    :param conn: the SQLAlchemy connection to use for moving the table information.
+    :param table: the table to move.
+    :param source_database: the database where the table is currently located at.
+    :param source_schema: the schema where the table is currently located at.
+    :param target_database: the database to move the table to.
+    :param target_schema: the schema to move the table to.
+    :param postfix: (optional) postfix to append to the table at the target database.
+    """
+    query = f'''
+        ALTER TABLE {source_database}.{source_schema}.{table}
+        RENAME TO {target_database}.{target_schema}.{table}{postfix if postfix else ''}
+    '''
+    conn.execute(query)

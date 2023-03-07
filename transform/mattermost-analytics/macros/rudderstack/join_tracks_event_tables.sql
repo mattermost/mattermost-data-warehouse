@@ -4,7 +4,7 @@
     -%}
     {%- set all_relations = dbt_utils.get_relations_by_pattern(schema, '%', database='RAW') | list -%}
     {%- set relations = all_relations | rejectattr('identifier', 'in', rudderstack_tables) | list -%}
-    {%- set include = var('base_event_columns') -%}
+    {%- set include = get_base_event_columns() -%}
 
     {%- if columns -%}
         {# If user defined columns to keep, filter them #}

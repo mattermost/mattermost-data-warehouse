@@ -1,0 +1,19 @@
+version: 2
+
+exposures:
+  - name: event_registry_dashboard
+    type: application
+    description: |
+      Looker dashboard for event registry. Offers insights on available events, as well as daily volume of
+      events.
+
+    url: https://mattermost.looker.com/dashboards/397
+    tags:
+      - looker
+    maturity: medium
+    owner:
+      name: Ioannis Foukarakis
+      email: ioannis.foukarakis@mattermost.com
+    depends_on:
+      - ref('dim_events')
+      - ref('fct_events_daily_snapshot')

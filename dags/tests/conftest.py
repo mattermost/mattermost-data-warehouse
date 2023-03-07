@@ -11,9 +11,16 @@ from airflow.operators import BaseOperator
 @pytest.fixture(autouse=True)
 def config_utils(monkeypatch):
 
-    # patching environment variables used in airflow_utils
+    # patching environment variables used in airflow DAGs
     monkeypatch.setenv("NAMESPACE", "test_namespace")
     monkeypatch.setenv("AIRFLOW_BASE_URL", "https://test.airflow.mattermost.com")
+    monkeypatch.setenv("AIRFLOW_VAR_STITCH_SECRET", "test_secret_value")
+    monkeypatch.setenv("AIRFLOW_VAR_STITCH_LOADS_ENDPOINT", "test_loads_endpoint")
+    monkeypatch.setenv("AIRFLOW_VAR_STITCH_EXTRACTIONS_ENDPOINT", "test_extractions_endpoint")
+    monkeypatch.setenv("AIRFLOW_VAR_HIGHTOUCH_SYNCS_ENDPOINT", "test_syncs_endpoint")
+    monkeypatch.setenv("AIRFLOW_VAR_HIGHTOUCH_SECRET", "test_hightouch_secret")
+    monkeypatch.setenv("AIRFLOW_VAR_RUDDER_SCHEMAS", '["schema1", "schema2"]')
+    monkeypatch.setenv("AIRFLOW_VAR_RUDDER_MAX_AGE", '2')
 
 
 @pytest.fixture

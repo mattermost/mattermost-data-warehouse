@@ -37,7 +37,10 @@ WITH subscriptions AS (
         ,subscriptions.status
         ,subscriptions.updated
         ,subscriptions.plan
-        ,subscriptions.metadata
+        ,subscriptions.metadata        
+        ,subscriptions.ended_at
+        ,subscriptions.canceled_at
+        ,subscriptions.updated_by_event_type
     FROM {{ source('stripe_raw','subscriptions') }}
     {% if is_incremental() %}
 

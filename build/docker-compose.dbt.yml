@@ -50,25 +50,24 @@ services:
           read_only: True
 
     data_image:
-      image: docker.io/adovenmm/data-image:v01.21.1
+      build:
+        dockerfile: build/Dockerfile
+        context: ../
       env_file:
         - ../.dbt.env
       restart: always
+      entrypoint: [ "" ]
       command: bash -c "/bin/bash"
-      working_dir: /usr/local/analytics/
-      volumes:
-        - type: bind
-          source: .
-          target: /usr/local/analytics
 
     permifrost:
-      image: docker.io/adovenmm/permifrost:latest
+      build:
+        dockerfile: build/permifrost.Dockerfile
+        context: ../
       env_file:
         - ../.dbt.env
       restart: always
-      command: /bin/bash -c "permifrost grant roles.yaml"
+      command: /bin/bash -c "/bin/bash"
       volumes:
         - type: bind
-          source: ./load/snowflake/roles.yaml
-          target: /roles.yaml
-          read_only: True
+          source: ../load
+          target: /app/load
