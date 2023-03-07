@@ -58,3 +58,8 @@ macros:
       - name: source_name
         type: string
         description: An optional name for the source table. If not defined, the name of the relation will be used.
+
+  - name: get_base_event_columns
+    description: |
+      Returns the list of columns to use from rudderstack tables. This list contains columns that are expected to be
+      in [every event table](https://www.rudderstack.com/docs/destinations/warehouse-destinations/warehouse-schema/#standard-rudderstack-properties

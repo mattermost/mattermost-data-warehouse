@@ -7,7 +7,6 @@ from dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, pod_defaults, pod
 from dags.kube_secrets import (
     DBT_CLOUD_API_ACCOUNT_ID,
     DBT_CLOUD_API_KEY,
-    GITHUB_TOKEN,
     SNOWFLAKE_ACCOUNT,
     SNOWFLAKE_PASSWORD,
     SNOWFLAKE_TRANSFORM_ROLE,
@@ -51,23 +50,6 @@ dag = DAG(
     catchup=False,
     max_active_runs=1,  # Don't allow multiple concurrent dag executions
     doc_md=doc_md,
-)
-
-update_github_contributors = KubernetesPodOperator(
-    **pod_defaults,
-    image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
-    task_id="github-contributors",
-    name="github-contributors",
-    secrets=[
-        SNOWFLAKE_USER,
-        SNOWFLAKE_PASSWORD,
-        SNOWFLAKE_ACCOUNT,
-        SNOWFLAKE_TRANSFORM_WAREHOUSE,
-        GITHUB_TOKEN,
-    ],
-    env_vars=env_vars,
-    arguments=["python -m utils.github_contributors"],
-    dag=dag,
 )
 
 dbt_run_cloud_nightly = KubernetesPodOperator(

@@ -4,7 +4,7 @@
 {{
     dbt_utils.union_relations(
         relations=relations,
-        include=var('base_event_columns'),
+        include=get_base_event_columns(),
         source_column_name=None
     )
 }}

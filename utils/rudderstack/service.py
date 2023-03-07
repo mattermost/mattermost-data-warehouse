@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta, timezone
-from typing import List
+from typing import Iterable, List
 
 from sqlalchemy.engine import Engine
 
-from utils.db.helpers import get_table_stats_for_schema
+from utils.db.helpers import get_table_stats_for_schema, move_table
 
 # Tables that exist in rudderstack schema.
 RUDDERSTACK_TABLES = frozenset(
@@ -42,3 +42,33 @@ def list_event_tables(
     ]
     filtered_tables = filter(lambda x: all(f(x) for f in filters), stats)
     return [t.name for t in filtered_tables]
+
+
+def move_tables(
+    engine: Engine,
+    tables: Iterable[str],
+    source_database: str,
+    source_schema: str,
+    target_database: str,
+    target_schema: str,
+    postfix: str = None,
+) -> None:
+    """
+    Moves tables from source database/schema to target database/schema.
+
+    :param engine: the SQLAlchemy engine to use for moving the table information.
+    :param tables: the tables to move.
+    :param source_database: the database where the table is currently located at.
+    :param source_schema: the schema where the table is currently located at.
+    :param target_database: the database to move the table to.
+    :param target_schema: the schema to move the table to.
+    :param postfix: (optional) postfix to append to the table at the target database.
+    """
+    with engine.begin() as conn:
+        # Run in a transaction
+        for table in tables:
+            # Ignore whitelines
+            if table.strip():
+                move_table(
+                    conn, table.strip(), source_database, source_schema, target_database, target_schema, postfix=postfix
+                )

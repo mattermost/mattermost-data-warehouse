@@ -25,7 +25,7 @@ default_args = {
 }
 
 # Set the command for the container
-container_cmd = f"""
+container_cmd = """
     permifrost grant load/snowflake/roles.yaml
 """
 

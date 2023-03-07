@@ -1,5 +1,4 @@
 import pytest
-
 import responses as test_responses  # importing as test_responses, due to conflict with import in conftest.py
 import snowflake.connector
 
@@ -38,7 +37,8 @@ class TestPostDocsJob:
 
         mock_snowflake_connector('utils.post_docs_data')
         data = {
-            "text": "| Feedback            | Path                |\n|---------------------|---------------------|\n| test row 1 column 1 | test row 1 column 2 |\n| test row 2 column 1 | test row 2 column 2 |",
+            "text": "| Feedback            | Path                |\n|---------------------|---------------------|\n"
+            "| test row 1 column 1 | test row 1 column 2 |\n| test row 2 column 1 | test row 2 column 2 |",
             "channel": "mattermost-documentation-feedback",
         }
         test_responses.post(
