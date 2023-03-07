@@ -24,4 +24,4 @@ WITH performance_event AS (
       {{ source('mm_telemetry_prod', 'event') }}
     WHERE CATEGORY = 'performance'
 )
-SELECT * FROM performance_events
+SELECT * FROM performance_event
