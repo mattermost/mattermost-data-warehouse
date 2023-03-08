@@ -1,7 +1,8 @@
 {{
     config({
         "materialized": "incremental",
-        "cluster_by": ['event_date']
+        "cluster_by": ['event_date'],
+        "incremental_strategy": "append"
     })
 }}
 
@@ -12,8 +13,8 @@ WITH performance_rc AS (
      FROM
        {{ ref('int_mm_telemetry_rc_performance_events') }}
 {% if is_incremental() %}
-    WHERE received_at_date >= (
-        SELECT MAX(received_at_date)
+    WHERE received_at >= (
+        SELECT MAX(received_at)
         FROM {{ this }} 
         WHERE _source_relation = 'int_mm_telemetry_rc_performance_events') 
 {% endif %}
@@ -25,7 +26,7 @@ performance_prod AS (
      FROM
        {{ ref('int_mm_telemetry_prod_performance_events') }}
 {% if is_incremental() %}
-    WHERE received_at_date >= (SELECT MAX(received_at_date) FROM {{ this }} 
+    WHERE received_at >= (SELECT MAX(received_at) FROM {{ this }} 
     WHERE _source_relation = 'int_mm_telemetry_prod_performance_events')  
 
 {% endif %}

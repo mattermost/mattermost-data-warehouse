@@ -11,8 +11,11 @@ models:
       - name: context_page_referrer          
       - name: channel                        
       - name: context_app_namespace          
-      - name: id                             
-      - name: user_actual_id                 
+      - name: id
+        tests:
+          - unique
+          - not_null                                
+      - name: user_actual_id                
       - name: context_library_name           
       - name: type                           
       - name: context_app_version            
@@ -32,7 +35,9 @@ models:
       - name: context_page_path              
       - name: context_os_version             
       - name: category                       
-      - name: duration                       
+      - name: duration
+        tests:
+          - not_null                        
       - name: num_of_request                 
       - name: max_api_resource_size          
       - name: longest_api_resource_duration  
@@ -71,4 +76,6 @@ models:
       - name: uuid_ts                        
       - name: received_at
       - name: event_date
+        tests:
+          - not_null 
       - name: received_at_date
