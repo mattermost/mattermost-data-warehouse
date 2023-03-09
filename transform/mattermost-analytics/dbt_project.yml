@@ -55,13 +55,17 @@ models:
       +materialized: table
       schema: utilities
       tags: [ 'utilities' ]
-    dbt_project_evaluator:
-      +schema: dbt_project_evaluator
 
+seeds:
+  dbt_project_evaluator:
+    dbt_project_evaluator_exceptions:
+      +enabled: false
+      
 tests:
   dbt_project_evaluator:
     # Set DBT project
     +severity: "{{ env_var('DBT_PROJECT_EVALUATOR_SEVERITY', 'warn') }}"
+    staging_prefixes: stg_,base_
     other_prefixes: eg_
 
 # Configuration variables
