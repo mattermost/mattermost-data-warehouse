@@ -13,7 +13,7 @@ WITH performance_rc AS (
      FROM
        {{ ref('int_mm_telemetry_rc_performance_events') }}
 {% if is_incremental() %}
-    WHERE received_at >= (
+    WHERE received_at > (
         SELECT MAX(received_at)
         FROM {{ this }} 
         WHERE _source_relation = 'int_mm_telemetry_rc_performance_events') 
@@ -26,7 +26,7 @@ performance_prod AS (
      FROM
        {{ ref('int_mm_telemetry_prod_performance_events') }}
 {% if is_incremental() %}
-    WHERE received_at >= (SELECT MAX(received_at) FROM {{ this }} 
+    WHERE received_at > (SELECT MAX(received_at) FROM {{ this }} 
     WHERE _source_relation = 'int_mm_telemetry_prod_performance_events')  
 
 {% endif %}
