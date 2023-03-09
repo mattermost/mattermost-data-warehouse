@@ -12,7 +12,13 @@ RUDDERSTACK_TABLES = frozenset(
 
 
 def list_event_tables(
-    engine: Engine, database: str, schema: str, min_rows: int = None, max_rows: int = None, max_age: timedelta = None
+    engine: Engine,
+    database: str,
+    schema: str,
+    min_rows: int = None,
+    max_rows: int = None,
+    min_age: timedelta = None,
+    max_age: timedelta = None,
 ) -> List[str]:
     """
     Loads stats for all tables in a schema.
@@ -22,6 +28,7 @@ def list_event_tables(
     :param schema: the schema to load information for.
     :param min_rows: ignore tables with less than this number of rows (if specified).
     :param max_rows: ignore tables with more than this number of rows (if specified).
+    :param min_age: ignore tables created less than this timedelta ago.
     :param max_age: ignore tables created more than this timedelta ago.
     :return: a list of stats for all tables in the schema.
     """
@@ -36,6 +43,9 @@ def list_event_tables(
         lambda table: table.name.upper() not in RUDDERSTACK_TABLES,
         lambda table: table.rows >= min_rows if min_rows else True,
         lambda table: table.rows <= max_rows if max_rows else True,
+        lambda table: table.created_at.astimezone(timezone.utc).replace(tzinfo=None) < current_time - min_age
+        if min_age
+        else True,
         lambda table: table.created_at.astimezone(timezone.utc).replace(tzinfo=None) > current_time - max_age
         if max_age
         else True,
