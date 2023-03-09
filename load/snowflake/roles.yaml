@@ -185,6 +185,7 @@ roles:
                 write:
                     - raw
                     - analytics
+                    - archive
                     - dev
             schemas:
                 read:
