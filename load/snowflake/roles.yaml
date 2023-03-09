@@ -5,6 +5,9 @@ databases:
     - analytics:
         shared: no
 
+    - archive:
+        shared: no
+
     - raw:
         shared: no
 
@@ -42,28 +45,34 @@ roles:
                 read:
                     - raw
                     - analytics
+                    - archive
                     - dev
                 write:
                     - raw
                     - analytics
+                    - archive
                     - dev
             schemas:
                 read:
                     - raw.*
                     - analytics.*
+                    - archive.*
                     - dev.*
                 write:
                     - raw.*
                     - analytics.*
+                    - archive.*
                     - dev.*
             tables:
                 read:
                     - raw.*.*
                     - analytics.*.*
+                    - archive.*.*
                     - dev.*.*
                 write:
                     - raw.*.*
                     - analytics.*.*
+                    - archive.*.*
                     - dev.*.*
 
     ## Regular Roles
@@ -141,18 +150,24 @@ roles:
             databases:
                 read:
                     - raw
+                    - archive
                 write:
                     - raw
+                    - archive
             schemas:
                 read:
                     - raw.*
+                    - archive.*
                 write:
                     - raw.*
+                    - archive.*
             tables:
                 read:
                     - raw.*.*
+                    - archive.*.*
                 write:
                     - raw.*.*
+                    - archive.*.*
 
     - transformer:  # For automated jobs
         warehouses:
@@ -164,6 +179,7 @@ roles:
                 read:
                     - raw
                     - analytics
+                    - archive
                     - snowflake
                     - dev
                 write:
@@ -174,19 +190,23 @@ roles:
                 read:
                     - raw.*
                     - analytics.*
+                    - archive.*
                     - snowflake.account_usage
                     - dev.*
                 write:
                     - analytics.*
+                    - archive.*
                     - dev.*
             tables:
                 read:
                     - raw.*.*
                     - analytics.*.*
+                    - archive.*.*
                     - snowflake.account_usage.*
                     - dev.*.*
                 write:
                     - analytics.*.*
+                    - archive.*.*
                     - dev.*.*
 
     # Object Roles
