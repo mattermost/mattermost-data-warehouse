@@ -55,3 +55,19 @@ models:
       +materialized: table
       schema: utilities
       tags: [ 'utilities' ]
+    dbt_project_evaluator:
+      +schema: dbt_project_evaluator
+
+tests:
+  dbt_project_evaluator:
+    # Set DBT project
+    +severity: "{{ env_var('DBT_PROJECT_EVALUATOR_SEVERITY', 'warn') }}"
+    other_prefixes: eg_
+
+# Configuration variables
+vars:
+  dbt_project_evaluator:
+    # Set test and doc coverage to 75% (default is 100%)
+    documentation_coverage_target: 75
+    test_coverage_target: 75
+
