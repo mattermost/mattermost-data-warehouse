@@ -7,6 +7,9 @@ models:
 
     columns:
       - name: event_id
+        tests:
+          - unique
+          - not_null
       - name: event_table          
       - name: event_name                        
       - name: category          
