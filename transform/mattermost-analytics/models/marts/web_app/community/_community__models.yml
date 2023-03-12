@@ -15,5 +15,4 @@ models:
       - name: user_id           
       - name: received_at
       - name: timestamp                     
-      - name: received_at_date   
       - name: event_date   
