@@ -13,7 +13,7 @@ WITH community_prod AS (
         , timestamp::date as event_date
      FROM
        {{ ref('stg_mm_telemetry_prod__tracks') }} 
-    WHERE server_id = '93mykbogbjfrbbdqphx3zhze5c'
+    WHERE server_id = '{{ var("community_server_id") }}'
 {% if is_incremental() %}
     AND received_at_date >= (SELECT MAX(received_at_date) FROM {{ this }}) 
     AND _source_relation = 'stg_mm_telemetry_prod__tracks'
@@ -27,7 +27,7 @@ community_rc AS (
         , timestamp::date as event_date
      FROM
        {{ ref('stg_mm_telemetry_rc__tracks') }} 
-    WHERE server_id = '93mykbogbjfrbbdqphx3zhze5c'
+    WHERE server_id = '{{ var("community_server_id") }}'
 {% if is_incremental() %}
     AND received_at_date >= (SELECT MAX(received_at_date) FROM {{ this }}) 
     AND _source_relation = 'stg_mm_telemetry_rc__tracks'

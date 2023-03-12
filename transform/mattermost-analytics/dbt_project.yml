@@ -75,3 +75,5 @@ vars:
     documentation_coverage_target: 75
     test_coverage_target: 75
 
+    # Community Server ID
+  community_server_id : 93mykbogbjfrbbdqphx3zhze5c
