@@ -15,8 +15,9 @@ WITH community_prod AS (
        {{ ref('stg_mm_telemetry_prod__tracks') }} 
     WHERE server_id = '{{ var("community_server_id") }}'
 {% if is_incremental() %}
-    AND received_at_date >= (SELECT MAX(received_at_date) FROM {{ this }}) 
-    AND _source_relation = 'stg_mm_telemetry_prod__tracks'
+    AND received_at_date >= (SELECT MAX(received_at_date) FROM {{ this }}
+    WHERE _source_relation = 'stg_mm_telemetry_prod__tracks') 
+
 {% endif %}
 ), 
 community_rc AS (
@@ -29,8 +30,9 @@ community_rc AS (
        {{ ref('stg_mm_telemetry_rc__tracks') }} 
     WHERE server_id = '{{ var("community_server_id") }}'
 {% if is_incremental() %}
-    AND received_at_date >= (SELECT MAX(received_at_date) FROM {{ this }}) 
-    AND _source_relation = 'stg_mm_telemetry_rc__tracks'
+    AND received_at_date >= (SELECT MAX(received_at_date) FROM {{ this }}   
+    WHERE _source_relation = 'stg_mm_telemetry_rc__tracks') 
+
 {% endif %}
 )
   SELECT * FROM community_prod
