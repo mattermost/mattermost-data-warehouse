@@ -17,7 +17,6 @@ WITH community_prod AS (
 {% if is_incremental() %}
     AND received_at > (SELECT MAX(received_at) FROM {{ this }}
     WHERE _source_relation = 'stg_mm_telemetry_prod__tracks') 
-
 {% endif %}
 ), 
 community_rc AS (
@@ -31,9 +30,8 @@ community_rc AS (
 {% if is_incremental() %}
     AND received_at > (SELECT MAX(received_at) FROM {{ this }}   
     WHERE _source_relation = 'stg_mm_telemetry_rc__tracks') 
-
 {% endif %}
 )
   SELECT * FROM community_prod
-  UNION_ALL
+  UNION ALL
   SELECT * FROM community_rc
