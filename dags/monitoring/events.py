@@ -3,8 +3,7 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 from airflow.models import Variable
-from airflow.operators.python_operator import PythonOperator
-from airflow.utils.trigger_rule import TriggerRule
+from airflow.operators.python_operator import PythonOperator, ShortCircuitOperator
 from tabulate import tabulate
 
 from dags._helpers import chunk
@@ -56,11 +55,22 @@ dag = DAG(
 )
 
 
+def short_circuit_on_no_new_tables(task_id):
+    def _do_short_circuit(**kwargs):
+        """Short circuit if no new tables"""
+        ti = kwargs['ti']
+        xcom_result = ti.xcom_pull(task_ids=task_id)
+        is_xcom_none_or_empty = not xcom_result or not xcom_result.get('new_tables', [])
+        return not is_xcom_none_or_empty
+
+    return _do_short_circuit
+
+
 def table_formatter(task_id, size=10):
     def format_tables(**kwargs):
         """Format result as table"""
         ti = kwargs['ti']
-        result = ti.xcom_pull(task_ids=task_id)['new_tables']
+        result = ti.xcom_pull(task_ids=task_id).get('new_tables', [])
         return tabulate(chunk(result, size, pad=True), headers='firstrow', tablefmt='github')
 
     return format_tables
@@ -88,10 +98,17 @@ def get_pod_operators(dag):
                 "rudder list ${SNOWFLAKE_LOAD_DATABASE} "
                 + schema
                 + " -w ${SNOWFLAKE_LOAD_WAREHOUSE} -r ${SNOWFLAKE_LOAD_ROLE} --max-age {{ var.value.rudder_max_age }}"
-                + " --format-json > /airflow/xcom/return.json"
+                + " --format-json > /airflow/xcom/return.json || true"
             ],
             do_xcom_push=True,
             dag=dag,
+        )
+
+        check_output = ShortCircuitOperator(
+            task_id=f'short-circuit-{schema}',
+            provide_context=True,  # provide context is for getting the TI (task instance ) parameters
+            dag=dag,
+            python_callable=short_circuit_on_no_new_tables(f"check-new-tables-{schema}"),
         )
 
         apply_format = PythonOperator(
@@ -99,7 +116,6 @@ def get_pod_operators(dag):
             provide_context=True,  # provide context is for getting the TI (task instance ) parameters
             dag=dag,
             python_callable=table_formatter(f"check-new-tables-{schema}"),
-            trigger_rule=TriggerRule.ALL_FAILED,
         )
 
         alert_op = MattermostOperator(
@@ -117,7 +133,7 @@ def get_pod_operators(dag):
             dag=dag,
         )
 
-        op >> apply_format >> alert_op
+        op >> check_output >> apply_format >> alert_op
 
         result.append(op)
 
