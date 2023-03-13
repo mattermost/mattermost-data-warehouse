@@ -3,24 +3,13 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.models import Variable
-from airflow.models.xcom import XCom
 from airflow.operators.http_operator import SimpleHttpOperator
 from airflow.operators.python_operator import PythonOperator
-from airflow.utils.db import provide_session
 
-from dags.airflow_utils import send_alert
+from dags.airflow_utils import cleanup_xcom, send_alert
 from dags.general._helpers import resolve_hightouch, resolve_stitch
 
 task_logger = logging.getLogger('airflow.task')
-
-
-# To clean up Xcom after dag finished run.
-@provide_session
-def cleanup_xcom(**context):
-    dag = context["dag"]
-    dag_id = dag._dag_id
-    session = context["session"]
-    session.query(XCom).filter(XCom.dag_id == dag_id).delete()
 
 
 default_args = {'on_failure_callback': send_alert}
