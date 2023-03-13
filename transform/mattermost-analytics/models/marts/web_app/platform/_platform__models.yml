@@ -81,7 +81,7 @@ models:
       # Each event should appear once
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
-            - event_date
+            - timestamp
             - user_id
             - user_actual_id
             - category
