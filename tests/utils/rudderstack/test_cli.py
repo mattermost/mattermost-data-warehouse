@@ -74,6 +74,6 @@ def test_should_print_tables_as_json(mocker):
     # THEN: expect exit code to be 1
     assert result.exit_code == 1
     # THEN: expect tables to be printed in stdout
-    assert result.stdout == '["new-table-1", "new-table-2"]\n'
+    assert result.stdout == '{"new_tables": ["new-table-1", "new-table-2"]}\n'
     # THEN: expect error to be printed in stderr
     assert result.stderr == 'Error: New tables found...\n'
