@@ -3,6 +3,8 @@ import os
 import urllib.parse
 
 from airflow.contrib.kubernetes.pod import Resources
+from airflow.models import XCom
+from airflow.utils.db import provide_session
 
 from plugins.operators.mattermost_operator import MattermostOperator
 
@@ -74,3 +76,12 @@ def send_alert(context):
     MattermostOperator(
         mattermost_conn_id='mattermost', text=create_alert_body(context), username='Airflow', task_id=task_id
     ).execute(context)
+
+
+# To clean up Xcom after dag finished run.
+@provide_session
+def cleanup_xcom(**context):
+    dag = context["dag"]
+    dag_id = dag._dag_id
+    session = context["session"]
+    session.query(XCom).filter(XCom.dag_id == dag_id).delete()
