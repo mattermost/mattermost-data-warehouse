@@ -45,7 +45,7 @@ def test_table_formatter(mocker, input, size, output):
 
     # GIVEN: a list of items in xcom
     mock_ti = mocker.MagicMock()
-    mock_ti.xcom_pull.return_value = input
+    mock_ti.xcom_pull.return_value = {'new_tables': input}
 
     # WHEN: request to format items
     result = table_formatter('task-id', size=size)(ti=mock_ti)

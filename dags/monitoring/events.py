@@ -60,7 +60,7 @@ def table_formatter(task_id, size=10):
     def format_tables(**kwargs):
         """Format result as table"""
         ti = kwargs['ti']
-        result = ti.xcom_pull(task_ids=task_id)
+        result = ti.xcom_pull(task_ids=task_id)['new_tables']
         return tabulate(chunk(result, size, pad=True), headers='firstrow', tablefmt='github')
 
     return format_tables

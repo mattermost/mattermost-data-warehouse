@@ -88,7 +88,7 @@ def list_tables(
             max_age=timedelta(days=max_age) if max_age else None,
         )
         if format_json:
-            click.echo(json.dumps(result))
+            click.echo(json.dumps({"new_tables": result}))
         else:
             for table in result:
                 click.echo(table)
