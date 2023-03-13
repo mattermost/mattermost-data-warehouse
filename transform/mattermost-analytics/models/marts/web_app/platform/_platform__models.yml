@@ -35,9 +35,7 @@ models:
       - name: context_page_path              
       - name: context_os_version             
       - name: category                       
-      - name: duration
-        tests:
-          - not_null                        
+      - name: duration                     
       - name: num_of_request                 
       - name: max_api_resource_size          
       - name: longest_api_resource_duration  
@@ -79,3 +77,14 @@ models:
         tests:
           - not_null 
       - name: received_at_date
+
+    tests:
+      # Each event should appear once
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - event_date
+            - user_id
+            - user_actual_id
+            - category
+            - event_type
+            - duration
