@@ -86,5 +86,5 @@ models:
             - user_id
             - user_actual_id
             - category
-            - event_type
+            - type
             - duration
