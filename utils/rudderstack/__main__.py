@@ -1,3 +1,4 @@
+import json
 from datetime import timedelta
 
 import click
@@ -42,8 +43,12 @@ def rudder() -> None:
     '--max-rows', type=click.IntRange(0), help='include tables with no more rows than this number of rows (inclusive)'
 )
 @click.option(
+    '--min-age', type=click.IntRange(0), help='include tables that have been created before to this number of days ago'
+)
+@click.option(
     '--max-age', type=click.IntRange(0), help='include tables that have been created up to this number of days ago'
 )
+@click.option('--format-json', is_flag=True, help='use JSON as output format')
 def list_tables(
     database: str,
     schema: str,
@@ -54,7 +59,9 @@ def list_tables(
     role: str,
     min_rows: int,
     max_rows: int,
+    min_age: int,
     max_age: int,
+    format_json: bool,
 ) -> None:
     """
     List Rudderstack event tables for given database and schema.
@@ -77,10 +84,14 @@ def list_tables(
             schema,
             min_rows=min_rows,
             max_rows=max_rows,
+            min_age=timedelta(days=min_age) if min_age else None,
             max_age=timedelta(days=max_age) if max_age else None,
         )
-        for table in result:
-            click.echo(table)
+        if format_json:
+            click.echo(json.dumps({"new_tables": result}))
+        else:
+            for table in result:
+                click.echo(table)
         # Make sure that exit code is > 0 if tables are found
         if result:
             raise click.ClickException("New tables found...")
