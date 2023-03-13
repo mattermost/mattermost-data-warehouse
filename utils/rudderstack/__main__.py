@@ -42,6 +42,9 @@ def rudder() -> None:
     '--max-rows', type=click.IntRange(0), help='include tables with no more rows than this number of rows (inclusive)'
 )
 @click.option(
+    '--min-age', type=click.IntRange(0), help='include tables that have been created before to this number of days ago'
+)
+@click.option(
     '--max-age', type=click.IntRange(0), help='include tables that have been created up to this number of days ago'
 )
 def list_tables(
@@ -54,6 +57,7 @@ def list_tables(
     role: str,
     min_rows: int,
     max_rows: int,
+    min_age: int,
     max_age: int,
 ) -> None:
     """
@@ -77,6 +81,7 @@ def list_tables(
             schema,
             min_rows=min_rows,
             max_rows=max_rows,
+            min_age=timedelta(days=min_age) if min_age else None,
             max_age=timedelta(days=max_age) if max_age else None,
         )
         for table in result:
