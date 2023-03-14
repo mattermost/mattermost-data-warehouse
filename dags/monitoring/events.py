@@ -60,8 +60,7 @@ def short_circuit_on_no_new_tables(task_id):
         """Short circuit if no new tables"""
         ti = kwargs['ti']
         xcom_result = ti.xcom_pull(task_ids=task_id)
-        is_xcom_none_or_empty = not xcom_result or not xcom_result.get('new_tables', [])
-        return not is_xcom_none_or_empty
+        return bool(xcom_result and xcom_result.get('new_tables', []))
 
     return _do_short_circuit
 
