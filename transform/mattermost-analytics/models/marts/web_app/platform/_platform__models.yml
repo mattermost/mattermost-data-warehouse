@@ -8,6 +8,9 @@ models:
 
     columns:
       - name: _source_relation
+        tests:
+          - accepted_values:
+              values: ['int_mm_telemetry_rc_performance_events', 'int_mm_telemetry_prod_performance_events']
       - name: context_page_referrer          
       - name: channel                        
       - name: context_app_namespace          
