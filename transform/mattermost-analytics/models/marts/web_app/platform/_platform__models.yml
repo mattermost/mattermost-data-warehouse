@@ -15,6 +15,9 @@ models:
       - name: channel                        
       - name: context_app_namespace          
       - name: id
+        tests:
+          - unique
+          - not null
       - name: user_actual_id                
       - name: context_library_name           
       - name: type                           
