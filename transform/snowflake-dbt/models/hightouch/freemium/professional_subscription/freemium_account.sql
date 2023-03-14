@@ -12,8 +12,10 @@ WITH existing_contacts AS (
         contact.dwh_external_id__c,
         CASE
             WHEN SUBSTR(
-                contact.ownerid
-            ) = '005' THEN NULL
+                contact.ownerid,
+                0,
+                3
+            ) = '00G' THEN NULL
             ELSE contact.ownerid
         END AS ownerid,
         ROW_NUMBER() over (
@@ -31,8 +33,10 @@ existing_leads AS (
         LEAD.dwh_external_id__c,
         CASE
             WHEN SUBSTR(
-                LEAD.ownerid
-            ) = '005' THEN NULL
+                LEAD.ownerid,
+                0,
+                3
+            ) = '00G' THEN NULL
             ELSE LEAD.ownerid
         END AS ownerid,
         ROW_NUMBER() over (
