@@ -11,8 +11,10 @@ WITH existing_lead AS (
         LEAD.email,
         CASE
             WHEN SUBSTR(
-                LEAD.ownerid
-            ) = '005' THEN NULL
+                LEAD.ownerid,
+                0,
+                3
+            ) = '00G' THEN NULL
             ELSE LEAD.ownerid
         END AS ownerid
     FROM
