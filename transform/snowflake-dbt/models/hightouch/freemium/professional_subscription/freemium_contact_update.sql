@@ -9,7 +9,14 @@ WITH existing_lead AS (
     SELECT
         lead.id,
         lead.email,
-        lead.ownerid
+        CASE
+            WHEN SUBSTR(
+                LEAD.ownerid,
+                0,
+                3
+            ) = '00G' THEN NULL
+            ELSE LEAD.ownerid
+        END AS ownerid
     FROM {{ ref('lead') }}
     WHERE converteddate IS NULL
     QUALIFY ROW_NUMBER() OVER (PARTITION BY lead.email ORDER BY lead.createddate DESC) = 1
