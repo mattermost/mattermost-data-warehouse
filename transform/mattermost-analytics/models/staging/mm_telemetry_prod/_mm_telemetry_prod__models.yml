@@ -57,7 +57,6 @@ models:
       - name: max_api_resource_size          
       - name: longest_api_resource_duration  
       - name: user_id                        
-      - name: userid                         
       - name: root_id                        
       - name: post_id                        
       - name: sort                           
