@@ -18,19 +18,13 @@ class MattermostOperator(SimpleHttpOperator):
     :param props: Sets the post props, a JSON property bag for storing extra or meta data on the post.
     """
 
-    template_fields = (
-        'text',
-        'channel',
-        'username',
-        'type',
-        'props',
-    )
+    template_fields = ('text', 'channel', 'username', 'type', 'props', 'attachments')
 
     def __init__(
         self,
         *,
         mattermost_conn_id,
-        text="",
+        text=None,
         channel=None,
         username=None,
         icon_url=None,

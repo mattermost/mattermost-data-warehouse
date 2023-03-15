@@ -34,13 +34,13 @@ def test_should_create_pod_operators():
 
 
 @pytest.mark.parametrize(
-    "input,size,output",
+    "input,output",
     [
-        [['a', 'b', 'c', 'd', 'e'], 2, '| a   | b   |\n|-----|-----|\n| c   | d   |\n| e   |     |'],
-        [['a', 'b', 'c', 'd', 'e'], 3, '| a   | b   | c   |\n|-----|-----|-----|\n| d   | e   |     |'],
+        [[], ''],
+        [['a', 'b', 'c', 'd', 'e'], ' - a\n - b\n - c\n - d\n - e'],
     ],
 )
-def test_table_formatter(mocker, input, size, output):
+def test_table_formatter(mocker, input, output):
     from dags.monitoring.events import table_formatter
 
     # GIVEN: a list of items in xcom
@@ -48,7 +48,7 @@ def test_table_formatter(mocker, input, size, output):
     mock_ti.xcom_pull.return_value = {'new_tables': input}
 
     # WHEN: request to format items
-    result = table_formatter('task-id', size=size)(ti=mock_ti)
+    result = table_formatter('task-id')(ti=mock_ti)
 
     # THEN: expect to be in proper table
     assert result == output
