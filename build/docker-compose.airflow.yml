@@ -28,11 +28,14 @@ services:
       - AIRFLOW_DATABASE_PASSWORD=bitnami1
       - AIRFLOW_EXECUTOR=CeleryExecutor
       - AIRFLOW_LOAD_EXAMPLES=no
-      - NAMESPACE=airflow
+      - AIRFLOW_FERNET_KEY=JWk2WQr0hIeVmpOoG7OyWvVwz1IS4XtzbRoV8u0qaNw=
+      - NAMESPACE=default
+      - ENVIRONMENT=docker-compose
     volumes:
       - airflow_scheduler_data:/bitnami
       - ../dags:/opt/bitnami/airflow/dags/dags
       - ../plugins:/opt/bitnami/airflow/dags/plugins
+      - .:/opt/kube
 
   airflow-worker:
     depends_on:
@@ -45,11 +48,14 @@ services:
       - AIRFLOW_DATABASE_PASSWORD=bitnami1
       - AIRFLOW_EXECUTOR=CeleryExecutor
       - AIRFLOW_LOAD_EXAMPLES=no
-      - NAMESPACE=airflow
+      - AIRFLOW_FERNET_KEY=JWk2WQr0hIeVmpOoG7OyWvVwz1IS4XtzbRoV8u0qaNw=
+      - NAMESPACE=default
+      - ENVIRONMENT=docker-compose
     volumes:
       - airflow_worker_data:/bitnami
       - ../dags:/opt/bitnami/airflow/dags/dags
       - ../plugins:/opt/bitnami/airflow/dags/plugins
+      - .:/opt/kube
 
   airflow:
     depends_on:
@@ -62,13 +68,56 @@ services:
       - AIRFLOW_DATABASE_PASSWORD=bitnami1
       - AIRFLOW_EXECUTOR=CeleryExecutor
       - AIRFLOW_LOAD_EXAMPLES=no
-      - NAMESPACE=airflow
+      - AIRFLOW_FERNET_KEY=JWk2WQr0hIeVmpOoG7OyWvVwz1IS4XtzbRoV8u0qaNw=
+      - NAMESPACE=default
+      - ENVIRONMENT=docker-compose
     ports:
       - '8080:8080'
     volumes:
       - airflow_data:/bitnami
       - ../dags:/opt/bitnami/airflow/dags/dags
       - ../plugins:/opt/bitnami/airflow/dags/plugins
+      - .:/opt/kube
+
+
+  # Local kubernetes cluster
+  k3s-server:
+    image: "rancher/k3s:${K3S_VERSION:-latest}"
+    command:
+    - server
+    tmpfs:
+    - /run
+    - /var/run
+    privileged: true
+    environment:
+    - K3S_TOKEN=secret
+    - K3S_KUBECONFIG_OUTPUT=/output/kubeconfig.yaml
+    - K3S_KUBECONFIG_MODE=666
+    volumes:
+    - .:/output
+    ports:
+    - 6443:6443
+
+  k3s-agent:
+    image: "rancher/k3s:${K3S_VERSION:-latest}"
+    command:
+    - agent
+    tmpfs:
+    - /run
+    - /var/run
+    privileged: true
+    environment:
+    - K3S_URL=https://k3s-server:6443
+    - K3S_TOKEN=secret
+
+  k3s-airflow-config:
+    image: python:3.8.15-slim@sha256:fc2f284772a4443ce7238930ba9a8d5e3c720926616fca074b99213484a3820f
+    depends_on:
+      - k3s-agent
+      - k3s-server
+    command: bash -c "pip install pyyaml && cd /output && python airflow-kubeconfig.py"
+    volumes:
+      - .:/output
 
 volumes:
   airflow_scheduler_data:
