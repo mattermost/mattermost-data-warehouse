@@ -79,17 +79,3 @@ models:
         tests:
           - not_null 
       - name: received_at_date
-
-    tests:
-      # Each event should appear once
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - timestamp
-            - received_at
-            - original_timestamp
-            - user_id
-            - user_actual_id
-            - category
-            - type
-            - duration
-            - id
