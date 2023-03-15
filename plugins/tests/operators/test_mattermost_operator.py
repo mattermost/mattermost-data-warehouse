@@ -32,6 +32,7 @@ def test_template_fields(dag, full_config):
         'username',
         'type',
         'props',
+        'attachments'
     )
 
     assert template_fields == operator.template_fields
