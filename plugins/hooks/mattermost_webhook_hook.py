@@ -66,6 +66,9 @@ class MattermostWebhookHook(HttpHook):
             'username': self.username,
             'type': self.type,
             'props': self.props,
+            'icon_url': self.icon_url,
+            'icon_emoji': self.icon_emoji,
+            'attachments': self.attachments,
         }
         return json.dumps({k: v for k, v in msg.items() if v is not None})
 

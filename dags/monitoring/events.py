@@ -4,9 +4,7 @@ from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 from airflow.models import Variable
 from airflow.operators.python_operator import PythonOperator, ShortCircuitOperator
-from tabulate import tabulate
 
-from dags._helpers import chunk
 from dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, cleanup_xcom, pod_defaults, send_alert
 from dags.kube_secrets import (
     SNOWFLAKE_ACCOUNT,
@@ -65,14 +63,22 @@ def short_circuit_on_no_new_tables(task_id):
     return _do_short_circuit
 
 
-def table_formatter(task_id, size=10):
+def table_formatter(task_id):
     def format_tables(**kwargs):
         """Format result as table"""
         ti = kwargs['ti']
         result = ti.xcom_pull(task_ids=task_id).get('new_tables', [])
-        return tabulate(chunk(result, size, pad=True), headers='firstrow', tablefmt='github')
+        return "\n".join([f' - {table}' for table in result])
 
     return format_tables
+
+
+clean_xcom = PythonOperator(
+    task_id="cleanup_xcom",
+    provide_context=True,  # provide context is for getting the TI (task instance ) parameters
+    dag=dag,
+    python_callable=cleanup_xcom,
+)
 
 
 def get_pod_operators(dag):
@@ -121,14 +127,16 @@ def get_pod_operators(dag):
             mattermost_conn_id='mattermost',
             attachments=[
                 {
-                    'title': ':warning: New tables created in the past {{ var.value.rudder_max_age }} days',
+                    'title': '[Schema '
+                    + schema
+                    + '] New tables created in the past {{ var.value.rudder_max_age }} days',
                     'color': '#ffcc00',
-                    'text': f'{{ ti.xcom_pull(task_ids="apply-format-{schema}") }}',
+                    'text': '{{ ti.xcom_pull(task_ids="apply-format-' + schema + '") }}',
                 },
             ],
             icon_emoji=':warning:',
             username='Airflow',
-            task_id=f"check-new-tables-{schema}-handle-failure",
+            task_id=f"notify-new-tables-{schema}",
             dag=dag,
         )
 
@@ -139,13 +147,4 @@ def get_pod_operators(dag):
     return result
 
 
-clean_xcom = PythonOperator(
-    task_id="clean_xcom",
-    python_callable=cleanup_xcom,
-    provide_context=True,
-    dag=dag,
-)
-
-pod_operators = get_pod_operators(dag)
-
-pod_operators >> clean_xcom
+clean_xcom >> get_pod_operators(dag)
