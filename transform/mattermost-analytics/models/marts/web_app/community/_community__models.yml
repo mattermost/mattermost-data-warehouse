@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: community_tracks
+  - name: grp_community_tracks
     description: |
       Rudderstack default columns from tracks for Community.
 
