@@ -1,9 +1,10 @@
 import json
 import logging
-from datetime import datetime, timedelta
 import os
-import tabulate
+from datetime import datetime, timedelta
+
 import looker_sdk
+import tabulate
 
 from plugins.operators.mattermost_operator import MattermostOperator
 
@@ -172,7 +173,6 @@ def get_look_data(title: str) -> str:
     This method gets look data from looker and returns string of result
     """
     title = title.lower()
-    import looker_sdk
     sdk = looker_sdk.init40()
     look = next(iter(sdk.search_looks(title=title)), None)
     if not look:
@@ -205,7 +205,7 @@ def resolve_looker(look_title: str, connection_id: str, secrets: dict) -> bool:
     This method returns if look data is successfully sent to mattermost channel, else False
     :param look_title: Name of look to be sent to channel
     :param connection_id: Connection id used by mattermost operator, defaults to `mattermost`
-    :param secrets: Dictionary of looker secrets to be added to environment
+    :param secrets: Dictionary of looker secrets to be added to environment, required by looker sdk.
     """
     os.environ["LOOKERSDK_BASE_URL"] = secrets.get("looker_base_url")
     os.environ["LOOKERSDK_CLIENT_ID"] = secrets.get("looker_client_id")
