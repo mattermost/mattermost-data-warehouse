@@ -7,7 +7,7 @@ from airflow.operators.http_operator import SimpleHttpOperator
 from airflow.operators.python_operator import PythonOperator
 
 from dags.airflow_utils import cleanup_xcom, send_alert
-from dags.general._helpers import resolve_hightouch, resolve_stitch
+from dags.general._helpers import resolve_hightouch, resolve_stitch, resolve_looker
 
 task_logger = logging.getLogger('airflow.task')
 
@@ -50,6 +50,19 @@ with DAG(
     )
     resolve_hightouch_status = PythonOperator(
         task_id='resolve_hightouch_status', provide_context=True, python_callable=resolve_hightouch
+    )
+    resolve_looker_status = PythonOperator(
+        task_id="check_looker_status",
+        python_callable=resolve_looker,
+        op_args=[
+            Variable.get("looker_dashboard_errors_look"),
+            "mattermost",
+            {
+                "looker_base_url": Variable.get("looker_base_url"),
+                "looker_client_id": Variable.get("looker_client_id"),
+                "looker_client_secret": Variable.get("looker_client_secret"),
+            }
+        ],
     )
 
     clean_xcom = PythonOperator(
