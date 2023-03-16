@@ -1,6 +1,9 @@
 import json
 import logging
 from datetime import datetime, timedelta
+import os
+import tabulate
+import looker_sdk
 
 from plugins.operators.mattermost_operator import MattermostOperator
 
@@ -144,3 +147,69 @@ def time_filter(target_time, format, delta_hours):
     :param delta_hours: Number of hours to be added to target_time for comparison.
     """
     return datetime.strptime(target_time, format) + timedelta(hours=delta_hours) >= datetime.utcnow()
+
+
+def format_look_result(result: list) -> list:
+    """
+    Removes new line character, sql function `VARCHAR` to prevent cloudflare error
+    Adds base looker url to dashboard link
+    """
+    return [
+        {
+            " ".join(key.replace("history", "error").split(".")): "[link]("+os.getenv("LOOKERSDK_BASE_URL")+"/dashboards-next/"
+            + str(_dict[key])
+            + ")"
+            if key == "dashboard.link"
+            else str(_dict[key]).replace("\n", " ").replace("VARCHAR","")
+            for key in _dict.keys()
+        }
+        for _dict in result
+    ]
+
+
+def get_look_data(title: str) -> str:
+    """
+    This method gets look data from looker and returns string of result
+    """
+    title = title.lower()
+    import looker_sdk
+    sdk = looker_sdk.init40()
+    look = next(iter(sdk.search_looks(title=title)), None)
+    if not look:
+        raise Exception(f"Look '{title}' was not found")
+    look_data = sdk.run_look(look.id, result_format='json')
+    if not look_data:
+        raise Exception(f"Unable to get look data for id '{str(look.id)}'")
+    return look_data
+
+
+def post_looker_results(look_data: str, connection_id: str) -> bool:
+    """
+    This method returns True if look data is sent to mattermost.
+    False otherwise.
+    :param look_data: Unformatted string of look data 
+    :param connection_id: Connection id used by mattermost operator
+    """
+    message = tabulate(
+        format_look_result(json.loads(look_data)),
+        headers="keys",
+        tablefmt='github'
+        )
+    MattermostOperator(mattermost_conn_id=connection_id, text=message, task_id='post_looker_results').execute(
+        None
+    )
+
+
+def resolve_looker(look_title: str, connection_id: str, secrets: dict) -> bool:
+    """
+    This method returns if look data is successfully sent to mattermost channel, else False
+    :param look_title: Name of look to be sent to channel
+    :param connection_id: Connection id used by mattermost operator, defaults to `mattermost`
+    :param secrets: Dictionary of looker secrets to be added to environment
+    """
+    os.environ["LOOKERSDK_BASE_URL"] = secrets.get("looker_base_url")
+    os.environ["LOOKERSDK_CLIENT_ID"] = secrets.get("looker_client_id")
+    os.environ["LOOKERSDK_CLIENT_SECRET"] = secrets.get("looker_client_secret")
+    os.environ["LOOKERSDK_VERIFY_SSL"] = "1"
+    look_data = get_look_data(look_title)
+    post_looker_results(look_data, connection_id)
