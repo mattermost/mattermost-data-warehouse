@@ -10,15 +10,7 @@ WITH existing_contacts AS (
         contact.sfid,
         contact.email,
         contact.dwh_external_id__c,
-        CASE
-            WHEN SUBSTR(
-                contact.ownerid,
-                0,
-                3
-            ) = '00G' THEN NULL
-            ELSE contact.ownerid
-        END AS ownerid,
-        ROW_NUMBER() over (
+        contact.ownerid ROW_NUMBER() over (
             PARTITION BY contact.email
             ORDER BY
                 createddate DESC
@@ -31,15 +23,7 @@ existing_leads AS (
         LEAD.sfid,
         LEAD.email,
         LEAD.dwh_external_id__c,
-        CASE
-            WHEN SUBSTR(
-                LEAD.ownerid,
-                0,
-                3
-            ) = '00G' THEN NULL
-            ELSE LEAD.ownerid
-        END AS ownerid,
-        ROW_NUMBER() over (
+        LEAD.ownerid ROW_NUMBER() over (
             PARTITION BY LEAD.email
             ORDER BY
                 createddate DESC
@@ -50,11 +34,9 @@ existing_leads AS (
 customers_with_cloud_paid_subs AS (
     SELECT
         customers_with_cloud_paid_subs.*,
-        COALESCE(
-            existing_leads.ownerid,
-            existing_contacts.ownerid,
-            '0053p0000064nt8AAA'
-        ) AS ownerid
+        {{ transform_ownerid(
+            'COALESCE(existing_leads.ownerid, existing_contacts.ownerid)'
+        ) }} AS ownerid
     FROM
         {{ ref('customers_with_cloud_paid_subs') }}
         LEFT JOIN {{ ref('account') }}

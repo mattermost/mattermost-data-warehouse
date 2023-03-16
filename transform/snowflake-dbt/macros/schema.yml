@@ -20,3 +20,13 @@ macros:
       - name: schema
         type: string
         description: The schema containing the `tracks` table.
+
+  - name: transform_ownerid
+    description: A macro to trasnform ownerid to be used in salesforce.
+    arguments:
+      - name: ownerid
+        type: string
+        description: The ownerid that needs to be transformed.
+      - name: default_ownerid
+        type: string
+        description: default value to use if the ownerid starts with '00G'.
