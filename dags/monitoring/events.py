@@ -3,9 +3,9 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 from airflow.models import Variable
-from airflow.utils.trigger_rule import TriggerRule
+from airflow.operators.python_operator import PythonOperator, ShortCircuitOperator
 
-from dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, pod_defaults, send_alert
+from dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, cleanup_xcom, pod_defaults, send_alert
 from dags.kube_secrets import (
     SNOWFLAKE_ACCOUNT,
     SNOWFLAKE_LOAD_DATABASE,
@@ -53,6 +53,34 @@ dag = DAG(
 )
 
 
+def short_circuit_on_no_new_tables(task_id):
+    def _do_short_circuit(**kwargs):
+        """Short circuit if no new tables"""
+        ti = kwargs['ti']
+        xcom_result = ti.xcom_pull(task_ids=task_id)
+        return bool(xcom_result and xcom_result.get('new_tables', []))
+
+    return _do_short_circuit
+
+
+def table_formatter(task_id):
+    def format_tables(**kwargs):
+        """Format result as table"""
+        ti = kwargs['ti']
+        result = ti.xcom_pull(task_ids=task_id).get('new_tables', [])
+        return "\n".join([f' - {table}' for table in result])
+
+    return format_tables
+
+
+clean_xcom = PythonOperator(
+    task_id="cleanup_xcom",
+    provide_context=True,  # provide context is for getting the TI (task instance ) parameters
+    dag=dag,
+    python_callable=cleanup_xcom,
+)
+
+
 def get_pod_operators(dag):
     result = []
     schemas = Variable.get("rudder_schemas", deserialize_json=True)
@@ -75,22 +103,48 @@ def get_pod_operators(dag):
                 "rudder list ${SNOWFLAKE_LOAD_DATABASE} "
                 + schema
                 + " -w ${SNOWFLAKE_LOAD_WAREHOUSE} -r ${SNOWFLAKE_LOAD_ROLE} --max-age {{ var.value.rudder_max_age }}"
+                + " --format-json > /airflow/xcom/return.json || true"
             ],
+            do_xcom_push=True,
             dag=dag,
         )
-        failure_op = MattermostOperator(
+
+        check_output = ShortCircuitOperator(
+            task_id=f'short-circuit-{schema}',
+            provide_context=True,  # provide context is for getting the TI (task instance ) parameters
+            dag=dag,
+            python_callable=short_circuit_on_no_new_tables(f"check-new-tables-{schema}"),
+        )
+
+        apply_format = PythonOperator(
+            task_id=f'apply-format-{schema}',
+            provide_context=True,  # provide context is for getting the TI (task instance ) parameters
+            dag=dag,
+            python_callable=table_formatter(f"check-new-tables-{schema}"),
+        )
+
+        alert_op = MattermostOperator(
             mattermost_conn_id='mattermost',
-            text=f'New event tables detected in schema {schema}',
+            attachments=[
+                {
+                    'title': '[Schema '
+                    + schema
+                    + '] New tables created in the past {{ var.value.rudder_max_age }} days',
+                    'color': '#ffcc00',
+                    'text': '{{ ti.xcom_pull(task_ids="apply-format-' + schema + '") }}',
+                },
+            ],
+            icon_emoji=':warning:',
             username='Airflow',
-            task_id=f"check-new-tables-{schema}-handle-failure",
+            task_id=f"notify-new-tables-{schema}",
             dag=dag,
-            trigger_rule=TriggerRule.ALL_FAILED,
         )
-        op >> failure_op
+
+        op >> check_output >> apply_format >> alert_op
+
         result.append(op)
 
     return result
 
 
-pod_operators = get_pod_operators(dag)
-pod_operators
+clean_xcom >> get_pod_operators(dag)

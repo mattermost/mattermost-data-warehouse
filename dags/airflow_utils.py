@@ -3,6 +3,8 @@ import os
 import urllib.parse
 
 from airflow.contrib.kubernetes.pod import Resources
+from airflow.models import XCom
+from airflow.utils.db import provide_session
 
 from plugins.operators.mattermost_operator import MattermostOperator
 
@@ -13,6 +15,7 @@ MATTERMOST_DATAWAREHOUSE_IMAGE = "mattermost/mattermost-data-warehouse:master"
 
 mm_webhook_url = os.getenv("MATTERMOST_WEBHOOK_URL")
 DEFAULT_AIRFLOW_NAMESPACE = "airflow-dev"  # to prevent tests from failing
+IS_DEV_MODE = os.getenv("ENVIRONMENT") == 'docker-compose'
 
 # Set the resources for the task pods
 pod_resources = Resources(request_memory="500Mi", request_cpu="500m")
@@ -26,6 +29,11 @@ pod_defaults = {
     "namespace": os.environ.get('NAMESPACE', DEFAULT_AIRFLOW_NAMESPACE),
     "cmds": ["/bin/bash", "-c"],
 }
+
+if IS_DEV_MODE:
+    # Override defaults for dev mode
+    pod_defaults["in_cluster"] = False
+    pod_defaults["config_file"] = "/opt/kube/airflow-kube.yaml"
 
 # Default environment variables for worker pods
 env = os.environ.copy()
@@ -74,3 +82,12 @@ def send_alert(context):
     MattermostOperator(
         mattermost_conn_id='mattermost', text=create_alert_body(context), username='Airflow', task_id=task_id
     ).execute(context)
+
+
+# To clean up Xcom after dag finished run.
+@provide_session
+def cleanup_xcom(**context):
+    dag = context["dag"]
+    dag_id = dag._dag_id
+    session = context["session"]
+    session.query(XCom).filter(XCom.dag_id == dag_id).delete()

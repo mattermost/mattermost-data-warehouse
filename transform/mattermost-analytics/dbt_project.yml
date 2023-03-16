@@ -56,6 +56,10 @@ models:
       schema: utilities
       tags: [ 'utilities' ]
 
+  dbt_project_evaluator:
+    schema:
+      mart_dbt_project_evaluator
+
 seeds:
   dbt_project_evaluator:
     dbt_project_evaluator_exceptions:

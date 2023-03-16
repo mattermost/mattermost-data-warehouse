@@ -26,13 +26,7 @@ def test_create_min_config(dag, min_config):
 def test_template_fields(dag, full_config):
     operator = MattermostOperator(task_id="mattermost_task", dag=dag, **full_config)
 
-    template_fields = (
-        'text',
-        'channel',
-        'username',
-        'type',
-        'props',
-    )
+    template_fields = ('text', 'channel', 'username', 'type', 'props', 'attachments')
 
     assert template_fields == operator.template_fields
 

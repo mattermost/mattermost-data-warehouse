@@ -37,16 +37,11 @@ jobs:
       - name: Install dependencies
         run: poetry install && poetry run pip install clearbit==0.1.7
 
-      # Lint checks will print output but will continue. This should be stricter as soon as
-      # code is updated to defined coding standards.
       - name: Run isort
         run: poetry run isort . --check
-        continue-on-error: true
 
       - name: Run black
         run: poetry run black . --check
-        continue-on-error: true
 
       - name: Run flake8
         run: poetry run flake8 --config build/.flake8 .
-        continue-on-error: true

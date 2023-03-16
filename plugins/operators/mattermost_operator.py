@@ -18,23 +18,20 @@ class MattermostOperator(SimpleHttpOperator):
     :param props: Sets the post props, a JSON property bag for storing extra or meta data on the post.
     """
 
-    template_fields = (
-        'text',
-        'channel',
-        'username',
-        'type',
-        'props',
-    )
+    template_fields = ('text', 'channel', 'username', 'type', 'props', 'attachments')
 
     def __init__(
         self,
         *,
         mattermost_conn_id,
-        text="",
+        text=None,
         channel=None,
         username=None,
+        icon_url=None,
+        icon_emoji=None,
         type=None,
         props=None,
+        attachments=None,
         **kwargs,
     ) -> None:
         super().__init__(endpoint=None, **kwargs)
@@ -42,8 +39,11 @@ class MattermostOperator(SimpleHttpOperator):
         self.text = text
         self.channel = channel
         self.username = username
+        self.icon_url = icon_url
+        self.icon_emoji = icon_emoji
         self.type = type
         self.props = props
+        self.attachments = attachments
 
     def hook(self):
         return MattermostWebhookHook(
@@ -51,8 +51,11 @@ class MattermostOperator(SimpleHttpOperator):
             text=self.text,
             channel=self.channel,
             username=self.username,
+            icon_url=self.icon_url,
+            icon_emoji=self.icon_emoji,
             type=self.type,
             props=self.props,
+            attachments=self.attachments,
         )
 
     def execute(self, context):
