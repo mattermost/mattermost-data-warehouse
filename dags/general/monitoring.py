@@ -7,7 +7,7 @@ from airflow.operators.http_operator import SimpleHttpOperator
 from airflow.operators.python_operator import PythonOperator
 
 from dags.airflow_utils import cleanup_xcom, send_alert
-from dags.general._helpers import resolve_hightouch, resolve_stitch, resolve_looker
+from dags.general._helpers import resolve_hightouch, resolve_looker, resolve_stitch
 
 task_logger = logging.getLogger('airflow.task')
 
