@@ -9,7 +9,7 @@ models:
       - name: event_id
         tests:
           - unique
-          - not null
+          - not_null
       - name: event_table          
       - name: event_name                        
       - name: category          
