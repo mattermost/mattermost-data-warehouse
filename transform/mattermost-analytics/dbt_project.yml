@@ -45,11 +45,17 @@ models:
       data_eng:
         schema: int_data_eng
         tags: ['hourly']
+      web_app:
+        schema: int_web_app
+        tags: ['hourly']
     marts:
       +materialized: table
       tags: ['marts']
       data_eng:
         schema: mart_data_eng
+        tags: ['hourly']
+      web_app:
+        schema: mart_web_app
         tags: ['hourly']
     utilities:
       +materialized: table
