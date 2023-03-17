@@ -10,5 +10,7 @@ exposures:
     tags:
       - looker
     maturity: medium
+    owner:
+      name: Srikar Gudipudi
     depends_on:
       - ref('grp_community_tracks')
