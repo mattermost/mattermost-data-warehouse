@@ -83,5 +83,5 @@ vars:
     documentation_coverage_target: 75
     test_coverage_target: 75
     staging_prefixes: ['stg_', 'base_']
-    marts_prefixes: ['fct_', 'dim_', 'eg_']
+    marts_prefixes: ['fct_', 'dim_', 'grp_']
 

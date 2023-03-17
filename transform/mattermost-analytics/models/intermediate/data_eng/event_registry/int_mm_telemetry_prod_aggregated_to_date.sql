@@ -4,7 +4,7 @@
         "incremental_strategy": "merge",
         "unique_key": ['daily_event_id'],
         "merge_update_columns": ['event_count'],
-        "cluster_by": ['date_received_at'],
+        "cluster_by": ['received_at_date'],
         "snowflake_warehouse": "transform_l"
     })
 }}

@@ -6,7 +6,7 @@
 
 SELECT DISTINCT
     daily_event_id AS id
-    , date_received_at AS event_date
+    , received_at_date AS event_date
     , event_id
     , event_count
 FROM
