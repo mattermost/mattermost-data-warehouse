@@ -5,3 +5,5 @@ packages:
     version: 0.9.0
   - package: dbt-labs/dbt_project_evaluator
     version: 0.4.1
+  - package: data-mie/dbt_profiler
+    version: 0.6.3
