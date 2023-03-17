@@ -4,7 +4,7 @@
 WITH tmp AS (
     SELECT
         -- Surrogate key required as it's both a good practice, as well as allows merge incremental strategy.
-        CAST(received_at AS date) AS date_received_at
+        CAST(received_at AS date) AS received_at_date
         {% for column_name in by_columns %}
         , {{ column_name }}
         {% endfor %}
@@ -20,16 +20,16 @@ WITH tmp AS (
        received_at <= CURRENT_TIMESTAMP
 {% if is_incremental() %}
        -- this filter will only be applied on an incremental run
-      AND received_at >= (SELECT MAX(date_received_at) FROM {{ this }})
+      AND received_at >= (SELECT MAX(received_at_date) FROM {{ this }})
 {% endif %}
-    GROUP BY date_received_at, {{ ', '.join(by_columns) }}
-    ORDER BY date_received_at, {{ by_columns[0] }}
+    GROUP BY received_at_date, {{ ', '.join(by_columns) }}
+    ORDER BY received_at_date, {{ by_columns[0] }}
 )
 SELECT
     -- Surrogate key required as it's both a good practice, as well as allows merge incremental strategy.
-    {{ dbt_utils.generate_surrogate_key(['date_received_at', 'source'] + by_columns ) }} AS daily_event_id
+    {{ dbt_utils.generate_surrogate_key(['received_at_date', 'source'] + by_columns ) }} AS daily_event_id
     , {{ dbt_utils.generate_surrogate_key(['source'] + by_columns ) }} AS event_id
-    , date_received_at
+    , received_at_date
     , source
     {% for column_name in by_columns %}
     , {{ column_name }}
