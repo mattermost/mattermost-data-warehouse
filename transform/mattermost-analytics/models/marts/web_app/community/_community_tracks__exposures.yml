@@ -12,5 +12,6 @@ exposures:
     maturity: medium
     owner:
       name: Srikar Gudipudi
+      email: -
     depends_on:
       - ref('grp_community_tracks')
