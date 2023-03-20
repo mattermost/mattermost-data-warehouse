@@ -36,4 +36,33 @@ models:
         description: The project's name
         tests:
           - not null
-        
+  
+  - name: fct_issues_daily_snapshot
+    description: Issues snapshot facts. Stores a snapshot of all issues, updated daily.
+
+    columns:
+      - name: issue_id
+        description: The issue's id. For issue MM-12345 it will be 12345.
+        tests:
+          - not_null
+      - name: key
+        description: The issue's key. For issue MM-12345 it will be MM-12345.
+        tests:
+          - not_null
+          - unique
+      - name: project_id
+        description: The project's ID.
+        tests:
+          - not_null
+      - name: created_at
+        description: The timestamp that the project was created.
+        tests:
+          - not_null
+      - name: closed_at
+        description: The timestamp that the issue was closed. Uses the last `updated_at` value if the issue has a status of `Closed` or `Done`.
+      - name: status
+        description: The status of the ticket.
+      - name: resolution
+        description: The resolution of the ticket.
+      - name: lead_time_in_days
+        description: The lead time, deefined as the number of days between `created_at` and `closed_at`. Null if the issue hasn't been closed yet.
