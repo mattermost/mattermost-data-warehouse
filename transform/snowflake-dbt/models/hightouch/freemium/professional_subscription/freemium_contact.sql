@@ -28,7 +28,7 @@ freemium_contacts_to_sync AS (
             customers_with_cloud_paid_subs.email
         ) AS contact_last_name,
         existing_leads.id AS duplicate_lead_id,
-        -- existing_lead.email AS duplicate_lead_email,
+        -- existing_leads.email AS duplicate_lead_email,
         customers_with_cloud_paid_subs.account_external_id,
         {{ get_ownerid_or_default('existing_leads.ownerid') }} AS ownerid,
         'Cloud Purchase' AS most_recent_action,
@@ -39,8 +39,8 @@ freemium_contacts_to_sync AS (
         {{ ref('customers_with_cloud_paid_subs') }}
         LEFT JOIN {{ ref('contact') }}
         ON customers_with_cloud_paid_subs.email = contact.email
-        LEFT JOIN existing_lead
-        ON customers_with_cloud_paid_subs.email = existing_lead.email
+        LEFT JOIN existing_leads
+        ON customers_with_cloud_paid_subs.email = existing_leads.email
     WHERE
         contact.id IS NULL
         AND customers_with_cloud_paid_subs.hightouch_sync_eligible
