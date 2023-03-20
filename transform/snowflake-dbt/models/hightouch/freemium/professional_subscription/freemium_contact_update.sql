@@ -27,7 +27,7 @@ freemium_contacts_to_sync AS (
             customers_with_cloud_paid_subs.last_name,
             customers_with_cloud_paid_subs.email
         ) AS contact_last_name,
-        existing_lead.id AS duplicate_lead_id,
+        existing_leads.id AS duplicate_lead_id,
         -- existing_lead.email AS duplicate_lead_email,
         customers_with_cloud_paid_subs.account_external_id,
         {{ get_ownerid_or_default('existing_leads.ownerid') }} AS ownerid,
