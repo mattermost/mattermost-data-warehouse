@@ -6,10 +6,13 @@ WITH issues AS (
 )
 SELECT
     id AS issue_id,
-    key,
+    key AS issue_key,
     -- Parent
     fields:parent.id::INTEGER AS parent_id,
     fields:parent.key::VARCHAR AS parent_key,
+    -- Project
+    fields:project.id AS project_id,
+    fields:project.key AS project_key,
     -- Description
     fields:summary::VARCHAR AS summary,
     fields:description::VARCHAR AS description,

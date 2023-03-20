@@ -5,8 +5,8 @@ WITH projects AS (
         {{ source('mattermost_jira', 'projects') }}
 )
 SELECT
-    id,
-    key,
+    id AS project_id,
+    key AS project_key,
     name
 FROM
     projects
