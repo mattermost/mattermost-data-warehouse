@@ -28,67 +28,43 @@ models:
       Reconstructed `performance_events` table from schema `MM_TELEMETRY_PROD` using only columns needed by looker.
 
     columns:
-      - name: context_page_referrer          
-      - name: channel                        
-      - name: context_app_namespace          
-      - name: id                             
-      - name: user_actual_id                 
-      - name: context_library_name           
-      - name: type                           
-      - name: context_app_version            
-      - name: user_actual_role               
-      - name: context_page_url               
-      - name: context_os_name                
-      - name: context_page_title             
-      - name: anonymous_id                   
-      - name: context_app_build              
-      - name: context_page_search            
-      - name: context_library_version        
-      - name: context_ip                     
-      - name: context_useragent              
-      - name: context_app_name               
-      - name: context_locale                 
-      - name: context_screen_density         
-      - name: context_page_path              
-      - name: context_os_version             
-      - name: category                       
-      - name: duration                       
-      - name: num_of_request                 
-      - name: max_api_resource_size          
-      - name: longest_api_resource_duration  
-      - name: user_id                        
-      - name: root_id                        
-      - name: post_id                        
-      - name: sort                           
-      - name: team_id                        
-      - name: version                        
-      - name: keyword                        
-      - name: count                          
-      - name: gfyid                          
-      - name: field                          
-      - name: plugin_id                      
-      - name: installed_version              
-      - name: group_constrained              
-      - name: value                          
-      - name: include_deleted                
-      - name: role                           
-      - name: privacy                        
-      - name: scheme_id                      
-      - name: metric                         
-      - name: error                          
-      - name: num_invitations_sent           
-      - name: num_invitations                
-      - name: channel_sidebar                
-      - name: app                            
-      - name: method                         
-      - name: remaining                      
-      - name: screen                         
-      - name: filter                         
-      - name: version                        
-      - name: original_timestamp             
-      - name: sent_at                        
-      - name: uuid_ts                        
-      - name: received_at 
-      - name: event_date 
-      - name: received_at_date
-       
+    	-name: id
+    	-name: anonymous_id
+    	-name: received_at
+    	-name: sent_at
+    	-name: original_timestamp
+    	-name: timestamp
+    	-name: context_ip
+    	-name: event
+    	-name: event_text
+    	-name: context_page_referrer
+    	-name: channel
+    	-name: context_app_namespace
+    	-name: user_actual_id
+    	-name: context_library_name
+    	-name: type
+    	-name: context_app_version
+    	-name: user_actual_role
+    	-name: context_page_url
+    	-name: context_os_name
+    	-name: context_page_title
+    	-name: context_app_build
+    	-name: context_page_search
+    	-name: context_library_version
+    	-name: context_useragent
+    	-name: context_app_name
+    	-name: context_locale
+    	-name: context_screen_density
+    	-name: context_page_path
+    	-name: context_os_version
+    	-name: category
+    	-name: duration
+    	-name: num_of_request
+    	-name: max_api_resource_size
+    	-name: longest_api_resource_duration
+    	-name: user_id
+    	-name: count
+    	-name: uuid_ts
+    	-name: event_date
+    	-name: received_at_date
+          
