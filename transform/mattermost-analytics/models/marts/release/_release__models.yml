@@ -1,0 +1,39 @@
+version: 2
+
+
+models:
+  - name: dim_labels
+    description: Dimension storing all labels assigned to an issue.
+
+    columns:
+      - name: issue_key
+        description: The issue the label is assigned to.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fct_issues_daily_snapshot')
+              field: issue_key
+      - name: label
+        description: The label assigned to the issue.
+        tests:
+          - not_null
+        
+  - name: dim_projects
+    description: Dimension storing all known projects.
+
+    columns:
+      - name: project_id
+        description: The project's unique ID.
+        tests:
+          - not_null
+          - unique
+      - name: project_key
+        description: The project's key
+        tests:
+          - not_null
+          - unique:
+      - name: name
+        description: The project's name
+        tests:
+          - not null
+        

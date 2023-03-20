@@ -1,0 +1,84 @@
+version: 2
+
+models:
+  - name: stg_mattermost_jira__issues
+    description: |
+      Contains denormalized JIRA issue information. Fields have been extracted from JSON payload. 
+
+    columns:
+      - name: issue_id
+        description: The issue's id. For issue MM-12345 it will be 12345.
+        tests:
+          - not_null
+      - name: issue_key
+        description: The issue's key. For issue MM-12345 it will be MM-12345.
+        tests:
+          - not_null
+          - unique
+      - name: project_id
+        description: The project's ID.
+        tests:
+          - not_null
+      - name: project_key
+        description: The project's key.
+        tests:
+          - not_null
+      - name: summary
+        description: The issue's summary.
+        tests:
+          - not_null
+      - name: description
+        description: The issue's description.
+      - name: issue_type_id
+        description: The issue's type ID.
+        tests:
+          - not_null
+      - name: issue_type_name
+        description: The issue's type name.
+      - name: reporter_account_id
+        description: The id of the reporter of the issue.
+      - name: reporter_display_name
+        description: The name of the reporter of the issue.
+      - name: creator_account_id
+        description: The id of the creator of the issue.
+      - name: creator_display_name
+        description: The name of the creator of the issue.
+      - name: status_id
+        description: The id of the status of the issue.
+      - name: status_name
+        description: The name of the status of the issue.
+      - name: status_category_name
+        description: The name of the status' category.
+      - name: status_category_key
+        description: The key of the status' category.
+      - name: resolution
+        description: The resolution of the issue.
+      - name: resolution_date
+        description: The date of the resolution, adjusted in UTC.
+      - name: labels
+        description: List of labels assigned to the given issue.
+      - name: fix_versions
+        description: List of fix version details.
+      - name: created_at
+        description: Timestamp that the issue was created.
+      - name: updated_at
+        description: Timestamp that the issue was last updated.
+
+  - name: stg_mattermost_jira__projects
+    description: Contains all the known JIRA projects
+
+    columns:
+      - name: project_id
+        description: The project's ID.
+        tests:
+          - not_null
+          - unique
+      - name: project_key
+        description: The project's key.
+        tests:
+          - not_null
+          - unique
+      - name: name
+        description: The project's name.
+        tests:
+          - not_null
