@@ -4,7 +4,7 @@
     "tags" :["hourly","blapi"] }
 ) }}
 -- lead or contact already exists
-WITH existing_lead AS (
+WITH existing_leads AS (
 
     SELECT
         LEAD.id,

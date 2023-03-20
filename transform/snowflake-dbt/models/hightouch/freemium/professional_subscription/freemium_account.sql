@@ -10,7 +10,8 @@ WITH existing_contacts AS (
         contact.sfid,
         contact.email,
         contact.dwh_external_id__c,
-        contact.ownerid ROW_NUMBER() over (
+        contact.ownerid,
+        ROW_NUMBER() over (
             PARTITION BY contact.email
             ORDER BY
                 createddate DESC
@@ -23,7 +24,8 @@ existing_leads AS (
         LEAD.sfid,
         LEAD.email,
         LEAD.dwh_external_id__c,
-        LEAD.ownerid ROW_NUMBER() over (
+        LEAD.ownerid,
+        ROW_NUMBER() over (
             PARTITION BY LEAD.email
             ORDER BY
                 createddate DESC
