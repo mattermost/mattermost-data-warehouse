@@ -113,6 +113,3 @@ seeds:
       schema: staging
     nps_category_backfill:
       schema: staging
-
-vars:
-  salesforce_default_ownerid: '0053p0000064nt8AAA' #default value for salesforce ownerid
