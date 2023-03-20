@@ -115,4 +115,4 @@ seeds:
       schema: staging
 
 vars:
-  salesforce_default_ownerid: '0053p0000064nt8AAA' #default value for salesforce ownerid
+  salesforce_default_ownerid: "'0053p0000064nt8AAA'" #default value for salesforce ownerid
