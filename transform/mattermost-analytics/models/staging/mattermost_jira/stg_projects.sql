@@ -2,7 +2,7 @@ WITH projects AS (
     SELECT
         *
     FROM
-        {{ source('mattermost', 'projects') }}
+        {{ source('mattermost_jira', 'projects') }}
 )
 SELECT
     id,
