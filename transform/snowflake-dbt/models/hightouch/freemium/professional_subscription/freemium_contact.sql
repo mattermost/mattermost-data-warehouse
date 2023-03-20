@@ -30,7 +30,7 @@ freemium_contacts_to_sync AS (
         existing_lead.id AS duplicate_lead_id,
         -- existing_lead.email AS duplicate_lead_email,
         customers_with_cloud_paid_subs.account_external_id,
-        {{ transform_ownerid('existing_leads.ownerid') }} AS ownerid,
+        {{ get_ownerid_or_default('existing_leads.ownerid') }} AS ownerid,
         'Cloud Purchase' AS most_recent_action,
         'Cloud Professional' AS most_recent_action_detail,
         'Referral' AS lead_source,

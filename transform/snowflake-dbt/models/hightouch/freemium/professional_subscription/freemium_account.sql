@@ -34,7 +34,7 @@ existing_leads AS (
 customers_with_cloud_paid_subs AS (
     SELECT
         customers_with_cloud_paid_subs.*,
-        {{ transform_ownerid(
+        {{ get_ownerid_or_default(
             'COALESCE(existing_leads.ownerid, existing_contacts.ownerid)'
         ) }} AS ownerid
     FROM
