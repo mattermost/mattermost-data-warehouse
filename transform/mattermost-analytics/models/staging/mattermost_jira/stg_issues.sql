@@ -2,7 +2,7 @@ WITH issues AS (
     SELECT
         *
     FROM
-        {{ source('mattermost', 'issues') }}
+        {{ source('mattermost_jira', 'issues') }}
 )
 SELECT
     id AS issue_id,
@@ -29,14 +29,15 @@ SELECT
     fields:status.statusCategory.name::VARCHAR AS status_category_name,
     fields:status.statusCategory.key::VARCHAR AS status_category_key,
     -- Resolution
-    fields:resolution::VARCHAR AS resolution,
-    CAST(fields:resolutiondate AS {{ dbt.type_timestamp() }}) AS resolution_date,
+    fields:resolution.id::VARCHAR AS resolution_id,
+    fields:resolution.description::VARCHAR AS resolution_description,
+    CONVERT_TIMEZONE('UTC', TO_TIMESTAMP_TZ(fields:resolutiondate::VARCHAR, 'YYYY-MM-DD"T"HH24:MI:SS.FFTZHTZM')) AS resolution_date,
     -- Labels:
     fields:labels AS labels,
     -- Fix Version
     fields:fixVersions AS fix_versions,
     -- Timestamps
-    CAST(fields:created AS {{ dbt.type_timestamp() }}) AS created_at,
-    CAST(fields:updated AS {{ dbt.type_timestamp() }}) AS updated_at
+    CAST(fields:created AS {{ dbt.type_timestamp() }})  AS created_at,
+    CAST(fields:updated AS {{ dbt.type_timestamp() }})  AS updated_at
 FROM
     issues

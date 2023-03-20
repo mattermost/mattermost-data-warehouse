@@ -1,3 +1,5 @@
+version: 2
+
 sources:
   - name: mattermost_jira
     database: 'ANALYTICS'
