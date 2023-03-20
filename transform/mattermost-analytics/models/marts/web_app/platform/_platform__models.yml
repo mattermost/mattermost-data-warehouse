@@ -13,8 +13,8 @@ models:
               values: ['int_mm_telemetry_rc_performance_events', 'int_mm_telemetry_prod_performance_events']
       - name: id
         tests:
-           - not_null
-           - unique
+          - not_null
+          - unique
       - name: anonymous_id
       - name: received_at
       - name: sent_at
@@ -52,7 +52,7 @@ models:
       - name: count
       - name: uuid_ts
       - name: event_date
-         tests:
-           - not_null 
+        tests:
+          - not_null 
       - name: received_at_date
 
