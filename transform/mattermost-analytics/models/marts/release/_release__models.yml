@@ -44,7 +44,7 @@ models:
         description: The issue's id. For issue MM-12345 it will be 12345.
         tests:
           - not_null
-      - name: key
+      - name: issue_key
         description: The issue's key. For issue MM-12345 it will be MM-12345.
         tests:
           - not_null
@@ -64,4 +64,4 @@ models:
       - name: resolution
         description: The resolution of the ticket.
       - name: lead_time_in_days
-        description: The lead time, deefined as the number of days between `created_at` and `closed_at`. Null if the issue hasn't been closed yet.
+        description: The lead time, defined as the number of days between `created_at` and `closed_at`. Null if the issue hasn't been closed yet.
