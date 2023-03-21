@@ -6,7 +6,7 @@
     })
 }}
 
-SELECT * FROM 
+SELECT {{ dbt_utils.star(ref('stg_mm_telemetry_prod__performance_events')) }} FROM 
 {{ ref('stg_mm_telemetry_prod__performance_events') }}
 
 {% if is_incremental() %}
