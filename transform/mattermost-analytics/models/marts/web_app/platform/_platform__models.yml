@@ -43,7 +43,6 @@ models:
       - name: longest_api_resource_duration
       - name: user_id
       - name: count
-      - name: uuid_ts
       - name: event_date
         tests:
           - not_null 
