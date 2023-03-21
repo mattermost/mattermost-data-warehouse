@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: eg_performance_events
+  - name: grp_performance_events
     description: |
       Events Group performance_events table containing metrics 
       from web-app and web-app RC telemetry for category = performance.
@@ -23,7 +23,6 @@ models:
       - name: context_ip
       - name: event
       - name: event_text
-      - name: context_page_referrer
       - name: channel
       - name: context_app_namespace
       - name: user_actual_id
@@ -31,18 +30,12 @@ models:
       - name: type
       - name: context_app_version
       - name: user_actual_role
-      - name: context_page_url
-      - name: context_os_name
-      - name: context_page_title
       - name: context_app_build
-      - name: context_page_search
       - name: context_library_version
       - name: context_useragent
       - name: context_app_name
       - name: context_locale
       - name: context_screen_density
-      - name: context_page_path
-      - name: context_os_version
       - name: category
       - name: duration
       - name: num_of_request
