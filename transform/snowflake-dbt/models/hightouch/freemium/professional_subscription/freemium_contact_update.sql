@@ -39,8 +39,8 @@ freemium_contacts_to_sync AS (
         {{ ref('customers_with_cloud_paid_subs') }}
         LEFT JOIN {{ ref('contact') }}
         ON customers_with_cloud_paid_subs.email = contact.email
-        LEFT JOIN existing_lead
-        ON customers_with_cloud_paid_subs.email = existing_lead.email
+        LEFT JOIN existing_leads
+        ON customers_with_cloud_paid_subs.email = existing_leads.email
     WHERE
         contact.id IS NOT NULL
         AND customers_with_cloud_paid_subs.hightouch_sync_eligible
