@@ -53,6 +53,9 @@ models:
         description: The project's ID.
         tests:
           - not_null
+          - relationships:
+              to: ref('dim_projects')
+              field: project_id
       - name: created_at
         description: The timestamp that the project was created.
         tests:
@@ -61,12 +64,13 @@ models:
         description: The timestamp that the issue was closed. Uses the last `updated_at` value if the issue has a status of `Closed` or `Done`.
       - name: status
         description: The status of the ticket.
+        tests:
+          - not_null
       - name: resolution
         description: The resolution of the ticket.
       - name: lead_time_in_days
         description: The lead time, defined as the number of days between `created_at` and `closed_at`. Null if the issue hasn't been closed yet.
         tests:
-          - not_null
           - dbt_utils.accepted_range:
               min_value: 0
               inclusive: true
