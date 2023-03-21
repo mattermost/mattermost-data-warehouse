@@ -34,7 +34,7 @@ models:
       - name: name
         description: The project's name
         tests:
-          - not null
+          - not_null
   
   - name: fct_issues_daily_snapshot
     description: Issues snapshot facts. Stores a snapshot of all issues, updated daily.
