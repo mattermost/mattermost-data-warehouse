@@ -1,6 +1,5 @@
 version: 2
 
-
 models:
   - name: dim_labels
     description: Dimension storing all labels assigned to an issue.
@@ -31,7 +30,7 @@ models:
         description: The project's key
         tests:
           - not_null
-          - unique:
+          - unique
       - name: name
         description: The project's name
         tests:
