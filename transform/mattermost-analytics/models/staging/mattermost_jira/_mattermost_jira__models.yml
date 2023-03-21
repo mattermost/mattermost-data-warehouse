@@ -7,11 +7,12 @@ models:
 
     columns:
       - name: issue_id
-        description: The issue's id. For issue MM-12345 it will be 12345.
+        description: The issue's id. 
         tests:
           - not_null
+          - unique
       - name: issue_key
-        description: The issue's key. For issue MM-12345 it will be MM-12345.
+        description: The issue's key (example MM-12345).
         tests:
           - not_null
           - unique
