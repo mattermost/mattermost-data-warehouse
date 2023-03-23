@@ -12,6 +12,6 @@ exposures:
     maturity: medium
     owner:
       name: Srikar Gudipudi
-      email: -
+      email: analytics@mattermost.com
     depends_on:
       - ref('grp_community_tracks')
