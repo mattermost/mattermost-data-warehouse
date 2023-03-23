@@ -63,3 +63,36 @@ macros:
     description: |
       Returns the list of columns to use from rudderstack tables. This list contains columns that are expected to be
       in [every event table](https://www.rudderstack.com/docs/destinations/warehouse-destinations/warehouse-schema/#standard-rudderstack-properties
+
+  union_relations:
+    description: |
+      A macro to create a UNION ALL statement by combining the columns of multiple relations.
+    arguments:
+      relations:
+        description: The list of relations to union.
+        type: list
+        required: true
+        element_type: string
+      column_override:
+        description: A dictionary to override the data type of specific columns.
+        type: dict
+        required: false
+      include:
+        description: A list of column names to include in the result.
+        type: list
+        required: false
+        element_type: string
+      exclude:
+        description: A list of column names to exclude from the result.
+        type: list
+        required: false
+        element_type: string
+      source_column_name:
+        description: The name of the column that will store the source relation name.
+        type: string
+        required: false
+      where:
+        description: A WHERE clause to filter the result.
+        type: string
+        required: false
+      
