@@ -61,7 +61,7 @@ models:
         tests:
           - dbt_utils.accepted_range:
               min_value: 0
-              inclusive: false
+              inclusive: true
       - name: version_minor
         description: The minor part version of the version. I.e. for `v7.5` it's 5.
         tests:
@@ -71,11 +71,10 @@ models:
       - name: component
         description: |
           The component that this version applies to. Valid values are Mobile, Desktop, Mobile, Playbooks,
-          IR, Cloud and Apps.
+          IR, Cloud and Apps or null (for old versions).
         tests:
-          - not_null
           - accepted_values:
-              values: [ 'Mobile', 'Desktop', 'Playbooks', 'IR', 'Cloud', 'Apps' ]
+              values: [ 'Mobile', 'Desktop', 'Playbooks', 'IR', 'Cloud', 'Apps', null ]
       - name: cloud_release_date
         description: The Cloud release date. Not null only when component is Cloud.
 

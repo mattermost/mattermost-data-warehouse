@@ -8,6 +8,6 @@ SELECT
     END AS closed_at,
     status_name AS status,
     resolution_description AS resolution,
-    {{ datediff("created_at_date", "closed_at_date", "day") }} AS lead_time_in_days
+    {{ datediff("created_at", "closed_at", "day") }} AS lead_time_in_days
 FROM
     {{ ref('stg_mattermost_jira__issues') }}
