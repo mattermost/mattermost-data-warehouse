@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: grp_community_tracks
+    description: |
+      Rudderstack default columns from tracks for Community.
+
+    columns:
+      - name: event_id
+        tests:
+          - unique
+          - not_null
+      - name: event_table          
+      - name: event_name                        
+      - name: category          
+      - name: event_type                             
+      - name: server_id                 
+      - name: user_id           
+      - name: received_at
+      - name: timestamp                     
+      - name: event_date   

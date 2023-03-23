@@ -85,3 +85,5 @@ vars:
     staging_prefixes: ['stg_', 'base_']
     marts_prefixes: ['fct_', 'dim_', 'grp_']
 
+    # Community Server ID
+  community_server_id : 93mykbogbjfrbbdqphx3zhze5c

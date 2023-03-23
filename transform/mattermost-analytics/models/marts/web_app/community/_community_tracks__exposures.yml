@@ -1,0 +1,17 @@
+version: 2
+
+exposures:
+  - name: community_tracks_explore
+    type: notebook
+    description: |
+      Data from Community Server. Offers insights on available events, user activity, as well as daily volume of
+      events.
+
+    tags:
+      - looker
+    maturity: medium
+    owner:
+      name: Srikar Gudipudi
+      email: analytics@mattermost.com
+    depends_on:
+      - ref('grp_community_tracks')
