@@ -2,10 +2,10 @@ SELECT
     issue_id,
     issue_key,
     project_id,
-    created_at_date,
+    created_at,
     CASE
         WHEN status_name IN ('Closed', 'Done') THEN updated_at
-    END AS closed_at_date,
+    END AS closed_at,
     status_name AS status,
     resolution_description AS resolution,
     {{ datediff("created_at_date", "closed_at_date", "day") }} AS lead_time_in_days

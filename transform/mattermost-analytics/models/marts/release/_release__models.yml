@@ -100,11 +100,11 @@ models:
           - relationships:
               to: ref('dim_projects')
               field: project_id
-      - name: created_at_date
+      - name: created_at
         description: The timestamp that the project was created.
         tests:
           - not_null
-      - name: closed_at_date
+      - name: closed_at
         description: The timestamp that the issue was closed. Uses the last `updated_at` value if the issue has a status of `Closed` or `Done`.
       - name: status
         description: The status of the ticket.

@@ -5,10 +5,9 @@ WITH unparsed_fix_versions AS (
         issue_id,
         value:name::string as fix_version_name,
         -- Break down different variations of target version
-        REGEXP_LIKE(fix_version_name, '.*v\\d+\.\\d+.*', 'i') AS target_version,
         REGEXP_SUBSTR(fix_version_name, 'v\\d+\.\\d+') AS semver,
-        REGEXP_SUBSTR(version, 'v(\\d+)', 1, 1, 'e', 1)::int AS version_major,
-        REGEXP_SUBSTR(version, '\\.(\\d+)', 1, 1, 'e', 1)::int AS version_minor,
+        REGEXP_SUBSTR(semver, 'v(\\d+)', 1, 1, 'e', 1)::int AS version_major,
+        REGEXP_SUBSTR(semver, '\\.(\\d+)', 1, 1, 'e', 1)::int AS version_minor,
         CASE
             WHEN fix_version_name ILIKE '%mobile%' THEN 'Mobile'
             WHEN fix_version_name ILIKE '%desktop%' THEN 'Desktop'
