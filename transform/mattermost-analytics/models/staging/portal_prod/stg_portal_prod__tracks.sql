@@ -12,5 +12,6 @@ SELECT
      , category              AS category
      , user_id               AS user_id
      , received_at           AS received_at
+     , timestamp             AS timestamp
 FROM
     tracks
