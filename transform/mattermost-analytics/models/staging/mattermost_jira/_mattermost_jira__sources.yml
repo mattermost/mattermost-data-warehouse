@@ -1,0 +1,339 @@
+version: 2
+
+sources:
+  - name: mattermost_jira
+    database: 'ANALYTICS'
+    schema: mattermost_jira
+    loader: Stitch
+    description: |
+      Copy of JIRA database.
+    tags:
+      - stitch
+
+    tables:
+      - name: _sdc_rejected
+        columns:
+          - name: record
+          - name: reason
+          - name: table_name
+          - name: _sdc_rejected_at
+
+      - name: changelogs
+        columns:
+          - name: author
+          - name: created
+          - name: historymetadata
+          - name: id
+          - name: issueid
+          - name: items
+          - name: _sdc_batched_at
+          - name: _sdc_extracted_at
+          - name: _sdc_received_at
+          - name: _sdc_sequence
+          - name: _sdc_table_version
+
+      - name: issue_comments
+        columns:
+          - name: id
+            description: Unique ID of the comment.
+            tests:
+              - not_null
+              - unique
+          - name: author
+            description: JSON object containing author information.
+          - name: body
+            description: Content of the comment.
+          - name: created
+            description: Timestamp where the comment was created.
+          - name: issueid
+            description: Foreign key referencing the id of the `issue` that was commented on.
+            tests:
+              - not_null
+          - name: jsdpublic
+          - name: self
+            description: Link to the REST API call to get current comment.
+          - name: updateauthor
+            description: JSON Object of the last author that updated the comment.
+          - name: updated
+            description: Timestamp when the comment was last updated at.
+          - name: visibility
+          # Stitch columns
+          - name: _sdc_batched_at
+          - name: _sdc_extracted_at
+          - name: _sdc_received_at
+          - name: _sdc_sequence
+          - name: _sdc_table_version
+
+      - name: issue_transitions
+        columns:
+          - name: hasscreen
+          - name: id
+          - name: isconditional
+          - name: isglobal
+          - name: isinitial
+          - name: issueid
+          - name: name
+          - name: to
+          - name: _sdc_batched_at
+          - name: _sdc_extracted_at
+          - name: _sdc_received_at
+          - name: _sdc_sequence
+          - name: _sdc_table_version
+
+      - name: issues
+        columns:
+          - name: id
+          - name: key
+          - name: self
+          - name: expand
+          - name: fields
+          - name: _sdc_batched_at
+          - name: _sdc_extracted_at
+          - name: _sdc_received_at
+          - name: _sdc_sequence
+          - name: _sdc_table_version
+
+      - name: issues_expanded
+        columns:
+          - name: id
+          - name: key
+          - name: self
+          - name: aggregateprogress_progress
+          - name: aggregateprogress_total
+          - name: aggregatetimeestimate
+          - name: aggregatetimeoriginalestimate
+          - name: aggregatetimespent
+          - name: assignee_accountid
+          - name: assignee_accounttype
+          - name: assignee_active
+          - name: assignee_avatarurls
+          - name: assignee_displayname
+          - name: assignee_self
+          - name: assignee_timezone
+          - name: attachment
+          - name: components
+          - name: created
+          - name: creator_accountid
+          - name: creator_accounttype
+          - name: creator_active
+          - name: creator_avatarurls
+          - name: creator_displayname
+          - name: creator_self
+          - name: creator_timezone
+          - name: customfield_10000
+          - name: customfield_10001
+          - name: customfield_10003
+          - name: customfield_10004
+          - name: customfield_10006
+          - name: customfield_10007
+          - name: customfield_10011
+          - name: customfield_10500
+          - name: customfield_10600_hasepiclinkfielddependency
+          - name: customfield_10600_noneditablereason
+          - name: customfield_10600_showfield
+          - name: customfield_10700
+          - name: customfield_10800
+          - name: customfield_10900
+          - name: customfield_11100_accountid
+          - name: customfield_11100_accounttype
+          - name: customfield_11100_active
+          - name: customfield_11100_avatarurls
+          - name: customfield_11100_displayname
+          - name: customfield_11100_self
+          - name: customfield_11100_timezone
+          - name: customfield_11101_id
+          - name: customfield_11101_self
+          - name: customfield_11101_value
+          - name: customfield_11103
+          - name: customfield_11104
+          - name: customfield_11105
+          - name: customfield_11106
+          - name: customfield_11107
+          - name: customfield_11108
+          - name: customfield_11109
+          - name: customfield_11110
+          - name: customfield_11111
+          - name: customfield_11112
+          - name: customfield_11113
+          - name: customfield_11114
+          - name: customfield_11116
+          - name: customfield_11117
+          - name: customfield_11118
+          - name: customfield_11119
+          - name: customfield_11121
+          - name: customfield_11122
+          - name: customfield_11123
+          - name: customfield_11124
+          - name: customfield_11125
+          - name: customfield_11126
+          - name: customfield_11127
+          - name: description
+          - name: duedate
+          - name: fixversions
+          - name: issuelinks
+          - name: issuetype_avatarid
+          - name: issuetype_description
+          - name: issuetype_iconurl
+          - name: issuetype_id
+          - name: issuetype_name
+          - name: issuetype_self
+          - name: issuetype_subtask
+          - name: labels
+          - name: lastviewed
+          - name: progress_progress
+          - name: progress_total
+          - name: project_avatarurls
+          - name: project_id
+          - name: project_key
+          - name: project_name
+          - name: project_projecttypekey
+          - name: project_self
+          - name: project_simplified
+          - name: reporter_accountid
+          - name: reporter_accounttype
+          - name: reporter_active
+          - name: reporter_avatarurls
+          - name: reporter_displayname
+          - name: reporter_self
+          - name: reporter_timezone
+          - name: resolution_description
+          - name: resolution_id
+          - name: resolution_name
+          - name: resolution_self
+          - name: resolutiondate
+          - name: security
+          - name: status_description
+          - name: status_iconurl
+          - name: status_id
+          - name: status_name
+          - name: status_self
+          - name: status_statuscategory
+          - name: statuscategorychangedate
+          - name: subtasks
+          - name: summary
+          - name: timeestimate
+          - name: timeoriginalestimate
+          - name: timespent
+          - name: updated
+          - name: votes_hasvoted
+          - name: votes_self
+          - name: votes_votes
+          - name: watches_iswatching
+          - name: watches_self
+          - name: watches_watchcount
+          - name: workratio
+          - name: _sdc_batched_at
+          - name: _sdc_extracted_at
+          - name: _sdc_received_at
+          - name: _sdc_table_version
+
+      - name: project_types
+        columns:
+          - name: key
+          - name: color
+          - name: descriptioni18nkey
+          - name: formattedkey
+          - name: _sdc_batched_at
+          - name: _sdc_extracted_at
+          - name: _sdc_received_at
+          - name: _sdc_sequence
+          - name: _sdc_table_version
+
+      - name: projects
+        columns:
+          - name: id
+          - name: key
+          - name: avatarurls
+          - name: description
+          - name: expand
+          - name: lead
+          - name: name
+          - name: projectkeys
+          - name: projecttypekey
+          - name: self
+          - name: simplified
+          - name: url
+          - name: _sdc_batched_at
+          - name: _sdc_extracted_at
+          - name: _sdc_received_at
+          - name: _sdc_sequence
+          - name: _sdc_table_version
+
+      - name: resolutions
+        columns:
+          - name: id
+          - name: name
+          - name: description
+          - name: self
+          - name: _sdc_batched_at
+          - name: _sdc_extracted_at
+          - name: _sdc_received_at
+          - name: _sdc_sequence
+          - name: _sdc_table_version
+
+      - name: roles
+        columns:
+          - name: id
+          - name: name
+          - name: actors
+          - name: description
+          - name: self
+          - name: _sdc_batched_at
+          - name: _sdc_extracted_at
+          - name: _sdc_received_at
+          - name: _sdc_sequence
+          - name: _sdc_table_version
+
+      - name: users
+        columns:
+          - name: accountid
+          - name: accounttype
+          - name: active
+          - name: avatarurls
+          - name: displayname
+          - name: self
+          - name: timezone
+          - name: _sdc_batched_at
+          - name: _sdc_extracted_at
+          - name: _sdc_received_at
+          - name: _sdc_sequence
+          - name: _sdc_table_version
+
+      - name: versions
+        columns:
+          - name: archived
+          - name: description
+          - name: id
+          - name: name
+          - name: overdue
+          - name: projectid
+          - name: released
+          - name: releasedate
+          - name: self
+          - name: userreleasedate
+          - name: userstartdate
+          - name: startdate
+          - name: _sdc_batched_at
+          - name: _sdc_extracted_at
+          - name: _sdc_received_at
+          - name: _sdc_sequence
+          - name: _sdc_table_version
+
+      - name: worklogs
+        columns:
+          - name: id
+          - name: author
+          - name: created
+          - name: issueid
+          - name: self
+          - name: started
+          - name: timespent
+          - name: timespentseconds
+          - name: updateauthor
+          - name: updated
+          - name: comment
+          - name: _sdc_batched_at
+          - name: _sdc_extracted_at
+          - name: _sdc_received_at
+          - name: _sdc_sequence
+          - name: _sdc_table_version

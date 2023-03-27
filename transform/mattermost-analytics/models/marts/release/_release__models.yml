@@ -1,0 +1,120 @@
+version: 2
+
+models:
+  - name: dim_labels
+    description: Dimension storing all labels assigned to an issue.
+
+    columns:
+      - name: issue_id
+        description: The issue's ID.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fct_issues_daily_snapshot')
+              field: issue_id
+      - name: label
+        description: The label assigned to the issue.
+        tests:
+          - not_null
+        
+  - name: dim_projects
+    description: Dimension storing all known projects.
+
+    columns:
+      - name: project_id
+        description: The project's unique ID.
+        tests:
+          - not_null
+          - unique
+      - name: project_key
+        description: The project's key
+        tests:
+          - not_null
+          - unique
+      - name: name
+        description: The project's name
+        tests:
+          - not_null
+
+  - name: dim_fix_versions
+    description: Fix versions for the given issue.
+
+    columns:
+      - name: issue_id
+        description: The issue's id.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fct_issues_daily_snapshot')
+              field: issue_id
+      - name: fix_version
+        description: The raw fix version value.
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+      - name: semver
+        description: The semantic version part of the fix version.
+        tests:
+          - dbt_utils.not_empty_string
+      - name: version_major
+        description: The major part version of the version. I.e. for `v7.5` it's 7.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+      - name: version_minor
+        description: The minor part version of the version. I.e. for `v7.5` it's 5.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+      - name: component
+        description: |
+          The component that this version applies to. Valid values are Mobile, Desktop, Mobile, Playbooks,
+          IR, Cloud and Apps or null (for old versions).
+        tests:
+          - accepted_values:
+              values: [ 'Mobile', 'Desktop', 'Playbooks', 'IR', 'Cloud', 'Apps', null ]
+      - name: cloud_release_date
+        description: The Cloud release date. Not null only when component is Cloud.
+
+  - name: fct_issues_daily_snapshot
+    description: Issues snapshot facts. Stores a snapshot of all issues, updated daily.
+
+    columns:
+      - name: issue_id
+        description: The issue's id.
+        tests:
+          - not_null
+          - unique
+      - name: issue_key
+        description: The issue's key (example MM-12345).
+        tests:
+          - not_null
+          - unique
+      - name: project_id
+        description: The project's ID.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_projects')
+              field: project_id
+      - name: created_at
+        description: The timestamp that the project was created.
+        tests:
+          - not_null
+      - name: closed_at
+        description: The timestamp that the issue was closed. Uses the last `updated_at` value if the issue has a status of `Closed` or `Done`.
+      - name: status
+        description: The status of the ticket.
+        tests:
+          - not_null
+      - name: resolution
+        description: The resolution of the ticket.
+      - name: lead_time_in_days
+        description: The lead time, defined as the number of days between `created_at` and `closed_at`. Null if the issue hasn't been closed yet.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+

@@ -57,6 +57,9 @@ models:
       web_app:
         schema: mart_web_app
         tags: ['hourly']
+      release:
+        schema: mart_release
+        tags: ['nightly']
     utilities:
       +materialized: table
       schema: utilities
