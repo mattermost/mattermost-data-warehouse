@@ -6,6 +6,7 @@ SELECT
     CASE
         WHEN status_name IN ('Closed', 'Done') THEN updated_at
     END AS closed_at,
+    issue_type_name AS issue_type,
     status_name AS status,
     resolution_description AS resolution,
     {{ datediff("created_at", "closed_at", "day") }} AS lead_time_in_days
