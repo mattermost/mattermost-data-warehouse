@@ -99,6 +99,10 @@ models:
           - relationships:
               to: ref('dim_projects')
               field: project_id
+      - name: issue_type
+        description: The type of the issue (bug, task, feature etc).
+        tests:
+          - not_null
       - name: created_at
         description: The timestamp that the project was created.
         tests:
