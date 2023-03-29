@@ -52,10 +52,10 @@ models:
         description: The name of the status' category.
       - name: status_category_key
         description: The key of the status' category.
-      - name: resolution
-        description: The resolution of the issue.
-      - name: resolution_date
-        description: The date of the resolution, adjusted in UTC.
+      - name: resolution_id
+        description: The id of the issue's resolution.
+      - name: resolution_name
+        description: The name of the resolution.
       - name: labels
         description: List of labels assigned to the given issue.
       - name: fix_versions

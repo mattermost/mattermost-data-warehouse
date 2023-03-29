@@ -33,7 +33,7 @@ SELECT
     fields:status.statusCategory.key::VARCHAR AS status_category_key,
     -- Resolution
     fields:resolution.id::VARCHAR AS resolution_id,
-    fields:resolution.description::VARCHAR AS resolution_description,
+    fields:resolution.name::VARCHAR AS resolution_name,
     CONVERT_TIMEZONE('UTC', TO_TIMESTAMP_TZ(fields:resolutiondate::VARCHAR, 'YYYY-MM-DD"T"HH24:MI:SS.FFTZHTZM')) AS resolution_date,
     -- Labels:
     fields:labels AS labels,
