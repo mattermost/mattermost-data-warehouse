@@ -11,10 +11,12 @@ models:
         tests:
           - accepted_values:
               values: ['int_mm_telemetry_rc_performance_events', 'int_mm_telemetry_prod_performance_events']
+              tags: [ 'slow' ]
       - name: id
         tests:
           - not_null
-          - unique
+          - unique:
+              tags: ['slow']
       - name: anonymous_id
       - name: received_at
       - name: sent_at

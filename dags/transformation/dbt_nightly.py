@@ -73,5 +73,25 @@ dbt_run_cloud_nightly = KubernetesPodOperator(
     dag=dag,
 )
 
+dbt_run_cloud_mattermost_analytics_nightly = KubernetesPodOperator(
+    **pod_defaults,
+    image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
+    task_id="dbt-cloud-mattermost-analytics-nightly",
+    name="dbt-cloud-mattermost-analytics-nightly",
+    secrets=[
+        DBT_CLOUD_API_ACCOUNT_ID,
+        DBT_CLOUD_API_KEY,
+        SNOWFLAKE_ACCOUNT,
+        SNOWFLAKE_USER,
+        SNOWFLAKE_PASSWORD,
+        SNOWFLAKE_TRANSFORM_ROLE,
+        SNOWFLAKE_TRANSFORM_WAREHOUSE,
+        SNOWFLAKE_TRANSFORM_SCHEMA,
+        SSH_KEY,
+    ],
+    env_vars=env_vars,
+    arguments=["python -m  utils.run_dbt_cloud_job 254981 \"Mattermost Analytics DBT nightly\""],
+    dag=dag,
+)
 
-dbt_run_cloud_nightly
+dbt_run_cloud_mattermost_analytics_nightly >> dbt_run_cloud_nightly
