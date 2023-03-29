@@ -705,3 +705,4 @@ WHERE s.date >= '2016-04-01'
 )
 SELECT *
 FROM server_config_details
+QUALIFY ROW_NUMBER() OVER (PARTITION BY id ORDER BY date) = 1
