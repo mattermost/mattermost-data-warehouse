@@ -25,12 +25,16 @@ WITH unparsed_fix_versions AS (
         REGEXP_LIKE(fix_version_name, '.*v\\d+\.\\d+.*', 'i')
 )
 SELECT
-    issue_id,
-    fix_version_name AS fix_version,
-    semver,
-    version_major,
-    version_minor,
-    component,
-    cloud_release_date
+    fv.issue_id,
+    fv.fix_version_name AS fix_version,
+    fv.semver,
+    fv.version_major,
+    fv.version_minor,
+    fv.component,
+    fv.cloud_release_date,
+    rd.planned_release_date
 FROM
-    unparsed_fix_versions
+    unparsed_fix_versions fv
+    -- Add planned release date by looking up dates ONLY for Cloud and On Prem releases)
+    LEFT JOIN {{ ref('stg_mattermost__version_release_dates') }} rd
+        ON fv.semver = rd.short_version AND (fv.component IS NULL OR fv.component = 'Cloud')

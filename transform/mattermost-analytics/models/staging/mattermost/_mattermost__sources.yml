@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: mattermost
+    database: 'ANALYTICS'
+    schema: mattermost
+    loader: snowflake-dbt
+    description: |
+      Seeds from Snowflake-DBT project.
+    tags:
+      - snowflake-dbt
+
+    tables:
+      - name: version_release_dates
+        columns:
+          - name: version
+            tests:
+              - unique
+              - not_null
+          - name: release_date
+          - name: supported
+          - name: release_number

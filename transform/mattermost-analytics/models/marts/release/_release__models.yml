@@ -77,6 +77,8 @@ models:
               values: [ 'Mobile', 'Desktop', 'Playbooks', 'IR', 'Cloud', 'Apps', null ]
       - name: cloud_release_date
         description: The Cloud release date. Not null only when component is Cloud.
+      - name: planned_release_date
+        description: The date that the release in semver column is planned for. Applies only for Cloud/OnPrem.
 
   - name: fct_issues_daily_snapshot
     description: Issues snapshot facts. Stores a snapshot of all issues, updated daily.
