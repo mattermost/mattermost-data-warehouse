@@ -1,0 +1,29 @@
+version: 2
+
+models:
+  - name: stg_mattermost___version_release_dates
+    description: |
+      Contains version information for releases. 
+
+    columns:
+      - name: version
+        description: The semver string (`major.minor.patch` format).
+        tests:
+          - not_null
+          - unique
+      - name: short_version
+        description: The short format of the version, omitting patch (example `v6.3`).
+        tests:
+          - not_null
+      - name: planned_release_date
+        description: The planned date for the release.
+        tests:
+          - not_null
+      - name: is_supported
+        description: Whether the version is supported or not.
+        tests:
+          - not_null
+      - name: release_number
+        description: The issue's release number.
+        tests:
+          - not_null
