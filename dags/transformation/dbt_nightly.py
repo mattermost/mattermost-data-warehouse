@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+from airflow.utils.trigger_rule import TriggerRule
 
 from dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, pod_defaults, pod_env_vars, send_alert
 from dags.kube_secrets import (
@@ -78,6 +79,7 @@ dbt_run_cloud_mattermost_analytics_nightly = KubernetesPodOperator(
     image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
     task_id="dbt-cloud-mattermost-analytics-nightly",
     name="dbt-cloud-mattermost-analytics-nightly",
+    trigger_rule=TriggerRule.ALL_DONE,
     secrets=[
         DBT_CLOUD_API_ACCOUNT_ID,
         DBT_CLOUD_API_KEY,
@@ -94,4 +96,4 @@ dbt_run_cloud_mattermost_analytics_nightly = KubernetesPodOperator(
     dag=dag,
 )
 
-dbt_run_cloud_mattermost_analytics_nightly >> dbt_run_cloud_nightly
+dbt_run_cloud_nightly >> dbt_run_cloud_mattermost_analytics_nightly
