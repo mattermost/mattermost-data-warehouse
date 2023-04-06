@@ -9,11 +9,12 @@ with subscriptions AS (
     SELECT
         subscriptions.*,
         products.name,
+        products.cws_sku_name as product_sku,
         INITCAP(SPLIT_PART(replace(cws_dns, '-', ' '), '.', 1)) as company,
         ROW_NUMBER() OVER (PARTITION BY subscriptions.customer ORDER BY subscriptions.created DESC) as row_num
     FROM {{ source('stripe', 'subscriptions')}} 
     JOIN {{ source('stripe', 'products') }} on products.id = coalesce(subscriptions.plan:"product"::varchar, subscriptions.metadata:"current_product_id"::varchar)
     WHERE subscriptions.cws_dns is not null
-    AND products.name in ('Cloud Starter', 'Cloud Enterprise') 
+    AND products.cws_sku_name in ('cloud-professional', 'cloud-starter')
 )
 SELECT * FROM subscriptions
