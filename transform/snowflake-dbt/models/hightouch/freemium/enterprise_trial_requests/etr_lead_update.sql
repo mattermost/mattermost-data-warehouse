@@ -28,8 +28,8 @@ WITH existing_lead AS (
     FROM {{ ref('customers_with_cloud_free_subs') }} as customers_with_free_subs
     LEFT JOIN existing_lead ON customers_with_free_subs.email = existing_lead.email
     WHERE existing_lead.id is not null -- lead exists in salesforce
-    AND sku = 'Cloud Enterprise' 
-    AND previous_sku = 'Cloud Starter'
+    AND product_sku = 'cloud-enterprise' 
+    AND previous_product_sku = 'cloud-starter'
     AND status = 'trialing'
     AND customers_with_free_subs.hightouch_sync_eligible
 )

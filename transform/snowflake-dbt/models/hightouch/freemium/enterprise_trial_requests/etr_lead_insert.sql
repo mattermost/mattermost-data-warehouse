@@ -27,8 +27,8 @@ WITH existing_lead AS (
     FROM {{ ref('customers_with_cloud_free_subs') }} as customers_with_free_subs
     LEFT JOIN existing_lead ON customers_with_free_subs.email = existing_lead.email
     WHERE existing_lead.id is null
-    AND sku = 'Cloud Enterprise' 
-    AND previous_sku = 'Cloud Starter'
+    AND product_sku = 'cloud-enterprise' 
+    AND previous_product_sku = 'cloud-starter'
     AND status = 'trialing'
     AND customers_with_free_subs.hightouch_sync_eligible
     AND customers_with_free_subs.email not in  -- only insert leads that are not inserted by cs campaign
