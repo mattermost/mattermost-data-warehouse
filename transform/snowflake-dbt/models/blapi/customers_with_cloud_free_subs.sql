@@ -20,7 +20,7 @@ with current_subscriptions AS(
 ), previous_subscriptions AS (
     SELECT 
         current_subscription_id, 
-        products.name as previous_sku
+        products.cws_sku_name as previous_product_sku
     FROM 
         previous_subscriptions_pre
         JOIN {{ source('stripe', 'products') }} on products.id = previous_product_id
@@ -33,8 +33,8 @@ with current_subscriptions AS(
         SPLIT_PART(customers.email, '@', 2) as domain,
         current_subscriptions.id as subscription_id,
         current_subscriptions.cws_dns as cloud_dns,
-        current_subscriptions.name as sku,
-        previous_subscriptions.previous_sku,
+        current_subscriptions.product_sku,
+        previous_subscriptions.previous_product_sku,
         left(coalesce(current_subscriptions.company, customers.email), 40) as company_name,
         current_subscriptions.status,
         current_subscriptions.created >= '2022-06-14' as hightouch_sync_eligible
