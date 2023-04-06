@@ -60,6 +60,9 @@ models:
       release:
         schema: mart_release
         tags: ['nightly']
+      sales:
+        schema: mart_sales
+        tags: ['hourly']
     utilities:
       +materialized: table
       schema: utilities

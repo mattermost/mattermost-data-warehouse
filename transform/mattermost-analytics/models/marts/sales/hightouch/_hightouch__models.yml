@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: fct_trial_requests
+    description: |
+      Trial request data from Customer Web Server to be synced to Salesforce.
+
+    columns:
+      - name: trial_request_id
+        tests:
+          - unique
+          - not_null
+      - name: company_size_bucket
+        description: The company's size bucket. I.e. 1-50, 51-100 etc.
+      - name: company_name
+        description: The company's name.
+      - name: email
+        description: |
+          The contact email provided in the signup form. If not filled in, it's the email of the user 
+          requesting the trial.
+        tests:
+          - not_null
+      - name: country_name
+        description: The requester's country.
+      - name: trial_start_date
+        description: The starting date of the trial.
+      - name: num_users
+        description: Number of end users for the server.

@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: cws_test
+    database: 'RAW'
+    schema: cws_test
+    loader: Stitch
+    description: |
+      Customer Web Server test database replica.
+    tags:
+      - stitch
+
+    tables:
+      - name: marketing
+      - name: trial_requests

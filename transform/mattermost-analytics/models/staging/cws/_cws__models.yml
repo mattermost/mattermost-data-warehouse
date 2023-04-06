@@ -1,0 +1,51 @@
+version: 2
+
+models:
+  - name: cws_trial_requests
+    description: |
+      Form data for trial requests.
+
+    columns:
+      - name: trial_request_id
+        description: The trial request's ID.
+        tests:
+          - not_null
+          - unique
+      - name: country_name
+        description: The full name of the country.
+      - name: company_name
+        description: The name of the company.
+      - name: company_size_bucket
+        description: A script representing the "bucket" that this company belongs to (i.e. 1 to 50, 50 to 100 etc).
+      - name: contact_email
+        description: The contact's email.
+        tags: ['pii']
+      - name: first_name
+        description: Contact's first name.
+        tags: ['pii']
+      - name: last_name
+        description: Contact's last name.
+        tags: ['pii']
+      - name: email
+        description: The user's email (TBD).
+        tags: ['pii']
+      - name: username
+        description: TBD
+        tags: ['pii']
+      - name: is_receive_email_accepted
+        description: Whether the user opted in to receive emails.
+      - name: server_id
+        description: The server's id.
+      - name: site_name
+        description: The name of the site.
+      - name: site_url
+        description: The URL of the site.
+      - name: start_date
+        description: TBD
+      - name: end_date
+        description: TBD
+      - name: is_terms_accepted
+        description: Whether the user accepted the terms and conditions.
+      - name: num_users
+        description: The total number of users (TBD).
+
