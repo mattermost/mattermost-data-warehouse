@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: stg_mattermost___version_release_dates
+  - name: stg_mattermost__version_release_dates
     description: |
       Contains version information for releases. 
 
