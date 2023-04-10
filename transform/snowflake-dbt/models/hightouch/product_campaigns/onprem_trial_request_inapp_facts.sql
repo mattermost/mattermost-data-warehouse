@@ -29,6 +29,7 @@ with existing_members as (
 ), trial_facts as (
     select
         tr.email
+        , tr.email LIKE '%_@__%.__%' as is_valid_email
         , left(tr.email, 40) as first_name
         , tr.site_url
         , tr.license_id
@@ -92,4 +93,5 @@ select trial_facts.*
 from
     trial_facts
     left join already_customer on trial_facts.email = already_customer.email
-where already_customer.email is null and trial_facts.row_number = 1
+where
+    already_customer.email is null and trial_facts.row_number = 1
