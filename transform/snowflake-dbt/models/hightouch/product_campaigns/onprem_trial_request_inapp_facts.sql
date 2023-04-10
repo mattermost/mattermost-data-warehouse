@@ -30,6 +30,8 @@ with existing_members as (
     select
         tr.email
         , left(tr.email, 40) as first_name
+        -- Keep leftmost part
+        , left(split_part(tr.email, '@', 1), 40) as email_prefix
         , tr.site_url
         , tr.license_id
         , tr.sfid
