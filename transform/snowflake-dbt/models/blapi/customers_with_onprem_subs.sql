@@ -39,7 +39,7 @@ WITH payment_addresses AS (
         COALESCE(pa.country_code, cc.code) AS country_code
     FROM
         payment_addresses pa
-        LEFT JOIN {{ ref('country_codes') }} cc ON pa.country = cc.code
+        LEFT JOIN {{ ref('country_codes') }} cc ON pa.country_code = cc.code
     WHERE
         row_num = 1
 ), customers_with_onprem_subs AS (
