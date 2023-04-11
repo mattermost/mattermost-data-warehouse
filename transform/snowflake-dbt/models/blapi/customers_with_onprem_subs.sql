@@ -5,7 +5,7 @@
   })
 }}
 
-WITH latest_credit_card_address AS (
+WITH payment_addresses AS (
     SELECT
         payment_methods.customer_id,
         addresses.line1,
@@ -24,6 +24,24 @@ WITH latest_credit_card_address AS (
         ON addresses.country = postal_code_mapping.country
         AND postal_code_mapping.postal_code like addresses.postal_code || '%'
     WHERE addresses.address_type = 'billing'
+), latest_credit_card_address AS (
+    -- Country from blapi addresses is inconsistent. Sometimes it's country name, while others it's country code.
+    -- This CTE attempts to normalize this.
+    SELECT
+        pa.customer_id,
+        pa.line1,
+        pa.line2,
+        pa.postal_code,
+        pa.city,
+        pa.state,
+        COALESCE(cc.name, pa.country) AS country,
+        pa.state_code,
+        COALESCE(pa.country_code, cc.code) AS country_code
+    FROM
+        payment_addresses pa
+        LEFT JOIN {{ ref('country_codes') }} cc ON pa.country = cc.code
+    WHERE
+        row_num = 1
 ), customers_with_onprem_subs AS (
     SELECT
         customers.id as customer_id,
@@ -81,18 +99,18 @@ WITH latest_credit_card_address AS (
         latest_credit_card_address.postal_code,
         latest_credit_card_address.city,
         case
-            when latest_credit_card_address.country in ('US', 'CA')
+            when latest_credit_card_address.country in ('US', 'CA', 'United States', 'Canada')
             then latest_credit_card_address.state
             else null
         end as state,
         latest_credit_card_address.country,
         case
-            when latest_credit_card_address.country in ('US', 'CA')
+            when latest_credit_card_address.country in ('US', 'CA', 'United States', 'Canada')
             then latest_credit_card_address.state_code
             else null
         end as state_code,
         case
-            when latest_credit_card_address.country in ('US', 'CA')
+            when latest_credit_card_address.country in ('US', 'CA', 'United States', 'Canada')
             then latest_credit_card_address.country_code
             else null
         end as country_code,
@@ -107,7 +125,6 @@ WITH latest_credit_card_address AS (
         LEFT JOIN {{ ref('invoices') }} ON onprem_subscriptions.stripe_invoice_number = invoices.number 
         JOIN latest_credit_card_address
             ON customers.id = latest_credit_card_address.customer_id
-            AND latest_credit_card_address.row_num = 1
 ), customers_account AS (
     SELECT
         customers_with_onprem_subs.stripe_charge_id,
