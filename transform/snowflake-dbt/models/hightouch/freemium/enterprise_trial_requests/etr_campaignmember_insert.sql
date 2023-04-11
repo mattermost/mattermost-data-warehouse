@@ -54,8 +54,8 @@ with existing_members as (
     LEFT JOIN existing_contacts ON customers_with_free_subs.email = existing_contacts.email
     WHERE (existing_leads.sfid is not null or existing_contacts.sfid is not null) -- either contact or lead exists
     AND existing_members.sfid is null -- not member of campaign either
-    AND sku = 'Cloud Enterprise' 
-    AND previous_sku = 'Cloud Starter'
+    AND product_sku = 'cloud-enterprise' 
+    AND previous_product_sku = 'cloud-starter'
     AND customers_with_free_subs.status = 'trialing'
     AND customers_with_free_subs.hightouch_sync_eligible
 )
