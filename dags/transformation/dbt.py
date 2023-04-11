@@ -29,6 +29,7 @@ default_args = {
     "retry_delay": timedelta(minutes=1),
     "sla": timedelta(hours=8),
     "start_date": datetime(2019, 1, 1, 0, 0, 0),
+    "default_timeout": timedelta(hours=1),
 }
 
 # Create the DAG
