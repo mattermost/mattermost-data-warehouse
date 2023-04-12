@@ -29,6 +29,7 @@ WITH latest_payment AS (
         AND p.name != 'Cloud Enterprise'
         AND p.name != 'Cloud Starter'
         AND p.name != 'Cloud Professional'
+        AND p.name NOT ILIKE '%cloud%'
 )
 SELECT * FROM subscriptions
 WHERE row_num = 1
