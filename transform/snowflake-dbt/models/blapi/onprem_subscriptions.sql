@@ -24,8 +24,7 @@ WITH latest_payment AS (
     FROM {{ source('blapi', 'subscriptions_version') }} s
     JOIN {{ source('blapi', 'products') }} p ON s.product_id = p.id
     JOIN latest_payment ON s.id = latest_payment.subscription_id AND latest_payment.row_num = 1
-    WHERE s.subscription_version_id_mod
-        AND p.name != 'Mattermost Cloud'
+    WHERE p.name != 'Mattermost Cloud'
         AND p.name != 'Cloud Enterprise'
         AND p.name != 'Cloud Starter'
         AND p.name != 'Cloud Professional'
