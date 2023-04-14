@@ -29,7 +29,7 @@ default_args = {
 dag = DAG(
     "snowflake_job",
     default_args=default_args,
-    schedule_interval="*/5 * * * *",
+    schedule_interval="0 0 * * *",
     catchup=False,
     max_active_runs=1,  # Don't allow multiple concurrent dag executions
 )
