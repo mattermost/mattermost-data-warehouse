@@ -33,11 +33,15 @@ with existing_members as (
 )
 select
     facts.email,
+    {{ validate_email('facts.email') }} as is_valid_email,
+    -- Multiple contact forms for the same email might have be submitted. Add row number per email while ordering by
+    -- form creation date in order to get the order of the submissions.
+    ROW_NUMBER() OVER (PARTITION BY facts.email ORDER BY facts.created_at ASC) fact_row_number,
     'Sales Inquiry' as contact_us_inquiry_type,
     to_varchar(facts.created_at, 'YYYY-MM-DDTHH24:MI:SSZ') as request_to_contact_us_date,
     facts.comment as tell_us_more,
     facts.name as company,
-    lead.dwh_external_id__c is not null as lead_exists,
+    lead.sfid is not null as lead_exists,
     contact.dwh_external_id__c is not null as contact_exists,
     coalesce(campaignmember.dwh_external_id__c, UUID_STRING('78157189-82de-4f4d-9db3-88c601fbc22e', '7013p000001TxBuAAK' || facts.email)) AS campaignmember_external_id,
     coalesce(contact.dwh_external_id__c, UUID_STRING('78157189-82de-4f4d-9db3-88c601fbc22e', facts.email)) AS contact_external_id,
