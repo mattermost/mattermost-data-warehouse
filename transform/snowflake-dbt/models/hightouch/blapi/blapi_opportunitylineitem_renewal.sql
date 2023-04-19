@@ -21,7 +21,10 @@ WITH onprem_olis_to_sync AS (
     LEFT JOIN {{ ref('opportunitylineitem') }}
         ON customers_with_onprem_subs.subscription_version_id = opportunitylineitem.subs_version_id__c
     WHERE opportunitylineitem.id IS NULL
+    -- Same filters as in blapi_onprem_opportunity_renewal
     AND customers_with_onprem_subs.is_renewed
+    AND customers_with_onprem_subs.account_sfid is not null
+    AND customers_with_onprem_subs.account_type in ('Customer','Customer(Attrited)')
     AND customers_with_onprem_subs.opportunity_sfid is not null
     AND customers_with_onprem_subs.hightouch_sync_eligible
 )
