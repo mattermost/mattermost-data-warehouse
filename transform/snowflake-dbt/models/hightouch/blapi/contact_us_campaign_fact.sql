@@ -7,7 +7,7 @@
 with existing_members as (
     select
         campaignmember.sfid,
-        campaignmember.email,
+        lower(campaignmember.email) as email,
         campaignmember.dwh_external_id__c,
         case
             when campaignmember.campaignid = '7013p000001NkNtAAK' then 'Portal'
@@ -19,14 +19,14 @@ with existing_members as (
 ), existing_leads as (
     select
         lead.sfid,
-        lead.email,
+        lower(lead.email) as email,
         lead.dwh_external_id__c,
         row_number() over (partition by lead.email order by createddate desc) as row_num
     from {{ ref('lead') }}
 ), existing_contacts as (
     select
         contact.sfid,
-        contact.email,
+        lower(contact.email) as email,
         contact.dwh_external_id__c,
         row_number() over (partition by contact.email order by createddate desc) as row_num
     from {{ ref('contact') }}
@@ -69,11 +69,11 @@ select
 from
     {{ ref('contact_us_requests') }} facts
     left join existing_members as campaignmember
-        on facts.email = campaignmember.email and campaignmember.row_num = 1
+        on LOWER(facts.email) = campaignmember.email and campaignmember.row_num = 1
     left join existing_leads as lead
-        on facts.email = lead.email and lead.row_num = 1
+        on LOWER(facts.email) = lead.email and lead.row_num = 1
     left join existing_contacts as contact
-        on facts.email = contact.email and contact.row_num = 1
+        on LOWER(facts.email) = contact.email and contact.row_num = 1
 where
     facts.inquiry_type = 'I need to contact sales'
     and facts.inquiry_issue != 'I want to cancel my Mattermost account'
