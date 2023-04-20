@@ -79,3 +79,5 @@ where
     and facts.inquiry_issue != 'I want to cancel my Mattermost account'
     and facts.created_at >= '2021-08-23'
     and is_valid_email
+    -- Filter invalid sources
+    and facts.source in ('Portal', 'Cloud')
