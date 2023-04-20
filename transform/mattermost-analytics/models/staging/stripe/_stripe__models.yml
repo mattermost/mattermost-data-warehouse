@@ -1,0 +1,107 @@
+version: 2
+
+models:
+  - name: stg_stripe__customers
+    description: "Extracts and transforms data related to customer information from Stripe."
+    columns:
+      - name: account_balance
+        description: "The account balance of the customer."
+
+      - name: balance
+        description: "The available balance in the customer's Stripe account."
+
+      - name: cards
+        description: "The list of payment cards associated with the customer."
+
+      - name: created
+        description: "The date and time when the customer's Stripe account was created."
+
+      - name: currency
+        description: "The currency used for transactions made by the customer."
+
+      - name: delinquent
+        description: "Indicates whether the customer's account is delinquent."
+
+      - name: email
+        description: "The email address associated with the customer's Stripe account."
+
+      - name: id
+        description: "The unique identifier for the customer's Stripe account."
+
+      - name: invoice_prefix
+        description: "The prefix used for the customer's invoices."
+
+      - name: invoice_settings
+        description: "The invoice settings for the customer's account."
+
+      - name: livemode
+        description: "Indicates whether the customer's Stripe account is in live mode."
+
+      - name: contactfirstname
+        description: "The first name of the customer's contact person."
+
+      - name: contactlastname
+        description: "The last name of the customer's contact person."
+
+      - name: cws_customer
+        description: "The identifier for the customer in the CardWorks system."
+
+      - name: metadata
+        description: "Additional metadata associated with the customer's account."
+
+      - name: name
+        description: "The name associated with the customer's Stripe account."
+
+      - name: next_invoice_sequence
+        description: "The next sequential number for the customer's invoices."
+
+      - name: object
+        description: "The object type, which is 'customer' for all records in this model."
+
+      - name: preferred_locales
+        description: "The preferred languages of the customer."
+
+      - name: sources
+        description: "The payment sources associated with the customer."
+
+      - name: subscriptions
+        description: "The subscriptions associated with the customer."
+
+      - name: tax_exempt
+        description: "Indicates whether the customer is tax exempt."
+
+      - name: updated
+        description: "The date and time when the customer's Stripe account was last updated."
+
+      - name: _sdc_batched_at
+        description: "The date and time when the record was batched into the target system."
+
+      - name: _sdc_extracted_at
+        description: "The date and time when the record was extracted from the source system."
+
+      - name: _sdc_received_at
+        description: "The date and time when the record was received by the target system."
+
+      - name: _sdc_sequence
+        description: "The sequence number for the record."
+
+      - name: _sdc_table_version
+        description: "The version number of the source system's table."
+
+      - name: default_source
+        description: "The default payment source associated with the customer."
+
+      - name: shipping
+        description: "The customer's shipping information."
+
+      - name: tax_ids
+        description: "The tax IDs associated with the customer."
+
+      - name: address
+        description: "The customer's billing address."
+
+      - name: default_card
+        description: "The default payment card associated with the customer."
+
+      - name: discount
+        description: "The discount
