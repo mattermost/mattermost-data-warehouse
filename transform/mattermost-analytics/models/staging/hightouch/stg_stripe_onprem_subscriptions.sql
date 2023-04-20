@@ -2,7 +2,6 @@
     "materialized": 'table',
     "schema": "stripe",
     "unique_key":"invoice_id",
-    "tags":["nightly"]
   })
 }}
 
