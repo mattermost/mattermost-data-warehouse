@@ -2,147 +2,192 @@ version: 2
 
 models:
   - name: stg_stripe__customers
-    description: "Extracts and transforms data related to customer information from Stripe."
+    description: Extracts and transforms data related to customer information from Stripe.
     columns:
       - name: account_balance
-        description: "The account balance of the customer."
+        description: The account balance of the customer.
       - name: balance
-        description: "The available balance in the customer's Stripe account."
+        description: The available balance in the customer's Stripe account.
       - name: cards
-        description: "The list of payment cards associated with the customer."
+        description: The list of payment cards associated with the customer.
       - name: created
-        description: "The date and time when the customer's Stripe account was created."
+        description: The date and time when the customer's Stripe account was created.
       - name: currency
-        description: "The currency used for transactions made by the customer."
+        description: The currency used for transactions made by the customer.
       - name: delinquent
-        description: "Indicates whether the customer's account is delinquent."
+        description: Indicates whether the customer's account is delinquent.
       - name: email
-        description: "The email address associated with the customer's Stripe account."
+        description: The email address associated with the customer's Stripe account.
       - name: id
-        description: "The unique identifier for the customer's Stripe account."
+        description: The unique identifier for the customer's Stripe account.
       - name: invoice_prefix
-        description: "The prefix used for the customer's invoices."
+        description: The prefix used for the customer's invoices.
       - name: invoice_settings
-        description: "The invoice settings for the customer's account."
+        description: The invoice settings for the customer's account.
       - name: livemode
-        description: "Indicates whether the customer's Stripe account is in live mode."
+        description: Indicates whether the customer's Stripe account is in live mode.
       - name: contactfirstname
-        description: "The first name of the customer's contact person."
+        description: The first name of the customer's contact person.
       - name: contactlastname
-        description: "The last name of the customer's contact person."
+        description: The last name of the customer's contact person.
       - name: cws_customer
-        description: "The identifier for the customer in the CardWorks system."
+        description: The identifier for the customer in the CardWorks system.
       - name: metadata
-        description: "Additional metadata associated with the customer's account."
+        description: Additional metadata associated with the customer's account.
       - name: name
-        description: "The name associated with the customer's Stripe account."
+        description: The name associated with the customer's Stripe account.
       - name: next_invoice_sequence
-        description: "The next sequential number for the customer's invoices."
+        description: The next sequential number for the customer's invoices.
       - name: object
-        description: "The object type, which is 'customer' for all records in this model."
+        description: The object type, which is 'customer' for all records in this model.
       - name: preferred_locales
-        description: "The preferred languages of the customer."
+        description: The preferred languages of the customer.
       - name: sources
-        description: "The payment sources associated with the customer."
+        description: The payment sources associated with the customer.
       - name: subscriptions
-        description: "The subscriptions associated with the customer."
+        description: The subscriptions associated with the customer.
       - name: tax_exempt
-        description: "Indicates whether the customer is tax exempt."
+        description: Indicates whether the customer is tax exempt.
       - name: updated
-        description: "The date and time when the customer's Stripe account was last updated."
+        description: The date and time when the customer's Stripe account was last updated.
       - name: _sdc_batched_at
-        description: "The date and time when the record was batched into the target system."
+        description: The date and time when the record was batched into the target system.
       - name: _sdc_extracted_at
-        description: "The date and time when the record was extracted from the source system."
+        description: The date and time when the record was extracted from the source system.
       - name: _sdc_received_at
-        description: "The date and time when the record was received by the target system."
+        description: The date and time when the record was received by the target system.
       - name: _sdc_sequence
-        description: "The sequence number for the record."
+        description: The sequence number for the record.
       - name: _sdc_table_version
-        description: "The version number of the source system's table."
+        description: The version number of the source system's table.
       - name: default_source
-        description: "The default payment source associated with the customer."
+        description: The default payment source associated with the customer.
       - name: shipping
-        description: "The customer's shipping information."
+        description: The customer's shipping information.
       - name: tax_ids
-        description: "The tax IDs associated with the customer."
+        description: The tax IDs associated with the customer.
       - name: address
-        description: "The customer's billing address."
+        description: The customer's billing address.
       - name: default_card
-        description: "The default payment card associated with the customer."
+        description: The default payment card associated with the customer.
       - name: discount
-        description: "The discount"
+        description: The discount
 
   - name: stg_stripe__subscriptions
-    description: "Staging table for Stripe subscriptions"
+    description: Staging table for Stripe subscriptions
     columns:
       - name: billing
-        description: "The billing type of the subscription (e.g., 'charge_automatically')"
+        description: The billing type of the subscription (e.g., 'charge_automatically')
       - name: billing_cycle_anchor
-        description: "The date at which the current billing period ends"
+        description: The date at which the current billing period ends
       - name: cancel_at_period_end
-        description: "A boolean indicating whether the subscription will be canceled at the end of the current billing period"
+        description: A boolean indicating whether the subscription will be canceled at the end of the current billing period
       - name: collection_method
-        description: "The payment collection method for the subscription (e.g., 'charge_automatically')"
+        description: The payment collection method for the subscription (e.g., 'charge_automatically')
       - name: created
-        description: "The timestamp when the subscription was created"
+        description: The timestamp when the subscription was created
       - name: current_period_end
-        description: "The end date of the current billing period"
+        description: The end date of the current billing period
       - name: current_period_start
-        description: "The start date of the current billing period"
+        description: The start date of the current billing period
       - name: customer
-        description: "The customer to whom the subscription belongs"
+        description: The customer to whom the subscription belongs
       - name: id
-        description: "The ID of the subscription"
+        description: The ID of the subscription
       - name: invoice_customer_balance_settings
-        description: "The settings for automatic customer balance management"
+        description: The settings for automatic customer balance management
       - name: items
-        description: "An array of subscription line items"
+        description: An array of subscription line items
       - name: latest_invoice
-        description: "The ID of the most recent invoice for the subscription"
+        description: The ID of the most recent invoice for the subscription
       - name: livemode
-        description: "A boolean indicating whether the subscription is in live mode"
+        description: A boolean indicating whether the subscription is in live mode
       - name: cws_dns
-        description: "The DNS of the subscription"
+        description: The DNS of the subscription
       - name: cws_installation
-        description: "The installation ID of the subscription"
+        description: The installation ID of the subscription
       - name: cws_installation_state
-        description: "The installation state of the subscription"
+        description: The installation state of the subscription
       - name: billing_type
-        description: "The type of billing for the subscription"
+        description: The type of billing for the subscription
       - name: current_product_id
-        description: "The ID of the current product for the subscription"
+        description: The ID of the current product for the subscription
       - name: renewed_from_sub_id
-        description: "The ID of the subscription that this subscription was renewed from"
+        description: The ID of the subscription that this subscription was renewed from
       - name: license_id
-        description: "The license ID for the subscription"
+        description: The license ID for the subscription
       - name: purchase_order_num
-        description: "The purchase order number for the subscription"
+        description: The purchase order number for the subscription
       - name: edition
-        description: "The edition of the subscription"
+        description: The edition of the subscription
       - name: date_converted_to_paid
-        description: "The timestamp when the subscription was converted to paid status"
+        description: The timestamp when the subscription was converted to paid status
       - name: license_end_date
-        description: "The end date of the subscription's license"
+        description: The end date of the subscription's license
       - name: actual_renewal_date
-        description: "The timestamp of the actual renewal date for the subscription"
+        description: The timestamp of the actual renewal date for the subscription
       - name: metadata
-        description: "Metadata associated with the subscription"
+        description: Metadata associated with the subscription
       - name: object
-        description: "The object type of the subscription"
+        description: The object type of the subscription
       - name: pending_setup_intent
-        description: "The setup intent for the subscription"
+        description: The setup intent for the subscription
       - name: plan
-        description: "The plan associated with the subscription"
+        description: The plan associated with the subscription
       - name: quantity
-        description: "The quantity of the subscription"
+        description: The quantity of the subscription
       - name: start_date
-        description: "The start date of the subscription"
+        description: The start date of the subscription
       - name: status
-        description: "The status of the subscription"
+        description: The status of the subscription
       - name: updated
-        description: "The timestamp when the subscription was last updated"
+        description: The timestamp when the subscription was last updated
       - name: _sdc_batched_at
-        description: "The timestamp of when the row was batched by Stitch"
+        description: The timestamp of when the row was batched by Stitch
       - name: _sdc_extracted_at
-        description: "The timestamp of when the row was extracted"
+        description: The timestamp of when the row was extracted
+  - name: stg_stripe__products
+    description: A staging table for Stripe products data.
+    columns:
+      - name: active
+        description: A boolean value indicating whether the product is currently available for purchase.
+      - name: attributes
+        description: A dictionary containing additional information about the product.
+      - name: created
+        description: The timestamp at which the product was created.
+      - name: description
+        description: A description of the product.
+      - name: id
+        description: The unique identifier for the product.
+      - name: images
+        description: A list of URLs for images associated with the product.
+      - name: livemode
+        description: A boolean value indicating whether the product is in live mode.
+      - name: cws_product_family
+        description: The product family that the product belongs to.
+      - name: cws_sku_name
+        description: The SKU name associated with the product.
+      - name: cws_allowable_addons
+        description: A list of add-ons that can be purchased with the product.
+      - name: metadata
+        description: Additional metadata associated with the product.
+      - name: name
+        description: The name of the product.
+      - name: object
+        description: The object type, which is always product.
+      - name: shippable
+        description: A boolean value indicating whether the product can be shipped.
+      - name: type
+        description: The type of the product.
+      - name: updated
+        description: The timestamp at which the product was last updated.
+      - name: _sdc_batched_at
+        description: The timestamp at which the record was batched for ingestion into the data warehouse.
+      - name: _sdc_extracted_at
+        description: The timestamp at which the record was extracted from the source system.
+      - name: _sdc_received_at
+        description: The timestamp at which the record was received by the data pipeline.
+      - name: _sdc_sequence
+        description: A sequence number for the record within the current batch.
+      - name: _sdc_table_version
+        description: The version of the source table schema.
