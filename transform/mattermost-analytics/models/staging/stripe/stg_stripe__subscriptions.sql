@@ -4,7 +4,7 @@ with source as (
 
 ),
 
-renamed as (
+subscriptions as (
 
     select
         billing,
@@ -61,4 +61,4 @@ renamed as (
 
 )
 
-select * from renamed
+select * from subscriptions

@@ -4,7 +4,7 @@ with source as (
 
 ),
 
-renamed as (
+customers as (
 
     select
         account_balance,
@@ -47,4 +47,4 @@ renamed as (
 
 )
 
-select * from renamed
+select * from customers

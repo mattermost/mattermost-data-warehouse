@@ -4,7 +4,7 @@ with source as (
 
 ),
 
-renamed as (
+products as (
 
     select
         active,
@@ -36,4 +36,4 @@ renamed as (
 
 )
 
-select * from renamed
+select * from products
