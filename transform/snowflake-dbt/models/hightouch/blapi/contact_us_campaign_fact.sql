@@ -15,7 +15,7 @@ with existing_members as (
         end as campaign_type,
         row_number() over (partition by campaignmember.email order by createddate desc) as row_num
     from {{ ref('campaignmember') }}
-    where campaignmember.campaignid = '7013p000001TuhdAAC'
+    where campaignmember.campaignid IN ('7013p000001NkNtAAK', '7013p000001Ttg5AAC')
 ), existing_leads as (
     select
         lead.sfid,
