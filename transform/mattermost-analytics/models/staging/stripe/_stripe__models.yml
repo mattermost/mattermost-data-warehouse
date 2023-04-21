@@ -188,16 +188,6 @@ models:
         description: The type of the product.
       - name: updated_at
         description: The timestamp at which the product was last updated.
-      - name: _sdc_batched_at
-        description: The timestamp at which the record was batched for ingestion into the data warehouse.
-      - name: _sdc_extracted_at
-        description: The timestamp at which the record was extracted from the source system.
-      - name: _sdc_received_at
-        description: The timestamp at which the record was received by the data pipeline.
-      - name: _sdc_sequence
-        description: A sequence number for the record within the current batch.
-      - name: _sdc_table_version
-        description: The version of the source table schema.
       - name: unit_label
         description: The label used to indicate the unit of measurement for a product.
       - name: updated_by_event_type
