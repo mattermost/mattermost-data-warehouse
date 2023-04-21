@@ -20,11 +20,6 @@ products as (
         shippable,
         type,
         updated AS updated_at,
-        _sdc_batched_at,
-        _sdc_extracted_at,
-        _sdc_received_at,
-        _sdc_sequence,
-        _sdc_table_version,
         unit_label,
         updated_by_event_type,
         deactivate_on
