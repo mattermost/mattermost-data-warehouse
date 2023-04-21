@@ -3,7 +3,7 @@
     "schema": "incident_collaboration",
     "tags":"nightly",
     "unique_key":"id",
-    "warehouse":"TRANSFORM_XS"
+    "warehouse":"ANALYST_XS"
   })
 }}
  
