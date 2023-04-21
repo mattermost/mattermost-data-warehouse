@@ -9,7 +9,7 @@ products as (
     select
         active,
         attributes,
-        created,
+        created AS created_at,
         description,
         id,
         images,
@@ -22,7 +22,7 @@ products as (
         object,
         shippable,
         type,
-        updated,
+        updated as updated_at,
         _sdc_batched_at,
         _sdc_extracted_at,
         _sdc_received_at,

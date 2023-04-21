@@ -18,7 +18,7 @@ customers as (
         invoice_prefix,
         invoice_settings,
         livemode,
-        metadata:"contactfirstname"::varchar as contactfirstname,
+        metadata:"contactfirstname"::varchar as contact_first_name,
         metadata:"contactlastname"::varchar as contactlastname,
         metadata:"cws-customer"::varchar as cws_customer,
         metadata,
