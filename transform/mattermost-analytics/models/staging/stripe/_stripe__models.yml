@@ -10,7 +10,7 @@ models:
         description: The available balance in the customer's Stripe account.
       - name: cards
         description: The list of payment cards associated with the customer.
-      - name: created
+      - name: created_at
         description: The date and time when the customer's Stripe account was created.
       - name: currency
         description: The currency used for transactions made by the customer.
@@ -18,7 +18,7 @@ models:
         description: Indicates whether the customer's account is delinquent.
       - name: email
         description: The email address associated with the customer's Stripe account.
-      - name: id
+      - name: customer_id
         description: The unique identifier for the customer's Stripe account.
       - name: invoice_prefix
         description: The prefix used for the customer's invoices.
@@ -26,20 +26,16 @@ models:
         description: The invoice settings for the customer's account.
       - name: livemode
         description: Indicates whether the customer's Stripe account is in live mode.
-      - name: contactfirstname
+      - name: contact_first_name
         description: The first name of the customer's contact person.
-      - name: contactlastname
+      - name: contact_last_name
         description: The last name of the customer's contact person.
-      - name: cws_customer
-        description: The identifier for the customer in the CardWorks system.
-      - name: metadata
-        description: Additional metadata associated with the customer's account.
+      - name: portal_customer_id
+        description: The identifier for the customer in the portal site.
       - name: name
         description: The name associated with the customer's Stripe account.
       - name: next_invoice_sequence
         description: The next sequential number for the customer's invoices.
-      - name: object
-        description: The object type, which is 'customer' for all records in this model.
       - name: preferred_locales
         description: The preferred languages of the customer.
       - name: sources
@@ -48,7 +44,7 @@ models:
         description: The subscriptions associated with the customer.
       - name: tax_exempt
         description: Indicates whether the customer is tax exempt.
-      - name: updated
+      - name: updated_at
         description: The date and time when the customer's Stripe account was last updated.
       - name: _sdc_batched_at
         description: The date and time when the record was batched into the target system.
@@ -71,7 +67,13 @@ models:
       - name: default_card
         description: The default payment card associated with the customer.
       - name: discount
-        description: The discount
+        description: The discount.
+      - name: updated_by_event_type
+        description: The event type that updated the customer.
+      - name: _updated_at
+        description: Internal timestamp value to be used for incremental loads.
+      - name: _created_at
+        description: Internal timestamp value to be used for incremental loads.
 
   - name: stg_stripe__subscriptions
     description: Staging table for Stripe subscriptions
@@ -84,7 +86,7 @@ models:
         description: A boolean indicating whether the subscription will be canceled at the end of the current billing period
       - name: collection_method
         description: The payment collection method for the subscription (e.g., 'charge_automatically')
-      - name: created
+      - name: created_at
         description: The timestamp when the subscription was created
       - name: current_period_end
         description: The end date of the current billing period
@@ -120,16 +122,12 @@ models:
         description: The purchase order number for the subscription
       - name: edition
         description: The edition of the subscription
-      - name: date_converted_to_paid
+      - name: converted_to_paid_at
         description: The timestamp when the subscription was converted to paid status
-      - name: license_end_date
+      - name: license_end_at
         description: The end date of the subscription's license
-      - name: actual_renewal_date
+      - name: actual_renewal_at
         description: The timestamp of the actual renewal date for the subscription
-      - name: metadata
-        description: Metadata associated with the subscription
-      - name: object
-        description: The object type of the subscription
       - name: pending_setup_intent
         description: The setup intent for the subscription
       - name: plan
@@ -140,12 +138,45 @@ models:
         description: The start date of the subscription
       - name: status
         description: The status of the subscription
-      - name: updated
+      - name: updated_at
         description: The timestamp when the subscription was last updated
       - name: _sdc_batched_at
         description: The timestamp of when the row was batched by Stitch
       - name: _sdc_extracted_at
         description: The timestamp of when the row was extracted
+      - _sdc_received_at:
+          description: "The timestamp when the record was received by the data integration pipeline."
+      - _sdc_sequence:
+          description: "The sequence number of the record in the stream from which it was ingested."
+      - _sdc_table_version:
+          description: "The version number of the table schema in the source system."
+      - trial_start_at:
+          description: "The start date and time of the trial period for a subscription."
+      - tax_percent:
+          description: "The tax rate applied to a subscription."
+      - ended_at:
+          description: "The date and time when a subscription ended."
+      - trial_end_at:
+          description: "The end date and time of the trial period for a subscription."
+      - canceled_at:
+          description: "The date and time when a subscription was canceled."
+      - _updated_at:
+          description: "The timestamp when the record was last updated in the source system."
+      - _created_at:
+          description: "The timestamp when the record was created in the source system."
+      - updated_by_event_type:
+          description: "The type of event that triggered the last update to the record."
+      - default_payment_method:
+          description: "The default payment method for a customer's subscription."
+      - cancel_at:
+          description: "The date and time when a subscription will be canceled."
+      - pause_collection:
+          description: "A flag indicating whether collection of payment for a subscription has been paused."
+      - discount:
+          description: "The discount applied to a subscription."
+      - days_until_due:
+          description: "The number of days before a subscription is due for payment."
+
   - name: stg_stripe__products
     description: A staging table for Stripe products data.
     columns:
@@ -153,11 +184,11 @@ models:
         description: A boolean value indicating whether the product is currently available for purchase.
       - name: attributes
         description: A dictionary containing additional information about the product.
-      - name: created
+      - name: created_at
         description: The timestamp at which the product was created.
       - name: description
         description: A description of the product.
-      - name: id
+      - name: product_id
         description: The unique identifier for the product.
       - name: images
         description: A list of URLs for images associated with the product.
@@ -165,12 +196,8 @@ models:
         description: A boolean value indicating whether the product is in live mode.
       - name: cws_product_family
         description: The product family that the product belongs to.
-      - name: cws_sku_name
+      - name: sku
         description: The SKU name associated with the product.
-      - name: cws_allowable_addons
-        description: A list of add-ons that can be purchased with the product.
-      - name: metadata
-        description: Additional metadata associated with the product.
       - name: name
         description: The name of the product.
       - name: object
@@ -179,7 +206,7 @@ models:
         description: A boolean value indicating whether the product can be shipped.
       - name: type
         description: The type of the product.
-      - name: updated
+      - name: updated_at
         description: The timestamp at which the product was last updated.
       - name: _sdc_batched_at
         description: The timestamp at which the record was batched for ingestion into the data warehouse.
@@ -191,3 +218,9 @@ models:
         description: A sequence number for the record within the current batch.
       - name: _sdc_table_version
         description: The version of the source table schema.
+      - unit_label:
+          description: The label used to indicate the unit of measurement for a product.
+      - updated_by_event_type:
+          description: The type of event that triggered the last update to the record.
+      - deactivate_on:
+          description: The date and time when a product will be deactivated or no longer available.
