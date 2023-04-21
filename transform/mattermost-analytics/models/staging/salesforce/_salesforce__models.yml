@@ -1574,7 +1574,7 @@ models:
 
   - name: stg_salesforce__user
     description: | 
-      A user is anyone who logs in to Salesforce.
+      Represents a user in your organization.
     columns:
       - name: user_id
         description: "The user's ID, as defined by Salesforce."
