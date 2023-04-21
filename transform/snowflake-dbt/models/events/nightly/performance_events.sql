@@ -1,7 +1,6 @@
 {{config({
     "materialized": "incremental",
     "schema": "events",
-    "tags":"nightly",
     "snowflake_warehouse": "transform_xs"
   })
 }}
