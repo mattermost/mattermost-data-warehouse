@@ -1,0 +1,1661 @@
+version: 2
+
+models:
+  - name: stg_salesforce__campaign
+    description: | 
+      Salesforce campaign objects, excluding deleted objects. Represent marketing initiatives, such as an advertisement,
+      direct mail, or conference, that you conduct in order to generate prospects and build brand awareness.
+    columns:
+      - name: campaign_id
+        description: "The campaign id, as defined by Salesforce"
+        tests:
+          - not_null
+          - unique
+
+      - name: actual_cost
+        description: ""
+
+      - name: amount_all_opportunities
+        description: ""
+
+      - name: amount_won_opportunities
+        description: ""
+
+      - name: budgeted_cost
+        description: ""
+
+      - name: created_by_id
+        description: ""
+
+      - name: created_date
+        description: ""
+
+      - name: description
+        description: ""
+
+      - name: end_date
+        description: ""
+
+      - name: expected_response
+        description: ""
+
+      - name: hierarchy_actual_cost
+        description: ""
+
+      - name: hierarchy_amount_all_opportunities
+        description: ""
+
+      - name: hierarchy_amount_won_opportunities
+        description: ""
+
+      - name: hierarchy_budgeted_cost
+        description: ""
+
+      - name: hierarchy_expected_revenue
+        description: ""
+
+      - name: hierarchy_number_of_contacts
+        description: ""
+
+      - name: hierarchy_number_of_converted_leads
+        description: ""
+
+      - name: hierarchy_number_of_leads
+        description: ""
+
+      - name: hierarchy_number_of_opportunities
+        description: ""
+
+      - name: hierarchy_number_of_responses
+        description: ""
+
+      - name: hierarchy_number_of_won_opportunities
+        description: ""
+
+      - name: hierarchy_number_sent
+        description: ""
+
+      - name: is_active
+        description: ""
+
+      - name: is_deleted
+        description: ""
+
+      - name: last_modified_by_id
+        description: ""
+
+      - name: last_modified_date
+        description: ""
+
+      - name: name
+        description: ""
+
+      - name: number_of_contacts
+        description: ""
+
+      - name: number_of_converted_leads
+        description: ""
+
+      - name: number_of_leads
+        description: ""
+
+      - name: number_of_opportunities
+        description: ""
+
+      - name: number_of_responses
+        description: ""
+
+      - name: number_of_won_opportunities
+        description: ""
+
+      - name: number_sent
+        description: ""
+
+      - name: owner_id
+        description: ""
+
+      - name: parent_id
+        description: ""
+
+      - name: start_date
+        description: ""
+
+      - name: status
+        description: ""
+
+      - name: systemmodstamp
+        description: ""
+
+      - name: type
+        description: ""
+
+      - name: last_viewed_date
+        description: ""
+
+      - name: last_referenced_date
+        description: ""
+
+      - name: expected_revenue
+        description: ""
+
+      - name: campaign_offer_detail__c
+        description: ""
+
+      - name: campaign_offer__c
+        description: ""
+
+      - name: dscorgpkg__suppress_from_discoverorg__c
+        description: ""
+
+      - name: triggers_mql__c
+        description: ""
+
+  - name: stg_salesforce__campaign_member
+    description: | 
+      Any lead or contact associated with a campaign.
+      Excludes deleted objects.
+    columns:
+      - name: campaign_member_id
+        description: "The Salesforce ID of the campaign member"
+        tests:
+          - not_null
+          - unique
+
+      - name: campaign_id
+        description: ""
+
+      - name: city
+        description: ""
+
+      - name: company_or_account
+        description: ""
+
+      - name: contact_id
+        description: ""
+
+      - name: country
+        description: ""
+
+      - name: created_by_id
+        description: ""
+
+      - name: created_date
+        description: ""
+
+      - name: description
+        description: ""
+
+      - name: do_not_call
+        description: ""
+
+      - name: email
+        description: ""
+
+      - name: fax
+        description: ""
+
+      - name: first_name
+        description: ""
+
+      - name: first_responded_date
+        description: ""
+
+      - name: has_opted_out_of_email
+        description: ""
+
+      - name: has_opted_out_of_fax
+        description: ""
+
+      - name: has_responded
+        description: ""
+
+      - name: is_deleted
+        description: ""
+
+      - name: last_modified_by_id
+        description: ""
+
+      - name: last_modified_date
+        description: ""
+
+      - name: last_name
+        description: ""
+
+      - name: lead_id
+        description: ""
+
+      - name: lead_or_contact_id
+        description: ""
+
+      - name: lead_or_contact_owner_id
+        description: ""
+
+      - name: lead_source
+        description: ""
+
+      - name: mobile_phone
+        description: ""
+
+      - name: name
+        description: ""
+
+      - name: phone
+        description: ""
+
+      - name: postalcode
+        description: ""
+
+      - name: salutation
+        description: ""
+
+      - name: state
+        description: ""
+
+      - name: status
+        description: ""
+
+      - name: street
+        description: ""
+
+      - name: systemmodstamp
+        description: ""
+
+      - name: title
+        description: ""
+
+      - name: type
+        description: ""
+
+      - name: accounttype__c
+        description: ""
+
+      - name: contact_us_notes__c
+        description: ""
+
+      - name: converted_date__c
+        description: ""
+
+      - name: cosize__c
+        description: ""
+
+      - name: dwh_external_id__c
+        description: ""
+
+      - name: e_purchase_date__c
+        description: ""
+
+      - name: first_responded_on__c
+        description: ""
+
+      - name: geo__c
+        description: ""
+
+      - name: last_occurrence__c
+        description: ""
+
+      - name: leadcontact_create_date__c
+        description: ""
+
+      - name: lead_source_text__c
+        description: ""
+
+      - name: lead_source__c
+        description: ""
+
+      - name: marketing_ops_fix_detail__c
+        description: ""
+
+      - name: member_channel_detail__c
+        description: ""
+
+      - name: member_channel__c
+        description: ""
+
+      - name: mql_date__c
+        description: ""
+
+      - name: mql__c
+        description: ""
+
+      - name: named_account__c
+        description: ""
+
+      - name: pql_date__c
+        description: ""
+
+      - name: region__c
+        description: ""
+
+      - name: senior_title__c
+        description: ""
+
+      - name: technical_title__c
+        description: ""
+
+  - name: stg_salesforce__contact
+    description: |
+      Contacts are the individuals associated with accounts. Excludes deleted contacts.
+    columns:
+      - name: contact_id
+        description: "The contact's ID, as defined by Salesforce"
+        tests:
+          - not_null
+          - unique
+
+
+      - name: account_id
+        description: ""
+
+      - name: created_by_id
+        description: ""
+
+      - name: created_date
+        description: ""
+
+      - name: do_not_call
+        description: ""
+
+      - name: email
+        description: ""
+
+      - name: first_name
+        description: ""
+
+      - name: has_opted_out_of_email
+        description: ""
+
+      - name: has_opted_out_of_fax
+        description: ""
+
+      - name: is_deleted
+        description: ""
+
+      - name: last_modified_by_id
+        description: ""
+
+      - name: last_modified_date
+        description: ""
+
+      - name: last_name
+        description: ""
+
+      - name: name
+        description: ""
+
+      - name: onwer_id
+        description: ""
+
+      - name: systemmodstamp
+        description: ""
+
+      - name: clearbit_employee_count__c
+        description: ""
+
+      - name: company_type__c
+        description: ""
+
+      - name: contact_us_inquiry_type__c
+        description: ""
+
+      - name: discoverorg_employee_count__c
+        description: ""
+
+      - name: duplicate_lead_id__c
+        description: ""
+
+      - name: dwh_external_id__c
+        description: ""
+
+      - name: employees__c
+        description: ""
+
+      - name: employee_count_override__c
+        description: ""
+
+      - name: first_action_detail__c
+        description: ""
+
+      - name: first_action__c
+        description: ""
+
+      - name: first_channel_detail__c
+        description: ""
+
+      - name: first_channel__c
+        description: ""
+
+      - name: first_mcl_date__c
+        description: ""
+
+      - name: first_mel_date__c
+        description: ""
+
+      - name: first_mql_date__c
+        description: ""
+
+      - name: first_not_a_lead_date__c
+        description: ""
+
+      - name: first_pql_date__c
+        description: ""
+
+      - name: first_qsc_date__c
+        description: ""
+
+      - name: first_qso_date__c
+        description: ""
+
+      - name: first_recycle_date__c
+        description: ""
+
+      - name: first_scl_date__c
+        description: ""
+
+      - name: first_sdl_date__c
+        description: ""
+
+      - name: how_did_you_hear_about_mattermost__c
+        description: ""
+
+      - name: lead_source_detail__c
+        description: ""
+
+      - name: lead_source__c
+        description: ""
+
+      - name: marketing_suspend__c
+        description: ""
+
+      - name: most_recent_action_detail__c
+        description: ""
+
+      - name: most_recent_action__c
+        description: ""
+
+      - name: most_recent_lead_source_detail__c
+        description: ""
+
+      - name: most_recent_lead_source__c
+        description: ""
+
+      - name: most_recent_mcl_date__c
+        description: ""
+
+      - name: most_recent_mel_date__c
+        description: ""
+
+      - name: most_recent_mql_date__c
+        description: ""
+
+      - name: most_recent_qsc_date__c
+        description: ""
+
+      - name: most_recent_qso_date__c
+        description: ""
+
+      - name: most_recent_recycle_date__c
+        description: ""
+
+      - name: most_recent_scl_date__c
+        description: ""
+
+      - name: most_recent_sdl_date__c
+        description: ""
+
+      - name: number_of_end_users__c
+        description: ""
+
+      - name: request_a_quote_date__c
+        description: ""
+
+      - name: request_to_contact_us_date__c
+        description: ""
+
+      - name: tell_us_more_about_how_we_can_help_you__c
+        description: ""
+
+      - name: trial_req_date__c
+        description: ""
+
+      - name: cloud_dns__c
+        description: ""
+
+      - name: stripe_customer_id__c
+        description: ""
+
+      - name: most_recent_pql_date__c
+        description: ""
+
+      - name: trial_license_id__c
+        description: ""
+
+  - name: stg_salesforce__lead
+    description: |
+      A lead is a sales prospect who has expressed interest in your product or company.
+      Excludes deleted leads.
+    columns:
+      - name: lead_id
+        description: "The lead's ID, as defined by Salesforce."
+        tests:
+          - not_null
+          - unique
+
+      - name: company
+        description: ""
+
+      - name: converted_account_id
+        description: ""
+
+      - name: converted_contact_id
+        description: ""
+
+      - name: converted_date
+        description: ""
+
+      - name: converted_opportunity_id
+        description: ""
+
+      - name: country
+        description: ""
+
+      - name: country_code
+        description: ""
+
+      - name: created_by_id
+        description: ""
+
+      - name: created_date
+        description: ""
+
+      - name: description
+        description: ""
+
+      - name: email
+        description: ""
+
+      - name: first_name
+        description: ""
+
+      - name: has_opted_out_of_email
+        description: ""
+
+      - name: has_opted_out_of_fax
+        description: ""
+
+      - name: is_deleted
+        description: ""
+
+      - name: industry
+        description: ""
+
+      - name: last_modified_by_id
+        description: ""
+
+      - name: last_modified_date
+        description: ""
+
+      - name: last_name
+        description: ""
+
+      - name: mobile_phone
+        description: ""
+
+      - name: name
+        description: ""
+
+      - name: owner_id
+        description: ""
+
+      - name: phone
+        description: ""
+
+      - name: postalcode
+        description: ""
+
+      - name: state
+        description: ""
+
+      - name: statecode
+        description: ""
+
+      - name: status
+        description: ""
+
+      - name: systemmodstamp
+        description: ""
+
+      - name: website
+        description: ""
+
+      - name: actively_being_sequenced__c
+        description: ""
+
+      - name: api_id__c
+        description: ""
+
+      - name: assignment_logic__c
+        description: ""
+
+      - name: behavior_score__c
+        description: ""
+
+      - name: campaign_id__c
+        description: ""
+
+      - name: channel_detail__c
+        description: ""
+
+      - name: channel__c
+        description: ""
+
+      - name: cleaned_up_website__c
+        description: ""
+
+      - name: clearbit_employee_count__c
+        description: ""
+
+      - name: cloud_daily_posts__c
+        description: ""
+
+      - name: cloud_dau__c
+        description: ""
+
+      - name: cloud_dns__c
+        description: ""
+
+      - name: cloud_last_active_date__c
+        description: ""
+
+      - name: cloud_mau__c
+        description: ""
+
+      - name: cloud_plugins_enabled__c
+        description: ""
+
+      - name: cloud_total_posts__c
+        description: ""
+
+      - name: company_type__c
+        description: ""
+
+      - name: connected__c
+        description: ""
+
+      - name: contact_us_inquiry_type__c
+        description: ""
+
+      - name: current_sequence_status__c
+        description: ""
+
+      - name: current_sequence_step_number__c
+        description: ""
+
+      - name: current_sequence_step_type__c
+        description: ""
+
+      - name: current_sequence_task_due_date__c
+        description: ""
+
+      - name: current_sequence_user_name__c
+        description: ""
+
+      - name: discoverorg_employee_count__c
+        description: ""
+
+      - name: discovery_call_booked__c
+        description: ""
+
+      - name: discovery_call_completed__c
+        description: ""
+
+      - name: dscorgpkg__company_hq_country_code__c
+        description: ""
+
+      - name: dwh_external_id__c
+        description: ""
+
+      - name: employee_count_override__c
+        description: ""
+
+      - name: engagio__matched_account__c
+        description: ""
+
+      - name: existing_account__c
+        description: ""
+
+      - name: first_action_detail__c
+        description: ""
+
+      - name: first_action__c
+        description: ""
+
+      - name: first_channel_detail__c
+        description: ""
+
+      - name: first_channel__c
+        description: ""
+
+      - name: first_mcl_date__c
+        description: ""
+
+      - name: first_mel_date__c
+        description: ""
+
+      - name: first_mql_date__c
+        description: ""
+
+      - name: first_not_a_lead_date__c
+        description: ""
+
+      - name: first_pql_date__c
+        description: ""
+
+      - name: first_qsc_date__c
+        description: ""
+
+      - name: first_qso_date__c
+        description: ""
+
+      - name: first_recycle_date__c
+        description: ""
+
+      - name: first_scl_date__c
+        description: ""
+
+      - name: first_sdl_date__c
+        description: ""
+
+      - name: geo__c
+        description: ""
+
+      - name: how_did_you_hear_about_mattermost__c
+        description: ""
+
+      - name: inbound_outbound__c
+        description: ""
+
+      - name: indirect_lead__c
+        description: ""
+
+      - name: industry_text__c
+        description: ""
+
+      - name: job_function__c
+        description: ""
+
+      - name: junk_reason__c
+        description: ""
+
+      - name: lead2convdays__c
+        description: ""
+
+      - name: lead2trialdays__c
+        description: ""
+
+      - name: lead_created_date__c
+        description: ""
+
+      - name: lead_number__c
+        description: ""
+
+      - name: lead_source_detail__c
+        description: ""
+
+      - name: lead_source_text__c
+        description: ""
+
+      - name: lead_status_at_conversion__c
+        description: ""
+
+      - name: lead_status_minor__c
+        description: ""
+
+      - name: lead_type__c
+        description: ""
+
+      - name: linkedin__c
+        description: ""
+
+      - name: marketing_suspend__c
+        description: ""
+
+      - name: matched_account_company_type__c
+        description: ""
+
+      - name: matched_account_named_account_tier__c
+        description: ""
+
+      - name: matched_account_named_account__c
+        description: ""
+
+      - name: most_recent_action_detail__c
+        description: ""
+
+      - name: most_recent_action__c
+        description: ""
+
+      - name: most_recent_lead_source_detail__c
+        description: ""
+
+      - name: most_recent_lead_source__c
+        description: ""
+
+      - name: most_recent_mcl_date__c
+        description: ""
+
+      - name: most_recent_mel_date__c
+        description: ""
+
+      - name: most_recent_mql_date__c
+        description: ""
+
+      - name: most_recent_qsc_date__c
+        description: ""
+
+      - name: most_recent_qso_date__c
+        description: ""
+
+      - name: most_recent_recycle_date__c
+        description: ""
+
+      - name: most_recent_scl_date__c
+        description: ""
+
+      - name: most_recent_sdl_date__c
+        description: ""
+
+      - name: name_of_currently_active_sequence__c
+        description: ""
+
+      - name: never_connected__c
+        description: ""
+
+      - name: numberofemployees
+        description: ""
+
+      - name: original_owner__c
+        description: ""
+
+      - name: outreach_cadence_add__c
+        description: ""
+
+      - name: outreach_manual_create__c
+        description: ""
+
+      - name: outreach__c
+        description: ""
+
+      - name: partner_email__c
+        description: ""
+
+      - name: partner_name__c
+        description: ""
+
+      - name: product_status__c
+        description: ""
+
+      - name: quality_star_rating__c
+        description: ""
+
+      - name: quality__c
+        description: ""
+
+      - name: recycle_reason__c
+        description: ""
+
+      - name: request_a_demo_date__c
+        description: ""
+
+      - name: request_a_trial_date__c
+        description: ""
+
+      - name: request_quote_date__c
+        description: ""
+
+      - name: request_to_contact_us_date__c
+        description: ""
+
+      - name: stripe_customer_id__c
+        description: ""
+
+      - name: tell_us_more_about_how_we_can_help_you__c
+        description: ""
+
+      - name: territoryid__c
+        description: ""
+
+      - name: territory__c
+        description: ""
+
+      - name: timeline__c
+        description: ""
+
+      - name: where_are_you_with_mattermost__c
+        description: ""
+
+      - name: discovery_call_date__c
+        description: ""
+
+      - name: most_recent_pql_date__c
+        description: ""
+
+      - name: lifecycle_stage__c
+        description: ""
+
+      - name: sal_date__c
+        description: ""
+
+      - name: most_recent_reengaged_date__c
+        description: ""
+
+      - name: first_reengaged_date__c
+        description: ""
+
+      - name: trial_license_id__c
+        description: ""
+
+      - name: trial_activation_date__c
+        description: ""
+
+  - name: stg_salesforce__opportunity
+    description: | 
+      Opportunities track sales and pending deals.
+      Excludes deleted opportunities.
+
+    columns:
+      - name: opportunity_id
+        description: "The opportunity's ID, as defined by Salesforce"
+        tests:
+          - not_null
+          - unique
+
+      - name: account_id
+        description: ""
+
+      - name: amount
+        description: ""
+
+      - name: campaign_id
+        description: ""
+
+      - name: close_date
+        description: ""
+
+      - name: contract_id
+        description: ""
+
+      - name: created_by_id
+        description: ""
+
+      - name: created_date
+        description: ""
+
+      - name: expected_revenue
+        description: ""
+
+      - name: forecast_category
+        description: ""
+
+      - name: forecast_category_name
+        description: ""
+
+      - name: is_closed
+        description: ""
+
+      - name: is_deleted
+        description: ""
+
+      - name: is_won
+        description: ""
+
+      - name: last_modified_by_id
+        description: ""
+
+      - name: last_modified_date
+        description: ""
+
+      - name: name
+        description: ""
+
+      - name: next_step
+        description: ""
+
+      - name: onwer_id
+        description: ""
+
+      - name: pricebook2_id
+        description: ""
+
+      - name: probability
+        description: ""
+
+      - name: stage_name
+        description: ""
+
+      - name: systemmodstamp
+        description: ""
+
+      - name: type
+        description: ""
+
+      - name: active_licenses__c
+        description: ""
+
+      - name: additional_environment_details__c
+        description: ""
+
+      - name: amount_in_commit__c
+        description: ""
+
+      - name: amount_in_pipeline__c
+        description: ""
+
+      - name: available_renewal__c
+        description: ""
+
+      - name: billing_city__c
+        description: ""
+
+      - name: billing_country__c
+        description: ""
+
+      - name: billing_country_code__c
+        description: ""
+
+      - name: billing_partner_name__c
+        description: ""
+
+      - name: billing_state_province__c
+        description: ""
+
+      - name: billing_street__c
+        description: ""
+
+      - name: billing_zip_postal_code__c
+        description: ""
+
+      - name: ce_owner__c
+        description: ""
+
+      - name: closed_lost_other__c
+        description: ""
+
+      - name: compelling_event__c
+        description: ""
+
+      - name: competitor__c
+        description: ""
+
+      - name: contract_finalized__c
+        description: ""
+
+      - name: created_by_role__c
+        description: ""
+
+      - name: cs_qualified_lead__c
+        description: ""
+
+      - name: csm_override__c
+        description: ""
+
+      - name: csm_owner__c
+        description: ""
+
+      - name: current_identitiy_provider_sso__c
+        description: ""
+
+      - name: current_identity_provider_sso__c
+        description: ""
+
+      - name: current_productivity_platform__c
+        description: ""
+
+      - name: data_migration_required__c
+        description: ""
+
+      - name: days_past_renewal__c
+        description: ""
+
+      - name: decision_criteria_process__c
+        description: ""
+
+      - name: delta_amount__c
+        description: ""
+
+      - name: dwh_external_id__c
+        description: ""
+
+      - name: e_purchase_date__c
+        description: ""
+
+      - name: emm_mdm__c
+        description: ""
+
+      - name: end_customer_po_number__c
+        description: ""
+
+      - name: ending_arr__c
+        description: ""
+
+      - name: enterprise_trial_completed__c
+        description: ""
+
+      - name: existing_chat_solution__c
+        description: ""
+
+      - name: existing_chat_solution_details__c
+        description: ""
+
+      - name: expansion_type__c
+        description: ""
+
+      - name: extended_support_release_customer__c
+        description: ""
+
+      - name: forecast_category_custom__c
+        description: ""
+
+      - name: geo__c
+        description: ""
+
+      - name: gtm_save_motions__c
+        description: ""
+
+      - name: how_did_you_hear_about_mattermost__c
+        description: ""
+
+      - name: infosec_questionnaire_completed__c
+        description: ""
+
+      - name: invoice_number__c
+        description: ""
+
+      - name: lead_created_date__c
+        description: ""
+
+      - name: lead_source_detail__c
+        description: ""
+
+      - name: lead_source_detail_upon_conversion__c
+        description: ""
+
+      - name: lead_source_text__c
+        description: ""
+
+      - name: lead_source_upon_conversion__c
+        description: ""
+
+      - name: lead_type__c
+        description: ""
+
+      - name: leadid__c
+        description: ""
+
+      - name: license_active__c
+        description: ""
+
+      - name: license_contract_sent__c
+        description: ""
+
+      - name: license_end_date__c
+        description: ""
+
+      - name: license_key__c
+        description: ""
+
+      - name: license_key_sent_date__c
+        description: ""
+
+      - name: license_quantity__c
+        description: ""
+
+      - name: license_start_date__c
+        description: ""
+
+      - name: lost_reason__c
+        description: ""
+
+      - name: lost_to_competitor__c
+        description: ""
+
+      - name: mobile_in_scope__c
+        description: ""
+
+      - name: mql_date__c
+        description: ""
+
+      - name: mql_reason__c
+        description: ""
+
+      - name: new_expansion_total__c
+        description: ""
+
+      - name: new_logo__c
+        description: ""
+
+      - name: open_source_user__c
+        description: ""
+
+      - name: opp_line_items_products__c
+        description: ""
+
+      - name: opp_products__c
+        description: ""
+
+      - name: order_type__c
+        description: ""
+
+      - name: original_opportunity__c
+        description: ""
+
+      - name: original_opportunity_amount__c
+        description: ""
+
+      - name: original_opportunity_arr__c
+        description: ""
+
+      - name: original_opportunity_end_date__c
+        description: ""
+
+      - name: original_opportunity_id__c
+        description: ""
+
+      - name: original_opportunity_length_in_months__c
+        description: ""
+
+      - name: original_opportunityid__c
+        description: ""
+
+      - name: other_integrations__c
+        description: ""
+
+      - name: override_total_net_new_arr__c
+        description: ""
+
+      - name: paper_trail_process__c
+        description: ""
+
+      - name: partner_name__c
+        description: ""
+
+      - name: product__c
+        description: ""
+
+      - name: regulatory_requirements__c
+        description: ""
+
+      - name: renewal_amount_total__c
+        description: ""
+
+      - name: renewal_created_date__c
+        description: ""
+
+      - name: renewal_includes_leftover_expansion__c
+        description: ""
+
+      - name: renewed_by_opp_arr__c
+        description: ""
+
+      - name: renewed_by_opp_prob__c
+        description: ""
+
+      - name: renewed_by_opportunity_id__c
+        description: ""
+
+      - name: requirements__c
+        description: ""
+
+      - name: risks__c
+        description: ""
+
+      - name: sbqq__contracted__c
+        description: ""
+
+      - name: sbqq__primaryquote__c
+        description: ""
+
+      - name: self_service_enabled__c
+        description: ""
+
+      - name: shipping_city__c
+        description: ""
+
+      - name: shipping_country__c
+        description: ""
+
+      - name: shipping_country_code__c
+        description: ""
+
+      - name: shipping_state_province__c
+        description: ""
+
+      - name: shipping_street__c
+        description: ""
+
+      - name: shipping_zip_postal_code__c
+        description: ""
+
+      - name: stage_before_closed_lost__c
+        description: ""
+
+      - name: stage_change_date__c
+        description: ""
+
+      - name: status_wlo__c
+        description: ""
+
+      - name: stripe_id__c
+        description: ""
+
+      - name: subs_id__c
+        description: ""
+
+      - name: suppress_external_email__c
+        description: ""
+
+      - name: suppress_internal_email__c
+        description: ""
+
+      - name: suppress_renewal_process__c
+        description: ""
+
+      - name: target_go_live_date__c
+        description: ""
+
+      - name: target_integrations__c
+        description: ""
+
+      - name: territory__c
+        description: ""
+
+      - name: territory_segment__c
+        description: ""
+
+      - name: time_in_stage__c
+        description: ""
+
+      - name: total_net_new_arr__c
+        description: ""
+
+      - name: total_net_new_arr_with_override__c
+        description: ""
+
+      - name: trial_license_id__c
+        description: ""
+
+      - name: use_case__c
+        description: ""
+
+  - name: stg_salesforce__opportunity_line_item
+    description: |
+      Opportunity Line Items are the Products which are associated to an Opportunity.
+      Deleted opportunity line items are excluded.
+
+    columns:
+      - name: opportunity_line_item
+        description: "The opportunity line item's ID, as defined by Salesforce"
+        tests:
+          - not_null
+          - unique
+
+      - name: created_by_id
+        description: ""
+
+      - name: created_date
+        description: ""
+
+      - name: description
+        description: ""
+
+      - name: discount
+        description: ""
+
+      - name: is_deleted
+        description: ""
+
+      - name: last_modified_by_id
+        description: ""
+
+      - name: last_modfieid_date
+        description: ""
+
+      - name: list_price
+        description: ""
+
+      - name: name
+        description: ""
+
+      - name: opportunity_id
+        description: ""
+
+      - name: pricebook_entry_id
+        description: ""
+
+      - name: product2_id
+        description: ""
+
+      - name: product_code
+        description: ""
+
+      - name: quantity
+        description: ""
+
+      - name: service_date
+        description: ""
+
+      - name: sort_ordr
+        description: ""
+
+      - name: subtotal
+        description: ""
+
+      - name: systemmodstamp
+        description: ""
+
+      - name: total_price
+        description: ""
+
+      - name: unit_price
+        description: ""
+
+      - name: amount_manual_override__c
+        description: ""
+
+      - name: coterm_expansion_amount__c
+        description: ""
+
+      - name: discount_calc__c
+        description: ""
+
+      - name: discounted_list_price__c
+        description: ""
+
+      - name: dwh_external_id__c
+        description: ""
+
+      - name: end_date__c
+        description: ""
+
+      - name: expansion_amount__c
+        description: ""
+
+      - name: invoice_id__c
+        description: ""
+
+      - name: invoice_status__c
+        description: ""
+
+      - name: is_prorated_expansion__c
+        description: ""
+
+      - name: leftover_expansion_amount__c
+        description: ""
+
+      - name: lineitemid__c
+        description: ""
+
+      - name: monthly_billing_amount__c
+        description: ""
+
+      - name: multi_amount__c
+        description: ""
+
+      - name: netsuite_invoice_id__c
+        description: ""
+
+      - name: new_amount__c
+        description: ""
+
+      - name: pricing_method__c
+        description: ""
+
+      - name: product_end_datef__c
+        description: ""
+
+      - name: product_line_type__c
+        description: ""
+
+      - name: product_start_datef__c
+        description: ""
+
+      - name: product_type__c
+        description: ""
+
+      - name: prorated_listprice__c
+        description: ""
+
+      - name: recalculate_sales_price__c
+        description: ""
+
+      - name: renewal_amount__c
+        description: ""
+
+      - name: renewal_end_date__c
+        description: ""
+
+      - name: renewal_multi_amount__c
+        description: ""
+
+      - name: renewal_start_date__c
+        description: ""
+
+      - name: renewed_by_opportunity_line_id__c
+        description: ""
+
+      - name: reseller_fee__c
+        description: ""
+
+      - name: revenue_type__c
+        description: ""
+
+      - name: sales_price_needs_to_be_updated__c
+        description: ""
+
+      - name: start_date__c
+        description: ""
+
+      - name: subs_id__c
+        description: ""
+
+      - name: subs_version_id__c
+        description: ""
+
+      - name: term_months__c
+        description: ""
+
+      - name: total_amount__c
+        description: ""
+
+      - name: total_amount_total_price__c
+        description: ""
+
+      - name: total_price_with_annualized_expansion__c
+        description: ""
+
+  - name: stg_salesforce__user
+    description: | 
+      A user is anyone who logs in to Salesforce.
+    columns:
+      - name: user_id
+        description: "The user's ID, as defined by Salesforce."
+        tests:
+          - not_null
+          - unique
+
+      - name: created_date
+        description: ""
+
+      - name: department
+        description: ""
+
+      - name: division
+        description: ""
+
+      - name: email
+        description: ""
+
+      - name: employee_number
+        description: ""
+
+      - name: federation_identifier
+        description: ""
+
+      - name: first_name
+        description: ""
+
+      - name: is_active
+        description: ""
+
+      - name: last_name
+        description: ""
+
+      - name: manager_id
+        description: ""
+
+      - name: name
+        description: ""
+
+      - name: profile_id
+        description: ""
+
+      - name: systemmodstamp
+        description: ""
+
+      - name: title
+        description: ""
+
+      - name: username
+        description: ""
+
+      - name: user_role_id
+        description: ""
+
+      - name: user_type
+        description: ""
+
+      - name: dwh_external_id__c
+        description: ""
+
+      - name: mattermost_handle__c
+        description: ""
+
+      - name: owner_type__c
+        description: ""
+
+      - name: sales_ops__c
+        description: ""
+
+      - name: sales_segment__c
+        description: ""
+
+      - name: start_date__c
+        description: ""
+
+      - name: system_type__c
+        description: ""
+
+      - name: territory__c
+        description: ""
+
+      - name: validation_exempt__c
+        description: ""
