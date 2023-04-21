@@ -66,6 +66,9 @@ models:
       nightly:
         +snowflake_warehouse: "TRANSFORM_M"
         tags: "nightly"
+      hourly:
+        +snowflake_warehouse: "TRANSFORM_XS"
+        tags: "hourly"
 
     staging:
       server:
@@ -73,7 +76,8 @@ models:
         tags: ["server", "nightly"]
 
     qa:
-      tags: "qa"
+      tags: ["qa", "nightly"]
+
 
 seeds:
   enabled: true

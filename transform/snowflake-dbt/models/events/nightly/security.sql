@@ -1,8 +1,7 @@
 {{config({
     "materialized": "incremental",
     "schema": "events",
-    "unique_key": "id",
-    "tags":"hourly"
+    "unique_key": "id"
   })
 }}
 

@@ -1,9 +1,8 @@
 {{config({
     "materialized": 'incremental',
     "schema": "events",
-    "unique_key":'id',
-    "tag":"nightly"
-  })
+    "unique_key":'id'
+      })
 }}
 
 WITH mobile_events AS (

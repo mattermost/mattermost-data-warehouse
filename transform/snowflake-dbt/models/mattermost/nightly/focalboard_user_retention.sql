@@ -1,7 +1,6 @@
 {{config({
     "materialized": "table",
     "schema": "mattermost",
-    "tags":"nightly",
     "unique_key":"id"
   })
 }}
