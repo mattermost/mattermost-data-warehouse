@@ -11,14 +11,21 @@ models:
       - name: cards
         description: The list of payment cards associated with the customer.
       - name: created_at
+        tests:
+          - not_null
         description: The date and time when the customer's Stripe account was created.
       - name: currency
         description: The currency used for transactions made by the customer.
       - name: delinquent
         description: Indicates whether the customer's account is delinquent.
       - name: email
+        tests:
+          - not_null
         description: The email address associated with the customer's Stripe account.
       - name: customer_id
+        tests:
+          - not_null
+          - unique
         description: The unique identifier for the customer's Stripe account.
       - name: invoice_prefix
         description: The prefix used for the customer's invoices.
@@ -45,6 +52,8 @@ models:
       - name: tax_exempt
         description: Indicates whether the customer is tax exempt.
       - name: updated_at
+        tests:
+          - not_null
         description: The date and time when the customer's Stripe account was last updated.
       - name: default_source
         description: The default payment source associated with the customer.
@@ -61,8 +70,12 @@ models:
       - name: updated_by_event_type
         description: The event type that updated the customer.
       - name: _updated_at
+        tests:
+          - not_null
         description: Internal timestamp value to be used for incremental loads.
       - name: _created_at
+        tests:
+          - not_null
         description: Internal timestamp value to be used for incremental loads.
 
   - name: stg_stripe__subscriptions
@@ -82,9 +95,12 @@ models:
         description: The end date of the current billing period
       - name: current_period_start
         description: The start date of the current billing period
-      - name: customer
+      - name: customer_id
         description: The customer to whom the subscription belongs
       - name: subscription_id
+        tests:
+          - not_null
+          - unique
         description: The ID of the subscription
       - name: invoice_customer_balance_settings
         description: The settings for automatic customer balance management
@@ -124,7 +140,7 @@ models:
         description: The plan associated with the subscription
       - name: quantity
         description: The quantity of the subscription
-      - name: start_date
+      - name: start_at
         description: The start date of the subscription
       - name: status
         description: The status of the subscription
@@ -141,8 +157,12 @@ models:
       - name: canceled_at
         description: The date and time when a subscription was canceled.
       - name: _updated_at
+        tests:
+          - not_null
         description: Internal timestamp value to be used for incremental loads.
       - name: _created_at
+        tests:
+          - not_null
         description: Internal timestamp value to be used for incremental loads.
       - name: updated_by_event_type
         description: The type of event that triggered the last update to the record.
@@ -169,6 +189,9 @@ models:
       - name: description
         description: A description of the product.
       - name: product_id
+        tests:
+          - not_null
+          - unique
         description: The unique identifier for the product.
       - name: images
         description: A list of URLs for images associated with the product.
@@ -177,11 +200,11 @@ models:
       - name: cws_product_family
         description: The product family that the product belongs to.
       - name: sku
+        tests:
+          - not_null
         description: The SKU name associated with the product.
       - name: name
         description: The name of the product.
-      - name: object
-        description: The object type, which is always product.
       - name: shippable
         description: A boolean value indicating whether the product can be shipped.
       - name: type

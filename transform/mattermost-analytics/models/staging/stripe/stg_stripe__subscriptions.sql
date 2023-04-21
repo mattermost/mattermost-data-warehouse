@@ -14,7 +14,7 @@ subscriptions as (
         created as created_at,
         current_period_end as current_period_end_at,
         current_period_start as current_period_start_at,
-        customer,
+        customer as customer_id,
         id as subscription_id,
         invoice_customer_balance_settings,
         items,
