@@ -95,7 +95,7 @@ models:
         description: The end date of the current billing period
       - name: current_period_start
         description: The start date of the current billing period
-      - name: customer_id
+      - name: stripe_customer_id
         description: The customer to whom the subscription belongs
       - name: subscription_id
         tests:
@@ -200,8 +200,6 @@ models:
       - name: cws_product_family
         description: The product family that the product belongs to.
       - name: sku
-        tests:
-          - not_null
         description: The SKU name associated with the product.
       - name: name
         description: The name of the product.
