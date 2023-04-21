@@ -55,9 +55,7 @@ renamed as (
         -- Custom columns
         campaign_offer_detail__c,
         campaign_offer__c,
-
         dscorgpkg__suppress_from_discoverorg__c,
-
         triggers_mql__c
 
 

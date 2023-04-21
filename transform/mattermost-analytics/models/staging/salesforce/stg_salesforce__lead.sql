@@ -7,7 +7,7 @@ with source as (
 renamed as (
 
     select
-        id as as lead_id,
+        id as lead_id,
         company,
         convertedaccountid as converted_account_id,
         convertedcontactid as converted_contact_id,
