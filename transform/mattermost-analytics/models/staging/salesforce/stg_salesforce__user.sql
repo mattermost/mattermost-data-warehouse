@@ -9,7 +9,7 @@ renamed as (
 
     select
         id as user_id,
-        createddate as created_date,
+        createddate as created_at,
         department,
         division,
         email,
@@ -21,7 +21,7 @@ renamed as (
         managerid as manager_id,
         name,
         profileid as profile_id,
-        systemmodstamp,
+        systemmodstamp as system_modstamp_at,
         title,
         username,
         userroleid as user_role_id,

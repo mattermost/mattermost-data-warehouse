@@ -27,13 +27,13 @@ models:
       - name: created_by_id
         description: ""
 
-      - name: created_date
+      - name: created_at
         description: ""
 
       - name: description
         description: ""
 
-      - name: end_date
+      - name: end_at
         description: ""
 
       - name: expected_response
@@ -84,7 +84,7 @@ models:
       - name: last_modified_by_id
         description: ""
 
-      - name: last_modified_date
+      - name: last_modified_at
         description: ""
 
       - name: name
@@ -117,22 +117,22 @@ models:
       - name: parent_id
         description: ""
 
-      - name: start_date
+      - name: start_at
         description: ""
 
       - name: status
         description: ""
 
-      - name: systemmodstamp
+      - name: system_modstamp_at
         description: ""
 
       - name: type
         description: ""
 
-      - name: last_viewed_date
+      - name: last_viewed_at
         description: ""
 
-      - name: last_referenced_date
+      - name: last_referenced_at
         description: ""
 
       - name: expected_revenue
@@ -179,7 +179,7 @@ models:
       - name: created_by_id
         description: ""
 
-      - name: created_date
+      - name: created_at
         description: ""
 
       - name: description
@@ -197,7 +197,7 @@ models:
       - name: first_name
         description: ""
 
-      - name: first_responded_date
+      - name: first_responded_at
         description: ""
 
       - name: has_opted_out_of_email
@@ -215,7 +215,7 @@ models:
       - name: last_modified_by_id
         description: ""
 
-      - name: last_modified_date
+      - name: last_modified_at
         description: ""
 
       - name: last_name
@@ -257,7 +257,7 @@ models:
       - name: street
         description: ""
 
-      - name: systemmodstamp
+      - name: system_modstamp_at
         description: ""
 
       - name: title
@@ -349,7 +349,7 @@ models:
       - name: created_by_id
         description: ""
 
-      - name: created_date
+      - name: created_at
         description: ""
 
       - name: do_not_call
@@ -373,7 +373,7 @@ models:
       - name: last_modified_by_id
         description: ""
 
-      - name: last_modified_date
+      - name: last_modified_at
         description: ""
 
       - name: last_name
@@ -385,7 +385,7 @@ models:
       - name: onwer_id
         description: ""
 
-      - name: systemmodstamp
+      - name: system_modstamp_at
         description: ""
 
       - name: clearbit_employee_count__c
@@ -549,7 +549,7 @@ models:
       - name: converted_contact_id
         description: ""
 
-      - name: converted_date
+      - name: converted_at
         description: ""
 
       - name: converted_opportunity_id
@@ -564,7 +564,7 @@ models:
       - name: created_by_id
         description: ""
 
-      - name: created_date
+      - name: created_at
         description: ""
 
       - name: description
@@ -591,7 +591,7 @@ models:
       - name: last_modified_by_id
         description: ""
 
-      - name: last_modified_date
+      - name: last_modified_at
         description: ""
 
       - name: last_name
@@ -621,7 +621,7 @@ models:
       - name: status
         description: ""
 
-      - name: systemmodstamp
+      - name: system_modstamp_at
         description: ""
 
       - name: website
@@ -978,7 +978,7 @@ models:
       - name: campaign_id
         description: ""
 
-      - name: close_date
+      - name: close_at
         description: ""
 
       - name: contract_id
@@ -987,7 +987,7 @@ models:
       - name: created_by_id
         description: ""
 
-      - name: created_date
+      - name: created_at
         description: ""
 
       - name: expected_revenue
@@ -1011,7 +1011,7 @@ models:
       - name: last_modified_by_id
         description: ""
 
-      - name: last_modified_date
+      - name: last_modified_at
         description: ""
 
       - name: name
@@ -1032,7 +1032,7 @@ models:
       - name: stage_name
         description: ""
 
-      - name: systemmodstamp
+      - name: system_modstamp_at
         description: ""
 
       - name: type
@@ -1401,7 +1401,7 @@ models:
       - name: created_by_id
         description: ""
 
-      - name: created_date
+      - name: created_at
         description: ""
 
       - name: description
@@ -1416,7 +1416,7 @@ models:
       - name: last_modified_by_id
         description: ""
 
-      - name: last_modfieid_date
+      - name: last_modified_at
         description: ""
 
       - name: list_price
@@ -1440,7 +1440,7 @@ models:
       - name: quantity
         description: ""
 
-      - name: service_date
+      - name: service_at
         description: ""
 
       - name: sort_ordr
@@ -1449,7 +1449,7 @@ models:
       - name: subtotal
         description: ""
 
-      - name: systemmodstamp
+      - name: system_modstamp_at
         description: ""
 
       - name: total_price
@@ -1582,7 +1582,7 @@ models:
           - not_null
           - unique
 
-      - name: created_date
+      - name: created_at
         description: ""
 
       - name: department
@@ -1618,7 +1618,7 @@ models:
       - name: profile_id
         description: ""
 
-      - name: systemmodstamp
+      - name: system_modstamp_at
         description: ""
 
       - name: title

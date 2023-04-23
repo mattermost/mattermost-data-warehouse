@@ -11,7 +11,7 @@ renamed as (
         id as contact_id,
         accountid as account_id,
         createdbyid as created_by_id,
-        createddate as created_date,
+        createddate as created_at,
         donotcall as do_not_call,
         email,
         firstname as first_name,
@@ -19,11 +19,11 @@ renamed as (
         hasoptedoutoffax as has_opted_out_of_fax,
         isdeleted as is_deleted,
         lastmodifiedbyid as last_modified_by_id,
-        lastmodifieddate as last_modified_date,
+        lastmodifieddate as last_modified_at,
         lastname as last_name,
         name,
         ownerid as onwer_id,
-        systemmodstamp,
+        systemmodstamp as system_modstamp_at,
 
         -- Custom columns
         clearbit_employee_count__c,
