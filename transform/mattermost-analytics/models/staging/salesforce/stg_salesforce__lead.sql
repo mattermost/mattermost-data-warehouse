@@ -8,35 +8,49 @@ renamed as (
 
     select
         id as lead_id,
-        company,
+
+        -- Foreign keys
         convertedaccountid as converted_account_id,
         convertedcontactid as converted_contact_id,
-        converteddate as converted_at,
         convertedopportunityid as converted_opportunity_id,
-        country,
-        countrycode as country_code,
         createdbyid as created_by_id,
-        createddate as created_at,
+        lastmodifiedbyid as last_modified_by_id,
+        ownerid as owner_id,
+
+        -- Conversion status
+        converteddate as converted_at,
+        status,
+
+        -- Details
+        name,
         description,
-        email,
         firstname as first_name,
+        lastname as last_name,
+
+        -- Contact preferences
         hasoptedoutofemail as has_opted_out_of_email,
         hasoptedoutoffax as has_opted_out_of_fax,
-        isdeleted as is_deleted,
-        industry,
-        lastmodifiedbyid as last_modified_by_id,
-        lastmodifieddate as last_modified_at,
-        lastname as last_name,
-        mobilephone as mobile_phone,
-        name,
-        ownerid as owner_id,
-        phone,
-        postalcode,
+
+        -- Contact details
+        country,
+        countrycode as country_code,
         state,
         statecode,
-        status,
-        systemmodstamp as system_modstamp_at,
+        postalcode,
+        phone,
+        mobilephone as mobile_phone,
+        email,
+
+        -- Company context
+        company,
+        industry,
         website,
+
+        -- Metadata
+        createddate as created_at,
+        isdeleted as is_deleted,
+        lastmodifieddate as last_modified_at,
+        systemmodstamp as system_modstamp_at,
 
         -- Custom columns
         actively_being_sequenced__c,

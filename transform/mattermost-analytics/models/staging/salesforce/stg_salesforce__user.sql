@@ -9,23 +9,33 @@ renamed as (
 
     select
         id as user_id,
-        createddate as created_at,
-        department,
-        division,
+
+        -- Foreign keys
+        managerid as manager_id,
+        profileid as profile_id,
+        userroleid as user_role_id,
+
+        -- Personal info
+        name,
+        firstname as first_name,
+        lastname as last_name,
+        title,
+        username,
         email,
         employeenumber as employee_number,
         federationidentifier as federation_identifier,
-        firstname as first_name,
+
+        -- Company context
+        department,
+        division,
+
+        -- Account details
         isactive as is_active,
-        lastname as last_name,
-        managerid as manager_id,
-        name,
-        profileid as profile_id,
-        systemmodstamp as system_modstamp_at,
-        title,
-        username,
-        userroleid as user_role_id,
         usertype as user_type,
+
+        -- Metadata
+        createddate as created_at,
+        systemmodstamp as system_modstamp_at,
 
         -- Custom columns
         dwh_external_id__c,

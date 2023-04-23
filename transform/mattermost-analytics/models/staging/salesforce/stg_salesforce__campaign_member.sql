@@ -9,44 +9,56 @@ renamed as (
 
     select
         id as campaign_member_id,
+
+        -- Foreign keys
         campaignid as campaign_id,
-        city,
-        companyoraccount as company_or_account,
-        contactid as contact_id,
-        country,
         createdbyid as created_by_id,
-        createddate as created_at,
+        leadid as lead_id,
+        lastmodifiedbyid as last_modified_by_id,
+        leadorcontactid as lead_or_contact_id,
+        leadorcontactownerid as lead_or_contact_owner_id,
+        contactid as contact_id,
+
+        -- Details
+        name,
+        salutation,
         description,
-        donotcall as do_not_call,
-        email,
-        fax,
+        status,
+        title,
+        type,
+        companyoraccount as company_or_account,
         firstname as first_name,
+        lastname as last_name,
+        leadsource as lead_source,
+
+        -- Contact preferences
+        donotcall as do_not_call,
         firstrespondeddate as first_responded_at,
         hasoptedoutofemail as has_opted_out_of_email,
         hasoptedoutoffax as has_opted_out_of_fax,
         hasresponded as has_responded,
-        isdeleted as is_deleted,
-        lastmodifiedbyid as last_modified_by_id,
-        lastmodifieddate as last_modified_at,
-        lastname as last_name,
-        leadid as lead_id,
-        leadorcontactid as lead_or_contact_id,
-        leadorcontactownerid as lead_or_contact_owner_id,
-        leadsource as lead_source,
-        mobilephone as mobile_phone,
-        name,
 
+        -- Contact information
         phone,
-        postalcode,
-        salutation,
-        state,
-        status,
-        street,
-        systemmodstamp as system_modstamp_at,
-        title,
-        type,
+        mobilephone as mobile_phone,
+        fax,
+        email,
 
-       -- Custom columns
+        -- Address
+        street,
+        city,
+        country,
+        state,
+        postalcode,
+
+        -- Metadata
+        createddate as created_at,
+        isdeleted as is_deleted,
+        lastmodifieddate as last_modified_at,
+
+        systemmodstamp as system_modstamp_at,
+
+        -- Custom columns
         accounttype__c,
         contact_us_notes__c,
         converted_date__c,

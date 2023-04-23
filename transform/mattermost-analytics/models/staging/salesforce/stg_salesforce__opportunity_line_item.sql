@@ -9,26 +9,34 @@ renamed as (
 
     select
         id as opportunity_line_item,
+
+        -- Foreign keys
         createdbyid as created_by_id,
-        createddate as created_at,
-        description,
-        discount,
-        isdeleted as is_deleted,
         lastmodifiedbyid as last_modified_by_id,
-        lastmodifieddate as last_modified_at,
-        listprice as list_price,
-        name,
         opportunityid as opportunity_id,
         pricebookentryid as pricebook_entry_id,
         product2id as product2_id,
+
+        -- Details
+        name,
+        description,
         productcode as product_code,
-        quantity,
         servicedate as service_at,
         sortorder as sort_order,
-        subtotal,
-        systemmodstamp as system_modstamp_at,
-        totalprice as total_price,
+
+        -- Accounting
+        quantity,
         unitprice as unit_price,
+        discount,
+        listprice as list_price,
+        totalprice as total_price,
+        subtotal,
+
+        -- Metadata
+        createddate as created_at,
+        isdeleted as is_deleted,
+        lastmodifieddate as last_modified_at,
+        systemmodstamp as system_modstamp_at,
 
         -- Custom columns
         amount_manual_override__c,

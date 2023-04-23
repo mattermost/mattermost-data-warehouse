@@ -9,20 +9,26 @@ renamed as (
 
     select
         id as contact_id,
+
+        -- Foreign keys
         accountid as account_id,
         createdbyid as created_by_id,
-        createddate as created_at,
-        donotcall as do_not_call,
-        email,
+        lastmodifiedbyid as last_modified_by_id,
+        ownerid as onwer_id,
+
+        -- Contact details
+        name,
         firstname as first_name,
+        lastname as last_name,
+        email,
+        donotcall as do_not_call,
         hasoptedoutofemail as has_opted_out_of_email,
         hasoptedoutoffax as has_opted_out_of_fax,
+
+        -- Metadata
+        createddate as created_at,
         isdeleted as is_deleted,
-        lastmodifiedbyid as last_modified_by_id,
         lastmodifieddate as last_modified_at,
-        lastname as last_name,
-        name,
-        ownerid as onwer_id,
         systemmodstamp as system_modstamp_at,
 
         -- Custom columns

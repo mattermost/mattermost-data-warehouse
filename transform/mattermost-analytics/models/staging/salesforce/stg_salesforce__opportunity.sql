@@ -9,29 +9,39 @@ renamed as (
 
     select
         id as opportunity_id,
+
+        -- Foreign keys
         accountid as account_id,
-        amount,
         campaignid as campaign_id,
-        closedate as close_at,
         contractid as contract_id,
         createdbyid as created_by_id,
-        createddate as created_at,
+        lastmodifiedbyid as last_modified_by_id,
+        ownerid as onwer_id,
+        pricebook2id as pricebook2_id,
+
+        -- Context
+        name,
+        type,
+
+        -- Pipeline
+        probability,
         expectedrevenue as expected_revenue,
         forecastcategory as forecast_category,
         forecastcategoryname as forecast_category_name,
+        closedate as close_at,
         isclosed as is_closed,
-        isdeleted as is_deleted,
         iswon as is_won,
-        lastmodifiedbyid as last_modified_by_id,
-        lastmodifieddate as last_modified_at,
-        name,
         nextstep as next_step,
-        ownerid as onwer_id,
-        pricebook2id as pricebook2_id,
-        probability,
         stagename as stage_name,
+
+        -- Accounting
+        amount,
+
+        -- Metadata
+        createddate as created_at,
+        isdeleted as is_deleted,
+        lastmodifieddate as last_modified_at,
         systemmodstamp as system_modstamp_at,
-        type,
 
         -- Custom columns
         active_licenses__c,
