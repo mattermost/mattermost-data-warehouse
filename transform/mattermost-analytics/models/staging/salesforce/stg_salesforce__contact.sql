@@ -14,7 +14,7 @@ renamed as (
         accountid as account_id,
         createdbyid as created_by_id,
         lastmodifiedbyid as last_modified_by_id,
-        ownerid as onwer_id,
+        ownerid as owner_id,
 
         -- Contact details
         name,
