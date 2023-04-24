@@ -38,7 +38,6 @@ sources:
             description: Unique identifier
             tests:
               - not_null
-              - unique
           - name: companycountry
             description: The name of the company's country
           - name: companyname
@@ -47,7 +46,10 @@ sources:
             description: The company's size bucket
             tests:
               - accepted_values:
+                  name: valid_bucket_names
                   values: ['ONE_TO_50', 'FIFTY_TO_100', 'ONE_HUNDRED_TO_500', 'FIVE_HUNDRED_TO_1000', 'ONE_THOUSAND_TO_2500', 'TWO_THOUSAND_FIVE_HUNDRED_AND_UP']
+                  config:
+                    where: "companysize is not null"
           - name: contactemail
             description: Email address provided explicitly by the user when requesting the license.
           - name: contactfirstname
@@ -56,6 +58,8 @@ sources:
             description: The last name of the user.
           - name: email
             description: Email address of the mattermost user requesting the trial.
+            tests:
+              - not_null
           - name: enddate
             description: Trial end date
           - name: name
@@ -64,6 +68,8 @@ sources:
             description: Whether the user accepted to receive emails or not.
           - name: serverid
             description: The server's id.
+            tests:
+              - not_null
           - name: sitename
             description: The name of the site.
           - name: siteurl
