@@ -34,7 +34,7 @@ sources:
 
       - name: trial_requests
         columns:
-          - name: trial_request_id
+          - name: id
             description: Unique identifier
             tests:
               - not_null
