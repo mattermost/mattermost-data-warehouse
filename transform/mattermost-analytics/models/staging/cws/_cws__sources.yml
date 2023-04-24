@@ -45,6 +45,8 @@ sources:
                   name: valid_country_name
                   to: ref('country_codes')
                   field: name
+                  config:
+                    where: "companycountry != ''"
           - name: companyname
             description: The company's name.
           - name: companysize
