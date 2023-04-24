@@ -1,0 +1,203 @@
+version: 2
+
+models:
+  - name: stg_stripe__customers
+    description: Extracts and transforms data related to customer information from Stripe.
+    columns:
+      - name: account_balance
+        description: The account balance of the customer.
+      - name: balance
+        description: The available balance in the customer's Stripe account.
+      - name: cards
+        description: The list of payment cards associated with the customer.
+      - name: created_at
+        tests:
+          - not_null
+        description: The date and time when the customer's Stripe account was created.
+      - name: currency
+        description: The currency used for transactions made by the customer.
+      - name: delinquent
+        description: Indicates whether the customer's account is delinquent.
+      - name: email
+        tests:
+          - not_null
+        description: The email address associated with the customer's Stripe account.
+      - name: customer_id
+        tests:
+          - not_null
+          - unique
+        description: The unique identifier for the customer's Stripe account.
+      - name: invoice_prefix
+        description: The prefix used for the customer's invoices.
+      - name: invoice_settings
+        description: The invoice settings for the customer's account.
+      - name: livemode
+        description: Indicates whether the customer's Stripe account is in live mode.
+      - name: contact_first_name
+        description: The first name of the customer's contact person.
+      - name: contact_last_name
+        description: The last name of the customer's contact person.
+      - name: portal_customer_id
+        description: The identifier for the customer in the portal site.
+      - name: name
+        description: The name associated with the customer's Stripe account.
+      - name: next_invoice_sequence
+        description: The next sequential number for the customer's invoices.
+      - name: preferred_locales
+        description: The preferred languages of the customer.
+      - name: sources
+        description: The payment sources associated with the customer.
+      - name: subscriptions
+        description: The subscriptions associated with the customer.
+      - name: tax_exempt
+        description: Indicates whether the customer is tax exempt.
+      - name: updated_at
+        tests:
+          - not_null
+        description: The date and time when the customer's Stripe account was last updated.
+      - name: default_source
+        description: The default payment source associated with the customer.
+      - name: shipping
+        description: The customer's shipping information.
+      - name: tax_ids
+        description: The tax IDs associated with the customer.
+      - name: address
+        description: The customer's billing address.
+      - name: default_card
+        description: The default payment card associated with the customer.
+      - name: discount
+        description: The discount.
+      - name: updated_by_event_type
+        description: The event type that updated the customer.
+
+  - name: stg_stripe__subscriptions
+    description: Staging table for Stripe subscriptions
+    columns:
+      - name: billing
+        description: The billing type of the subscription (e.g., 'charge_automatically')
+      - name: billing_cycle_anchor
+        description: The date at which the current billing period ends
+      - name: cancel_at_period_end
+        description: A boolean indicating whether the subscription will be canceled at the end of the current billing period
+      - name: collection_method
+        description: The payment collection method for the subscription (e.g., 'charge_automatically')
+      - name: created_at
+        tests:
+          - not_null
+        description: The timestamp when the subscription was created
+      - name: current_period_end
+        description: The end date of the current billing period
+      - name: current_period_start
+        description: The start date of the current billing period
+      - name: stripe_customer_id
+        description: The customer to whom the subscription belongs
+      - name: subscription_id
+        tests:
+          - not_null
+          - unique
+        description: The ID of the subscription
+      - name: invoice_customer_balance_settings
+        description: The settings for automatic customer balance management
+      - name: items
+        description: An array of subscription line items
+      - name: latest_invoice
+        description: The ID of the most recent invoice for the subscription
+      - name: livemode
+        description: A boolean indicating whether the subscription is in live mode
+      - name: cws_dns
+        description: The DNS of the subscription
+      - name: cws_installation
+        description: The installation ID of the subscription
+      - name: cws_installation_state
+        description: The installation state of the subscription
+      - name: billing_type
+        description: The type of billing for the subscription
+      - name: current_product_id
+        description: The ID of the current product for the subscription
+      - name: renewed_from_subscription_id
+        description: The ID of the subscription that this subscription was renewed from
+      - name: license_id
+        description: The license ID for the subscription
+      - name: purchase_order_num
+        description: The purchase order number for the subscription
+      - name: edition
+        description: The edition of the subscription
+      - name: converted_to_paid_at
+        description: The timestamp when the subscription was converted to paid status
+      - name: license_end_at
+        description: The end date of the subscription's license
+      - name: actual_renewal_at
+        description: The timestamp of the actual renewal date for the subscription
+      - name: pending_setup_intent
+        description: The setup intent for the subscription
+      - name: plan
+        description: The plan associated with the subscription
+      - name: quantity
+        description: The quantity of the subscription
+      - name: start_at
+        description: The start date of the subscription
+      - name: status
+        description: The status of the subscription
+      - name: updated_at
+        description: The timestamp when the subscription was last updated
+      - name: trial_start_at
+        description: The start date and time of the trial period for a subscription.
+      - name: tax_percent
+        description: The tax rate applied to a subscription.
+      - name: ended_at
+        description: The date and time when a subscription ended.
+      - name: trial_end_at
+        description: The end date and time of the trial period for a subscription.
+      - name: canceled_at
+        description: The date and time when a subscription was canceled.
+      - name: updated_by_event_type
+        description: The type of event that triggered the last update to the record.
+      - name: default_payment_method
+        description: The default payment method for a customer's subscription.
+      - name: cancel_at
+        description: The date and time when a subscription will be canceled.
+      - name: pause_collection
+        description: A flag indicating whether collection of payment for a subscription has been paused.
+      - name: discount
+        description: The discount applied to a subscription.
+      - name: days_until_due
+        description: The number of days before a subscription is due for payment.
+
+  - name: stg_stripe__products
+    description: A staging table for Stripe products data.
+    columns:
+      - name: active
+        description: A boolean value indicating whether the product is currently available for purchase.
+      - name: attributes
+        description: A dictionary containing additional information about the product.
+      - name: created_at
+        description: The timestamp at which the product was created.
+      - name: description
+        description: A description of the product.
+      - name: product_id
+        tests:
+          - not_null
+          - unique
+        description: The unique identifier for the product.
+      - name: images
+        description: A list of URLs for images associated with the product.
+      - name: livemode
+        description: A boolean value indicating whether the product is in live mode.
+      - name: cws_product_family
+        description: The product family that the product belongs to.
+      - name: sku
+        description: The SKU name associated with the product.
+      - name: name
+        description: The name of the product.
+      - name: shippable
+        description: A boolean value indicating whether the product can be shipped.
+      - name: type
+        description: The type of the product.
+      - name: updated_at
+        description: The timestamp at which the product was last updated.
+      - name: unit_label
+        description: The label used to indicate the unit of measurement for a product.
+      - name: updated_by_event_type
+        description: The type of event that triggered the last update to the record.
+      - name: deactivate_on
+        description: The date and time when a product will be deactivated or no longer available.
