@@ -40,13 +40,6 @@ sources:
               - not_null
           - name: companycountry
             description: The name of the company's country
-            tests:
-              - relationships:
-                  name: valid_country_name
-                  to: ref('country_codes')
-                  field: name
-                  config:
-                    where: "companycountry != ''"
           - name: companyname
             description: The company's name.
           - name: companysize

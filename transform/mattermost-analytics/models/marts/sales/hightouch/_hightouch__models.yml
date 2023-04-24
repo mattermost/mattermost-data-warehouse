@@ -28,6 +28,14 @@ models:
           - not_null
       - name: country_name
         description: The requester's country.
+        # Make sure that country name has been transformed to a valid country name
+        tests:
+          - relationships:
+              name: valid_country_name
+              to: ref('country_codes')
+              field: name
+              config:
+                where: "country_name != ''"
       - name: trial_start_at
         description: The starting date of the trial.
       - name: num_users
