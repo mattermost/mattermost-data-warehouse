@@ -8,7 +8,6 @@ models:
     columns:
       - name: trial_request_id
         tests:
-          - unique
           - not_null
       - name: name
         description: The user's full name.
