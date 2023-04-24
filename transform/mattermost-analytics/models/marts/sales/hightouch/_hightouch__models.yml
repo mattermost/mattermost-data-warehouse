@@ -10,6 +10,12 @@ models:
         tests:
           - unique
           - not_null
+      - name: name
+        description: The user's full name.
+      - name: first_name
+        description: The user's first name.
+      - name: last_name
+        description: The user's last name.
       - name: company_size_bucket
         description: The company's size bucket. I.e. 1-50, 51-100 etc.
       - name: company_name
@@ -22,7 +28,7 @@ models:
           - not_null
       - name: country_name
         description: The requester's country.
-      - name: trial_start_date
+      - name: trial_start_at
         description: The starting date of the trial.
       - name: num_users
         description: Number of end users for the server.

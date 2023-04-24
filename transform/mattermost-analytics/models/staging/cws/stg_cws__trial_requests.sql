@@ -12,27 +12,27 @@ renamed as (
 
         -- User info
         name,
-        contactfirstname,
-        contactlastname,
+        contactfirstname as first_name,
+        contactlastname as last_name,
         email,
-        contactemail,
+        contactemail as contact_email,
 
         -- Company info
-        companycountry,
-        companyname,
-        companysize,
+        companycountry as country_name,
+        companyname as company_name,
+        companysize as company_size_bucket,
 
         -- Installation info
-        serverid,
-        sitename,
-        siteurl,
-        users,
+        serverid as server_id,
+        sitename as site_name,
+        siteurl as site_url,
+        users as num_users,
 
         -- Trial info
-        startdate,
-        enddate,
-        receiveemailsaccepted,
-        termsaccepted
+        startdate as start_at,
+        enddate as end_at,
+        receiveemailsaccepted as is_receive_emails_accepted,
+        termsaccepted as is_terms_accepted
 
         -- Stitch columns omitted
 
