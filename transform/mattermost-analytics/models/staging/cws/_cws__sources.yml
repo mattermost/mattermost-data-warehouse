@@ -34,12 +34,17 @@ sources:
 
       - name: trial_requests
         columns:
-          - name: id
+          - name: trial_request_id
             description: Unique identifier
             tests:
               - not_null
           - name: companycountry
             description: The name of the company's country
+            tests:
+              - relationships:
+                  name: valid_country_name
+                  to: ref('country_codes')
+                  field: name
           - name: companyname
             description: The company's name.
           - name: companysize

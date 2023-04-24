@@ -76,7 +76,9 @@ seeds:
   dbt_project_evaluator:
     dbt_project_evaluator_exceptions:
       +enabled: false
-      
+  salesforce:
+    schema: seed_salesforce
+
 tests:
   dbt_project_evaluator:
     # Set DBT project

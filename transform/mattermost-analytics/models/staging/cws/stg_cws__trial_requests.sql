@@ -8,7 +8,7 @@ with source as (
 renamed as (
 
     select
-        id,
+        id as trial_request_id,
 
         -- User info
         name,
