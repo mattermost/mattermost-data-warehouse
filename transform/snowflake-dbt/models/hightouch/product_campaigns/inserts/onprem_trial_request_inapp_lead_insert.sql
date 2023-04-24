@@ -10,5 +10,9 @@ with leads_to_insert as (
         not lead_exists and not contact_exists
         -- Invalid emails will fail to sync anyway
         and is_valid_email
+        -- Exceptions
+        and lead_external_id not in (
+            '1492e438-bcda-58a6-906c-5b45fa292ffd'  -- https://mattermost.atlassian.net/browse/MM-51946
+        )
 )
 select * from leads_to_insert

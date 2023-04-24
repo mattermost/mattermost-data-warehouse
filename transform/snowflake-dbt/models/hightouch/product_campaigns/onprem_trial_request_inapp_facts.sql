@@ -29,7 +29,7 @@ with existing_members as (
 ), trial_facts as (
     select
         tr.email
-        , tr.email LIKE '%_@__%.__%' and tr.email not like '%@%@%' as is_valid_email
+        , {{ validate_email('tr.email') }} as is_valid_email
         , left(tr.email, 40) as first_name
         -- Keep leftmost part
         , left(split_part(tr.email, '@', 1), 40) as email_prefix
