@@ -26,3 +26,5 @@ models:
         description: The starting date of the trial.
       - name: num_users
         description: Number of end users for the server.
+      - name: is_existing_lead
+        description: Whether a

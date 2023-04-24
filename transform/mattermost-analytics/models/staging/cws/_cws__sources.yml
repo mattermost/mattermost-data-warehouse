@@ -1,15 +1,82 @@
 version: 2
 
 sources:
-  - name: cws_test
+  - name: cws
     database: 'RAW'
-    schema: cws_test
+    schema: cws_prod
     loader: Stitch
     description: |
-      Customer Web Server test database replica.
+      Customer Web Server database replica.
     tags:
       - stitch
 
     tables:
+      - name: _sdc_rejected
+        description: Rejected columns from stitch syncs
+        columns:
+          - name: record
+          - name: reason
+          - name: table_name
+          - name: _sdc_rejected_at
+
       - name: marketing
+        columns:
+          - name: createdat
+          - name: email
+          - name: id
+          - name: serverid
+          - name: subscribedcontent
+          - name: updatedat
+          - name: _sdc_batched_at
+          - name: _sdc_received_at
+          - name: _sdc_sequence
+          - name: _sdc_table_version
+
       - name: trial_requests
+        columns:
+          - name: id
+            description: Unique identifier
+            tests:
+              - not_null
+              - unique
+          - name: companycountry
+            description: The name of the company's country
+          - name: companyname
+            description: The company's name.
+          - name: companysize
+            description: The company's size bucket
+            tests:
+              - accepted_values:
+                  values: ['ONE_TO_50', 'FIFTY_TO_100', 'ONE_HUNDRED_TO_500', 'FIVE_HUNDRED_TO_1000', 'ONE_THOUSAND_TO_2500', 'TWO_THOUSAND_FIVE_HUNDRED_AND_UP']
+          - name: contactemail
+            description: Email address provided explicitly by the user when requesting the license.
+          - name: contactfirstname
+            description: The first name of the user.
+          - name: contactlastname
+            description: The last name of the user.
+          - name: email
+            description: Email address of the mattermost user requesting the trial.
+          - name: enddate
+            description: Trial end date
+          - name: name
+            description: The contact's full name
+          - name: receiveemailsaccepted
+            description: Whether the user accepted to receive emails or not.
+          - name: serverid
+            description: The server's id.
+          - name: sitename
+            description: The name of the site.
+          - name: siteurl
+            description: The URL of the installation.
+          - name: startdate
+            description: Trial start date
+          - name: termsaccepted
+            description: Whether the user accepted the terms or not.
+          - name: users
+            description: Number of users
+          - name: _sdc_batched_at
+          - name: _sdc_received_at
+          - name: _sdc_sequence
+          - name: _sdc_table_version
+          - name: __sdc_primary_key
+
