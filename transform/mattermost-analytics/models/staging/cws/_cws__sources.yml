@@ -47,9 +47,7 @@ sources:
             tests:
               - accepted_values:
                   name: valid_bucket_names
-                  values: ['ONE_TO_50', 'FIFTY_TO_100', 'ONE_HUNDRED_TO_500', 'FIVE_HUNDRED_TO_1000', 'ONE_THOUSAND_TO_2500', 'TWO_THOUSAND_FIVE_HUNDRED_AND_UP']
-                  config:
-                    where: "companysize is not null"
+                  values: ['', 'ONE_TO_50', 'FIFTY_TO_100', 'ONE_HUNDRED_TO_500', 'FIVE_HUNDRED_TO_1000', 'ONE_THOUSAND_TO_2500', 'TWO_THOUSAND_FIVE_HUNDRED_AND_UP']
           - name: contactemail
             description: Email address provided explicitly by the user when requesting the license.
           - name: contactfirstname
