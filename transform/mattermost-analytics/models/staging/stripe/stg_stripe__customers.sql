@@ -35,9 +35,7 @@ customers as (
         address,
         default_card,
         discount,
-        updated_by_event_type,
-        updated as _updated_at,
-        created as _created_at
+        updated_by_event_type
 
     from source
 

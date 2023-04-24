@@ -69,14 +69,6 @@ models:
         description: The discount.
       - name: updated_by_event_type
         description: The event type that updated the customer.
-      - name: _updated_at
-        tests:
-          - not_null
-        description: Internal timestamp value to be used for incremental loads.
-      - name: _created_at
-        tests:
-          - not_null
-        description: Internal timestamp value to be used for incremental loads.
 
   - name: stg_stripe__subscriptions
     description: Staging table for Stripe subscriptions
@@ -90,6 +82,8 @@ models:
       - name: collection_method
         description: The payment collection method for the subscription (e.g., 'charge_automatically')
       - name: created_at
+        tests:
+          - not_null
         description: The timestamp when the subscription was created
       - name: current_period_end
         description: The end date of the current billing period
@@ -156,14 +150,6 @@ models:
         description: The end date and time of the trial period for a subscription.
       - name: canceled_at
         description: The date and time when a subscription was canceled.
-      - name: _updated_at
-        tests:
-          - not_null
-        description: Internal timestamp value to be used for incremental loads.
-      - name: _created_at
-        tests:
-          - not_null
-        description: Internal timestamp value to be used for incremental loads.
       - name: updated_by_event_type
         description: The type of event that triggered the last update to the record.
       - name: default_payment_method

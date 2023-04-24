@@ -48,9 +48,7 @@ subscriptions as (
         cancel_at,
         pause_collection,
         discount,
-        days_until_due,
-        updated as _updated_at,
-        created as _created_at
+        days_until_due
 
     from source
 
