@@ -11,7 +11,11 @@
 with trial_requests as (
     select
         trial_request_id,                                   -- Primary key
-        name,                                               -- Mapped to field name of lead
+        -- Convention followed in SF
+        coalesce(
+            name,
+            left(email, 40)
+        ) as name,                                          -- Mapped to field name of lead
         first_name,                                         -- Mapped to field first_name of lead
         last_name,                                          -- Mapped to field last_name of lead
         case

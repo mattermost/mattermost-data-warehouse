@@ -11,7 +11,10 @@ renamed as (
         id as trial_request_id,
 
         -- User info
-        name,
+        case
+            when name = '' then null
+            else name
+        end as name,
         contactfirstname as first_name,
         contactlastname as last_name,
         email,
