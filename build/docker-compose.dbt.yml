@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
     dbt_image:
-      image: ghcr.io/dbt-labs/dbt-snowflake:1.1.0@sha256:26b63ed21a1d534439fa9cd2b107a873e14ae9021153dca2f13ec104fd518754
+      image: ghcr.io/dbt-labs/dbt-snowflake:1.2.0@sha256:ebfb5c168d6fc125500585389fa67244908a90f507a18758b96909c16aa840f4
       env_file:
         - ../.dbt.env
       environment:
