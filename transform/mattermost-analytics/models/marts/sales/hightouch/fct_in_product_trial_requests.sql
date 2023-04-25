@@ -34,7 +34,11 @@ with trial_requests as (
 )
 select
     tr.*,
-    l.lead_id is not null as is_existing_lead
+    l.lead_id is not null as is_existing_lead,
+    {{ validate_email('tr.email') }} as is_valid_email
 from
     trial_requests tr
     left join {{ ref('stg_salesforce__lead') }} l on tr.email = l.email
+where
+    -- Skip invalid emails
+    is_valid_email

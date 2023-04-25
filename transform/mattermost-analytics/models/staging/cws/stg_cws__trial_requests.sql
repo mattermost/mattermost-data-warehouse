@@ -15,7 +15,10 @@ renamed as (
         contactfirstname as first_name,
         contactlastname as last_name,
         email,
-        contactemail as contact_email,
+        case
+            when contactemail = '' then null
+            else contactemail
+        end as contact_email,
 
         -- Company info
         companycountry as country_name,

@@ -13,12 +13,15 @@ models:
           - unique
       - name: name
         description: The user's full name.
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
       - name: first_name
         description: The user's first name.
       - name: last_name
         description: The user's last name.
-      - name: company_size_bucket
-        description: The company's size bucket. I.e. 1-50, 51-100 etc.
+      - name: company_size
+        description: The lower bound of the company size bucket.
       - name: company_name
         description: The company's name.
       - name: email
@@ -27,6 +30,7 @@ models:
           requesting the trial.
         tests:
           - not_null
+          - dbt_utils.not_empty_string
       - name: country_name
         description: The requester's country.
         # Make sure that country name has been transformed to a valid country name
@@ -43,3 +47,5 @@ models:
         description: Number of end users for the server.
       - name: is_existing_lead
         description: Whether there's already a lead with the same email.
+      - name: is_valid_email
+        description: Whether the email is valid. Used to skip invalid emails.
