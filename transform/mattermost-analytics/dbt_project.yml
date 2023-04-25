@@ -38,35 +38,31 @@ models:
       +materialized: view
       # Ideally this would have been named staging. Unfortunately there's already a schema with that name.
       schema: dbt_staging
-      # Staging layer contains views. Running on hourly mode should introduce manageable load.
       tags: ['staging', 'hourly']
     intermediate:
       +materialized: ephemeral
       tags: ['intermediate']
       data_eng:
         schema: int_data_eng
-        tags: ['nightly']
+        tags: ['hourly']
+      mlt:
+        schema: int_mlt
+        tags: ['hourly']
       web_app:
         schema: int_web_app
-        tags: ['nightly']
+        tags: ['hourly']
+      sales:
+        schema: int_sales
+        tags: ['hourly']
     marts:
       +materialized: table
       tags: ['marts']
       data_eng:
         schema: mart_data_eng
-        tags: ['nightly']
+        tags: ['hourly']
       web_app:
         schema: mart_web_app
-        tags: ['nightly']
-      release:
-        schema: mart_release
-        tags: ['nightly']
-      sales:
-        schema: mart_sales
-        tags: ['nightly']
-        hightouch:
-          # Hightouch syncs should be as close to real time as possible.
-          tags: ['hourly']
+        tags: ['hourly']
     utilities:
       +materialized: table
       schema: utilities
@@ -80,17 +76,7 @@ seeds:
   dbt_project_evaluator:
     dbt_project_evaluator_exceptions:
       +enabled: false
-
-  mattermost_analytics:
-    +enabled: true
-    salesforce:
-      +schema: seed_salesforce
-      country_codes:
-        # Override column types
-        +column_types:
-          code: varchar(2)
-          name: varchar(50)
-
+      
 tests:
   dbt_project_evaluator:
     # Set DBT project
@@ -105,8 +91,3 @@ vars:
     staging_prefixes: ['stg_', 'base_']
     marts_prefixes: ['fct_', 'dim_', 'grp_']
 
-    # Community Server ID
-  community_server_id : 93mykbogbjfrbbdqphx3zhze5c
-
-  # Salesforce variables
-  in_product_trial_campaign_id: 7013p000001NkNoAAK
