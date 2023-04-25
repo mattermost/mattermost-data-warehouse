@@ -10,7 +10,7 @@ WITH customers as (
     FROM
         { { ref('stg_stripe__customers') } }
     where
-        created >= '2023-04-22' -- to be removed
+        created_at >= '2023-04-22' -- to be removed
 ),
 subscriptions as (
     SELECT
@@ -36,6 +36,7 @@ customers_with_cloud_enterprise_trial as (
         where CURRENT_DATE < subscriptions.trial_end_at
         AND products.sku = `cloud-enterprise` -- TBD if we need this after yesterday's call with Nick.
 )
+
 select
     *
 from
