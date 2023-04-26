@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: cws_trial_requests
+  - name: stg_cws__trial_requests
     description: |
       Form data for trial requests.
 
