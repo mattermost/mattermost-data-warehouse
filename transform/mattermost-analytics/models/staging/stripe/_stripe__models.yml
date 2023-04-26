@@ -122,6 +122,8 @@ models:
         description: The purchase order number for the subscription
       - name: edition
         description: The edition of the subscription
+      - name: product
+        description: The product ID of the subscription
       - name: converted_to_paid_at
         description: The timestamp when the subscription was converted to paid status
       - name: license_end_at
@@ -202,49 +204,103 @@ models:
       - name: deactivate_on
         description: The date and time when a product will be deactivated or no longer available.
 
-  - name: stg_stripe_onprem_subscriptions
-    description: |
-      Reconstructed `onprem_subscriptions` table using Stripe events.
-
+  - name: stg_stripe__invoices
+    description: Staging table for Stripe Invoices
     columns:
-      - name: sku
-      - name: stripe_charge_id
-      - name: invoice_number
-      - name: stripe_invoice_number
-      - name: invoice_quantity
-      - name: invoice_amount
-      - name: row_num
-      - name: billing
-      - name: billing_cycle_anchor
-      - name: cancel_at_period_end
-      - name: created
-      - name: current_period_end
-      - name: current_period_start
-      - name: trial_end
-      - name: trial_start
-      - name: quantity
+      - name: account_country
+      - name: account_name
+      - name: amount_due
+      - name: amount_paid
+      - name: amount_remaining
+      - name: attempted
+      - name: attempt_count
+      - name: automatic_tax
+      - name: auto_advance
+      - name: billing_reason
+      - name: charge
+      - name: collection_method
+      - name: created_at
+      - name: currency
       - name: customer
+      - name: customer_address
+      - name: customer_email
+      - name: customer_name
+      - name: customer_shipping
+      - name: line1,
+      - name: line2,
+      - name: postal_code
+      - name: city
+      - name: state
+      - name: country
+      - name: customer_tax_exempt
+      - name: customer_tax_ids
+      - name: default_tax_rates
+      - name: discount
+      - name: discounts
+      - name: due_date_at
+      - name: ending_balance
+      - name: footer
+      - name: hosted_invoice_url
       - name: id
+      - name: invoice_pdf
+      - name: lines
       - name: livemode
-      - name: cws_dns
-      - name: cws_blapi_subscription
-      - name: cws_installation
-      - name: cws_installation_state
-      - name: billing_type
-      - name: renewed_from_sub_id
-      - name: license_id
-      - name: edition
-      - name: sfdc_migrated_opportunity_sfid
-      - name: purchase_order_num
-      - name: date_converted_to_paid
-      - name: license_end_date
-      - name: actual_renewal_date
-      - name: start
-      - name: status
-      - name: updated
-      - name: plan
       - name: metadata
-      - name: ended_at
-      - name: canceled_at
+      - name: number
+      - name: object
+      - name: paid
+      - name: paid_out_of_band
+      - name: payment_intent
+      - name: payment_settings
+      - name: period_end_at
+      - name: period_start_at
+      - name: post_payment_credit_notes_amount
+      - name: pre_payment_credit_notes_amount
+      - name: receipt_number
+      - name: starting_balance
+      - name: status
+      - name: status_transitions
+      - name: subscription
+      - name: subtotal
+      - name: tax
+      - name: total
+      - name: total_discount_amounts
+      - name: total_tax_amounts
+      - name: updated_at
+      - name: webhooks_delivered_at
+      - name: next_payment_attempt
+      - name: payment
+      - name: forgiven
+      - name: billing
+      - name: tax_percent
+      - name: finalized_at
+      - name: closed_at
       - name: updated_by_event_type
-      - name: total_in_cents
+      - name: date
+
+  - name: stg_stripe__invoice_line_items
+    description: Staging table for Stripe Invoices
+    columns:
+      - name: amount
+      - name: currency
+      - name: description
+      - name: discountable
+      - name: discounts
+      - name: discount_amounts
+      - name: id
+      - name: invoice
+      - name: invoice_item
+      - name: livemode
+      - name: metadata
+      - name: object
+      - name: period
+      - name: plan
+      - name: price
+      - name: proration
+      - name: proration_details
+      - name: quantity
+      - name: subscription
+      - name: subscription_item
+      - name: tax_amounts
+      - name: tax_rates
+      - name: type

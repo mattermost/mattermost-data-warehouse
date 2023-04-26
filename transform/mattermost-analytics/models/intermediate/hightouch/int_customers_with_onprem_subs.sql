@@ -16,7 +16,7 @@ WITH latest_credit_card_address AS (
         state as state_code,
         country as country_code,
         ROW_NUMBER() OVER (PARTITION BY invoices.customer ORDER BY invoices.created DESC) as row_num
-    FROM {{ source('stripe_raw','invoices') }} invoices
+    FROM {{ ref('stg_stripe__invoices') }} invoices
         )
         , customers_with_onprem_subs AS (
     SELECT
@@ -86,14 +86,14 @@ WITH latest_credit_card_address AS (
             else null
         end as country_code,
         onprem_subscriptions.updated >= '2021-08-18' as hightouch_sync_eligible
-    FROM {{ source('stripe_raw','customers') }} customers
-        JOIN {{ ref('stg_stripe_onprem_subscriptions') }} ON customers.id = onprem_subscriptions.customer
+    FROM {{ ref('stg_stripe__customers') }} customers
+        JOIN {{ ref('int_stripe_onprem_subscriptions') }} ON customers.id = onprem_subscriptions.customer
         JOIN "ANALYTICS".stripe.subscriptions ON onprem_subscriptions.id = subscriptions.id
         JOIN {{ source('blapi','products') }} ON onprem_subscriptions.sku = products.sku
-        LEFT JOIN {{ source('stripe_raw','subscriptions') }} renewed_from_subscription
-            ON subscriptions.renewed_from_sub_id = renewed_from_subscription.id
-        LEFT JOIN {{ ref('stg_stripe_onprem_subscriptions') }} renewed_from_blapi_subscription ON subscriptions.renewed_from_sub_id = renewed_from_blapi_subscription.id
-        LEFT JOIN {{ source('stripe_raw','invoices') }} ON onprem_subscriptions.stripe_invoice_number = invoices.number 
+        LEFT JOIN {{ ref('stg_stripe__subscriptions') }} renewed_from_subscription
+            ON subscriptions.renewed_from_sub_id = renewed_from_subscription.id{{ ref('stg_salesforce__account') }}
+        LEFT JOIN {{ ref('int_stripe_onprem_subscriptions') }} renewed_from_blapi_subscription ON subscriptions.renewed_from_sub_id = renewed_from_blapi_subscription.id
+        LEFT JOIN {{ ref('stg_stripe__invoices') }} ON onprem_subscriptions.stripe_invoice_number = invoices.number 
         JOIN latest_credit_card_address
             ON customers.id = latest_credit_card_address.customer
             AND latest_credit_card_address.row_num = 1
@@ -110,7 +110,7 @@ WITH latest_credit_card_address AS (
         account.type as account_type,
         ROW_NUMBER() OVER (PARTITION BY customers_with_onprem_subs.stripe_charge_id ORDER BY account.lastmodifieddate DESC) as row_num
     FROM customers_with_onprem_subs
-    LEFT JOIN {{ ref('account') }}
+    LEFT JOIN {{ ref('stg_salesforce__account') }}
         ON customers_with_onprem_subs.domain = account.cbit__clearbitdomain__c
 ), customers_contact AS (
     SELECT
@@ -122,13 +122,13 @@ WITH latest_credit_card_address AS (
                 customers_with_onprem_subs.customer_id || customers_with_onprem_subs.email)
         ) AS contact_external_id,
         contact.sfid as contact_sfid,
-        account.id as account_sfid,
+        account.id as account_id,
         account.dwh_external_id__c as contact_account_external_id,
         ROW_NUMBER() OVER (PARTITION BY customers_with_onprem_subs.stripe_charge_id ORDER BY contact.lastmodifieddate DESC) as row_num
     FROM customers_with_onprem_subs
-    LEFT JOIN {{ ref('contact') }}
+    LEFT JOIN {{ ref('stg_salesforce__contact') }}
        ON customers_with_onprem_subs.email = contact.email
-    LEFT JOIN {{ ref('account') }}
+    LEFT JOIN {{ ref('stg_salesforce__account') }}
         ON contact.accountid = account.id
 ), customers_opportunity AS (
     SELECT
@@ -137,7 +137,7 @@ WITH latest_credit_card_address AS (
         opportunity.sfid as opportunity_sfid,
         ROW_NUMBER() OVER (PARTITION BY customers_with_onprem_subs.stripe_charge_id ORDER BY opportunity.lastmodifieddate DESC) as row_num
     FROM customers_with_onprem_subs
-    LEFT JOIN {{ ref('opportunity') }}
+    LEFT JOIN {{ ref('stg_salesforce__opportunity') }}
         ON customers_with_onprem_subs.stripe_charge_id = opportunity.stripe_id__c
 ),  customers_previous_opportunity AS (
     SELECT 
@@ -146,7 +146,7 @@ WITH latest_credit_card_address AS (
         opportunity.amount as up_for_renewal_arr,
         ROW_NUMBER() OVER (PARTITION BY customers_with_onprem_subs.stripe_charge_id ORDER BY opportunity.lastmodifieddate DESC) as row_num
     FROM customers_with_onprem_subs
-    JOIN {{ ref('opportunity') }}
+    JOIN {{ ref('stg_salesforce__opportunity') }}
         ON customers_with_onprem_subs.previous_stripe_charge_id = opportunity.stripe_id__c
         WHERE customers_with_onprem_subs.is_renewed
 
@@ -162,7 +162,7 @@ WITH latest_credit_card_address AS (
     FROM customers_with_onprem_subs
     LEFT JOIN customers_opportunity
         ON customers_with_onprem_subs.stripe_charge_id = customers_opportunity.stripe_charge_id
-    LEFT JOIN {{ ref('opportunitylineitem') }}
+    LEFT JOIN {{ ref('stg_salesforce__opportunity_line_item') }}
         ON customers_opportunity.opportunity_sfid = opportunitylineitem.opportunityid
 )
 SELECT
