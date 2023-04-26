@@ -8,7 +8,9 @@ WITH customers as (
     SELECT
         customer_id,
         email,
-        name
+        name,
+        contact_first_name,
+        contact_last_name
     FROM
         {{ ref('stg_stripe__customers') }}
     where
