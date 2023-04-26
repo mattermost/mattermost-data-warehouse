@@ -31,7 +31,7 @@ with trial_requests as (
            when country_name = 'United States of America' then 'United States'
            else country_name
         end as country_name,                                -- Mapped to field country
-        start_at as trial_start_at,                         -- Mapped to request_a_trial_date__c and TBD
+        start_at as trial_start_at,                         -- Mapped to request_a_trial_date__c and Click_to_Accept_Date_Time_Trial__c
         num_users                                           -- Mapped to field numberofemployees of lead
     from
         {{ ref('stg_cws__trial_requests')}}
