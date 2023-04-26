@@ -25,13 +25,13 @@ invoices as (
           , customer_address as customer_address
           , customer_email as customer_email
           , customer_name as customer_name
-          , customer_shipping as customer_shipping
           , TRIM(customer_shipping:"address":"line1",'"') as line1
           , TRIM(customer_shipping:"address":"line2",'"') as line2
           , TRIM(customer_shipping:"address":"postal_code",'"') as postal_code
           , TRIM(customer_shipping:"address":"city",'"') as city
           , TRIM(customer_shipping:"address":"state",'"') as state
           , TRIM(customer_shipping:"address":"country",'"') as country
+          , TRIM(customer_shipping:"name",'"') as customer_full_name
           , customer_tax_exempt as customer_tax_exempt
           , customer_tax_ids as customer_tax_ids
           , default_tax_rates as default_tax_rates
