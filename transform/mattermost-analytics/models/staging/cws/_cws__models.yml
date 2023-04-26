@@ -10,7 +10,9 @@ models:
         description: The trial request's ID.
         tests:
           - not_null
-          - unique
+          # Disabled for now as there's a bug with duplicate records being synced. However the downstream model that is
+          # currently using these data is doing deduplication, so results are as expected.
+          # - unique
       # User info
       - name: name
         description: The user's full name
