@@ -13,7 +13,7 @@ invoice_line_items as (
         , discountable as discountable
         , discounts as discounts
         , discount_amounts as discount_amounts
-        , id as id
+        , id as invoice_line_item_id
         , invoice as invoice
         , invoice_item as invoice_item
         , livemode as livemode

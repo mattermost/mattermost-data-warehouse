@@ -41,7 +41,7 @@ invoices as (
           , ending_balance as ending_balance
           , footer as footer
           , hosted_invoice_url as hosted_invoice_url
-          , id as id
+          , id as invoice_id
           , invoice_pdf as invoice_pdf
           , lines as lines
           , livemode as livemode
