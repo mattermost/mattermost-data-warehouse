@@ -55,4 +55,4 @@ where
     -- Skip invalid emails
     is_valid_email
 -- Update oldest lead
-qualify row_number() over (partition by email order by created_at asc) = 1
+qualify row_number() over (partition by tr.normalized_email order by created_at asc) = 1
