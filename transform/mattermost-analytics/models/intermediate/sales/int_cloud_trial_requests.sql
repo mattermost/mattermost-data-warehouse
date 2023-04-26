@@ -9,8 +9,8 @@ WITH customers as (
         { { dbt_utils.star(ref('stg_stripe__customers')) } }
     FROM
         { { ref('stg_stripe__customers') } }
-    where
-        created_at >= '2023-04-22' -- to be removed
+    -- where
+    --     created_at >= '2023-04-22' -- to be removed
 ),
 subscriptions as (
     SELECT
