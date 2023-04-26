@@ -47,7 +47,6 @@ WITH latest_credit_card_address AS (
         onprem_subscriptions.stripe_charge_id,
         onprem_subscriptions.invoice_quantity,
         onprem_subscriptions.sku as sku,
-        --products.pricebookentryid,
         to_varchar(subscriptions.actual_renewal_at, 'yyyy-mm-dd"T"hh24:mi:ss"Z"') as actual_renewal_at,
         dateadd(day, 1, subscriptions.actual_renewal_at::date) as renewal_start_date,
         dateadd(year, 1, subscriptions.actual_renewal_at::date) as renewal_end_date,
@@ -79,7 +78,6 @@ WITH latest_credit_card_address AS (
     FROM {{ ref('stg_stripe__customers') }} customers
         JOIN {{ ref('int_stripe_onprem_subscriptions') }} onprem_subscriptions ON customers.customer_id = onprem_subscriptions.stripe_customer_id
         JOIN {{ ref('stg_stripe__subscriptions') }} subscriptions ON onprem_subscriptions.subscription_id = subscriptions.subscription_id
-        --JOIN {{ source('blapi','products') }} products ON onprem_subscriptions.sku = products.sku
         LEFT JOIN {{ ref('stg_stripe__subscriptions') }} renewed_subscriptions
             ON subscriptions.subscription_id = renewed_subscriptions.renewed_from_subscription_id
         LEFT JOIN {{ ref('int_stripe_onprem_subscriptions') }} renewed_from_subscription ON subscriptions.renewed_from_subscription_id = renewed_from_subscription.subscription_id
