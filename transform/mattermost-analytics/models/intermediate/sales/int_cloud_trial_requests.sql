@@ -6,21 +6,28 @@
 
 WITH customers as (
     SELECT
-        { { dbt_utils.star(ref('stg_stripe__customers')) } }
+        customer_id,
+        email,
+        name as customer_name
     FROM
         { { ref('stg_stripe__customers') } }
-    -- where
-    --     created_at >= '2023-04-22' -- to be removed
+    where
+        created_at >= '2023-04-27' -- only select customers after the cloud release.
 ),
 subscriptions as (
     SELECT
-        { { dbt_utils.star(ref('stg_stripe__subscriptions')) } }
+        subscription_id,
+        trial_start_at,
+        trial_end_at,
+        product_id
     FROM
         { { ref('stg_stripe__subscriptions') } }
 ),
 products as (
     SELECT
-        { { dbt_utils.star(ref('stg_stripe__products')) } }
+        product_id,
+        name as product_name,
+        sku as product_sku
     FROM
         { { ref('stg_stripe__products') } }
 ),
