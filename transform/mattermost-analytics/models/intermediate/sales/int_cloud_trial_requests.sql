@@ -1,18 +1,12 @@
-{{
-    config({
-        "materialized": "table"
-    })
-}}
-
 WITH customers as (
     SELECT
         customer_id,
         email,
         name as customer_name
     FROM
-        { { ref('stg_stripe__customers') } }
+        {{ ref('stg_stripe__customers') }}
     where
-        created_at >= '2023-04-27' -- only select customers after the cloud release.
+        created_at >= '2023-04-27' -- only select customers after the release.
 ),
 subscriptions as (
     SELECT
@@ -21,7 +15,7 @@ subscriptions as (
         trial_end_at,
         product_id
     FROM
-        { { ref('stg_stripe__subscriptions') } }
+        {{ ref('stg_stripe__subscriptions') }}
 ),
 products as (
     SELECT
@@ -29,7 +23,7 @@ products as (
         name as product_name,
         sku as product_sku
     FROM
-        { { ref('stg_stripe__products') } }
+        {{ ref('stg_stripe__products') }}
 ),
 customers_with_cloud_enterprise_trial as (
     select
@@ -47,8 +41,4 @@ customers_with_cloud_enterprise_trial as (
 select
     *
 from
-    customers_with_cloud_enterprise_trial
-
--- {% if is_incremental() %}
---     WHERE received_at > (SELECT MAX(received_at) FROM {{ this }}) 
---     {% endif %}
+    customers_with_cloud_enterprise_trial;
