@@ -38,30 +38,34 @@ models:
       +materialized: view
       # Ideally this would have been named staging. Unfortunately there's already a schema with that name.
       schema: dbt_staging
-      tags: ['staging', 'hourly']
+      tags: ['staging', 'nightly']
     intermediate:
       +materialized: ephemeral
       tags: ['intermediate']
       data_eng:
         schema: int_data_eng
-        tags: ['hourly']
-      mlt:
-        schema: int_mlt
-        tags: ['hourly']
+        tags: ['nightly']
       web_app:
         schema: int_web_app
-        tags: ['hourly']
+        tags: ['nightly']
       sales:
         schema: int_sales
         tags: ['hourly']
+      
     marts:
       +materialized: table
       tags: ['marts']
       data_eng:
         schema: mart_data_eng
-        tags: ['hourly']
+        tags: ['nightly']
       web_app:
         schema: mart_web_app
+        tags: ['nightly']
+      release:
+        schema: mart_release
+        tags: ['nightly']
+      sales:
+        schema: mart_sales
         tags: ['hourly']
     utilities:
       +materialized: table
@@ -91,3 +95,7 @@ vars:
     staging_prefixes: ['stg_', 'base_']
     marts_prefixes: ['fct_', 'dim_', 'grp_']
 
+    # Community Server ID
+  community_server_id : 93mykbogbjfrbbdqphx3zhze5c
+    # Salesforce id for cloud enterprise trial campaign
+  cloud_enterprise_trial_salesforce_id: 701Dm000000gpPZIAY
