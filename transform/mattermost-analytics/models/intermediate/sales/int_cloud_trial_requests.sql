@@ -40,7 +40,7 @@ customers_with_cloud_enterprise_trial as (
         subscriptions.subscription_id,
         subscriptions.trial_start_at,
         subscriptions.trial_end_at,
-        products.id,
+        products.product_id,
         products.name as product_name
     from
         customers
