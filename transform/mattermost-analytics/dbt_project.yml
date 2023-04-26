@@ -95,3 +95,6 @@ vars:
 
     # Community Server ID
   community_server_id : 93mykbogbjfrbbdqphx3zhze5c
+
+  # Salesforce variables
+  in_product_trial_campaign_id: 7013p000001NkNoAAK
