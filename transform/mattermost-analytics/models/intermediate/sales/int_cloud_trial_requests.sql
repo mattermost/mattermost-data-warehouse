@@ -47,4 +47,4 @@ customers_with_cloud_enterprise_trial as (
 select
     *
 from
-    customers_with_cloud_enterprise_trial;
+    customers_with_cloud_enterprise_trial
