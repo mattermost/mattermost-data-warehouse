@@ -110,7 +110,7 @@ renamed as (
         , netsuite_conn__credit_hold__c as netsuite_conn__credit_hold__c
         , netsuite_conn__netsuite_id__c as netsuite_conn__netsuite_id__c
         , netsuite_conn__netsuite_sync_err__c as netsuite_conn__netsuite_sync_err__c
-        , netsuite_conn__pushed_from_opportun as netsuite_conn__pushed_from_opportun
+        , netsuite_conn__pushed_from_opportunity__c as netsuite_conn__pushed_from_opportunity__c
         , netsuite_conn__push_to_netsuite__c as netsuite_conn__push_to_netsuite__c
         , netsuite_conn__sync_in_progress__c as netsuite_conn__sync_in_progress__c
         , offer_detail__c as offer_detail__c

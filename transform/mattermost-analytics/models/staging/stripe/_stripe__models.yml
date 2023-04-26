@@ -120,6 +120,8 @@ models:
         description: The license ID for the subscription
       - name: purchase_order_num
         description: The purchase order number for the subscription
+      - name: sfdc_migrated_opportunity_sfid
+        description: The Opportunity SFID of the migrated subscription        
       - name: edition
         description: The edition of the subscription
       - name: product

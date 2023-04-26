@@ -1,18 +1,6 @@
 version: 2
 
 sources:
-  - name: blapi
-    database: 'ANALYTICS'
-    schema: blapi
-    loader: Stitch
-    description: |
-      BLAPI data.
-    tags:
-      - stitch
-      
-    tables:
-      - name: products
-
   - name: stripe_raw
     database: 'ANALYTICS'
     schema: stripe_raw

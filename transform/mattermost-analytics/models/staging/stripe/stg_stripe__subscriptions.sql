@@ -28,6 +28,7 @@ subscriptions as (
         metadata:"cws-renewed-from-stripe-id"::varchar as renewed_from_subscription_id,
         metadata:"cws-license-id"::varchar as license_id,
         metadata:"internal_purchase_order"::varchar as purchase_order_number,
+        metadata:"sfdc-migrated-opportunity-sfid"::varchar as sfdc_migrated_opportunity_sfid,
         plan:"name"::varchar as edition,
         plan:"product"::varchar as product,
         TO_TIMESTAMP_NTZ(metadata:"cws-date-converted-to-paid"::int) as converted_to_paid_at,
