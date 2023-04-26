@@ -17,6 +17,7 @@ WITH customers as (
 subscriptions as (
     SELECT
         subscription_id,
+        customer_id,
         trial_start_at,
         trial_end_at,
         product_id
