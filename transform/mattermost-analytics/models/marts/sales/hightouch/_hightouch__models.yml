@@ -24,10 +24,10 @@ models:
         description: The lower bound of the company size bucket.
       - name: company_name
         description: The company's name.
-      - name: email
+      - name: normalized_email
         description: |
           The contact email provided in the signup form. If not filled in, it's the email of the user 
-          requesting the trial.
+          requesting the trial. Email is lowercased in order to match Salesforce lowercased emails.
         tests:
           - not_null
           - dbt_utils.not_empty_string
@@ -49,3 +49,9 @@ models:
         description: Whether there's already a lead with the same email.
       - name: is_valid_email
         description: Whether the email is valid. Used to skip invalid emails.
+      - name: lead_id
+        description: The id of the lead to update (if any exists), matched on email.
+      - name: campaign_member_status
+        description: The campaign member's status.
+      - name: campaign_id
+        description: The id of the campaign to attribute this lead to.

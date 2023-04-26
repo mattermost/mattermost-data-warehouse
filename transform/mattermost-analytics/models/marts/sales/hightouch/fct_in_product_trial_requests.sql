@@ -44,7 +44,7 @@ select
     l.lead_id is not null as is_existing_lead,
     -- Campaign member fields
     l.lead_id,
-    'Responded' as status,
+    'Responded' as campaign_member_status,
     '{{ var('in_product_trial_campaign_id') }}' as campaign_id,
     -- Extra validation
     {{ validate_email('tr.normalized_email') }} as is_valid_email
