@@ -50,7 +50,7 @@ WITH latest_credit_card_address AS (
         to_varchar(subscriptions.actual_renewal_at, 'yyyy-mm-dd"T"hh24:mi:ss"Z"') as actual_renewal_at,
         dateadd(day, 1, subscriptions.actual_renewal_at::date) as renewal_start_date,
         dateadd(year, 1, subscriptions.actual_renewal_at::date) as renewal_end_date,
-        renewed_from_subscription.sfdc_migrated_opportunity_id,
+        renewed_from_subscription.sfdc_migrated_opportunity_sfid,
         CASE 
             WHEN renewed_from_subscription.subscription_id is not null 
             THEN true
