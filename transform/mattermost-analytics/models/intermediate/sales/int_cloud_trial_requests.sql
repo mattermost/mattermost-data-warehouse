@@ -36,7 +36,7 @@ customers_with_cloud_enterprise_trial as (
     select
         customers.customer_id,
         customers.email,
-        customer.name as customer_name,
+        customers.name as customer_name,
         subscriptions.subscription_id,
         subscriptions.trial_start_at,
         subscriptions.trial_end_at,
