@@ -39,6 +39,8 @@ customers_with_cloud_enterprise_trial as (
         customers.customer_id,
         customers.email,
         customers.name as customer_name,
+        customers.contact_first_name as customer_first_name,
+        customers.contact_last_name as customer_last_name,
         subscriptions.subscription_id,
         subscriptions.trial_start_at,
         subscriptions.trial_end_at,
