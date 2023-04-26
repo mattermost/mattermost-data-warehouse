@@ -8,7 +8,7 @@ WITH customers as (
     SELECT
         customer_id,
         email,
-        name as customer_name
+        name
     FROM
         {{ ref('stg_stripe__customers') }}
     where
@@ -27,22 +27,27 @@ subscriptions as (
 products as (
     SELECT
         product_id,
-        name as product_name,
-        sku as product_sku
+        name,
+        sku
     FROM
         {{ ref('stg_stripe__products') }}
 ),
 customers_with_cloud_enterprise_trial as (
     select
-        customers.*,
-        subscriptions.*,
-        products.*
+        customers.customer_id,
+        customers.email,
+        customer.name as customer_name,
+        subscriptions.subscription_id,
+        subscriptions.trial_start_at,
+        subscriptions.trial_end_at,
+        products.id,
+        products.name as product_name
     from
         customers
         left join subscriptions on subscriptions.customer_id = customers.customer_id
         left join products on subscriptions.product_id = products.product_id
         where CURRENT_DATE < subscriptions.trial_end_at
-        AND products.product_sku = 'cloud-enterprise' -- TBD if we need this after yesterday's call with Nick.
+        AND products.sku = 'cloud-enterprise' -- TBD if we need this after yesterday's call with Nick.
 )
 
 select
