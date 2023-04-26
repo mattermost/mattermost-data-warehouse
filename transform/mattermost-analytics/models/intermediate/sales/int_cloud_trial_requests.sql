@@ -34,7 +34,7 @@ customers_with_cloud_enterprise_trial as (
         left join subscriptions on subscriptions.customer_id = customers.customer_id
         left join products on subscriptions.product_id = products.product_id
         where CURRENT_DATE < subscriptions.trial_end_at
-        AND products.sku = `cloud-enterprise` -- TBD if we need this after yesterday's call with Nick.
+        AND products.sku = 'cloud-enterprise' -- TBD if we need this after yesterday's call with Nick.
 )
 
 select
