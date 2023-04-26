@@ -51,7 +51,7 @@ WITH latest_credit_card_address AS (
         to_varchar(subscriptions.actual_renewal_at, 'yyyy-mm-dd"T"hh24:mi:ss"Z"') as actual_renewal_at,
         dateadd(day, 1, subscriptions.actual_renewal_at::date) as renewal_start_date,
         dateadd(year, 1, subscriptions.actual_renewal_at::date) as renewal_end_date,
-        renewed_from_subscription.sfdc_migrated_opportunity_sfid,
+        renewed_from_subscription.sfdc_migrated_opportunity_id,
         CASE 
             WHEN renewed_from_subscription.subscription_id is not null 
             THEN true
@@ -111,7 +111,7 @@ WITH latest_credit_card_address AS (
                 '78157189-82de-4f4d-9db3-88c601fbc22e',
                 customers_with_onprem_subs.customer_id || customers_with_onprem_subs.email)
         ) AS contact_external_id,
-        contact.contact_id as contact_sfid,
+        contact.contact_id as contact_id,
         account.account_id as account_id,
         account.dwh_external_id__c as contact_account_external_id,
         ROW_NUMBER() OVER (PARTITION BY customers_with_onprem_subs.stripe_charge_id ORDER BY contact.last_modified_at DESC) as row_num
@@ -124,7 +124,7 @@ WITH latest_credit_card_address AS (
     SELECT
         customers_with_onprem_subs.stripe_charge_id,
             opportunity.dwh_external_id__c as opportunity_external_id,
-        opportunity.opportunity_id as opportunity_sfid,
+        opportunity.opportunity_id as opportunity_id,
         ROW_NUMBER() OVER (PARTITION BY customers_with_onprem_subs.stripe_charge_id ORDER BY opportunity.last_modified_at DESC) as row_num
     FROM customers_with_onprem_subs
     LEFT JOIN {{ ref('stg_salesforce__opportunity') }} opportunity
@@ -132,7 +132,7 @@ WITH latest_credit_card_address AS (
 ),  customers_previous_opportunity AS (
     SELECT 
         customers_with_onprem_subs.subscription_id, 
-        opportunity.opportunity_id as previous_opportunity_sfid,
+        opportunity.opportunity_id as previous_opportunity_id,
         opportunity.amount as up_for_renewal_arr,
         ROW_NUMBER() OVER (PARTITION BY customers_with_onprem_subs.stripe_charge_id ORDER BY opportunity.last_modified_at DESC) as row_num
     FROM customers_with_onprem_subs
@@ -147,13 +147,13 @@ WITH latest_credit_card_address AS (
             opportunitylineitem.dwh_external_id__c,
             UUID_STRING('78157189-82de-4f4d-9db3-88c601fbc22e', customers_opportunity.opportunity_external_id || 'oli')
         ) AS opportunitylineitem_external_id,
-        opportunitylineitem.opportunity_line_item as opportunitylineitem_sfid,
+        opportunitylineitem.opportunity_line_item as opportunity_line_item,
         ROW_NUMBER() OVER (PARTITION BY customers_with_onprem_subs.stripe_charge_id ORDER BY opportunitylineitem.last_modified_at DESC) as row_num
     FROM customers_with_onprem_subs
     LEFT JOIN customers_opportunity
         ON customers_with_onprem_subs.stripe_charge_id = customers_opportunity.stripe_charge_id
     LEFT JOIN {{ ref('stg_salesforce__opportunity_line_item') }} opportunitylineitem
-        ON customers_opportunity.opportunity_sfid = opportunitylineitem.opportunity_id
+        ON customers_opportunity.opportunity_id = opportunitylineitem.opportunity_id
 )
 SELECT
     customers_with_onprem_subs.*,
@@ -165,12 +165,12 @@ SELECT
     customers_account.account_type,
     coalesce(customers_account.account_id, customers_contact.account_id) as account_id,
     customers_contact.contact_external_id,
-    customers_contact.contact_sfid,
+    customers_contact.contact_id,
     customers_opportunity.opportunity_external_id,
-    customers_opportunity.opportunity_sfid,
+    customers_opportunity.opportunity_id,
     customers_oli.opportunitylineitem_external_id,
-    customers_oli.opportunitylineitem_sfid,
-    customers_previous_opportunity.previous_opportunity_sfid,
+    customers_oli.opportunity_line_item,
+    customers_previous_opportunity.previous_opportunity_id,
     customers_previous_opportunity.up_for_renewal_arr
 FROM customers_with_onprem_subs
 JOIN customers_account
