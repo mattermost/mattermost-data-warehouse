@@ -34,7 +34,7 @@ products as (
     FROM
         {{ ref('stg_stripe__products') }}
 ),
-customers_with_cloud_enterprise_trial as (
+cloud_trial_requests as (
     select
         customers.customer_id,
         customers.email,
@@ -57,4 +57,4 @@ customers_with_cloud_enterprise_trial as (
 select
     *
 from
-    customers_with_cloud_enterprise_trial
+    cloud_trial_requests
