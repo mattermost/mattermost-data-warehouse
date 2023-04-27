@@ -16,14 +16,15 @@ with trial_requests as (
             name,
             left(email, 40)
         ) as name,                                          -- Mapped to field name of lead
-        first_name,                                         -- Mapped to field first_name of lead
-        last_name,                                          -- Mapped to field last_name of lead
+        left(split_part(tr.email, '@', 1), 40) as email_prefix -- To be used in case name is missing.
+        coalesce(first_name, email_prefix) as first_name,   -- Mapped to field first_name of lead
+        coalesce(last_name, email_prefix) as last_name,     -- Mapped to field last_name of lead
         case
         {% for bucket, size_lower in size_buckets.items() -%}
             when company_size_bucket = '{{bucket}}' then {{size_lower}}
         {% endfor -%}
         end as company_size,                                -- Mapping lower threshold
-        company_name,                                       -- Mapped to field company of lead
+        coalesce(company_name, 'Unknown') as company_name,  -- Mapped to field company of lead
         -- Salesforce lowercases email
         lower(coalesce(contact_email, email)) as normalized_email, -- Mapped to field email of lead
         case
