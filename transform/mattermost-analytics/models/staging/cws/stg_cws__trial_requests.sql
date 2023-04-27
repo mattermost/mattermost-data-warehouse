@@ -23,6 +23,9 @@ renamed as (
             when contactlastname = '' then null
             else contactlastname
         end as last_name,
+        -- Attempt to extract first and last name from name.
+        trim(substring(name, 1, charindex(' ', name) - 1)) as extracted_first_name,
+        trim(substring(name, charindex(' ', name) + 1, len(name) - CHARINDEX(' ', name))) as extracted_last_name,
         email,
         case
             when contactemail = '' then null

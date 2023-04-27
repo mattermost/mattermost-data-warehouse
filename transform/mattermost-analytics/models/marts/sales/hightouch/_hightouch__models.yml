@@ -18,19 +18,28 @@ models:
           - not_null
           - dbt_utils.not_empty_string
       - name: first_name
-        description: The user's first name.
+        description: | 
+          The user's first name. This value may originate from:
+            - First name (if directly provided).
+            - By splitting the name string on first space and keeping the first part.
+            - If none of the above are available, the first 40 characters of the "username" part of the email.
         tests:
           - dbt_utils.not_empty_string
         tags: ['pii']
       - name: last_name
-        description: The user's last name.
+        description: | 
+          The user's last name. This value may originate from:
+            - Last name (if directly provided).
+            - By splitting the name string on first space and keeping the second part.
+            - If none of the above are available, the first 40 characters of the "username" part of the email.
         tests:
           - dbt_utils.not_empty_string
         tags: ['pii']
       - name: company_size
         description: The lower bound of the company size bucket.
       - name: company_name
-        description: The company's name.
+        description: |
+          The company's name. If not provided, `Unknown` is used.
         tests:
           - dbt_utils.not_empty_string
       - name: normalized_email

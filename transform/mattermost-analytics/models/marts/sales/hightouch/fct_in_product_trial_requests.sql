@@ -21,12 +21,12 @@ with trial_requests as (
         left(split_part(normalized_email, '@', 1), 40) as email_prefix, -- To be used in case name is missing.
         coalesce(
             first_name,
-            split_part(name, ' ', 1),
+            case when extracted_first_name = '' then null else extracted_first_name end,
             email_prefix
         ) as first_name,                                        -- Mapped to field first_name of lead
         coalesce(
             last_name,
-            case when split_part(name, ' ', 2) != '' then split_part(name, ' ', 2) else email_prefix end
+            case when extracted_last_name = '' then null else extracted_last_name end,
         ) as last_name,         -- Mapped to field last_name of lead
         case
         {% for bucket, size_lower in size_buckets.items() -%}
