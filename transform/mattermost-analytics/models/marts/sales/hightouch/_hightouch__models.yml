@@ -19,14 +19,20 @@ models:
           - dbt_utils.not_empty_string
       - name: first_name
         description: The user's first name.
+        tests:
+          - dbt_utils.not_empty_string
         tags: ['pii']
       - name: last_name
         description: The user's last name.
+        tests:
+          - dbt_utils.not_empty_string
         tags: ['pii']
       - name: company_size
         description: The lower bound of the company size bucket.
       - name: company_name
         description: The company's name.
+        tests:
+          - dbt_utils.not_empty_string
       - name: normalized_email
         tags: ['pii']
         description: |
