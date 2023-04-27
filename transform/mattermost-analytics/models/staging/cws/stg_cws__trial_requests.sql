@@ -24,8 +24,23 @@ renamed as (
             else contactlastname
         end as last_name,
         -- Attempt to extract first and last name from name.
-        trim(substring(name, 1, charindex(' ', name) - 1)) as extracted_first_name,
-        trim(substring(name, charindex(' ', name) + 1, len(name) - CHARINDEX(' ', name))) as extracted_last_name,
+        trim(name) as _name,
+        case
+            -- Empty string
+            when _name = '' then null
+            -- A whitespace exists in the string, split it
+            when charindex(' ', _name) > 0 then substring(name, 1, charindex(' ', name) - 1)
+            -- No whitespace, return the full string
+            else _name
+        end as extracted_first_name,
+        case
+            -- Empty string
+            when _name = '' then null
+            -- A whitespace exists
+            when charindex(' ', _name) > 0 then substring(name, charindex(' ', name) + 1, len(name) - charindex(' ', name))
+            -- No whitespace, can't find it
+            else null
+        end as extracted_last_name,
         email,
         case
             when contactemail = '' then null
