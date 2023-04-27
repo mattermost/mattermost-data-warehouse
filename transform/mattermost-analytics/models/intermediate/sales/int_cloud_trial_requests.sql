@@ -14,7 +14,7 @@ WITH customers as (
     FROM
         {{ ref('stg_stripe__customers') }}
     where
-        created_at >= '2022-04-27' -- only select customers after the release.
+        created_at >= '2023-04-27' -- only select customers after the release.
 ),
 subscriptions as (
     SELECT
