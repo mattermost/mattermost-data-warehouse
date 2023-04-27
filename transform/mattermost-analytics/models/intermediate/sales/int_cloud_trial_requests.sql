@@ -20,6 +20,7 @@ subscriptions as (
     SELECT
         subscription_id,
         cws_installation,
+        cws_dns,
         customer_id,
         trial_start_at,
         trial_end_at,
@@ -45,15 +46,19 @@ cloud_trial_requests as (
         subscriptions.subscription_id,
         subscriptions.trial_start_at,
         subscriptions.trial_end_at,
+        subscriptions.cws_installation,
         products.product_id,
         products.name as product_name
     from
         customers
+        -- will lead to rows fanning out since a customer can have many subscriptions
         left join subscriptions on subscriptions.customer_id = customers.customer_id
         left join products on subscriptions.product_id = products.product_id
         where CURRENT_DATE < subscriptions.trial_end_at
-        AND cws_installation is not null -- only get cloud subscriptions
-        AND products.sku = 'cloud-enterprise' -- TBD if we need this after yesterday's call with Nick.
+        -- only get cloud subscriptions
+        AND cws_installation is not null
+        -- TBD if we need this after yesterday's call with Nick.
+        AND products.sku = 'cloud-enterprise'
 )
 
 select
