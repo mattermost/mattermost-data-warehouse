@@ -9,6 +9,8 @@ with cloud_trial_requests as (
 )
 select
     ctr.email,
+    l.lead_id as existing_lead_id,
+    '{{ var('cloud_enterprise_trial_campaign_id') }}' as campaign_id,
     l.lead_id is not null as is_existing_lead,
     cm.campaign_member_id is not null as is_existing_campaign_member,
     -- Campaign member status
