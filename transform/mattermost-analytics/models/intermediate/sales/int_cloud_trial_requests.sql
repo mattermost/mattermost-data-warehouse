@@ -54,7 +54,7 @@ cloud_trial_requests as (
         -- will lead to rows fanning out since a customer can have many subscriptions
         left join subscriptions on subscriptions.customer_id = customers.customer_id
         left join products on subscriptions.product_id = products.product_id
-        where CURRENT_DATE < subscriptions.trial_end_at
+        -- where CURRENT_DATE < subscriptions.trial_end_at
         -- only get cloud subscriptions
         AND cws_installation is not null
         -- TBD if we need this after yesterday's call with Nick.
