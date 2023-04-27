@@ -14,7 +14,7 @@ WITH customers as (
     FROM
         {{ ref('stg_stripe__customers') }}
     where
-        created_at >= '2022-01-01' -- only select customers after the release.
+        created_at >= '2022-04-27' -- only select customers after the release.
 ),
 subscriptions as (
     SELECT
@@ -51,13 +51,13 @@ cloud_trial_requests as (
         products.name as product_name
     from
         customers
-        -- will lead to rows fanning out since a customer can have many subscriptions
+        -- Will lead to rows fanning out since a customer can have many subscriptions
         left join subscriptions on subscriptions.customer_id = customers.customer_id
         left join products on subscriptions.product_id = products.product_id
-        -- where CURRENT_DATE < subscriptions.trial_end_at
-        -- only get cloud subscriptions
+        -- Trial data end is in the future
+        where CURRENT_DATE < subscriptions.trial_end_at
+        -- Only get cloud subscriptions
         AND cws_installation is not null
-        -- TBD if we need this after yesterday's call with Nick.
         AND products.sku = 'cloud-enterprise'
 )
 
