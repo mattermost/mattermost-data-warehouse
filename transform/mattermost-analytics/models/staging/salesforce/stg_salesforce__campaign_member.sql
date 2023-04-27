@@ -55,7 +55,6 @@ renamed as (
         createddate as created_at,
         isdeleted as is_deleted,
         lastmodifieddate as last_modified_at,
-
         systemmodstamp as system_modstamp_at,
 
         -- Custom columns

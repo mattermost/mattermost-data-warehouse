@@ -52,6 +52,8 @@ models:
         description: Number of end users for the server.
       - name: is_existing_lead
         description: Whether there's already a lead with the same email.
+      - name: is_existing_campaign_member
+        description: Whether there's already a campaign member for the same email and lead.
       - name: is_valid_email
         description: Whether the email is valid. Used to skip invalid emails.
       - name: lead_id

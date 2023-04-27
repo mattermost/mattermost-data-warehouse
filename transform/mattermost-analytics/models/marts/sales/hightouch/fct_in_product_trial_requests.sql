@@ -43,6 +43,7 @@ select
     tr.*,
     l.lead_id is not null as is_existing_lead,
     -- Campaign member fields
+    cm.campaign_member_id is not null as is_existing_campaign_member,
     l.lead_id,
     'Responded' as campaign_member_status,
     '{{ var('in_product_trial_campaign_id') }}' as campaign_id,
@@ -51,8 +52,10 @@ select
 from
     trial_requests tr
     left join {{ ref('stg_salesforce__lead') }} l on tr.normalized_email = l.email
+    left join {{ ref('stg_salesforce__campaign_member') }} cm
+        on l.lead_id = cm.lead_id and tr.normalized_email = cm.email and cm.campaign_id = '{{ var('in_product_trial_campaign_id') }}'
 where
     -- Skip invalid emails
     is_valid_email
 -- Update oldest lead
-qualify row_number() over (partition by tr.normalized_email order by created_at asc) = 1
+qualify row_number() over (partition by tr.normalized_email order by l.created_at asc) = 1
