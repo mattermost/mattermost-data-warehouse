@@ -17,11 +17,11 @@ select
         ELSE 'Email Verified'
     END as campaign_member_status,
     -- Extra validation
-    {{ validate_email('tr.email') }} as is_valid_email
+    {{ validate_email('ctr.email') }} as is_valid_email
 from
     cloud_trial_requests ctr
     left join {{ ref('stg_salesforce__lead') }} l on ctr.email = l.email
     left join {{ ref('stg_salesforce__campaign_member') }} cm 
-        on l.lead_id = cm.lead_id and tr.email = cm.email and cm.campaign_id = '{{ var('cloud_enterprise_trial_campaign_id') }}'
+        on l.lead_id = cm.lead_id and ctr.email = cm.email and cm.campaign_id = '{{ var('cloud_enterprise_trial_campaign_id') }}'
     where 
     is_valid_email
