@@ -81,6 +81,6 @@ models:
         description: The campaign member's status.
         tests:
           - accepted_values:
-              values: [Account created, Email verified, Workspace created, null]
+              values: ['Account created', 'Email verified', 'Workspace created', null]
       - name: is_valid_email
         description: Whether the email is valid. Used to skip invalid emails.
