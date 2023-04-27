@@ -38,7 +38,8 @@ models:
       +materialized: view
       # Ideally this would have been named staging. Unfortunately there's already a schema with that name.
       schema: dbt_staging
-      tags: ['staging', 'nightly']
+      # Staging layer contains views. Running on hourly mode should introduce manageable load.
+      tags: ['staging', 'hourly']
     intermediate:
       +materialized: ephemeral
       tags: ['intermediate']
@@ -62,7 +63,10 @@ models:
         tags: ['nightly']
       sales:
         schema: mart_sales
-        tags: ['hourly']
+        tags: ['nightly']
+        hightouch:
+          # Hightouch syncs should be as close to real time as possible.
+          tags: ['hourly']
     utilities:
       +materialized: table
       schema: utilities
