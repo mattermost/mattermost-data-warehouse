@@ -26,6 +26,12 @@ models:
       - name: last_name
         description: Contact's last name.
         tags: ['pii']
+      - name: extracted_first_name
+        description: Contact's first name, as extracted from column name.
+        tags: ['pii']
+      - name: extracted_last_name
+        description: Contact's last name, as extracted from column name.
+        tags: ['pii']
       - name: email
         description: The user's email (TBD).
         tags: ['pii']
