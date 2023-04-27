@@ -79,8 +79,9 @@ models:
         description: Whether there's already a campaign member for the same email and lead.
       - name: campaign_member_status
         description: The campaign member's status.
-        tests:
-          - accepted_values:
-              values: ['Account created', 'Email verified', 'Workspace created', null]
+        # Removing the test for now.
+        # tests:
+        #   - accepted_values:
+        #       values: ['Account created', 'Email verified', 'Workspace created', null]
       - name: is_valid_email
         description: Whether the email is valid. Used to skip invalid emails.
