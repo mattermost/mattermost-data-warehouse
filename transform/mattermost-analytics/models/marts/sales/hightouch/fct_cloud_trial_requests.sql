@@ -14,7 +14,7 @@ select
     -- Campaign member status
     CASE 
         WHEN ctr.cws_installation is not null then 'Workspace Created'
-        ELSE 'Email Verified'
+        ELSE null
     END as campaign_member_status,
     -- Extra validation
     {{ validate_email('ctr.email') }} as is_valid_email
