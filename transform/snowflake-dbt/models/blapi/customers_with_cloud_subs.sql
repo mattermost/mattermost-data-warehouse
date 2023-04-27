@@ -123,17 +123,24 @@ WITH latest_credit_card_address AS (
     SELECT
         customers_with_cloud_subs.subscription_id,
         COALESCE(
-            opportunity.dwh_external_id__c,
+            o1.dwh_external_id__c,
+            o2.dwh_external_id__c,
             UUID_STRING(
                 '78157189-82de-4f4d-9db3-88c601fbc22e',
                 customers_with_cloud_subs.subscription_id)
         ) AS opportunity_external_id,
-        opportunity.sfid as opportunity_sfid,
-        ROW_NUMBER() OVER (PARTITION BY customers_with_cloud_subs.subscription_id ORDER BY opportunity.lastmodifieddate DESC) as row_num
+        COALESCE(o1.sfid, o2.sfid) as opportunity_sfid,
+        COALESCE(o1.lastmodifieddate, o2.lastmodifieddate) as opportunity_lastmodifieddate
     FROM customers_with_cloud_subs
-    LEFT JOIN {{ ref('opportunity') }}
-        ON customers_with_cloud_subs.subscription_id = opportunity.subs_id__c
-            AND customers_with_cloud_subs.end_date = opportunity.closedate
+    LEFT JOIN {{ ref('opportunity') }} o1
+        ON customers_with_cloud_subs.subscription_id = o1.subs_id__c
+            AND customers_with_cloud_subs.end_date = o1.closedate
+    LEFT JOIN "ANALYTICS".orgm.opportunity o2
+        ON UUID_STRING(
+            '78157189-82de-4f4d-9db3-88c601fbc22e',
+            customers_with_cloud_subs.subscription_id
+        ) = o2.dwh_external_id__c
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY subscription_id ORDER BY opportunity_lastmodifieddate DESC) = 1
 )
 SELECT
     customers_with_cloud_subs.*,
@@ -156,4 +163,3 @@ JOIN customers_contact
     AND customers_contact.row_num = 1
 JOIN customers_opportunity
     ON customers_with_cloud_subs.subscription_id = customers_opportunity.subscription_id
-    AND customers_opportunity.row_num = 1
