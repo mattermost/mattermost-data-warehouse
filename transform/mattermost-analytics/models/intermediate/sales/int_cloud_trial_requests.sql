@@ -19,6 +19,7 @@ WITH customers as (
 subscriptions as (
     SELECT
         subscription_id,
+        cws_installation,
         customer_id,
         trial_start_at,
         trial_end_at,
@@ -51,6 +52,7 @@ cloud_trial_requests as (
         left join subscriptions on subscriptions.customer_id = customers.customer_id
         left join products on subscriptions.product_id = products.product_id
         where CURRENT_DATE < subscriptions.trial_end_at
+        AND cws_installation is not null -- only get cloud subscriptions
         AND products.sku = 'cloud-enterprise' -- TBD if we need this after yesterday's call with Nick.
 )
 
