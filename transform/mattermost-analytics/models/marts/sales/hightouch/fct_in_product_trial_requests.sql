@@ -27,6 +27,7 @@ with trial_requests as (
         coalesce(
             last_name,
             case when extracted_last_name = '' then null else extracted_last_name end,
+            email_prefix
         ) as last_name,         -- Mapped to field last_name of lead
         case
         {% for bucket, size_lower in size_buckets.items() -%}
