@@ -38,7 +38,8 @@ models:
       +materialized: view
       # Ideally this would have been named staging. Unfortunately there's already a schema with that name.
       schema: dbt_staging
-      tags: ['staging', 'nightly']
+      # Staging layer contains views. Running on hourly mode should introduce manageable load.
+      tags: ['staging', 'hourly']
     intermediate:
       +materialized: ephemeral
       tags: ['intermediate']
@@ -48,10 +49,6 @@ models:
       web_app:
         schema: int_web_app
         tags: ['nightly']
-      sales:
-        schema: int_sales
-        tags: ['hourly']
-      
     marts:
       +materialized: table
       tags: ['marts']
@@ -66,7 +63,10 @@ models:
         tags: ['nightly']
       sales:
         schema: mart_sales
-        tags: ['hourly']
+        tags: ['nightly']
+        hightouch:
+          # Hightouch syncs should be as close to real time as possible.
+          tags: ['hourly']
     utilities:
       +materialized: table
       schema: utilities
@@ -80,7 +80,17 @@ seeds:
   dbt_project_evaluator:
     dbt_project_evaluator_exceptions:
       +enabled: false
-      
+
+  mattermost_analytics:
+    +enabled: true
+    salesforce:
+      +schema: seed_salesforce
+      country_codes:
+        # Override column types
+        +column_types:
+          code: varchar(2)
+          name: varchar(50)
+
 tests:
   dbt_project_evaluator:
     # Set DBT project
@@ -97,5 +107,7 @@ vars:
 
     # Community Server ID
   community_server_id : 93mykbogbjfrbbdqphx3zhze5c
-    # Salesforce id for cloud enterprise trial campaign
+
+  # Salesforce variables
+  in_product_trial_campaign_id: 7013p000001NkNoAAK
   cloud_enterprise_trial_salesforce_id: 701Dm000000gpPZIAY
