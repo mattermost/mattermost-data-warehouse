@@ -13,7 +13,7 @@ select
     cm.campaign_member_id is not null as is_existing_campaign_member,
     -- Campaign member status
     CASE 
-        WHEN ctr.cws is not null then 'Workspace Created'
+        WHEN ctr.cws_installation is not null then 'Workspace Created'
         ELSE 'Email Verified'
     END as campaign_member_status,
     -- Extra validation
