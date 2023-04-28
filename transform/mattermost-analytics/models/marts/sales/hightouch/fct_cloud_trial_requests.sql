@@ -4,11 +4,7 @@ with cloud_trial_requests_pre as (
         cws_installation
     from
         {{ ref('int_cloud_trial_requests') }} -- Fetch the most recent cloud trial
-        qualify row_number() over (
-            partition by email
-            order by
-                trial_start_at desc
-        ) = 1
+        qualify row_number() over (partition by email order by trial_start_at desc) = 1
 ),
 cloud_trial_requests as (
     select
@@ -33,11 +29,7 @@ cloud_trial_requests as (
     where
         is_valid_email
         and -- Rows may fan out in case of multiple leads with same email address, fetching the one with the latest created_at date.
-        qualify row_number() over (
-            partition by ctr.email
-            order by
-                l.created_at asc
-        ) = 1
+        qualify row_number() over (partition by ctr.email order by l.created_at asc) = 1
 )
 select
     *
