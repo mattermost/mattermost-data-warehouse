@@ -3,7 +3,7 @@ with cloud_trial_requests_pre as (
         email,
         cws_installation
     from
-        {{ ref('int_cloud_trial_requests') } } -- Fetch the most recent cloud trial
+        {{ ref('int_cloud_trial_requests') }} -- Fetch the most recent cloud trial
         qualify row_number() over (
             partition by email
             order by
