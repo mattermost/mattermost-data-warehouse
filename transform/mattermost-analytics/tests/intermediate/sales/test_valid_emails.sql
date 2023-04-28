@@ -1,6 +1,5 @@
 {{ config(
-    severity = 'warn',
-    error_if = '> 0'
+    severity = 'warn'
 ) }}
 
 select
@@ -12,4 +11,3 @@ from
     {{ ref('int_cloud_trial_requests') }}
 where
     not is_valid_email
-    or not is_valid_email
