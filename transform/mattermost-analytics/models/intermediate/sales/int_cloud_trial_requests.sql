@@ -1,10 +1,7 @@
 WITH customers as (
     SELECT
         customer_id,
-        email,
-        name,
-        contact_first_name,
-        contact_last_name
+        email
     FROM
         {{ ref('stg_stripe__customers') }}
     where
@@ -34,9 +31,6 @@ cloud_trial_requests as (
     select
         customers.customer_id,
         customers.email,
-        customers.name as customer_name,
-        customers.contact_first_name as customer_first_name,
-        customers.contact_last_name as customer_last_name,
         subscriptions.subscription_id,
         subscriptions.trial_start_at,
         subscriptions.trial_end_at,
