@@ -1,101 +1,42 @@
 version: 2
 
 models:
-  - name: int_customers_with_onprem_subs
-    description: Customers with OnPrem Subscriptions created from Stripe data.
-
-    columns:
-      - name: customer_id
-      - name: email
-      - name: first_name
-      - name: last_name
-      - name: domain
-      - name: subscription_id
-      - name: previous_stripe_charge_id
-      - name: start_date
-      - name: end_date
-      - name: total
-      - name: listed_total
-      - name: updated_at
-      - name: invoice_number
-      - name: stripe_charge_id
-      - name: invoice_quantity
-      - name: sku
-      - name: pricebookentryid
-      - name: actual_renewal_date
-      - name: renewal_start_date
-      - name: renewal_end_date
-      - name: sfdc_migrated_opportunity_sfid
-      - name: is_renewed
-      - name: renewed_from_total
-      - name: license_key
-      - name: purchase_order_num
-      - name: line1
-      - name: line2
-      - name: street_address
-      - name: postal_code
-      - name: city
-      - name: state
-      - name: country
-      - name: state_code
-      - name: country_code
-      - name: hightouch_sync_eligible
-      - name: account_external_id
-      - name: account_type
-      - name: account_sfid
-      - name: contact_external_id
-      - name: contact_sfid
-      - name: opportunity_external_id
-      - name: opportunity_sfid
-      - name: opportunitylineitem_external_id
-      - name: opportunitylineitem_sfid
-      - name: previous_opportunity_sfid
-      - name: up_for_renewal_arr
-
-
-  - name: int_stripe_onprem_subscriptions
+  - name: int_onprem_subscriptions
     description: |
       Reconstructed `onprem_subscriptions` table using Stripe events.
 
-    columns:
-      - name: sku
-      - name: stripe_charge_id
-      - name: invoice_number
-      - name: stripe_invoice_number
-      - name: invoice_quantity
-      - name: invoice_amount
-      - name: row_num
-      - name: billing
-      - name: billing_cycle_anchor
-      - name: cancel_at_period_end
-      - name: created
-      - name: current_period_end
-      - name: current_period_start
-      - name: trial_end
-      - name: trial_start
-      - name: quantity
-      - name: customer
-      - name: id
-      - name: livemode
-      - name: cws_dns
-      - name: cws_blapi_subscription
-      - name: cws_installation
-      - name: cws_installation_state
-      - name: billing_type
-      - name: renewed_from_sub_id
-      - name: license_id
-      - name: edition
-      - name: sfdc_migrated_opportunity_sfid
-      - name: purchase_order_num
-      - name: date_converted_to_paid
-      - name: license_end_date
-      - name: actual_renewal_date
-      - name: start
-      - name: status
-      - name: updated
-      - name: plan
-      - name: metadata
-      - name: ended_at
-      - name: canceled_at
-      - name: updated_by_event_type
-      - name: total_in_cents
+    columns:  
+      - name: opportunity_type 
+      - name: order_type 
+      - name: ownerid 
+      - name: stagename 
+      - name: opportunity_name 
+      - name: subscription_id 
+      - name: purchase_order_number 
+      - name: stripe_customer_id 
+      - name: license_id 
+      - name: edition 
+      - name: product 
+      - name: sku 
+      - name: charge 
+      - name: subscription 
+      - name: invoice_number 
+      - name: stripe_invoice_number 
+      - name: invoice_id 
+      - name: invoice_created_at 
+      - name: email 
+      - name: domain 
+      - name: customer_name 
+      - name: line1 
+      - name: line2 
+      - name: postal_code 
+      - name: city 
+      - name: state 
+      - name: country 
+      - name: customer_full_name 
+      - name: total 
+      - name: subtotal 
+      - name: invoice_row_num 
+      - name: invoice_quantity 
+      - name: previous_quantity 
+      - name: seats_purchased
