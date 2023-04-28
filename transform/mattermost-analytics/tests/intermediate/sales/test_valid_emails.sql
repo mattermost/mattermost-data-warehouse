@@ -9,7 +9,7 @@ select
     or email = ''
     or {{validate_email('email')}} as is_valid_email,
 from
-    {{ ref('stg_stripe__customers') }}
+    {{ ref('int_cloud_trial_requests') }}
 where
     not is_valid_email
     or not is_valid_email
