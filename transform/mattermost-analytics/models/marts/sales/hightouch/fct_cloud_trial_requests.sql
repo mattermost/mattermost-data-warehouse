@@ -29,7 +29,7 @@ with cloud_trial_requests as (
         left join {{ ref('stg_salesforce__lead') }} l on ctr.email = l.email
         left join {{ ref('stg_salesforce__campaign_member') }} cm on l.lead_id = cm.lead_id
         and ctr.email = cm.email
-        and cm.campaign_id = '{{ var(' cloud_enterprise_trial_campaign_id ') }}'
+        and cm.campaign_id = '{{ var('cloud_enterprise_trial_campaign_id') }}'
     where
         is_valid_email
         and -- Rows may fan out in case of multiple leads with same email address, fetching the one with the latest created_at date.
