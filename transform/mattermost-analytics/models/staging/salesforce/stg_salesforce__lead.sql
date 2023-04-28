@@ -45,6 +45,7 @@ renamed as (
         company,
         industry,
         website,
+        numberofemployees,
 
         -- Metadata
         createddate as created_at,
@@ -134,7 +135,6 @@ renamed as (
         most_recent_sdl_date__c,
         name_of_currently_active_sequence__c,
         never_connected__c,
-        numberofemployees,
         original_owner__c,
         outreach_cadence_add__c,
         outreach_manual_create__c,

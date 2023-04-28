@@ -1,0 +1,79 @@
+version: 2
+
+models:
+  - name: fct_in_product_trial_requests
+    description: |
+      Trial request data from Customer Web Server to be synced to Salesforce.
+
+    columns:
+      - name: trial_request_id
+        description: The id of the trial request.
+        tests:
+          - not_null
+          - unique
+      - name: name
+        description: The user's full name.
+        tags: [ 'pii' ]
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+      - name: first_name
+        description: | 
+          The user's first name. This value may originate from:
+            - First name (if directly provided).
+            - By splitting the name string on first space and keeping the first part.
+            - If none of the above are available, the first 40 characters of the "username" part of the email.
+        tests:
+          - dbt_utils.not_empty_string
+        tags: ['pii']
+      - name: last_name
+        description: | 
+          The user's last name. This value may originate from:
+            - Last name (if directly provided).
+            - By splitting the name string on first space and keeping the second part.
+            - If none of the above are available, the first 40 characters of the "username" part of the email.
+        tests:
+          - dbt_utils.not_empty_string
+        tags: ['pii']
+      - name: company_size
+        description: The lower bound of the company size bucket.
+      - name: company_name
+        description: |
+          The company's name. If not provided, `Unknown` is used.
+        tests:
+          - dbt_utils.not_empty_string
+      - name: normalized_email
+        tags: ['pii']
+        description: |
+          The contact email provided in the signup form. If not filled in, it's the email of the user 
+          requesting the trial. Email is lowercased in order to match Salesforce lowercased emails.
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+      - name: country_name
+        description: The requester's country.
+        # Make sure that country name has been transformed to a valid country name
+        tests:
+          - relationships:
+              name: valid_country_name
+              to: ref('country_codes')
+              field: name
+              config:
+                where: "country_name != ''"
+        tags: ['pii']
+      - name: trial_start_at
+        description: The starting date of the trial.
+      - name: num_users
+        description: Number of end users for the server.
+      - name: is_existing_lead
+        description: Whether there's already a lead with the same email.
+      - name: is_existing_campaign_member
+        description: Whether there's already a campaign member for the same email and lead.
+      - name: is_valid_email
+        description: Whether the email is valid. Used to skip invalid emails.
+      - name: lead_id
+        description: The id of the lead to update (if any exists), matched on email.
+      - name: campaign_member_status
+        description: The campaign member's status.
+      - name: campaign_id
+        description: The id of the campaign to attribute this lead to.
