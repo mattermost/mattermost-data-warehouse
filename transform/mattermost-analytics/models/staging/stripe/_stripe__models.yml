@@ -89,7 +89,7 @@ models:
         description: The end date of the current billing period
       - name: current_period_start
         description: The start date of the current billing period
-      - name: stripe_customer_id
+      - name: customer_id
         description: The customer to whom the subscription belongs
       - name: subscription_id
         tests:
