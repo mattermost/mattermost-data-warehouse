@@ -10,7 +10,7 @@ with cloud_trial_requests_pre as (
                 trial_start_at desc
         ) = 1
 ),
-with cloud_trial_requests as (
+cloud_trial_requests as (
     select
         ctr.email,
         l.lead_id as existing_lead_id,
