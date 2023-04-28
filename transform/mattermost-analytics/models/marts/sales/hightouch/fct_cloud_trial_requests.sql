@@ -32,7 +32,7 @@ cloud_trial_requests as (
         and cm.campaign_id = '{{ var('cloud_enterprise_trial_campaign_id') }}'
     where
         is_valid_email
-        and -- Rows may fan out in case of multiple leads with same email address, fetching the one with the latest created_at date.
+        -- Rows may fan out in case of multiple leads with same email address, fetching the one with the latest created_at date.
         qualify row_number() over (
             partition by ctr.email
             order by
