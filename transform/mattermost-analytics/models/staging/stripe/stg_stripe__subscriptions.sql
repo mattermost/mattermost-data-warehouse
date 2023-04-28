@@ -35,7 +35,6 @@ subscriptions as (
         TO_TIMESTAMP_NTZ(metadata:"cws-license-end-date"::int) as license_end_at,
         TO_TIMESTAMP_NTZ(metadata:"cws-actual-renewal-date"::int / 1000) as actual_renewal_at,
         pending_setup_intent,
-        plan,
         quantity,
         start_date as start_at,
         status,

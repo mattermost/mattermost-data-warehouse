@@ -17,7 +17,6 @@ invoice_line_items as (
         , invoice as invoice
         , invoice_item as invoice_item
         , livemode as livemode
-        , metadata as metadata
         , object as object
         , period as period
         , plan as plan

@@ -134,8 +134,6 @@ models:
         description: The timestamp of the actual renewal date for the subscription
       - name: pending_setup_intent
         description: The setup intent for the subscription
-      - name: plan
-        description: The plan associated with the subscription
       - name: quantity
         description: The quantity of the subscription
       - name: start_at
@@ -245,8 +243,6 @@ models:
         description: The customers email. Until the invoice is finalized, this field will equal customer.email. Once the invoice is finalized, this field will no longer be updated.
       - name: customer_name
         description: The customers name.
-      - name: customer_shipping
-        description: The customers shipping information.
       - name: line1
         description: Address Line 1
       - name: line2
@@ -285,8 +281,6 @@ models:
         description: The individual line items that make up the invoice.
       - name: livemode
         description: Has the value true if the object exists in live mode or the value false if the object exists in test mode.
-      - name: metadata
-        description: Set of key-value pairs that you can attach to an object.
       - name: number
         description: A unique, identifying string that appears on emails sent to the customer for this invoice.
       - name: object
@@ -373,8 +367,6 @@ models:
         description: Invoice Items represent the component lines of an invoice.
       - name: livemode
         description: Has the value true if the object exists in live mode or the value false if the object exists in test mode.
-      - name: metadata
-        description: Set of key-value pairs that you can attach to an object.
       - name: object
         description: String representing the objects type.
       - name: period

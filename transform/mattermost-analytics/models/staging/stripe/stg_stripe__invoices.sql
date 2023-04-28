@@ -45,7 +45,6 @@ invoices as (
           , invoice_pdf as invoice_pdf
           , lines as lines
           , livemode as livemode
-          , metadata as metadata
           , number as number
           , object as object
           , paid as paid
