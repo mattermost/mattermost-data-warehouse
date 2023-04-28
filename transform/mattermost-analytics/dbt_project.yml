@@ -49,8 +49,8 @@ models:
       web_app:
         schema: int_web_app
         tags: ['nightly']
-      hightouch:
-        schema: int_hightouch
+      sales:
+        schema: int_sales
         tags: ['hourly']
     marts:
       +materialized: table
