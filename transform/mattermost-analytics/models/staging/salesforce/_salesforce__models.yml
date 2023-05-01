@@ -1665,6 +1665,9 @@ models:
       Represents an Account in SFDC.
     columns:
       - name : account_id
+        tests:
+          - not_null
+          - unique
       - name : owner_id
       - name : parent_id
       - name : created_by_id

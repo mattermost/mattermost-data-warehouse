@@ -13,7 +13,9 @@ models:
       - name: opportunity_name 
       - name: subscription_id 
       - name: purchase_order_number 
-      - name: stripe_customer_id 
+      - name: stripe_customer_id
+        tests:
+          - not_null
       - name: license_id 
       - name: edition 
       - name: product 
@@ -22,7 +24,10 @@ models:
       - name: subscription 
       - name: invoice_number 
       - name: stripe_invoice_number 
-      - name: invoice_id 
+      - name: invoice_id
+        tests:
+          - not_null
+          - unique      
       - name: invoice_created_at 
       - name: email 
       - name: domain 
