@@ -17,7 +17,7 @@ invoices as (
           , automatic_tax as automatic_tax
           , auto_advance as auto_advance
           , billing_reason as billing_reason
-          , charge as charge
+          , charge as charge_id
           , collection_method as collection_method
           , created as created_at
           , currency as currency
@@ -59,7 +59,7 @@ invoices as (
           , starting_balance as starting_balance
           , status as status
           , status_transitions as status_transitions
-          , subscription as subscription
+          , subscription as subscription_id
           , subtotal as subtotal
           , tax as tax
           , total as total

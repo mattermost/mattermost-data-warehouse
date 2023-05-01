@@ -18,7 +18,7 @@ select s.subscription_id
     where s.edition not ilike '%cloud%' 
 ), invoices AS (
     SELECT s.*
-        , invoices.charge
+        , invoices.charge_id
         , invoices.subscription
         , 'ONL' || invoices.number AS invoice_number
         , invoices.number as stripe_invoice_number
@@ -40,27 +40,22 @@ select s.subscription_id
     FROM {{ ref('stg_stripe__invoices') }} invoices
     JOIN subscriptions s on s.subscription_id = invoices.subscription
     WHERE invoices.status = 'paid'
-) --select * from invoices
+) 
 , invoice_line_items AS (
     SELECT i.* 
         , ili.quantity as quantity
-        , LAG(ili.quantity) OVER (PARTITION BY i.subscription ORDER BY i.invoice_created_at) previous_quantity
+        , LAG(ili.quantity) OVER (PARTITION BY i.subscription_id ORDER BY i.invoice_created_at) previous_quantity
         , ili.quantity - COALESCE(LAG(ili.quantity) OVER (PARTITION BY i.subscription ORDER BY i.invoice_created_at),0) seats_purchased
     from {{ ref('stg_stripe__invoice_line_items') }} ili 
-    JOIN invoices i ON i.invoice_id = ili.invoice
+    JOIN invoices i ON i.invoice_id = ili.invoice_id
     WHERE amount > 0
 ) select 
 CASE WHEN invoice_row_num = 1 THEN 'New Purchase' 
      WHEN invoice_row_num > 1 THEN 'Expansion' 
      END AS opportunity_type
     , 'Online' as order_type
-    , '0053p0000064nt8AAA' AS ownerid
+    , '{{ var("salesforce_default_ownerid") }}' AS ownerid
     , '6. Closed Won' as stagename
-    , --CASE WHEN account.name = 'Hold Public'
-        --THEN email || ' ' || sku || ' qty:' || seats_purchased || ' inv:' || invoice_number
-        --ELSE 
-        domain || ' ' || sku || ' qty:' || seats_purchased || ' inv:' || invoice_number
-       -- END 
-       AS opportunity_name
+    , domain || ' ' || sku || ' qty:' || seats_purchased || ' inv:' || invoice_number AS opportunity_name
     , invoice_line_items.*    
 from invoice_line_items

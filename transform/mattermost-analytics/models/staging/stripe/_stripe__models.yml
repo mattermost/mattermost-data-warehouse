@@ -227,11 +227,13 @@ models:
         description: Controls whether Stripe will perform automatic collection of the invoice. 
       - name: billing_reason
         description: Indicates the reason why the invoice was created.
-      - name: charge
+      - name: charge_id
         description: ID of the latest charge generated for this invoice, if any.
       - name: collection_method
         description: Either charge_automatically, or send_invoice.
       - name: created_at
+        tests:
+          - not_null
         description: Time at which the object was created. Measured in seconds since the Unix epoch.
       - name: currency
         description: Three-letter ISO currency code, in lowercase. 
@@ -273,7 +275,9 @@ models:
         description: Footer displayed on the invoice.
       - name: hosted_invoice_url
         description: The URL for the hosted invoice page, which allows customers to view and pay an invoice.
-      - name: id
+      - name: invoice_id
+        tests:
+          - not_null
         description: Unique identifier for the object. This property is always present unless the invoice is an upcoming invoice.
       - name: invoice_pdf
         description: The link to download the PDF for the invoice.
@@ -309,7 +313,7 @@ models:
         description: The status of the invoice, one of draft, open, paid, uncollectible, or void.
       - name: status_transitions
         description: The timestamps at which the invoice status was updated.
-      - name: subscription
+      - name: subscription_id
         description: The subscription that this invoice was prepared for, if any.
       - name: subtotal
         description: Total of all subscriptions, invoice items, and prorations on the invoice before any invoice level discount or exclusive tax is applied.
@@ -359,9 +363,14 @@ models:
         description: The discounts which apply to the invoice item. 
       - name: discount_amounts
         description: The amounts, of the discount.
-      - name: id
+      - name: invoice_line_item_id
+        tests:
+          - not_null
+          - unique
         description: The ID of the customer who will be billed when this invoice item is billed.
-      - name: invoice
+      - name: invoice_id
+        tests:
+          - not_null
         description: The ID of an existing invoice to add this invoice item to.
       - name: invoice_item
         description: Invoice Items represent the component lines of an invoice.

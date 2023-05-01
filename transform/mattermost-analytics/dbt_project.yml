@@ -113,3 +113,4 @@ vars:
 
   # Salesforce variables
   in_product_trial_campaign_id: 7013p000001NkNoAAK
+  salesforce_default_ownerid: 0053p0000064nt8AAA #default value for salesforce ownerid

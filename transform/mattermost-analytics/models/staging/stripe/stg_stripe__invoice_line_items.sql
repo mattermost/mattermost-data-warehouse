@@ -14,7 +14,7 @@ invoice_line_items as (
         , discounts as discounts
         , discount_amounts as discount_amounts
         , id as invoice_line_item_id
-        , invoice as invoice
+        , invoice as invoice_id
         , invoice_item as invoice_item
         , livemode as livemode
         , object as object
