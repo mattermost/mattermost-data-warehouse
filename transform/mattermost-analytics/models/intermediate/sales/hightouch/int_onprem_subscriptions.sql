@@ -19,7 +19,7 @@ select s.subscription_id
 ), invoices AS (
     SELECT s.*
         , invoices.charge_id
-        , invoices.subscription
+        , invoices.subscription_id
         , 'ONL' || invoices.number AS invoice_number
         , invoices.number as stripe_invoice_number
         , invoices.invoice_id as invoice_id
@@ -36,9 +36,9 @@ select s.subscription_id
         , invoices.customer_full_name
         , invoices.total
         , invoices.subtotal
-        , ROW_NUMBER() OVER (PARTITION BY invoices.subscription ORDER BY invoices.created_at) as invoice_row_num
+        , ROW_NUMBER() OVER (PARTITION BY invoices.subscription_id ORDER BY invoices.created_at) as invoice_row_num
     FROM {{ ref('stg_stripe__invoices') }} invoices
-    JOIN subscriptions s on s.subscription_id = invoices.subscription
+    JOIN subscriptions s on s.subscription_id = invoices.subscription_id
     WHERE invoices.status = 'paid'
 ) 
 , invoice_line_items AS (
