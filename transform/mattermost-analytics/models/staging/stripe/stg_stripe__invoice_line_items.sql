@@ -24,7 +24,7 @@ invoice_line_items as (
         , proration as proration
         , proration_details as proration_details
         , quantity as quantity
-        , subscription as subscription
+        , subscription as subscription_id
         , subscription_item as subscription_item
         , tax_amounts as tax_amounts
         , tax_rates as tax_rates

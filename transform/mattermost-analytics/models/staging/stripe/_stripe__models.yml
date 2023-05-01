@@ -390,7 +390,7 @@ models:
         description: Additional details for proration line items
       - name: quantity
         description: Quantity of units for the invoice item.
-      - name: subscription
+      - name: subscription_id
         description: The subscription that this invoice item has been created for, if any.
       - name: subscription_item
         description: The subscription item that this invoice item has been created for, if any.
