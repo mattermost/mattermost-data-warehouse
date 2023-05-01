@@ -55,7 +55,7 @@ select s.subscription_id
     JOIN invoices i ON i.invoice_id = ili.invoice_id
     WHERE amount > 0
 ) select 
-CASE WHEN invoice_row_num = 1 THEN 'New Purchase' 
+CASE WHEN invoice_row_num = 1 THEN 'New Subscription' 
      WHEN invoice_row_num > 1 THEN 'Expansion' 
      END AS opportunity_type
     , 'Online' as order_type
