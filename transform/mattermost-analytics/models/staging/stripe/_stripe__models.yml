@@ -100,7 +100,7 @@ models:
         description: The settings for automatic customer balance management
       - name: items
         description: An array of subscription line items
-      - name: latest_invoice
+      - name: latest_invoice_id
         description: The ID of the most recent invoice for the subscription
       - name: livemode
         description: A boolean indicating whether the subscription is in live mode
@@ -124,7 +124,7 @@ models:
         description: The Opportunity SFID of the migrated subscription        
       - name: edition
         description: The edition of the subscription
-      - name: product
+      - name: product_id
         description: The product ID of the subscription
       - name: converted_to_paid_at
         description: The timestamp when the subscription was converted to paid status

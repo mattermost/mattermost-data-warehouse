@@ -11,10 +11,10 @@ select s.subscription_id
     , s.stripe_customer_id 
     , s.license_id
     , s.edition
-    , s.product
+    , s.product_id
     , p.sku
     FROM {{ ref('stg_stripe__subscriptions') }}  s 
-    JOIN {{ ref('stg_stripe__products') }} p ON s.product = p.product_id
+    JOIN {{ ref('stg_stripe__products') }} p ON s.product_id = p.product_id
     where s.edition not ilike '%cloud%' 
 ), invoices AS (
     SELECT s.*
