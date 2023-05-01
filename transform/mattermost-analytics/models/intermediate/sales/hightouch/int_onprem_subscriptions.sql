@@ -45,7 +45,7 @@ select s.subscription_id
     SELECT i.* 
         , ili.quantity as quantity
         , LAG(ili.quantity) OVER (PARTITION BY i.subscription_id ORDER BY i.invoice_created_at) previous_quantity
-        , ili.quantity - COALESCE(LAG(ili.quantity) OVER (PARTITION BY i.subscription ORDER BY i.invoice_created_at),0) seats_purchased
+        , ili.quantity - COALESCE(LAG(ili.quantity) OVER (PARTITION BY i.subscription_id ORDER BY i.invoice_created_at),0) seats_purchased
     from {{ ref('stg_stripe__invoice_line_items') }} ili 
     JOIN invoices i ON i.invoice_id = ili.invoice_id
     WHERE amount > 0
