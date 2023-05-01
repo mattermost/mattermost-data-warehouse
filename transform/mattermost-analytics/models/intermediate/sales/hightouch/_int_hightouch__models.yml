@@ -3,7 +3,19 @@ version: 2
 models:
   - name: int_onprem_subscriptions
     description: |
-      Reconstructed `onprem_subscriptions` table using Stripe events.
+      Reconstructed `onprem_subscriptions` table using Stripe events. 
+      We are fetching all paid invoices data. Paid invoices in On-Prem have subtotal > 0. Hence the filter amount > 0.
+      When the customer pays for an expansion they first get refunded the original purchase amount 
+      and get charged for the new amount based on the new number of seats purchased. 
+      So in any subscription where an expansion has happened, we will see 3 rows of data in invoice_line_items.
+        -  The original purchase amount
+        -  The refunded amount which is < 0 (this is not required in SFDC, after I spoke to John)
+        -  The new amount charged.
+
+      We are only interested for the amount, from these 3 rows of data, from Invoice Line Items the invoice amounts > 0. 
+      Since that is the actual amount paid for the expansion. For seats, they always show the total seats after the expansion.
+      we need to subtract the total seats from the previous purchase. You can see the calculation (Lag functions) in the code.
+      
 
     columns:  
       - name: opportunity_type 
