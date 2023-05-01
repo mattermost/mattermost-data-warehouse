@@ -17,7 +17,12 @@ select s.subscription_id
     JOIN {{ ref('stg_stripe__products') }} p ON s.product_id = p.product_id
     where s.edition not ilike '%cloud%' 
 ), invoices AS (
-    SELECT s.*
+    SELECT s.purchase_order_number
+        , s.stripe_customer_id 
+        , s.license_id
+        , s.edition
+        , s.product_id
+        , s.sku
         , invoices.charge_id
         , invoices.subscription_id
         , 'ONL' || invoices.number AS invoice_number
