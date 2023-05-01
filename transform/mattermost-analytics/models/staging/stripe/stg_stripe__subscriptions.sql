@@ -24,7 +24,7 @@ subscriptions as (
         metadata:"cws-installation"::varchar as cws_installation,
         metadata:"cws-installation-state"::varchar as cws_installation_state,
         metadata:"billing-type"::varchar as billing_type,
-        metadata:"current_product_id"::varchar as product_id,
+        metadata:"current_product_id"::varchar as current_product_id,
         metadata:"cws-renewed-from-stripe-id"::varchar as renewed_from_subscription_id,
         metadata:"cws-license-id"::varchar as license_id,
         metadata:"internal_purchase_order"::varchar as purchase_order_number,
