@@ -11,5 +11,5 @@ select
     user_id,
     event as event_table
 from 
-    pageviews;
+    pageviews
 
