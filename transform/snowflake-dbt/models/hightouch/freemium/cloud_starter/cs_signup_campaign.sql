@@ -42,7 +42,7 @@ select
     facts.cloud_mau,
     facts.cloud_dau,
     left(coalesce(facts.company_name, facts.email), 40) as company_name,
-    lead.dwh_external_id__c is not null as lead_exists,
+    lead.dwh_external_id__c is not null or l2.dwh_external_id__c is not null as lead_exists,
     contact.dwh_external_id__c is not null as contact_exists,
     coalesce(campaignmember.dwh_external_id__c, UUID_STRING('78157189-82de-4f4d-9db3-88c601fbc22e', '7013p000001TxBuAAK' || facts.portal_customer_id || facts.email)) AS campaignmember_external_id,
     coalesce(contact.dwh_external_id__c, UUID_STRING('78157189-82de-4f4d-9db3-88c601fbc22e', facts.portal_customer_id || facts.email)) AS contact_external_id,
@@ -79,5 +79,7 @@ from
         on facts.email = campaignmember.email and campaignmember.row_num = 1
     left join existing_leads as lead
         on facts.email = lead.email and lead.row_num = 1
+    left join existing_leads as l2
+        on UUID_STRING('78157189-82de-4f4d-9db3-88c601fbc22e', facts.portal_customer_id || facts.email) = l2.dwh_external_id__c and l2.row_num = 1
     left join existing_contacts as contact
         on facts.email = contact.email and contact.row_num = 1
