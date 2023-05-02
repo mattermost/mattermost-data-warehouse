@@ -1,4 +1,4 @@
 SELECT
-    {{ dbt_utils.star(source('portal_prod', 'IDENTIFIES')) }}
+    {{ dbt_utils.star(source('portal_prod', 'identifies')) }}
 FROM
-    {{ ref ('base_portal_prod__tracks') }}
+    {{ source('portal_prod', 'identifies') }}
