@@ -5,8 +5,6 @@ models:
     description: Trial Requests from blapi
   - name: addresses
     description: Contains all addresses (billing & shipping) provided by customers (from blapi).
-  - name: contact_us_requests
-    description: Contains contact us requests (from blapi).
   - name: credit_cards
     description: Contains all credit cards provided by customers (from blapi).
   - name: customers_blapi
