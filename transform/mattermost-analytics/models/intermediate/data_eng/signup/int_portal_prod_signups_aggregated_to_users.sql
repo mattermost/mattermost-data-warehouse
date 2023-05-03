@@ -8,8 +8,8 @@ WITH signups as(
 SELECT
     identifies.user_id,
     identifies.portal_customer_id,
-    MAX(CASE WHEN pageviews.event_type = 'PAGEVIEW_VERIFY_EMAIL' THEN true ELSE false END) AS account_created,
-    MAX(CASE WHEN pageviews.event_type = 'PAGEVIEW_CREATE_WORKSPACE' THEN true ELSE false END) AS email_verified
+    MAX(CASE WHEN pageviews.event_table = 'PAGEVIEW_VERIFY_EMAIL' THEN true ELSE false END) AS account_created,
+    MAX(CASE WHEN pageviews.event_table = 'PAGEVIEW_CREATE_WORKSPACE' THEN true ELSE false END) AS email_verified
 FROM
     {{ ref('stg_portal_prod__pageviews') }} pageviews
     JOIN {{ ref('stg_portal_prod__identifies') }} identifies
