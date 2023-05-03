@@ -27,7 +27,7 @@ with current_subscriptions AS(
         customers.email,
         customers_blapi.first_name,
         coalesce(NULLIF(TRIM(customers_blapi.last_name), ''), customers.email) as last_name,
-        SPLIT_PART(customers.email, '@', 2) as domain,
+        COALESCE(SPLIT_PART(cloud_subscriptions.cloud_dns, '.', 1), SPLIT_PART(customers.email, '@', 2)) as domain,
         invoices.id as invoice_id,
         current_subscriptions.id as subscription_id,
         current_subscriptions.cws_dns as cloud_dns,

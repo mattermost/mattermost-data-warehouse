@@ -41,7 +41,7 @@ WITH latest_credit_card_address AS (
         customers.email,
         customers.first_name,
         coalesce(NULLIF(TRIM(customers.last_name), ''), customers.email) as last_name,
-        SPLIT_PART(customers.email, '@', 2) as domain,
+        COALESCE(SPLIT_PART(cloud_subscriptions.cloud_dns, '.', 1), SPLIT_PART(customers.email, '@', 2)) as domain,
         freemium_subscriptions.id as subscription_id,
         freemium_subscriptions.subscription_version_id,
         freemium_subscriptions.previous_subscription_version_id,
