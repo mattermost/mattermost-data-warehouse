@@ -1,3 +1,10 @@
+{{
+    config({
+        "materialized": "table"
+    }}
+}}
+
+
 WITH signups as(
 SELECT
     identifies.user_id,
