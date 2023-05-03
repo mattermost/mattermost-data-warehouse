@@ -42,7 +42,7 @@ models:
         description:  The pageview ID of the event.
       - name: user_id
         description:  The ID of the user that sent the event.
-      - event_table:
+      - name: event_table
         description:  The event table that records the event request.
       - name: received_at
         description:  Timestamp registered by RudderStack when the event was ingested (received).
