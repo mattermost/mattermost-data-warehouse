@@ -49,9 +49,6 @@ models:
       web_app:
         schema: int_web_app
         tags: ['nightly']
-      sales:
-        schema: int_sales
-        tags: ['hourly']
     marts:
       +materialized: table
       tags: ['marts']
