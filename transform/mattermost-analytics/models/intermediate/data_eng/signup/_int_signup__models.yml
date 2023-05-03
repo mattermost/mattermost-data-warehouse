@@ -3,16 +3,15 @@ version: 2
 models:
   - name: int_signups_aggregated_to_users
     description: User signup stages, aggregated by users.
-    
+
     columns:
-      - name: event_id
-        description: Surrogate key representing a group of events with specific name, category, type.
+      - name: portal_customer_id
+        description: Customer identifier that joins to customer info coming from stripe.
         tests:
           - not_null
-      - name: daily_event_id
-        description: |
-          Surrogate key representing a group of events with specific name, category, type for a specific date.
-          Multiple `daily_event_id`'s may exist for the same event id.
-        tests:
-          - not_null
-          - unique
+      - name: account_created
+        description: Boolean value indicating if the user created the account.
+      - name: email_verified
+        description: Boolean value indicating if the user verified the email address.
+      - name: workspace_created
+        description: Boolean value indicating if the user created the workspace, defaults to false.
