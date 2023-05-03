@@ -9,7 +9,7 @@ WITH identifies as (
         coalesce(portal_customer_id, context_traits_portal_customer_id) as portal_customer_id,
         ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RECEIVED_AT) AS row_number
     from
-        {{ ref('base_portal_prod__identifies') }}
+        {{ ref('stg_portal_prod__identifies') }}
     WHERE 
         coalesce(portal_customer_id, context_traits_portal_customer_id) IS NOT NULL
 )
