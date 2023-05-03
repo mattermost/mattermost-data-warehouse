@@ -1,9 +1,11 @@
 {{
     config({
+        -- "materialized": "incremental"
         "materialized": "table"
-    }}
+        -- "incremental_strategy": "merge",
+        -- "unique_key": ['user_id']
+    })
 }}
-
 
 WITH signups as(
 SELECT
@@ -11,7 +13,7 @@ SELECT
     identifies.portal_customer_id,
     MAX(CASE WHEN pageviews.event_type = 'PAGEVIEW_VERIFY_EMAIL' THEN true ELSE false END) AS account_created,
     MAX(CASE WHEN pageviews.event_type = 'PAGEVIEW_CREATE_WORKSPACE' THEN true ELSE false END) AS email_verified,
-    null AS workspace_created
+    -- null AS workspace_created
 FROM
     {{ ref('stg_portal_prod__pageviews') }} pageviews
     JOIN {{ ref('stg_portal_prod__identifies') }} identifies
