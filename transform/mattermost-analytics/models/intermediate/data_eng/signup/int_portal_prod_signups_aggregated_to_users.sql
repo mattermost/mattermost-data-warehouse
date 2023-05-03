@@ -8,16 +8,19 @@ WITH identifies as (
     SELECT user_id, 
         coalesce(portal_customer_id, context_traits_portal_customer_id) as portal_customer_id,
         ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RECEIVED_AT) AS row_number
-    from
+    FROM
         {{ ref('stg_portal_prod__identifies') }}
     WHERE 
-        coalesce(portal_customer_id, context_traits_portal_customer_id) IS NOT NULL
+        coalesce(portal_customer_id, context_traits_portal_customer_id) IS NOT NULL and received_at >= '2023-04-01'
 ), pageviews as (
     SELECT
         user_id,
-        event_table
+        event_table,
+        received_at
     FROM
         {{ ref('stg_portal_prod__pageviews') }} 
+    WHERE
+        received_at >= '2023-04-01'
 ), signups as(
     SELECT
         identifies.portal_customer_id,
@@ -26,7 +29,8 @@ WITH identifies as (
         MAX(CASE WHEN pageviews.event_table = 'pageview_cloud_landing_page' THEN true ELSE false END) AS cloud_landing_page,
         MAX(CASE WHEN pageviews.event_table = 'pageview_create_signup_password' THEN true ELSE false END) AS create_signup_password,
         MAX(CASE WHEN pageviews.event_table = 'pageview_getting_started' THEN true ELSE false END) AS pageview_getting_started,
-        MAX(CASE WHEN pageviews.event_table = 'pageview_true_up_review_cws' THEN true ELSE false END) AS pageview_true_up_review_cws
+        MAX(CASE WHEN pageviews.event_table = 'pageview_true_up_review_cws' THEN true ELSE false END) AS pageview_true_up_review_cws,
+        MAX(received_at) as date_updated
     FROM
         pageviews
         JOIN (select * from identifies where row_number = 1) identifies

@@ -7,9 +7,10 @@ with pageviews as(
 )
 
 select 
-    id,
+    id as pageview_id,
     user_id,
-    event as event_table
+    event as event_table,
+    received_at
 from 
     pageviews
 
