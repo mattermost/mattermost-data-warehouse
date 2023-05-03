@@ -21,7 +21,6 @@ sources:
       - name: credit_cards_version
       - name: customers
       - name: customers_version
-      - name: features
       - name: features_version
       - name: invoices
       - name: invoices_version
