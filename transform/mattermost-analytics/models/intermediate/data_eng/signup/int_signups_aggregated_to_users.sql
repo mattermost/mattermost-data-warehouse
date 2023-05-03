@@ -1,6 +1,9 @@
 {{
     config({
-        "materialized": "table"
+        "materialized": "table",
+        "incremental_strategy": "merge",
+        "unique_key": ['portal_customer_id'],
+        "merge_update_columns": ['verify_email']
     })
 }}
 
@@ -11,7 +14,7 @@ WITH identifies as (
     FROM
         {{ ref('stg_portal_prod__identifies') }}
     WHERE 
-        coalesce(portal_customer_id, context_traits_portal_customer_id) IS NOT NULL and received_at >= '2023-04-01'
+        coalesce(portal_customer_id, context_traits_portal_customer_id) IS NOT NULL and received_at >= '2023-04-04'
 ), pageviews as (
     SELECT
         user_id,
@@ -20,12 +23,15 @@ WITH identifies as (
     FROM
         {{ ref('stg_portal_prod__pageviews') }} 
     WHERE
-        received_at >= '2023-04-01'
+        received_at >= '2023-04-04'
 ), signups as(
     SELECT
         identifies.portal_customer_id,
-        true AS account_created,
+        -- Account is created when portal_customer_id exists
+        true AS account_created, 
+        -- Email is verified and user is redirected to `pageview_create_workspace` screen.
         MAX(CASE WHEN pageviews.event_table = 'pageview_create_workspace' THEN true ELSE false END) AS verify_email,
+        -- Setting to false as we consider `workspace_installation_id` from stripeas source of truth 
         false AS workspace_created
     FROM
         pageviews

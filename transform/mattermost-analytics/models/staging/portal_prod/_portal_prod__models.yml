@@ -19,3 +19,30 @@ models:
       - name: received_at
         description: Timestamp registered by RudderStack when the event was ingested (received).
 
+  - name: stg_portal_prod__identifies
+    description: |
+      Contains mapping from rudder user_id to portal user_id
+    
+    columns:
+      - name: user_id
+        description: The ID of the user that sent the event.
+      - name: portal_customer_id
+        description:  Portal customer id for the user
+      - name: context_traits_portal_customer_id
+        description:  Duplicate of portal_customer_id ingested via context traits, required since sometimes portal_customer_id is null
+      - name: received_at
+        description:  Timestamp registered by RudderStack when the event was ingested (received).
+      
+  - name: stg_portal_prod__pageviews
+    description: |
+      Contains mapping from rudder user_id to portal user_id
+
+    columns:
+      - name: pageview_id
+        description:  The pageview ID of the event.
+      - name: user_id
+        description:  The ID of the user that sent the event.
+      - event_table:
+        description:  The event table that records the event request.
+      - name: received_at
+        description:  Timestamp registered by RudderStack when the event was ingested (received).

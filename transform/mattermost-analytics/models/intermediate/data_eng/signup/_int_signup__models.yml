@@ -1,0 +1,18 @@
+version: 2
+
+models:
+  - name: int_signups_aggregated_to_users
+    description: User signup stages, aggregated by users.
+    
+    columns:
+      - name: event_id
+        description: Surrogate key representing a group of events with specific name, category, type.
+        tests:
+          - not_null
+      - name: daily_event_id
+        description: |
+          Surrogate key representing a group of events with specific name, category, type for a specific date.
+          Multiple `daily_event_id`'s may exist for the same event id.
+        tests:
+          - not_null
+          - unique
