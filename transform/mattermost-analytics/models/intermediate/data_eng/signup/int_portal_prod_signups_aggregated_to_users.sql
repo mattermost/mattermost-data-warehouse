@@ -22,8 +22,12 @@ WITH identifies as (
     SELECT
         identifies.user_id,
         identifies.portal_customer_id,
-        MAX(CASE WHEN pageviews.event_table = 'pageview_verify_email' THEN true ELSE false END) AS account_created,
-        MAX(CASE WHEN pageviews.event_table = 'pageview_create_workspace' THEN true ELSE false END) AS email_verified
+        MAX(CASE WHEN pageviews.event_table = 'pageview_verify_email' THEN true ELSE false END) AS verify_email,
+        MAX(CASE WHEN pageviews.event_table = 'pageview_create_workspace' THEN true ELSE false END) AS create_workspace,
+        MAX(CASE WHEN pageviews.event_table = 'pageview_cloud_landing_page' THEN true ELSE false END) AS cloud_landing_page,
+        MAX(CASE WHEN pageviews.event_table = 'pageview_create_signup_password' THEN true ELSE false END) AS create_signup_password,
+        MAX(CASE WHEN pageviews.event_table = 'pageview_getting_started' THEN true ELSE false END) AS pageview_getting_started,
+        MAX(CASE WHEN pageviews.event_table = 'pageview_true_up_review_cws' THEN true ELSE false END) AS pageview_true_up_review_cws
     FROM
         pageviews
         JOIN (select * from identifies where row_number = 1) identifies
