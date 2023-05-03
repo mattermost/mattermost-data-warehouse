@@ -12,16 +12,13 @@ WITH identifies as (
         {{ ref('stg_portal_prod__identifies') }}
     WHERE 
         coalesce(portal_customer_id, context_traits_portal_customer_id) IS NOT NULL
-)
-WITH pageviews as (
+), pageviews as (
     SELECT
         user_id,
         event_table
     FROM
         {{ ref('stg_portal_prod__pageviews') }} 
-)
-
-WITH signups as(
+), signups as(
     SELECT
         identifies.user_id,
         identifies.portal_customer_id,
