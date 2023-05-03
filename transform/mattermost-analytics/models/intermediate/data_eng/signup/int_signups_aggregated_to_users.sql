@@ -31,7 +31,7 @@ WITH identifies as (
         true AS account_created, 
         -- Email is verified and user is redirected to `pageview_create_workspace` screen.
         MAX(CASE WHEN pageviews.event_table = 'pageview_create_workspace' THEN true ELSE false END) AS email_verified,
-        -- Setting to false as we consider `workspace_installation_id` from stripeas source of truth 
+        -- Setting to false as we consider `workspace_installation_id` from stripe as source of truth 
         false AS workspace_created
     FROM
         pageviews
