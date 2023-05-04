@@ -23,6 +23,7 @@ cloud_trial_requests as (
         ctr.trial_start_at,
         ctr.trial_end_at,
         l.lead_id as existing_lead_id,
+        cm.campaign_member_id as existing_campaign_member_id,
         '{{ var('cloud_enterprise_trial_campaign_id') }}' as campaign_id,
         l.lead_id is not null as is_existing_lead,
         cm.campaign_member_id is not null as is_existing_campaign_member,
