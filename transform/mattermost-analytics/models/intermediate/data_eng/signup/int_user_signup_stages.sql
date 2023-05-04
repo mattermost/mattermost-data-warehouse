@@ -27,7 +27,7 @@ SELECT
             THEN TRUE 
         ELSE FALSE 
     END AS email_verified,
-    qualify row_number() over (partition by portal_customer_id order by timestamp) as row_number
+    qualify row_number() over (partition by portal_customer_id order by timestamp) = 1
 FROM
     rudder_portal_user_mappings
 LEFT JOIN 
