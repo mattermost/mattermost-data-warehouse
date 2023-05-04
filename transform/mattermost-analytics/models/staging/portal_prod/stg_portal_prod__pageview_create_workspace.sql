@@ -1,6 +1,6 @@
 with source as (
 
-    select * from {{ source('portal_prod', 'pageview_verify_email') }}
+    select * from {{ source('portal_prod', 'pageview_create_workspace') }}
 
 ),
 

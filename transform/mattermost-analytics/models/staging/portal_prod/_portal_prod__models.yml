@@ -33,7 +33,7 @@ models:
       - name: timestamp
         description:  Timestamp value associated with event.
       
-  - name: stg_portal_prod__pageviews
+  - name: stg_portal_prod__pageview_create_workspace
     description: |
       Contains mapping from rudder user_id to portal user_id
 

@@ -9,13 +9,13 @@ WITH rudder_portal_user_mappings as (
         portal_customer_id
     FROM
         {{ ref('int_rudder_portal_user_mapping') }} 
-), pageview_email_verified as (
+), pageview_create_workspace as (
     SELECT
         user_id,
         pageview_id,
         timestamp
     FROM
-        {{ ref('stg_portal_prod__pageview_email_verified') }}
+        {{ ref('stg_portal_prod__pageview_create_workspace') }}
 ), user_signup_stages as ( 
 SELECT
     portal_customer_id,
@@ -31,7 +31,7 @@ SELECT
 FROM
     rudder_portal_user_mappings
 LEFT JOIN 
-    pageview_email_verified
+    pageview_create_workspace
 ON pageview_email_verified.user_id = rudder_portal_user_mappings.user_id
 )
 
