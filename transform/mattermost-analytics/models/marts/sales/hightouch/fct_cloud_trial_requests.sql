@@ -1,7 +1,9 @@
 with cloud_trial_requests_pre as (
     select
         email,
-        cws_installation
+        cws_installation, 
+        trial_start_at,
+        trial_end_at
     from
         {{ ref('int_cloud_trial_requests') }} -- Fetch the most recent cloud trial
         qualify row_number() over (
@@ -13,6 +15,8 @@ with cloud_trial_requests_pre as (
 cloud_trial_requests as (
     select
         ctr.email,
+        ctr.trial_start_at,
+        ctr.trial_end_at,
         l.lead_id as existing_lead_id,
         '{{ var('cloud_enterprise_trial_campaign_id') }}' as campaign_id,
         l.lead_id is not null as is_existing_lead,
