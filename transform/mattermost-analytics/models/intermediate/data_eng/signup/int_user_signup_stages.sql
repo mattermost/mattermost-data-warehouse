@@ -1,3 +1,8 @@
+{{
+    config({
+        "materialized": "table"
+    })
+}}
 WITH rudder_portal_user_mappings as (
     SELECT
         user_id,
