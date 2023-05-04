@@ -13,7 +13,6 @@ FROM
     {{ ref('stg_portal_prod__identifies') }}
 WHERE
     portal_customer_id IS NOT NULL
-    OR user_id IS NOT NULL
+    AND user_id IS NOT NULL
 GROUP BY
-    1,
-    2
+    1,2
