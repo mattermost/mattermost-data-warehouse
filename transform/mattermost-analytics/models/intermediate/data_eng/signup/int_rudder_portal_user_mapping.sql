@@ -14,7 +14,7 @@ FROM
 WHERE
     portal_customer_id IS NOT NULL 
     -- getting values as `N/A` from portal
-    AND portal_customer_id IS NOT 'N/A'
+    AND portal_customer_id NOT IN ('N/A')
     AND user_id IS NOT NULL
 GROUP BY
     1,2
