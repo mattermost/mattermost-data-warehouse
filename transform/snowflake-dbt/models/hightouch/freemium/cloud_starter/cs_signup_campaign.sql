@@ -41,7 +41,13 @@ select
     facts.cloud_posts_daily,
     facts.cloud_mau,
     facts.cloud_dau,
-    left(coalesce(facts.company_name, facts.email), 40) as company_name,
+    left(
+        coalesce(
+            -- Remove emoji characters
+            regexp_replace(facts.company_name, '[\uD83C\uDC00-\uD83C\uDFFF]|[\uD83D\uDC00-\uD83D\uDFFF]|[\uD83E\uDC00-\uD83E\uDFFF]', ''),
+            facts.email
+        ),
+    40) as company_name,
     lead.dwh_external_id__c is not null or l2.dwh_external_id__c is not null as lead_exists,
     contact.dwh_external_id__c is not null as contact_exists,
     coalesce(campaignmember.dwh_external_id__c, UUID_STRING('78157189-82de-4f4d-9db3-88c601fbc22e', '7013p000001TxBuAAK' || facts.portal_customer_id || facts.email)) AS campaignmember_external_id,
