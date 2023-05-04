@@ -22,14 +22,18 @@ SELECT
     -- Account is created when portal_customer_id exists
     true AS account_created, 
     -- Email is verified and user is redirected to `pageview_create_workspace` screen.
-    if pageview_email_verified.pageview_id then true else false as email_verified
+    CASE 
+        WHEN pageview_email_verified.pageview_id IS NOT NULL 
+            THEN TRUE 
+        ELSE FALSE 
+    END AS email_verified
 FROM
     rudder_portal_user_mappings
 LEFT JOIN 
     pageview_email_verified
 ON pageview_email_verified.user_id = rudder_portal_user_mappings.user_id
-QUALIFY row_number() over (partition by portal_customer_id order by timestamp) = 1
 )
 
 select 
-    * from user_signup_stages
+    * from user_signup_stages 
+    QUALIFY row_number() over (partition by portal_customer_id order by timestamp) = 1
