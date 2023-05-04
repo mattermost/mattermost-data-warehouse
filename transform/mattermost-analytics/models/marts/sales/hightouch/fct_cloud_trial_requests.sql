@@ -1,3 +1,8 @@
+{{
+    config({
+        "materialized": "table"
+    })
+}}
 with cloud_trial_requests_pre as (
     select
         email,
