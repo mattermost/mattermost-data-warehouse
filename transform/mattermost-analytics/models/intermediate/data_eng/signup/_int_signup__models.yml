@@ -9,17 +9,19 @@ models:
         description: Customer identifier that joins to customer info coming from stripe.
         tests:
           - not_null
+          - unique
       - name: account_created
         description: Boolean value indicating if the user created the account.
       - name: email_verified
         description: Boolean value indicating if the user verified the email address.
-      - name: workspace_created
-        description: Boolean value indicating if the user created the workspace, defaults to false.
   - name: int_rudder_portal_user_mapping
     description:  This table provide a list of distinct user and portal customer ID pairs with a non-null value for both IDs.
 
     columns: 
       - name: user_id
         description: User ID coming from rudder events.
+        tests:
+          - unique
       - name: portal_customer_id
+          - unique
         description: Customer ID in portal that joins to rudder user ID.
