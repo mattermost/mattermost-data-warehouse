@@ -77,3 +77,26 @@ models:
         description: The campaign member's status.
       - name: campaign_id
         description: The id of the campaign to attribute this lead to.
+  - name: fct_cloud_trial_requests
+    description: |
+      Trial request data coming from the source Stripe, only limited to creating campaign member objects in Salesforce.
+
+    columns:
+      - name: email
+        tags: ['pii']
+        description: Customer email for cloud trial requests coming from Stripe.
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+      - name: is_existing_lead
+        description: Whether there's already a lead with the same email.
+      - name: is_existing_campaign_member
+        description: Whether there's already a campaign member for the same email and lead.
+      - name: campaign_member_status
+        description: The campaign member's status.
+        # Removing the test for now.
+        # tests:
+        #   - accepted_values:
+        #       values: ['Account created', 'Email verified', 'Workspace created', null]
+      - name: is_valid_email
+        description: Whether the email is valid. Used to skip invalid emails.
