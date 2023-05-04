@@ -12,7 +12,9 @@ SELECT
 FROM
     {{ ref('stg_portal_prod__identifies') }}
 WHERE
-    portal_customer_id NOT IN (NULL, 'N/A')
+    portal_customer_id IS NOT NULL 
+    -- getting values as `N/A` from portal
+    AND portal_customer_id IS NOT 'N/A'
     AND user_id IS NOT NULL
 GROUP BY
     1,2
