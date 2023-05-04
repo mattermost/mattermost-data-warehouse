@@ -27,7 +27,7 @@ SELECT
             THEN TRUE 
         ELSE FALSE 
     END AS email_verified,
-    row_number() over (partition by portal_customer_id order by timestamp) as row_number
+    qualify row_number() over (partition by portal_customer_id order by timestamp) as row_number
 FROM
     rudder_portal_user_mappings
 LEFT JOIN 
@@ -36,5 +36,4 @@ ON pageview_email_verified.user_id = rudder_portal_user_mappings.user_id
 )
 
 select 
-    * from user_signup_stages 
-    QUALIFY row_number = 1
+    * from user_signup_stages
