@@ -46,7 +46,6 @@ cloud_trial_requests as (
         where CURRENT_DATE < subscriptions.trial_end_at
         -- Only get cloud subscriptions
         AND cws_installation is not null
-        AND products.sku = 'cloud-enterprise'
 )
 
 select
