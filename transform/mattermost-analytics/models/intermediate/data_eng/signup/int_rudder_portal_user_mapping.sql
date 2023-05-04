@@ -1,3 +1,9 @@
+{{
+    config({
+        "materialized": "table"
+    })
+}}
+
 SELECT
     user_id,
     portal_customer_id,
