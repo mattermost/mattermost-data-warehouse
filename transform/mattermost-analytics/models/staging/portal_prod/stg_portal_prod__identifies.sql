@@ -8,7 +8,7 @@ renamed as (
 
     select
         user_id,
-        coalesce(portal_customer_id,context_traits_portal_customer_id) as portal_customer_id
+        coalesce(portal_customer_id,context_traits_portal_customer_id) as portal_customer_id,
         timestamp
     
     from source
