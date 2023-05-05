@@ -370,6 +370,9 @@ models:
         description: The ID of the customer who will be billed when this invoice item is billed.
       - name: invoice_id
         tests:
+          - relationships:
+              to: ref('stg_stripe__invoices')
+              field: invoice_id
           - not_null
         description: The ID of an existing invoice to add this invoice item to.
       - name: invoice_item
