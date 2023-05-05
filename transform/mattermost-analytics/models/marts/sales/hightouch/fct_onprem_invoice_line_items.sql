@@ -8,7 +8,7 @@
 WITH subscriptions AS (
 select s.subscription_id
     , s.purchase_order_number
-    , s.stripe_customer_id 
+    , s.customer_id 
     , s.license_id
     , s.edition
     , s.product_id
@@ -18,7 +18,7 @@ select s.subscription_id
     where s.edition not ilike '%cloud%' 
 ), invoices AS (
     SELECT s.purchase_order_number
-        , s.stripe_customer_id 
+        , s.customer_id 
         , s.license_id
         , s.edition
         , s.product_id
