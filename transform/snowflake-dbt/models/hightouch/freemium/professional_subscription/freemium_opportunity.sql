@@ -8,7 +8,7 @@
 WITH freemium_opportunity_to_sync AS (
     SELECT
         customers_with_cloud_paid_subs.*,
-        coalesce(account.dwh_external_id__c, customers_with_cloud_paid_subs.account_external_id) as account_lookup_id,
+        customers_with_cloud_paid_subs.account_external_id as account_lookup_id,
         SPLIT_PART(cloud_dns, '.', 0) ||
             ' Cloud Subscription' AS opportunity_name,
         'New Subscription' AS opportunity_type,
@@ -21,10 +21,7 @@ WITH freemium_opportunity_to_sync AS (
     FROM {{ ref('customers_with_cloud_paid_subs') }}
     LEFT JOIN {{ ref('opportunity') }}
         ON customers_with_cloud_paid_subs.opportunity_external_id = opportunity.dwh_external_id__c
-    LEFT JOIN {{ ref('account') }}
-        ON customers_with_cloud_paid_subs.account_external_id = account.dwh_external_id__c
-        OR customers_with_cloud_paid_subs.domain = account.cbit__clearbitdomain__c
-    WHERE opportunity.id IS NULL AND account.dwh_external_id__c IS NOT NULL -- do not create opportunity if account does not exists
+    WHERE opportunity.id IS NULL AND customers_with_cloud_paid_subs.account_external_id IS NOT NULL -- do not create opportunity if account does not exists
     AND customers_with_cloud_paid_subs.hightouch_sync_eligible
     AND customers_with_cloud_paid_subs.status in ('canceled', 'active') 
     AND customers_with_cloud_paid_subs.SKU = 'Cloud Professional'
