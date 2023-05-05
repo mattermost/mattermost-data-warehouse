@@ -48,7 +48,9 @@ WITH payment_addresses AS (
         customers.email,
         customers.first_name,
         coalesce(customers.last_name, customers.email) as last_name,
-        SPLIT_PART(customers.email, '@', 2) as domain,
+        CASE WHEN SPLIT_PART(customers.email, '@', 2) = 'gmail.com' 
+        THEN NULL        
+        ELSE SPLIT_PART(customers.email, '@', 2) END as domain,
         onprem_subscriptions.id as subscription_id,
         onprem_subscriptions.subscription_version_id,
         CASE 
