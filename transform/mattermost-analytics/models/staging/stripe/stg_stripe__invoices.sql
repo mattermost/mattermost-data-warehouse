@@ -77,7 +77,7 @@ invoices as (
           , updated_by_event_type as updated_by_event_type
           , date as date
 
-    from source as rce
+    from source
 
 )
 
