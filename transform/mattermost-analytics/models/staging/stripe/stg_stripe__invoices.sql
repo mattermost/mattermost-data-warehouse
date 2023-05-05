@@ -25,13 +25,13 @@ invoices as (
           , customer_address as customer_address
           , customer_email as customer_email
           , customer_name as customer_name
-          , customer_shipping:address:line1::string as line1
-          , customer_shipping:address:line2::string as line2
-          , customer_shipping:address:postal_code::string as postal_code
-          , customer_shipping:address:city::string as city
-          , customer_shipping:address:state::string as state
-          , customer_shipping:address:country::string as country
-          , customer_shipping:name::string as customer_full_name
+          , customer_shipping:"address":"line1"::string as line1
+          , customer_shipping:"address":"line2"::string as line2
+          , customer_shipping:"address":"postal_code"::string as postal_code
+          , customer_shipping:"address":"city"::string as city
+          , customer_shipping:"address":"state"::string as state
+          , customer_shipping:"address":"country"::string as country
+          , customer_shipping:"name"::string as customer_full_name
           , customer_tax_exempt as customer_tax_exempt
           , customer_tax_ids as customer_tax_ids
           , default_tax_rates as default_tax_rates
