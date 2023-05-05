@@ -32,7 +32,7 @@ with current_subscriptions AS(
         coalesce(NULLIF(TRIM(customers_blapi.last_name), ''), customers.email) as last_name,
         CASE WHEN SPLIT_PART(customers.email, '@', 2) = 'gmail.com' 
         THEN NULL
-        ELSE SPLIT_PART(customers.email, '@', 2) as domain,
+        ELSE SPLIT_PART(customers.email, '@', 2) END as domain,
         current_subscriptions.id as subscription_id,
         current_subscriptions.cws_dns as cloud_dns,
         current_subscriptions.product_sku,
