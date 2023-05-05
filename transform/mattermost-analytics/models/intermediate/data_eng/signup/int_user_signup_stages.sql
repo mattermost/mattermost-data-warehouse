@@ -23,7 +23,7 @@ SELECT
     true AS account_created, 
     -- Email is verified and user is redirected to `pageview_create_workspace` screen.
     CASE 
-        WHEN pageview_email_verified.pageview_id IS NOT NULL 
+        WHEN pageview_create_workspace.pageview_id IS NOT NULL 
             THEN TRUE 
         ELSE FALSE 
     END AS email_verified,
@@ -32,7 +32,7 @@ FROM
     rudder_portal_user_mappings
 LEFT JOIN 
     pageview_create_workspace
-ON pageview_email_verified.user_id = rudder_portal_user_mappings.user_id
+ON pageview_create_workspace.user_id = rudder_portal_user_mappings.user_id
 )
 
 select 

@@ -1,6 +1,7 @@
 version: 2
 
 models:
+
   - name: int_signups_aggregated_to_users
     description: User signup stages, aggregated by users.
 
@@ -14,6 +15,7 @@ models:
         description: Boolean value indicating if the user created the account.
       - name: email_verified
         description: Boolean value indicating if the user verified the email address.
+
   - name: int_rudder_portal_user_mapping
     description:  This table provide a list of distinct user and portal customer ID pairs with a non-null value for both IDs.
 

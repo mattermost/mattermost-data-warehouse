@@ -35,7 +35,7 @@ models:
       
   - name: stg_portal_prod__pageview_create_workspace
     description: |
-      Contains mapping from rudder user_id to portal user_id
+      Contains rudder data coming from `pageview_create_workspace`.
 
     columns:
       - name: pageview_id
