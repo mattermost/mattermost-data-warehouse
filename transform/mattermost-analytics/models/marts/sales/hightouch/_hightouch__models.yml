@@ -102,7 +102,7 @@ models:
       - name: opportunity_name 
       - name: subscription_id 
       - name: purchase_order_number 
-      - name: stripe_customer_id
+      - name: customer_id
         tests:
           - not_null
       - name: license_id 
