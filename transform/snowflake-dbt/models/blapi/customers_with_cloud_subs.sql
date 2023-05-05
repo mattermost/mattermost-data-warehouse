@@ -44,7 +44,7 @@ WITH latest_credit_card_address AS (
         customers.first_name,
         coalesce(NULLIF(TRIM(customers.last_name), ''), customers.email) as last_name,
         CASE WHEN SPLIT_PART(customers.email, '@', 2) = 'gmail.com' 
-        THEN SPLIT_PART(cloud_subscriptions.cloud_dns, '.', 1)
+        THEN NULL        
         ELSE SPLIT_PART(customers.email, '@', 2) as domain,
         cloud_subscriptions.id as subscription_id,
         cloud_subscriptions.subscription_version_id,
