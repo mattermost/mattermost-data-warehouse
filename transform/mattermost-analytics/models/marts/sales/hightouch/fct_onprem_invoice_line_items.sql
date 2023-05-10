@@ -67,5 +67,5 @@ select s.subscription_id
     , domain || ' ' || sku || ' qty:' || seats_purchased || ' inv:' || invoice_number AS opportunity_name
     , invoice_line_items.*    
 FROM invoice_line_items invoice_line_items
-JOIN {{ ref('stg_salesforce__contact') }} contact ON invoice_line_items.email = contact.email
-JOIN {{ ref('stg_salesforce__account') }} account ON contact.account_id = account.account_id
+LEFT JOIN {{ ref('stg_salesforce__contact') }} contact ON invoice_line_items.email = contact.email
+LEFT JOIN {{ ref('stg_salesforce__account') }} account ON contact.account_id = account.account_id
