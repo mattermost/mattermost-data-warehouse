@@ -95,6 +95,8 @@ models:
       
 
     columns:  
+      - name: account_id
+      - name: contact_email
       - name: opportunity_type 
       - name: order_type 
       - name: ownerid 

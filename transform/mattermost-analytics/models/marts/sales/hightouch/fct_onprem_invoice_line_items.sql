@@ -53,16 +53,19 @@ select s.subscription_id
         , ili.quantity as quantity
         , LAG(ili.quantity) OVER (PARTITION BY i.subscription_id ORDER BY i.invoice_created_at) previous_quantity
         , ili.quantity - COALESCE(LAG(ili.quantity) OVER (PARTITION BY i.subscription_id ORDER BY i.invoice_created_at),0) seats_purchased
-    from {{ ref('stg_stripe__invoice_line_items') }} ili 
+    FROM {{ ref('stg_stripe__invoice_line_items') }} ili 
     JOIN invoices i ON i.invoice_id = ili.invoice_id
     WHERE amount > 0
-) select 
-CASE WHEN invoice_row_num = 1 THEN 'New Subscription' 
-     WHEN invoice_row_num > 1 THEN 'Expansion' 
-     END AS opportunity_type
+) select account.account_id 
+    , contact.email as contact_email
+    , CASE WHEN invoice_row_num = 1 THEN 'New Subscription' 
+      WHEN invoice_row_num > 1 THEN 'Expansion' 
+      END AS opportunity_type
     , 'Online' as order_type
     , '{{ var("salesforce_default_ownerid") }}' AS ownerid
     , '6. Closed Won' as stagename
     , domain || ' ' || sku || ' qty:' || seats_purchased || ' inv:' || invoice_number AS opportunity_name
     , invoice_line_items.*    
-from invoice_line_items
+FROM invoice_line_items invoice_line_items
+JOIN {{ ref('stg_salesforce__contact') }} contact ON invoice_line_items.email = contact.email
+JOIN {{ ref('stg_salesforce__account') }} account ON contact.account_id = account.account_id
