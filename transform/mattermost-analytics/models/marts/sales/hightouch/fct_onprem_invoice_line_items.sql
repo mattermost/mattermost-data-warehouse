@@ -34,6 +34,7 @@ select s.subscription_id
         , invoices.customer_name
         , invoices.line1
         , invoices.line2
+        , coalesce(invoices.line1, '') || ' ' || coalesce(invoices.line2, '') as street_address
         , invoices.postal_code
         , invoices.city
         , invoices.state
@@ -56,7 +57,6 @@ select s.subscription_id
     JOIN invoices i ON i.invoice_id = ili.invoice_id
     WHERE amount > 0
 ) select 
-B.ID AS ACCOUNTID,
 CASE WHEN invoice_row_num = 1 THEN 'New Subscription' 
      WHEN invoice_row_num > 1 THEN 'Expansion' 
      END AS opportunity_type
@@ -65,6 +65,4 @@ CASE WHEN invoice_row_num = 1 THEN 'New Subscription'
     , '6. Closed Won' as stagename
     , domain || ' ' || sku || ' qty:' || seats_purchased || ' inv:' || invoice_number AS opportunity_name
     , invoice_line_items.*    
-from invoice_line_items A 
-LEFT JOIN ORGM.CONTACT C ON A.EMAIL = C.email
-LEFT JOIN ORGM.ACCOUNT B ON C.ACCOUNTID = B.ID
+from invoice_line_items

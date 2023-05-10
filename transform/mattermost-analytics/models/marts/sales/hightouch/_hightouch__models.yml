@@ -123,6 +123,7 @@ models:
       - name: customer_name 
       - name: line1 
       - name: line2 
+      - name: street_address
       - name: postal_code 
       - name: city 
       - name: state 
