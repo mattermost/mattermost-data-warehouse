@@ -8,7 +8,8 @@
 WITH cloud_accounts_to_sync as (
     SELECT
         customers_with_cloud_subs.*,
-        '0053p0000064nt8AAA' AS ownerid
+        '0053p0000064nt8AAA' AS ownerid,
+        COALESCE(customers_with_cloud_subs.domain, '{{ var('unknown_account_name') }}' ) AS account_name
     FROM {{ ref('customers_with_cloud_subs') }}
     LEFT JOIN {{ ref('account') }}
         ON customers_with_cloud_subs.domain = account.cbit__clearbitdomain__c
