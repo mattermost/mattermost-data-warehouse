@@ -100,7 +100,7 @@ models:
         description: The settings for automatic customer balance management
       - name: items
         description: An array of subscription line items
-      - name: latest_invoice
+      - name: latest_invoice_id
         description: The ID of the most recent invoice for the subscription
       - name: livemode
         description: A boolean indicating whether the subscription is in live mode
@@ -120,8 +120,12 @@ models:
         description: The license ID for the subscription
       - name: purchase_order_num
         description: The purchase order number for the subscription
+      - name: sfdc_migrated_opportunity_sfid
+        description: The Opportunity SFID of the migrated subscription        
       - name: edition
         description: The edition of the subscription
+      - name: product_id
+        description: The product ID of the subscription
       - name: converted_to_paid_at
         description: The timestamp when the subscription was converted to paid status
       - name: license_end_at
@@ -130,8 +134,6 @@ models:
         description: The timestamp of the actual renewal date for the subscription
       - name: pending_setup_intent
         description: The setup intent for the subscription
-      - name: plan
-        description: The plan associated with the subscription
       - name: quantity
         description: The quantity of the subscription
       - name: start_at
@@ -201,3 +203,203 @@ models:
         description: The type of event that triggered the last update to the record.
       - name: deactivate_on
         description: The date and time when a product will be deactivated or no longer available.
+
+  - name: stg_stripe__invoices
+    description: Staging table for Stripe Invoices
+    columns:
+      - name: account_country
+        description: The country of the business associated with this invoice, most often the business creating the invoice.
+      - name: account_name
+        description: The public name of the business associated with this invoice, most often the business creating the invoice.
+      - name: amount_due
+        description: Final amount due at this time for this invoice.
+      - name: amount_paid
+        description: The amount, in cents, that was paid.
+      - name: amount_remaining
+        description: The difference between amount_due and amount_paid, in cents.
+      - name: attempted
+        description: Whether an attempt has been made to pay the invoice.
+      - name: attempt_count
+        description: Number of payment attempts made for this invoice, from the perspective of the payment retry schedule. Any payment attempt counts as the first attempt, and subsequently only automatic retries increment the attempt count. 
+      - name: automatic_tax
+        description: Settings and latest results for automatic tax lookup for this invoice.
+      - name: auto_advance
+        description: Controls whether Stripe will perform automatic collection of the invoice. 
+      - name: billing_reason
+        description: Indicates the reason why the invoice was created.
+      - name: charge_id
+        description: ID of the latest charge generated for this invoice, if any.
+      - name: collection_method
+        description: Either charge_automatically, or send_invoice.
+      - name: created_at
+        tests:
+          - not_null
+        description: Time at which the object was created. Measured in seconds since the Unix epoch.
+      - name: currency
+        description: Three-letter ISO currency code, in lowercase. 
+      - name: customer
+        description: The ID of the customer who will be billed.
+      - name: customer_address
+        description: The customers address. Until the invoice is finalized, this field will equal customer.address. Once the invoice is finalized, this field will no longer be updated.
+      - name: customer_email
+        description: The customers email. Until the invoice is finalized, this field will equal customer.email. Once the invoice is finalized, this field will no longer be updated.
+      - name: customer_name
+        description: The customers name.
+      - name: line1
+        description: Address Line 1
+      - name: line2
+        description: Address Line 2
+      - name: postal_code
+        description: Address Postal code
+      - name: city
+        description: City of Address
+      - name: state
+        description: State of Address
+      - name: country
+        description: Country of Address
+      - name: customer_tax_exempt
+        description: The customers tax exempt status. 
+      - name: customer_tax_ids
+        description: The customers tax IDs.
+      - name: default_tax_rates
+        description: The tax rates applied to this invoice, if any.
+      - name: discount
+        description: Describes the current discount applied to this invoice, if there is one. Not populated if there are multiple discounts.
+      - name: discounts
+        description: The discounts applied to the invoice. Line item discounts are applied before invoice discounts. 
+      - name: due_date_at
+        description: The date on which payment for this invoice is due.
+      - name: ending_balance
+        description: Ending customer balance after the invoice is finalized.
+      - name: footer
+        description: Footer displayed on the invoice.
+      - name: hosted_invoice_url
+        description: The URL for the hosted invoice page, which allows customers to view and pay an invoice.
+      - name: invoice_id
+        tests:
+          - not_null
+        description: Unique identifier for the object. This property is always present unless the invoice is an upcoming invoice.
+      - name: invoice_pdf
+        description: The link to download the PDF for the invoice.
+      - name: lines
+        description: The individual line items that make up the invoice.
+      - name: livemode
+        description: Has the value true if the object exists in live mode or the value false if the object exists in test mode.
+      - name: number
+        description: A unique, identifying string that appears on emails sent to the customer for this invoice.
+      - name: object
+        description: String representing the objects type.
+      - name: paid
+        description: Whether payment was successfully collected for this invoice.
+      - name: paid_out_of_band
+        description: Returns true if the invoice was manually marked paid, returns false if the invoice hasn’t been paid yet or was paid on Stripe.
+      - name: payment_intent
+        description: The PaymentIntent associated with this invoice.
+      - name: payment_settings
+        description: Configuration settings for the PaymentIntent that is generated when the invoice is finalized.
+      - name: period_end_at
+        description: End of the usage period during which invoice items were added to this invoice.
+      - name: period_start_at
+        description: Start of the usage period during which invoice items were added to this invoice.
+      - name: post_payment_credit_notes_amount
+        description: Total amount of all post-payment credit notes issued for this invoice.
+      - name: pre_payment_credit_notes_amount
+        description: Total amount of all pre-payment credit notes issued for this invoice.
+      - name: receipt_number
+        description: This is the transaction number that appears on email receipts sent for this invoice.
+      - name: starting_balance
+        description: Starting customer balance before the invoice is finalized. 
+      - name: status
+        description: The status of the invoice, one of draft, open, paid, uncollectible, or void.
+      - name: status_transitions
+        description: The timestamps at which the invoice status was updated.
+      - name: subscription_id
+        description: The subscription that this invoice was prepared for, if any.
+      - name: subtotal
+        description: Total of all subscriptions, invoice items, and prorations on the invoice before any invoice level discount or exclusive tax is applied.
+      - name: tax
+        description: The amount of tax on this invoice. This is the sum of all the tax amounts on this invoice.
+      - name: total
+        description: Total after discounts and taxes.
+      - name: total_discount_amounts
+        description: The aggregate amounts calculated per discount across all line items.
+      - name: total_tax_amounts
+        description: The aggregate amounts calculated per tax rate for all line items.
+      - name: updated_at
+        description: Invoice Updated timestamp
+      - name: webhooks_delivered_at
+        description: Invoices are automatically paid or sent 1 hour after webhooks are delivered, or until all webhook delivery attempts have been exhausted. 
+      - name: next_payment_attempt
+        description: The time at which payment will next be attempted. 
+      - name: payment
+        description: Payment
+      - name: forgiven
+        description: Instead of checking the forgiven field on an invoice, check for the uncollectible status.
+      - name: billing
+        description: Billing information associated with the invoice.
+      - name: tax_percent
+        description: The percentage of tax on this invoice.
+      - name: finalized_at
+        description: The finalized_at property has been moved into the status_transitions hash.
+      - name: closed_at
+        description: closed has been deprecated in favor of the more specific auto_advance field. Where you might have set closed=true on invoices in the past, set auto_advance=false.
+      - name: updated_by_event_type
+        description: Event type that caused an invoice changes.
+      - name: date
+        description: Time at which the object was created. Measured in seconds since the Unix epoch.
+
+  - name: stg_stripe__invoice_line_items
+    description: Staging table for Stripe Invoices
+    columns:
+      - name: amount
+        description: Amount (in the currency specified) of the invoice item.
+      - name: currency
+        description: Three-letter ISO currency code, in lowercase.
+      - name: description
+        description: An arbitrary string attached to the object. Often useful for displaying to users.
+      - name: discountable
+        description: If true, discounts will apply to this invoice item. Always false for prorations.
+      - name: discounts
+        description: The discounts which apply to the invoice item. 
+      - name: discount_amounts
+        description: The amounts, of the discount.
+      - name: invoice_line_item_id
+        tests:
+          - not_null
+          - unique
+        description: The ID of the customer who will be billed when this invoice item is billed.
+      - name: invoice_id
+        tests:
+          - relationships:
+              to: ref('stg_stripe__invoices')
+              field: invoice_id
+          - not_null
+        description: The ID of an existing invoice to add this invoice item to.
+      - name: invoice_item
+        description: Invoice Items represent the component lines of an invoice.
+      - name: livemode
+        description: Has the value true if the object exists in live mode or the value false if the object exists in test mode.
+      - name: object
+        description: String representing the objects type.
+      - name: period
+        description: The period associated with this invoice item. 
+      - name: plan
+        description: Plan of the purchased item.
+      - name: price
+        description: The ID of the price object.
+      - name: proration
+        description: Whether the invoice item was created automatically as a proration adjustment when the customer switched plans.
+      - name: proration_details
+        description: Additional details for proration line items
+      - name: quantity
+        description: Quantity of units for the invoice item.
+      - name: subscription_id
+        description: The subscription that this invoice item has been created for, if any.
+      - name: subscription_item
+        description: The subscription item that this invoice item has been created for, if any.
+      - name: tax_amounts
+        description: The aggregate amounts calculated per tax rate for all of the items on the order.
+      - name: tax_rates
+        description: The tax rates which apply to the invoice item.
+      - name: type
+        description: A string identifying the type of the source of this line item.
