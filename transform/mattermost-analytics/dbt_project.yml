@@ -95,6 +95,10 @@ tests:
   dbt_project_evaluator:
     # Set DBT project
     +severity: "{{ env_var('DBT_PROJECT_EVALUATOR_SEVERITY', 'warn') }}"
+  mattermost_analytics:
+    staging:
+      salesforce:
+        tags: ['nightly']
 
 # Configuration variables
 vars:
