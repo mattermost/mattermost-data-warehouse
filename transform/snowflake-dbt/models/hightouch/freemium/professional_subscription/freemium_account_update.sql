@@ -11,7 +11,7 @@ WITH customers_with_cloud_paid_subs as (
         'Customer' as account_type,
         -- Metadata to be used for selecting proper external id
         external_id_account.id as dwh_id_account_id,
-        external_id_account.id is not null as has_external_id_match,
+        external_id_account.id is not null as has_dwh_id_account_id,
         external_id_account.dwh_external_id__c as dwh_id_account_external_id,
 
         contact.accountid as contact_account_id,
@@ -62,13 +62,13 @@ SELECT
     --  3. account from lead
     --  4. account with matching domain
     case
-        when has_external_id_match then 'existing external id'
+        when has_dwh_id_account_id then 'existing external id'
         when has_contact_match then 'contact'
         when has_lead_match then 'lead'
         else 'domain'
     end as external_id_from,
     case
-        when has_external_id_match then dwh_id_account_external_id
+        when has_dwh_id_account_id then dwh_id_account_external_id
         when has_contact_match then contact_account_external_id
         when has_lead_match then lead_account_external_id
         else domain_account_external_id
@@ -78,7 +78,7 @@ FROM customers_with_cloud_paid_subs
 -- Remove duplicates by prioritizing over external id, contact, lead and finally domain.
 qualify row_number() over(
     partition by email
-    order by has_external_id_match desc,
+    order by has_dwh_id_account_id desc,
              has_contact_match desc,
              has_lead_match desc,
              has_domain_match desc
