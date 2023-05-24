@@ -128,6 +128,8 @@ models:
         description: The product ID of the subscription
       - name: converted_to_paid_at
         description: The timestamp when the subscription was converted to paid status
+      - name: license_start_at
+        description: The start date of the subscription's license
       - name: license_end_at
         description: The end date of the subscription's license
       - name: actual_renewal_at
