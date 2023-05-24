@@ -29,3 +29,7 @@ WITH onprem_olis_to_sync AS (
     AND customers_with_onprem_subs.hightouch_sync_eligible
 )
 SELECT * FROM onprem_olis_to_sync
+WHERE
+    subscription_version_id not in (
+        '8kis7psj1jb5pqifnsr8dxf3ie'   -- See https://mattermost.atlassian.net/browse/MM-52880
+    )
