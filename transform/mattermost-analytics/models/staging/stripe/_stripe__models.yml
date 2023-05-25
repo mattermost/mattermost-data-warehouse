@@ -403,3 +403,34 @@ models:
         description: The tax rates which apply to the invoice item.
       - name: type
         description: A string identifying the type of the source of this line item.
+
+  - name: stg_stripe__subscription_items
+    description: |
+      Staging table for Stripe Subscription Items. Contains all items that are linked to a subscription.
+      
+      For Self-serve self-hosted plans, at least one Subscription Item exists for each subscription:
+      - The first subscription item (always there, guaranteed) is the plan for the subscription.
+      - A second possible item is the Premier Support Add-On. This can only be purchased on a new subscription (ie, not a renewal). It cannot be purchased as part of a renewal. 
+
+    columns:
+      - name: subscription_item_id
+        description: The primary key of subscription items.
+        tests:
+          - not_null
+          - unique
+      - name: subscription_id
+        description: Reference to the subscription object.
+        tests:
+          - not_null
+      - name: product_id
+        description: Reference to the product.
+        tests:
+          - not_null
+      - name: created_at
+        description: Timestamp that the subscription item was created at.
+      - name: plan_interval
+        description: The interval of the plan (month or year).
+      - name: plan_interval_count
+        description: Count of plan_intervals for the related plan.
+      - name: quantity
+        description: Timestamp that the subscription item was created at.
