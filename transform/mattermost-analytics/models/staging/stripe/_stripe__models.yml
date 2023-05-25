@@ -118,10 +118,14 @@ models:
         description: The ID of the subscription that this subscription was renewed from
       - name: license_id
         description: The license ID for the subscription
+      - name: migrated_license_id
+        description: The id of the license, in case of a backfilled licenses since before Stripe.
       - name: purchase_order_num
         description: The purchase order number for the subscription
       - name: sfdc_migrated_opportunity_sfid
-        description: The Opportunity SFID of the migrated subscription        
+        description: The Opportunity SFID of the migrated subscription
+      - name: sfdc_migrated_started_at
+        description: The license start date of the migrated subscription.
       - name: edition
         description: The edition of the subscription
       - name: product_id
