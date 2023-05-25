@@ -5,16 +5,16 @@ select
     case
         -- Handle backfills
         when s.sfdc_migrated_license_id is not null then sfdc_migrated_started_at
-        else s.license_end_at
-    end as license_end_at,
+        else s.license_start_at
+    end as coalesced_license_start_at,
     case
         -- Handle backfills
         when s.sfdc_migrated_license_id is not null then s.current_period_end_at
         else s.license_end_at
-    end as license_end_at,
+    end as coalesced_license_end_at,
     license_id is null as is_missing_license_id,
-    license_end_at is null as is_missing_license_start_at,
-    license_end_at is null as is_missing_license_end_at
+    coalesced_license_start_at is null as is_missing_license_start_at,
+    coalesced_license_end_at is null as is_missing_license_end_at
 from
     {{ ref('stg_stripe__subscriptions')}} s
     left join {{ ref('stg_stripe__subscription_items')}} si on s.subscription_id = si.subscription_id
@@ -28,8 +28,8 @@ where
     and s.status <> 'incomplete_expired'
     and (
         -- License id must be non null
-        license_id is null
+        is_missing_license_id
         -- License must have start and end date
-       or license_start_at is null
-       or license_end_at is null
+        or is_missing_license_start_at
+        or is_missing_license_end_at
     )
