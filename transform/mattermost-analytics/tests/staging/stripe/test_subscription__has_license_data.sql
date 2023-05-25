@@ -24,6 +24,8 @@ where
     p.name not ilike '%cloud%'
     -- Skip support subscription items and focus on main plan
     and p.name <> 'Premier Support'
+    -- Skip incomplete subscriptions
+    and s.status <> 'incomplete_expired'
     and (
         -- License id must be non null
         license_id is null
