@@ -5,11 +5,11 @@
 ) }}
 
 select
-    s.subscription_id, count(s.subscription_item_id)
+    si.subscription_id, count(si.subscription_item_id)
 from
-    {{ ref('stg_stripe__subscription_items')}} s
-    left join {{ ref('stg_stripe__products')}} p on s.product_id = p.product_id
+    {{ ref('stg_stripe__subscription_items')}} si
+    left join {{ ref('stg_stripe__products')}} p on si.product_id = p.product_id
 where
     p.name not ilike '%cloud%'
 group by subscription_id
-having count(s.subscription_item_id) > 2
+having count(si.subscription_item_id) > 2
