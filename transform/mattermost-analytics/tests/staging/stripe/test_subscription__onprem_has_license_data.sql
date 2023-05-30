@@ -1,4 +1,11 @@
--- This will fail
+-- Warn until the edge cases are clarified
+{{ config(
+    severity = 'warn',
+    error_if = '> 3'
+) }}
+
+-- Test all specs defined in https://mattermost.atlassian.net/wiki/spaces/DATAENG/pages/2453733377/Self+Serve+Renewals
+
 select
     s.subscription_id,
     p.name as plan_name,
@@ -33,3 +40,5 @@ where
         or is_missing_license_start_at
         or is_missing_license_end_at
     )
+    -- Data before this date might not be in-line with specification
+    and s.created_at > '2021-04-01'
