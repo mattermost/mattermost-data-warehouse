@@ -25,7 +25,7 @@ with current_subscriptions AS(
                 current_subscriptions.id)
         AS opportunity_external_id,
         customers.email,
-        customers.contactfirstname,
+        customers.contactfirstname as first_name,
         coalesce(NULLIF(TRIM(customers.contactlastname), ''), customers.email) as last_name,
         CASE WHEN SPLIT_PART(customers.email, '@', 2) = 'gmail.com' 
         THEN NULL        
