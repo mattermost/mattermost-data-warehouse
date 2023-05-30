@@ -31,6 +31,7 @@ subscriptions as (
         metadata:"internal_purchase_order"::varchar as purchase_order_number,
         metadata:"sfdc-migrated-opportunity-sfid"::varchar as sfdc_migrated_opportunity_sfid,
         TO_TIMESTAMP_NTZ(metadata:"sfdc-original-start-date"::varchar) as sfdc_migrated_started_at,
+        metadata:"renewal-type"::varchar as renewal_type,
         plan:"name"::varchar as edition,
         plan:"product"::varchar as product_id,
         TO_TIMESTAMP_NTZ(metadata:"cws-date-converted-to-paid"::int) as converted_to_paid_at,

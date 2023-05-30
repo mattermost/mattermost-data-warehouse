@@ -1,9 +1,3 @@
--- Warn until the edge cases are clarified
-{{ config(
-    severity = 'warn',
-    error_if = '> 3'
-) }}
-
 -- Test all specs defined in https://mattermost.atlassian.net/wiki/spaces/DATAENG/pages/2453733377/Self+Serve+Renewals
 
 select
@@ -40,5 +34,7 @@ where
         or is_missing_license_start_at
         or is_missing_license_end_at
     )
+    -- Ignoring subscriptions that come from admin portal/sales
+    and s.renewal_type <> 'sales-only'
     -- Data before this date might not be in-line with specification
     and s.created_at > '2021-04-01'

@@ -126,6 +126,8 @@ models:
         description: The Opportunity SFID of the migrated subscription
       - name: sfdc_migrated_started_at
         description: The license start date of the migrated subscription.
+      - name: renewal_type
+        description: If `sales-only`, it cannot be renewed by self-serve.
       - name: edition
         description: The edition of the subscription
       - name: product_id
