@@ -1,9 +1,3 @@
--- Warn until the edge cases are clarified
-{{ config(
-    severity = 'warn',
-    error_if = '> 2'
-) }}
-
 select
     si.subscription_id, count(si.subscription_item_id)
 from

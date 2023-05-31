@@ -40,3 +40,10 @@ renamed as (
 )
 
 select * from renamed
+where
+    -- Known problematic cases
+    -- On prem subscriptions with more than 2 subscription items
+    subscription_id not in (
+        'sub_IIhi2F9b4KvQof',
+        'sub_IIhmz3ZpMrAlV2'
+    )
