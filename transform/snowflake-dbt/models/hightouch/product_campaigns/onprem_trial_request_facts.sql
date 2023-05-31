@@ -23,7 +23,6 @@ with latest_server_daily_details as (
         , tr.server_id
         , tr.start_date::date as start_date
         , tr.end_date::date as expire_date
-        , 'E20 Trial' as edition
         , case when server_fact.max_registered_users >= 100 then 'More than 100 users; ' else '' end as num_users
         , case when coalesce(latest_server_daily_details.enable_cluster, false) then 'High Availability; ' else '' end as high_availability
         , case when coalesce(latest_server_daily_details.enable_compliance, false) then 'Advanced Compliance; ' else '' end as advanced_compliance
