@@ -20,10 +20,10 @@ with latest_server_daily_details as (
         tr.email
         , tr.site_url
         , tr.license_id
-        , license_server_fact.server_id
-        , license_server_fact.start_date
-        , license_server_fact.expire_date
-        , license_server_fact.edition
+        , tr.server_id
+        , tr.start_date::date as start_date
+        , tr.end_date::date as expire_date
+        , 'E20 Trial' as edition
         , case when server_fact.max_registered_users >= 100 then 'More than 100 users; ' else '' end as num_users
         , case when coalesce(latest_server_daily_details.enable_cluster, false) then 'High Availability; ' else '' end as high_availability
         , case when coalesce(latest_server_daily_details.enable_compliance, false) then 'Advanced Compliance; ' else '' end as advanced_compliance
@@ -43,10 +43,9 @@ with latest_server_daily_details as (
         , row_number() over (partition by tr.email order by tr.start_date desc) as row_number
     from 
         {{ ref('trial_requests') }} tr
-        join {{ ref('license_server_fact') }} on tr.license_id = license_server_fact.license_id
-        join latest_server_daily_details on license_server_fact.server_id = latest_server_daily_details.server_id
+        join latest_server_daily_details on tr.server_id = latest_server_daily_details.server_id
             and latest_server_daily_details.row_number = 1
-        left join {{ ref('server_fact') }} on server_fact.server_id = license_server_fact.server_id
+        left join {{ ref('server_fact') }} on server_fact.server_id = tr.server_id
     where (
         latest_server_daily_details.enable_cluster
         or latest_server_daily_details.enable_compliance
