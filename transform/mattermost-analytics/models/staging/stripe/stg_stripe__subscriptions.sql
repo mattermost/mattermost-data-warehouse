@@ -27,11 +27,15 @@ subscriptions as (
         metadata:"current_product_id"::varchar as current_product_id,
         metadata:"cws-renewed-from-stripe-id"::varchar as renewed_from_subscription_id,
         metadata:"cws-license-id"::varchar as license_id,
+        metadata:"sfdc-migrated-license-key"::varchar as sfdc_migrated_license_id,
         metadata:"internal_purchase_order"::varchar as purchase_order_number,
         metadata:"sfdc-migrated-opportunity-sfid"::varchar as sfdc_migrated_opportunity_sfid,
+        TO_TIMESTAMP_NTZ(metadata:"sfdc-original-start-date"::varchar) as sfdc_migrated_started_at,
+        metadata:"renewal-type"::varchar as renewal_type,
         plan:"name"::varchar as edition,
         plan:"product"::varchar as product_id,
         TO_TIMESTAMP_NTZ(metadata:"cws-date-converted-to-paid"::int) as converted_to_paid_at,
+        TO_TIMESTAMP_NTZ(metadata:"cws-license-start-date"::int) as license_start_at,
         TO_TIMESTAMP_NTZ(metadata:"cws-license-end-date"::int) as license_end_at,
         TO_TIMESTAMP_NTZ(metadata:"cws-actual-renewal-date"::int / 1000) as actual_renewal_at,
         pending_setup_intent,
@@ -55,4 +59,13 @@ subscriptions as (
 
 )
 
-select * from subscriptions
+select
+    *
+from subscriptions
+where
+    -- Known problematic cases
+    -- On prem subscriptions with more than 2 subscription items
+    subscription_id not in (
+        'sub_IIhi2F9b4KvQof',
+        'sub_IIhmz3ZpMrAlV2'
+    )
