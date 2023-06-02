@@ -28,7 +28,7 @@ from
     left join {{ ref('stg_stripe__subscription_items')}} si on s.subscription_id = si.subscription_id
     left join {{ ref('stg_stripe__products')}} p on si.product_id = p.product_id
     left join {{ ref('stg_stripe__invoices')}} i on i.subscription_id = s.subscription_id
-    left join {{ ref('stg_stripe__invoice_line_items')}} ili on ili.invoice_id = s.invoice_id
+    left join {{ ref('stg_stripe__invoice_line_items')}} ili on ili.invoice_id = i.invoice_id
 where
     -- Onprem subscription/subscription items
     p.name not ilike '%cloud%'
