@@ -69,7 +69,7 @@ subscriptions as (
             when sfdc_migrated_license_id is not null then current_period_end_at
             else _license_end_at
         end as license_end_at,
-        metadata:"cws-license-start-date"::int > 0 and metadata:"cws-license-end-date"::int > 0 as _invalid_license_date_range,
+        metadata:"cws-license-start-date"::int = 0 and metadata:"cws-license-end-date"::int = 0 as _invalid_license_date_range,
 
 
         -- User data
