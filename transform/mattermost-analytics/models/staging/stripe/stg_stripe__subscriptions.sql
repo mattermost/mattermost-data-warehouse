@@ -71,7 +71,6 @@ subscriptions as (
         end as license_end_at,
         metadata:"cws-license-start-date"::int = 0 and metadata:"cws-license-end-date"::int = 0 as _invalid_license_date_range,
 
-
         -- User data
         metadata:"internal_purchase_order"::varchar as purchase_order_number,
 
