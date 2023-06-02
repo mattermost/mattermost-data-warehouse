@@ -10,7 +10,7 @@ select
     p.name as plan_name,
     s.license_start_at,
     s.license_end_at,
-    actual_renewal_at,
+    s.actual_renewal_at,
     ili.quantity,
     ili.quantity - LAG(ili.quantity) OVER (PARTITION BY s.customer_id ORDER BY i.created_at) as seat_difference,
     datediff(day, actual_renewal_at, lag(license_end_at) OVER (PARTITION BY s.customer_id ORDER BY i.created_at)) as days_since_previous_license_end,
