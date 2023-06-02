@@ -20,7 +20,7 @@ select
     ili.quantity - LAG(ili.quantity) OVER (PARTITION BY s.customer_id ORDER BY i.created_at) as seat_difference,
     datediff(day, actual_renewal_at, lag(license_end_at) OVER (PARTITION BY s.customer_id ORDER BY i.created_at)) as days_since_previous_license_end,
     row_number() over(partition by s.customer_id order by i.created_at) as charge_order,
-    case when days_since_previous_license_end < 60 then true else false as is_renewal,
+    case when days_since_previous_license_end < 60 then true else false end as is_renewal,
     case when seat_difference > 0 then true else false end as is_expansion,
     case when seat_difference < 0 then true else false end as is_contraction
 from
@@ -28,6 +28,7 @@ from
     left join {{ ref('stg_stripe__subscription_items')}} si on s.subscription_id = si.subscription_id
     left join {{ ref('stg_stripe__products')}} p on si.product_id = p.product_id
     left join {{ ref('stg_stripe__invoices')}} i on i.subscription_id = s.subscription_id
+    left join {{ ref('stg_stripe__invoice_line_items')}} ili on ili.invoice_id = s.invoice_id
 where
     -- Onprem subscription/subscription items
     p.name not ilike '%cloud%'
