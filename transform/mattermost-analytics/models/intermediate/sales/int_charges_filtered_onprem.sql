@@ -40,3 +40,5 @@ where
     and s.renewal_type is null
     -- Data before this date might not be in-line with specification
     and s.created_at > '2021-04-01'
+    -- Paid invoice line items
+    and ili.amount > 0
