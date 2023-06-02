@@ -1,3 +1,8 @@
+{{config({
+    "materialized": 'table',
+    "unique_key":"charge_id",
+  })
+}}
 
 select
     s.subscription_id,
