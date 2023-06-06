@@ -23,7 +23,8 @@ select
     row_number() over(partition by s.customer_id order by i.created_at) as charge_order,
     case when days_since_previous_license_end < 60 then true else false end as is_renewal,
     case when seat_difference > 0 then true else false end as is_expansion,
-    case when seat_difference < 0 then true else false end as is_contraction
+    case when seat_difference < 0 then true else false end as is_contraction,
+    s.renewed_from_subscription_id = lag(s.renewed_from_subscription_id) OVER (PARTITION BY s.customer_id ORDER BY i.created_at) as _is_matching_renewed_from
 from
     {{ ref('stg_stripe__subscriptions')}} s
     left join {{ ref('stg_stripe__subscription_items')}} si on s.subscription_id = si.subscription_id

@@ -69,8 +69,11 @@ subscriptions as (
             when sfdc_migrated_license_id is not null then current_period_end_at
             else _license_end_at
         end as license_end_at,
-        metadata:"cws-license-start-date"::int = 0 and metadata:"cws-license-end-date"::int = 0 as _invalid_license_date_range,
-
+        -- License start and end date are invalid if:
+        -- - No backfill information
+        -- - Values are equal to zero (AKA 1970-01-01 00:00:00) or null
+        (license_start_at is null or license_start_at < '2000-01-01')
+        and (license_end_at is null or license_end_at < '200-01-01') as _invalid_license_date_range,
         -- User data
         metadata:"internal_purchase_order"::varchar as purchase_order_number,
 
