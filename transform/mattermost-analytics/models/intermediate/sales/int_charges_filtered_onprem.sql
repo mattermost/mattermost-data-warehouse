@@ -21,7 +21,11 @@ select
     ili.quantity - LAG(ili.quantity) OVER (PARTITION BY s.customer_id ORDER BY i.created_at) as seat_difference,
     datediff(day, lag(license_end_at) OVER (PARTITION BY s.customer_id ORDER BY i.created_at), license_start_at) as days_since_previous_license_end,
     row_number() over(partition by s.customer_id order by i.created_at) as charge_order,
-    case when days_since_previous_license_end < 60 then true else false end as is_renewal,
+    case
+        when s.renewed_from_subscription_id is not null then true
+        when days_since_previous_license_end < 60 then true
+        else false end
+    as is_renewal,
     case when seat_difference > 0 then true else false end as is_expansion,
     case when seat_difference < 0 then true else false end as is_contraction,
     s.renewed_from_subscription_id = lag(s.subscription_id) OVER (PARTITION BY s.customer_id ORDER BY i.created_at) as _is_matching_renewed_from
