@@ -44,6 +44,13 @@ models:
         tests:
           - not_null
 
+  - name: contracted_arr_reporting
+    description: Same as arr_reporting but reporting date shifts to closing date instead of reporting date which is based on the later of close date or license start
+    columns:
+      - name: account_id
+        tests:
+          - not_null
+  
   - name: arr_vintages
     description: Grouping of arr_reporting into a shape friendly for vintage reporting without gaps on months
 
