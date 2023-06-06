@@ -73,7 +73,7 @@ subscriptions as (
         -- - No backfill information
         -- - Values are equal to zero (AKA 1970-01-01 00:00:00) or null
         (license_start_at is null or license_start_at < '2000-01-01')
-        and (license_end_at is null or license_end_at < '200-01-01') as _invalid_license_date_range,
+        and (license_end_at is null or license_end_at < '2000-01-01') as _invalid_license_date_range,
         -- User data
         metadata:"internal_purchase_order"::varchar as purchase_order_number,
 
