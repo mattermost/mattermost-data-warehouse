@@ -59,7 +59,7 @@ subscriptions as (
             -- Handle backfills
             when sfdc_migrated_license_id is not null then sfdc_migrated_started_at
             -- Handle bug whenever license start date doesn't exist but end date exists
-            when metadata:"cws-license-start-date"::int = 0 and metadata:"cws-license-end-date"::int > 0 then TIMEADD(year, -1, actual_renewal_at)
+            when metadata:"cws-license-start-date"::int = 0 and metadata:"cws-license-end-date"::int > 0 then TIMEADD(year, -1, TO_TIMESTAMP_NTZ(metadata:"cws-license-end-date"::int))
             -- Handle bug where both license start and end date is 0
             when metadata:"cws-license-start-date"::int = 0 and metadata:"cws-license-end-date"::int = 0 then current_period_start_at
             else TO_TIMESTAMP_NTZ(metadata:"cws-license-start-date"::int)
@@ -79,6 +79,7 @@ subscriptions as (
         -- Other metadata
         metadata:"billing-type"::varchar as billing_type,
         metadata:"sfdc-migrated-opportunity-sfid"::varchar as sfdc_migrated_opportunity_sfid,
+        case when metadata:"cws-license-admin-generated"::boolean = true then true else false end as is_admin_generated_license,
         metadata:"renewal-type"::varchar as renewal_type,
         plan:"name"::varchar as edition,
         TO_TIMESTAMP_NTZ(metadata:"cws-date-converted-to-paid"::int) as converted_to_paid_at

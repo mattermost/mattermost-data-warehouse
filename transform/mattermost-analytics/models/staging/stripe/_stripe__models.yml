@@ -116,6 +116,10 @@ models:
         description: The ID of the current product for the subscription
       - name: renewed_from_subscription_id
         description: The ID of the subscription that this subscription was renewed from
+        tests:
+          - relationships:
+              to: ref('stg_stripe__subscriptions')
+              field: subscription_id
       - name: license_id
         description: The license ID for the subscription
       - name: migrated_license_id
