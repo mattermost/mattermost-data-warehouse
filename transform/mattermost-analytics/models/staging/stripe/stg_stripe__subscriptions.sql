@@ -21,8 +21,8 @@ subscriptions as (
 
         -- Subscription data
         created as created_at,
-        current_period_end as current_period_end_at,
         current_period_start as current_period_start_at,
+        current_period_end as current_period_end_at,
         trial_start as trial_start_at,
         trial_end as trial_end_at,
         start_date as start_at,
@@ -62,7 +62,7 @@ subscriptions as (
             when metadata:"cws-license-start-date"::int = 0 and metadata:"cws-license-end-date"::int > 0 then TIMEADD(year, -1, actual_renewal_at)
             -- Handle bug where both license start and end date is 0
             when metadata:"cws-license-start-date"::int = 0 and metadata:"cws-license-end-date"::int = 0 then current_period_start_at
-            else TO_TIMESTAMP_NTZ(metadata:"cws-license-end-date"::int)
+            else TO_TIMESTAMP_NTZ(metadata:"cws-license-start-date"::int)
         end as license_start_at,
         case
             -- License data available
