@@ -54,26 +54,25 @@ subscriptions as (
 
         -- License specific data
         TO_TIMESTAMP_NTZ(metadata:"sfdc-original-start-date"::varchar) as sfdc_migrated_started_at,
-        TO_TIMESTAMP_NTZ(metadata:"cws-license-start-date"::int) as _license_start_at,
-        TO_TIMESTAMP_NTZ(metadata:"cws-license-end-date"::int) as _license_end_at,
         TO_TIMESTAMP_NTZ(metadata:"cws-actual-renewal-date"::int / 1000) as actual_renewal_at,
         case
-            -- Handle backfills and bugs
+            -- Handle backfills
             when sfdc_migrated_license_id is not null then sfdc_migrated_started_at
             -- Handle bug whenever license start date doesn't exist but end date exists
             when metadata:"cws-license-start-date"::int = 0 and metadata:"cws-license-end-date"::int > 0 then TIMEADD(year, -1, actual_renewal_at)
-            else _license_start_at
+            -- Handle bug where both license start and end date is 0
+            when metadata:"cws-license-start-date"::int = 0 and metadata:"cws-license-end-date"::int = 0 then current_period_start_at
+            else TO_TIMESTAMP_NTZ(metadata:"cws-license-end-date"::int)
         end as license_start_at,
         case
+            -- License data available
+            when metadata:"cws-license-end-date"::int > 0 then TO_TIMESTAMP_NTZ(metadata:"cws-license-end-date"::int)
             -- Handle backfills
             when sfdc_migrated_license_id is not null then current_period_end_at
-            else _license_end_at
+            -- Handle bug whenever license start date doesn't exist but end date exists
+            -- Handle bug where both license start and end date is 0
+            else current_period_end_at
         end as license_end_at,
-        -- License start and end date are invalid if:
-        -- - No backfill information
-        -- - Values are equal to zero (AKA 1970-01-01 00:00:00) or null
-        (license_start_at is null or license_start_at < '2000-01-01')
-        and (license_end_at is null or license_end_at < '2000-01-01') as _invalid_license_date_range,
         -- User data
         metadata:"internal_purchase_order"::varchar as purchase_order_number,
 
@@ -98,5 +97,3 @@ where
         'sub_IIhi2F9b4KvQof',
         'sub_IIhmz3ZpMrAlV2'
     )
-    -- Ignore entries with invalid start and end date pairs
-    and not _invalid_license_date_range
