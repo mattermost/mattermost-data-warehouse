@@ -4,8 +4,9 @@ select
     s.subscription_id,
     p.name as plan_name,
     license_id is null as is_missing_license_id,
-    license_start_at is null as is_missing_license_start_at,
-    license_end_at is null as is_missing_license_end_at
+    (license_start_at is null or license_start_at < '2000-01-01') as is_missing_license_start_at,
+    (license_end_at is null or license_end_at < '2000-01-01')as is_missing_license_end_at,
+    license_end_at <= license_start_at as is_invalid_date_range
 from
     {{ ref('stg_stripe__subscriptions')}} s
     left join {{ ref('stg_stripe__subscription_items')}} si on s.subscription_id = si.subscription_id
@@ -28,5 +29,6 @@ where
         -- License must have valid start and end date
         or is_missing_license_start_at
         or is_missing_license_end_at
-        or _invalid_license_date_range
+        -- License end date must be after start date
+        or is_invalid_date_range
     )
