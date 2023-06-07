@@ -7,7 +7,10 @@
 
 --v1 Roy CONTRACTED ARR REPORTING
 --tested on snowflake 20230606
---this sql model reports ARR on date contracted instead of report date where report date is the later of close date or license start
+--this sql model reports ARR on date contracted date instead of report date used on arr_reporting model
+--Contracted date is based on the max of closing day which is the date the sales person closed the deal with approved contracts
+--Contracted date is the max of closing days within a certain period
+--There is a potential for several closing days for the same period that pertained to the same deal and doing the maximum avoids potential duplicates
 
 
 --population coming from arr_transactions
