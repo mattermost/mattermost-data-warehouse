@@ -40,7 +40,7 @@ with denormalized_subscriptions as (
 )
 select
     subscription.*,
-    subscription.quantity - previous_subscription.quantity as seats_diff,
+    subscription.number_of_seats - previous_subscription.number_of_seats as seats_diff,
     subscription.license_start_at - previous_subscription.license_end_at as days_since_previous_license_end,
     subscription.license_start_at - previous_subscription.actual_renewal_at as days_since_actual_license_end,
     (s.renewed_from_subscription_id is not null) as is_renewal,
