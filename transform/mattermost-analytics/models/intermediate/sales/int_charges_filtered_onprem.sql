@@ -43,7 +43,7 @@ select
     subscription.number_of_seats - previous_subscription.number_of_seats as seats_diff,
     subscription.license_start_at - previous_subscription.license_end_at as days_since_previous_license_end,
     subscription.license_start_at - previous_subscription.actual_renewal_at as days_since_actual_license_end,
-    (s.renewed_from_subscription_id is not null) as is_renewal,
+    (subscription.renewed_from_subscription_id is not null) as is_renewal,
     seats_diff > 0 as is_expansion,
     seats_diff < 0 as in_contraction
 from
