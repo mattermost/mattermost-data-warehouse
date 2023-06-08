@@ -14,20 +14,9 @@
 
 
 --population coming from arr_transactions
-with trans as (
-select 
-    t.* 
-    ,last_day(date_trunc('week',closing_date),'week') as closing_week
-    ,last_day(closing_date,month) as closing_month
-    ,last_day(dateadd('month',1,last_day(dateadd('month',2,date_trunc('quarter',dateadd('month',-1,closing_month)))))) as closing_fiscal_quarter
-    ,last_day(dateadd('month',1,last_day(dateadd('month',11,date_trunc('year',dateadd('month',-1,closing_month)))))) as closing_fiscal_year
-from {{ ref( 'arr_transactions') }} t
---from analytics.finance.arr_transactions t
-)
-
 --grouping arr transactions to the same close day to report contracted arr and the associated breakdown of arr change
 --cte calculatings daily outstanding arr for whole portfolio
-,a as (
+with a as (
     select
     closing_month as closing_mo
     ,account_name
@@ -116,8 +105,7 @@ from {{ ref( 'arr_transactions') }} t
 	,last_day(min(account_start)) as cohort_month
     ,last_day(dateadd('month',1,last_day(dateadd('month',2,date_trunc('quarter',dateadd('month',-1,cohort_month)))))) as cohort_fiscal_qtr
     ,last_day(dateadd('month',1,last_day(dateadd('month',11,date_trunc('year',dateadd('month',-1,cohort_month)))))) as cohort_fiscal_yr
-from trans
---from {{ ref( 'arr_transactions') }}
+from {{ ref( 'arr_transactions') }}
 --from analytics.finance.arr_transactions
 	where closing_mo <= last_day(current_date,month)
 	group by 1,2,3
