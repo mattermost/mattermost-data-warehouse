@@ -23,6 +23,7 @@ with denormalized_subscriptions as (
         i.invoice_id is null as is_missing_invoice,
         s.sfdc_migrated_license_id is not null as is_sfdc_migrated,
         s.is_admin_generated_license,
+        s.renewal_type, -- for debugging
         case when s.renewal_type = 'sales-only' then true else false end as is_only_renewed_from_sales
     from
         {{ ref('stg_stripe__subscriptions')}} s

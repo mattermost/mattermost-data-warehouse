@@ -87,7 +87,6 @@ subscriptions as (
     from source
 
 )
-
 select
     *
 from subscriptions
