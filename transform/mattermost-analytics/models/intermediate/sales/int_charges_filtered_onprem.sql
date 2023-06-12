@@ -83,7 +83,7 @@ with onprem_subscriptions as (
 )
 select
     oc.*,
-    oc.previous_charge_id is null and renewed_from_subscription_id is null as is_new_purchase,
+    oc.previous_charge_id is null and oc.renewed_from_subscription_id is null as is_new_purchase,
     oc.renewed_from_subscription_id is not null and oc.is_subscriptions_first_charge is_renewal,
     oc.number_of_seats - pc.number_of_seats as seats_diff,
     seats_diff > 0 as is_expansion,
