@@ -50,7 +50,7 @@ with onprem_subscriptions as (
         -- Keep first, last and previous charge in group
         lag(i.charge_id) over(partition by i.subscription_id order by i.created_at asc) as previous_charge,
         last_value(i.charge_id) over(partition by i.subscription_id order by i.created_at asc) as last_subscription_charge,
-        i.charge_id = last_subscription_charge as is_subscriptions_last_charger
+        i.charge_id = last_subscription_charge as is_subscriptions_last_charge
     from
         --- Join on onprem subscriptions in order to prune records
         onprem_subscriptions ds
