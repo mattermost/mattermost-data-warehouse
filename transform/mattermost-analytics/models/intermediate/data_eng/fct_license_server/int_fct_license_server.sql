@@ -16,20 +16,32 @@ trial_requests AS
         *
     FROM 
         {{ ref('stg_blapi__trial_requests') }}
-) SELECT 
-    DISTINCT user_id as server_id
-    , a.license_id
-    , a.customer_id
-    , a.installation_id
-    , NULL AS name
-    , NULL as site_url
-    , NULL as email
-    , a.edition as edition
-    , users
-    , a.issued_date
-    , a.start_date
-    , a.expire_date
+) SELECT server_id
+        , license_id
+        , customer_id
+        , installation_id
+        , NULL AS name
+        , NULL as site_url
+        , NULL as email
+        , edition as edition
+        , users
+        , issued_date
+        , start_date
+        , expire_date
     FROM 
-    telemetry_licenses a 
-    UNION 
-    SELECT * from trial_requests
+    telemetry_licenses 
+UNION 
+    SELECT server_id
+        , license_id
+        , NULL AS customer_id
+        , NULL AS installation_id
+        , name
+        , site_url
+        , email
+        , edition
+        , users
+        , issued_date
+        , start_date
+        , expire_date 
+    FROM
+    trial_requests

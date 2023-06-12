@@ -8,8 +8,6 @@ models:
     columns:
       - name: server_id
       - name: license_id
-      - name: customer_id
-      - name: installation_id
       - name: name
       - name: site_url
       - name: email

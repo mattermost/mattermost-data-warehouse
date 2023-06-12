@@ -3,8 +3,6 @@ WITH trial_requests AS (
     SELECT DISTINCT
       server_id     AS server_id
       , id          AS license_id
-      , NULL        AS customer_id
-      , NULL        AS installation_id
       , name        AS name
       , site_url    AS site_url
       , email       AS email
