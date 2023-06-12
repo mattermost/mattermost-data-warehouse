@@ -17,4 +17,4 @@ WITH trial_requests AS (
       {{ source('blapi', 'trial_requests') }}
 )
 SELECT *
-FROM license
+FROM trial_requests
