@@ -1,0 +1,173 @@
+version: 2
+
+sources:
+  - name: mattermost2
+    database: 'RAW'
+    schema: mattermost2
+    loader: Rudderstack
+    description: |
+      Mattermost2 server telemetry data. Stored using Rudderstack. Rudderstack documentations offers an
+      in-depth documentation of the [warehouse schema](https://www.rudderstack.com/docs/destinations/warehouse-destinations/warehouse-schema/).
+      
+      This schema contains production data.
+      
+      [Server source](https://github.com/mattermost/mattermost-server/blob/master/services/telemetry/telemetry.go)
+      [Webapp source](https://github.com/mattermost/mattermost-webapp/blob/master/packages/mattermost-redux/src/client/rudder.ts)
+    tags: [ 'rudderstack' ]
+
+    # Omitting tables with 20 or less rows.
+    tables:
+      - name: groups
+        description: Contains raw server-level group data as a single row per server per timestamp.
+
+      - name: activity
+        description: Contains raw server-level activity at a given point in time/on a specific date. Includes number of posts, channels,
+          slash commands, api calls, bot accounts, etc.
+
+      - name: channel_moderation
+        description: Contains raw server-level channel data as a single row per server per timestamp.
+
+      - name: config_analytics
+        description: The raw Server analytics configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_announcement
+        description: The raw Server announcements configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_audit
+        description: The raw Server Audit configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_bleve
+        description: The raw Server Bleve configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_client_requirements
+        description: The raw Server client requirements configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_cluster
+        description: The raw Server cluster configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_compliance
+        description: The raw Server compliance configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_data_retention
+        description: The raw Server data retention configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_display
+        description: The raw Server disply configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_elasticsearch
+        description: The raw Server ElasticSearch configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_email
+        description: The raw Server email configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_experimental
+        description: The raw Server experimental configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_extension
+        description: The raw Server extension configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_file
+        description: The raw Server file configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_guest_accounts
+        description: The raw Server guest account configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_image_proxy
+        description: The raw Server image proxy configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_ldap
+        description: The raw Server LDAP configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_localization
+        description: The raw Server localization configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_log
+        description: The raw Server log configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_message_export
+        description: The raw Server message export configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_metrics
+        description: The raw Server metrics configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_nativeapp
+        description: The raw Server Native App configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_notifications_log
+        description: The raw Server notifications log configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_oauth
+        description: The raw Server OAuth configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_password
+        description: The raw Server password configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_plugin
+        description: The raw Server plugin configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_privacy
+        description: The raw Server privacy configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_rate
+        description: The raw Server rate configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_saml
+        description: The raw Server SAML configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_service
+        description: The raw Server service configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_sql
+        description: The raw Server sql configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_support
+        description: The raw Server support configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_team
+        description: The raw Server team configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: config_theme
+        description: The raw Server theme configuration data sent to Mattermost by Telemetry-Enabled Servers.
+
+      - name: elasticsearch
+        description: Contains raw server-level ElasticSearch data as a single row per server per timestamp.
+
+      - name: event
+        description: >
+          Contains raw user-level event data as a single row per event.
+          Source is mattermost webapp ([code](https://github.com/mattermost/mattermost-webapp/blob/master/packages/mattermost-redux/src/client/rudder.ts#L35))
+        tags: [ 'tracks', 'mattermost-webapp' ]
+
+      - name: identifies
+        description: Contains raw user-level data from rudderstack identifies method.
+
+      - name: license
+        description: Daily license data
+
+      - name: pages
+        description: Contains raw user-level data from rudderstack pages method.
+
+      - name: permissions_general
+        description: Contains the raw general permissions for each server at a given point in time/on a specific date.
+
+      - name: permissions_system_scheme
+        description: Contains the raw system scheme permissions for each server's user type at a given point in time/on a specific
+          date - system admin, team guest user, system user, team admin, channel admin, channel guest, and channel user
+
+      - name: permissions_team_schemes
+        description: Contains the raw team scheme permissions for each server's user type at a given point in time/on a specific
+          date - team guest, channel admin, channel user, team admin, channel guest, and team user.
+
+      - name: plugins
+        description: Contains the raw plugin configurations of a server at a given point in time. Represented by integer counts.
+          No plugin names or details provided.
+
+      - name: server
+        description: Daily server data
+
+      - name: tracks
+        description: >
+          Contains raw user-level data from rudderstack track method. Note that for every `track` call, RudderStack
+          creates a record in both the `tracks` and `<event_name>` tables.
+
+      - name: users
