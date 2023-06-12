@@ -64,7 +64,10 @@ with onprem_subscriptions as (
 ), onprem_charges as (
     select
         os.*,
-        foi.*,
+        foi.invoice_id,
+        foi.charge_id,
+        foi.amount_paid,
+        foi.number_of_seats,
         -- Handle cases where previous charge is from a previous subscription
         coalesce(foi.previous_charge, lpc.charge_id) as previous_charge
     from
@@ -73,6 +76,12 @@ with onprem_subscriptions as (
         left join flattened_onprem_invoices lpc on os.renewed_from_subscription_id = lpc.subscription_id and lpc.is_subscriptions_last_charge
 )
 select
-    *
+    oc.*,
+    oc.renewed_from_subscription_id is null as is_new_purchase,
+    oc.renewed_from_subscription_id is not null as is_renewal,
+    oc.number_of_seats - pc.number_of_seats as seats_diff,
+    seats_diff > 0 as is_expansion,
+    seats_diff < 0 as is_contraction
 from
-    onprem_charges
+    onprem_charges oc
+    left join onprem_charges as pc on oc.previous_charge_id = pc.charge_id
