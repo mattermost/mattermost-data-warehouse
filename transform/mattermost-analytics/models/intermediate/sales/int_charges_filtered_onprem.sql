@@ -50,7 +50,9 @@ with onprem_subscriptions as (
         ) as number_of_seats,
         -- Keep first, last and previous charge in group
         lag(i.charge_id) over(partition by i.subscription_id order by i.created_at asc) as previous_charge,
+        first_value(i.charge_id) over(partition by i.subscription_id order by i.created_at asc) as first_subscription_charge,
         last_value(i.charge_id) over(partition by i.subscription_id order by i.created_at asc) as last_subscription_charge,
+        i.charge_id = first_subscription_charge as is_subscriptions_first_charge,
         i.charge_id = last_subscription_charge as is_subscriptions_last_charge
     from
         --- Join on onprem subscriptions in order to prune records
@@ -72,6 +74,7 @@ with onprem_subscriptions as (
         coalesce(foi.previous_charge, lpc.charge_id) as previous_charge_id,
         foi.amount_paid,
         foi.number_of_seats,
+        foi.is_subscriptions_first_charge,
         foi.created_at as invoice_created_at
     from
         onprem_subscriptions os
@@ -80,8 +83,8 @@ with onprem_subscriptions as (
 )
 select
     oc.*,
-    oc.renewed_from_subscription_id is null as is_new_purchase,
-    oc.renewed_from_subscription_id is not null as is_renewal,
+    oc.previous_charge_id is null and renewed_from_subscription_id is null as is_new_purchase,
+    oc.renewed_from_subscription_id is not null and oc.is_subscriptions_first_charge is_renewal,
     oc.number_of_seats - pc.number_of_seats as seats_diff,
     seats_diff > 0 as is_expansion,
     seats_diff < 0 as is_contraction
