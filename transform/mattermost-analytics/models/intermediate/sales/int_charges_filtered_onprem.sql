@@ -39,6 +39,7 @@ with onprem_subscriptions as (
         i.invoice_id,
         i.charge_id,
         i.amount_paid,
+        i.created_at,
         -- Get number of seats for current invoice by ignoring line items referring previous invoice.
         -- Max is used here in order to return the single not-null item.
         max(
@@ -60,7 +61,8 @@ with onprem_subscriptions as (
         i.subscription_id,
         i.invoice_id,
         i.charge_id,
-        i.amount_paid
+        i.amount_paid,
+        i.created_at
 ), onprem_charges as (
     select
         os.*,
