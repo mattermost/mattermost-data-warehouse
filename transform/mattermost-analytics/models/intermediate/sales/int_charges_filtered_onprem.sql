@@ -68,10 +68,11 @@ with onprem_subscriptions as (
         os.*,
         foi.invoice_id,
         foi.charge_id,
+        -- Handle cases where previous charge is from a previous subscription
+        coalesce(foi.previous_charge, lpc.charge_id) as previous_charge_id,
         foi.amount_paid,
         foi.number_of_seats,
-        -- Handle cases where previous charge is from a previous subscription
-        coalesce(foi.previous_charge, lpc.charge_id) as previous_charge_id
+        foi.created_at as invoice_created_at
     from
         onprem_subscriptions os
         left join flattened_onprem_invoices foi on os.subscription_id = foi.subscription_id
