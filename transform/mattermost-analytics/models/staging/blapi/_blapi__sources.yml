@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: blapi
+    database: 'RAW'
+    schema: blapi
+    loader: pipelinewise
+    description: |
+      Raw BLAPI data.
+    tags:
+      - pipelinewise
+      
+    tables:
+      - name: trial_requests
