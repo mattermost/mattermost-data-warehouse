@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: stg_mm_telemetry_prod__tracks
+  - name: stg_mm_telemetry_rc__tracks
     description: |
       Reconstructed `tracks` table using custom properties expected to be in the events.
 
@@ -25,9 +25,10 @@ models:
       - name: timestamp
         description: Timestamp registered by RudderStack when the event occured refactored to clients clock skew.
 
-  - name: stg_mm_telemetry_prod__performance_events
+        
+  - name: stg_mm_telemetry_rc__performance_events
     description: |
-      Reconstructed `performance_events` table from schema `MM_TELEMETRY_PROD` using only columns needed by looker.
+      Reconstructed `performance_events` table from schema `MM_TELEMETRY_RC` using only columns needed by looker.
 
     columns:
       - name: id
@@ -61,3 +62,19 @@ models:
       - name: count
       - name: event_date
       - name: received_at_date
+      
+  - name: stg_mm_telemetry_prod__license
+    description: |
+      License table from schema `MM_TELEMETRY_PROD` using only columns needed by looker.
+
+    columns:
+      - name: id
+      - name: server_id
+      - name: license_id
+      - name: customer_id
+      - name: installation_id
+      - name: edition
+      - name: users
+      - name: issued_date
+      - name: start_date
+      - name: expire_date

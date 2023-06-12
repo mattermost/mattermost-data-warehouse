@@ -1,0 +1,20 @@
+version: 2
+
+models:      
+  - name: stg_blapi__trial_requests
+    description: |
+        Form data for BLAPI trial requests.
+
+    columns:
+      - name: server_id
+      - name: license_id
+      - name: customer_id
+      - name: installation_id
+      - name: name
+      - name: site_url
+      - name: email
+      - name: edition
+      - name: users
+      - name: issued_date
+      - name: start_date
+      - name: expire_date

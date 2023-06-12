@@ -1,0 +1,18 @@
+version: 2
+
+models:      
+  - name: stg_mattermost2__license
+    description: |
+      License table from schema `MM_TELEMETRY_PROD` using only columns needed by looker.
+
+    columns:
+      - name: id
+      - name: server_id
+      - name: license_id
+      - name: customer_id
+      - name: installation_id
+      - name: edition
+      - name: users
+      - name: issued_date
+      - name: start_date
+      - name: expire_date
