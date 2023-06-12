@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: int_fct_license
+  - name: int_fct_license_server
     description: Intermediate table for fct_license_server.
 
     columns:
