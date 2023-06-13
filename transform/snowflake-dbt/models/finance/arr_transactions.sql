@@ -305,6 +305,11 @@ licterm as (
     ,iff(closing_date>license_start_date,closing_date,license_start_date) as report_date
     ,last_day(dateadd('month',1,last_day(dateadd('month',2,date_trunc('quarter',dateadd('month',-1,report_month)))))) as fiscal_quarter
     ,last_day(dateadd('month',1,last_day(dateadd('month',11,date_trunc('year',dateadd('month',-1,report_month)))))) as fiscal_year
+    --adding dates below to report contracted ARR based on closed date
+    ,last_day(date_trunc('week',closing_date),'week') as closing_week
+    ,last_day(closing_date,month) as closing_month
+    ,last_day(dateadd('month',1,last_day(dateadd('month',2,date_trunc('quarter',dateadd('month',-1,closing_month)))))) as closing_fiscal_quarter
+    ,last_day(dateadd('month',1,last_day(dateadd('month',11,date_trunc('year',dateadd('month',-1,closing_month)))))) as closing_fiscal_year
     ,case
       when opp_type != 'Expired' and license_end_date >= last_day(current_date) and license_start_date <= last_day(current_date) then true 
       else false 
@@ -366,6 +371,11 @@ select
     ,report_month
     ,report_date
     ,last_day(date_trunc('week',report_date),'week') as report_week
+    --added dates below to enable reporting of contracted arr
+    ,closing_fiscal_year
+    ,closing_fiscal_quarter
+    ,closing_month
+    ,closing_week
     ,closing_date
     ,license_start_date
     ,license_end_date
