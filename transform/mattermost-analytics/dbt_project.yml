@@ -46,6 +46,9 @@ models:
       data_eng:
         schema: int_data_eng
         tags: ['nightly']
+      product:
+        schema: int_product
+        tags: ['nightly']
       web_app:
         schema: int_web_app
         tags: ['nightly']
