@@ -26,7 +26,7 @@ WITH onprem_olis_to_sync AS (
     AND customers_with_onprem_subs.hightouch_sync_eligible
     -- Same filters as in blapi_onprem_opportunity
     AND NOT customers_with_onprem_subs.is_renewed -- filtering out renewed from new subscriptions which are part of another model.
-    AND (customers_with_onprem_subs.account_sfid is null OR customers_with_onprem_subs.account_type not in ('Customer','Customer(Attrited)')) -- removing renewals which are part of another model
+    AND (customers_with_onprem_subs.account_sfid is null OR customers_with_onprem_subs.account_type not in ('Customer','Customer (Attrited)')) -- removing renewals which are part of another model
 
 )
 SELECT * FROM onprem_olis_to_sync
