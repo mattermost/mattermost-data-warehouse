@@ -31,7 +31,7 @@ select
     , activity_date
     , server_id
     , user_id
-    , 1 as is_active
+    , true as is_active
     -- Required for incremental loading
     , received_at_date
 from
