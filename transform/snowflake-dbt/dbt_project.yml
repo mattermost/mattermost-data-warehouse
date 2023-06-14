@@ -120,3 +120,4 @@ seeds:
 
 vars:
   salesforce_default_ownerid: "'0053p0000064nt8AAA'" #default value for salesforce ownerid
+  unknown_account_name: "Unknown Company from Product"

@@ -21,7 +21,6 @@ sources:
       - name: credit_cards_version
       - name: customers
       - name: customers_version
-      - name: features
       - name: features_version
       - name: invoices
       - name: invoices_version
@@ -41,25 +40,6 @@ sources:
       - name: subscriptions_version
       - name: usage_events
       - name: usage_events_version
-      - name: contact_us_requests
-        columns:
-          - name: id
-          - name: created_at
-          - name: name
-          - name: email
-          - name: inquiry_type
-          - name: inquiry_issue
-          - name: comment
-          - name: customer_id
-          - name: source
-            tests:
-              - accepted_values:
-                  values: [ 'Portal', 'Cloud' ]
-          - name: zendesk_ticket_id
-          - name: campaign_member_sfid
-          - name: _sdc_extracted_at
-          - name: _sdc_batched_at
-          - name: _sdc_deleted_at
 
   - name: stripe
     database: ANALYTICS

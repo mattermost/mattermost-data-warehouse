@@ -5,14 +5,10 @@ models:
     description: Trial Requests from blapi
   - name: addresses
     description: Contains all addresses (billing & shipping) provided by customers (from blapi).
-  - name: contact_us_requests
-    description: Contains contact us requests (from blapi).
   - name: credit_cards
     description: Contains all credit cards provided by customers (from blapi).
   - name: customers_blapi
     description: Contains all customers and their specific attributes (from blapi).
-  - name: features
-    description: Contains all features provided by various skus (from blapi).
   - name: invoices_blapi
     description: Contains all Mattermost Cloud customer invoices (from blapi). Includes additional forecasted invoice total to provide current month forecasts.
     columns:

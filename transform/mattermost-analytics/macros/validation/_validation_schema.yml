@@ -1,0 +1,15 @@
+version: 2
+
+macros:
+
+  - name: validate_email
+    description: |
+      Basic validation for email addresses. Checks that email address:
+      - Contains username followed by `@` and a domain-like string.
+      - Contains only a single `@`.
+      - Special characters like `\/()&$^&!` do not exist.
+
+    arguments:
+      - name: email
+        type: string
+        description: The column containing email addresses.

@@ -25,9 +25,11 @@ with current_subscriptions AS(
                 current_subscriptions.id)
         AS opportunity_external_id,
         customers.email,
-        customers_blapi.first_name,
-        coalesce(NULLIF(TRIM(customers_blapi.last_name), ''), customers.email) as last_name,
-        SPLIT_PART(customers.email, '@', 2) as domain,
+        customers.contactfirstname as first_name,
+        coalesce(NULLIF(TRIM(customers.contactlastname), ''), customers.email) as last_name,
+        CASE WHEN SPLIT_PART(customers.email, '@', 2) = 'gmail.com' 
+        THEN NULL        
+        ELSE SPLIT_PART(customers.email, '@', 2) END as domain,
         invoices.id as invoice_id,
         current_subscriptions.id as subscription_id,
         current_subscriptions.cws_dns as cloud_dns,
@@ -42,6 +44,5 @@ with current_subscriptions AS(
     FROM {{ source('stripe','customers') }} 
         JOIN current_subscriptions ON customers.id = current_subscriptions.customer
         LEFT JOIN {{ source('stripe', 'invoices') }} ON invoices.subscription = current_subscriptions.id
-        LEFT JOIN {{ source('blapi', 'customers') }} customers_blapi ON customers_blapi.stripe_id = customers.id
 )
 select * from customers_with_paid_subs where row_num = 1

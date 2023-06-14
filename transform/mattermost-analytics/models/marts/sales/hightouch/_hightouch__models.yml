@@ -1,0 +1,165 @@
+version: 2
+
+models:
+  - name: fct_in_product_trial_requests
+    description: |
+      Trial request data from Customer Web Server to be synced to Salesforce.
+
+    columns:
+      - name: trial_request_id
+        description: The id of the trial request.
+        tests:
+          - not_null
+          - unique
+      - name: name
+        description: The user's full name.
+        tags: [ 'pii' ]
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+      - name: first_name
+        description: | 
+          The user's first name. This value may originate from:
+            - First name (if directly provided).
+            - By splitting the name string on first space and keeping the first part.
+            - If none of the above are available, the first 40 characters of the "username" part of the email.
+        tests:
+          - dbt_utils.not_empty_string
+        tags: ['pii']
+      - name: last_name
+        description: | 
+          The user's last name. This value may originate from:
+            - Last name (if directly provided).
+            - By splitting the name string on first space and keeping the second part.
+            - If none of the above are available, the first 40 characters of the "username" part of the email.
+        tests:
+          - dbt_utils.not_empty_string
+        tags: ['pii']
+      - name: company_size
+        description: The lower bound of the company size bucket.
+      - name: company_name
+        description: |
+          The company's name. If not provided, `Unknown` is used.
+        tests:
+          - dbt_utils.not_empty_string
+      - name: normalized_email
+        tags: ['pii']
+        description: |
+          The contact email provided in the signup form. If not filled in, it's the email of the user 
+          requesting the trial. Email is lowercased in order to match Salesforce lowercased emails.
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+      - name: country_name
+        description: The requester's country.
+        # Make sure that country name has been transformed to a valid country name
+        tests:
+          - relationships:
+              name: valid_country_name
+              to: ref('country_codes')
+              field: name
+              config:
+                where: "country_name != ''"
+        tags: ['pii']
+      - name: trial_start_at
+        description: The starting date of the trial.
+      - name: num_users
+        description: Number of end users for the server.
+      - name: is_existing_lead
+        description: Whether there's already a lead with the same email.
+      - name: is_existing_campaign_member
+        description: Whether there's already a campaign member for the same email and lead.
+      - name: is_valid_email
+        description: Whether the email is valid. Used to skip invalid emails.
+      - name: lead_id
+        description: The id of the lead to update (if any exists), matched on email.
+      - name: campaign_member_status
+        description: The campaign member's status.
+      - name: campaign_id
+        description: The id of the campaign to attribute this lead to.
+
+  - name: fct_onprem_invoice_line_items
+    description: |
+      Creating de-normalized invoice_line_items & subscriptions using Stripe events for On-Prem subscriptions. 
+      We are fetching all paid invoices data. Paid invoices in On-Prem have subtotal > 0. Hence the filter amount > 0.
+      When the customer pays for an expansion they first get refunded the original purchase amount 
+      and get charged for the new amount based on the new number of seats purchased. 
+      So in any subscription where an expansion has happened, we will see 3 rows of data in invoice_line_items.
+        -  The original purchase amount
+        -  The refunded amount which is < 0 (this is not required in SFDC, after I spoke to John)
+        -  The new amount charged.
+
+      We are only interested for the amount, from these 3 rows of data, from Invoice Line Items the invoice amounts > 0. 
+      Since that is the actual amount paid for the expansion. For seats, they always show the total seats after the expansion.
+      we need to subtract the total seats from the previous purchase. You can see the calculation (Lag functions) in the code.
+      
+
+    columns:  
+      - name: account_id
+      - name: contact_email
+      - name: opportunity_type 
+      - name: order_type 
+      - name: ownerid 
+      - name: stagename 
+      - name: opportunity_name 
+      - name: subscription_id 
+      - name: purchase_order_number 
+      - name: customer_id
+        tests:
+          - not_null
+      - name: license_id 
+      - name: edition 
+      - name: product 
+      - name: sku 
+      - name: charge 
+      - name: subscription 
+      - name: invoice_number 
+      - name: stripe_invoice_number 
+      - name: invoice_id
+        tests:
+          - not_null
+          - unique      
+      - name: invoice_created_at 
+      - name: email 
+      - name: domain 
+      - name: customer_name 
+      - name: line1 
+      - name: line2 
+      - name: street_address
+      - name: postal_code 
+      - name: city 
+      - name: state 
+      - name: country 
+      - name: customer_full_name 
+      - name: total 
+      - name: subtotal
+      - name: updated_at
+      - name: invoice_row_num 
+      - name: invoice_quantity 
+      - name: previous_quantity 
+      - name: seats_purchased
+
+
+  - name: fct_cloud_trial_requests
+    description: |
+      Trial request data coming from the source Stripe, only limited to creating campaign member objects in Salesforce.
+
+    columns:
+      - name: email
+        tags: ['pii']
+        description: Customer email for cloud trial requests coming from Stripe.
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+      - name: is_existing_lead
+        description: Whether there's already a lead with the same email.
+      - name: is_existing_campaign_member
+        description: Whether there's already a campaign member for the same email and lead.
+      - name: campaign_member_status
+        description: The campaign member's status.
+        # Removing the test for now.
+        # tests:
+        #   - accepted_values:
+        #       values: ['Account created', 'Email verified', 'Workspace created', null]
+      - name: is_valid_email
+        description: Whether the email is valid. Used to skip invalid emails.
