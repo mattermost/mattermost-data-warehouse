@@ -58,6 +58,9 @@ models:
       data_eng:
         schema: mart_data_eng
         tags: ['nightly']
+      product:
+        schema: mart_product
+        tags: ['nightly']
       web_app:
         schema: mart_web_app
         tags: ['nightly']

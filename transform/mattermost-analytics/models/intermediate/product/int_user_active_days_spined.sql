@@ -25,7 +25,7 @@ with user_first_active_day as (
         left join {{ ref('telemetry_days') }} all_days on all_days.date_day >= first_day.first_active_day
 )
 select
-    spined.date_day as activity_date,
+    cast(spined.date_day as date) as activity_date,
     spined.server_id,
     spined.user_id,
     coalesce(user_active_days.is_active, false) as is_active_today,
