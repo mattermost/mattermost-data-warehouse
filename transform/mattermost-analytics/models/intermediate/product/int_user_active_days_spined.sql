@@ -22,7 +22,7 @@ with user_first_active_day as (
         all_days.date_day
     from
         user_first_active_day first_day
-        left join {{ ref('int_all_telemetry_days') }} all_days on all_days.date_day >= first_day.first_active_day
+        left join {{ ref('telemetry_days') }} all_days on all_days.date_day >= first_day.first_active_day
 )
 select
     spined.date_day as activity_date,
