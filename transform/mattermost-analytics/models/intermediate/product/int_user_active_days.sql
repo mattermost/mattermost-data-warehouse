@@ -2,7 +2,7 @@
     config({
         "materialized": "incremental",
         "incremental_strategy": "merge",
-        "merge_update_columns": ['received_at_date']
+        "merge_update_columns": ['received_at_date'],
         "unique_key": ['daily_user_id'],
         "cluster_by": ['received_at_date'],
         "snowflake_warehouse": "transform_l"
