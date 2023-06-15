@@ -1,7 +1,9 @@
 {{
     config({
         "materialized": "table",
-        "cluster_by": ['activity_date', 'server_id']
+        "cluster_by": ['activity_date', 'server_id'],
+        "unique_key": ['activity_date', 'server_id', 'user_id'],
+        "snowflake_warehouse": "transform_l"
     })
 }}
 with user_first_active_day as (
