@@ -32,11 +32,11 @@ select
     max(is_active_today) over(
         partition by spined.user_id order by spined.date_day
         rows between 6 preceding and current row
-    ) as is_activate_last_7_days,
+    ) as is_active_last_7_days,
     max(is_active_today) over(
         partition by spined.user_id order by spined.date_day
         rows between 29 preceding and current row
-    ) as is_activate_last_30_days
+    ) as is_active_last_30_days
 from
     spined
     left join {{ ref('int_user_active_days') }} user_active_days

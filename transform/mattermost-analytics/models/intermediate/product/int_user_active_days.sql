@@ -18,17 +18,19 @@ with tmp as (
     from
         {{ ref('stg_mm_telemetry_prod__tracks') }}
     where
-       received_at <= current_timestamp
+        -- Exclude items without user ids, such as server side telemetry etc
+        user_id is not null
+        and received_at <= current_timestamp
 {% if is_incremental() %}
-       -- this filter will only be applied on an incremental run
-      and received_at >= (select max(received_at_date) from {{ this }})
+        -- this filter will only be applied on an incremental run
+        and received_at >= (select max(received_at_date) from {{ this }})
 {% endif %}
     group by received_at_date, activity_date, server_id, user_id
     order by received_at_date
 )
 select
     -- Surrogate key required as it's both a good practice, as well as allows merge incremental strategy.
-    {{ dbt_utils.generate_surrogate_key(['received_at_date', 'activity_date', 'server_id', 'user_id']) }} AS daily_user_id
+    {{ dbt_utils.generate_surrogate_key(['received_at_date', 'activity_date', 'server_id', 'user_id']) }} as daily_user_id
     , activity_date
     , server_id
     , user_id
