@@ -6,13 +6,26 @@
         "snowflake_warehouse": "transform_l"
     })
 }}
-with user_first_active_day as (
+
+with user_active_days as (
+    select
+        {{ dbt_utils.star(from=ref('int_user_active_days_legacy_telemetry') }}
+    from
+        {{ ref('int_user_active_days_legacy_telemetry') }}
+
+    union
+
+    select
+        {{ dbt_utils.star(from=ref('int_user_active_days_server_telemetry') }}
+    from
+        {{ ref('int_user_active_days_server_telemetry') }}
+), user_first_active_day as (
     select
         server_id,
         user_id,
         min(activity_date) as first_active_day
     from
-        {{ ref('int_user_active_days') }}
+        user_active_days
     group by 1, 2
 ), spined as (
     -- Use date spine to fill in missing days
@@ -39,7 +52,7 @@ select
     ) as is_active_last_30_days
 from
     spined
-    left join {{ ref('int_user_active_days') }} user_active_days
+    left join user_active_days
         on spined.date_day = user_active_days.activity_date
             and spined.server_id = user_active_days.server_id
             and spined.user_id = user_active_days.user_id

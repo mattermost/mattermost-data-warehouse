@@ -1,0 +1,68 @@
+version: 2
+
+sources:
+  - name: mattermost2
+    database: 'RAW'
+    schema: mattermost2
+    loader: Segment
+    description: |
+      Product telemetry data. 
+      Telemetry for older versions of Mattermost (up to 5.x). Telemetry is pushed via Segment
+      (see [source](https://app.segment.com/smarttotem/sources/mattermost2/settings/sql)).
+    tags:
+      - segment
+
+    tables:
+      - name: activity
+      - name: channel_moderation
+      - name: config_analytics
+      - name: config_announcement
+      - name: config_audit
+      - name: config_bleve
+      - name: config_client_requirements
+      - name: config_cluster
+      - name: config_compliance
+      - name: config_data_retention
+      - name: config_display
+      - name: config_elasticsearch
+      - name: config_email
+      - name: config_experimental
+      - name: config_extension
+      - name: config_file
+      - name: config_guest_accounts
+      - name: config_image_proxy
+      - name: config_ldap
+      - name: config_localization
+      - name: config_log
+      - name: config_message_export
+      - name: config_metrics
+      - name: config_nativeapp
+      - name: config_notifications_log
+      - name: config_oauth
+      - name: config_password
+      - name: config_plugin
+      - name: config_privacy
+      - name: config_rate
+      - name: config_rupport
+      - name: config_saml
+      - name: config_service
+      - name: config_sql
+      - name: config_support
+      - name: config_team
+      - name: config_theme
+      - name: config_timezone
+      - name: config_webrtc
+      - name: elasticsearch
+      - name: event
+      - name: event_mobile
+      - name: groups
+      - name: identifies
+      - name: license
+      - name: pages
+      - name: permissions_general
+      - name: permissions_system_scheme
+      - name: permissions_team_schemes
+      - name: plugins
+      - name: server
+      - name: tracks
+      - name: users
