@@ -9,14 +9,21 @@
 
 with user_active_days as (
     select
-        {{ dbt_utils.star(from=ref('int_user_active_days_legacy_telemetry') }}
+        -- Load only required columns
+        activity_date,
+        server_id,
+        user_id,
+        is_active
     from
         {{ ref('int_user_active_days_legacy_telemetry') }}
 
     union
 
     select
-        {{ dbt_utils.star(from=ref('int_user_active_days_server_telemetry') }}
+        activity_date,
+        server_id,
+        user_id,
+        is_active
     from
         {{ ref('int_user_active_days_server_telemetry') }}
 ), user_first_active_day as (
