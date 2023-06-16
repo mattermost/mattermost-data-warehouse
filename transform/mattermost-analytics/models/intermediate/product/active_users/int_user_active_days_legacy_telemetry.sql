@@ -16,7 +16,7 @@ with tmp as (
         server_id,
         user_id
     from
-        {{ ref('stg_mm_telemetry_prod__tracks') }}
+        {{ ref('stg_mattermost2__tracks') }}
     where
         -- Exclude items without user ids, such as server side telemetry etc
         user_id is not null
