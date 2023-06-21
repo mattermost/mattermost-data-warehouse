@@ -6,9 +6,15 @@
     })
 }}
 
-SELECT {{ dbt_utils.star(ref('stg_mm_telemetry_prod__performance_events')) }} FROM 
-{{ ref('stg_mm_telemetry_prod__performance_events') }}
-
+SELECT
+    {{ dbt_utils.star(ref('stg_mm_telemetry_prod__performance_events')) }}
+FROM
+    {{ ref('stg_mm_telemetry_prod__performance_events') }}
+WHERE
+    id not in (
+        'd\';waitfor/**/delay\'0:0:0\'/**/--/**/',
+        's\');waitfor/**/delay\'0:0:0\'/**/--/**/'
+    )
 {% if is_incremental() %}
-    WHERE received_at > (SELECT MAX(received_at) FROM {{ this }}) 
-    {% endif %}
+    and received_at > (SELECT MAX(received_at) FROM {{ this }})
+{% endif %}
