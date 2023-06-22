@@ -62,3 +62,57 @@ models:
       - name: request_count
       - name: event_date
       - name: received_at_date
+
+
+  - name: stg_mm_telemetry_prod__server
+    description: |
+      Events originating from servers with server metadata. Sent using Rudderstack.
+
+    columns:
+      - name: event_id
+        description: The event's id.
+      - name: event_name
+        description: The name of the event.
+      - name: event_table
+        description: The name of the event table.
+      - name: server_id
+        description: The ID of the server the event originated from.
+      - name: received_at
+        description: Timestamp registered by Segment when the event was ingested (received).
+      - name: timestamp
+        description: Timestamp registered by Segment when the event occured refactored to clients clock skew.
+      - name: count_system_admins
+        description: The total number of system admins at the time the event was submitted.
+      - name: version_full
+        description: The full version string of the server's semver.
+      - name: version_major
+        description: The major version of the server at the time the event was submitted/
+      - name: version_minor
+        description: The minor version of the server at the time the event was submitted/
+      - name: version_patch
+        description: The patch version of the server at the time the event was submitted.
+      - name: installation_id
+        description: The id of the installation
+      - name: installation_type
+        description: |
+          Type of installation (if known). Possible values are: kubernetes-operator, deb_package, gitlab_omnibus, omnibus, ubuntu-testing, docker, podman, team
+      - name: anonymous_id
+        description: Server's anonymous ID.
+      - name: server_ip
+        description: |
+          The server's IP address. See [Rudderstack docs](https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/#how-rudderstack-collects-ip-address) for more information.
+      - name: operating_system
+        description: The operating system that the server runs on.
+      - name: database_type
+        description: The name of the database used by the server.
+      - name: database_version
+        description: The version of the database
+      - name: edition
+        description: Whether the build is enterprise ready or not.
+      - name: context_library_version
+        description: The version of Segment library used to send this event.
+      - name: context_library_name
+        description: The name of Segment library used to send this event.
+      - name: uuid_ts
+      - name: sent_at
+      - name: original_timestamp
