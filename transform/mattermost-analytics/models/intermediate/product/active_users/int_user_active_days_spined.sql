@@ -8,25 +8,18 @@
 }}
 
 with user_active_days as (
+    -- Merge mobile with server data
     select
         -- Load only required columns
-        activity_date,
-        server_id,
-        user_id,
-        is_active
+        coalesce(s.activity_date, m.activity_date) as activity_date,
+        coalesce(s.server_id, m.server_id) as server_id,
+        coalesce(s.user_id, m.user_id) as user_id,
+        coalesce(s.is_active, m.is_active) as is_active,
+        s.server_id is not null as is_desktop_or_server,
+        m.server_id is not null as is_mobile
     from
-        {{ ref('int_user_active_days_server_telemetry') }}
-
-    union
-
-    select
-        activity_date,
-        server_id,
-        user_id,
-        is_active
-    from
-        {{ ref('int_user_active_days_mobile_telemetry') }}
--- TODO: deduplicate user ids
+        {{ ref('int_user_active_days_server_telemetry') }} s
+        full outer join {{ ref('int_user_active_days_mobile_telemetry') }} m on s.daily_user_id = m.daily_user_id
 ), user_first_active_day as (
     select
         server_id,
@@ -50,6 +43,8 @@ select
     spined.server_id,
     spined.user_id,
     coalesce(user_active_days.is_active, false) as is_active_today,
+    coalesce(user_active_days.is_desktop_or_server, false) as is_desktop_or_server,
+    coalesce(user_active_days.is_desktop_or_server, false) as is_desktop_or_server,
     max(is_active_today) over(
         partition by spined.user_id order by spined.date_day
         rows between 6 preceding and current row
