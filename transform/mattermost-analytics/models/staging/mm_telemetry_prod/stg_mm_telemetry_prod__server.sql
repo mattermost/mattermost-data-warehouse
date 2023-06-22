@@ -47,7 +47,9 @@ with source as (
         -- Ignored - not reflected in code
         -- , server_id
     from source
-
+    where
+        -- Clean up invalid data
+        id is not null
 )
 
 select * from renamed
