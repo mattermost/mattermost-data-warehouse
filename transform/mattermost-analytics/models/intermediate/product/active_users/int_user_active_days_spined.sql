@@ -15,7 +15,7 @@ with user_active_days as (
         user_id,
         is_active
     from
-        {{ ref('int_user_active_days_legacy_telemetry') }}
+        {{ ref('int_user_active_days_server_telemetry') }}
 
     union
 
@@ -25,7 +25,8 @@ with user_active_days as (
         user_id,
         is_active
     from
-        {{ ref('int_user_active_days_server_telemetry') }}
+        {{ ref('int_user_active_days_mobile_telemetry') }}
+-- TODO: deduplicate user ids
 ), user_first_active_day as (
     select
         server_id,
