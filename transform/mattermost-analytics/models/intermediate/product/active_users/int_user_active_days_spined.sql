@@ -7,19 +7,23 @@
     })
 }}
 
+{% set metrics = ['is_active', 'is_desktop_or_server', 'is_mobile', 'is_old_server'] %}
+
 with user_active_days as (
     -- Merge mobile with server data
     select
         -- Load only required columns
-        coalesce(s.activity_date, m.activity_date) as activity_date,
-        coalesce(s.server_id, m.server_id) as server_id,
-        coalesce(s.user_id, m.user_id) as user_id,
-        coalesce(s.is_active, m.is_active) as is_active,
+        coalesce(s.activity_date, m.activity_date, l.activity_date) as activity_date,
+        coalesce(s.server_id, m.server_id, l.server_id) as server_id,
+        coalesce(s.user_id, m.user_id, l.user_id) as user_id,
+        coalesce(s.is_active, m.is_active, l.is_active) as is_active,
         s.server_id is not null as is_desktop_or_server,
-        m.server_id is not null as is_mobile
+        m.server_id is not null as is_mobile,
+        l.server_id is not null as is_old_server
     from
         {{ ref('int_user_active_days_server_telemetry') }} s
         full outer join {{ ref('int_user_active_days_mobile_telemetry') }} m on s.daily_user_id = m.daily_user_id
+        full outer join {{ ref('int_user_active_days_legacy_telemetry') }} l on s.daily_user_id = l.daily_user_id
 ), user_first_active_day as (
     select
         server_id,
@@ -39,20 +43,21 @@ with user_active_days as (
         left join {{ ref('telemetry_days') }} all_days on all_days.date_day >= first_day.first_active_day
 )
 select
-    cast(spined.date_day as date) as activity_date,
-    spined.server_id,
-    spined.user_id,
-    coalesce(user_active_days.is_active, false) as is_active_today,
-    coalesce(user_active_days.is_desktop_or_server, false) as is_desktop_or_server,
-    coalesce(user_active_days.is_desktop_or_server, false) as is_desktop_or_server,
-    max(is_active_today) over(
+    cast(spined.date_day as date) as activity_date
+    , spined.server_id
+    , spined.user_id
+
+{% for metric in metrics %}
+    , coalesce(user_active_days.{{metric}}, false) as {{metric}}_today
+    , max({{metric}}_today) over(
         partition by spined.user_id order by spined.date_day
         rows between 6 preceding and current row
-    ) as is_active_last_7_days,
-    max(is_active_today) over(
+    ) as {{metric}}_last_7_days
+    , max({{metric}}_today) over(
         partition by spined.user_id order by spined.date_day
         rows between 29 preceding and current row
-    ) as is_active_last_30_days
+    ) as {{metric}}_last_30_days
+{% endfor %}
 from
     spined
     left join user_active_days
