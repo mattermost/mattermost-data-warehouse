@@ -1,0 +1,118 @@
+version: 2
+
+models:
+  - name: int_user_active_days_legacy_telemetry
+    description: |
+      User activity per date and server for old servers (up to 5.25.0). Used to mark the days that a user was active on
+      a server. This table contains rows only for the dates/servers that a user is active on.
+
+    columns:
+      - name: daily_user_id
+        description: A unique id for each date/server/user combination.
+      - name: activity_date
+        description: The date that the user was active on.
+      - name: server_id
+        description: The server's unique id.
+      - name: user_id
+        description: The user's unique id.
+      - name: is_active
+        description: Boolean flag marking whether the user was active on the specific date and server. Always true.
+      - name: received_at_date
+        description: |
+          Date that the event for the user activity was received. Used for incremental load only, not to be used
+          downstream.
+
+  - name: int_user_active_days_mobile_telemetry
+    description: |
+      User activity per date and server for mobile. Used to mark the days that a user was active on
+      a server. This table contains rows only for the dates/servers that a user is active on.
+
+    columns:
+      - name: daily_user_id
+        description: A unique id for each date/server/user combination.
+      - name: activity_date
+        description: The date that the user was active on.
+      - name: server_id
+        description: The server's unique id.
+      - name: user_id
+        description: The user's unique id.
+      - name: is_active
+        description: Boolean flag marking whether the user was active on the specific date and server. Always true.
+      - name: received_at_date
+        description: |
+          Date that the event for the user activity was received. Used for incremental load only, not to be used
+          downstream.
+
+  - name: int_user_active_days_server_telemetry
+    description: |
+      User activity per date and server for new servers (since 5.23.0). Used to mark the days that a user was active on
+      a server. This table contains rows only for the dates/servers that a user is active on.
+
+    columns:
+      - name: daily_user_id
+        description: A unique id for each date/server/user combination.
+      - name: activity_date
+        description: The date that the user was active on.
+      - name: server_id
+        description: The server's unique id.
+      - name: user_id
+        description: The user's unique id.
+      - name: is_active
+        description: Boolean flag marking whether the user was active on the specific date and server. Always true.
+      - name: received_at_date
+        description: |
+          Date that the event for the user activity was received. Used for incremental load only, not to be used
+          downstream.
+
+  - name: int_user_active_days_spined
+    description: |
+      Contains record per user per day since the user's first active date. Uses data from new & old servers, as well as 
+      from mobile. Performs deduplication for servers that sent data both via Rudderstack and Segment.
+
+    columns:
+      - name: activity_date
+        description: The date that the user was active on.
+      - name: server_id
+        description: The server's unique id.
+      - name: user_id
+        description: The user's unique id.
+      - name: is_active_today
+        description: Boolean flag indicating whether the user was active on the specific date and server.
+      - name: is_active_last_7_days
+        description: |
+          Boolean flag indicating whether the user was active on the specific date and previous 6 days, and 
+          for the specific server.
+      - name: is_active_last_30_days
+        description: |
+          Boolean flag indicating whether the user was active on the specific date and previous 29 days, and 
+          for the specific server.
+      - name: is_desktop_or_server_today
+        description: Indicates whether the user was active on the specific date and server. Only for new (>= 5.23.0) servers.
+      - name: is_desktop_or_server_last_7_days
+        description: |
+          Indicates whether the user was active on the specific date and previous 6 days, and for the specific server.
+          Only for new (>= 5.23.0) servers.
+      - name: is_desktop_or_server_last_30_days
+        description: |
+          Indicates whether the user was active on the specific date and previous 29 days, and for the specific server.
+          Only for new (>= 5.23.0) servers.
+      - name: is_mobile_today
+        description: Indicates whether the user was active on the specific date and server. Only for mobile users.
+      - name: is_mobile-last_7_days
+        description: |
+          Indicates whether the user was active on the specific date and previous 6 days, and for the specific server.
+          Only for mobile users.
+      - name: is_mobile_last_30_days
+        description: |
+          Indicates whether the user was active on the specific date and previous 29 days, and for the specific server.
+          Only for mobile users.
+      - name: is_old_server_today
+        description: Indicates whether the user was active on the specific date and server. Only for old (<= 5.25.0) servers.
+      - name: is_old_server_last_7_days
+        description: |
+          Indicates whether the user was active on the specific date and previous 6 days, and for the specific server.
+          Only for old (<= 5.25.0) servers.
+      - name: is_old_server_last_30_days
+        description: |
+          Indicates whether the user was active on the specific date and previous 29 days, and for the specific server.
+          Only for old (<= 5.25.0) servers.
