@@ -73,4 +73,12 @@ renamed as (
 
 )
 
-select * from renamed
+select
+    *
+from
+    renamed
+where
+    trial_request_id not in (
+        -- Invalid records
+        'uu6zjmatt38wzmhphs57rsbbro'
+    )
