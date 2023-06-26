@@ -1,9 +1,9 @@
 
 WITH tracks AS (
     SELECT
-        {{ dbt_utils.star(ref('base_mm_mobile_prod__tracks')) }}
+        {{ dbt_utils.star(ref('base_mattermost2__tracks')) }}
     FROM
-        {{ ref ('base_mm_mobile_prod__tracks') }}
+        {{ ref ('base_mattermost2__tracks') }}
 )
 SELECT
      id               AS event_id

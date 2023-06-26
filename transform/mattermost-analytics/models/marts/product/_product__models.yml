@@ -1,0 +1,54 @@
+version: 2
+
+models:
+  - name: fct_active_users
+    description: |
+      Contains statistics about daily, weekly and monthly active users for each date. Statistics are stored per server.
+      Telemetry data are used to identify user activity.
+      
+      Also offers:
+      - Mobile only DAU/WAU/MAU. 
+      - Desktop/server DAU/WAU/MAU. Includes all telemetry from within the app, plus any user telemetry that might be originating from server side, excluding old servers (pre 5.23.0).
+      - Legacy DAU/WAU/MAU. Same as desktop/server, but includes telemetry up to 5.25.0.
+      
+      > Version 5.23.0 - 5.25.0 of Mattermost server transmitted telemetry both to Segment and Rudderstack.
+
+    columns:
+      - name: activity_date
+        description: The date for the measurement.
+        tests:
+          - not_null
+      - name: server_id
+        description: The server's unique id.
+        tests:
+          - not_null
+      - name: daily_active_users
+        description: The number of unique active users for the given server and date.
+      - name: weekly_active_users
+        description: The number of unique active users for the date and previous 6 days.
+      - name: monthly_active_users
+        description: The number of unique active users for the date and previous 29 days.
+      - name: daily_desktop_active_users
+        description: The number of unique desktop active users for the given server and date.
+      - name: weekly_desktop_active_users
+        description: The number of unique desktop active users for the date and previous 6 days.
+      - name: monthly_desktop_active_users
+        description: The number of unique desktop active users for the date and previous 29 days.
+      - name: daily_mobile_active_users
+        description: The number of unique mobile active users for the given server and date.
+      - name: weekly_mobile_active_users
+        description: The number of unique mobile active users for the date and previous 6 days.
+      - name: monthly_mobile_active_users
+        description: The number of unique mobile active users for the date and previous 29 days.
+      - name: daily_legacy_active_users
+        description: The number of unique legacy active users for the given server and date.
+      - name: weekly_legacy_active_users
+        description: The number of unique legacy active users for the date and previous 6 days.
+      - name: monthly_legacy_active_users
+        description: The number of unique legacy active users for the date and previous 29 days.
+    tests:
+      # A date should only appear once per server
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - activity_date
+            - server_id
