@@ -1,8 +1,11 @@
 import os
 import sys
 import time
+from logging import getLogger
 
 import requests
+
+logger = getLogger(__name__)
 
 BASE_URL = "https://cloud.getdbt.com/api/v2"
 
@@ -15,7 +18,7 @@ headers = {"Authorization": f"Token {token}", "Content-Type": "application/json"
 def trigger_dbt_run(job_id: int, job_description: str) -> int:
     data = {"cause": f"Airflow run - {job_description}"}
     url = f"{BASE_URL}/accounts/{account_id}/jobs/{job_id}/run/"
-    print(f"Calling dbt cloud API with URL {url}")
+    logger.info(f"Calling dbt cloud API with URL {url}")
     resp = requests.request(
         "POST",
         url,
@@ -25,9 +28,10 @@ def trigger_dbt_run(job_id: int, job_description: str) -> int:
 
     if resp.status_code == 200:
         run_id = resp.json()["data"]["id"]
-        print(resp.json())
-        print(f"Triggered dbt cloud job run with ID: {run_id}")
+        logger.info(f"Triggered dbt cloud job run with ID: {run_id}")
         return run_id
+    else:
+        logger.error(f"Failed to trigger dbt cloud job run, reason: {resp.content}")
 
 
 def poll_dbt_run(run_id: int):
@@ -41,11 +45,11 @@ def poll_dbt_run(run_id: int):
     while current_time <= timeout_time and status == "running":
         resp = requests.get(f"{BASE_URL}/accounts/{account_id}/runs/{run_id}/", headers=headers)
 
-        print(f"Checking dbt cloud run {run_id} status: {status}")
+        logger.info(f"Checking dbt cloud run {run_id} status: {status}")
 
         if resp.status_code == 200:
             payload = resp.json()["data"]
-            print(payload)
+            logger.info(payload)
             if payload["is_complete"]:
                 if payload["is_error"]:
                     raise Exception("Error running dbt cloud job -- make this link to dbt cloud")
@@ -63,6 +67,5 @@ if __name__ == "__main__":
         run_id = trigger_dbt_run(sys.argv[1], sys.argv[2])
         poll_dbt_run(run_id)
     except Exception as e:
-        print("An exception occurred")
-        print(e)
+        logger.error("An exception occurred", e)
         raise
