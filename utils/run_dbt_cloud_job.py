@@ -28,6 +28,9 @@ def trigger_dbt_run(job_id: int, job_description: str) -> int:
 
     if resp.status_code == 200:
         run_id = resp.json()["data"]["id"]
+        if not run_id:
+            logger.info(f"No run id returned, response from CloudDBT was: {resp.content}")
+            raise Exception("Unable to get run id")
         logger.info(f"Triggered dbt cloud job run with ID: {run_id}")
         return run_id
     else:
@@ -35,8 +38,6 @@ def trigger_dbt_run(job_id: int, job_description: str) -> int:
 
 
 def poll_dbt_run(run_id: int):
-    if not run_id:
-        raise Exception("Unable to get run id")
     current_time = int(time.time())
     timeout_time = current_time + timeout
 
