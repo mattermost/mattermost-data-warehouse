@@ -5,22 +5,27 @@
   })
 }}
 
---v6 of arr transactions 20220819
+--v7 of arr transactions 20230626
+--retired blapi reference because blapi will be decremented in the company
+--added contracted fiscal quarters and years to enable contracted arr reporting 
 --this query reflects arr transactions during the lifecycle of a paying sales serve customer 
 --based on key input fields by sales ops on license_start_date__c license_end_date__c and amount 
 --in the salesforce opportunity table
 --logic then calculates corresponding opportunity transactions to create an ending arr balance by report month and rollfoward of activities
---ending arr balance is validated by the aggreement of active licenses and ending arr per account id as of run date
+--ending arr balance is validated by the agreement of active licenses and ending arr per account id as of run date
 --this query also corrects for the new customer count which raw data incorrectly reports because of migration cutoff
---opportunities closed are recognized at the later of close date or license start date
+--following reporting month opportunities closed are recognized at the later of close date or license start date
+--following closing month opportunities closed are recognized at close date
 --license expiry is recognized at license end date even though early cancellation notice is received
 --to identify cloud and monthly billing customers to be excluded from selfserve ARR
 --currently account owner in accounts table is not reflective of the true account owner thus using the latest account owner of the opportunity
 --structure of queries below are funnel data to selfserve arr then gather demographic info then pull master data set and add expiry and renewal information 
 --modified to have parent child relationship as deployed by Jim K
 
---identify mrr population as tracked by stripe and product type
-with mrr as (
+--cte to identify cloud professional licenses to be excluded from salesforce data
+--these are month to month usage of the product with no annual commitment 
+--retired blapi code below to point to stripe directly 
+/*with mrr as (
    select 
         es.server_id,
         ls.server_id as ls_server_id,
@@ -46,6 +51,26 @@ with mrr as (
     where ls.issued_date is not null
         and ls.edition in ('Cloud Professional')
         and es.reason is null
+)*/
+
+with mrr as (
+   select
+    customer as stripeid,
+    customers.name as customer_name,
+    subscriptions.id as subscription_id,
+    cws_dns as customer_dns,
+    cws_installation as license_id,
+    subscriptions.created::date as date_joined,
+    current_period_end::date as active_license_end,
+    date_converted_to_paid::date as convert_to_paying,
+    subscriptions.edition as product,
+    canceled_at::date as cancellation_date,
+    subscriptions.status as active_status
+--from {{ref('subscriptions')}}  
+--from {{ source('stripe_raw', 'subscriptions') }}   
+from analytics.stripe.subscriptions 
+left join analytics.stripe.customers on customers.id = subscriptions.customer
+where subscriptions.edition = 'Cloud Professional'
 )
 
 --cte to limit report to paying arr customers and exclude trial customers that did not convert to paying
