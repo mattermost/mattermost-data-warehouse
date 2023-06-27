@@ -76,7 +76,7 @@ models:
     utilities:
       +materialized: table
       schema: utilities
-      tags: [ 'utilities' ]
+      tags: ['utilities', 'hourly']
 
   dbt_project_evaluator:
     schema:
