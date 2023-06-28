@@ -31,5 +31,5 @@ select
         )
     )) as count_reported_versions
 from
-    {{ ref('int_legacy_server_telemetry_latest_daily') }} l
+    {{ ref('int_server_telemetry_legacy_latest_daily') }} l
     full outer join {{ ref('int_server_telemetry_latest_daily') }} s on s.id = l.id
