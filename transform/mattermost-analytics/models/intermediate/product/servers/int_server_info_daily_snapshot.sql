@@ -4,7 +4,7 @@
     })
 }}
 select
-    coalesce(s.id, l.id) as daily_server_id,
+    coalesce(s.daily_server_id, l.daily_server_id) as daily_server_id,
     coalesce(s.id, l.server_id) as server_id,
     coalesce(s.server_date, l.server_date) as snapshot_date,
     coalesce(s.version_full, l.version_full) as version_full,
@@ -32,4 +32,4 @@ select
     )) as count_reported_versions
 from
     {{ ref('int_server_telemetry_legacy_latest_daily') }} l
-    full outer join {{ ref('int_server_telemetry_latest_daily') }} s on s.id = l.id
+    full outer join {{ ref('int_server_telemetry_latest_daily') }} s on s.daily_server_id = l.daily_server_id

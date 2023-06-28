@@ -1,7 +1,7 @@
 select
     server_id,
     CAST(timestamp AS date) AS server_date,
-    {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} AS id,
+    {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} AS daily_server_id,
     count_system_admins,
     version_full,
     version_major,

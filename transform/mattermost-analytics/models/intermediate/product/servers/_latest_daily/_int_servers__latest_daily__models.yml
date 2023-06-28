@@ -7,7 +7,7 @@ models:
       submitted for the same server within the same day, the last values are stored.
 
     columns:
-      - name: id
+      - name: daily_server_id
         description: A unique id for each server and date.
       - name: server_id
         description: The server's unique id.
@@ -42,7 +42,7 @@ models:
       submitted for the same server within the same day, the last values are stored.
 
     columns:
-      - name: id
+      - name: daily_server_id
         description: A unique id for each server and date.
       - name: server_id
         description: The server's unique id.

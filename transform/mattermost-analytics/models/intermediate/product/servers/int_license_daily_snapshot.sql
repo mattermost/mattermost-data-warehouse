@@ -4,8 +4,8 @@
     })
 }}
 select
-    coalesce(s.id, l.id) as daily_server_id,
-    coalesce(s.id, l.server_id) as server_id,
+    coalesce(s.daily_server_id, l.daily_server_id) as daily_server_id,
+    coalesce(s.server_id, l.server_id) as server_id,
     coalesce(s.server_date, l.server_date) as snapshot_date,
     coalese(s.customer_id, customer_id) as customer_id,
     coalese(s.license_id, license_id) as license_id,
@@ -15,4 +15,4 @@ select
     coalese(s.users, users) as users
 from
     {{ ref('int_license_telemetry_legacy_latest_daily') }} l
-    full outer join {{ ref('int_license_telemetry_latest_daily') }} s on s.id = l.id
+    full outer join {{ ref('int_license_telemetry_latest_daily') }} s on s.daily_server_id = l.daily_server_id
