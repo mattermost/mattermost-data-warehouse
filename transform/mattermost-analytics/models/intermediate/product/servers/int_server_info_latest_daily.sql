@@ -1,3 +1,8 @@
+{{
+    config({
+        "materialized": "table",
+    })
+}}
 select
     coalesce(s.id, l.id) as daily_server_id,
     coalesce(s.id, l.server_id) as server_id,
@@ -14,13 +19,18 @@ select
     s.installation_id,
     s.server_ip,
     s.installation_type,
-    array_disticnt(
+    array_distinct(
         array_cat(
                 coalesce(s.reported_versions, array_construct()),
                 coalesce(l.reported_versions, array_construct())
         )
     ) as reported_versions,
-    array_size(reported_versions) as count_reported_versions
+    array_size(array_distinct(
+        array_cat(
+                coalesce(s.reported_versions, array_construct()),
+                coalesce(l.reported_versions, array_construct())
+        )
+    )) as count_reported_versions
 from
     {{ ref('int_legacy_server_telemetry_latest_daily') }} l
     full outer join {{ ref('int_server_telemetry_latest_daily') }} s on s.id = l.id
