@@ -7,12 +7,12 @@ select
     coalesce(s.daily_server_id, l.daily_server_id) as daily_server_id,
     coalesce(s.server_id, l.server_id) as server_id,
     coalesce(s.server_date, l.server_date) as snapshot_date,
-    coalese(s.customer_id, customer_id) as customer_id,
-    coalese(s.license_id, license_id) as license_id,
-    coalese(s.sku_short_name, sku_short_name) as sku_short_name,
-    coalese(s.issued_at, issued_at) as issued_at,
-    coalese(s.expire_at, expire_at) as expire_at,
-    coalese(s.users, users) as users
+    coalesce(s.customer_id, l.customer_id) as customer_id,
+    coalesce(s.license_id, l.license_id) as license_id,
+    coalesce(s.sku_short_name, l.sku_short_name) as sku_short_name,
+    coalesce(s.issued_at, l.issued_at) as issued_at,
+    coalesce(s.expire_at, l.expire_at) as expire_at,
+    coalesce(s.users, l.users) as users
 from
     {{ ref('int_license_telemetry_legacy_latest_daily') }} l
     full outer join {{ ref('int_license_telemetry_latest_daily') }} s on s.daily_server_id = l.daily_server_id

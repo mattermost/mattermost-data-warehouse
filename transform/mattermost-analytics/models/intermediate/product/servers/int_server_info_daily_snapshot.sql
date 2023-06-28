@@ -5,7 +5,7 @@
 }}
 select
     coalesce(s.daily_server_id, l.daily_server_id) as daily_server_id,
-    coalesce(s.id, l.server_id) as server_id,
+    coalesce(s.server_id, l.server_id) as server_id,
     coalesce(s.server_date, l.server_date) as snapshot_date,
     coalesce(s.version_full, l.version_full) as version_full,
     coalesce(s.version_major, l.version_major) as version_major,
