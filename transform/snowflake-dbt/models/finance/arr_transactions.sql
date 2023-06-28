@@ -22,55 +22,34 @@
 --structure of queries below are funnel data to selfserve arr then gather demographic info then pull master data set and add expiry and renewal information 
 --modified to have parent child relationship as deployed by Jim K
 
---cte to identify cloud professional licenses to be excluded from salesforce data
+--cte to identify cloud professional opportunity ids to be excluded from ARR population
 --these are month to month usage of the product with no annual commitment 
---retired blapi code below to point to stripe directly 
-/*with mrr as (
-   select 
-        es.server_id,
-        ls.server_id as ls_server_id,
-        ls.license_id,
-        ls.customer_id,
-        ls.id,
-        ls.customer_name,
-        ls.edition,
-        ls.account_sfid,
-        ls.opportunity_sfid,
-        ls.stripeid,
-        ls.issued_date,
-        sub.status,
-        sub.sfdc_migrated_opportunity_sfid
-   from {{ref('license_server_fact')}} ls 
-   --from analytics.blp.license_server_fact ls
-   left join {{ref('excludable_servers')}} es 
-   --left join  analytics.mattermost.excludable_servers es  
-        on ls.server_id = es.server_id
-   left join {{ref('subscriptions')}} sub
-   --left join analytics.stripe.subscriptions sub 
-        on sub.license_id = ls.license_id 
-    where ls.issued_date is not null
-        and ls.edition in ('Cloud Professional')
-        and es.reason is null
-)*/
 
 with mrr as (
-   select
-    customer as stripeid,
-    customers.name as customer_name,
-    subscriptions.id as subscription_id,
-    cws_dns as customer_dns,
-    cws_installation as license_id,
-    subscriptions.created::date as date_joined,
-    current_period_end::date as active_license_end,
-    date_converted_to_paid::date as convert_to_paying,
-    subscriptions.edition as product,
-    canceled_at::date as cancellation_date,
-    subscriptions.status as active_status
---from {{ref('subscriptions')}}  
---from {{ source('stripe_raw', 'subscriptions') }}   
-from analytics.stripe.subscriptions 
-left join analytics.stripe.customers on customers.id = subscriptions.customer
-where subscriptions.edition = 'Cloud Professional'
+select
+    opp.id as opportunity_id
+    --,opp.accountid as account_id
+    --,opp.pricebook2id
+    --,oli.productcode
+    --,opp.license_key__c as license_id
+    --,opp.closedate::date as close_date
+    ,opp.license_start_date__c::date as license_start_date
+    --,opp.license_end_date__c::date as license_end_date
+    ,datediff('days',license_start_date__c,license_end_date__c) as term_days
+    --,opp.amount 
+from {{ ref( 'opportunitylineitem') }} oli
+--from analytics.orgm.opportunitylineitem oli 
+left join {{ ref( 'opportunity') }} opp
+--left join analytics.orgm.opportunity opp
+    on oli.opportunityid = opp.id 
+where oli.productcode like '%Cloud Professional%'
+        and oli.product_type__c = 'Monthly Billing'
+        and opp.iswon = true
+        and opp.isclosed = true
+        and opp.isdeleted = false
+        and opp.license_start_date__c < date '2023-06-30'
+        and term_days < 365
+group by 1,2,3
 )
 
 --cte to limit report to paying arr customers and exclude trial customers that did not convert to paying
@@ -83,7 +62,6 @@ where subscriptions.edition = 'Cloud Professional'
     WHERE opp.iswon in (true,false)
         and opp.isclosed = true
         and opp.isdeleted = false
-        and coalesce(opp.license_key__c,'null') not in (select distinct license_id from mrr)
     group by 1
     having arr >=1
     order by 1
@@ -188,6 +166,7 @@ where subscriptions.edition = 'Cloud Professional'
         and opp.isdeleted = false
         and opp.type != 'Monthly Billing'
         and opp.accountid in (select distinct accountid from pop)
+        and opp.id not in (select opportunity_id from mrr)
     order by opp.accountid, opp.closedate asc
 )
 
