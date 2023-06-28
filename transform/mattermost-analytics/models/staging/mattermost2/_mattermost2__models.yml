@@ -68,7 +68,7 @@ models:
       - name: sent_at
       - name: original_timestamp
 
-  - name: stg_mattermost2_prod__license
+  - name: stg_mattermost2__license
     description: |
       Telemetry data containing license information.
     columns:

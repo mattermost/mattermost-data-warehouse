@@ -14,5 +14,5 @@ select
     coalese(s.expire_at, expire_at) as expire_at,
     coalese(s.users, users) as users
 from
-    {{ ref('int_license_legacy_latest_daily') }} l
-    full outer join {{ ref('int_license_latest_daily') }} s on s.id = l.id
+    {{ ref('int_license_telemetry_legacy_latest_daily') }} l
+    full outer join {{ ref('int_license_telemetry_latest_daily') }} s on s.id = l.id
