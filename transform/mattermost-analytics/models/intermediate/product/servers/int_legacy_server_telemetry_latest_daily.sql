@@ -17,7 +17,8 @@ select
     database_version,
     edition,
     -- Can be used to identify potential upgrade/upgrade attempts or erroneous data
-    count(distinct version_full) over (partition by server_id, server_date) as count_versions_in_date
+    count(distinct version_full) over (partition by server_id, server_date) as count_reported_versions,
+    array_unique_agg(version_full) over (partition by server_id, server_date) as reported_versions
 from
     {{ ref('stg_mattermost2__server') }}
 -- Keep latest record per day
