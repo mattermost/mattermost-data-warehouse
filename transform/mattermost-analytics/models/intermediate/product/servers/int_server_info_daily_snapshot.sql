@@ -14,8 +14,9 @@ select
     coalesce(s.operating_system, l.operating_system) as operating_system,
     coalesce(s.database_type, l.database_type) as database_type,
     coalesce(s.database_version, l.database_version) as database_version,
-    coalesce(s.edition, l.edition) as edition,
+    coalesce(s.edition, l.edition) as is_enterprise_ready,
     s.installation_id,
+    s.installation_id is not null as is_cloud,
     s.server_ip,
     s.installation_type,
     array_distinct(

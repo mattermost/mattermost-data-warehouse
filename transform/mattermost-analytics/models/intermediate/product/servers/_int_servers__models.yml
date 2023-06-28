@@ -32,8 +32,10 @@ models:
         description: The type of the database used for this installation (i.e. postgres, mysql, ...).
       - name: database_version
         description: The version of the database.
-      - name: edition
+      - name: is_enterprise_ready
         description: Whether this server is an enterprise-ready build.
+      - name: is_cloud
+        description: Whether this server is a cloud installation or not.
       - name: reported_versions
         description: The unique versions reported from the server for that date.
       - name: count_reported_versions
