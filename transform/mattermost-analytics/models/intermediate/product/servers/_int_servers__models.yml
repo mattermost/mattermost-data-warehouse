@@ -99,8 +99,6 @@ models:
         description: The minor version part of the server's semver. I.e. 2 for 7.2.3.
       - name: version_patch
         description: The patch version part of the server's semver. I.e. 3 for 7.2.3.
-      - name: installation_id
-        description: The reported ID of the installation.
       - name: installation_type
         description: The method used for installing the Mattermost server (docker, deb package, ...).
       - name: server_ip

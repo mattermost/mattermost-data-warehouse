@@ -15,7 +15,6 @@ select
     coalesce(s.database_type, l.database_type) as database_type,
     coalesce(s.database_version, l.database_version) as database_version,
     coalesce(s.edition, l.edition) as edition,
-    s.installation_id is not null as is_cloud_server,
     s.installation_id,
     s.server_ip,
     s.installation_type,
