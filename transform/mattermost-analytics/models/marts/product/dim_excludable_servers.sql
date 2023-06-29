@@ -1,5 +1,6 @@
-
-SELECT
-    {{ dbt_utils.star(ref('int_excludable_servers')) }}
-FROM
-    {{ ref ('int_excludable_servers') }}
+select
+    server_id,
+    array_agg(reason) as reasons
+from
+    {{ ref('int_excludable_servers') }}
+group by server_id
