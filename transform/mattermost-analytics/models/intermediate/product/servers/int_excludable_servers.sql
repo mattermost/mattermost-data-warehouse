@@ -13,7 +13,7 @@ with seed_file as (
 ), cloud_servers as (
     -- Exclude cloud servers registered using mattermost related users.
     select
-        distinct sib.server_id, sib.installation_id,
+        distinct sib.server_id,
         case
             when s.cws_installation is null then 'No Stripe Installation Found'
             when
