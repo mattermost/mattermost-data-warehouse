@@ -1,8 +1,3 @@
-{{
-    config({
-        "materialized": "table",
-    })
-}}
 with seed_file as (
     -- Exclude servers defined in seed file
     select

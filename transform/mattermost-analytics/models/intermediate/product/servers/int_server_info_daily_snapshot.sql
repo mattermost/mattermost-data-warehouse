@@ -1,8 +1,3 @@
-{{
-    config({
-        "materialized": "table",
-    })
-}}
 select
     coalesce(s.daily_server_id, l.daily_server_id) as daily_server_id,
     coalesce(s.server_id, l.server_id) as server_id,

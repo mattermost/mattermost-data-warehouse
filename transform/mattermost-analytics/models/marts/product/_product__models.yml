@@ -52,3 +52,76 @@ models:
           combination_of_columns:
             - activity_date
             - server_id
+
+  - name: dim_daily_server_info
+    description: |
+      Daily information about the server based on telemetry data. In case of multiple values in a day, the latest
+      value is kept.
+    columns:
+      - name: daily_server_id
+        description: A unique id for each server and date
+        tests:
+          - unique
+          - not_null
+      - name: server_id
+        description: The server's unique id.
+      - name: snapshot_date
+        description: The date that server sent the information.
+      - name: version_full
+        description: The full semver of the Mattermost server.
+      - name: version_major
+        description: The major version part of the server's semver. I.e. 7 for 7.2.3.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 1
+              inclusive: true
+      - name: version_minor
+        description: The minor version part of the server's semver. I.e. 2 for 7.2.3.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+      - name: version_patch
+        description: The patch version part of the server's semver. I.e. 3 for 7.2.3.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+      - name: installation_type
+        description: The method used for installing the Mattermost server (docker, deb package, ...).
+      - name: server_ip
+        description: The IP address of the server.
+      - name: operating_system
+        description: The name of the operating system the server is installed at.
+      - name: database_type
+        description: The type of the database used for this installation (i.e. postgres, mysql, ...).
+      - name: database_version
+        description: The version of the database.
+      - name: is_enterprise_ready
+        description: Whether this server is an enterprise-ready build.
+      - name: is_cloud
+        description: Whether this server is a cloud installation or not.
+        tests:
+          - not_null
+      - name: reported_versions
+        description: The unique versions reported from the server for that date.
+      - name: count_reported_versions
+        description: The total number of distinct versions reported for the given date & server.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 1
+              inclusive: true
+
+  - name: dim_excludable_servers
+    description: List of known excludable servers
+
+    columns:
+      - name: server_id
+        description: The server's unique id.
+        tests:
+          - unique
+          - not_null
+      - name: reasons
+        description: A list of reasons this table should be excluded.
+        tests:
+          - not_null
