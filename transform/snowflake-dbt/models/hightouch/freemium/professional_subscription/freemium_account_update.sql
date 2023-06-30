@@ -43,43 +43,52 @@ WITH customers_with_cloud_paid_subs as (
     customers_with_cloud_paid_subs.hightouch_sync_eligible
     AND customers_with_cloud_paid_subs.status in ('canceled', 'active') 
     AND customers_with_cloud_paid_subs.SKU = 'Cloud Professional'
+), customer_to_account as (
+    SELECT
+        -- Data for debugging
+        email,
+        dwh_id_account_id,
+        dwh_id_account_external_id,
+        contact_account_id,
+        contact_account_external_id,
+        lead_account_id,
+        lead_account_external_id,
+        domain_account_id,
+        domain_account_external_id,
+        -- Data to be updated
+        -- Select account id based on priority:
+        --  1. external id match
+        --  2. account from contact
+        --  3. account from lead
+        --  4. account with matching domain
+        case
+            when has_external_id_match then 'existing external id'
+            when has_contact_match then 'contact'
+            when has_lead_match then 'lead'
+            else 'domain'
+        end as external_id_from,
+        -- Define priority as a number. The lower the number the higher the priority
+        case
+            when has_external_id_match then 1
+            when has_contact_match then 2
+            when has_lead_match then 3
+            else 4
+        end as priority,
+        case
+            when has_external_id_match then dwh_id_account_external_id
+            when has_contact_match then contact_account_external_id
+            when has_lead_match then lead_account_external_id
+            else domain_account_external_id
+        end as account_external_id,
+        account_type
+    FROM customers_with_cloud_paid_subs
 )
-SELECT
-    -- Data for debugging
-    email,
-    dwh_id_account_id,
-    dwh_id_account_external_id,
-    contact_account_id,
-    contact_account_external_id,
-    lead_account_id,
-    lead_account_external_id,
-    domain_account_id,
-    domain_account_external_id,
-    -- Data to be updated
-    -- Select account id based on priority:
-    --  1. external id match
-    --  2. account from contact
-    --  3. account from lead
-    --  4. account with matching domain
-    case
-        when has_dwh_id_account_id then 'existing external id'
-        when has_contact_match then 'contact'
-        when has_lead_match then 'lead'
-        else 'domain'
-    end as external_id_from,
-    case
-        when has_dwh_id_account_id then dwh_id_account_external_id
-        when has_contact_match then contact_account_external_id
-        when has_lead_match then lead_account_external_id
-        else domain_account_external_id
-    end as account_external_id,
-    account_type
-FROM customers_with_cloud_paid_subs
+select
+    *
+from
+    customer_to_account
 -- Remove duplicates by prioritizing over external id, contact, lead and finally domain.
 qualify row_number() over(
-    partition by email
-    order by has_dwh_id_account_id desc,
-             has_contact_match desc,
-             has_lead_match desc,
-             has_domain_match desc
+    partition by account_external_id
+    order by priority
 ) = 1
