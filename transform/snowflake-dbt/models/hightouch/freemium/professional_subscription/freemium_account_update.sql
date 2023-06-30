@@ -62,20 +62,20 @@ WITH customers_with_cloud_paid_subs as (
         --  3. account from lead
         --  4. account with matching domain
         case
-            when has_external_id_match then 'existing external id'
+            when has_dwh_id_account_id then 'existing external id'
             when has_contact_match then 'contact'
             when has_lead_match then 'lead'
             else 'domain'
         end as external_id_from,
         -- Define priority as a number. The lower the number the higher the priority
         case
-            when has_external_id_match then 1
+            when has_dwh_id_account_id then 1
             when has_contact_match then 2
             when has_lead_match then 3
             else 4
         end as priority,
         case
-            when has_external_id_match then dwh_id_account_external_id
+            when has_dwh_id_account_id then dwh_id_account_external_id
             when has_contact_match then contact_account_external_id
             when has_lead_match then lead_account_external_id
             else domain_account_external_id
