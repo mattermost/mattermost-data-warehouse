@@ -1,6 +1,7 @@
 {{
     config({
-        "materialized": "table"
+        "materialized": "table",
+        "snowflake_warehouse": "transform_l"
     })
 }}
 with server_first_day_per_telemetry as (
