@@ -13,4 +13,4 @@ select
 from
     {{ ref('stg_diagnostics__log_entries') }}
 -- Keep latest record per day
-qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
+qualify row_number() over (partition by server_id, server_date order by log_at desc) = 1
