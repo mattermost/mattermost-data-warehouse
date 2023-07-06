@@ -48,7 +48,7 @@ select
     coalesce(t.database_type, l.database_type, d.database_type) as database_type,
     coalesce(t.database_version, l.database_version) as database_version,
     coalesce(t.edition, l.edition, d.is_enterprise_ready) as is_enterprise_ready,
-    s.installation_id,
+    t.installation_id,
     case
         when t.server_id is not null and t.installation_id is not null then true
         when t.server_id is not null and t.installation_id is null then false
