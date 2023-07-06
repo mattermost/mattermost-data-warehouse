@@ -17,8 +17,8 @@ WITH customers AS (
         ,customers.id
         ,customers.invoice_prefix
         ,customers.livemode
-        ,customers.metadata:"contactfirstname"::varchar as contactfirstname
-        ,customers.metadata:"contactlastname"::varchar as contactlastname
+        ,customers.metadata:"ContactFirstName"::varchar as contactfirstname
+        ,customers.metadata:"ContactLastName"::varchar as contactlastname
         ,customers.metadata:"cws-customer"::varchar as cws_customer
         ,customers.sources
         ,customers.updated
@@ -30,7 +30,7 @@ WITH customers AS (
     FROM {{ source('stripe_raw','customers') }}
     {% if is_incremental() %}
 
-    WHERE customers.created::date >= (SELECT MAX(created::date) FROM {{ this }} )
+    WHERE customers.created >= (SELECT MAX(created::date) FROM {{ this }} )
 
     {% endif %}
 )

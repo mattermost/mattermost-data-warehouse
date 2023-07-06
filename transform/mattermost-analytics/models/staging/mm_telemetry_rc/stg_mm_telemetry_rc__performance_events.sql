@@ -3,7 +3,7 @@
 , "context_app_build" , "context_library_version"
 , "context_useragent", "context_app_name", "context_locale", "context_screen_density" 
 , "category" , "duration" , "num_of_request", "max_api_resource_size"
-, "longest_api_resource_duration" , "user_id", "count"] -%}
+, "longest_api_resource_duration" , "user_id", "count", "request_count"] -%}
 
 WITH performance_events AS (
     SELECT

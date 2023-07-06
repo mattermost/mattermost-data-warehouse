@@ -45,7 +45,7 @@ with DAG(
         http_conn_id="hightouch",
         method="GET",
         endpoint=Variable.get('hightouch_syncs_endpoint'),
-        headers={'Content-Type': 'application/json', 'Authorization': Variable.get('hightouch_secret')},
+        headers={'Content-Type': 'application/json', 'Authorization': f"Bearer {Variable.get('hightouch_secret')}"},
         xcom_push=True,
     )
     resolve_hightouch_status = PythonOperator(

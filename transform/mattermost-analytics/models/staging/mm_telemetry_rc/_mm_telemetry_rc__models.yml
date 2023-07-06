@@ -60,5 +60,6 @@ models:
       - name: longest_api_resource_duration
       - name: user_id
       - name: count
+      - name: request_count
       - name: event_date
       - name: received_at_date
