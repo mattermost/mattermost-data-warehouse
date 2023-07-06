@@ -1,9 +1,3 @@
--- {{
---     config({
---         "materialized": "table",
---         "snowflake_warehouse": "transform_l"
---     })
--- }}
 with server_first_day_per_telemetry as (
     select
         server_id,
