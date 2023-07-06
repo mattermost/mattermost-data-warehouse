@@ -1,3 +1,8 @@
+{{
+    config({
+        "materialized": "table"
+    })
+}}
 with server_first_day_per_telemetry as (
     select
         server_id,
