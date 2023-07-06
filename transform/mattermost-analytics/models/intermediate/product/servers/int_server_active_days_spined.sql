@@ -43,7 +43,8 @@ with server_first_day_per_telemetry as (
     -- Use date spine to fill in missing days
     select
         first_day.server_id,
-        all_days.date_day
+        all_days.date_day,
+        {{ dbt_utils.generate_surrogate_key(['server_id', 'date_day']) }} AS daily_server_id,
     from
         server_first_active_day first_day
         left join {{ ref('telemetry_days') }} all_days on all_days.date_day >= first_day.first_active_day
@@ -51,7 +52,7 @@ with server_first_day_per_telemetry as (
 select
     s.server_id,
     s.date_day as snapshot_date,
-    {{ dbt_utils.generate_surrogate_key(['s.server_id', 's.date_day']) }} AS daily_server_id,
+    s.daily_server_id,
     coalesce(t.version_full, l.version_full, d.version_full) as version_full,
     coalesce(t.version_major, l.version_major, d.version_major) as version_major,
     coalesce(t.version_minor, l.version_minor, d.version_minor) as version_minor,
@@ -85,12 +86,15 @@ select
                 coalesce(d.reported_versions, array_construct())
             )
         )
-    )) as count_reported_versions
+    )) as count_reported_versions,
+    t.daily_server_id is not null as has_telemetry_data,
+    l.daily_server_id is not null as has_legacy_telemetry_data,
+    d.daily_server_id is not null as has_diagnostics_data
 from
     spined s
     -- Telemetry (rudderstack) data
-    left join {{ ref('int_server_telemetry_latest_daily') }} t
+    left join {{ ref('int_server_telemetry_latest_daily') }} t on s.daily_server_id = t.daily_server_id
     -- Telemetry (segment) data
-    left join {{ ref('int_server_telemetry_legacy_latest_daily') }} l
+    left join {{ ref('int_server_telemetry_legacy_latest_daily') }} l on s.daily_server_id = l.daily_server_id
     -- Security update logs (diagnostics) data
-    left join {{ ref('int_server_security_update_latest_daily') }} d
+    left join {{ ref('int_server_security_update_latest_daily') }} d on s.daily_server_id = d.daily_server_id
