@@ -9,24 +9,36 @@ with server_first_day_per_telemetry as (
         min(server_date) as server_date
     from
         {{ ref('int_server_telemetry_legacy_latest_daily') }}
+    group by
+        server_id
+
     union all
+
     select
         server_id,
         min(server_date) as server_date
     from
         {{ ref('int_server_telemetry_latest_daily') }}
+    group by
+        server_id
+
     union all
+
     select
         server_id,
         min(server_date) as server_date
     from
         {{ ref('int_server_security_update_latest_daily') }}
+    group by
+        server_id
 ), server_first_active_day as (
     select
         server_id,
         min(server_date) as first_active_day
     from
         server_first_day_per_telemetry
+    group by
+        server_id
 ), spined as (
     -- Use date spine to fill in missing days
     select
