@@ -3,7 +3,7 @@
         "materialized": "incremental",
         "incremental_strategy": "merge",
         "merge_update_columns": ['count_reported_versions', 'reported_versions'],
-        "unique_key": ['daily_user_id'],
+        "unique_key": ['daily_server_id'],
         "cluster_by": ['server_date'],
         "snowflake_warehouse": "transform_l"
     })
