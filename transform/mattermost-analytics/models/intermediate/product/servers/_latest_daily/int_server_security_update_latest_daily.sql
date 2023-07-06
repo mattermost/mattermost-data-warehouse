@@ -1,3 +1,8 @@
+{{
+    config({
+        "materialized": "table"
+    })
+}}
 select
     server_id,
     log_date AS server_date,
@@ -9,7 +14,10 @@ select
     cip as server_ip,
     operating_system,
     database_type,
-    is_enterprise_ready
+    is_enterprise_ready,
+    -- Can be used to identify potential upgrade/upgrade attempts or erroneous data
+    count(distinct version_full) over (partition by server_id, server_date) as count_reported_versions,
+    array_unique_agg(version_full) over (partition by server_id, server_date) as reported_versions
 from
     {{ ref('stg_diagnostics__log_entries') }}
 -- Keep latest record per day
