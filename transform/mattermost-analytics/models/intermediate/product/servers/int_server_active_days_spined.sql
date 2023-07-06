@@ -44,7 +44,7 @@ with server_first_day_per_telemetry as (
     select
         first_day.server_id,
         all_days.date_day,
-        {{ dbt_utils.generate_surrogate_key(['server_id', 'date_day']) }} AS daily_server_id,
+        {{ dbt_utils.generate_surrogate_key(['server_id', 'date_day']) }} AS daily_server_id
     from
         server_first_active_day first_day
         left join {{ ref('telemetry_days') }} all_days on all_days.date_day >= first_day.first_active_day
