@@ -60,14 +60,14 @@ select
         array_cat(
                 coalesce(t.reported_versions, array_construct()),
                 coalesce(l.reported_versions, array_construct()),
-                array_construct(d.version_full)
+                coalesce(d.reported_versions, array_construct())
         )
     ) as reported_versions,
     array_size(array_distinct(
         array_cat(
                 coalesce(t.reported_versions, array_construct()),
                 coalesce(l.reported_versions, array_construct()),
-                array_construct(d.version_full)
+                coalesce(d.reported_versions, array_construct())
         )
     )) as count_reported_versions
 from
