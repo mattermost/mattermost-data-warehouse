@@ -33,7 +33,7 @@ with server_first_day_per_telemetry as (
         first_day.server_id,
         all_days.date_day
     from
-        server_first_active_day
+        server_first_active_day first_day
         left join {{ ref('telemetry_days') }} all_days on all_days.date_day >= first_day.first_active_day
 )
 select
