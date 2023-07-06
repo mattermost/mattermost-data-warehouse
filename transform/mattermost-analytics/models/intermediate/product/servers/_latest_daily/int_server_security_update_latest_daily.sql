@@ -1,6 +1,11 @@
 {{
     config({
-        "materialized": "table"
+        "materialized": "incremental",
+        "incremental_strategy": "merge",
+        "merge_update_columns": ['count_reported_versions', 'reported_versions'],
+        "unique_key": ['daily_user_id'],
+        "cluster_by": ['server_date'],
+        "snowflake_warehouse": "transform_l"
     })
 }}
 select
@@ -20,5 +25,10 @@ select
     array_unique_agg(version_full) over (partition by server_id, server_date) as reported_versions
 from
     {{ ref('stg_diagnostics__log_entries') }}
+{% if is_incremental() %}
+where
+    -- this filter will only be applied on an incremental run
+    log_date >= (select max(server_date) from {{ this }})
+{% endif %}
 -- Keep latest record per day
 qualify row_number() over (partition by server_id, server_date order by log_at desc) = 1
