@@ -1,0 +1,50 @@
+version: 2
+
+sources:
+  - name: diagnostics
+    database: 'RAW'
+    schema: diagnostics
+    description: |
+      Contains parsed logs from security update check service.
+    loader: Snowflake Stage
+    tags:
+      - stage
+
+    tables:
+      - name: log_entries
+        description: |
+          Contains parsed logs from security update check service. The logs are loaded using a Snowflake stage. An 
+          [Airflow DAG](https://github.com/mattermost/mattermost-data-warehouse/blob/master/dags/extract/diagnostics.py)
+          triggers the loading of the job. The entrypoint to the script that performs the loading is available
+          [here](https://github.com/mattermost/mattermost-data-warehouse/blob/master/extract/s3_extract/diagnostics_job.py).
+          
+          In-depth documentation of the fields is available at 
+          [Cloudfront documentation](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html).
+          
+        columns:
+          - name: logdate
+          - name: logtime
+          - name: edge
+          - name: bytessent
+          - name: cip
+          - name: method
+          - name: host
+          - name: uri
+          - name: status
+          - name: creferrer
+          - name: useragent
+          - name: cs_uri_query
+          - name: cookie
+          - name: x_edge_result_type
+          - name: x_edge_request_id
+          - name: x_host_header
+          - name: protocol
+          - name: cs_bytes
+          - name: time_taken
+          - name: x_forwarded_for
+          - name: ssl_protocol
+          - name: ssl_cipher
+          - name: x_edge_response_result_type
+          - name: cs_protocol_version
+          - name: file_status
+          - name: file_encrypted_fields

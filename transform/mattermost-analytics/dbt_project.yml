@@ -122,3 +122,6 @@ vars:
   in_product_trial_campaign_id: 7013p000001NkNoAAK
   salesforce_default_ownerid: 0053p0000064nt8AAA #default value for salesforce ownerid
   cloud_enterprise_trial_campaign_id: 701Dm000000gpPZIAY
+
+on-run-start:
+  -  '{{ create_parse_qs_udf()}}'
