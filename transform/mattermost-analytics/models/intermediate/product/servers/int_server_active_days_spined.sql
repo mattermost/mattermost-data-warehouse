@@ -38,8 +38,8 @@ with server_first_day_per_telemetry as (
 ), server_first_active_day as (
     select
         server_id,
-        min(first_server_date) as first_active_date,
-        max(last_server_date) as last_active_date
+        min(first_server_date) as first_active_day,
+        max(last_server_date) as last_active_day
     from
         server_first_day_per_telemetry
     group by
@@ -52,7 +52,8 @@ with server_first_day_per_telemetry as (
         {{ dbt_utils.generate_surrogate_key(['server_id', 'date_day']) }} AS daily_server_id
     from
         server_first_active_day first_day
-        left join {{ ref('telemetry_days') }} all_days on all_days.date_day >= first_day.first_active_day and all_days.date_day <= first_day.last_active_day
+        left join {{ ref('telemetry_days') }} all_days
+            on all_days.date_day >= first_day.first_active_day and all_days.date_day <= first_day.last_active_day
 )
 select
     s.server_id,
