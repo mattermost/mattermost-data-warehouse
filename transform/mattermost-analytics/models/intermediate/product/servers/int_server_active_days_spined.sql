@@ -30,7 +30,7 @@ with server_first_day_per_telemetry as (
         min(server_date) as first_server_date,
         max(server_date) as last_server_date
     from
-        server_date >= '{{ var('telemetry_start_date')}}'
+        {{ ref('int_server_security_update_latest_daily') }}
     where
         server_date >= {{ var('telemetry_start_date')}}
     group by
