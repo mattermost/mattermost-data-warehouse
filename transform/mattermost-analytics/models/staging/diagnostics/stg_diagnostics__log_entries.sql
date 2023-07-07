@@ -1,9 +1,3 @@
-{{
-    config({
-        "materialized": "table",
-        "snowflake_warehouse": "transform_l"
-    })
-}}
 with server_activity_stats as (
     select
         server_id,

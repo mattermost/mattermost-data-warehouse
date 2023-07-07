@@ -1,9 +1,13 @@
 version: 2
 
 models:
-  - name: stg_diagnostics__log_entries
+  - name: base_diagnostics__log_entries
     description: |
-      Log entries from security update service. Excludes servers that report only a single day of activity.
+      Log entries from security update service. Performs some basic cleaning of data, including:
+      - Keeps only `GET` requests to `/security` endpoint
+      - Keepi only requests made by the Go HTTP client
+      - Ignores requests to a future date.
+      Columns that have the same value always or are of no real value are ignored.
 
     columns:
       - name: log_date
