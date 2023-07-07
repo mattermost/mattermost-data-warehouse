@@ -5,6 +5,8 @@ with server_first_day_per_telemetry as (
         max(server_date) as last_server_date
     from
         {{ ref('int_server_telemetry_legacy_latest_daily') }}
+    where
+        server_date >= {{ var('telemetry_start_date')}}
     group by
         server_id
 
@@ -16,6 +18,8 @@ with server_first_day_per_telemetry as (
         max(server_date) as last_server_date
     from
         {{ ref('int_server_telemetry_latest_daily') }}
+    where
+        server_date >= {{ var('telemetry_start_date')}}
     group by
         server_id
 
@@ -27,6 +31,8 @@ with server_first_day_per_telemetry as (
         max(server_date) as last_server_date
     from
         {{ ref('int_server_security_update_latest_daily') }}
+    where
+        server_date >= {{ var('telemetry_start_date')}}
     group by
         server_id
 ), server_first_active_day as (
