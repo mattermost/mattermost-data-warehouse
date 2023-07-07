@@ -1,3 +1,8 @@
+{{
+    config({
+        "snowflake_warehouse": "transform_l"
+    })
+}}
 select
     daily_server_id,
     server_id,
