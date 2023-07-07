@@ -1,7 +1,7 @@
 select
     daily_server_id,
     server_id,
-    snapshot_date,
+    activity_date,
     version_full,
     version_major,
     version_minor,
@@ -14,6 +14,9 @@ select
     is_cloud,
     server_ip,
     installation_type,
-    count_reported_versions
+    count_reported_versions,
+    has_telemetry_data,
+    has_legacy_telemetry_data,
+    has_diagnostics_data
 from
-    {{ ref('int_server_info_daily_snapshot') }}
+    {{ ref('int_server_active_days_spined') }}

@@ -1,9 +1,3 @@
-{{
-    config({
-        "materialized": "table",
-        "snowflake_warehouse": "transform_l"
-    })
-}}
 with server_first_day_per_telemetry as (
     select
         server_id,
@@ -48,17 +42,17 @@ with server_first_day_per_telemetry as (
     -- Use date spine to fill in missing days
     select
         first_day.server_id,
-        all_days.date_day::date as snapshot_date,
-        {{ dbt_utils.generate_surrogate_key(['server_id', 'snapshot_date']) }} AS daily_server_id
+        all_days.date_day::date as activity_date,
+        {{ dbt_utils.generate_surrogate_key(['server_id', 'activity_date']) }} AS daily_server_id
     from
         server_first_active_day first_day
         left join {{ ref('telemetry_days') }} all_days
             on all_days.date_day >= first_day.first_active_day and all_days.date_day <= first_day.last_active_day
 )
 select
-    s.server_id,
-    s.snapshot_date as snapshot_date,
     s.daily_server_id,
+    s.server_id,
+    s.activity_date,
     coalesce(t.version_full, l.version_full, d.version_full) as version_full,
     coalesce(t.version_major, l.version_major, d.version_major) as version_major,
     coalesce(t.version_minor, l.version_minor, d.version_minor) as version_minor,
