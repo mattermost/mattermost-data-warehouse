@@ -32,7 +32,7 @@ with server_first_day_per_telemetry as (
     from
         {{ ref('int_server_security_update_latest_daily') }}
     where
-        server_date >= {{ var('telemetry_start_date')}}
+        server_date >= '{{ var('telemetry_start_date')}}'
     group by
         server_id
 ), server_first_active_day as (
