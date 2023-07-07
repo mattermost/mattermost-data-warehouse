@@ -48,8 +48,8 @@ with server_first_day_per_telemetry as (
     -- Use date spine to fill in missing days
     select
         first_day.server_id,
-        all_days.date_day,
-        {{ dbt_utils.generate_surrogate_key(['server_id', 'date_day']) }} AS daily_server_id
+        all_days.date_day::date as snapshot_date,
+        {{ dbt_utils.generate_surrogate_key(['server_id', 'snapshot_date']) }} AS daily_server_id
     from
         server_first_active_day first_day
         left join {{ ref('telemetry_days') }} all_days
@@ -57,7 +57,7 @@ with server_first_day_per_telemetry as (
 )
 select
     s.server_id,
-    s.date_day as snapshot_date,
+    s.snapshot_date as snapshot_date,
     s.daily_server_id,
     coalesce(t.version_full, l.version_full, d.version_full) as version_full,
     coalesce(t.version_major, l.version_major, d.version_major) as version_major,
