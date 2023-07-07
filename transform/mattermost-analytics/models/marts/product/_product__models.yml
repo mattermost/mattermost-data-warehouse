@@ -65,8 +65,12 @@ models:
           - not_null
       - name: server_id
         description: The server's unique id.
+        tests:
+          - not_null
       - name: activity_date
         description: The date that server sent the information.
+        tests:
+          - not_null
       - name: version_full
         description: The full semver of the Mattermost server.
       - name: version_major
@@ -102,7 +106,8 @@ models:
       - name: is_cloud
         description: Whether this server is a cloud installation or not.
         tests:
-          - not_null
+          - not_null:
+              where: "has_telemetry_data = true"
       - name: reported_versions
         description: The unique versions reported from the server for that date.
       - name: count_reported_versions
@@ -111,6 +116,7 @@ models:
           - dbt_utils.accepted_range:
               min_value: 1
               inclusive: true
+              where: "has_telemetry_data or or has_legacy_telemetry_data or has_diagnostics_data"
       - name: has_telemetry_data
         description: Whether there were telemetry data reported for this server on the given data.
       - name: has_legacy_telemetry_data
