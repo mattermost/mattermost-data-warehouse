@@ -9,7 +9,6 @@ from airflow.utils.db import provide_session
 from plugins.operators.mattermost_operator import MattermostOperator
 
 PERMIFROST_IMAGE = "mattermost/mattermost-permifrost:master"
-PIPELINEWISE_IMAGE = "docker.io/adovenmm/pipelinewise:latest"
 
 MATTERMOST_DATAWAREHOUSE_IMAGE = "mattermost/mattermost-data-warehouse:master"
 
