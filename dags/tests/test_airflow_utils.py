@@ -4,7 +4,9 @@ def test_create_alert_body(config_alert_context):
 
     body = create_alert_body(config_alert_context)
     assert ':red_circle: Test Exception message' in body
-    assert '**Dag**: [test_utils_dag](https://airflow.dataeng.internal.mattermost.com/tree?dag_id=test_utils_dag)' in body
+    assert (
+        '**Dag**: [test_utils_dag](https://airflow.dataeng.internal.mattermost.com/tree?dag_id=test_utils_dag)' in body
+    )
     assert (
         '**Task**: [test_task](https://airflow.dataeng.internal.mattermost.com/task?dag_id=test_utils_dag&task_id=test_task&execution_date=2022-11-15T00%3A00%3A00%2B00%3A00)'  # noqa: E501
         in body
