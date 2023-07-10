@@ -64,3 +64,23 @@ models:
       - name: is_terms_accepted
         description: Whether the user accepted the terms and conditions.
 
+  - name: stg_cws__marketing
+    description: |
+      Security Newsletter subscription data.
+
+    columns:
+      - name: marketing_id
+        description: Marketing ID.
+        tests:
+          - not_null
+      - name: email
+        description: The user's email
+        tags: ['pii']
+      - name: subscribed_content
+        description: The content the user subscibed to.
+      - name: server_id
+        description: The server's id.
+      - name: created_at
+        description: Newsletter row created time.
+      - name: updated_at
+        description: Newsletter row updated time.

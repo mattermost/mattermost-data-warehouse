@@ -14,7 +14,7 @@ renamed as (
         email as email,
         subscribedcontent as subscribed_content,
 
-        -- Installation info
+        -- Newsletter metadata
         serverid as server_id,
         to_timestamp(createdat) as created_at,
         to_timestamp(updatedat) as updated_at
