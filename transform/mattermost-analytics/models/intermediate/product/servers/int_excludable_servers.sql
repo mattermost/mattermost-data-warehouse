@@ -24,9 +24,11 @@ with seed_file as (
         reason is not null
 ), user_telemetry_servers as (
     select
-        distinct server_id
+        distinct server_id, count(distinct activity_date) as total_activity_dates
     from
         {{ ref('int_user_active_days_spined') }}
+    where
+        is_active_today
 ), server_only_telemetry as (
     -- Servers with only server side telemetry
     select
@@ -46,9 +48,16 @@ with seed_file as (
     where
         uts.server_id is null
         and sot.count_days_telemetry = 1
+), single_day_user_telemetry as (
+    -- Servers where user telemetry exists only for a single day
+    select
+        server_id,
+        'Single day user telemetry'
 )
 select * from seed_file
 union all
 select * from cloud_servers
 union all
 select * from single_day_server_side_telemetry_only
+union all
+select * from single_day_user_telemetry

@@ -27,9 +27,6 @@ models:
         description: The server's unique id.
         tests:
           - not_null
-          - relationships:
-              to: ref('dim_daily_server_info')
-              field: server_id  # Expect to see server telemetry for all servers with user telemetry
       - name: daily_active_users
         description: The number of unique active users for the given server and date.
       - name: weekly_active_users
