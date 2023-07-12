@@ -33,17 +33,24 @@ with seed_file as (
         distinct server_id
     from
         {{ ref('int_user_active_days_spined') }}
-), single_day_server_side_telemetry_only as (
-    -- Servers with just a single day of server side telemetry and no user telemetry
+), server_only_telemetry as (
+    -- Servers with only server side telemetry
     select
-        distinct st.server_id,
+        server_id,
+        count_if(has_telemetry_data or has_legacy_telemetry_data) as count_days_telemetry
+    from
+        {{ ref('int_server_active_days_spined') }}
+), single_day_server_side_telemetry_only as (
+    -- Servers with only server side telemetry and no user telemetry
+    select
+        sot.server_id,
         'Single day server-side telemetry only' as reason
     from
-        {{ ref('int_server_active_days_spined') }} st
-        left join user_telemetry_servers ut on st.server_id = ut.server_id
+        server_only_telemetry sot
+        left join user_telemetry_servers uts on sot.server_id = uts.server_id
     where
-        ut.server_id is null
-        and  (st.has_legacy_telemetry_data or st.has_telemetry_data)
+        uts.server_id is null
+        and sot.count_days_telemetry = 1
 )
 select * from seed_file
 union all
