@@ -24,11 +24,12 @@ with seed_file as (
         reason is not null
 ), user_telemetry_servers as (
     select
-        distinct server_id, count(distinct activity_date) as total_activity_dates
+        server_id, count(distinct activity_date) as total_activity_dates
     from
         {{ ref('int_user_active_days_spined') }}
     where
         is_active_today
+    group by server_id
 ), server_only_telemetry as (
     -- Servers with only server side telemetry
     select
