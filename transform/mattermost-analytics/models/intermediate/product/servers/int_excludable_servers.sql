@@ -53,6 +53,10 @@ with seed_file as (
     select
         server_id,
         'Single day user telemetry' as reason
+    from
+        user_telemetry_servers
+    where count_days_telemetry = 1
+
 )
 select * from seed_file
 union all
