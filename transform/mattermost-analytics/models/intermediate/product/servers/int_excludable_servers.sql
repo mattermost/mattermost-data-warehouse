@@ -55,7 +55,8 @@ with seed_file as (
         'Single day user telemetry' as reason
     from
         user_telemetry_servers
-    where count_days_telemetry = 1
+    where
+        total_activity_dates = 1
 
 )
 select * from seed_file
