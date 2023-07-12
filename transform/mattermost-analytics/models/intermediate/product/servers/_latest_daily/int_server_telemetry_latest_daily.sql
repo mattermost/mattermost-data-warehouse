@@ -1,3 +1,8 @@
+{{
+    config({
+        "materialized": "table",
+    })
+}}
 select
     server_id,
     CAST(timestamp AS date) AS server_date,
