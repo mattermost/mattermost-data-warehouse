@@ -36,7 +36,7 @@ with seed_file as (
 ), single_day_server_side_telemetry_only as (
     -- Servers with just a single day of server side telemetry and no user telemetry
     select
-        distinct server_telemetry.server_id,
+        distinct st.server_id,
         'Single day server-side telemetry only' as reason
     from
         {{ ref('int_server_active_days_spined') }} st
