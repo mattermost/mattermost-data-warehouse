@@ -56,7 +56,7 @@ models:
   - name: dim_daily_server_info
     description: |
       Daily information about the server based on telemetry data. In case of multiple values in a day, the latest
-      value is kept.
+      value is kept. Does not contain servers marked for exclusion.
     columns:
       - name: daily_server_id
         description: A unique id for each server and date
