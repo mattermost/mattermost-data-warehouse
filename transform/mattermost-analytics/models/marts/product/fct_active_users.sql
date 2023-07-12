@@ -8,7 +8,7 @@
 %}
 
 select
-    {{ dbt_utils.generate_surrogate_key(['activity_date', 'server_id']) }} AS id
+    {{ dbt_utils.generate_surrogate_key(['activity_date', 'server_id']) }} AS daily_server_id
     , activity_date
     , server_id
 {% for metric, column in column_map.items() %}

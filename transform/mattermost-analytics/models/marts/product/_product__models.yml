@@ -14,6 +14,14 @@ models:
       > Version 5.23.0 - 5.25.0 of Mattermost server transmitted telemetry both to Segment and Rudderstack.
 
     columns:
+      - name: daily_server_id
+        description: A unique id for each server and date
+        tests:
+          - unique
+          - not_null
+          - relationships:
+                to: ref('dim_daily_server_info')
+                field: daily_server_id
       - name: activity_date
         description: The date for the measurement.
         tests:
