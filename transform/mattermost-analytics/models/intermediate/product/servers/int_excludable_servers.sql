@@ -40,6 +40,7 @@ with seed_file as (
         count_if(has_telemetry_data or has_legacy_telemetry_data) as count_days_telemetry
     from
         {{ ref('int_server_active_days_spined') }}
+    group by server_id
 ), single_day_server_side_telemetry_only as (
     -- Servers with only server side telemetry and no user telemetry
     select
