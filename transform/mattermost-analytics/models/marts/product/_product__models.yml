@@ -19,10 +19,6 @@ models:
         tests:
           - unique
           - not_null
-          - relationships:
-                to: ref('dim_daily_server_info')
-                field: daily_server_id
-                where: "daily_active_users > 0"   # Expect to see server telemetry for dates where user activity exists
       - name: activity_date
         description: The date for the measurement.
         tests:
@@ -31,6 +27,9 @@ models:
         description: The server's unique id.
         tests:
           - not_null
+          - relationships:
+              to: ref('dim_daily_server_info')
+              field: server_id  # Expect to see server telemetry for all servers with user telemetry
       - name: daily_active_users
         description: The number of unique active users for the given server and date.
       - name: weekly_active_users
