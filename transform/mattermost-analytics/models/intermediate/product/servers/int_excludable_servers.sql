@@ -52,7 +52,7 @@ with seed_file as (
     -- Servers where user telemetry exists only for a single day
     select
         server_id,
-        'Single day user telemetry'
+        'Single day user telemetry' as reason
 )
 select * from seed_file
 union all
