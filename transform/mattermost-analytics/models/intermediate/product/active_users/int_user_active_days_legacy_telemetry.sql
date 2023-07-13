@@ -43,3 +43,5 @@ select
     , received_at_date
 from
     tmp
+where
+    activity_date >= '{{ var('telemetry_start_date')}}'

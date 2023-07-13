@@ -31,6 +31,8 @@ with user_active_days as (
         min(activity_date) as first_active_day
     from
         user_active_days
+    where
+        activity_date >= '{{ var('telemetry_start_date')}}'
     group by 1, 2
 ), spined as (
     -- Use date spine to fill in missing days
