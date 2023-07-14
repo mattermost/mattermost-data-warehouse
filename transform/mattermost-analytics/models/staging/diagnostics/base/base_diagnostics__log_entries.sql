@@ -10,7 +10,7 @@ renamed as (
         to_timestamp(logdate|| ' ' || logtime) as log_at,
         edge,
         cip as server_ip,
-        parse_qs(cs_uri_query) as _parsed_cs_uri_query,
+        mattermost_analytics.parse_qs(cs_uri_query) as _parsed_cs_uri_query,
         _parsed_cs_uri_query:id::varchar as server_id,
         _parsed_cs_uri_query:b::varchar as _security_build,
         split_part(_security_build, '.', 1) as version_major,
