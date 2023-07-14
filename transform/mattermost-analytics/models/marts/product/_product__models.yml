@@ -14,6 +14,11 @@ models:
       > Version 5.23.0 - 5.25.0 of Mattermost server transmitted telemetry both to Segment and Rudderstack.
 
     columns:
+      - name: daily_server_id
+        description: A unique id for each server and date
+        tests:
+          - unique
+          - not_null
       - name: activity_date
         description: The date for the measurement.
         tests:
@@ -56,7 +61,7 @@ models:
   - name: dim_daily_server_info
     description: |
       Daily information about the server based on telemetry data. In case of multiple values in a day, the latest
-      value is kept.
+      value is kept. Does not contain servers marked for exclusion.
     columns:
       - name: daily_server_id
         description: A unique id for each server and date
@@ -65,8 +70,12 @@ models:
           - not_null
       - name: server_id
         description: The server's unique id.
-      - name: snapshot_date
+        tests:
+          - not_null
+      - name: activity_date
         description: The date that server sent the information.
+        tests:
+          - not_null
       - name: version_full
         description: The full semver of the Mattermost server.
       - name: version_major
@@ -102,7 +111,8 @@ models:
       - name: is_cloud
         description: Whether this server is a cloud installation or not.
         tests:
-          - not_null
+          - not_null:
+              where: "has_telemetry_data = true"
       - name: reported_versions
         description: The unique versions reported from the server for that date.
       - name: count_reported_versions
@@ -111,6 +121,13 @@ models:
           - dbt_utils.accepted_range:
               min_value: 1
               inclusive: true
+              where: "has_telemetry_data or has_legacy_telemetry_data or has_diagnostics_data"
+      - name: has_telemetry_data
+        description: Whether there were telemetry data reported for this server on the given data.
+      - name: has_legacy_telemetry_data
+        description: Whether there were legacy (segment) telemetry data reported for this server on the given data.
+      - name: has_diagnostics_data
+        description: Whether there were security update server data reported for this server on the given data.
 
   - name: dim_excludable_servers
     description: List of known excludable servers
@@ -122,6 +139,6 @@ models:
           - unique
           - not_null
       - name: reasons
-        description: A list of reasons this table should be excluded.
+        description: A list of reasons this server should be excluded.
         tests:
           - not_null
