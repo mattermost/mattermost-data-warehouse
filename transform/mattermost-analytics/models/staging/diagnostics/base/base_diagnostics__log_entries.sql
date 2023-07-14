@@ -1,8 +1,3 @@
-{{config({
-    "materialized": "table",
-    "snowflake_warehouse": "transform_l"
-  })
-}}
 with source as (
 
     select * from {{ source('diagnostics', 'log_entries') }}
