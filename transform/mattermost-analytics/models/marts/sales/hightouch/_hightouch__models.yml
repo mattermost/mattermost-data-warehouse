@@ -101,3 +101,28 @@ models:
         #       values: ['Account created', 'Email verified', 'Workspace created', null]
       - name: is_valid_email
         description: Whether the email is valid. Used to skip invalid emails.
+
+  - name: fct_marketing_campaign_member
+    description: |
+      Marketing data coming from cws, to sync with leads & campaign member in Salesforce.
+
+    columns:
+      - name: marketing_id
+        description: Marketing ID from cws.
+      - name: email
+        tags: ['pii']
+        description: Customer email for marketing coming from cws.
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+      - name: server_id
+        description: Server ID of the user who subscribed to the marketing campaign.
+      - name: lead_id
+        description: Lead ID of the user who subscribed to the marketing campaign in Salesforce.
+      - name: campaign_member_id
+        description: Campaign Member ID of the user who subscribed to the marketing campaign in Salesforce.
+      - name: is_existing_lead
+        description: Whether there's already a lead with the same email.
+      - name: is_existing_campaign_member
+        description: Whether there's already a campaign member for the same email and lead.
+
