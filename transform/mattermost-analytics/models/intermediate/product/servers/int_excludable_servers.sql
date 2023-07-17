@@ -1,6 +1,6 @@
 {{
   config({
-    "schema": "cs",
+    "materialized": "table",
     "snowflake_warehouse": "transform_l"
   })
 }}
