@@ -12,6 +12,6 @@ select
     server_id, reason
 from
     version_exclusions
-    unpivot(reason for explanation in (internal_email, restricted_ip, ran_tests, user_count_sanity_check))
+    unpivot(reason for explanation in (restricted_ip, ran_tests, user_count_sanity_check))
 where
     reason is not null
