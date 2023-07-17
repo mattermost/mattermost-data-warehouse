@@ -3,11 +3,8 @@ select
     distinct sib.server_id,
     case
         when s.cws_installation is null then 'No Stripe Installation Found'
-        when
-            lower(SPLIT_PART(c.email, '@', 2)) in ('mattermost.com', 'adamcgross.com', 'hulen.com')
-            or lower(c.email) IN ('ericsteven1992@gmail.com', 'eric.nelson720@gmail.com') then 'Internal Email'
-        else null
     end as reason
+    -- There's a bug in version format in past model
 from
     {{ ref('_int_server_installation_id_bridge')}} sib
     left join {{ ref('stg_stripe__subscriptions')}} s on sib.installation_id = s.cws_installation
