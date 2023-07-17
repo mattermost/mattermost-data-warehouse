@@ -3,7 +3,7 @@ select
     distinct sib.server_id,
     case
         -- Telemetry indicates an installation id but it doesn't exist in stripe
-        when sib.installation_id is not null and s.cws_installations is null then 'No Stripe Installation Found'
+        when sib.installation_id is not null and s.cws_installation is null then 'No Stripe Installation Found'
         -- Installation exists but email belongs to an internal user
         when
             lower(split_part(c.email, '@', 2)) in ('mattermost.com', 'adamcgross.com', 'hulen.com')
