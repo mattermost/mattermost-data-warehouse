@@ -1,3 +1,8 @@
+{{config({
+    "materialized": "table",
+    "snowflake_warehouse": "transform_l",
+  })
+}}
 with security_exclusion_reasons as (
     select
         server_id,

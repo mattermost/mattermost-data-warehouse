@@ -1,3 +1,8 @@
+{{config({
+    "materialized": "table",
+    "snowflake_warehouse": "transform_l",
+  })
+}}
 -- Servers marked as cloud from telemetry but no matching stripe data
 select
     distinct sib.server_id,
