@@ -7,6 +7,7 @@ with server_first_day_per_telemetry as (
         {{ ref('int_server_telemetry_legacy_latest_daily') }}
     where
         server_date >= '{{ var('telemetry_start_date')}}'
+        and server_id not in (select server_id from {{ ref('int_excludable_servers') }})
     group by
         server_id
 
@@ -20,6 +21,7 @@ with server_first_day_per_telemetry as (
         {{ ref('int_server_telemetry_latest_daily') }}
     where
         server_date >= '{{ var('telemetry_start_date')}}'
+        and server_id not in (select server_id from {{ ref('int_excludable_servers') }})
     group by
         server_id
 
@@ -33,6 +35,7 @@ with server_first_day_per_telemetry as (
         {{ ref('int_server_security_update_latest_daily') }}
     where
         server_date >= '{{ var('telemetry_start_date')}}'
+        and server_id not in (select server_id from {{ ref('int_excludable_servers') }})
     group by
         server_id
 ), server_first_active_day as (

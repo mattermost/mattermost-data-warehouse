@@ -8,16 +8,24 @@ with user_telemetry_servers as (
         is_active_today
     group by server_id
 ),
+server_side_activity as (
+    select
+        server_id, server_date
+    from
+        {{ ref('int_server_telemetry_legacy_latest_daily') }}
+    union all
+    select
+        server_id, server_date
+    from
+        {{ ref('int_server_telemetry_latest_daily') }}
+),
 server_only_telemetry as (
     -- Servers with only server side telemetry
     select
-        server_id,
-        count(distinct activity_date) as count_server_active_days
+        server_id, count(distinct server_date) as count_server_active_days
     from
-        {{ ref('int_server_active_days_spined') }}
-    where
-        has_telemetry_data or has_legacy_telemetry_data
-    group by server_id
+        server_side_activity
+    group by 1
 )
 select
     coalesce(uts.server_id, sot.server_id) as server_id,
