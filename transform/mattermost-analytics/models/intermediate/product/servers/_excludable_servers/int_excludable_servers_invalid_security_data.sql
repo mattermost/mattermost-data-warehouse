@@ -24,4 +24,4 @@ from
 where
     reason is not null
 union all
-select server_id, 'Single day security only' as reason from server_activity_stats
+select server_id, 'Single day security only' as reason from server_activity_stats where total_activity_days = 1
