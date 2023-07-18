@@ -1,4 +1,4 @@
-with version_exclusions as (
+with security_exclusion_reasons as (
     select
         server_id,
         case when server_ip = '194.30.0.184' then 'Restricted IP' end as restricted_ip,

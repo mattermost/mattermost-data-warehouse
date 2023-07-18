@@ -25,16 +25,10 @@ select
     array_unique_agg(version_full) over (partition by server_id, server_date) as reported_versions
 from
     {{ ref('stg_diagnostics__log_entries') }}
-where
-    -- Exclude custom builds
-    not is_custom_build_number
-    -- Ignore test builds
-    and not has_run_unit_tests
-    -- Exclude servers from these IPs as they were used for a large number of tests
-    and server_ip not in ('194.30.0.183', '194.30.0.184')
 {% if is_incremental() %}
+where
     -- this filter will only be applied on an incremental run
-    and log_date >= (select max(server_date) from {{ this }})
+    log_date >= (select max(server_date) from {{ this }})
 {% endif %}
 -- Keep latest record per day
 qualify row_number() over (partition by server_id, server_date order by log_at desc) = 1
