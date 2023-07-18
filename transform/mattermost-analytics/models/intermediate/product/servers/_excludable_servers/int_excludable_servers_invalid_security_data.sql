@@ -25,4 +25,3 @@ where
     reason is not null
 union all
 select server_id, 'Single day security only' as reason from server_activity_stats
-;
