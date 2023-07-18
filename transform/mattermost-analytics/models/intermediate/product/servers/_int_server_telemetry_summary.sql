@@ -1,3 +1,9 @@
+{{config({
+    "materialized": "table",
+    "snowflake_warehouse": "transform_l",
+  })
+}}
+
 with user_telemetry_servers as (
     select
         server_id,
