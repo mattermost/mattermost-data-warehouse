@@ -15,7 +15,7 @@ with seed_file as (
 )
 select * from seed_file
 union all
-select * from {{ ref('int_excludable_servers_invalid_security_version') }}
+select * from {{ ref('int_excludable_servers_invalid_security_data') }}
 union all
 select * from {{ ref('int_excludable_servers_cloud_installations') }}
 union all
