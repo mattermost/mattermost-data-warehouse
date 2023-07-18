@@ -7,6 +7,11 @@ with marketing as (
         , updated_at
     from
         {{ ref('stg_cws__marketing')}}
+    qualify row_number() over (
+            partition by email
+            order by
+                created_at desc
+        ) = 1
 ),
 marketing_campaign_member as (
     select distinct m.marketing_id as marketing_id
@@ -21,6 +26,11 @@ marketing_campaign_member as (
         marketing m
         left join {{ ref('stg_salesforce__lead') }}  l on m.email = l.email
         left join {{ ref('stg_salesforce__campaign_member') }} cm on l.lead_id = cm.lead_id and m.email = cm.email
+        qualify row_number() over (
+            partition by m.email
+            order by
+                l.created_at asc
+        ) = 1
 )
 select
     *
