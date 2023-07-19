@@ -2,7 +2,8 @@
     config({
         "materialized": "incremental",
         "cluster_by": ['event_date'],
-        "incremental_strategy": "append"
+        "incremental_strategy": "append",
+        "snowflake_warehouse": "transform_l"
     })
 }}
 

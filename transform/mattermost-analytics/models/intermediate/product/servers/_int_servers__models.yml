@@ -2,8 +2,11 @@ version: 2
 
 models:
 
-  - name: int_server_info_daily_snapshot
+  - name: int_server_active_days_spined
     description: |
+      Contains record per user per day since the user's first active date. Uses data from new & old servers, as well as 
+      from mobile. Performs deduplication for servers that sent data both via Rudderstack and Segment.
+      
       Stores the latest server info submitted by a server per date. In case of data from multiple channels 
       (i.e. rudderstack and segment), rudderstack is preferred.
 
@@ -12,7 +15,7 @@ models:
         description: A unique id for each server and date
       - name: server_id
         description: The server's unique id.
-      - name: snapshot_date
+      - name: activity_date
         description: The date that server sent the information.
       - name: version_full
         description: The full semver of the Mattermost server.
@@ -22,10 +25,6 @@ models:
         description: The minor version part of the server's semver. I.e. 2 for 7.2.3.
       - name: version_patch
         description: The patch version part of the server's semver. I.e. 3 for 7.2.3.
-      - name: installation_type
-        description: The method used for installing the Mattermost server (docker, deb package, ...).
-      - name: server_ip
-        description: The IP address of the server.
       - name: operating_system
         description: The name of the operating system the server is installed at.
       - name: database_type
@@ -36,7 +35,17 @@ models:
         description: Whether this server is an enterprise-ready build.
       - name: is_cloud
         description: Whether this server is a cloud installation or not.
+      - name: server_ip
+        description: The IP address of the server.
+      - name: installation_type
+        description: The method used for installing the Mattermost server (docker, deb package, ...).
       - name: reported_versions
         description: The unique versions reported from the server for that date.
       - name: count_reported_versions
         description: The total number of distinct versions reported for the given date & server.
+      - name: has_telemetry_data
+        description: Whether there were telemetry data reported for this server on the given data.
+      - name: has_legacy_telemetry_data
+        description: Whether there were legacy (segment) telemetry data reported for this server on the given data.
+      - name: has_diagnostics_data
+        description: Whether there were security update server data reported for this server on the given data.
