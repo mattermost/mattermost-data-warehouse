@@ -31,8 +31,14 @@ WITH subscriptions AS (
         ,subscriptions.metadata:"sfdc-migrated-opportunity-sfid"::varchar as sfdc_migrated_opportunity_sfid
         ,subscriptions.metadata:"internal_purchase_order"::varchar as purchase_order_num
         ,TO_TIMESTAMP_NTZ(subscriptions.metadata:"cws-date-converted-to-paid"::int) as date_converted_to_paid
-        ,TO_TIMESTAMP_NTZ(subscriptions.metadata:"cws-license-end-date"::int) as license_end_date
-        ,TO_TIMESTAMP_NTZ(subscriptions.metadata:"cws-actual-renewal-date"::int / 1000) as actual_renewal_date
+        ,TO_TIMESTAMP_NTZ(CASE WHEN subscriptions.metadata:"cws-license-end-date"::int < 1000000000 
+            THEN subscriptions.metadata:"cws-license-end-date"::int / 1000 -- Timestamp is in milliseconds, convert to seconds
+            ELSE subscriptions.metadata:"cws-license-end-date"::int   -- Timestamp is in seconds, leave as is
+            END) as license_end_date
+        ,TO_TIMESTAMP_NTZ(CASE WHEN subscriptions.metadata:"cws-actual-renewal-date"::int < 1000000000 
+            THEN subscriptions.metadata:"cws-actual-renewal-date"::int -- Timestamp is in milliseconds, convert to seconds-
+            ELSE subscriptions.metadata:"cws-actual-renewal-date"::int / 1000 -- Timestamp is in seconds, leave as is
+            END) as actual_renewal_date
         ,subscriptions."START"
         ,subscriptions.status
         ,subscriptions.updated
