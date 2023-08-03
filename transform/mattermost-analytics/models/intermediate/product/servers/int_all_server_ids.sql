@@ -1,8 +1,3 @@
-{{config({
-    "materialized": "table",
-    "snowflake_warehouse": "transform_l",
-  })
-}}
 --
 -- List of all known server ids
 --
