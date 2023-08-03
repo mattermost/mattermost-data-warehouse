@@ -1,6 +1,6 @@
 select
     server_id,
-    array_agg(reason) as reasons
+    array_agg(reason) within group (order by reason) as reasons
 from
     {{ ref('int_excludable_servers') }}
 where
