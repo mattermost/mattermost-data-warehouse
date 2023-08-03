@@ -61,8 +61,8 @@ user_summary as (
 select
     s.server_id,
     coalesce(ss.count_server_active_days, 0) as count_server_active_days,
-    coalesce(ds.count_user_active_days, 0) as count_user_active_days,
-    coalesce(us.count_diagnostics_active_days, 0) as count_diagnostics_active_days,
+    coalesce(us.count_user_active_days, 0) as count_user_active_days,
+    coalesce(ds.count_diagnostics_active_days, 0) as count_diagnostics_active_days,
     ss.first_date as server_telemetry_first_date,
     ss.last_date as server_telemetry_last_date,
     us.first_date as user_telemetry_first_date,
