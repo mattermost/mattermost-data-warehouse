@@ -4,6 +4,7 @@ with security_exclusion_reasons as (
         case when server_ip = '194.30.0.184' then 'Restricted IP' end as restricted_ip,
         case when has_run_unit_tests then 'Ran Tests' end as ran_tests,
         case when count_users < count_active_users then 'Active Users > Registered Users' end as user_count_sanity_check,
+        -- This check seems to be falsely identifying cloud builds as custom build version formats.
         -- case when is_custom_build_version_format then 'Custom Build Version Format' end as custom_build_version_format
         -- One check in existing logic does not work:
         -- dev_build is never 1
