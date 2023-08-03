@@ -29,6 +29,7 @@ with all_server_ids as (
         distinct server_id
     from
         {{ ref('int_user_active_days_server_telemetry') }}
+    union
     -- Diagnostics
     select
         distict server_id
