@@ -9,7 +9,7 @@ with server_side_activity as (
         distinct server_id, server_date
     from
         {{ ref('int_server_telemetry_legacy_latest_daily') }}
-    union all
+    union
     select
         distinct server_id, server_date
     from
@@ -31,7 +31,7 @@ user_activity as (
         distinct server_id, activity_date
     from
         {{ ref('int_user_active_days_legacy_telemetry') }}
-    union all
+    union
     select
         distinct server_id, activity_date
     from
@@ -47,6 +47,16 @@ user_summary as (
     from
         user_activity
     group by 1
+),
+ diagnostics_summary as (
+    select
+        server_id,
+        count(distinct log_date) as total_activity_days,
+        min(log_date) as first_date,
+        max(log_date) as last_date
+    from
+        {{ ref('stg_diagnostics__log_entries') }}
+    group by server_id
 )
 select
     coalesce(server_summary.server_id, user_summary.server_id) as server_id,
