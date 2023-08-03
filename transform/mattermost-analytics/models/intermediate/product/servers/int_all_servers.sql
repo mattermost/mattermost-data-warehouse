@@ -32,7 +32,7 @@ with all_server_ids as (
     union
     -- Diagnostics
     select
-        distict server_id
+        distinct server_id
     from
         {{ ref('stg_diagnostics__log_entries') }}
 )
