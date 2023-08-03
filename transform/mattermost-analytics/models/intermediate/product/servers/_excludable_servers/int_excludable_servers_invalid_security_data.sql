@@ -13,6 +13,13 @@ with security_exclusion_reasons as (
         -- One check in existing logic does not work:
         -- dev_build is never 1
     from {{ ref('stg_diagnostics__log_entries') }}
+), server_activity_stats as (
+    select
+        server_id,
+        count(distinct log_date) as total_activity_days
+    from
+        {{ ref('stg_diagnostics__log_entries') }}
+    group by server_id
 )
 select
     distinct server_id, reason
@@ -21,6 +28,5 @@ from
     unpivot(reason for explanation in (restricted_ip, ran_tests, user_count_sanity_check, custom_build_version_format))
 where
     reason is not null
---
 union all
 select server_id, 'Single day security only' as reason from server_activity_stats where total_activity_days = 1
