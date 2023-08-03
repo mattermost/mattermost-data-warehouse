@@ -1,10 +1,3 @@
-{{
-  config({
-    "materialized": "table",
-    "snowflake_warehouse": "transform_l"
-  })
-}}
-
 with seed_file as (
     -- Servers defined in seed file
     select

@@ -1,9 +1,3 @@
-{{config({
-    "materialized": "table",
-    "snowflake_warehouse": "transform_l",
-  })
-}}
-
 with server_side_activity as (
     select
         distinct server_id, server_date
