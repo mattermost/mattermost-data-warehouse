@@ -20,5 +20,8 @@ select
     array_unique_agg(version_full) over (partition by server_id, server_date) as reported_versions
 from
     {{ ref('stg_mm_telemetry_prod__server') }}
+where
+    -- Ignore rows where server date is in the future.
+    server_date <= CURRENT_DATE()
 -- Keep latest record per day
 qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
