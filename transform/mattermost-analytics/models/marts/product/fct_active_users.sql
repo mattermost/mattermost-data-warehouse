@@ -26,5 +26,5 @@ from
     metrics
 where
     server_id not in (
-        select server_id from {{ ref('int_excludable_servers') }}
+        select server_id from {{ ref('dim_excludable_servers') }}
     )
