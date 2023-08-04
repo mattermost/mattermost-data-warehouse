@@ -32,6 +32,11 @@ renamed as (
         ) is null
         and regexp_substr(
             _security_build, '^[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}$') is null
+        -- Extra check to properly handle cloud builds
+        and regexp_substr(
+            _security_build,
+            '^[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.cloud-[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9]+$') is null
+        ) is null
         as is_custom_build_version_format
 
         -- Ignoring these columns as they either have the same value always or there's no value in the data
