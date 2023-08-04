@@ -43,4 +43,4 @@ models:
       - name: server_id
         description: The server id.
       - name: reason
-        description: The reason that this
+        description: The reason that this server is excluded.
