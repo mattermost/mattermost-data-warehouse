@@ -1,3 +1,4 @@
+-- Materializing this intermediate table as it's used multiple times downstream.
 {{
     config({
         "materialized": "table",
