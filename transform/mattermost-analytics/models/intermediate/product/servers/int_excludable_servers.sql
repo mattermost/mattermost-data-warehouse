@@ -1,4 +1,10 @@
-with seed_file as (
+{{
+    config({
+        "materialized": "table",
+        "snowflake_warehouse": "transform_l"
+    })
+}}
+    with seed_file as (
     -- Servers defined in seed file
     select
         trim(server_id) as server_id,
