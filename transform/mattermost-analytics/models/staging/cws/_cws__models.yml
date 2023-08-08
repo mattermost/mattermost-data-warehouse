@@ -77,7 +77,7 @@ models:
         description: The user's email
         tags: ['pii']
       - name: subscribed_content
-        description: The content the user subscibed to.
+        description: The content the user subscribed to.
       - name: server_id
         description: The server's id.
       - name: created_at
