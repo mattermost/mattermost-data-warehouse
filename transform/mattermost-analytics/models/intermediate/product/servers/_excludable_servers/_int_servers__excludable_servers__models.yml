@@ -1,0 +1,46 @@
+version: 2
+
+models:
+  - name: int_excludable_servers_cloud_installations
+    description: |
+      Server exclusion reasons for cloud related servers. Exclusion reason may contain:
+      - Telemetry id not registered in Stripe.
+      - Internal email (email with @mattermost.com domain).
+    columns:
+      - name: server_id
+        description: The server id.
+      - name: reason
+        description: The reason that this server is excluded.
+
+  - name: int_excludable_servers_invalid_security_data
+    description: |
+      Server exclusion reasons based on requests to security update check endpoint. The main source for these exclusion 
+      reasons was [Mattermost Handbook](https://handbook.mattermost.com/operations/operations/company-metrics/metrics-definitions#server-considerations).
+      Exclusion reason may contain:
+      - Restricted IP (i.e. IPs reporting large number of server ids).
+      - Ran tests
+      - Server reporting active users > registered users
+      - Custom build version format. 
+
+    columns:
+      - name: server_id
+        description: The server id.
+      - name: reason
+        description: The reason that this server is excluded.
+
+  - name: int_excludable_servers_single_day_activity
+    description: |
+      Server exclusion reasons based on number of active telemetry or diagnostics data. The goal of these exclusion
+      is to catch any telemetry from test servers that seem to be active just for a single day. The majority of these 
+      servers is expected to be test servers or invalid telemetry data (i.e. pen test etc).
+      Exclusion reason may contain:
+      - Server received telemetry for server side for a single day and no telemetry from users.
+      - Server received telemetry for user actions for a single day and no telemetry from server.
+      - Security update check endpoint was called for a single day for a server, but neither server nor user telemetry 
+        has been recorded.
+
+    columns:
+      - name: server_id
+        description: The server id.
+      - name: reason
+        description: The reason that this server is excluded.
