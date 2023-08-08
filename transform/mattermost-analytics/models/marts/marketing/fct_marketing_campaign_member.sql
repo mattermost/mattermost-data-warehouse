@@ -1,12 +1,12 @@
 with marketing as (
     select marketing_id
         , email as email
-        , subscribed_content
         , server_id
         , created_at
         , updated_at
     from
         {{ ref('stg_cws__marketing')}}
+    where subscribed_content = 'security_newsletter'
     qualify row_number() over (
             partition by email
             order by
@@ -17,9 +17,8 @@ marketing_campaign_member as (
     select distinct m.marketing_id as marketing_id
         , m.email as email
         , m.server_id as server_id
-        , m.subscribed_content as subscribed_content
-        , l.lead_id as existing_lead_id
-        , cm.campaign_member_id as existing_campaign_member_id
+        , l.lead_id as lead_id
+        , cm.campaign_member_id as campaign_member_id
         , l.lead_id is not null as is_existing_lead
         , cm.campaign_member_id is not null as is_existing_campaign_member
     from
