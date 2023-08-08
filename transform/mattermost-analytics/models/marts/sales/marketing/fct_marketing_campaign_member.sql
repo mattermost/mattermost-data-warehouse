@@ -25,7 +25,8 @@ marketing_campaign_member as (
     from
         marketing m
         left join {{ ref('stg_salesforce__lead') }}  l on m.email = l.email
-        left join {{ ref('stg_salesforce__campaign_member') }} cm on l.lead_id = cm.lead_id and m.email = cm.email
+        left join {{ ref('stg_salesforce__campaign_member') }} cm on l.lead_id = cm.lead_id and m.email = cm.email 
+        and cm.campaign_id = '{{ var('marketing_newsletter_campaign_id') }}'
         qualify row_number() over (
             partition by m.email
             order by
