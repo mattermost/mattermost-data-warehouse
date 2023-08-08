@@ -38,5 +38,5 @@ models:
         description: Total number of active users.
       - name: has_run_unit_tests
         description: Whether this server was used to run unit tests.
-      - name: is_custom_build_number
+      - name: is_custom_build_version_format
         description: Whether the build number indicates a custom build (dev, test, branch etc).
