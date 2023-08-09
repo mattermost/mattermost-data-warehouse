@@ -116,3 +116,74 @@ models:
       - name: uuid_ts
       - name: sent_at
       - name: original_timestamp
+
+  - name: stg_mm_telemetry_prod__activity
+    description: Tracks key metrics related to server activity
+
+    columns:
+      - name: event_id
+        description: The event's id.
+      - name: event_name
+        description: The name of the event.
+      - name: event_table
+        description: The name of the event table.
+      - name: server_id
+        description: The ID of the server the event originated from.
+      - name: received_at
+        description: Timestamp registered by Segment when the event was ingested (received).
+      - name: timestamp
+        description: Timestamp registered by Segment when the event occured refactored to clients clock skew.
+      - name: installation_id
+        description: The id of the installation
+      - name: anonymous_id
+        description: Server's anonymous ID.
+      - name: server_ip
+        description: |
+          The server's IP address. See [Rudderstack docs](https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/#how-rudderstack-collects-ip-address) for more information.
+      - name: count_public_channels
+        description: Total number of public channels.
+      - name: count_deleted_public_channels
+        description: Total number of deleted public channels.
+      - name: count_private_channels
+        description: Total number of private channels.
+      - name: count_deleted_private_channels
+        description: Total number of deleted private channels.
+      - name: count_bot_posts_previous_day
+        description: Total number of deleted posts.
+      - name: count_posts_previous_day
+        description: Total number of posts the day before the event was sent.
+      - name: count_teams
+        description: Total number of teams in the server.
+      - name: count_slash_commands
+        description: Total number of slash commands.
+      - name: count_direct_message_channels
+        description: Total number of direct message channels.
+      - name: count_posts
+        description: Total number of posts.
+      - name: count_incoming_webhooks
+        description: Total number of incoming webhooks, excluding deleted.
+      - name: count_outgoing_webhooks
+        description: Total number of outgoing webhooks, excluding deleted.
+      - name: daily_active_users
+        description: |
+          Total number of active users for the past 24 hours prior to the timestamp of the event.
+          Bots and deleted users are excluded.
+      - name: monthly_active_user
+        description: |
+          Total number of active users for the past 31 days prior to the timestamp of the event.
+          Bots and deleted users are excluded.
+      - name: count_registered_users
+        description: Total number of users, including deleted users.
+      - name: registered_deactivated_users
+        description: Total number of inactive (deleted) users.
+      - name: bot_accounts
+        description: Total number of bot accounts.
+      - name: guest_accounts
+        description: Total number of guest users, excluding deleted.
+      - name: context_library_version
+        description: The version of Segment library used to send this event.
+      - name: context_library_name
+        description: The name of Segment library used to send this event.
+      - name: uuid_ts
+      - name: sent_at
+      - name: original_timestamp
