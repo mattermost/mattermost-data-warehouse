@@ -1,9 +1,9 @@
 version: 2
 
 models:
-  - name: fct_marketing_campaign_member
+  - name: fct_security_newsletter
     description: |
-      Marketing data coming from cws, to sync with leads & campaign member in Salesforce.
+      Security Newsletter data from cws marketing, to sync with leads & campaign member in Salesforce.
 
     columns:
       - name: marketing_id

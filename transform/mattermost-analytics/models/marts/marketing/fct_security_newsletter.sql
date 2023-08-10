@@ -13,7 +13,7 @@ with marketing as (
                 created_at desc
         ) = 1
 ),
-marketing_campaign_member as (
+security_newsletter as (
     select distinct m.marketing_id as marketing_id
         , m.email as email
         , m.server_id as server_id
@@ -35,4 +35,4 @@ marketing_campaign_member as (
 select
     *
 from
-    marketing_campaign_member
+    security_newsletter
