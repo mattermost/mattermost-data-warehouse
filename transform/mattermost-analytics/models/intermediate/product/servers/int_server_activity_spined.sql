@@ -25,8 +25,8 @@ with server_activity_dates as (
 ), server_date_range as (
     select
         server_id,
-        min(first_server_date) as first_active_day,
-        max(last_server_date) as last_active_day
+        min(server_date) as first_active_day,
+        max(server_date) as last_active_day
     from server_activity_dates
     group by 1
 ), spined as (
