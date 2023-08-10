@@ -30,7 +30,7 @@ with server_activity_dates as (
     select
         sdr.server_id,
         all_days.date_day::date as activity_date,
-        {{ dbt_utils.generate_surrogate_key(['activity_date', 'server_id']) }} AS daily_server_id
+        {{ dbt_utils.generate_surrogate_key(['server_id', 'activity_date']) }} AS daily_server_id
     from
         server_date_range sdr
         left join {{ ref('telemetry_days') }} all_days
