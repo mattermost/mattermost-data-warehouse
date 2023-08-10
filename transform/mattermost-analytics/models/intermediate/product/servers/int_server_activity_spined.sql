@@ -38,7 +38,7 @@ with server_activity_dates as (
     from
         server_date_range sdr
         left join {{ ref('telemetry_days') }} all_days
-            on all_days.date_day >= first_day.first_server_date and all_days.date_day <= sdr.last_active_day
+            on all_days.date_day >= sdr.first_active_day and all_days.date_day <= sdr.last_active_day
 )
 select
     s.daily_server_id,
