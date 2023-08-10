@@ -11,8 +11,6 @@ with server_activity_dates as (
         {{ ref('int_activity_latest_daily') }}
     where
         server_date >= '{{ var('telemetry_start_date')}}'
-        and server_id not in (select server_id from {{ ref('int_excludable_servers') }})
-
     union all
 
     select
@@ -21,7 +19,6 @@ with server_activity_dates as (
         {{ ref('int_activity_legacy_latest_daily') }}
     where
         server_date >= '{{ var('telemetry_start_date')}}'
-        and server_id not in (select server_id from {{ ref('int_excludable_servers') }})
 ), server_date_range as (
     select
         server_id,
