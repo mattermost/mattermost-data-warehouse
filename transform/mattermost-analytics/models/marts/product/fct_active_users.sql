@@ -21,9 +21,18 @@ with metrics as (
     group by activity_date, server_id
 )
 select
-    *
+    -- Client telemetry
+    m.*,
+    -- Server activity
+    coalesce(sas.daily_active_users, 0) as server_daily_active_users,
+    coalesce(sas.monthly_active_user, 0) as server_monthly_active_user,
+    coalesce(sas.count_registered_users, 0) as count_registered_users,
+    coalesce(sas.registered_deactivated_users, 0) as registered_deactivated_users,
+    coalesce(sas.is_missing_activity_data, true) as is_missing_server_activity_data
 from
-    metrics
+
+    metrics m
+    left join {{ ref('int_server_activity_spined')}} sas on m.daily_server_id = sas.daily_server_id
 where
     server_id not in (
         select server_id from {{ ref('dim_excludable_servers') }}
