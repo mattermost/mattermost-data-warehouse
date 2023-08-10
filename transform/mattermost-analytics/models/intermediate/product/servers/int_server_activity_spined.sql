@@ -12,7 +12,6 @@ with server_activity_dates as (
     where
         server_date >= '{{ var('telemetry_start_date')}}'
     union all
-
     select
         server_id, server_date
     from
@@ -30,17 +29,16 @@ with server_activity_dates as (
     -- Use date spine to fill in missing days
     select
         sdr.server_id,
-        all_days.date_day::date as activity_date,
-        {{ dbt_utils.generate_surrogate_key(['server_id', 'activity_date']) }} AS daily_server_id
+        all_days.date_day::date as activity_date
     from
         server_date_range sdr
         left join {{ ref('telemetry_days') }} all_days
             on all_days.date_day >= sdr.first_active_day and all_days.date_day <= sdr.last_active_day
 )
 select
-    s.daily_server_id,
     s.server_id,
     s.activity_date,
+    {{ dbt_utils.generate_surrogate_key(['server_id', 'activity_date']) }} AS daily_server_id,
     coalesce(a.daily_active_users, l.daily_active_users, 0) as daily_active_users,
     coalesce(a.monthly_active_user, l.monthly_active_user, 0) as monthly_active_user,
     coalesce(a.count_registered_users, l.count_registered_users, 0) as count_registered_users,
