@@ -30,7 +30,6 @@ select
     coalesce(sas.registered_deactivated_users, 0) as registered_deactivated_users,
     coalesce(sas.is_missing_activity_data, true) as is_missing_server_activity_data
 from
-
     metrics m
     left join {{ ref('int_server_activity_spined')}} sas on m.daily_server_id = sas.daily_server_id
 where

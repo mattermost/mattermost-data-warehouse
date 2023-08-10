@@ -11,7 +11,7 @@
 select
     server_id,
     log_date AS server_date,
-    {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} AS daily_server_id,
+    {{ dbt_utils.generate_surrogate_key(['server_date', 'server_id']) }} AS daily_server_id
     version_full,
     version_major,
     version_minor,
