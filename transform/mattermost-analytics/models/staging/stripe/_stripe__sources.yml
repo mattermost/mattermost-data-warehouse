@@ -1,7 +1,7 @@
 version: 2
 
 sources:
-  - name: stripe_raw
+  - name: stripe
     database: 'ANALYTICS'
     schema: stripe_raw
     loader: Stitch

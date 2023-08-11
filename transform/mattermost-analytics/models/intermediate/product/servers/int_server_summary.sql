@@ -1,3 +1,12 @@
+-- Materialize as table in order to break chained view dependency.  This model performs quite a few operations,
+-- so it's a good candidate to materialize to table rather than ephemeral.
+-- See https://dbt-labs.github.io/dbt-project-evaluator/0.7/rules/performance/#chained-view-dependencies for more
+-- details
+{{
+    config({
+        "materialized": "table"
+    })
+}}
 with server_side_activity as (
     select
         distinct server_id, server_date
