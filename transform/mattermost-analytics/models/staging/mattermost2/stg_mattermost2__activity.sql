@@ -42,12 +42,13 @@ renamed as (
         -- Metadata from Segment
         , context_library_version
         , context_library_name
-        , uuid_ts
         , sent_at
         , original_timestamp
 
         -- Ignored - legacy feature with only ~ 5.7% of segment data having value
         -- , used_apiv3
+        -- Ignored - used by segment for debugging purposes
+        -- , uuid_ts
 
     from source
 

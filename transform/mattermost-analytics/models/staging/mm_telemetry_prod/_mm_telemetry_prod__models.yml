@@ -184,6 +184,5 @@ models:
         description: The version of Rudderstack library used to send this event.
       - name: context_library_name
         description: The name of Rudderstack library used to send this event.
-      - name: uuid_ts
       - name: sent_at
       - name: original_timestamp
