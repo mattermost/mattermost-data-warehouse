@@ -63,9 +63,9 @@ user_summary as (
     group by server_id
 ), all_server_ids as (
     select distinct server_id from server_summary
-    union all
+    union
     select distinct server_id from user_summary
-    union all
+    union
     select distinct server_id from diagnostics_summary
 )
 select
