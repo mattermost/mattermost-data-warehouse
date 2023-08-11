@@ -55,7 +55,7 @@ models:
         description: |
           Total number of active users for the past 24 hours prior to the timestamp of the event.
           Bots and deleted users are excluded. Reported by mattermost server.
-      - name: server_monthly_active_user
+      - name: server_monthly_active_users
         description: |
           Total number of active users for the past 31 days prior to the timestamp of the event.
           Bots and deleted users are excluded. Reported by mattermost server.

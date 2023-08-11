@@ -168,7 +168,7 @@ models:
         description: |
           Total number of active users for the past 24 hours prior to the timestamp of the event.
           Bots and deleted users are excluded.
-      - name: monthly_active_user
+      - name: monthly_active_users
         description: |
           Total number of active users for the past 31 days prior to the timestamp of the event.
           Bots and deleted users are excluded.
@@ -181,9 +181,9 @@ models:
       - name: guest_accounts
         description: Total number of guest users, excluding deleted.
       - name: context_library_version
-        description: The version of Segment library used to send this event.
+        description: The version of Rudderstack library used to send this event.
       - name: context_library_name
-        description: The name of Segment library used to send this event.
+        description: The name of Rudderstack library used to send this event.
       - name: uuid_ts
       - name: sent_at
       - name: original_timestamp

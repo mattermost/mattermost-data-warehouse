@@ -113,7 +113,7 @@ models:
         description: |
           Total number of active users for the past 24 hours prior to the timestamp of the event.
           Bots and deleted users are excluded.
-      - name: monthly_active_user
+      - name: monthly_active_users
         description: |
           Total number of active users for the past 31 days prior to the timestamp of the event.
           Bots and deleted users are excluded.
