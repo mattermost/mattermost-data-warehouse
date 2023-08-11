@@ -50,12 +50,6 @@ models:
       - name: has_diagnostics_data
         description: Whether there were security update server data reported for this server on the given data.
 
-  - name: int_all_server_ids
-    description: All known server ids. Useful whenever a spine for all known servers is needed.
-    columns:
-      - name: server_id
-        description: The server id.
-
   - name: int_excludable_servers
     description: |
       List of servers with an exclusion reason. Combines different exclusion reasons.

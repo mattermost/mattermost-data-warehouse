@@ -1,3 +1,13 @@
+-- Materialize as table in order to break chained view dependency.  This model performs quite a few operations,
+-- so it's a good candidate to materialize to table rather than ephemeral.
+-- See https://dbt-labs.github.io/dbt-project-evaluator/0.7/rules/performance/#chained-view-dependencies for more
+-- details
+{{
+    config({
+        "materialized": "table",
+        "snowflake_warehouse": "transform_l"
+    })
+}}
 with server_side_activity as (
     select
         distinct server_id, server_date
@@ -51,6 +61,12 @@ user_summary as (
     from
         {{ ref('stg_diagnostics__log_entries') }}
     group by server_id
+), all_server_ids as (
+    select distinct server_id from server_summary
+    union
+    select distinct server_id from user_summary
+    union
+    select distinct server_id from diagnostics_summary
 )
 select
     s.server_id,
@@ -64,7 +80,7 @@ select
     ds.first_date as diagnostics_telemetry_first_date,
     ds.last_date as diagnostics_telemetry_last_date
 from
-    {{ ref('int_all_server_ids') }} s
+    all_server_ids s
     left join server_summary ss on s.server_id = ss.server_id
     left join user_summary us on s.server_id = us.server_id
     left join diagnostics_summary ds on s.server_id = ds.server_id

@@ -1,7 +1,7 @@
 
 with source as (
 
-    select * from {{ source('stripe_raw', 'subscription_items') }}
+    select * from {{ source('stripe', 'subscription_items') }}
 
 ),
 
