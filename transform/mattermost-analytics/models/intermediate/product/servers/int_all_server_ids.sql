@@ -2,6 +2,14 @@
 -- List of all known server ids
 --
 
+-- Temporary
+{{
+    config({
+        "materialized": "table",
+        "snowflake_warehouse": "transform_l"
+    })
+}}
+
 -- Server side telemetry
 select
     distinct server_id

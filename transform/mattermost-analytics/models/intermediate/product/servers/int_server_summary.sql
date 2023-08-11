@@ -61,6 +61,12 @@ user_summary as (
     from
         {{ ref('stg_diagnostics__log_entries') }}
     group by server_id
+), all_server_ids as (
+    select distinct server_id from server_summary
+    union all
+    select distinct server_id from user_summary
+    union all
+    select distinct server_id from diagnostics_summary
 )
 select
     s.server_id,
@@ -74,7 +80,7 @@ select
     ds.first_date as diagnostics_telemetry_first_date,
     ds.last_date as diagnostics_telemetry_last_date
 from
-    {{ ref('int_all_server_ids') }} s
+    all_server_ids s
     left join server_summary ss on s.server_id = ss.server_id
     left join user_summary us on s.server_id = us.server_id
     left join diagnostics_summary ds on s.server_id = ds.server_id
