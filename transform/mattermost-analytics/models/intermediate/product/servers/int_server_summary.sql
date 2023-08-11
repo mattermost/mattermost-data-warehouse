@@ -4,7 +4,8 @@
 -- details
 {{
     config({
-        "materialized": "table"
+        "materialized": "table",
+        "snowflake_warehouse": "transform_l"
     })
 }}
 with server_side_activity as (
