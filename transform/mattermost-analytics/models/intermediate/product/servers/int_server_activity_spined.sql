@@ -43,7 +43,7 @@ select
     coalesce(a.daily_active_users, l.daily_active_users, 0) as daily_active_users,
     coalesce(a.monthly_active_user, l.monthly_active_user, 0) as monthly_active_user,
     coalesce(a.count_registered_users, l.count_registered_users, 0) as count_registered_users,
-    coalesce(a.registered_deactivated_users, l.registered_deactivated_users, 0) as registered_deactivated_users,
+    coalesce(a.count_registered_deactivated_users, l.count_registered_deactivated_users, 0) as count_registered_deactivated_users,
     a.daily_server_id is null and l.daily_server_id is null as is_missing_activity_data
 from
     spined s

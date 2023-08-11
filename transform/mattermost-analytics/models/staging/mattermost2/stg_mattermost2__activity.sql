@@ -35,7 +35,7 @@ renamed as (
         , coalesce(active_users_daily, active_users) as daily_active_users
         , active_users_monthly as monthly_active_user
         , registered_users as count_registered_users
-        , coalesce(registered_deactivated_users, registered_inactive_users) as registered_deactivated_users
+        , coalesce(registered_deactivated_users, registered_inactive_users) as count_registered_deactivated_users
         , bot_accounts as bot_accounts
         , guest_accounts as guest_accounts
 

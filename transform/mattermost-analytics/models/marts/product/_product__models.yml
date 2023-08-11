@@ -51,6 +51,20 @@ models:
         description: The number of unique legacy active users for the date and previous 6 days.
       - name: monthly_legacy_active_users
         description: The number of unique legacy active users for the date and previous 29 days.
+      - name: server_daily_active_users
+        description: |
+          Total number of active users for the past 24 hours prior to the timestamp of the event.
+          Bots and deleted users are excluded. Reported by mattermost server.
+      - name: server_monthly_active_user
+        description: |
+          Total number of active users for the past 31 days prior to the timestamp of the event.
+          Bots and deleted users are excluded. Reported by mattermost server.
+      - name: count_registered_users
+        description: Total number of users, including deleted users. Reported by mattermost server.
+      - name: count_registered_deactivated_users
+        description: Total number of inactive (deleted) users. Reported by mattermost server.
+      - name: is_missing_activity_data
+        description: Whether there are missing server activity data for the given date.
     tests:
       # A date should only appear once per server
       - dbt_utils.unique_combination_of_columns:

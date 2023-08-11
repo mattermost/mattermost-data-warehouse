@@ -119,7 +119,7 @@ models:
           Bots and deleted users are excluded.
       - name: count_registered_users
         description: Total number of users, including deleted users.
-      - name: registered_deactivated_users
+      - name: count_registered_deactivated_users
         description: Total number of inactive (deleted) users.
       - name: bot_accounts
         description: Total number of bot accounts.

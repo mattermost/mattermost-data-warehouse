@@ -5,7 +5,7 @@ select
     daily_active_users,
     monthly_active_user,
     count_registered_users,
-    registered_deactivated_users
+    count_registered_deactivated_users
 from
     {{ ref('stg_mm_telemetry_prod__activity') }}
 where
