@@ -52,7 +52,11 @@ WITH opportunity_totals AS (
         renewal,
         multi,
         renewal_multi,
-        monthly_billing
+        monthly_billing,
+        cpq_renewal_arr__c, 
+        exit_year_arr__c, 
+        sales_forecast_category__c,  
+        total_net_new_arr_with_override__c
         FROM {{ ref('opportunity') }}
         LEFT JOIN opportunity_totals ON opportunity.sfid = opportunity_totals.opportunityid
         {% if is_incremental() %}
