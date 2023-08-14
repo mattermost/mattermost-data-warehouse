@@ -15,8 +15,8 @@
 )
 select * from seed_file
 union all
-select * from {{ ref('int_excludable_servers_invalid_security_data') }}
+select * from {{ ref('int_excludable_servers_invalid_security_data') }} where server_id is not null
 union all
-select * from {{ ref('int_excludable_servers_cloud_installations') }}
+select * from {{ ref('int_excludable_servers_cloud_installations') }} where server_id is not null
 union all
-select * from {{ ref('int_excludable_servers_single_day_activity') }}
+select * from {{ ref('int_excludable_servers_single_day_activity') }} where server_id is not null
