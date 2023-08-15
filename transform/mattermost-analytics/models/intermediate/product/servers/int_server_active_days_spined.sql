@@ -129,3 +129,5 @@ from
     left join {{ ref('int_activity_latest_daily') }} activity on s.daily_server_id = activity.daily_server_id
     --  Activity data (segment)
     left join {{ ref('int_activity_legacy_latest_daily') }} legacy_activity on s.daily_server_id = legacy_activity.daily_server_id
+where
+    s.server_id is not null
