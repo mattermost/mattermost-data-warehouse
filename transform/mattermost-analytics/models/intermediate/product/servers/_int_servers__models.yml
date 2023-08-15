@@ -43,12 +43,22 @@ models:
         description: The unique versions reported from the server for that date.
       - name: count_reported_versions
         description: The total number of distinct versions reported for the given date & server.
+      - name: daily_active_users
+        description: Daily active users reported by server.
+      - name: monthly_active_users
+        description: Monthly active users reported by server.
+      - name: count_registered_users
+        description: Total number of registered users. Includes deleted users.
+      - name: count_registered_deactivated_users
+        description: Number of deleted users.
       - name: has_telemetry_data
         description: Whether there were telemetry data reported for this server on the given data.
       - name: has_legacy_telemetry_data
         description: Whether there were legacy (segment) telemetry data reported for this server on the given data.
       - name: has_diagnostics_data
         description: Whether there were security update server data reported for this server on the given data.
+      - name: is_missing_activity_data
+        description: Whether server activity data are available for the given date and server id.
 
   - name: int_excludable_servers
     description: |
