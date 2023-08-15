@@ -1,3 +1,9 @@
+{{
+    config({
+        "materialized": "table",
+        "snowflake_warehouse": "transform_l"
+    })
+}}
 with server_first_day_per_telemetry as (
     select
         server_id,
@@ -7,7 +13,7 @@ with server_first_day_per_telemetry as (
         {{ ref('int_server_telemetry_legacy_latest_daily') }}
     where
         server_date >= '{{ var('telemetry_start_date')}}'
-        and server_id not in (select server_id from {{ ref('int_excludable_servers') }} where server_id is not null)
+        -- and server_id not in (select server_id from {{ ref('int_excludable_servers') }} where server_id is not null)
     group by
         server_id
 
@@ -21,7 +27,7 @@ with server_first_day_per_telemetry as (
         {{ ref('int_server_telemetry_latest_daily') }}
     where
         server_date >= '{{ var('telemetry_start_date')}}'
-        and server_id not in (select server_id from {{ ref('int_excludable_servers') }} where server_id is not null)
+        -- and server_id not in (select server_id from {{ ref('int_excludable_servers') }} where server_id is not null)
     group by
         server_id
 
@@ -35,10 +41,10 @@ with server_first_day_per_telemetry as (
         {{ ref('int_server_security_update_latest_daily') }}
     where
         server_date >= '{{ var('telemetry_start_date')}}'
-        and server_id not in (select server_id from {{ ref('int_excludable_servers') }} where server_id is not null)
+        -- and server_id not in (select server_id from {{ ref('int_excludable_servers') }} where server_id is not null)
     group by
         server_id
-), server_first_active_day as (
+), server_activity_date_range as (
     select
         server_id,
         min(first_server_date) as first_active_day,
@@ -50,13 +56,13 @@ with server_first_day_per_telemetry as (
 ), spined as (
     -- Use date spine to fill in missing days
     select
-        first_day.server_id,
+        sadr.server_id,
         all_days.date_day::date as activity_date,
         {{ dbt_utils.generate_surrogate_key(['server_id', 'activity_date']) }} AS daily_server_id
     from
-        server_first_active_day first_day
+        server_activity_date_range sadr
         left join {{ ref('telemetry_days') }} all_days
-            on all_days.date_day >= first_day.first_active_day and all_days.date_day <= first_day.last_active_day
+            on all_days.date_day >= sadr.first_active_day and all_days.date_day <= sadr.last_active_day
 )
 select
     s.daily_server_id,

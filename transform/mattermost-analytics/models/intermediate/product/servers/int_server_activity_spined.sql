@@ -1,4 +1,10 @@
-with server_activity_dates as (
+{{
+    config({
+        "materialized": "table",
+        "snowflake_warehouse": "transform_l"
+    })
+}}
+    with server_activity_dates as (
     select
         server_id, server_date
     from
