@@ -31,7 +31,7 @@ select
     coalesce(sas.is_missing_activity_data, true) as is_missing_server_activity_data
 from
     metrics m
-    left join {{ ref('int_server_activity_spined')}} sas on m.daily_server_id = sas.daily_server_id
+    left join {{ ref('int_server_active_days_spined')}} sas on m.daily_server_id = sas.daily_server_id
 where
     m.server_id not in (
         select server_id from {{ ref('dim_excludable_servers') }}

@@ -68,6 +68,8 @@ select
     s.daily_server_id,
     s.server_id,
     s.activity_date,
+
+    -- Server information
     coalesce(t.version_full, l.version_full, d.version_full) as version_full,
     coalesce(t.version_major, l.version_major, d.version_major) as version_major,
     coalesce(t.version_minor, l.version_minor, d.version_minor) as version_minor,
@@ -102,9 +104,19 @@ select
             )
         )
     )) as count_reported_versions,
+
+    -- Activity data
+    coalesce(activity.daily_active_users, legacy_activity.daily_active_users, 0) as daily_active_users,
+    coalesce(activity.monthly_active_users, legacy_activity.monthly_active_users, 0) as monthly_active_users,
+    coalesce(activity.count_registered_users, legacy_activity.count_registered_users, 0) as count_registered_users,
+    coalesce(activity.count_registered_deactivated_users, legacy_activity.count_registered_deactivated_users, 0) as count_registered_deactivated_users,
+
+    -- Metadata regarding telemetry/activity availability
     t.daily_server_id is not null as has_telemetry_data,
     l.daily_server_id is not null as has_legacy_telemetry_data,
-    d.daily_server_id is not null as has_diagnostics_data
+    d.daily_server_id is not null as has_diagnostics_data,
+    activity.daily_server_id is null and legacy_activity.daily_server_id is null as is_missing_activity_data
+
 from
     spined s
     -- Telemetry (rudderstack) data
@@ -113,3 +125,7 @@ from
     left join {{ ref('int_server_telemetry_legacy_latest_daily') }} l on s.daily_server_id = l.daily_server_id
     -- Security update logs (diagnostics) data
     left join {{ ref('int_server_security_update_latest_daily') }} d on s.daily_server_id = d.daily_server_id
+    -- Activity data (rudderstack)
+    left join {{ ref('int_activity_latest_daily') }} activity on s.daily_server_id = activity.daily_server_id
+    --  Activity data (segment)
+    left join {{ ref('int_activity_legacy_latest_daily') }} legacy_activity on s.daily_server_id = legacy_activity.daily_server_id
