@@ -4,8 +4,9 @@ models:
 
   - name: int_server_active_days_spined
     description: |
-      Contains record per user per day since the user's first active date. Uses data from new & old servers, as well as 
-      from mobile. Performs deduplication for servers that sent data both via Rudderstack and Segment.
+      Contains record per server per day since the server's first active date and up to the latest day (inclusive) that
+      the server submitted any information. Uses data from new & old servers, as well as from mobile amd security 
+      update endpoint. Performs deduplication for servers that sent data both via Rudderstack and Segment.
       
       Stores the latest server info submitted by a server per date. In case of data from multiple channels 
       (i.e. rudderstack and segment), rudderstack is preferred.
