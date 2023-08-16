@@ -137,11 +137,11 @@ models:
               inclusive: true
               where: "has_telemetry_data or has_legacy_telemetry_data or has_diagnostics_data"
       - name: has_telemetry_data
-        description: Whether there were telemetry data reported for this server on the given data.
+        description: Whether there were telemetry data reported for this server on the given date.
       - name: has_legacy_telemetry_data
-        description: Whether there were legacy (segment) telemetry data reported for this server on the given data.
+        description: Whether there were legacy (segment) telemetry data reported for this server on the given date.
       - name: has_diagnostics_data
-        description: Whether there were security update server data reported for this server on the given data.
+        description: Whether there were security update server data reported for this server on the given date.
 
   - name: dim_excludable_servers
     description: List of known excludable servers
@@ -156,3 +156,87 @@ models:
         description: A list of reasons this server should be excluded.
         tests:
           - not_null
+
+  - name: dim_version
+    description: List of known server versions
+
+    columns:
+      - name: version_id
+        description: The version's unique id. Surrogate key derived from full version.
+        tests:
+          - unique
+          - not_null
+      - name: version_full
+        description: The full semver of the Mattermost server.
+      - name: version_major
+        description: The major version part of the server's semver. I.e. 7 for 7.2.3.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 1
+              inclusive: true
+      - name: version_minor
+        description: The minor version part of the server's semver. I.e. 2 for 7.2.3.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+      - name: version_major_minor
+        description: The major and minor parts of the version concatenated, separated by `.`.
+      - name: version_patch
+        description: The patch version part of the server's semver. I.e. 3 for 7.2.3.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+
+  - name: fct_active_servers
+    description: | 
+      Contains daily information about each active server. A server is considered as active if:
+      
+      - User telemetry was detected via Rudderstack or Segment.
+      - Server activity was detected via Rudderstack or Segment.
+      - Server queried security update check endpoint.
+      
+      Note that server information is available only between the first and last date (inclusive) that the server was 
+      identified as active using any of the previously mentioned methods.
+
+    columns:
+      - name: daily_server_id
+        description: A unique id for each server and date
+        tests:
+          - unique
+          - not_null
+      - name: activity_date
+        description: The date for the measurement.
+        tests:
+          - not_null
+      - name: server_id
+        description: The server's unique id.
+        tests:
+          - not_null
+      - name: installation_id
+        description: The id of the installation. Exists only for cloud installations.
+      - name: version_id
+        description: The id of the server's version.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_version')
+              field: version_id
+      - name: installation_type
+        description: The method used for installing the Mattermost server (docker, deb package, ...).
+      - name: is_enterprise_ready
+        description: Whether the server is running an enterprise ready build.
+      - name: is_cloud
+        description: Whether the server is a cloud installation.
+      - name: count_reported_versions
+        description: The number of versions reported via all possible channels for the given date.
+      - name: has_telemetry_data
+        description: Whether there were telemetry data reported for this server on the given date.
+      - name: has_legacy_telemetry_data
+        description: Whether there were legacy (segment) telemetry data reported for this server on the given date.
+      - name: has_diagnostics_data
+        description: Whether there were security update server data reported for this server on the given date.
+      - name: is_missing_activity_data
+        description: Whether server activity data are available for the given date and server id.
+
