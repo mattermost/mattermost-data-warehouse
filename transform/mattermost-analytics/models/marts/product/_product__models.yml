@@ -137,11 +137,11 @@ models:
               inclusive: true
               where: "has_telemetry_data or has_legacy_telemetry_data or has_diagnostics_data"
       - name: has_telemetry_data
-        description: Whether there were telemetry data reported for this server on the given data.
+        description: Whether there were telemetry data reported for this server on the given date.
       - name: has_legacy_telemetry_data
-        description: Whether there were legacy (segment) telemetry data reported for this server on the given data.
+        description: Whether there were legacy (segment) telemetry data reported for this server on the given date.
       - name: has_diagnostics_data
-        description: Whether there were security update server data reported for this server on the given data.
+        description: Whether there were security update server data reported for this server on the given date.
 
   - name: dim_excludable_servers
     description: List of known excludable servers
@@ -232,11 +232,11 @@ models:
       - name: count_reported_versions
         description: The number of versions reported via all possible channels for the given date.
       - name: has_telemetry_data
-        description: Whether there were telemetry data reported for this server on the given data.
+        description: Whether there were telemetry data reported for this server on the given date.
       - name: has_legacy_telemetry_data
-        description: Whether there were legacy (segment) telemetry data reported for this server on the given data.
+        description: Whether there were legacy (segment) telemetry data reported for this server on the given date.
       - name: has_diagnostics_data
-        description: Whether there were security update server data reported for this server on the given data.
+        description: Whether there were security update server data reported for this server on the given date.
       - name: is_missing_activity_data
         description: Whether server activity data are available for the given date and server id.
 

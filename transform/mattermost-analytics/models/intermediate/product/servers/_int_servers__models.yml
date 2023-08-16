@@ -52,11 +52,11 @@ models:
       - name: count_registered_deactivated_users
         description: Number of deleted users.
       - name: has_telemetry_data
-        description: Whether there were telemetry data reported for this server on the given data.
+        description: Whether there were telemetry data reported for this server on the given date.
       - name: has_legacy_telemetry_data
-        description: Whether there were legacy (segment) telemetry data reported for this server on the given data.
+        description: Whether there were legacy (segment) telemetry data reported for this server on the given date.
       - name: has_diagnostics_data
-        description: Whether there were security update server data reported for this server on the given data.
+        description: Whether there were security update server data reported for this server on the given date.
       - name: is_missing_activity_data
         description: Whether server activity data are available for the given date and server id.
 
