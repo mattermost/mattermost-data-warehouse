@@ -91,7 +91,8 @@ dbt_run_cloud_mattermost_analytics_nightly = KubernetesPodOperator(
         SNOWFLAKE_TRANSFORM_SCHEMA,
         SSH_KEY,
     ],
-    env_vars=env_vars,
+    # Set timeout to 2.5 hours
+    env_vars={**env_vars, "DBT_JOB_TIMEOUT": "9000"},
     arguments=["python -m  utils.run_dbt_cloud_job 254981 \"Mattermost Analytics DBT nightly\""],
     dag=dag,
 )

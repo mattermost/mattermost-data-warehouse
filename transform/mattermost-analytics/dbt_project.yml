@@ -46,6 +46,9 @@ models:
       data_eng:
         schema: int_data_eng
         tags: ['nightly']
+      product:
+        schema: int_product
+        tags: ['nightly']
       web_app:
         schema: int_web_app
         tags: ['nightly']
@@ -54,6 +57,9 @@ models:
       tags: ['marts']
       data_eng:
         schema: mart_data_eng
+        tags: ['nightly']
+      product:
+        schema: mart_product
         tags: ['nightly']
       web_app:
         schema: mart_web_app
@@ -70,7 +76,7 @@ models:
     utilities:
       +materialized: table
       schema: utilities
-      tags: [ 'utilities' ]
+      tags: ['utilities', 'hourly']
 
   dbt_project_evaluator:
     schema:
@@ -116,3 +122,7 @@ vars:
   in_product_trial_campaign_id: 7013p000001NkNoAAK
   salesforce_default_ownerid: 0053p0000064nt8AAA #default value for salesforce ownerid
   cloud_enterprise_trial_campaign_id: 701Dm000000gpPZIAY
+  telemetry_start_date: "2020-04-01"
+
+on-run-start:
+  -  '{{ create_parse_qs_udf()}}'

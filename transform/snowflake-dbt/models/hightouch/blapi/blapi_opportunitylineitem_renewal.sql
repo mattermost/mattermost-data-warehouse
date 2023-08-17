@@ -24,7 +24,7 @@ WITH onprem_olis_to_sync AS (
     -- Same filters as in blapi_onprem_opportunity_renewal
     AND customers_with_onprem_subs.is_renewed
     AND customers_with_onprem_subs.account_sfid is not null
-    AND customers_with_onprem_subs.account_type in ('Customer','Customer(Attrited)')
+    AND customers_with_onprem_subs.account_type in ('Customer','Customer (Attrited)')
     AND customers_with_onprem_subs.opportunity_sfid is not null
     AND customers_with_onprem_subs.hightouch_sync_eligible
 )

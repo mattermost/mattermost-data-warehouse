@@ -1,3 +1,5 @@
-# Mattermost2 Telemetry Source
+# Mattermost Segment data
 
-Contains events from Mattermost's servers.
+Contains events from Mattermost's servers, submitted via Segment. 
+
+Segment was used in older versions of Mattermost.

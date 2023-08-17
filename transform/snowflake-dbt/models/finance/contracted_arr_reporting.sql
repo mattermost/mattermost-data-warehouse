@@ -24,8 +24,12 @@ with a as (
     ,min(child_no) as child_no
     ,max(closing_fiscal_year) as closing_fiscal_yr
     ,max(closing_fiscal_quarter) as closing_fiscal_qtr
+    ,max(fiscal_year) as report_fiscal_yr
+    ,max(fiscal_quarter) as report_fiscal_qtr
+    ,max(closing_month) as closing_month
     ,max(closing_week) as closing_wk
     ,max(closing_date) as close_day
+    ,max(report_month) as report_month
     ,min(parent_id) as parent_id
     ,min(split_part(parent_name,'-',1)) as parent
     ,min(account_owner) as account_owner
@@ -119,13 +123,13 @@ select
     ,dense_rank() over (partition by account_id order by license_beg, close_day) as trans_no
     ,case when close_day > license_beg then datediff('day',license_beg,close_day) else 0 end as days_delayed
     ,case 
-		when date_trunc('month',license_beg) < date_trunc('month',close_day) then 'Past Month' 
-		when date_trunc('month',close_day) < date_trunc('month',license_beg) then 'Future Month'
+        when report_month < closing_month then 'Past Month'
+        when report_month > closing_month then 'Future Month'
 		else 'Current Month'
 		end as license_month
     ,case 
-		when date_trunc('quarter',license_beg) < date_trunc('quarter',close_day) then 'Past Quarter' 
-		when date_trunc('quarter',close_day) < date_trunc('quarter',license_beg) then 'Future Quarter'
+        when closing_fiscal_qtr > report_fiscal_qtr then 'Past Quarter'
+        when closing_fiscal_qtr < report_fiscal_qtr then 'Future Quarter'
 		else 'Current Quarter'
 		end as license_quarter
     ,a.*

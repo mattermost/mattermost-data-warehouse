@@ -1,0 +1,9 @@
+version: 2
+
+macros:
+
+  - name: create_parse_qs_udf
+    description: |
+      Creates a new UDF called `parse_qs`. This UDF accepts a query string as input and returns an object with all
+      the query parameters. Note that current implementation returns only the first value in case there are multiple
+      values for the same query parameter.

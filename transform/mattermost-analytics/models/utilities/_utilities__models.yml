@@ -1,0 +1,11 @@
+version: 2
+
+models:
+  - name: telemetry_days
+    description: |
+      Date spine for telemetry related metrics. Date spines is from first telemetry date and up to current day 
+      (inclusive).
+
+    columns:
+      - name: date_day
+        description: Timestamp for the date of the spine. Always midnight of the day.

@@ -9,7 +9,6 @@ from airflow.utils.db import provide_session
 from plugins.operators.mattermost_operator import MattermostOperator
 
 PERMIFROST_IMAGE = "mattermost/mattermost-permifrost:master"
-PIPELINEWISE_IMAGE = "docker.io/adovenmm/pipelinewise:latest"
 
 MATTERMOST_DATAWAREHOUSE_IMAGE = "mattermost/mattermost-data-warehouse:master"
 
@@ -54,7 +53,7 @@ def create_alert_body(context):
     """
     Creates post body to be sent to mattermost channel.
     """
-    base_url = "https://airflow.internal.mattermost.com"
+    base_url = "https://airflow.dataeng.internal.mattermost.com"
     execution_date = context["ts"]
     dag_context = context["dag"]
     dag_name = dag_context.dag_id

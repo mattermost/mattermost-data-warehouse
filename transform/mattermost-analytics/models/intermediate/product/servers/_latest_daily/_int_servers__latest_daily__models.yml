@@ -1,0 +1,109 @@
+version: 2
+
+models:
+  - name: int_server_telemetry_legacy_latest_daily
+    description: |
+      Daily server information for old servers (<=5.25.0). In case multiple server informations were
+      submitted for the same server within the same day, the last values are stored.
+
+    columns:
+      - name: daily_server_id
+        description: A unique id for each server and date.
+      - name: server_id
+        description: The server's unique id.
+      - name: server_date
+        description: The date that server sent the information.
+      - name: count_system_admins
+        description: The number of system admins.
+      - name: version_full
+        description: The full semver of the Mattermost server.
+      - name: version_major
+        description: The major version part of the server's semver. I.e. 7 for 7.2.3.
+      - name: version_minor
+        description: The minor version part of the server's semver. I.e. 2 for 7.2.3.
+      - name: version_patch
+        description: The patch version part of the server's semver. I.e. 3 for 7.2.3.
+      - name: operating_system
+        description: The name of the operating system the server is installed at.
+      - name: database_type
+        description: The type of the database used for this installation (i.e. postgres, mysql, ...).
+      - name: database_version
+        description: The version of the database.
+      - name: edition
+        description: Whether this server is an enterprise-ready build.
+      - name: count_reported_versions
+        description: The total number of distinct versions reported for the given date & server.
+      - name: reported_versions
+        description: The unique versions reported from the server for that date.
+
+  - name: int_server_telemetry_latest_daily
+    description: |
+      Daily server information for newer servers (>=5.23.0). In case multiple server informations were
+      submitted for the same server within the same day, the last values are stored.
+
+    columns:
+      - name: daily_server_id
+        description: A unique id for each server and date.
+      - name: server_id
+        description: The server's unique id.
+      - name: server_date
+        description: The date that server sent the information.
+      - name: count_system_admins
+        description: The number of system admins.
+      - name: version_full
+        description: The full semver of the Mattermost server.
+      - name: version_major
+        description: The major version part of the server's semver. I.e. 7 for 7.2.3.
+      - name: version_minor
+        description: The minor version part of the server's semver. I.e. 2 for 7.2.3.
+      - name: version_patch
+        description: The patch version part of the server's semver. I.e. 3 for 7.2.3.
+      - name: installation_id
+        description: The reported ID of the installation.
+      - name: installation_type
+        description: The method used for installing the Mattermost server (docker, deb package, ...).
+      - name: anonymous_id
+        description: An anonymous id for the server
+      - name: server_ip
+        description: The IP address of the server.
+      - name: operating_system
+        description: The name of the operating system the server is installed at.
+      - name: database_type
+        description: The type of the database used for this installation (i.e. postgres, mysql, ...).
+      - name: database_version
+        description: The version of the database.
+      - name: edition
+        description: Whether this server is an enterprise-ready build.
+      - name: count_reported_versions
+        description: The total number of distinct versions reported for the given date & server.
+      - name: reported_versions
+        description: The unique versions reported from the server for that date.
+
+  - name: int_server_security_update_latest_daily
+    description: |
+      Daily server security update information. In case multiple server informations were
+      submitted for the same server within the same day, the last values are stored.
+
+    columns:
+      - name: daily_server_id
+        description: A unique id for each server and date.
+      - name: server_id
+        description: The server's unique id.
+      - name: server_date
+        description: The date that server sent the information.
+      - name: version_full
+        description: The full semver of the Mattermost server.
+      - name: version_major
+        description: The major version part of the server's semver. I.e. 7 for 7.2.3.
+      - name: version_minor
+        description: The minor version part of the server's semver. I.e. 2 for 7.2.3.
+      - name: version_patch
+        description: The patch version part of the server's semver. I.e. 3 for 7.2.3.
+      - name: server_ip
+        description: The IP that the request for security updates came from.
+      - name: operating_system
+        description: The name of the operating system the server is installed at.
+      - name: database_type
+        description: The type of the database used for this installation (i.e. postgres, mysql, ...).
+      - name: is_enterprise_ready
+        description: Whether it's an enterprise ready build.

@@ -73,4 +73,19 @@ renamed as (
 
 )
 
-select * from renamed
+select
+    *
+from
+    renamed
+where
+    trial_request_id not in (
+        -- Invalid records
+        'qzd5g81daibrxqfbppoeg1mezo',
+        'uu6zjmatt38wzmhphs57rsbbro',
+        'xchakhn3gfrdmq88m3apa7ht9r',
+        'nx6boyf3zjbctdkdpmdqyqtzeo',
+        's8j1frxu57bfx8x775ijabsnya',
+        'zka8qtk33pfopdh99fwrie6qth',
+        'fuyjomkuw389ux6mq19g7eiw3c',
+        '54mw3kph3iffzcyu7zxjfchgte'
+    )

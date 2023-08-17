@@ -1,18 +1,133 @@
 version: 2
 
-models:      
-  - name: stg_mattermost2__license
+models:
+  - name: stg_mattermost2__tracks
     description: |
-      License table from schema `MM_TELEMETRY_PROD` using only columns needed by looker.
+      Reconstructed `tracks` table using custom properties expected to be in the events.
 
     columns:
-      - name: id
+      - name: event_id
+        description: The event's id.
+      - name: event_name
+        description: The name of the event.
+      - name: event_table
+        description: The name of the event table.
+      - name: category
+        description: The event's category.
+      - name: event_type
+        description: The type of the event.
+      - name: user_id
+        description: The ID of the user that sent the event.
       - name: server_id
-      - name: license_id
-      - name: customer_id
-      - name: installation_id
+        description: The ID of the server the event originated from.
+      - name: received_at
+        description: Timestamp registered by Segment when the event was ingested (received).
+      - name: timestamp
+        description: Timestamp registered by Segment when the event occured refactored to clients clock skew.
+
+  - name: stg_mattermost2__server
+    description: |
+      Events originating from servers with server metadata. Sent using Segment.
+
+    columns:
+      - name: event_id
+        description: The event's id.
+      - name: event_name
+        description: The name of the event.
+      - name: event_table
+        description: The name of the event table.
+      - name: server_id
+        description: The ID of the server the event originated from.
+      - name: received_at
+        description: Timestamp registered by Segment when the event was ingested (received).
+      - name: timestamp
+        description: Timestamp registered by Segment when the event occured refactored to clients clock skew.
+      - name: count_system_admins
+        description: The total number of system admins at the time the event was submitted.
+      - name: version_full
+        description: The full version string of the server's semver.
+      - name: version_major
+        description: The major version of the server at the time the event was submitted/
+      - name: version_minor
+        description: The minor version of the server at the time the event was submitted/
+      - name: version_patch
+        description: The patch version of the server at the time the event was submitted.
+      - name: operating_system
+        description: The operating system that the server runs on.
+      - name: database_type
+        description: The name of the database used by the server.
+      - name: database_version
+        description: The version of the database
       - name: edition
-      - name: users
-      - name: issued_date
-      - name: start_date
-      - name: expire_date
+        description: Whether the build is enterprise ready or not.
+      - name: context_library_version
+        description: The version of Segment library used to send this event.
+      - name: context_library_name
+        description: The name of Segment library used to send this event.
+      - name: uuid_ts
+      - name: sent_at
+      - name: original_timestamp
+
+
+  - name: stg_mattermost2__activity
+    description: Tracks key metrics related to server activity
+
+    columns:
+      - name: event_id
+        description: The event's id.
+      - name: event_name
+        description: The name of the event.
+      - name: event_table
+        description: The name of the event table.
+      - name: server_id
+        description: The ID of the server the event originated from.
+      - name: received_at
+        description: Timestamp registered by Segment when the event was ingested (received).
+      - name: timestamp
+        description: Timestamp registered by Segment when the event occured refactored to clients clock skew.
+      - name: count_public_channels
+        description: Total number of public channels.
+      - name: count_deleted_public_channels
+        description: Total number of deleted public channels.
+      - name: count_private_channels
+        description: Total number of private channels.
+      - name: count_deleted_private_channels
+        description: Total number of deleted private channels.
+      - name: count_bot_posts_previous_day
+        description: Total number of deleted posts.
+      - name: count_posts_previous_day
+        description: Total number of posts the day before the event was sent.
+      - name: count_teams
+        description: Total number of teams in the server.
+      - name: count_slash_commands
+        description: Total number of slash commands.
+      - name: count_direct_message_channels
+        description: Total number of direct message channels.
+      - name: count_posts
+        description: Total number of posts.
+      - name: count_incoming_webhooks
+        description: Total number of incoming webhooks, excluding deleted.
+      - name: count_outgoing_webhooks
+        description: Total number of outgoing webhooks, excluding deleted.
+      - name: daily_active_users
+        description: |
+          Total number of active users for the past 24 hours prior to the timestamp of the event.
+          Bots and deleted users are excluded.
+      - name: monthly_active_users
+        description: |
+          Total number of active users for the past 31 days prior to the timestamp of the event.
+          Bots and deleted users are excluded.
+      - name: count_registered_users
+        description: Total number of users, including deleted users.
+      - name: count_registered_deactivated_users
+        description: Total number of inactive (deleted) users.
+      - name: bot_accounts
+        description: Total number of bot accounts.
+      - name: guest_accounts
+        description: Total number of guest users, excluding deleted.
+      - name: context_library_version
+        description: The version of Segment library used to send this event.
+      - name: context_library_name
+        description: The name of Segment library used to send this event.
+      - name: sent_at
+      - name: original_timestamp

@@ -5,47 +5,51 @@
   })
 }}
 
---v6 of arr transactions 20220819
+--v7 of arr transactions 20230626
+--retired blapi reference because blapi will be decremented in the company
+--added contracted fiscal quarters and years to enable contracted arr reporting 
 --this query reflects arr transactions during the lifecycle of a paying sales serve customer 
 --based on key input fields by sales ops on license_start_date__c license_end_date__c and amount 
 --in the salesforce opportunity table
 --logic then calculates corresponding opportunity transactions to create an ending arr balance by report month and rollfoward of activities
---ending arr balance is validated by the aggreement of active licenses and ending arr per account id as of run date
+--ending arr balance is validated by the agreement of active licenses and ending arr per account id as of run date
 --this query also corrects for the new customer count which raw data incorrectly reports because of migration cutoff
---opportunities closed are recognized at the later of close date or license start date
+--following reporting month opportunities closed are recognized at the later of close date or license start date
+--following closing month opportunities closed are recognized at close date
 --license expiry is recognized at license end date even though early cancellation notice is received
 --to identify cloud and monthly billing customers to be excluded from selfserve ARR
 --currently account owner in accounts table is not reflective of the true account owner thus using the latest account owner of the opportunity
 --structure of queries below are funnel data to selfserve arr then gather demographic info then pull master data set and add expiry and renewal information 
 --modified to have parent child relationship as deployed by Jim K
 
---identify mrr population as tracked by stripe and product type
+--cte to identify cloud professional opportunity ids to be excluded from ARR population
+--these are month to month usage of the product with no annual commitment 
+
 with mrr as (
-   select 
-        es.server_id,
-        ls.server_id as ls_server_id,
-        ls.license_id,
-        ls.customer_id,
-        ls.id,
-        ls.customer_name,
-        ls.edition,
-        ls.account_sfid,
-        ls.opportunity_sfid,
-        ls.stripeid,
-        ls.issued_date,
-        sub.status,
-        sub.sfdc_migrated_opportunity_sfid
-   from {{ref('license_server_fact')}} ls 
-   --from analytics.blp.license_server_fact ls
-   left join {{ref('excludable_servers')}} es 
-   --left join  analytics.mattermost.excludable_servers es  
-        on ls.server_id = es.server_id
-   left join {{ref('subscriptions')}} sub
-   --left join analytics.stripe.subscriptions sub 
-        on sub.license_id = ls.license_id 
-    where ls.issued_date is not null
-        and ls.edition in ('Cloud Professional')
-        and es.reason is null
+select
+    opp.id as opportunity_id
+    --,opp.accountid as account_id
+    --,opp.pricebook2id
+    --,oli.productcode
+    --,opp.license_key__c as license_id
+    --,opp.closedate::date as close_date
+    ,opp.license_start_date__c::date as license_start_date
+    --,opp.license_end_date__c::date as license_end_date
+    ,datediff('days',license_start_date__c,license_end_date__c) as term_days
+    --,opp.amount 
+from {{ ref( 'opportunitylineitem') }} oli
+--from analytics.orgm.opportunitylineitem oli 
+left join {{ ref( 'opportunity') }} opp
+--left join analytics.orgm.opportunity opp
+    on oli.opportunityid = opp.id 
+where oli.productcode like '%Cloud Professional%'
+        and oli.product_type__c = 'Monthly Billing'
+        and opp.iswon = true
+        and opp.isclosed = true
+        and opp.isdeleted = false
+        and opp.license_start_date__c < date '2023-06-30'
+        and term_days < 365
+group by 1,2,3
 )
 
 --cte to limit report to paying arr customers and exclude trial customers that did not convert to paying
@@ -58,7 +62,6 @@ with mrr as (
     WHERE opp.iswon in (true,false)
         and opp.isclosed = true
         and opp.isdeleted = false
-        and coalesce(opp.license_key__c,'null') not in (select distinct license_id from mrr)
     group by 1
     having arr >=1
     order by 1
@@ -163,6 +166,7 @@ with mrr as (
         and opp.isdeleted = false
         and opp.type != 'Monthly Billing'
         and opp.accountid in (select distinct accountid from pop)
+        and opp.id not in (select opportunity_id from mrr)
     order by opp.accountid, opp.closedate asc
 )
 
