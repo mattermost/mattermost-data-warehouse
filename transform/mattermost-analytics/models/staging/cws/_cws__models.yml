@@ -81,6 +81,6 @@ models:
       - name: server_id
         description: The server's id.
       - name: created_at
-        description: Newsletter row created time.
+        description: The row created time.
       - name: updated_at
-        description: Newsletter row updated time.
+        description: The row updated time.
