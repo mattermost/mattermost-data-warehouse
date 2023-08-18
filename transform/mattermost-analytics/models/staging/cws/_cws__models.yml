@@ -66,11 +66,11 @@ models:
 
   - name: stg_cws__marketing
     description: |
-      Security Newsletter subscription data.
+      CWS Marketing data.
 
     columns:
       - name: marketing_id
-        description: Marketing ID.
+        description: Unique Identifier for Marketing data.
         tests:
           - not_null
       - name: email
