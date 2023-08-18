@@ -7,7 +7,7 @@ models:
 
     columns:
       - name: marketing_id
-        description: Marketing ID from cws.
+        description: Unique identifier for cws marketing data.
       - name: email
         tags: ['pii']
         description: Customer email for marketing coming from cws.
