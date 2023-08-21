@@ -22,4 +22,4 @@
     from
         {{ ref('github_actions') }}
 )
-select * from seed_file
+select distinct * from seed_file
