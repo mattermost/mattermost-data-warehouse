@@ -1,4 +1,4 @@
-Date,Product,SKU,Quantity,Unit Type,Price Per Unit ($),Multiplier,Owner,Repository Slug,Username,Actions Workflow,Notes
+date,product,sku,quantity,unit_type,price_per_unit,multiplier,owner,repository_slug,username,actions_workflow,notes
 2023-05-21,Actions,Compute - UBUNTU_8_CORE,115,minute,0.032,1.0,mattermost,mattermost,mattermost-build,.github/workflows/server-ci-pr.yml,
 2023-05-21,Actions,Compute - UBUNTU,3,minute,0.008,1.0,mattermost,mattermost-plugin-broomer,spirosoik,.github/workflows/ci.yml,
 2023-05-21,Actions,Compute - UBUNTU,28,minute,0.008,1.0,mattermost,mattermost-plugin-workflow,hanzei,.github/workflows/ci.yml,
