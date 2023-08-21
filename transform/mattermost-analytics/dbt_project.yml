@@ -52,6 +52,9 @@ models:
       web_app:
         schema: int_web_app
         tags: ['nightly']
+      github_actions:
+        schema: int_github_actions
+        tags: ['nightly']
     marts:
       +materialized: table
       tags: ['marts']
