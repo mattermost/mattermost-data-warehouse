@@ -76,10 +76,18 @@ models:
       - name: email
         description: The user's email
         tags: ['pii']
+        tests: 
+          - not_null
+          - dbt_utils.not_empty_string
       - name: subscribed_content
         description: The content the user subscribed to.
+        tests:
+          - accepted_values:
+              values: [ 'security_newsletter']
       - name: server_id
         description: The server's id.
+        tests: 
+          - not_null
       - name: created_at
         description: The row created time.
       - name: updated_at

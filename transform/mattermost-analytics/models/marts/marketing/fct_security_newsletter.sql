@@ -21,6 +21,7 @@ security_newsletter as (
         , cm.campaign_member_id as campaign_member_id
         , l.lead_id is not null as is_existing_lead
         , cm.campaign_member_id is not null as is_existing_campaign_member
+        , '{{ var('marketing_newsletter_campaign_id') }}' as campaign_id
     from
         marketing m
         left join {{ ref('stg_salesforce__lead') }}  l on m.email = l.email

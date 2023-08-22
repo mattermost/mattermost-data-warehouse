@@ -17,11 +17,14 @@ models:
       - name: server_id
         description: Server ID of the user who subscribed to the marketing campaign.
       - name: lead_id
-        description: Lead ID of the user who subscribed to the marketing campaign in Salesforce.
+        description: Lead ID of the user who subscribed to the marketing campaign in Salesforce. 
+          Lead ID is selected by joining with the email provided in cws marketing, 
+          and in case of multiple Lead ID's we are picking the one which was created first.
       - name: campaign_member_id
         description: Campaign Member ID of the user who subscribed to the marketing campaign in Salesforce.
       - name: is_existing_lead
         description: Whether there's already a lead with the same email.
       - name: is_existing_campaign_member
         description: Whether there's already a campaign member for the same email and lead.
-
+      - name: campaign_id
+        description: Unique identifier of the campaign.
