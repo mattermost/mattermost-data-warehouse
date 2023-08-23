@@ -3,7 +3,6 @@ select
     daily_server_id,
     server_id,
     activity_date,
-    installation_id,
 
     -- Dimensions
     {{ dbt_utils.generate_surrogate_key(['version_full']) }} AS version_id,
@@ -11,7 +10,6 @@ select
 
     -- Facts
     is_enterprise_ready,
-    is_cloud,
     count_reported_versions,
 
     -- Metadata

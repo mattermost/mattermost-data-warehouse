@@ -65,6 +65,13 @@ models:
         description: Total number of inactive (deleted) users. Reported by mattermost server.
       - name: is_missing_activity_data
         description: Whether there are missing server activity data for the given date.
+      - name: version_id
+        description: The id of the server's version for the given date.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_version')
+              field: version_id
     tests:
       # A date should only appear once per server
       - dbt_utils.unique_combination_of_columns:
@@ -90,26 +97,6 @@ models:
         description: The date that server sent the information.
         tests:
           - not_null
-      - name: version_full
-        description: The full semver of the Mattermost server.
-      - name: version_major
-        description: The major version part of the server's semver. I.e. 7 for 7.2.3.
-        tests:
-          - dbt_utils.accepted_range:
-              min_value: 1
-              inclusive: true
-      - name: version_minor
-        description: The minor version part of the server's semver. I.e. 2 for 7.2.3.
-        tests:
-          - dbt_utils.accepted_range:
-              min_value: 0
-              inclusive: true
-      - name: version_patch
-        description: The patch version part of the server's semver. I.e. 3 for 7.2.3.
-        tests:
-          - dbt_utils.accepted_range:
-              min_value: 0
-              inclusive: true
       - name: installation_type
         description: The method used for installing the Mattermost server (docker, deb package, ...).
       - name: server_ip
@@ -214,8 +201,6 @@ models:
         description: The server's unique id.
         tests:
           - not_null
-      - name: installation_id
-        description: The id of the installation. Exists only for cloud installations.
       - name: version_id
         description: The id of the server's version.
         tests:
@@ -227,8 +212,6 @@ models:
         description: The method used for installing the Mattermost server (docker, deb package, ...).
       - name: is_enterprise_ready
         description: Whether the server is running an enterprise ready build.
-      - name: is_cloud
-        description: Whether the server is a cloud installation.
       - name: count_reported_versions
         description: The number of versions reported via all possible channels for the given date.
       - name: has_telemetry_data
@@ -240,3 +223,19 @@ models:
       - name: is_missing_activity_data
         description: Whether server activity data are available for the given date and server id.
 
+  - name: dim_server_info
+    description: Static information for a given server.
+    columns:
+      - name: server_id
+        description: The server's unique id.
+        tests:
+          - not_null
+      - name: installation_id
+        description: The id of the installation. Exists only for cloud installations.
+      - name: hosting_type
+        description: |
+          Type of hosting for this server. Can be one of:
+          - `Cloud`: server always reports an installation id
+          - `Self-hosted`: server always reports a null installation id.
+          - `Probably cloud`: server reports an installation id more often than reporting null as installation id.
+          - `Probably self-hosted`: server reports null installation id more often than a valid value.
