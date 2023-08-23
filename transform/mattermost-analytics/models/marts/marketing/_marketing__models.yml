@@ -28,3 +28,5 @@ models:
         description: Whether there's already a campaign member for the same email and lead.
       - name: campaign_id
         description: Unique identifier of the campaign.
+      - name: is_valid_email
+        description: Whether the email is valid. Used to skip invalid emails.
