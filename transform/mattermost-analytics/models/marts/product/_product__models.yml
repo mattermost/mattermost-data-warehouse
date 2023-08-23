@@ -109,8 +109,6 @@ models:
         description: The version of the database.
       - name: is_enterprise_ready
         description: Whether this server is an enterprise-ready build.
-      - name: is_cloud
-        description: Whether this server is a cloud installation or not.
         tests:
           - not_null:
               where: "has_telemetry_data = true"
