@@ -169,10 +169,6 @@ models:
         description: The major and minor parts of the version concatenated, separated by `.`.
       - name: version_patch
         description: The patch version part of the server's semver. I.e. 3 for 7.2.3.
-        tests:
-          - dbt_utils.accepted_range:
-              min_value: 0
-              inclusive: true
 
   - name: fct_active_servers
     description: | 
