@@ -4,8 +4,7 @@ with hosting_type_info as (
         server_id,
         -- Aggregate is cloud in order to validate whether the server is cloud or not
         count_if(is_cloud = true) as count_is_cloud_days,
-        count_if(is_cloud = false) as count_not_is_cloud_days,
-        count_if(is_cloud is null) as count_unknown_is_cloud_days
+        count_if(is_cloud = false) as count_not_is_cloud_days
     from
          {{ ref('int_server_active_days_spined') }}
     group by
