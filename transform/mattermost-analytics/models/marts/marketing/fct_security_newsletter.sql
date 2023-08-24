@@ -28,6 +28,7 @@ security_newsletter as (
         left join {{ ref('stg_salesforce__lead') }}  l on m.email = l.email
         left join {{ ref('stg_salesforce__campaign_member') }} cm on l.lead_id = cm.lead_id and m.email = cm.email 
         and cm.campaign_id = '{{ var('marketing_newsletter_campaign_id') }}'
+        where is_valid_email
         qualify row_number() over (
             partition by m.email
             order by
