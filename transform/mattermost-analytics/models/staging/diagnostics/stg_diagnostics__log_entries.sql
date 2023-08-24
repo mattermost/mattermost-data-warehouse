@@ -69,8 +69,8 @@ renamed as (
         and method = 'GET'
         -- Keep only requests sent by Mattermost servers
         and useragent like 'Go-http-client/%'
-        -- Keep only if log data exists
-
+        -- Remove invalid version
+        and version_patch != '0p2'
         -- Sanity check
         and to_date(logdate) <= CURRENT_DATE
 
