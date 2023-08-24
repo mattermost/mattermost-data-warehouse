@@ -235,5 +235,5 @@ models:
           Type of hosting for this server. Can be one of:
           - `Cloud`: server always reports an installation id
           - `Self-hosted`: server always reports a null installation id.
-          - `Probably cloud`: server reports an installation id more often than reporting null as installation id.
-          - `Probably self-hosted`: server reports null installation id more often than a valid value.
+          - `Probably cloud`: server reports an installation id more often than not reporting as installation id.
+          - `Probably self-hosted`: server does not report installation id more often than reporting an installation id.
