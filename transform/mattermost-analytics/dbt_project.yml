@@ -73,6 +73,8 @@ models:
         hightouch:
           # Hightouch syncs should be as close to real time as possible.
           tags: ['hourly']
+      marketing:
+        tags: ['nightly']
     utilities:
       +materialized: table
       schema: utilities
@@ -123,6 +125,7 @@ vars:
   salesforce_default_ownerid: 0053p0000064nt8AAA #default value for salesforce ownerid
   cloud_enterprise_trial_campaign_id: 701Dm000000gpPZIAY
   telemetry_start_date: "2020-04-01"
+  marketing_newsletter_campaign_id: 701Dm000000gnMlIAI
 
 on-run-start:
   -  '{{ create_parse_qs_udf()}}'
