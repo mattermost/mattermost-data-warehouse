@@ -1,10 +1,6 @@
 {{
     config({
-        "materialized": "incremental",
-        "incremental_strategy": "merge",
-        "merge_update_columns": ['count_reported_versions', 'reported_versions'],
-        "unique_key": ['daily_server_id'],
-        "cluster_by": ['server_date'],
+        "materialized": "table",
         "snowflake_warehouse": "transform_l"
     })
 }}
