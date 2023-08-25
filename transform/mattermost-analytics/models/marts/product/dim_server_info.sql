@@ -24,9 +24,7 @@ select
     case
         when count_is_cloud_days > 0 and count_not_is_cloud_days = 0 then 'Cloud'
         when count_is_cloud_days = 0 and count_not_is_cloud_days > 0 then 'Self-hosted'
-        -- The following cases are added for sanity checks
-        when count_is_cloud_days > count_not_is_cloud_days then 'Probably cloud'
-        when count_is_cloud_days < count_not_is_cloud_days then 'Probably self-hosted'
+        else 'Unknown'
     end as hosting_type,
     l.installation_id
 from
