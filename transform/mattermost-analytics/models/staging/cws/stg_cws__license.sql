@@ -16,8 +16,8 @@ renamed as (
             when subscriptionid like 'non-subscription license for%' then null
             else subscriptionid
         end as subscription_id
+        , extract_licensedata(payload) as _license
         , to_timestamp(_license:issued_at::int / 1000) as issued_at
-         , extract_license_data(payload) as _license
         , to_timestamp(_license:starts_at::int / 1000) as starts_at
         , to_timestamp(_license:expires_at::int / 1000) as expires_at
         , _license:sku_name::varchar as sku
@@ -32,36 +32,36 @@ renamed as (
         , _license:customer:name::varchar as customer_name
 
         -- Feature info
-        , _license_:features:users::int as number_of_users
-        , _license_:features:advanced_logging::boolean as is_feature_advanced_logging_enabled
-        , _license_:features:announcement::boolean as is_feature_announcement_enabled
-        , _license_:features:cloud::boolean as is_feature_cloud_enabled
-        , _license_:features:cluster::boolean as is_feature_cluster_enabled
-        , _license_:features:compliance::boolean as is_feature_compliance_enabled
-        , _license_:features:custom_permissions_schemes::boolean as is_feature_custom_permissions_schemes_enabled
-        , _license_:features:custom_terms_of_service::boolean as is_feature_custom_terms_of_service_enabled
-        , _license_:features:data_retention::boolean as is_feature_data_retention_enabled
-        , _license_:features:elastic_search::boolean as is_feature_elastic_search_enabled
-        , _license_:features:email_notification_contents::boolean as is_feature_email_notification_contents_enabled
-        , _license_:features:enterprise_plugins::boolean as is_feature_enterprise_plugins_enabled
-        , _license_:features:future_features::boolean as is_feature_future_features_enabled
-        , _license_:features:google_oauth::boolean as is_feature_google_oauth_enabled
-        , _license_:features:guest_accounts::boolean as is_feature_guest_accounts_enabled
-        , _license_:features:guest_accounts_permissions::boolean as is_feature_guest_accounts_permissions_enabled
-        , _license_:features:id_loaded::boolean as is_feature_id_loaded_enabled
-        , _license_:features:ldap::boolean as is_feature_ldap_enabled
-        , _license_:features:ldap_groups::boolean as is_feature_ldap_groups_enabled
-        , _license_:features:lock_teammate_name_display::boolean as is_feature_lock_teammate_name_display_enabled
-        , _license_:features:message_export::boolean as is_feature_message_export_enabled
-        , _license_:features:metrics::boolean as is_feature_metrics_enabled
-        , _license_:features:mfa::boolean as is_feature_mfa_enabled
-        , _license_:features:mhpns::boolean as is_feature_mhpns_enabled
-        , _license_:features:office365_oauth::boolean as is_feature_office365_oauth_enabled
-        , _license_:features:openid::boolean as is_feature_openid_enabled
-        , _license_:features:remote_cluster_service::boolean as is_feature_remote_cluster_service_enabled
-        , _license_:features:saml::boolean as is_feature_saml_enabled
-        , _license_:features:shared_channels::boolean as is_feature_shared_channels_enabled
-        , _license_:features:theme_management::boolean as is_feature_theme_management_enabled
+        , _license:features:users::int as number_of_users
+        , _license:features:advanced_logging::boolean as is_feature_advanced_logging_enabled
+        , _license:features:announcement::boolean as is_feature_announcement_enabled
+        , _license:features:cloud::boolean as is_feature_cloud_enabled
+        , _license:features:cluster::boolean as is_feature_cluster_enabled
+        , _license:features:compliance::boolean as is_feature_compliance_enabled
+        , _license:features:custom_permissions_schemes::boolean as is_feature_custom_permissions_schemes_enabled
+        , _license:features:custom_terms_of_service::boolean as is_feature_custom_terms_of_service_enabled
+        , _license:features:data_retention::boolean as is_feature_data_retention_enabled
+        , _license:features:elastic_search::boolean as is_feature_elastic_search_enabled
+        , _license:features:email_notification_contents::boolean as is_feature_email_notification_contents_enabled
+        , _license:features:enterprise_plugins::boolean as is_feature_enterprise_plugins_enabled
+        , _license:features:future_features::boolean as is_feature_future_features_enabled
+        , _license:features:google_oauth::boolean as is_feature_google_oauth_enabled
+        , _license:features:guest_accounts::boolean as is_feature_guest_accounts_enabled
+        , _license:features:guest_accounts_permissions::boolean as is_feature_guest_accounts_permissions_enabled
+        , _license:features:id_loaded::boolean as is_feature_id_loaded_enabled
+        , _license:features:ldap::boolean as is_feature_ldap_enabled
+        , _license:features:ldap_groups::boolean as is_feature_ldap_groups_enabled
+        , _license:features:lock_teammate_name_display::boolean as is_feature_lock_teammate_name_display_enabled
+        , _license:features:message_export::boolean as is_feature_message_export_enabled
+        , _license:features:metrics::boolean as is_feature_metrics_enabled
+        , _license:features:mfa::boolean as is_feature_mfa_enabled
+        , _license:features:mhpns::boolean as is_feature_mhpns_enabled
+        , _license:features:office365_oauth::boolean as is_feature_office365_oauth_enabled
+        , _license:features:openid::boolean as is_feature_openid_enabled
+        , _license:features:remote_cluster_service::boolean as is_feature_remote_cluster_service_enabled
+        , _license:features:saml::boolean as is_feature_saml_enabled
+        , _license:features:shared_channels::boolean as is_feature_shared_channels_enabled
+        , _license:features:theme_management::boolean as is_feature_theme_management_enabled
 
          -- Metadata
         , to_timestamp(createdat / 1000) as created_at
