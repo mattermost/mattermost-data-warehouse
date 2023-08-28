@@ -84,9 +84,6 @@ sources:
           - name: _sdc_table_version
           - name: __sdc_primary_key
 
-  - name: cws_prod
-    database: raw
-    tables:
       - name: license
         columns:
           - name: createdat
@@ -102,7 +99,7 @@ sources:
             description: | 
               The Stripe subscription ID this license maps to. In case it's not linked to a Stripe subscription, it is
               a string in the form `non-subscription license for <company name> <an id>`.
-          ## Stitch data
+          ## Stitch columns
           - name: _sdc_batched_at
           - name: _sdc_received_at
           - name: _sdc_sequence
