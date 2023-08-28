@@ -84,3 +84,26 @@ sources:
           - name: _sdc_table_version
           - name: __sdc_primary_key
 
+  - name: cws_prod
+    database: raw
+    tables:
+      - name: license
+        columns:
+          - name: createdat
+            description: Date that this record was created at.
+          - name: id
+            description: The license ID
+          - name: ispending
+          - name: payload
+            description: |
+              Base64 encoded base license payload. The base64 decoded string contains a JSON document, followed by 
+              some random bytes.
+          - name: subscriptionid
+            description: | 
+              The Stripe subscription ID this license maps to. In case it's not linked to a Stripe subscription, it is
+              a string in the form `non-subscription license for <company name> <an id>`.
+          ## Stitch data
+          - name: _sdc_batched_at
+          - name: _sdc_received_at
+          - name: _sdc_sequence
+          - name: _sdc_table_version
