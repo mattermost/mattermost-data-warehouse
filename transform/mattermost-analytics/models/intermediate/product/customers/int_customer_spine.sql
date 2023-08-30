@@ -47,7 +47,7 @@ with license_spine as (
     select distinct
         c.portal_customer_id as customer_id,
         c.customer_id as stripe_customer_id,
-        s.cws_installation as installation_id,
+        spine.cws_installation as installation_id,
         s.cws_dns as installation_hostname,
         srv.server_id
     from
