@@ -1,0 +1,21 @@
+with customer_licenses as (
+    -- On prem licenses
+    select distinct
+        customer_id,
+        license_id
+    from
+        {{ ref('stg_cws__license') }}
+), customer_installation as (
+    -- Cloud installations
+    select distinct
+        c.portal_customer_id as customer_id,
+        s.cws_installation as installation_id,
+        s.cws_dns as installation_hostname,
+        srv.server_id
+    from
+        {{ ref('stg_stripe__customers') }} c
+        left join {{ ref('stg_stripe_subscriptions') }} s on s.customer_id = c.customer_id
+        left join {{ ref('stg_mm_telemetry_prod_server') }} srv on srv.installation_id = s.cws_installation
+    where
+        cws_installation is not null
+)
