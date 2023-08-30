@@ -23,8 +23,8 @@ with onprem_servers as (
         srv.server_id
     from
         {{ ref('stg_stripe__customers') }} c
-        left join {{ ref('stg_stripe_subscriptions') }} s on s.customer_id = c.customer_id
-        left join {{ ref('stg_mm_telemetry_prod_server') }} srv on srv.installation_id = s.cws_installation
+        left join {{ ref('stg_stripe__subscriptions') }} s on s.customer_id = c.customer_id
+        left join {{ ref('stg_mm_telemetry_prod__server') }} srv on srv.installation_id = s.cws_installation
     where
         cws_installation is not null
 )
