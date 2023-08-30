@@ -28,7 +28,7 @@ with source as (
         , database_version
         , edition
 
-        -- Metadata from Rudderstack
+        -- Metadata from segment
         , context_library_version
         , context_library_name
         , uuid_ts

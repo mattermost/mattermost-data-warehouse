@@ -1,0 +1,16 @@
+version: 2
+
+sources:
+  - name: licenses
+    database: 'RAW'
+    schema: licenses
+    loader: Snowflake Stage
+    description: |
+      Pre-CWS license data. These data were uploaded to S3 and ingested via a Snowflake Stage to the data warehouse.
+      The data won't be updated (no new inserts or updates to the data).
+    tags:
+      - stage
+
+    tables:
+      - name: licenses
+        description: 'License data'
