@@ -20,6 +20,10 @@ with license_spine as (
         license_spine as spine
         left join {{ ref('stg_mm_telemetry_prod__license') }} as rudder_license on cws_license.license_id = rudder_license.license_id
         left join {{ ref('stg_mattermost2__license') }} as segment_license on cws_license.license_id = segment_license.license_id
+), cloud_spine as (
+    select installation_id from {{ ref('stg_mm_telemetry_prod__server') }}
+    union
+    select cws_installation as installation_id from {{ ref('stg_stripe__subscriptions') }}
 ), cloud_servers as (
     -- Cloud installations
     select distinct
@@ -28,18 +32,18 @@ with license_spine as (
         s.cws_dns as installation_hostname,
         srv.server_id
     from
-        {{ ref('stg_stripe__customers') }} c
-        left join {{ ref('stg_stripe__subscriptions') }} s on s.customer_id = c.customer_id
-        left join {{ ref('stg_mm_telemetry_prod__server') }} srv on srv.installation_id = s.cws_installation
-    where
-        cws_installation is not null
+        cloud_spine spine
+        left join {{ ref('stg_mm_telemetry_prod__server') }} srv on srv.installation_id = spine.installation_id
+        left join {{ ref('stg_stripe__subscriptions') }} s on s.cws_installtion = spine.installation_id
+        left join {{ ref('stg_stripe__customers') }} c on s.customer_id = c.customer_id
 )
 select
     customer_id,
     server_id,
     license_id,
     null as installation_id,
-    null as installation_hostname
+    null as installation_hostname,
+    'Self-hosted' as type
 from
     onprem_servers
 
@@ -50,6 +54,7 @@ select
     server_id,
     null as license_id,
     installation_id,
-    installation_hostname
+    installation_hostname,
+    'Cloud' as type
 from
     cloud_servers
