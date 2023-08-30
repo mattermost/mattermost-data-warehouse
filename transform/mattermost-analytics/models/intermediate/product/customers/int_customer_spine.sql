@@ -5,7 +5,7 @@
 }}
 
 with license_spine as (
-    select distinct license_id, customer_id from {{ ref('stg_mm_telemetry_prod__license') }
+    select distinct license_id, customer_id from {{ ref('stg_mm_telemetry_prod__license') }}
     union
     select distinct license_id, customer_id from  {{ ref('stg_mattermost2__license') }}
     union
