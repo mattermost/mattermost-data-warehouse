@@ -4,14 +4,20 @@
     })
 }}
 
-with onprem_servers as (
+with license_spine as (
+    select distinct license_id, customer_id from {{ ref('stg_mm_telemetry_prod__license') }
+    union
+    select distinct license_id, customer_id from  {{ ref('stg_mattermost2__license') }}
+    union
+    select distinct license_id from {{ ref('stg_cws__license') }}
+), onprem_servers as (
     -- On prem licenses
     select distinct
-        cws_license.customer_id,
-        cws_license.license_id,
+        spine.customer_id,
+        spine.license_id,
         coalesce(rudder_license.server_id, segment_license.server_id) as server_id
     from
-        {{ ref('stg_cws__license') }} cws_license
+        license_spine as spine
         left join {{ ref('stg_mm_telemetry_prod__license') }} as rudder_license on cws_license.license_id = rudder_license.license_id
         left join {{ ref('stg_mattermost2__license') }} as segment_license on cws_license.license_id = segment_license.license_id
 ), cloud_servers as (
