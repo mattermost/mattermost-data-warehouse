@@ -7,8 +7,8 @@
 with onprem_servers as (
     -- On prem licenses
     select distinct
-        cws.customer_id,
-        cws.license_id,
+        cws_license.customer_id,
+        cws_license.license_id,
         coalesce(rudder_license.server_id, segment_license.server_id) as server_id
     from
         {{ ref('stg_cws__license') }} cws_license
