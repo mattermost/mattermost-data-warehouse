@@ -5,12 +5,23 @@
 }}
 
 with license_spine as (
-    select distinct license_id, customer_id from {{ ref('stg_mm_telemetry_prod__license') }}
+    select
+        distinct license_id, customer_id
+    from
+        {{ ref('stg_mm_telemetry_prod__license') }}
+    where
+        license_id is not null and installation_id is null
+
     union
+
     select distinct license_id, customer_id from  {{ ref('stg_mattermost2__license') }}
+
     union
+
     select distinct license_id, customer_id from {{ ref('stg_cws__license') }}
+
     union
+
     select distinct license_id, customer_id from {{ ref('stg_licenses__licenses') }}
 ), onprem_servers as (
     -- On prem licenses
@@ -33,6 +44,7 @@ with license_spine as (
     where
         -- Not all servers are cloud servers, so ignore the ones without installation ids
         installation_id is not null
+        and license_id is null
 
     union
 
