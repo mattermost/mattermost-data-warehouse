@@ -81,7 +81,7 @@ select
     null as installation_id,
     null as installation_hostname,
     'Self-hosted' as type,
-    source
+    sources
 from
     onprem_servers
 
@@ -95,6 +95,6 @@ select
     installation_id,
     installation_hostname,
     'Cloud' as type,
-    source
+    sources
 from
     cloud_servers
