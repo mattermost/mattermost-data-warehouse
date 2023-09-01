@@ -44,6 +44,15 @@ with license_spine as (
     where
         -- Not all servers are cloud servers, so ignore the ones without installation ids
         installation_id is not null
+
+    union
+
+    select
+        cws_installation as installation_id
+    from
+        {{ ref('stg_stripe__subscriptions') }}
+    where
+        cws_installation is not null
 ), cloud_servers as (
     -- Cloud installations
     select distinct
