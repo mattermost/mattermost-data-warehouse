@@ -5,7 +5,6 @@ from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOpera
 
 from dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, pod_defaults, pod_env_vars, send_alert
 from dags.kube_secrets import (
-    CLEARBIT_KEY,
     DBT_CLOUD_API_ACCOUNT_ID,
     DBT_CLOUD_API_KEY,
     SNOWFLAKE_ACCOUNT,
@@ -100,39 +99,4 @@ dbt_run_cloud_mattermost_analytics_hourly = KubernetesPodOperator(
     dag=dag,
 )
 
-
-update_clearbit = KubernetesPodOperator(
-    **pod_defaults,
-    image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
-    task_id="update-clearbit",
-    name="update-clearbit",
-    secrets=[
-        SNOWFLAKE_USER,
-        SNOWFLAKE_PASSWORD,
-        SNOWFLAKE_ACCOUNT,
-        SNOWFLAKE_TRANSFORM_WAREHOUSE,
-        CLEARBIT_KEY,
-    ],
-    env_vars=env_vars,
-    arguments=["python -m utils.cloud_clearbit"],
-    dag=dag,
-)
-
-update_onprem_clearbit = KubernetesPodOperator(
-    **pod_defaults,
-    image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
-    task_id="update-onprem-clearbit",
-    name="update-onprem-clearbit",
-    secrets=[
-        SNOWFLAKE_USER,
-        SNOWFLAKE_PASSWORD,
-        SNOWFLAKE_ACCOUNT,
-        SNOWFLAKE_TRANSFORM_WAREHOUSE,
-        CLEARBIT_KEY,
-    ],
-    env_vars=env_vars,
-    arguments=["python -m utils.onprem_clearbit"],
-    dag=dag,
-)
-
-user_agent >> [dbt_run_cloud, dbt_run_cloud_mattermost_analytics_hourly] >> update_clearbit >> update_onprem_clearbit
+user_agent >> [dbt_run_cloud, dbt_run_cloud_mattermost_analytics_hourly]
