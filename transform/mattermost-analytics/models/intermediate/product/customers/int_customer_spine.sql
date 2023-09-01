@@ -40,11 +40,10 @@ with license_spine as (
     select
         installation_id
     from
-        {{ ref('stg_mm_telemetry_prod__license') }}
+        {{ ref('stg_mm_telemetry_prod__server') }}
     where
         -- Not all servers are cloud servers, so ignore the ones without installation ids
         installation_id is not null
-        and license_id is null
 
     union
 
