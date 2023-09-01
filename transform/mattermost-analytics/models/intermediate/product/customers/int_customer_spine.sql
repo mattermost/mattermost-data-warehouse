@@ -14,15 +14,15 @@ with license_spine as (
 
     union
 
-    select distinct license_id, customer_id from  {{ ref('stg_mattermost2__license') }}, 'Segment' as source
+    select distinct license_id, customer_id, 'Segment' as source from  {{ ref('stg_mattermost2__license') }}
 
     union
 
-    select distinct license_id, customer_id from {{ ref('stg_cws__license') }}, 'CWS' as source
+    select distinct license_id, customer_id, 'CWS' as source from {{ ref('stg_cws__license') }}
 
     union
 
-    select distinct license_id, customer_id from {{ ref('stg_licenses__licenses') }}, 'Legacy Licenses' as source
+    select distinct license_id, customer_id, 'Legacy Licenses' as source from {{ ref('stg_licenses__licenses') }}
 ), onprem_servers as (
     -- On prem licenses
     select distinct
