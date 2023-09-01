@@ -30,7 +30,7 @@ with license_spine as (
         spine.license_id,
         coalesce(c.customer_id, legacy.stripe_customer_id) as stripe_customer_id,
         coalesce(rudder_license.server_id, segment_license.server_id) as server_id,
-        array_agg(spine.source) as sources
+        array_agg(distinct spine.source) as sources
     from
         license_spine as spine
         left join {{ ref('stg_mm_telemetry_prod__license') }} rudder_license on spine.license_id = rudder_license.license_id
@@ -65,7 +65,7 @@ with license_spine as (
         spine.installation_id as installation_id,
         s.cws_dns as installation_hostname,
         srv.server_id,
-        array_agg(spine.source) as sources
+        array_agg(distinct spine.source) as sources
     from
         cloud_spine spine
         left join {{ ref('stg_mm_telemetry_prod__server') }} srv on srv.installation_id = spine.installation_id
