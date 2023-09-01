@@ -20,6 +20,7 @@ renamed as (
         , license_id
         , anonymous_id
         , customer_id
+        , coalesce(context_traits_installationid,  context_traits_installation_id) as installation_id
 
         -- License information
         , edition as license_name
@@ -60,7 +61,6 @@ renamed as (
         -- Server information
         -- IP address
         , context_ip as server_ip
-        , coalesce(context_traits_installationid,  context_traits_installation_id) as installation_id
 
         -- Metadata from Rudderstack
         , context_library_version
