@@ -54,10 +54,11 @@ renamed as (
         -- Metadata from Segment
         , context_library_version
         , context_library_name
-        , uuid_ts
         , sent_at
         , original_timestamp
 
+        -- Ignored - used by segment for debugging purposes
+        -- , uuid_ts
     from source
 
 )

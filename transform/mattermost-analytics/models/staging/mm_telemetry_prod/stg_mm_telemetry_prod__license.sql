@@ -65,7 +65,6 @@ renamed as (
         -- Metadata from Rudderstack
         , context_library_version
         , context_library_name
-        , uuid_ts
         , sent_at
         , original_timestamp
 
@@ -76,6 +75,8 @@ renamed as (
         -- , context_source_id
         -- , context_source_type
         -- , context_destination_id
+        -- Ignored - used by Rudderstack for debugging purposes
+        -- , uuid_ts
 
     from source
 

@@ -229,3 +229,101 @@ models:
         description: The name of Rudderstack library used to send this event.
       - name: sent_at
       - name: original_timestamp
+
+  - name: stg_mm_telemetry_prod__license
+    description: |
+     Telemetry containing license related data. Telemetry source is server-side components via Rudderstack.
+    columns:
+      - name: event_id
+        description: The event's id.
+      - name: event_name
+        description: The name of the event.
+      - name: event_table
+        description: The name of the event table.
+      - name: server_id
+        description: The ID of the server the event originated from.
+      - name: received_at
+        description: Timestamp registered by Segment when the event was ingested (received).
+      - name: timestamp
+        description: Timestamp registered by Segment when the event occured refactored to clients clock skew.
+      - name: license_id
+        description: The id of the license used at the time the event was sent.
+      - name: customer_id
+        description: The customer ID, as defined in the license.
+      - name: installation_id
+        description: The id of the installation
+      - name: anonymous_id
+        description: Server's anonymous ID.
+      - name: license_name
+        description: The name of the current license.
+      - name: licensed_seats
+        description: The number of licensed seats for the current license.
+      - name: issued_at
+        description: The date and time the license was issued at.
+      - name: start_at
+        description: The date and time the license started at.
+      - name: expire_at
+        description: The date and time the license expires at.
+      - name: is_feature_advanced_logging_enabled
+        description: Whether feature "feature_advanced_logging" is enabled.
+      - name: is_feature_cloud_enabled
+        description: Whether feature "feature_cloud" is enabled.
+      - name: is_feature_cluster_enabled
+        description: Whether feature "feature_cluster" is enabled.
+      - name: is_feature_compliance_enabled
+        description: Whether feature "feature_compliance" is enabled.
+      - name: is_feature_custom_permissions_schemes_enabled
+        description: Whether feature "feature_custom_permissions_schemes" is enabled.
+      - name: is_feature_data_retention_enabled
+        description: Whether feature "feature_data_retention" is enabled.
+      - name: is_feature_elastic_search_enabled
+        description: Whether feature "feature_elastic_search" is enabled.
+      - name: is_feature_email_notification_contents_enabled
+        description: Whether feature "feature_email_notification_contents" is enabled.
+      - name: is_feature_enterprise_plugins_enabled
+        description: Whether feature "feature_enterprise_plugins" is enabled.
+      - name: is_feature_future_enabled
+        description: Whether feature "feature_future" is enabled.
+      - name: is_feature_google_enabled
+        description: Whether feature "feature_google" is enabled.
+      - name: is_feature_guest_accounts_enabled
+        description: Whether feature "feature_guest_accounts" is enabled.
+      - name: is_feature_guest_accounts_permissions_enabled
+        description: Whether feature "feature_guest_accounts_permissions" is enabled.
+      - name: is_feature_id_loaded_enabled
+        description: Whether feature "feature_id_loaded" is enabled.
+      - name: is_feature_ldap_enabled
+        description: Whether feature "feature_ldap" is enabled.
+      - name: is_feature_ldap_groups_enabled
+        description: Whether feature "feature_ldap_groups" is enabled.
+      - name: is_feature_lock_teammate_name_display_enabled
+        description: Whether feature "feature_lock_teammate_name_display" is enabled.
+      - name: is_feature_message_export_enabled
+        description: Whether feature "feature_message_export" is enabled.
+      - name: is_feature_metrics_enabled
+        description: Whether feature "feature_metrics" is enabled.
+      - name: is_feature_mfa_enabled
+        description: Whether feature "feature_mfa" is enabled.
+      - name: is_feature_mhpns_enabled
+        description: Whether feature "feature_mhpns" is enabled.
+      - name: is_feature_office365_enabled
+        description: Whether feature "feature_office365" is enabled.
+      - name: is_feature_office_365_enabled
+        description: Whether feature "feature_office_365" is enabled.
+      - name: is_feature_openid_enabled
+        description: Whether feature "feature_openid" is enabled.
+      - name: is_feature_remote_cluster_service_enabled
+        description: Whether feature "feature_remote_cluster_service" is enabled.
+      - name: is_feature_saml_enabled
+        description: Whether feature "feature_saml" is enabled.
+      - name: is_feature_shared_channels_enabled
+        description: Whether feature "feature_shared_channels" is enabled.
+      - name: server_ip
+        description: |
+          The server's IP address. See [Rudderstack docs](https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/#how-rudderstack-collects-ip-address) for more information.
+      - name: context_library_version
+        description: The version of Segment library used to send this event.
+      - name: context_library_name
+        description: The name of Segment library used to send this event.
+      - name: sent_at
+      - name: original_timestamp

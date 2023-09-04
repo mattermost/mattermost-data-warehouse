@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: int_customers_spine
+    description: |
+      A list of all reported combinations of:
+      - Customer ID
+      - Stripe customer ID
+      - License ID
+      - Installation ID
+
+      There are a few important assumptions:
+      - A server might be mapped to multiple licenses (due to renewals, upgrades etc).
+      - A license ID should exist only for a single server.
+      - A server might be mapped to a single installation id.
+
+    columns:
+      - name: customer_id
+        description: The ID of the customer, as reported in CWS.
+      - name: stripe_customer_id
+        description: The Stripe ID for the customer mapping to the given license or installation id.
+      - name: server_id
+        description: The server ID for the current license or installation.
+      - name: license_id
+        description: The ID of the license. Present only for self-hosted installations.
+      - name: installation_id
+        description: The installation of the server. Present only for cloud installations.
+      - name: hostname
+        description: The cloud URL for the server. Present only for cloud installations.
+      - name: installation_type
+        description: Type of installation. Can be either `Self-hosted` or `Cloud`.
+      - name: sources
+        description: The source of the information for the current row.

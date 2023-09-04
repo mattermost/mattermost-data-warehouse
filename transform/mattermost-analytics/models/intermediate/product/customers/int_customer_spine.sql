@@ -63,7 +63,7 @@ with license_spine as (
         c.portal_customer_id as customer_id,
         c.customer_id as stripe_customer_id,
         spine.installation_id as installation_id,
-        s.cws_dns as installation_hostname,
+        s.cws_dns as hostname,
         srv.server_id,
         array_agg(distinct spine.source) as sources
     from
@@ -79,8 +79,8 @@ select
     server_id,
     license_id,
     null as installation_id,
-    null as installation_hostname,
-    'Self-hosted' as type,
+    null as hostname,
+    'Self-hosted' as installation_type,
     sources
 from
     onprem_servers
@@ -93,8 +93,8 @@ select
     server_id,
     null as license_id,
     installation_id,
-    installation_hostname,
-    'Cloud' as type,
+    hostname,
+    'Cloud' as installation_type,
     sources
 from
     cloud_servers
