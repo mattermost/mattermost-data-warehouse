@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: int_customers_spine
+  - name: int_customer_spine
     description: |
       A list of all reported combinations of:
       - Customer ID
