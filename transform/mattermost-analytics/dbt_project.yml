@@ -74,6 +74,7 @@ models:
           # Hightouch syncs should be as close to real time as possible.
           tags: ['hourly']
       marketing:
+        schema: mart_marketing
         tags: ['nightly']
     utilities:
       +materialized: table
