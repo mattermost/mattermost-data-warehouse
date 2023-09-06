@@ -23,7 +23,7 @@ models:
       - name: received_at
         description: Timestamp registered by Segment when the event was ingested (received).
       - name: timestamp
-        description: Timestamp registered by Segment when the event occured refactored to clients clock skew.
+        description: Timestamp registered by Segment when the event occurred refactored to clients clock skew.
 
   - name: stg_mattermost2__server
     description: |
@@ -41,7 +41,7 @@ models:
       - name: received_at
         description: Timestamp registered by Segment when the event was ingested (received).
       - name: timestamp
-        description: Timestamp registered by Segment when the event occured refactored to clients clock skew.
+        description: Timestamp registered by Segment when the event occurred refactored to clients clock skew.
       - name: count_system_admins
         description: The total number of system admins at the time the event was submitted.
       - name: version_full
@@ -84,7 +84,7 @@ models:
       - name: received_at
         description: Timestamp registered by Segment when the event was ingested (received).
       - name: timestamp
-        description: Timestamp registered by Segment when the event occured refactored to clients clock skew.
+        description: Timestamp registered by Segment when the event occurred refactored to clients clock skew.
       - name: count_public_channels
         description: Total number of public channels.
       - name: count_deleted_public_channels
@@ -131,3 +131,32 @@ models:
         description: The name of Segment library used to send this event.
       - name: sent_at
       - name: original_timestamp
+
+  - name: stg_mattermost2__oauth
+    description: Telemetry related to OAuth authentication configuration.
+    columns:
+      - name: event_id
+        description: The event's id.
+      - name: event_name
+        description: The name of the event.
+      - name: event_table
+        description: The name of the event table.
+      - name: server_id
+        description: The ID of the server the event originated from.
+      - name: received_at
+        description: Timestamp registered by Segment when the event was ingested (received).
+      - name: timestamp
+        description: Timestamp registered by Segment when the event occurred refactored to clients clock skew.
+      - name: is_office365_enabled
+        description: Whether Office365 OAuth is enabled
+      - name: is_google_enabled
+        description: Whether Google OAuth is enabled
+      - name: is_gitlab_enabled
+        description: Whether Gitlab OAuth is enabled
+      - name: context_library_version
+        description: The version of Segment library used to send this event.
+      - name: context_library_name
+        description: The name of Segment library used to send this event.
+      - name: sent_at
+      - name: original_timestamp
+

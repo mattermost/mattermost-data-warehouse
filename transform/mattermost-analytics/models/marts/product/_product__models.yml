@@ -234,3 +234,26 @@ models:
           - `Cloud`: server always reports an installation id
           - `Self-hosted`: server always reports a null installation id.
           - `Unknown`: missing server info or server reports a mix of cloud and self hosted.
+
+  - name: dim_daily_server_config
+    description: Daily server configuration.
+    columns:
+      - name: daily_server_id
+        description: A unique id for each server and date
+        tests:
+          - unique
+          - not_null
+      - name: is_office365_enabled
+        description: Whether Office365 OAuth is enabled
+      - name: is_google_enabled
+        description: Whether Google OAuth is enabled
+      - name: is_gitlab_enabled
+        description: Whether Gitlab OAuth is enabled
+      - name: is_openid_enabled
+        description: Whether OpenID OAuth is enabled
+      - name: is_openid_google_enabled
+        description: Whether OpenID with Google OAuth is enabled
+      - name: is_openid_gitlab_enabled
+        description: Whether OpenID with Gitlab OAuth is enabled
+      - name: is_openid_office365_enabled
+        description: Whether OpenID with Office365 OAuth is enabled
