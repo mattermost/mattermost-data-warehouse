@@ -110,6 +110,7 @@ select
     coalesce(activity.monthly_active_users, legacy_activity.monthly_active_users, 0) as monthly_active_users,
     coalesce(activity.count_registered_users, legacy_activity.count_registered_users, 0) as count_registered_users,
     coalesce(activity.count_registered_deactivated_users, legacy_activity.count_registered_deactivated_users, 0) as count_registered_deactivated_users,
+    coalesce(count_registered_users, 0) - coalesce(count_registered_deactivated_users, 0) as count_registered_active_users
 
     -- Metadata regarding telemetry/activity availability
     t.daily_server_id is not null as has_telemetry_data,

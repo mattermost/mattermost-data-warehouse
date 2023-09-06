@@ -52,6 +52,10 @@ models:
         description: Total number of registered users. Includes deleted users.
       - name: count_registered_deactivated_users
         description: Number of deleted users.
+      - name: count_registered_active_users
+        description: |
+          Total number of active registered users. Calculated as 
+          `count_registered_users - count_registered_deactivated_users`.
       - name: has_telemetry_data
         description: Whether there were telemetry data reported for this server on the given date.
       - name: has_legacy_telemetry_data
