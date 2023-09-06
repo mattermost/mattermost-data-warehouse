@@ -204,6 +204,8 @@ models:
               field: version_id
       - name: installation_type
         description: The method used for installing the Mattermost server (docker, deb package, ...).
+      - name: registered_user_bin
+        description: The group the server belongs based on the number of active (non deleted) registered users.
       - name: is_enterprise_ready
         description: Whether the server is running an enterprise ready build.
       - name: count_reported_versions
