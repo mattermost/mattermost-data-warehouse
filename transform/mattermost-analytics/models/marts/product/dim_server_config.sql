@@ -1,8 +1,8 @@
 with segment_oauth as (
     select
         server_id,
-        (timestamp as date) AS server_date,
-        {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} AS daily_server_id
+        cast(timestamp as date) as server_date,
+        {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
 
         is_office365_enabled,
         is_google_enabled,
@@ -13,8 +13,8 @@ with segment_oauth as (
 ), rudderstack_oauth as (
     select
         server_id,
-        (timestamp as date) AS server_date,
-        {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} AS daily_server_id
+        cast(timestamp as date) as server_date,
+        {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
 
         is_office365_enabled,
         is_google_enabled,
