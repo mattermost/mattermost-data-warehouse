@@ -33,6 +33,7 @@ select
     coalesce(r.is_google_enabled, s.is_google_enabled) as is_google_enabled,
     coalesce(r.is_gitlab_enabled, s.is_gitlab_enabled) as is_gitlab_enabled,
     case when r.is_openid_enabled = true then true else false end as is_openid_enabled,
+    case when r.is_openid_google_enabled = true then true else false end as is_openid_google_enabled,
     case when r.is_openid_gitlab_enabled = true then true else false end as is_openid_gitlab_enabled,
     case when r.is_openid_office365_enabled = true then true else false end as is_openid_office365_enabled
 from

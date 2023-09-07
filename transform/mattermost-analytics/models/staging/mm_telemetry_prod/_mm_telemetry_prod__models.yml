@@ -23,7 +23,7 @@ models:
       - name: received_at
         description: Timestamp registered by RudderStack when the event was ingested (received).
       - name: timestamp
-        description: Timestamp registered by RudderStack when the event occured refactored to clients clock skew.
+        description: Timestamp registered by RudderStack when the event occurred refactored to clients clock skew.
 
   - name: stg_mm_telemetry_prod__performance_events
     description: |
@@ -80,7 +80,7 @@ models:
       - name: received_at
         description: Timestamp registered by Segment when the event was ingested (received).
       - name: timestamp
-        description: Timestamp registered by Segment when the event occured refactored to clients clock skew.
+        description: Timestamp registered by Segment when the event occurred refactored to clients clock skew.
       - name: count_system_admins
         description: The total number of system admins at the time the event was submitted.
       - name: version_full
@@ -132,7 +132,7 @@ models:
       - name: received_at
         description: Timestamp registered by Segment when the event was ingested (received).
       - name: timestamp
-        description: Timestamp registered by Segment when the event occured refactored to clients clock skew.
+        description: Timestamp registered by Segment when the event occurred refactored to clients clock skew.
       - name: installation_id
         description: The id of the installation
       - name: anonymous_id
@@ -180,6 +180,49 @@ models:
         description: Total number of bot accounts.
       - name: guest_accounts
         description: Total number of guest users, excluding deleted.
+      - name: context_library_version
+        description: The version of Rudderstack library used to send this event.
+      - name: context_library_name
+        description: The name of Rudderstack library used to send this event.
+      - name: sent_at
+      - name: original_timestamp
+
+  - name: stg_mm_telemetry_prod__oauth
+    description: OAuth server configuration.
+    columns:
+      - name: event_id
+        description: The event's id.
+      - name: event_name
+        description: The name of the event.
+      - name: event_table
+        description: The name of the event table.
+      - name: server_id
+        description: The ID of the server the event originated from.
+      - name: received_at
+        description: Timestamp registered by Segment when the event was ingested (received).
+      - name: timestamp
+        description: Timestamp registered by Segment when the event occurred refactored to clients clock skew.
+      - name: installation_id
+        description: The id of the installation
+      - name: anonymous_id
+        description: Server's anonymous ID.
+      - name: server_ip
+        description: |
+          The server's IP address. See [Rudderstack docs](https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/#how-rudderstack-collects-ip-address) for more information.
+      - name: is_office365_enabled
+        description: Whether Office365 OAuth is enabled
+      - name: is_google_enabled
+        description: Whether Google OAuth is enabled
+      - name: is_gitlab_enabled
+        description: Whether Gitlab OAuth is enabled
+      - name: is_openid_enabled
+        description: Whether OpenID OAuth is enabled
+      - name: is_openid_google_enabled
+        description: Whether OpenID with Google OAuth is enabled
+      - name: is_openid_gitlab_enabled
+        description: Whether OpenID with Gitlab OAuth is enabled
+      - name: is_openid_office365_enabled
+        description: Whether OpenID with Office365 OAuth is enabled
       - name: context_library_version
         description: The version of Rudderstack library used to send this event.
       - name: context_library_name
