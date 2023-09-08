@@ -16,7 +16,7 @@ renamed as (
             when subscriptionid like 'non-subscription license for%' then null
             else subscriptionid
         end as subscription_id
-        , extract_license_data(payload) as _license
+        , mattermost_analytics.extract_license_data(payload) as _license
         , to_timestamp(_license:issued_at::int / 1000) as issued_at
         , to_timestamp(_license:starts_at::int / 1000) as starts_at
         , to_timestamp(_license:expires_at::int / 1000) as expires_at
