@@ -130,3 +130,4 @@ vars:
 
 on-run-start:
   -  '{{ create_parse_qs_udf()}}'
+  -  '{{ create_extract_license_data_udf()}}'

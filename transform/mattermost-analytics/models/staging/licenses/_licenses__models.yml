@@ -1,0 +1,23 @@
+version: 2
+
+models:
+  - name: stg_licenses__licenses
+    description: Pre-CWS license data.
+
+    columns:
+      - name: license_id
+        description: The ID of the license
+        tests:
+          - not_null
+      - name: customer_id
+        description: The customer's ID
+      - name: company_name
+        description: The company's name
+      - name: contact_email
+        description: The email for which the license was issued for
+      - name: stripe_customer_id
+        description: The ID of the Stripe customer
+      - name: issued_at
+        description: The timestamp when the license was issued at.
+      - name: expires_at
+        
