@@ -52,6 +52,8 @@ subscriptions as (
         metadata:"cws-dns"::varchar as cws_dns,
         metadata:"cws-installation"::varchar as cws_installation,
         metadata:"cws-installation-state"::varchar as cws_installation_state,
+        case when metadata:"cloud"::boolean = true then true else false end as is_cloud,
+        case when metadata:"cws-is-paid-tier"::boolean = true then true else false end as is_paid_tier,
 
         -- SFDC migration metadata
         TO_TIMESTAMP_NTZ(metadata:"sfdc-original-start-date"::varchar) as sfdc_migrated_started_at,
@@ -84,7 +86,8 @@ subscriptions as (
         case when metadata:"cws-license-admin-generated"::boolean = true then true else false end as is_admin_generated_license,
         metadata:"renewal-type"::varchar as renewal_type,
         plan:"name"::varchar as edition,
-        TO_TIMESTAMP_NTZ(metadata:"cws-date-converted-to-paid"::int) as converted_to_paid_at
+        TO_TIMESTAMP_NTZ(metadata:"cws-date-converted-to-paid"::int) as converted_to_paid_at,
+        metadata:"cws-purchase-source"::varchar as purchase_source
 
     from source
 

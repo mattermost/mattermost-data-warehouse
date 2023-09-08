@@ -78,7 +78,9 @@ models:
       - SFDC migrated licenses
       - Custom backfilling
       
-      More details are available in [Confluence](https://mattermost.atlassian.net/wiki/spaces/DATAENG/pages/2453733377/Self-Hosted+Self+Serve+Subscription+Renewals).
+      More details are available in Confluence:
+      - [Self-hosted](https://mattermost.atlassian.net/wiki/spaces/DATAENG/pages/2453733377/Self-Hosted+Self+Serve+Subscription+Renewals)
+      - [Cloud](https://mattermost.atlassian.net/wiki/spaces/DATAENG/pages/2455633921/Cloud+Mattermost+Cloud+Subscriptions+with+history)
     columns:
       - name: subscription_id
         tests:
@@ -161,6 +163,13 @@ models:
         description: The installation ID of the subscription.
       - name: cws_installation_state
         description: The installation state of the subscription.
+      - name: is_cloud
+        description: Whether this is a cloud or self-hosted subscription.
+      - name: is_paid_tier
+        description: |
+          This value was the main mechanism driving the "upgraded" experience in Mattermost Cloud. When a customer added
+          a payment method, we'd adjust the value for this variable to true. A workspace in the paid tier would not be
+          limited by the 10 user creation limit, and wouldn’t see any banners/etc prompting them to "subscribe".
       - name: sfdc_migrated_started_at
         description: The license start date of the migrated subscription.
       - name: actual_renewal_at
@@ -200,6 +209,8 @@ models:
         description: The edition of the subscription
       - name: converted_to_paid_at
         description: The timestamp when the subscription was converted to paid status
+      - name: purchase_source
+        description:
     tests:
       - dbt_utils.expression_is_true:
             name: license_start_date_before_end_Date
