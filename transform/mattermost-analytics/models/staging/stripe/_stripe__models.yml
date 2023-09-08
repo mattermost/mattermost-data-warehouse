@@ -81,12 +81,13 @@ models:
       More details are available in Confluence:
       - [Self-hosted](https://mattermost.atlassian.net/wiki/spaces/DATAENG/pages/2453733377/Self-Hosted+Self+Serve+Subscription+Renewals)
       - [Cloud](https://mattermost.atlassian.net/wiki/spaces/DATAENG/pages/2455633921/Cloud+Mattermost+Cloud+Subscriptions+with+history)
+
     columns:
       - name: subscription_id
+        description: The ID of the subscription.
         tests:
           - not_null
           - unique
-        description: The ID of the subscription.
       - name: customer_id
         description: The customer to whom the subscription belongs.
       - name: latest_invoice_id
@@ -176,7 +177,7 @@ models:
         description: The timestamp of the actual renewal date for the subscription
       - name: license_start_at
         description: |
-          The start date of the subscription's license. The priority for deciding which field or value should be used 
+          The start date of the subscription's license. The priority for deciding which field or value should be used
           for the license's start date is the following:
           - If it's an SFDC migrated license, then value of `sfdc_migrated_started_at`.
           - In case of a bug where license start date from CWS doesn't exist but end date exists, then derive it as 1 year from start.
@@ -188,7 +189,7 @@ models:
               expression: '>= ''2010-01-01'''
       - name: license_end_at
         description: |
-          The end date of the subscription's license. The priority for deciding which field or value should be used for  
+          The end date of the subscription's license. The priority for deciding which field or value should be used for
           the license's start date is the following:
           - If license end date from CWS is available, then use this date.
           - If the license is marked as migrated from SFDC, then use `current_period_end_at`
@@ -206,15 +207,15 @@ models:
       - name: renewal_type
         description: If `sales-only`, it cannot be renewed by self-serve.
       - name: edition
-        description: The edition of the subscription
+        description: The edition of the subscription.
       - name: converted_to_paid_at
-        description: The timestamp when the subscription was converted to paid status
+        description: The timestamp when the subscription was converted to paid status.
       - name: purchase_source
-        description:
+        description: The source that recorded the purchase.
     tests:
       - dbt_utils.expression_is_true:
-            name: license_start_date_before_end_Date
-            expression: 'license_start_at <= license_end_at'
+          name: license_start_date_before_end_Date
+          expression: 'license_start_at <= license_end_at'
 
   - name: stg_stripe__products
     description: A staging table for Stripe products data.
