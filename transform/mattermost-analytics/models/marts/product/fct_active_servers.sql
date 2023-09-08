@@ -12,7 +12,7 @@ select
         when count_registered_active_users < 10 then '< 10'
         when count_registered_active_users >= 10 and count_registered_active_users < 100 then '10-100'
         when count_registered_active_users >= 100 and count_registered_active_users < 250 then '100-250'
-        when count_registered_active_users >= 250 and count_registered_active_users < 1000 then '250-500'
+        when count_registered_active_users >= 250 and count_registered_active_users < 500 then '250-500'
         when count_registered_active_users >= 500 and count_registered_active_users < 1000 then '500-1000'
         when count_registered_active_users >= 1000 and count_registered_active_users < 2500 then '1000-2500'
         when count_registered_active_users >= 2500 then '>=2500'
