@@ -265,59 +265,59 @@ models:
       - name: expire_at
         description: The date and time the license expires at.
       - name: is_feature_advanced_logging_enabled
-        description: Whether feature "feature_advanced_logging" is enabled.
+        description: Whether feature "advanced_logging" is enabled.
       - name: is_feature_cloud_enabled
-        description: Whether feature "feature_cloud" is enabled.
+        description: Whether feature "cloud" is enabled.
       - name: is_feature_cluster_enabled
-        description: Whether feature "feature_cluster" is enabled.
+        description: Whether feature "cluster" is enabled.
       - name: is_feature_compliance_enabled
-        description: Whether feature "feature_compliance" is enabled.
+        description: Whether feature "compliance" is enabled.
       - name: is_feature_custom_permissions_schemes_enabled
-        description: Whether feature "feature_custom_permissions_schemes" is enabled.
+        description: Whether feature "custom_permissions_schemes" is enabled.
       - name: is_feature_data_retention_enabled
-        description: Whether feature "feature_data_retention" is enabled.
+        description: Whether feature "data_retention" is enabled.
       - name: is_feature_elastic_search_enabled
-        description: Whether feature "feature_elastic_search" is enabled.
+        description: Whether feature "elastic_search" is enabled.
       - name: is_feature_email_notification_contents_enabled
-        description: Whether feature "feature_email_notification_contents" is enabled.
+        description: Whether feature "email_notification_contents" is enabled.
       - name: is_feature_enterprise_plugins_enabled
-        description: Whether feature "feature_enterprise_plugins" is enabled.
+        description: Whether feature "enterprise_plugins" is enabled.
       - name: is_feature_future_enabled
-        description: Whether feature "feature_future" is enabled.
+        description: Whether feature "future" is enabled.
       - name: is_feature_google_enabled
-        description: Whether feature "feature_google" is enabled.
+        description: Whether feature "google" is enabled.
       - name: is_feature_guest_accounts_enabled
-        description: Whether feature "feature_guest_accounts" is enabled.
+        description: Whether feature "guest_accounts" is enabled.
       - name: is_feature_guest_accounts_permissions_enabled
-        description: Whether feature "feature_guest_accounts_permissions" is enabled.
+        description: Whether feature "guest_accounts_permissions" is enabled.
       - name: is_feature_id_loaded_enabled
-        description: Whether feature "feature_id_loaded" is enabled.
+        description: Whether feature "id_loaded" is enabled.
       - name: is_feature_ldap_enabled
-        description: Whether feature "feature_ldap" is enabled.
+        description: Whether feature "ldap" is enabled.
       - name: is_feature_ldap_groups_enabled
-        description: Whether feature "feature_ldap_groups" is enabled.
+        description: Whether feature "ldap_groups" is enabled.
       - name: is_feature_lock_teammate_name_display_enabled
-        description: Whether feature "feature_lock_teammate_name_display" is enabled.
+        description: Whether feature "lock_teammate_name_display" is enabled.
       - name: is_feature_message_export_enabled
-        description: Whether feature "feature_message_export" is enabled.
+        description: Whether feature "message_export" is enabled.
       - name: is_feature_metrics_enabled
-        description: Whether feature "feature_metrics" is enabled.
+        description: Whether feature "metrics" is enabled.
       - name: is_feature_mfa_enabled
-        description: Whether feature "feature_mfa" is enabled.
+        description: Whether feature "mfa" is enabled.
       - name: is_feature_mhpns_enabled
-        description: Whether feature "feature_mhpns" is enabled.
+        description: Whether feature "mhpns" is enabled.
       - name: is_feature_office365_enabled
-        description: Whether feature "feature_office365" is enabled.
+        description: Whether feature "office365" is enabled.
       - name: is_feature_office_365_enabled
-        description: Whether feature "feature_office_365" is enabled.
+        description: Whether feature "office_365" is enabled.
       - name: is_feature_openid_enabled
-        description: Whether feature "feature_openid" is enabled.
+        description: Whether feature "openid" is enabled.
       - name: is_feature_remote_cluster_service_enabled
-        description: Whether feature "feature_remote_cluster_service" is enabled.
+        description: Whether feature "remote_cluster_service" is enabled.
       - name: is_feature_saml_enabled
-        description: Whether feature "feature_saml" is enabled.
+        description: Whether feature "saml" is enabled.
       - name: is_feature_shared_channels_enabled
-        description: Whether feature "feature_shared_channels" is enabled.
+        description: Whether feature "shared_channels" is enabled.
       - name: server_ip
         description: |
           The server's IP address. See [Rudderstack docs](https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/#how-rudderstack-collects-ip-address) for more information.

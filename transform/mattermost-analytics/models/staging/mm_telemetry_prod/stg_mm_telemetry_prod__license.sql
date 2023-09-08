@@ -51,8 +51,7 @@ renamed as (
         , feature_metrics as is_feature_metrics_enabled
         , feature_mfa as is_feature_mfa_enabled
         , feature_mhpns as is_feature_mhpns_enabled
-        , feature_office365 as is_feature_office365_enabled
-        , feature_office_365 as is_feature_office_365_enabled
+        , coalesce(feature_office365, feature_office_365) as is_feature_office365_enabled
         , feature_openid as is_feature_openid_enabled
         , feature_remote_cluster_service as is_feature_remote_cluster_service_enabled
         , feature_saml as is_feature_saml_enabled
