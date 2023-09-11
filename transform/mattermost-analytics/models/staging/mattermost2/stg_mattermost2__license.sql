@@ -22,9 +22,9 @@ renamed as (
         -- License information
         , edition as license_name
         , users as licensed_seats
-        , to_timestamp(issued / 1000) as issued_at
-        , to_timestamp(expire / 1000) as expire_at
-        , to_timestamp(_start / 1000) as start_at
+        , to_timestamp_ntz(issued / 1000) as issued_at
+        , to_timestamp_ntz(expire / 1000) as expire_at
+        , to_timestamp_ntz(_start / 1000) as start_at
 
         -- Features
         , feature_cluster as is_feature_cluster_enabled
