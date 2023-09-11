@@ -8,7 +8,7 @@
 with stripe_licenses as (
     select
         s.license_id,
-        to_timestamp_ntz(date_part(epoch_microsecond, license_end_at)) as expire_at
+        to_timestamp_ntz(date_part(epoch_second, license_end_at)) as expire_at
     from
         {{ ref('stg_stripe__subscriptions')}} s
         left join {{ ref('stg_stripe__subscription_items')}} si on s.subscription_id = si.subscription_id
