@@ -49,9 +49,9 @@ with stripe_licenses as (
     having count(distinct expire_at) > 1
 )
 select
-    license_id,
-    expire_at,
-    source,
+    all_licenses.license_id,
+    all_licenses.expire_at,
+    all_licenses.source,
     -- Mark license IDs with > 1 expiration dates as outliers
     outliers.count_expiration_dates is not null as is_outlier
 from
