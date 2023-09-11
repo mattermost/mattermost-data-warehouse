@@ -82,3 +82,5 @@ renamed as (
 )
 
 select * from renamed
+where
+    expire_at
