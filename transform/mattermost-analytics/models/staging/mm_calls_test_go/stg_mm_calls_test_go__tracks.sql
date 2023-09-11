@@ -1,4 +1,5 @@
-{%- set include_columns = ["plugin_version", "user_id", "actual_user_id", "message_type", "server_version"] -%}
+{%- set include_columns = [ "plugin_version", "user_id", "actual_user_id"
+, "message_type", "server_version"] -%}
 
 WITH tracks AS (
     SELECT
