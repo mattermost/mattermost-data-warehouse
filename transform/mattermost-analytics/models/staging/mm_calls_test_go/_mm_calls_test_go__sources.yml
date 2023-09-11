@@ -1,0 +1,36 @@
+version: 2
+
+sources:
+  - name: mm_calls_test_go
+    database: 'RAW'
+    schema: mm_calls_test_go
+    loader: Rudderstack
+    description: |
+      Mattermost Calls telemetry data. Stored using Rudderstack.
+      
+    tags: [ 'rudderstack' ]
+
+    # Omitting tables with 20 or less rows.
+    tables:
+      - name: call_notify_admin
+      - name: call_ended
+      - name: call_started
+      - name: call_user_joined
+      - name: call_user_left
+      - name: user_close_expanded_view
+      - name: user_close_participants_list
+      - name: user_lower_hand
+      - name: user_open_channel_link
+      - name: user_open_expanded_view
+      - name: user_open_participants_list
+      - name: user_raise_hand
+      - name: user_share_screen
+      - name: user_start_recording
+      - name: user_stop_recording
+      - name: user_unshare_screen
+
+      - name: tracks
+        description: >
+          Contains raw user-level data from rudderstack track method. Note that for every `track` call, RudderStack
+          creates a record in both the `tracks` and `<event_name>` tables.
+
