@@ -25,9 +25,9 @@ renamed as (
         -- License information
         , edition as license_name
         , users as licensed_seats
-        , try_to_timestamp_ntz(issued) as issued_at
-        , try_to_timestamp_ntz(expire) as expire_at
-        , try_to_timestamp_ntz(_start) as start_at
+        , try_to_timestamp_ntz(cast(issued as varchar)) as issued_at
+        , try_to_timestamp_ntz(cast(expire as varchar)) as expire_at
+        , try_to_timestamp_ntz(cast(_start as varchar)) as start_at
 
         -- Features
         , feature_advanced_logging as is_feature_advanced_logging_enabled
