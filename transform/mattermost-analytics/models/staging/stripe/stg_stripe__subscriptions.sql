@@ -67,11 +67,11 @@ subscriptions as (
             when metadata:"cws-license-start-date"::int = 0 and metadata:"cws-license-end-date"::int > 0 then TIMEADD(year, -1, TO_TIMESTAMP_NTZ(metadata:"cws-license-end-date"::int))
             -- Handle bug where both license start and end date is 0
             when metadata:"cws-license-start-date"::int = 0 and metadata:"cws-license-end-date"::int = 0 then current_period_start_at
-            else TO_TIMESTAMP_NTZ(metadata:"cws-license-start-date"::int)
+            else TRY_TO_TIMESTAMP_NTZ(metadata:"cws-license-start-date"::varchar)
         end as license_start_at,
         case
             -- License data available
-            when metadata:"cws-license-end-date"::int > 0 then TO_TIMESTAMP_NTZ(metadata:"cws-license-end-date"::int)
+            when metadata:"cws-license-end-date"::int > 0 then TRY_TO_TIMESTAMP_NTZ(metadata:"cws-license-end-date"::varchar)
             -- Handle backfills
             when sfdc_migrated_license_id is not null then current_period_end_at
             -- Handle bug where both license start and end date is 0
