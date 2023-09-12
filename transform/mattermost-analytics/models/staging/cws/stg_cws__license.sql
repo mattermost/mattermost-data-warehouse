@@ -17,9 +17,9 @@ renamed as (
             else subscriptionid
         end as subscription_id
         , mattermost_analytics.extract_license_data(payload) as _license
-        , to_timestamp_ntz(_license:issued_at::int / 1000) as issued_at
-        , to_timestamp_ntz(_license:starts_at::int / 1000) as starts_at
-        , to_timestamp_ntz(_license:expires_at::int / 1000) as expire_at
+        , try_to_timestamp_ntz(_license:issued_at::int) as issued_at
+        , try_to_timestamp_ntz(_license:starts_at::int) as starts_at
+        , try_to_timestamp_ntz(_license:expires_at::int) as expire_at
         , _license:sku_name::varchar as sku
         , _license:sku_short_name::varchar as sku_short_name
         , _license:is_gov_sku::boolean as is_gov_sku
