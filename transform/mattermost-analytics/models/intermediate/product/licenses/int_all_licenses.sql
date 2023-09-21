@@ -8,8 +8,8 @@
 with stripe_licenses as (
     select
         s.license_id,
-        license_start_at as starts_at,
-        license_end_at as expire_at
+        -- Convert to epoch in order to remove timezone
+        to_timestamp_ntz(date_part(epoch_second, license_end_at)) as expire_at
     from
         {{ ref('stg_stripe__subscriptions')}} s
         left join {{ ref('stg_stripe__subscription_items')}} si on s.subscription_id = si.subscription_id
@@ -26,15 +26,15 @@ with stripe_licenses as (
         -- Ignore invalid records
         and s.license_id is not null
 ), all_licenses as (
-    select license_id, start_at, expire_at, 'CWS' as source from {{ ref('stg_cws__license') }}
+    select license_id, expire_at, 'CWS' as source from {{ ref('stg_cws__license') }}
     union
-    select license_id, starts_at, expire_at, 'Stripe' as source from stripe_licenses
+    select license_id, expire_at, 'Stripe' as source from stripe_licenses
     union
-    select license_id, start_at as starts_at, expire_at, 'Rudderstack' as source from {{ ref('stg_mm_telemetry_prod__license') }} where license_id is not null
+    select license_id, expire_at, 'Rudderstack' as source from {{ ref('stg_mm_telemetry_prod__license') }} where license_id is not null
     union
-    select license_id, start_at as starts_at, expire_at, 'Segment' as source from  {{ ref('stg_mattermost2__license') }} where license_id is not null
+    select license_id, expire_at, 'Segment' as source from  {{ ref('stg_mattermost2__license') }} where license_id is not null
     union
-    select license_id, issued_at as starts_at, expire_at as expire_at, 'Legacy' as source from {{ ref('stg_licenses__licenses') }}
+    select license_id, expire_at, 'Legacy' as source from {{ ref('stg_licenses__licenses') }}
 ), outliers as (
     -- Licenses with more than one expiration date
     select
@@ -50,7 +50,6 @@ with stripe_licenses as (
 )
 select
     all_licenses.license_id,
-    all_licenses.starts_at,
     all_licenses.expire_at,
     all_licenses.source,
     -- Mark license IDs with > 1 expiration dates as outliers
