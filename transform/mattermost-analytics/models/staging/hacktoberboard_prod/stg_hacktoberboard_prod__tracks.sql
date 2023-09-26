@@ -13,5 +13,6 @@ SELECT
         , user_id AS server_id
         , user_actual_id AS user_id
         , received_at AS received_at
+         , timestamp      AS timestamp
 FROM
     tracks
