@@ -30,9 +30,9 @@ with stripe_licenses as (
     union
     select license_id, expire_at, 'Stripe' as source from stripe_licenses
     union
-    select license_id, expire_at, 'Rudderstack' as source from {{ ref('stg_mm_telemetry_prod__license') }} where license_id is not null
+    select license_id, expire_at, 'Rudderstack' as source from {{ ref('stg_mm_telemetry_prod__license') }} where license_id is not null and license_name in ('E10', 'E20', 'enterprise', 'professional')
     union
-    select license_id, expire_at, 'Segment' as source from  {{ ref('stg_mattermost2__license') }} where license_id is not null
+    select license_id, expire_at, 'Segment' as source from  {{ ref('stg_mattermost2__license') }} where license_id is not null and license_name in ('E10', 'E20', 'enterprise', 'professional')
     union
     select license_id, expire_at, 'Legacy' as source from {{ ref('stg_licenses__licenses') }}
 ), outliers as (

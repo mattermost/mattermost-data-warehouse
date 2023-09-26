@@ -32,7 +32,7 @@ renamed as (
         , feature_custom_brand as is_feature_custom_brand_enabled
         , feature_custom_permissions_schemes as is_feature_custom_permissions_schemes_enabled
         , feature_data_retention as is_feature_data_retention_enabled
-        , feature_elastic_search as is_feature_elastic_search_enabled
+        , feature_elastic_search as is_feature_elastic_search_enable
         , feature_email_notification_contents as is_feature_email_notification_contents_enabled
         , feature_enterprise_plugins as is_feature_enterprise_plugins_enabled
         , feature_future as is_feature_future_enabled
