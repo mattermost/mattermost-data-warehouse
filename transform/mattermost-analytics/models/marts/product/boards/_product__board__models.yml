@@ -23,3 +23,39 @@ models:
         description: The number of unique board active users for the date and previous 6 days.
       - name: monthly_active_users
         description: The number of unique board active users for the date and previous 29 days.
+
+  - name: dim_board_customers
+    description: Details about the customers who use boards.
+
+    columns:
+      - name: server_id
+        description: The server's unique id.
+        tests:
+          - not_null
+          - unique
+      - name: name
+        description: The customer's name, as defined in Stripe.
+        tags: ['pii']
+        tests:
+          - not_null
+      - name: contact_first_name
+        description: The first name of the customer's contact person. Exists if it's available in Stripe.
+        tags: ['pii']
+      - name: contact_last_name
+        description: The last name of the customer's contact person. Exists if it's available in Stripe.
+        tags: ['pii']
+      - name: email
+        description: The email of the customer's contact person. Exists if it's available in Stripe.
+        tags: [ 'pii' ]
+        tests:
+          - not_null
+      - name: stripe_customer_id
+        description: The customer's Stripe ID. Useful for manual lookups at Stripe.
+        tests:
+          - not_null
+      - name: server_hostname
+        description: The hostname of the Cloud installation.
+        tests:
+          - not_null
+      - name: plan_name
+        description: The name of the customer's most recent plan.
