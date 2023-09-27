@@ -34,10 +34,8 @@ models:
           - not_null
           - unique
       - name: name
-        description: The customer's name, as defined in Stripe.
+        description: The customer's name, as defined in Stripe. Note that it's possible a name to be empty.
         tags: ['pii']
-        tests:
-          - not_null
       - name: contact_first_name
         description: The first name of the customer's contact person. Exists if it's available in Stripe.
         tags: ['pii']

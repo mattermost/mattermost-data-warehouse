@@ -21,8 +21,7 @@ with hosting_type_info as (
 ), latest_cloud_subscription as (
     select
         s.cws_installation as installation_id,
-        s.cws_dns as cloud_hostname,
-        s.edition as plan_name
+        s.cws_dns as cloud_hostname
     from
         {{ ref('stg_stripe__subscriptions')}} s
     where
@@ -38,8 +37,7 @@ select
         else 'Unknown'
     end as hosting_type,
     l.installation_id,
-    s.cloud_hostname,
-    s.plan_name as latest_plan_name
+    s.cloud_hostname
 from
     hosting_type_info hti
     join latest_values l on hti.server_id = l.server_id

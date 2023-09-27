@@ -241,11 +241,6 @@ models:
         tests:
           - not_null:
               where: "hosting_type = 'Cloud'"
-      - name: latest_plan_name
-        description: The latest cloud plan for this server.
-        tests:
-          - not_null:
-              where: "hosting_type = 'Cloud'"
 
   - name: dim_daily_server_config
     description: Daily server configuration.
