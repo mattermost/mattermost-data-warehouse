@@ -1,7 +1,7 @@
 
 with source as (
 
-    select * from {{ source('hacktoberboard_prod', 'activity') }}
+    select * from {{ source('hacktoberboard_prod', 'server') }}
 
 ),
 
@@ -20,11 +20,12 @@ renamed as (
         , anonymous_id
         , context_ip as server_ip
 
-        -- User metrics
-        , daily_active_users
-        , weekly_active_users
-        , monthly_active_users
-        , registered_users as count_registered_users
+        , version
+        , build_number
+        , build_hash
+        , edition
+        , operating_system
+        , server_id
 
         -- Metadata from Rudderstack
         , context_library_version
