@@ -15,7 +15,7 @@ select
     a.count_registered_users
 from
     {{ ref('stg_hacktoberboard_prod__activity') }} a
-    left join id_mapping m
+    left join id_mapping m on m.telemetry_id = a.telemetry_id
 where
     -- Ignore rows where server date is in the future.
     server_date <= CURRENT_DATE()
