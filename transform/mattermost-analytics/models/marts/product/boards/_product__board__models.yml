@@ -23,6 +23,20 @@ models:
         description: The number of unique board active users for the date and previous 6 days.
       - name: monthly_active_users
         description: The number of unique board active users for the date and previous 29 days.
+      - name: server_daily_active_users
+        description: |
+          Total number of active users for the past 24 hours prior to the timestamp of the event.
+          Reported by mattermost server.
+      - name: server_monthly_active_users
+        description: |
+          Total number of active users for the past 30 days prior to the timestamp of the event.
+          Reported by mattermost server.
+      - name: server_weekly_active_users
+        description: |
+          Total number of active users for the past 30 days prior to the timestamp of the event.
+          Reported by mattermost server.
+      - name: count_registered_users
+        description: Total number of users, excluding deleted users. Reported by mattermost server.
 
   - name: dim_board_customers
     description: Details about the customers who use boards.

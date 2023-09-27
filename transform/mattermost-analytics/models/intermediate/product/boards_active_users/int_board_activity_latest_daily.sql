@@ -3,9 +3,9 @@ select
     CAST(timestamp AS date) AS server_date,
     {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} AS daily_server_id,
     daily_active_users,
+    weekly_active_users,
     monthly_active_users,
-    count_registered_users,
-    count_registered_deactivated_users
+    count_registered_users
 from
     {{ ref('stg_hacktoberboard_prod__activity') }}
 where
