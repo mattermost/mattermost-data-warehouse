@@ -8,7 +8,7 @@ with id_mapping as (
 select
     m.server_id,
     CAST(a.timestamp AS date) AS server_date,
-    {{ dbt_utils.generate_surrogate_key(['m.server_id', 'a.server_date']) }} AS daily_server_id,
+    {{ dbt_utils.generate_surrogate_key(['m.server_id', 'server_date']) }} AS daily_server_id,
     a.daily_active_users,
     a.weekly_active_users,
     a.monthly_active_users,
