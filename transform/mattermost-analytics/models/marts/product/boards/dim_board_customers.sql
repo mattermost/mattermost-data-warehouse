@@ -1,6 +1,5 @@
 select
     sib.server_id,
-    sib.installation_id,
     c.name,
     c.contact_first_name,
     c.contact_last_name,
