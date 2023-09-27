@@ -18,6 +18,7 @@ from
     left join id_mapping m
 where
     -- Ignore rows where server date is in the future.
-    a.server_date <= CURRENT_DATE()
+    server_date <= CURRENT_DATE()
+
 -- Keep latest record per day
-qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
+qualify row_number() over (partition by m.server_id, server_date order by timestamp desc) = 1
