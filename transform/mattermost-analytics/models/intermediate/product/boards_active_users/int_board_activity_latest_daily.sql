@@ -1,4 +1,3 @@
-
 with id_mapping as (
     select
         distinct server_id, telemetry_id
