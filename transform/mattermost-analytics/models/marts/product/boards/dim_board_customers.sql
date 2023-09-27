@@ -14,4 +14,4 @@ from
 where
     s.cws_installation is not null
     and sib.server_id in (select distinct server_id from {{ ref('int_boards_active_days_spined') }})
-qualify row_number() over (partition by server_id order by s.created desc) = 1
+qualify row_number() over (partition by server_id order by s.created_at desc) = 1
