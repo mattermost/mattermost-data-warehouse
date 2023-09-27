@@ -36,14 +36,12 @@ models:
         description: The name of the event.
       - name: event_table
         description: The name of the event table.
-      - name: server_id
-        description: The ID of the server the event originated from.
+      - name: telemetry_id
+        description: The ID of the server the telemetry event originated from.
       - name: received_at
         description: Timestamp registered by Rudderstack when the event was ingested (received).
       - name: timestamp
         description: Timestamp registered by Rudderstack when the event occurred refactored to clients clock skew.
-      - name: installation_id
-        description: The id of the installation
       - name: anonymous_id
         description: Server's anonymous ID.
       - name: server_ip
@@ -61,6 +59,43 @@ models:
       - name: count_registered_users
         description: Total number of users, excluding deleted users.
       - name: count_registered_deactivated_users
+      - name: context_library_version
+        description: The version of Rudderstack library used to send this event.
+      - name: context_library_name
+        description: The name of Rudderstack library used to send this event.
+      - name: sent_at
+      - name: original_timestamp
+
+  - name: stg_hacktoberboard_prod__server
+    description: Server information from focalbaord servers.
+
+    columns:
+      - name: event_id
+        description: The event's id.
+      - name: event_name
+        description: The name of the event.
+      - name: event_table
+        description: The name of the event table.
+      - name: telemetry_id
+        description: The ID of the server the telemetry event originated from.
+      - name: received_at
+        description: Timestamp registered by Rudderstack when the event was ingested (received).
+      - name: timestamp
+        description: Timestamp registered by Rudderstack when the event occurred refactored to clients clock skew.
+      - name: anonymous_id
+        description: Server's anonymous ID.
+      - name: server_ip
+        description: |
+          The server's IP address. See [Rudderstack docs](https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/#how-rudderstack-collects-ip-address) for more information.
+      - name: version
+      - name: build_number
+      - name: build_hash
+      - name: edition
+      - name: operating_system
+      - name: server_id
+        description: |
+          The id of the server the telemetry originates from. Matches server id from `mm_telemetry_prod` or front-end
+          events.
       - name: context_library_version
         description: The version of Rudderstack library used to send this event.
       - name: context_library_name
