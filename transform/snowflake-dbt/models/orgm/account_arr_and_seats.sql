@@ -34,14 +34,14 @@ WITH leap_years AS (
     GROUP BY 1
 ), seats_licensed AS (
     SELECT account.sfid AS account_sfid,
-        SUM(CASE WHEN product2.family = 'License' THEN opportunitylineitem.quantity ELSE 0 END) AS seats
+        SUM(CASE WHEN product2.name like '%E10%' OR product2.name like '%E20%' OR product2.name like '%E25%' THEN opportunitylineitem.quantity ELSE 0 END) AS seats
     FROM {{ ref('account') }}
     LEFT JOIN {{ ref('opportunity') }} ON account.sfid = opportunity.accountid AND opportunity.status_wlo__c = 'Won'
     LEFT JOIN {{ ref('opportunitylineitem') }} ON opportunity.sfid = opportunitylineitem.opportunityid
     LEFT JOIN {{ ref('product2') }} ON opportunitylineitem.product2id = product2.sfid
     WHERE current_date >= opportunitylineitem.start_date__c AND current_date <= opportunitylineitem.end_date__c
     GROUP BY 1
-    HAVING SUM(CASE WHEN product2.family = 'License'  THEN opportunitylineitem.quantity ELSE 0 END) > 0
+    HAVING SUM(CASE WHEN product2.name like '%E10%' OR product2.name like '%E20%' OR product2.name like '%E25%' THEN opportunitylineitem.quantity ELSE 0 END) > 0
 ), account_arr_and_seats AS (
     SELECT
         account.sfid AS account_sfid,
