@@ -4,7 +4,7 @@ select
     c.contact_first_name,
     c.contact_last_name,
     c.email,
-    c.customer_id as stripe_customer_id,
+    c.customer_id as stripe_customer_id
 from
     {{ ref('_int_server_installation_id_bridge')}} sib
     join {{ ref('stg_stripe__subscriptions')}} s on sib.installation_id = s.cws_installation

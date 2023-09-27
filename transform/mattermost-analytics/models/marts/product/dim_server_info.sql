@@ -40,4 +40,4 @@ select
 from
     hosting_type_info hti
     join latest_values l on hti.server_id = l.server_id
-    left join latest_subscription on l.installation_id = s.cws_installation
+    left join latest_subscription s on l.installation_id = s.installation_id
