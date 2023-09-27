@@ -18,6 +18,14 @@ with hosting_type_info as (
          {{ ref('int_server_active_days_spined') }}
     -- Keep latest record per day
     qualify row_number() over (partition by server_id order by activity_date desc) = 1
+), latest_subscription as (
+    select
+        s.cws_installation as installation_id,
+        s.cws_dns as cloud_hostname,
+        s.edition as plan_name
+    from
+        {{ ref('stg_stripe__subscriptions')}} s
+    qualify row_number() over (partition by server_id order by s.created_at desc) = 1
 )
 select
     hti.server_id,
@@ -26,7 +34,10 @@ select
         when count_is_cloud_days = 0 and count_not_is_cloud_days > 0 then 'Self-hosted'
         else 'Unknown'
     end as hosting_type,
-    l.installation_id
+    l.installation_id,
+    s.cloud_hostname,
+    s.plan_name as latest_plan_name
 from
     hosting_type_info hti
     join latest_values l on hti.server_id = l.server_id
+    left join latest_subscription on l.installation_id = s.cws_installation
