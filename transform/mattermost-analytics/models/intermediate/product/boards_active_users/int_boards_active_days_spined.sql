@@ -55,15 +55,15 @@ select
     s.activity_date,
 
     -- Telemetry information
-    t.daily_active_users,
-    t.weekly_active_users,
-    t.monthly_active_users,
+    coalesce(t.daily_active_users, 0),
+    coalesce(t.weekly_active_users, 0),
+    coalesce(t.monthly_active_users, 0),
 
     -- Server activity information
-    a.daily_active_users as server_daily_active_users,
-    a.weekly_active_users as server_weekly_active_users,
-    a.monthly_active_users as server_monthly_active_users,
-    a.count_registered_users as count_registered_users,
+    coalesce(a.daily_active_users, 0) as server_daily_active_users,
+    coalesce(a.weekly_active_users, 0) as server_weekly_active_users,
+    coalesce(a.monthly_active_users, 0) as server_monthly_active_users,
+    coalesce(a.count_registered_users, 0) as count_registered_users,
 
     -- Metadata regarding telemetry/activity availability
     t.daily_server_id is not null as has_client_data,
