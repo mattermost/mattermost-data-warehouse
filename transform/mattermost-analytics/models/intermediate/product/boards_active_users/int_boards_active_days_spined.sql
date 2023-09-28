@@ -9,7 +9,7 @@
 with server_first_day_per_telemetry as (
     select
         server_id,
-        min(activity_date) as first_active_day,
+        min(activity_date) as first_active_date,
         max(activity_date) as last_active_date
     from
         {{ ref('int_boards_client_active_days') }}
@@ -21,7 +21,7 @@ with server_first_day_per_telemetry as (
 
     select
         server_id,
-        min(server_date) as first_active_day,
+        min(server_date) as first_active_date,
         max(server_date) as last_active_date
     from
         {{ ref('int_boards_server_active_days') }}
@@ -32,8 +32,8 @@ with server_first_day_per_telemetry as (
 ), server_activity_date_range as (
     select
         server_id,
-        min(first_active_day) as first_active_day,
-        max(last_active_date) as last_active_day
+        min(first_active_date) as first_active_date,
+        max(last_active_date) as last_active_date
     from
         server_first_day_per_telemetry
     group by
@@ -47,7 +47,7 @@ with server_first_day_per_telemetry as (
     from
         server_activity_date_range sadr
         left join {{ ref('telemetry_days') }} all_days
-            on all_days.date_day >= sadr.first_active_day and all_days.date_day <= sadr.last_active_day
+            on all_days.date_day >= sadr.first_active_date and all_days.date_day <= sadr.last_active_date
 )
 select
     s.daily_server_id,
