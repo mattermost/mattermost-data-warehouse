@@ -1,3 +1,11 @@
+{{
+    config({
+        "materialized": "table",
+        "unique_key": ['daily_user_id'],
+        "cluster_by": ['activity_date', 'server_id']
+    })
+}}
+
 with server_first_day_per_telemetry as (
     select
         server_id,
