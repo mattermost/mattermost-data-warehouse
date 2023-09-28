@@ -55,9 +55,9 @@ select
     s.activity_date,
 
     -- Telemetry information
-    coalesce(t.daily_active_users, 0),
-    coalesce(t.weekly_active_users, 0),
-    coalesce(t.monthly_active_users, 0),
+    coalesce(t.daily_active_users, 0) as daily_active_users,
+    coalesce(t.weekly_active_users, 0) as weekly_active_users,
+    coalesce(t.monthly_active_users, 0) as monthly_active_users,
 
     -- Server activity information
     coalesce(a.daily_active_users, 0) as server_daily_active_users,
