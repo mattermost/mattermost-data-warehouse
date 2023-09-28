@@ -48,7 +48,7 @@ models:
     description: |
       User activity per date and server. Reported by server-side telemetry. This table contains rows only for the 
       dates/servers that servers reported telemetry on. In case of multiple telemetry events reported by the same server
-      and date, the last in the day is used
+      and date, the last in the day is used.
     columns:
       - name: server_id
         description: The server's unique id.
@@ -59,15 +59,12 @@ models:
       - name: daily_active_users
         description: |
           Total number of active users for the past 24 hours prior to the timestamp of the event.
-          Reported by mattermost server.
       - name: weekly_active_users
         description: |
           Total number of active users for the past 30 days prior to the timestamp of the event.
-          Reported by mattermost server.
       - name: monthly_active_users
         description: |
           Total number of active users for the past 30 days prior to the timestamp of the event.
-          Reported by mattermost server.
       - name: count_registered_users
         description: Total number of users, excluding deleted users. Reported by mattermost server.
 
@@ -82,11 +79,14 @@ models:
       - name: server_id
         description: The server's unique id.
       - name: daily_active_users
-        description: The number of unique board active users for the given server and date.
+        description: |
+          The number of unique board active users for the given server and date. Calculated from user telemetry.
       - name: weekly_active_users
-        description: The number of unique board active users for the date and previous 6 days.
+        description: |
+          The number of unique board active users for the date and previous 6 days. Calculated from user telemetry.
       - name: monthly_active_users
-        description: The number of unique board active users for the date and previous 29 days.
+        description: |
+          The number of unique board active users for the date and previous 29 days. Calculated from user telemetry.
       - name: server_daily_active_users
         description: |
           Total number of active users for the past 24 hours prior to the timestamp of the event.
