@@ -1,10 +1,10 @@
 version: 2
 
 models:
-  - name: int_boards_active_days
+  - name: int_boards_client_active_days
     description: |
       User activity per date and server. Used to mark the days that a user was active on boards for a specific server.
-      This table contains rows only for the dates/servers that a user is active on.
+      Reported by front-end telemetry. This table contains rows only for the dates/servers that a user is active on.
 
     columns:
       - name: daily_user_id
@@ -21,6 +21,35 @@ models:
         description: |
           Date that the event for the user activity was received. Used for incremental load only, not to be used
           downstream.
+          
+
+  - name: int_boards_server_active_days
+    description: |
+      User activity per date and server. Reported by server-side telemetry. This table contains rows only for the 
+      dates/servers that servers reported telemetry on. In case of multiple telemetry events reported by the same server
+      and date, the last in the day is used
+    columns:
+      - name: server_id
+        description: The server's unique id.
+      - name: server_date
+        description: The date that the user was active on.
+      - name: daily_server_id
+        description: A unique id for each server and date.
+      - name: daily_active_users
+        description: |
+          Total number of active users for the past 24 hours prior to the timestamp of the event.
+          Reported by mattermost server.
+      - name: weekly_active_users
+        description: |
+          Total number of active users for the past 30 days prior to the timestamp of the event.
+          Reported by mattermost server.
+      - name: monthly_active_users
+        description: |
+          Total number of active users for the past 30 days prior to the timestamp of the event.
+          Reported by mattermost server.
+      - name: count_registered_users
+        description: Total number of users, excluding deleted users. Reported by mattermost server.
+
           
 
   - name: int_boards_active_days_spined
@@ -44,27 +73,3 @@ models:
         description: |
           Boolean flag indicating whether the user was active on the specific date and previous 29 days, and 
           for the specific server.
-
-  - name: int_board_activity_latest_daily
-    description: Last recorded activity telemetry per calendar date. Contains metrics reported by the server.
-    columns:
-      - name: server_id
-        description: The server's unique id.
-      - name: server_date
-        description: The date that the user was active on.
-      - name: daily_server_id
-        description: A unique id for each server and date.
-      - name: daily_active_users
-        description: |
-          Total number of active users for the past 24 hours prior to the timestamp of the event.
-          Reported by mattermost server.
-      - name: weekly_active_users
-        description: |
-          Total number of active users for the past 30 days prior to the timestamp of the event.
-          Reported by mattermost server.
-      - name: monthly_active_users
-        description: |
-          Total number of active users for the past 30 days prior to the timestamp of the event.
-          Reported by mattermost server.
-      - name: count_registered_users
-        description: Total number of users, excluding deleted users. Reported by mattermost server.

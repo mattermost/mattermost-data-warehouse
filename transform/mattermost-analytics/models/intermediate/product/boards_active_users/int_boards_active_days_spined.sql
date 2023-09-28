@@ -1,47 +1,79 @@
-{{
-    config({
-        "materialized": "table",
-        "cluster_by": ['activity_date', 'server_id'],
-        "unique_key": ['activity_date', 'server_id', 'user_id'],
-        "snowflake_warehouse": "transform_l"
-    })
-}}
-with user_first_active_day as (
+with server_first_day_per_telemetry as (
     select
         server_id,
-        user_id,
-        min(activity_date) as first_active_day
+        min(activity_date) as first_active_day,
+        max(activity_date) as last_server_date
     from
-        {{ ref('int_boards_active_days') }}
+        {{ ref('int_boards_client_active_days') }}
     where
         activity_date >= '{{ var('telemetry_start_date')}}'
-    group by 1, 2
+    group by 1
+
+    union all
+
+    select
+        server_id,
+        min(server_date) as first_active_day,
+        max(server_date) as last_server_date
+    from
+        {{ ref('int_boards_server_active_days') }}
+    where
+        activity_date >= '{{ var('telemetry_start_date')}}'
+    group by 1
+
+), server_activity_date_range as (
+    select
+        server_id,
+        min(first_server_date) as first_active_day,
+        max(last_server_date) as last_active_day
+    from
+        server_first_day_per_telemetry
+    group by
+        server_id
 ), spined as (
     -- Use date spine to fill in missing days
     select
-        first_day.server_id,
-        first_day.user_id,
-        all_days.date_day
+        sadr.server_id,
+        all_days.date_day::date as activity_date,
+        {{ dbt_utils.generate_surrogate_key(['server_id', 'activity_date']) }} AS daily_server_id
     from
-        user_first_active_day first_day
-        left join {{ ref('telemetry_days') }} all_days on all_days.date_day >= first_day.first_active_day
+        server_activity_date_range sadr
+        left join {{ ref('telemetry_days') }} all_days
+            on all_days.date_day >= sadr.first_active_day and all_days.date_day <= sadr.last_active_day
+), user_activity_daily as (
+    -- Aggregate client telemetry per day to bring to same granularity as server reported telemetry
+    select
+        {{ dbt_utils.generate_surrogate_key(['server_id', 'activity_date']) }} AS daily_server_id
+        , activity_date
+        , server_id
+        , sum(is_active_today::integer) as daily_active_users
+        , sum(is_active_last_7_days::integer) as weekly_active_users
+        , sum(is_active_last_30_days::integer) as monthly_active_users
+    from {{ ref('int_boards_client_active_days') }}
+    group by activity_date, server_id
 )
 select
-    cast(spined.date_day as date) as activity_date
-    , spined.server_id
-    , spined.user_id
-    , coalesce(user_active_days.is_active, false) as is_active_today
-    , max(is_active_today) over(
-        partition by spined.user_id order by spined.date_day
-        rows between 6 preceding and current row
-    ) as is_active_last_7_days
-    , max(is_active_today) over(
-        partition by spined.user_id order by spined.date_day
-        rows between 29 preceding and current row
-    ) as is_active_last_30_days
+    s.daily_server_id,
+    s.server_id,
+    s.activity_date,
+
+    -- Telemetry information
+    t.daily_active_users,
+    t.weekly_active_users,
+    t.monthly_active_users,
+
+    -- Server activity information
+    a.daily_active_users as server_daily_active_users,
+    a.weekly_active_users as server_weekly_active_users,
+    a.monthly_active_users as server_monthly_active_users,
+    a.count_registered_users as count_registered_users,
+
+    -- Metadata regarding telemetry/activity availability
+    t.daily_server_id is not null as has_client_data,
+    a.daily_server_id is not null as has_server_data
 from
-    spined
-    left join {{ ref('int_boards_active_days') }} user_active_days
-        on spined.date_day = user_active_days.activity_date
-            and spined.server_id = user_active_days.server_id
-            and spined.user_id = user_active_days.user_id
+    spined s
+    left join user_activity_daily t on s.daily_server_id = t.daily_server_id
+    left join {{ ref('int_boards_server_active_days') }} a on s.daily_server_id = a.daily_server_id
+where
+    s.server_id is not null

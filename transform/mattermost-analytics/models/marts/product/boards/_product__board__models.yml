@@ -37,6 +37,10 @@ models:
           Reported by mattermost server.
       - name: count_registered_users
         description: Total number of users, excluding deleted users. Reported by mattermost server.
+      - name: has_client_data
+        description: Whether client telemetry was reported for the specific server and date.
+      - name: has_server_data
+        description: Whether server telemetry was reported for the specific server and date.
 
   - name: dim_board_customers
     description: Details about the customers who use boards.
