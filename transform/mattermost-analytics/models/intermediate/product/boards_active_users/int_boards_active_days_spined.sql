@@ -10,7 +10,7 @@ with server_first_day_per_telemetry as (
     select
         server_id,
         min(activity_date) as first_active_day,
-        max(activity_date) as last_server_date
+        max(activity_date) as last_active_date
     from
         {{ ref('int_boards_client_active_days') }}
     where
@@ -22,7 +22,7 @@ with server_first_day_per_telemetry as (
     select
         server_id,
         min(server_date) as first_active_day,
-        max(server_date) as last_server_date
+        max(server_date) as last_active_date
     from
         {{ ref('int_boards_server_active_days') }}
     where
