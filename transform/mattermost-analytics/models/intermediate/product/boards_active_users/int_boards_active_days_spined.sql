@@ -26,7 +26,7 @@ with server_first_day_per_telemetry as (
     from
         {{ ref('int_boards_server_active_days') }}
     where
-        activity_date >= '{{ var('telemetry_start_date')}}'
+        server_date >= '{{ var('telemetry_start_date')}}'
     group by 1
 
 ), server_activity_date_range as (
