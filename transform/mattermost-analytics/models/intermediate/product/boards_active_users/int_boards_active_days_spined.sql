@@ -32,8 +32,8 @@ with server_first_day_per_telemetry as (
 ), server_activity_date_range as (
     select
         server_id,
-        min(first_server_date) as first_active_day,
-        max(last_server_date) as last_active_day
+        min(first_active_day) as first_active_day,
+        max(last_active_date) as last_active_day
     from
         server_first_day_per_telemetry
     group by
