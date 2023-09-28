@@ -18,7 +18,7 @@ with tmp as (
     from
         {{ ref('stg_hacktoberboard_prod__tracks') }}
     where
-        -- Exclude items without user ids, such as server side telemetry etc
+        -- Exclude items without user ids
         user_id is not null
         -- Exclude items without server ids
         and server_id is not null
