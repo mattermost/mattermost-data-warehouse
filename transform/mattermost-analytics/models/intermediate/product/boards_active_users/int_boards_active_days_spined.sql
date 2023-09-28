@@ -48,17 +48,6 @@ with server_first_day_per_telemetry as (
         server_activity_date_range sadr
         left join {{ ref('telemetry_days') }} all_days
             on all_days.date_day >= sadr.first_active_day and all_days.date_day <= sadr.last_active_day
-), user_activity_daily as (
-    -- Aggregate client telemetry per day to bring to same granularity as server reported telemetry
-    select
-        {{ dbt_utils.generate_surrogate_key(['server_id', 'activity_date']) }} AS daily_server_id
-        , activity_date
-        , server_id
-        , sum(is_active_today::integer) as daily_active_users
-        , sum(is_active_last_7_days::integer) as weekly_active_users
-        , sum(is_active_last_30_days::integer) as monthly_active_users
-    from {{ ref('int_boards_client_active_days') }}
-    group by activity_date, server_id
 )
 select
     s.daily_server_id,
@@ -81,7 +70,7 @@ select
     a.daily_server_id is not null as has_server_data
 from
     spined s
-    left join user_activity_daily t on s.daily_server_id = t.daily_server_id
+    left join {{ ref('int_boards_client_active_days') }} t on s.daily_server_id = t.daily_server_id
     left join {{ ref('int_boards_server_active_days') }} a on s.daily_server_id = a.daily_server_id
 where
     s.server_id is not null
