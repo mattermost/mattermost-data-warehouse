@@ -29,7 +29,7 @@ models:
           Reported by mattermost server.
       - name: server_weekly_active_users
         description: |
-          Total number of active users for the past 30 days prior to the timestamp of the event.
+          Total number of active users for the past 7 days prior to the timestamp of the event.
           Reported by mattermost server.
       - name: server_monthly_active_users
         description: |
