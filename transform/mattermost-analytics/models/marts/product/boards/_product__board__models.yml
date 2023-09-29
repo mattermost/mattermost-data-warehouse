@@ -17,6 +17,9 @@ models:
         description: The server's unique id.
         tests:
           - not_null
+          - relationships:
+              to: ref('dim_board_customers')
+              field: server_id
       - name: daily_active_users
         description: The number of unique board active users for the given server and date.
       - name: weekly_active_users
