@@ -2,20 +2,23 @@
 
 WITH tracks AS (
     SELECT
-        {{ get_rudderstack_columns() }}
-        , {% for column in include_columns %}
-        {{ column }} AS {{ column }}
-        {% if not loop.last %},{% endif %}
-    {% endfor %}
+        {{ dbt_utils.star(ref('base_mm_calls_test_go__tracks')) }}
     FROM
-        {{ source('mm_calls_test_go', 'tracks') }}
+        {{ ref ('base_mm_calls_test_go__tracks') }}
 )
 SELECT
-    id                  AS event_id 
-    , received_at       AS received_at
-    , timestamp         AS timestamp
-    , context_ip        AS context_ip
-    , event             AS event_table
-    , event_text        AS event_name
-    , user_id           AS server_id
+        participants as participants,
+        server_version as server_version,
+        call_id as call_id,
+        plugin_build as plugin_build,
+        event as event,
+        user_id as user_id,
+        received_at as received_at,
+        plugin_version as plugin_version,
+        duration as duration,
+        event_text as event_text,
+        id as event_id,
+        timestamp as timestamp,
+        screen_duration as screen_duration,
+        actual_user_id as user_actual_id
 FROM tracks
