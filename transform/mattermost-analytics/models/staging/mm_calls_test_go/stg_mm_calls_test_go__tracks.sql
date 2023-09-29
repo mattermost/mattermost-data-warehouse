@@ -1,5 +1,3 @@
-{%- set include_columns = [ "user_id" ] -%}
-
 WITH tracks AS (
     SELECT
         {{ dbt_utils.star(ref('base_mm_calls_test_go__tracks')) }}
