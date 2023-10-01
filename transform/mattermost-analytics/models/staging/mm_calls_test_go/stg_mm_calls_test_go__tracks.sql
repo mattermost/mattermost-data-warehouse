@@ -10,7 +10,7 @@ SELECT
         call_id as call_id,
         plugin_build as plugin_build,
         event as event,
-        user_id as user_id,
+        user_id as server_id,
         received_at as received_at,
         plugin_version as plugin_version,
         duration as duration,
@@ -18,5 +18,5 @@ SELECT
         id as event_id,
         timestamp as timestamp,
         screen_duration as screen_duration,
-        actual_user_id as user_actual_id
+        actual_user_id as user_id
 FROM tracks
