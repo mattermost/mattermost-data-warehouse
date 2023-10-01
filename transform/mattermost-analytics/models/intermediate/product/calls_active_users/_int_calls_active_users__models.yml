@@ -22,7 +22,7 @@ models:
           Date that the event for the user activity was received. Used for incremental load only, not to be used
           downstream.
 
-    - name: int_calls_client_active_days
+  - name: int_calls_client_active_days
     description: |
       User activity aggregated per day and server. Calculates daily, weekly and monthly active users based on telemetry.
       This model aggregates data from model int_calls_client_telemetry_daily.
