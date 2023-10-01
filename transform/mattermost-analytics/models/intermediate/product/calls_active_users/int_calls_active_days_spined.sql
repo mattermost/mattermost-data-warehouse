@@ -47,7 +47,7 @@ select
     coalesce(t.monthly_active_users, 0) as monthly_active_users,
 
     -- Metadata regarding telemetry/activity availability
-    t.daily_server_id is not null as has_client_data,
+    t.daily_server_id is not null as has_client_data
 from
     spined s
     left join {{ ref('int_calls_client_active_days') }} t on s.daily_server_id = t.daily_server_id
