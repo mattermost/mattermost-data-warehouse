@@ -1,0 +1,72 @@
+version: 2
+
+models:
+  - name: fct_board_activity
+    description: Daily boards activity per server. Includes excludable servers.
+    columns:
+      - name: daily_server_id
+        description: A unique id for each server and date
+        tests:
+          - unique
+          - not_null
+      - name: activity_date
+        description: The date for the measurement.
+        tests:
+          - not_null
+      - name: server_id
+        description: The server's unique id.
+      - name: daily_active_users
+        description: The number of unique board active users for the given server and date.
+      - name: weekly_active_users
+        description: The number of unique board active users for the date and previous 6 days.
+      - name: monthly_active_users
+        description: The number of unique board active users for the date and previous 29 days.
+      - name: server_daily_active_users
+        description: |
+          Total number of active users for the past 24 hours prior to the timestamp of the event.
+          Reported by mattermost server.
+      - name: server_weekly_active_users
+        description: |
+          Total number of active users for the past 7 days prior to the timestamp of the event.
+          Reported by mattermost server.
+      - name: server_monthly_active_users
+        description: |
+          Total number of active users for the past 30 days prior to the timestamp of the event.
+          Reported by mattermost server.
+      - name: count_registered_users
+        description: Total number of users, excluding deleted users. Reported by mattermost server.
+      - name: has_client_data
+        description: Whether client telemetry was reported for the specific server and date.
+      - name: has_server_data
+        description: Whether server telemetry was reported for the specific server and date.
+
+  - name: dim_board_customers
+    description: Details about the customers who use boards.
+
+    columns:
+      - name: server_id
+        description: The server's unique id.
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              to: ref('fct_board_activity')
+              field: server_id
+      - name: name
+        description: The customer's name, as defined in Stripe. Note that it's possible a name to be empty.
+        tags: ['pii']
+      - name: contact_first_name
+        description: The first name of the customer's contact person. Exists if it's available in Stripe.
+        tags: ['pii']
+      - name: contact_last_name
+        description: The last name of the customer's contact person. Exists if it's available in Stripe.
+        tags: ['pii']
+      - name: email
+        description: The email of the customer's contact person. Exists if it's available in Stripe.
+        tags: [ 'pii' ]
+        tests:
+          - not_null
+      - name: stripe_customer_id
+        description: The customer's Stripe ID. Useful for manual lookups at Stripe.
+        tests:
+          - not_null
