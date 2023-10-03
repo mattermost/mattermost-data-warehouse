@@ -16,10 +16,10 @@ models:
       - name: server_id
         description: The server's unique id.
       - name: daily_active_users
-        description: The number of unique board active users for the given server and date.
+        description: The number of unique calls active users for the given server and date.
       - name: weekly_active_users
-        description: The number of unique board active users for the date and previous 6 days.
+        description: The number of unique calls active users for the date and previous 6 days.
       - name: monthly_active_users
-        description: The number of unique board active users for the date and previous 29 days.
+        description: The number of unique calls active users for the date and previous 29 days.
       - name: has_client_data
         description: Whether client telemetry was reported for the specific server and date.

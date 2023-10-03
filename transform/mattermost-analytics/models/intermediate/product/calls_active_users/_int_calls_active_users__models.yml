@@ -28,7 +28,7 @@ models:
       This model aggregates data from model int_calls_client_telemetry_daily.
 
     columns:
-      - name: daily_user_id
+      - name: daily_server_id
         description: A unique id for each date/server/user combination.
       - name: activity_date
         description: The date that the user was active on.

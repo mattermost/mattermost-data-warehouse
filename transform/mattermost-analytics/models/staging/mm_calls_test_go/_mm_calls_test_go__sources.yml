@@ -7,6 +7,8 @@ sources:
     loader: Rudderstack
     description: |
       Mattermost Calls telemetry data. Stored using Rudderstack.
+      Consider renaming 'test'. Couldn't rename as we started data ingestion when we launched the Beta release.
+      
       
     tags: [ 'rudderstack' ]
 
