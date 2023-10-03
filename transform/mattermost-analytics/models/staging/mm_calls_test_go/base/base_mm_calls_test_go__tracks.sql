@@ -1,4 +1,4 @@
-{%- set include_columns = ["actual_user_id", "participants", "server_version", "plugin_build", "plugin_version"] -%}
+{%- set include_columns = ["actual_user_id", "server_version", "plugin_build", "plugin_version"] -%}
 
 {%- set relations = get_event_relations('mm_calls_test_go', database='RAW') -%}
 
