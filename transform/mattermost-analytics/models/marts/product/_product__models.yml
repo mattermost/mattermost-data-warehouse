@@ -228,6 +228,7 @@ models:
         description: The server's unique id.
         tests:
           - not_null
+          - unique
       - name: installation_id
         description: The id of the installation. Exists only for cloud installations.
       - name: hosting_type
