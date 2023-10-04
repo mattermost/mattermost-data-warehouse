@@ -62,6 +62,4 @@ models:
       - name: monthly_active_users
         description: |
           The number of unique calls active users for the date and previous 29 days. Calculated from user telemetry.
-      - name: has_client_data
-        description: Whether client telemetry was reported for the specific server and date.
 
