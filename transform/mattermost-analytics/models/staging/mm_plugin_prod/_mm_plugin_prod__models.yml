@@ -27,7 +27,7 @@ models:
       NPS was moved to a plugin from being its own separate feature.
     
     columns:
-- name: event_id
+      - name: event_id
         description: The event's id.
       - name: event_name
         description: The name of the event.
