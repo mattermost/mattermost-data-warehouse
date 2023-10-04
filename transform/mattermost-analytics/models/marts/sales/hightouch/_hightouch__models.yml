@@ -89,6 +89,7 @@ models:
         tests:
           - not_null
           - dbt_utils.not_empty_string
+          - unique
       - name: is_existing_lead
         description: Whether there's already a lead with the same email.
       - name: is_existing_campaign_member

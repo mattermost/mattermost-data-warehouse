@@ -8,6 +8,9 @@ models:
     columns:
       - name: marketing_id
         description: Unique identifier for cws marketing data.
+        tests:
+          - not_null
+          - unique
       - name: email
         tags: ['pii']
         description: Customer email for marketing coming from cws.

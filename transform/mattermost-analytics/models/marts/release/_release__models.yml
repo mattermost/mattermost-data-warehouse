@@ -9,6 +9,7 @@ models:
         description: The issue's ID.
         tests:
           - not_null
+          - unique
           - relationships:
               to: ref('fct_issues_daily_snapshot')
               field: issue_id
@@ -44,6 +45,7 @@ models:
         description: The issue's id.
         tests:
           - not_null
+          - unique
           - relationships:
               to: ref('fct_issues_daily_snapshot')
               field: issue_id
