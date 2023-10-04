@@ -1,0 +1,65 @@
+version: 2
+
+models:
+  - name: int_calls_client_telemetry_daily
+    description: |
+      User activity per date and server. Used to mark the days that a user was active on calls for a specific server.
+      Reported by front-end telemetry. This table contains rows only for the dates/servers that a user is active on.
+
+    columns:
+      - name: daily_user_id
+        description: A unique id for each date/server/user combination.
+      - name: activity_date
+        description: The date that the user was active on.
+      - name: server_id
+        description: The server's unique id.
+      - name: user_id
+        description: The user's unique id.
+      - name: is_active
+        description: Boolean flag marking whether the user was active on the specific date and server. Always true.
+      - name: received_at_date
+        description: |
+          Date that the event for the user activity was received. Used for incremental load only, not to be used
+          downstream.
+
+  - name: int_calls_client_active_days
+    description: |
+      User activity aggregated per day and server. Calculates daily, weekly and monthly active users based on telemetry.
+      This model aggregates data from model int_calls_client_telemetry_daily.
+
+    columns:
+      - name: daily_server_id
+        description: A unique id for each date/server/user combination.
+      - name: activity_date
+        description: The date that the user was active on.
+      - name: server_id
+        description: The server's unique id.
+      - name: daily_active_users
+        description: |
+          Total number of active users for the current date and server.
+      - name: weekly_active_users
+        description: |
+          Total number of active users for the current date and past 6 days (7 days total) and for the given server.
+      - name: monthly_active_users
+        description: |
+          Total number of active users for the current date and past 29 days (30 days total) and for the given server.
+
+  - name: int_calls_active_days_spined
+    description: |
+      Contains record per user per day since the user's first active date. Uses data from calls only.
+
+    columns:
+      - name: activity_date
+        description: The date that the user was active on.
+      - name: server_id
+        description: The server's unique id.
+      - name: daily_active_users
+        description: |
+          The number of unique calls active users for the given server and date. Calculated from user telemetry.
+      - name: weekly_active_users
+        description: |
+          The number of unique calls active users for the date and previous 6 days. Calculated from user telemetry.
+      - name: monthly_active_users
+        description: |
+          The number of unique calls active users for the date and previous 29 days. Calculated from user telemetry.
+
