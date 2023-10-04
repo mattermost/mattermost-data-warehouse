@@ -42,7 +42,7 @@ models:
       - name: timestamp
         description: Timestamp registered by Rudderstack when the event occurred refactored to clients clock skew.
       - name: user_created_at
-         description: Timestamp the user was created.
+        description: Timestamp the user was created.
       - name: anonymous_id
         description: Server's anonymous ID.
       - name: server_ip      
@@ -92,7 +92,7 @@ models:
       - name: timestamp
         description: Timestamp registered by Rudderstack when the event occurred refactored to clients clock skew.
       - name: user_created_at
-         description: Timestamp the user was created.
+        description: Timestamp the user was created.
       - name: anonymous_id
         description: Server's anonymous ID.
       - name: server_ip      
