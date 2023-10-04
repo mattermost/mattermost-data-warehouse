@@ -14,7 +14,7 @@ Column naming conventions **MUST** follow the [internal guidelines](https://matt
 
 ## DBT packages
 
-The project is using DBT packages to make development faster and to ensure codequality.
+The project is using DBT packages to make development faster and to ensure code quality.
 
 ### DBT Utils ([git repo](https://github.com/dbt-labs/dbt-utils))
 
