@@ -20,3 +20,102 @@ models:
         description: The ID of the server the event originated from.
       - name: received_at
         description: Timestamp registered by RudderStack when the event was ingested (received).
+
+  - name: stg_mm_plugin_prod__nps_feedback
+    description: 
+      Mattermost NPS feedback data reported by users and servers. 
+      NPS was moved to a plugin from being its own separate feature.
+    
+    columns:
+- name: event_id
+        description: The event's id.
+      - name: event_name
+        description: The name of the event.
+      - name: event_table
+        description: The name of the event table.
+      - name: user_id
+        description: The ID of the user that sent the event.
+      - name: server_id
+        description: The ID of the server the event originated from.
+      - name: received_at
+        description: Timestamp registered by RudderStack when the event was ingested (received).
+      - name: timestamp
+        description: Timestamp registered by Rudderstack when the event occurred refactored to clients clock skew.
+      - name: user_created_at
+         description: Timestamp the user was created.
+      - name: anonymous_id
+        description: Server's anonymous ID.
+      - name: server_ip      
+        description: The server's IP address. 
+      - name: license_id
+        description: The ID of the license.
+      - name: license_sku
+        description: The sku of the license.
+      - name: user_role
+        description: Role of the user who submitted NPS.
+      - name: feedback
+        description: NPS feedback submitted.
+      - name: server_install_date      
+        description: Server installation date.
+      - name: plugin_id
+        description: The ID of the plugin.
+      - name: server_version
+        description: The Server's version.
+      - name: plugin_version      
+        description: The plugin's version.
+      - name: context_library_version
+        description: The version of Rudderstack library used to send this event.
+      - name: context_library_name
+        description: The name of Rudderstack library used to send this event.
+      - name: sent_at
+      - name: original_timestamp
+
+
+  - name: stg_mm_plugin_prod__nps_score
+    description: 
+      Mattermost NPS score data reported by users and servers. 
+      NPS was moved to a plugin from being its own separate feature.
+    
+    columns:
+      - name: event_id
+        description: The event's id.
+      - name: event_name
+        description: The name of the event.
+      - name: event_table
+        description: The name of the event table.
+      - name: user_id
+        description: The ID of the user that sent the event.
+      - name: server_id
+        description: The ID of the server the event originated from.
+      - name: received_at
+        description: Timestamp registered by RudderStack when the event was ingested (received).
+      - name: timestamp
+        description: Timestamp registered by Rudderstack when the event occurred refactored to clients clock skew.
+      - name: user_created_at
+         description: Timestamp the user was created.
+      - name: anonymous_id
+        description: Server's anonymous ID.
+      - name: server_ip      
+        description: The server's IP address. 
+      - name: license_id
+        description: The ID of the license.
+      - name: license_sku
+        description: The sku of the license.
+      - name: user_role
+        description: Role of the user who submitted NPS.
+      - name: score
+        description: NPS score submitted.
+      - name: server_install_date      
+        description: Server installation date.
+      - name: plugin_id
+        description: The ID of the plugin.
+      - name: server_version
+        description: The Server's version.
+      - name: plugin_version      
+        description: The plugin's version.
+      - name: context_library_version
+        description: The version of Rudderstack library used to send this event.
+      - name: context_library_name
+        description: The name of Rudderstack library used to send this event.
+      - name: sent_at
+      - name: original_timestamp

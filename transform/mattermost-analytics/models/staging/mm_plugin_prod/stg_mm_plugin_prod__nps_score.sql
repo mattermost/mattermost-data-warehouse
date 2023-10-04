@@ -7,20 +7,20 @@ renamed as (
     select
         -- Common event columns
         id               as event_id
-        , event          as event_table
         , event_text     as event_name
-        , user_id        as server_id
-        , received_at    as received_at
-        , timestamp      as timestamp
+        , event          as event_table
 
         -- Using coalesce here, validated the data, there is no data where both are not null
         -- It was probably a field that was in the earlier versions of Rudder
         -- that changed when we upgraded Rudder to a newer version
         , COALESCE(useractualid, user_actual_id) as user_id
+        , user_id        as server_id
+        , received_at    as received_at
+        , timestamp      as timestamp
         , user_create_at as user_created_at
 
         -- Server info
-        , anonymous_id
+        , anonymous_id as anonymous_id
         , context_ip as server_ip
 
         -- NPS data
@@ -37,10 +37,10 @@ renamed as (
         , COALESCE(pluginversion, plugin_version) as plugin_version
 
         -- Metadata from Rudderstack
-        , context_library_version
-        , context_library_name
-        , sent_at
-        , original_timestamp
+        , context_library_version as context_library_version
+        , context_library_name as context_library_name
+        , sent_at as sent_at
+        , original_timestamp as original_timestamp
 
         -- Ignored -- Always same value
         -- , context_destination_type
