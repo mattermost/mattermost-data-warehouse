@@ -1,0 +1,62 @@
+version: 2
+
+models:
+
+
+  - name: stg_cws_test__license
+    description: |
+      CWS test licenses.
+
+    columns:
+      - name: license_id
+        description: Unique Identifier for licenses
+        tests:
+          - not_null
+          - unique
+      - name: is_pending
+      - name: subscription_id
+        description: Stripe subscription ID (if exists)
+      - name: _license
+        description: Extracted license json object.
+      - name: issued_at
+      - name: starts_at
+      - name: sku
+      - name: sku_short_name
+      - name: is_gov_sku
+      - name: is_trial
+      - name: company_name
+      - name: customer_email
+      - name: customer_id
+      - name: customer_name
+      - name: number_of_users
+      - name: is_feature_advanced_logging_enabled
+      - name: is_feature_announcement_enabled
+      - name: is_feature_cloud_enabled
+      - name: is_feature_cluster_enabled
+      - name: is_feature_compliance_enabled
+      - name: is_feature_custom_permissions_schemes_enabled
+      - name: is_feature_custom_terms_of_service_enabled
+      - name: is_feature_data_retention_enabled
+      - name: is_feature_elastic_search_enabled
+      - name: is_feature_email_notification_contents_enabled
+      - name: is_feature_enterprise_plugins_enabled
+      - name: is_feature_future_features_enabled
+      - name: is_feature_google_oauth_enabled
+      - name: is_feature_guest_accounts_enabled
+      - name: is_feature_guest_accounts_permissions_enabled
+      - name: is_feature_id_loaded_enabled
+      - name: is_feature_ldap_enabled
+      - name: is_feature_ldap_groups_enabled
+      - name: is_feature_lock_teammate_name_display_enabled
+      - name: is_feature_message_export_enabled
+      - name: is_feature_metrics_enabled
+      - name: is_feature_mfa_enabled
+      - name: is_feature_mhpns_enabled
+      - name: is_feature_office365_oauth_enabled
+      - name: is_feature_openid_enabled
+      - name: is_feature_remote_cluster_service_enabled
+      - name: is_feature_saml_enabled
+      - name: is_feature_shared_channels_enabled
+      - name: is_feature_theme_management_enabled
+      - name: created_at
+        description: The row created time.
