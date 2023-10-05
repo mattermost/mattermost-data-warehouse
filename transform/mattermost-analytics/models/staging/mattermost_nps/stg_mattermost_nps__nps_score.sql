@@ -1,5 +1,5 @@
 with source as (
-    select * from {{ source('mattermost_nps', 'nps_feedback') }}
+    select * from {{ source('mattermost_nps', 'nps_score') }}
 ) select     
         -- Common event columns
         id                    as event_id
