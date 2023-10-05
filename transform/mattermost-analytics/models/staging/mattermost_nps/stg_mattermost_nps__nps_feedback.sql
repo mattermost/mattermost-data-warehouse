@@ -23,7 +23,7 @@ with source as (
         , context_library_name as context_library_name
         , sent_at             as sent_at
         , original_timestamp  as original_timestamp
-        , server_id           as server_id
+        --, server_id           as server_id
         --uuid_ts
     from 
         source
