@@ -1,8 +1,6 @@
 with source as (
     select * from {{ source('mattermost_nps', 'nps_feedback') }}
-),
-renamed as (
-    select     
+) select     
         -- Common event columns
         id                    as event_id
         , event_text          as event_name
