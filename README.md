@@ -13,7 +13,7 @@ data to other tools.
     * [Billing](#billing)
     * [Utils](#utils)
     * [DAGs](#dags)
-  * [DBT setuo & development](#dbt-setuo--development)
+  * [DBT setup & development](#dbt-setup--development)
   * [Python Development](#python-development)
     * [Requirements](#requirements)
     * [Install dependencies](#install-dependencies)
@@ -75,7 +75,7 @@ A set of Python scripts performing custom ETLs. The utilities run as part of Air
 
 Airflow DAGs that orchestrate ETL pipelines.
 
-## DBT setuo & development
+## DBT setup & development
 
 Please see [DBT setup instructions](docs/DBT.md) for setting up DBT and for performing common operations.
 

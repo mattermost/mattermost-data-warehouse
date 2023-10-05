@@ -67,10 +67,21 @@ Consider editing the file and adding the following information:
 - `tags`: use one of `stage`, `rudderstack`, `segment`, `stitch` or a similar one to indicate how the data were loaded to the warehouse.
 - Table `description`, providing information about the purpose of the table, its structure and any other useful information.
 - Column `description`, providing information about the expectations on the data of each column.
+- Introducing tests on data sources. 
+
+Since data sources may come for multiple channels (events, analytics, telemetry or even other databases), it's a good 
+idea to introduce tests. These tests may ensure data integrity, conventions, freshness and any assumption made for the
+data. It can help catching inconsistencies early in the data pipelines. 
+
+Basic tests can be added in the `_<source_name>__sources.yml` file. These type of checks can assure there's no missing 
+values, uniqueness, proper format etc. More complex test cases can be implemented using [dbt_utils' generic tests](https://github.com/dbt-labs/dbt-utils#generic-tests)
+or [singular tests](https://docs.getdbt.com/docs/build/tests#singular-tests).
+
+> In case some of the tests are challenging to implement in the sources, consider them moving them to the staging layer.
 
 ### Adding a new staging model
 
-Staging models are used basic cleaning of the data. This might include:
+Staging models are used for basic cleaning of the data. This might include:
 - Renaming columns
 - Type casting
 - Extracting nested data (i.e. from nested JSON columns),
@@ -93,8 +104,9 @@ then be edited to perform basic cleaning.
 
 Some extra actions that we've found useful are:
 
-- Group the columns by their meaining. For example common telemetry event info may be moved as the first columns, followed by references (ids), values and finally metadata. This may improve readability of the SQL code a lot.
+- Group the columns by their meaning. For example common telemetry event info may be moved as the first columns, followed by references (ids), values and finally metadata. This may improve readability of the SQL code a lot.
 - Consider performing analysis on the values of each column. This way columns that i.e. always have the same value or are always null can be dropped.
+- Introducing data source tests that require the basic transformations performed in the staging layer. 
 
 ### Documenting a model
 

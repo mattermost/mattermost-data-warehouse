@@ -31,7 +31,7 @@ make dbt-bash
 For `mattermost-analytics` project run:
 
 ```bash
-make dbt-mattermost-analytiucs
+make dbt-mattermost-analytics
 ```
 
 Both options allow using `dbt` directly from a bash shell.
