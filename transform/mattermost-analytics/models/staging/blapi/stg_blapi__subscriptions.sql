@@ -30,7 +30,7 @@ renamed as (
         -- License information
         , license_issued_at
 
-        , mattermost_analytics.extract_license_data(license_payload) as _license
+        , mattermost_analytics.extract_license_data(coalesce(license_payload, '{}')) as _license
         , _license:"id"::varchar as license_id
         , try_to_timestamp_ntz(_license:issued_at::varchar) as issued_at
         , try_to_timestamp_ntz(_license:starts_at::varchar) as starts_at
