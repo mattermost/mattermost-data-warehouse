@@ -47,7 +47,7 @@ with stripe_licenses as (
         source,
         count(distinct expire_at) as count_expiration_dates
     from
-        analytics.dbt_cloud_pr_226810_1347.int_all_licenses
+        all_licenses
     where
         license_id is not null
     group by 1, 2
