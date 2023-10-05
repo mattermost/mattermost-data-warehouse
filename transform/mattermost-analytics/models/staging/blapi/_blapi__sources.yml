@@ -1,0 +1,979 @@
+version: 2
+
+sources:
+  - name: blapi
+    database: raw
+    tables:
+      - name: _airbyte_raw_public_addons
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_addons_version
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_addresses
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_addresses_version
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_contact_us_requests
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_credit_cards
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_credit_cards_version
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_customers
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_customers_version
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_features
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_features_version
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_invoices
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_invoices_version
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_payment_methods
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_payments
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_payments_version
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_product_addons
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_product_addons_version
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_product_features
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_product_features_version
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_products
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_products_version
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_purchase_fact
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_sla_metrics
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_sla_metrics_version
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_subscription_addons
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_subscription_addons_version
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_subscriptions
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_subscriptions_version
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_trial_requests
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_usage_events
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_usage_events_version
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: _airbyte_raw_public_users
+        columns:
+          - name: _airbyte_ab_id
+          - name: _airbyte_data
+          - name: _airbyte_emitted_at
+
+      - name: addons
+        columns:
+          - name: id
+          - name: version_id
+          - name: previous_version_id
+          - name: created_at
+          - name: updated_at
+          - name: deleted_at
+          - name: name
+          - name: display_name
+          - name: cents_per_seat
+          - name: pricebookentryid
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: addons_version
+        columns:
+          - name: version_id
+          - name: previous_version_id
+          - name: created_at
+          - name: updated_at
+          - name: deleted_at
+          - name: id
+          - name: name
+          - name: display_name
+          - name: cents_per_seat
+          - name: transaction_id
+          - name: end_transaction_id
+          - name: operation_type
+          - name: version_id_mod
+          - name: previous_version_id_mod
+          - name: created_at_mod
+          - name: updated_at_mod
+          - name: deleted_at_mod
+          - name: name_mod
+          - name: display_name_mod
+          - name: cents_per_seat_mod
+          - name: pricebookentryid
+          - name: pricebookentryid_mod
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: addresses
+        columns:
+          - name: id
+          - name: version_id
+          - name: previous_version_id
+          - name: created_at
+          - name: updated_at
+          - name: deleted_at
+          - name: line1
+          - name: line2
+          - name: city
+          - name: state
+          - name: country
+          - name: postal_code
+          - name: customer_id
+          - name: address_type
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: addresses_version
+        columns:
+          - name: version_id
+          - name: previous_version_id
+          - name: created_at
+          - name: updated_at
+          - name: deleted_at
+          - name: id
+          - name: line1
+          - name: line2
+          - name: city
+          - name: state
+          - name: country
+          - name: postal_code
+          - name: customer_id
+          - name: address_type
+          - name: transaction_id
+          - name: end_transaction_id
+          - name: operation_type
+          - name: version_id_mod
+          - name: previous_version_id_mod
+          - name: created_at_mod
+          - name: updated_at_mod
+          - name: deleted_at_mod
+          - name: line1_mod
+          - name: line2_mod
+          - name: city_mod
+          - name: state_mod
+          - name: country_mod
+          - name: postal_code_mod
+          - name: customer_id_mod
+          - name: address_type_mod
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: contact_us_requests
+        columns:
+          - name: id
+          - name: created_at
+          - name: name
+          - name: email
+          - name: inquiry_type
+          - name: inquiry_issue
+          - name: comment
+          - name: customer_id
+          - name: source
+          - name: zendesk_ticket_id
+          - name: campaign_member_sfid
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: credit_cards
+        columns:
+          - name: id
+          - name: fingerprint
+          - name: stripe_id
+          - name: card_brand
+          - name: last4
+          - name: exp_month
+          - name: exp_year
+          - name: address_check
+          - name: cvc_check
+          - name: zip_check
+          - name: three_d_secure_support
+          - name: card_country
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: credit_cards_temp
+        columns:
+          - name: id
+          - name: fingerprint
+          - name: stripe_id
+          - name: card_brand
+          - name: last4
+          - name: exp_month
+          - name: exp_year
+          - name: address_check
+          - name: cvc_check
+          - name: zip_check
+          - name: three_d_secure_support
+          - name: card_country
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: credit_cards_version
+        columns:
+          - name: id
+          - name: fingerprint
+          - name: stripe_id
+          - name: card_brand
+          - name: last4
+          - name: exp_month
+          - name: exp_year
+          - name: address_check
+          - name: cvc_check
+          - name: zip_check
+          - name: transaction_id
+          - name: end_transaction_id
+          - name: operation_type
+          - name: fingerprint_mod
+          - name: stripe_id_mod
+          - name: card_brand_mod
+          - name: last4_mod
+          - name: exp_month_mod
+          - name: exp_year_mod
+          - name: address_check_mod
+          - name: cvc_check_mod
+          - name: zip_check_mod
+          - name: three_d_secure_support
+          - name: three_d_secure_support_mod
+          - name: card_country
+          - name: card_country_mod
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: credit_cards_version_temp
+        columns:
+          - name: id
+          - name: fingerprint
+          - name: stripe_id
+          - name: card_brand
+          - name: last4
+          - name: exp_month
+          - name: exp_year
+          - name: address_check
+          - name: cvc_check
+          - name: zip_check
+          - name: transaction_id
+          - name: end_transaction_id
+          - name: operation_type
+          - name: fingerprint_mod
+          - name: stripe_id_mod
+          - name: card_brand_mod
+          - name: last4_mod
+          - name: exp_month_mod
+          - name: exp_year_mod
+          - name: address_check_mod
+          - name: cvc_check_mod
+          - name: zip_check_mod
+          - name: three_d_secure_support
+          - name: three_d_secure_support_mod
+          - name: card_country
+          - name: card_country_mod
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: customers
+        columns:
+          - name: id
+          - name: state
+          - name: version_id
+          - name: previous_version_id
+          - name: created_at
+          - name: updated_at
+          - name: deleted_at
+          - name: email
+          - name: stripe_id
+          - name: company_name
+          - name: sfdc_synced_at
+          - name: first_name
+          - name: last_name
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: customers_version
+        columns:
+          - name: version_id
+          - name: previous_version_id
+          - name: created_at
+          - name: updated_at
+          - name: deleted_at
+          - name: state
+          - name: id
+          - name: email
+          - name: stripe_id
+          - name: company_name
+          - name: transaction_id
+          - name: end_transaction_id
+          - name: operation_type
+          - name: version_id_mod
+          - name: previous_version_id_mod
+          - name: created_at_mod
+          - name: updated_at_mod
+          - name: deleted_at_mod
+          - name: state_mod
+          - name: email_mod
+          - name: stripe_id_mod
+          - name: company_name_mod
+          - name: sfdc_synced_at
+          - name: sfdc_synced_at_mod
+          - name: first_name
+          - name: first_name_mod
+          - name: last_name
+          - name: last_name_mod
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: features
+        columns:
+          - name: id
+          - name: state
+          - name: version_id
+          - name: previous_version_id
+          - name: created_at
+          - name: updated_at
+          - name: deleted_at
+          - name: name
+          - name: display_name
+          - name: description
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: features_version
+        columns:
+          - name: version_id
+          - name: previous_version_id
+          - name: created_at
+          - name: updated_at
+          - name: deleted_at
+          - name: state
+          - name: id
+          - name: name
+          - name: display_name
+          - name: description
+          - name: transaction_id
+          - name: end_transaction_id
+          - name: operation_type
+          - name: version_id_mod
+          - name: previous_version_id_mod
+          - name: created_at_mod
+          - name: updated_at_mod
+          - name: deleted_at_mod
+          - name: state_mod
+          - name: name_mod
+          - name: display_name_mod
+          - name: description_mod
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: invoices
+        columns:
+          - name: version_id
+          - name: previous_version_id
+          - name: created_at
+          - name: updated_at
+          - name: deleted_at
+          - name: id
+          - name: subscription_id
+          - name: stripe_id
+          - name: full_month_users
+          - name: partial_users
+          - name: start_date
+          - name: end_date
+          - name: total_user_months
+          - name: free_user_months
+          - name: max_users_in_month
+          - name: subtotal
+          - name: partial_user_months
+          - name: discounts_total
+          - name: total
+          - name: invoice_build_date
+          - name: netsuite_id
+          - name: status
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: invoices_version
+        columns:
+          - name: version_id
+          - name: previous_version_id
+          - name: created_at
+          - name: updated_at
+          - name: deleted_at
+          - name: id
+          - name: subscription_id
+          - name: stripe_id
+          - name: full_month_users
+          - name: partial_users
+          - name: start_date
+          - name: end_date
+          - name: total_user_months
+          - name: free_user_months
+          - name: max_users_in_month
+          - name: subtotal
+          - name: transaction_id
+          - name: end_transaction_id
+          - name: operation_type
+          - name: version_id_mod
+          - name: previous_version_id_mod
+          - name: created_at_mod
+          - name: updated_at_mod
+          - name: deleted_at_mod
+          - name: subscription_id_mod
+          - name: stripe_id_mod
+          - name: full_month_users_mod
+          - name: partial_users_mod
+          - name: start_date_mod
+          - name: end_date_mod
+          - name: total_user_months_mod
+          - name: free_user_months_mod
+          - name: max_users_in_month_mod
+          - name: subtotal_mod
+          - name: partial_user_months
+          - name: partial_user_months_mod
+          - name: discounts_total
+          - name: discounts_total_mod
+          - name: total
+          - name: total_mod
+          - name: invoice_build_date
+          - name: invoice_build_date_mod
+          - name: netsuite_id
+          - name: netsuite_id_mod
+          - name: status
+          - name: status_mod
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: payment_methods
+        columns:
+          - name: id
+          - name: state
+          - name: version_id
+          - name: previous_version_id
+          - name: created_at
+          - name: updated_at
+          - name: deleted_at
+          - name: payment_type
+          - name: customer_id
+          - name: address_id
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: payments
+        columns:
+          - name: id
+          - name: state
+          - name: version_id
+          - name: previous_version_id
+          - name: created_at
+          - name: updated_at
+          - name: deleted_at
+          - name: customer_id
+          - name: subscription_id
+          - name: payment_method_id
+          - name: total_in_cents
+          - name: stripe_id
+          - name: stripe_status
+          - name: invoice_number
+          - name: stripe_charge_id
+          - name: invoice_stripe_id
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: payments_version
+        columns:
+          - name: version_id
+          - name: previous_version_id
+          - name: created_at
+          - name: updated_at
+          - name: deleted_at
+          - name: state
+          - name: id
+          - name: customer_id
+          - name: subscription_id
+          - name: payment_method_id
+          - name: total_in_cents
+          - name: stripe_status
+          - name: stripe_id
+          - name: transaction_id
+          - name: end_transaction_id
+          - name: operation_type
+          - name: version_id_mod
+          - name: previous_version_id_mod
+          - name: created_at_mod
+          - name: updated_at_mod
+          - name: deleted_at_mod
+          - name: state_mod
+          - name: customer_id_mod
+          - name: subscription_id_mod
+          - name: payment_method_id_mod
+          - name: total_in_cents_mod
+          - name: stripe_status_mod
+          - name: stripe_id_mod
+          - name: invoice_number
+          - name: invoice_number_mod
+          - name: stripe_charge_id
+          - name: stripe_charge_id_mod
+          - name: invoice_stripe_id
+          - name: invoice_stripe_id_mod
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: product_addons
+        columns:
+          - name: product_id
+          - name: addon_id
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: product_addons_version
+        columns:
+          - name: product_id
+          - name: addon_id
+          - name: transaction_id
+          - name: end_transaction_id
+          - name: operation_type
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: product_features
+        columns:
+          - name: product_id
+          - name: feature_id
+          - name: active
+          - name: created_at
+          - name: deleted_at
+          - name: id
+          - name: previous_version_id
+          - name: updated_at
+          - name: version_id
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: product_features_version
+        columns:
+          - name: version_id
+          - name: previous_version_id
+          - name: created_at
+          - name: updated_at
+          - name: deleted_at
+          - name: id
+          - name: feature_id
+          - name: product_id
+          - name: active
+          - name: transaction_id
+          - name: end_transaction_id
+          - name: operation_type
+          - name: version_id_mod
+          - name: previous_version_id_mod
+          - name: created_at_mod
+          - name: updated_at_mod
+          - name: deleted_at_mod
+          - name: feature_id_mod
+          - name: product_id_mod
+          - name: active_mod
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: products
+        columns:
+          - name: state
+          - name: version_id
+          - name: previous_version_id
+          - name: created_at
+          - name: updated_at
+          - name: deleted_at
+          - name: id
+          - name: name
+          - name: description
+          - name: sku
+          - name: active
+          - name: cents_per_seat
+          - name: term_in_days
+          - name: pricebookentryid
+          - name: stripe_id
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: products_version
+        columns:
+          - name: version_id
+          - name: previous_version_id
+          - name: created_at
+          - name: updated_at
+          - name: deleted_at
+          - name: state
+          - name: id
+          - name: name
+          - name: description
+          - name: sku
+          - name: active
+          - name: cents_per_seat
+          - name: term_in_days
+          - name: transaction_id
+          - name: end_transaction_id
+          - name: operation_type
+          - name: version_id_mod
+          - name: previous_version_id_mod
+          - name: created_at_mod
+          - name: updated_at_mod
+          - name: deleted_at_mod
+          - name: state_mod
+          - name: name_mod
+          - name: description_mod
+          - name: sku_mod
+          - name: active_mod
+          - name: cents_per_seat_mod
+          - name: term_in_days_mod
+          - name: pricebookentryid
+          - name: pricebookentryid_mod
+          - name: stripe_id
+          - name: stripe_id_mod
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: purchase_fact
+        columns:
+          - name: id
+          - name: customer_id
+          - name: customer_version_id
+          - name: company_address_version_id
+          - name: billing_address_version_id
+          - name: subscription_id
+          - name: subscription_version_id
+          - name: payment_method_id
+          - name: payment_method_version_id
+          - name: payment_version_id
+          - name: customer_stripe_id
+          - name: subscription_stripe_id
+          - name: payment_stripe_id
+          - name: payment_method_stripe_id
+          - name: charge_stripe_id
+          - name: product_stripe_id
+          - name: has_premier_support
+          - name: payment_id
+          - name: created_at
+          - name: invoice_stripe_id
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: subscription_addons
+        columns:
+          - name: subscription_id
+          - name: addon_id
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: subscription_addons_version
+        columns:
+          - name: subscription_id
+          - name: addon_id
+          - name: transaction_id
+          - name: end_transaction_id
+          - name: operation_type
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: subscriptions
+        columns:
+          - name: id
+          - name: state
+          - name: version_id
+          - name: previous_version_id
+          - name: created_at
+          - name: updated_at
+          - name: deleted_at
+          - name: product_id
+          - name: customer_id
+          - name: start_date
+          - name: end_date
+          - name: num_seats
+          - name: total_in_cents
+          - name: license_issued_at
+          - name: license_payload
+          - name: sfdc_synced_at
+          - name: previous_subscription_version_id
+          - name: subscription_version_id
+          - name: stripe_id
+          - name: cloud_installation_id
+          - name: cloud_dns
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: subscriptions_version
+        columns:
+          - name: version_id
+          - name: previous_version_id
+          - name: created_at
+          - name: updated_at
+          - name: deleted_at
+          - name: state
+          - name: id
+          - name: product_id
+          - name: customer_id
+          - name: start_date
+          - name: end_date
+          - name: num_seats
+          - name: total_in_cents
+          - name: transaction_id
+          - name: end_transaction_id
+          - name: operation_type
+          - name: version_id_mod
+          - name: previous_version_id_mod
+          - name: created_at_mod
+          - name: updated_at_mod
+          - name: deleted_at_mod
+          - name: state_mod
+          - name: product_id_mod
+          - name: customer_id_mod
+          - name: start_date_mod
+          - name: end_date_mod
+          - name: num_seats_mod
+          - name: total_in_cents_mod
+          - name: license_issued_at
+          - name: license_issued_at_mod
+          - name: license_payload
+          - name: license_payload_mod
+          - name: sfdc_synced_at
+          - name: sfdc_synced_at_mod
+          - name: previous_subscription_version_id
+          - name: previous_subscription_version_id_mod
+          - name: subscription_version_id
+          - name: subscription_version_id_mod
+          - name: stripe_id
+          - name: stripe_id_mod
+          - name: cloud_installation_id
+          - name: cloud_installation_id_mod
+          - name: cloud_dns
+          - name: cloud_dns_mod
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: trial_requests
+        columns:
+          - name: id
+          - name: email
+          - name: name
+          - name: site_url
+          - name: site_name
+          - name: server_id
+          - name: start_date
+          - name: end_date
+          - name: users
+          - name: license_payload
+          - name: license_issued_at
+          - name: receive_emails_accepted
+          - name: terms_accepted
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: usage_events
+        columns:
+          - name: version_id
+          - name: previous_version_id
+          - name: created_at
+          - name: updated_at
+          - name: deleted_at
+          - name: id
+          - name: subscription_id
+          - name: cloud_installation_id
+          - name: timestamp
+          - name: active_users
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
+
+      - name: usage_events_version
+        columns:
+          - name: version_id
+          - name: previous_version_id
+          - name: created_at
+          - name: updated_at
+          - name: deleted_at
+          - name: id
+          - name: subscription_id
+          - name: cloud_installation_id
+          - name: timestamp
+          - name: active_users
+          - name: transaction_id
+          - name: end_transaction_id
+          - name: operation_type
+          - name: version_id_mod
+          - name: previous_version_id_mod
+          - name: created_at_mod
+          - name: updated_at_mod
+          - name: deleted_at_mod
+          - name: subscription_id_mod
+          - name: cloud_installation_id_mod
+          - name: timestamp_mod
+          - name: active_users_mod
+          - name: _sdc_extracted_at
+          - name: _sdc_batched_at
+          - name: _sdc_deleted_at
