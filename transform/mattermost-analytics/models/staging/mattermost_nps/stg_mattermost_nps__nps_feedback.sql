@@ -20,7 +20,7 @@ renamed as (
         , feedback            as feedback
         , server_install_date as server_install_date
          
-        -- Metadata from Rudderstack
+        -- Metadata from Segment
         , context_library_version as context_library_version
         , context_library_name as context_library_name
         , sent_at             as sent_at
