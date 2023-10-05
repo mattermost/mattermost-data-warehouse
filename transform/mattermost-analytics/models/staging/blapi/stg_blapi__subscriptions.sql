@@ -10,19 +10,19 @@ renamed as (
         id as subscription_id
 
         -- IDs
-        , version_id
-        , previous_version_id
-        , product_id
-        , customer_id
+        , version_id as version_id
+        , previous_version_id as previous_version_id
+        , product_id as blapi_product_id
+        , customer_id as blapi_customer_id
         , previous_subscription_version_id
         , subscription_version_id
-        , stripe_id
+        , stripe_id as stripe_subscription_id
         , cloud_installation_id
 
          -- Subscription info
         , state
-        , start_date
-        , end_date
+        , start_date as subscription_start_date
+        , end_date as subscription_end_date
         , num_seats
         , total_in_cents
         , cloud_dns
