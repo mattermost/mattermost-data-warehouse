@@ -94,7 +94,7 @@ models:
         description: The row updated time.
 
 
-  - name: stg_cws_test__license
+  - name: stg_cws__license
     description: |
       CWS test licenses.
 

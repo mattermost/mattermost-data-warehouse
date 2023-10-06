@@ -74,5 +74,5 @@ select
     -- Mark license IDs with > 1 expiration dates as outliers
     outliers.count_expiration_dates > 1 as is_outlier
 from
-    distinct_licenses
+    distinct_licenses all_licenses
     left join {{ ref('stg_cws__license') }} cws on all_licenses.license_id = cws.license_id
