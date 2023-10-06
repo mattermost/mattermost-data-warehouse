@@ -68,7 +68,7 @@ select
     datediff(month, cws.starts_at::date, cws.expire_at::date) as duration_months,
 
     -- Mark where the datasources reporting each license
-    sourecs,
+    sources,
     -- Mark license IDs with > 1 expiration dates as outliers
     outliers.count_expiration_dates > 1 as is_outlier
 from
