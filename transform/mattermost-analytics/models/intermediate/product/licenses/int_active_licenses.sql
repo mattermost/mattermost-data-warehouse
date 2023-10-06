@@ -36,18 +36,17 @@ with stripe_licenses as (
     -- Legacy licenses
     union
     select license_id, expire_at, 'Legacy' as source from {{ ref('stg_licenses__licenses') }}
-), outliers as (
+), distinct_licenses as (
     -- Licenses with more than one expiration date
     select
         license_id,
-        source,
-        count(distinct expire_at) as count_expiration_dates
+        count(distinct expire_at) as count_expiration_dates,
+        array_agg(source) within group (order by source) as sources
     from
         all_licenses
     where
         license_id is not null
-    group by 1, 2
-    having count(distinct expire_at) > 1
+    group by 1
 )
 select
     all_licenses.license_id,
@@ -70,10 +69,10 @@ select
     datediff(day, cws.starts_at::date, cws.expire_at::date) as duration_days,
     datediff(month, cws.starts_at::date, cws.expire_at::date) as duration_months,
 
-
+    -- Mark where the datasources reporting each license
+    sourecs,
     -- Mark license IDs with > 1 expiration dates as outliers
-    outliers.count_expiration_dates is not null as is_outlier
+    outliers.count_expiration_dates > 1 as is_outlier
 from
-    all_licenses
-    left join outliers on all_licenses.license_id = outliers.license_id and all_licenses.source = outliers.source
+    distinct_licenses
     left join {{ ref('stg_cws__license') }} cws on all_licenses.license_id = cws.license_id
