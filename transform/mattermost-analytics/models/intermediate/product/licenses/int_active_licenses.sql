@@ -50,8 +50,6 @@ with stripe_licenses as (
 )
 select
     all_licenses.license_id,
-    all_licenses.expire_at,
-    all_licenses.source,
 
     -- License data
     cws.issued_at,
