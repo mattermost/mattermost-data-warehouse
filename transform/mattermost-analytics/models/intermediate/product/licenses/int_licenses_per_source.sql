@@ -44,10 +44,7 @@ with stripe_licenses as (
         count(distinct expire_at) as count_expiration_dates
     from
         all_licenses
-    where
-        license_id is not null
     group by 1, 2
-    having count(distinct expire_at) > 1
 )
 select
     all_licenses.license_id,
@@ -58,3 +55,5 @@ select
 from
     all_licenses
     left join license_expiration_date_counts outliers on all_licenses.license_id = outliers.license_id and all_licenses.source = outliers.source
+where
+    all_licenses.license_id is not null
