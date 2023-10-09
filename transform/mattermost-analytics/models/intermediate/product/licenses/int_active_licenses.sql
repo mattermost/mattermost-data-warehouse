@@ -6,17 +6,19 @@
     })
 }}
 
-with distinct_licenses as (
+with active_licenses as (
 
      select
         license_id,
         max(has_multiple_expiration_dates) as has_multiple_expiration_dates,
         array_agg(source) within group (order by source) as sources
     from {{ ref('int_licenses_per_source') }}
+    where
+        cws.expire_at >= current_date
     group by 1
 )
 select
-    all_licenses.license_id,
+    active_licenses.license_id,
 
     -- License data
     cws.issued_at,
@@ -35,9 +37,9 @@ select
     datediff(month, cws.starts_at::date, cws.expire_at::date) as duration_months,
 
     -- Mark where the datasources reporting each license
-    all_licenses.sources,
+    active_licenses.sources,
     -- Mark license IDs with > 1 expiration dates as outliers
-    all_licenses.has_multiple_expiration_dates
+    active_licenses.has_multiple_expiration_dates
 from
-    distinct_licenses all_licenses
-    left join {{ ref('stg_cws__license') }} cws on all_licenses.license_id = cws.license_id
+    active_licenses
+    left join {{ ref('stg_cws__license') }} cws on active_licenses.license_id = cws.license_id
