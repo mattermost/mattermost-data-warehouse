@@ -39,8 +39,10 @@ select
 
     -- Mark where the datasources reporting each license
     active_licenses.sources,
-    -- Mark license IDs with > 1 expiration dates as outliers
-    active_licenses.has_multiple_expiration_dates
+    -- Mark license IDs with > 1 expiration dates on single source as outliers
+    active_licenses.has_multiple_expiration_dates_per_source,
+    -- Mark license IDs with > 1 expiration dates on all sources as outliers
+    active_licenses.has_multiple_expiration_dates_across_sources
 from
     active_licenses
     left join {{ ref('stg_cws__license') }} cws on active_licenses.license_id = cws.license_id
