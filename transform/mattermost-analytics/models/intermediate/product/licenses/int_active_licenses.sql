@@ -16,7 +16,7 @@ with active_licenses as (
     from {{ ref('int_licenses_per_source') }}
     group by 1
     having
-        min(expire_at) >= current_date
+        max(expire_at) >= current_date
 )
 select
     active_licenses.license_id,
