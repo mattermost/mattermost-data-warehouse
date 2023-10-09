@@ -11,7 +11,7 @@ with active_licenses as (
      select
         license_id,
         max(has_multiple_expiration_dates) as has_multiple_expiration_dates,
-        array_agg(source) within group (order by source) as sources
+        array_sort(array_agg(distinct source)) as sources
     from {{ ref('int_licenses_per_source') }}
     where
         expire_at >= current_date
