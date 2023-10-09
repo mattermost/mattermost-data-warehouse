@@ -14,7 +14,7 @@ with active_licenses as (
         array_agg(source) within group (order by source) as sources
     from {{ ref('int_licenses_per_source') }}
     where
-        cws.expire_at >= current_date
+        expire_at >= current_date
     group by 1
 )
 select
