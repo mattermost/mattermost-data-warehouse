@@ -51,7 +51,7 @@ select
     all_licenses.source,
     all_licenses.expire_at,
     -- Mark license IDs with > 1 expiration dates as outliers
-    outliers.count_expiration_dates is not null as has_multiple_expiration_dates
+    outliers.count_expiration_dates > 1 as has_multiple_expiration_dates
 from
     all_licenses
     left join license_expiration_date_counts outliers on all_licenses.license_id = outliers.license_id and all_licenses.source = outliers.source
