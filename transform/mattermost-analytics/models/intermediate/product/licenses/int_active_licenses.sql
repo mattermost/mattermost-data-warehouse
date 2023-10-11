@@ -25,7 +25,7 @@ select
     coalesce(cws.starts_at, rudder.starts_at),
     coalesce(cws.expire_at, rudder.expire_at),
     cws.sku,
-    coalesce(cws.sku_short_name, get(rudder.license_name, 0)),
+    coalesce(cws.sku_short_name, get(rudder.license_names, 0)),
     cws.is_gov_sku,
     cws.is_trial,
     cws.company_name,
