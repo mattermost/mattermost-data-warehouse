@@ -30,12 +30,12 @@ with stripe_licenses as (
     union
     select license_id, expire_at, 'Stripe' as source from stripe_licenses
     union
-    select license_id, expire_at, 'Rudderstack' as source from {{ ref('stg_mm_telemetry_prod__license') }} where license_id is not null and license_name in ('E10', 'E20', 'enterprise', 'professional')
+    select license_id, coalesce(expire_at, max_expire_at) as expire_at, 'Rudderstack' as source from {{ ref('int_rudder_licenses_deduped') }}
     union
-    select license_id, expire_at, 'Segment' as source from  {{ ref('stg_mattermost2__license') }} where license_id is not null and license_name in ('E10', 'E20', 'enterprise', 'professional')
+    select license_id, coalesce(expire_at, max_expire_at) as expire_at, 'Segment' as source from  {{ ref('int_segment_licenses_deduped') }}
     -- Legacy licenses
     union
-    select license_id, expire_at, 'Legacy' as source from {{ ref('stg_licenses__licenses') }}
+    select license_id, expire_at, 'Legacy' as source from {{ ref('int_legacy_licenses_deduped') }}
 ), license_expiration_date_counts as (
     -- Licenses with more than one expiration date
     select
