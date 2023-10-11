@@ -25,15 +25,31 @@ models:
           - not_null
           - unique
       - name: issued_at
-        description: The timestamp that the license was issued at.
+        description: The timestamp that the license was issued at. Null if multiple values exist for the same license id.
+      - name: min_issued_at
+        description: The minimum value for issued_at.
+      - name: max_issued_at
+        description: The maximum value for issued_at.
       - name: starts_at
-        description: The timestamp that the license starts/started.
+        description: The timestamp that the license starts/started. Null if multiple values exist for the same license id.
+      - name: min_starts_at
+        description: The minimum value for starts_at.
+      - name: max_starts_at
+        description: The maximum value for starts_at.
       - name: expire_at
-        description: The timestamp of the license's expiration.
-      - name: license_name
-        description: The name of the li ense.
+        description: The timestamp of the license's expiration. Null if multiple values exist for the same license id.
+      - name: min_expire_at
+        description: The minimum value for expire_at.
+      - name: max_expire_at
+        description: The maximum value for expire_at.
+      - name: license_names
+        description: An array with all the distinct license names reported for this license.
       - name: license_seats
-        description: The number of licensed seats.
+        description: The number of licensed seats. Null if multiple values exist for the same license id.
+      - name: min_licensed_seats
+        description: The minimum value for expire_at.
+      - name: max_licensed_seats
+        description: The maximum value for expire_at.
 
 
   - name: int_segment_licenses_deduped
@@ -46,12 +62,28 @@ models:
           - not_null
           - unique
       - name: issued_at
-        description: The timestamp that the license was issued at.
+        description: The timestamp that the license was issued at. Null if multiple values exist for the same license id.
+      - name: min_issued_at
+        description: The minimum value for issued_at.
+      - name: max_issued_at
+        description: The maximum value for issued_at.
       - name: starts_at
-        description: The timestamp that the license starts/started.
+        description: The timestamp that the license starts/started. Null if multiple values exist for the same license id.
+      - name: min_starts_at
+        description: The minimum value for starts_at.
+      - name: max_starts_at
+        description: The maximum value for starts_at.
       - name: expire_at
-        description: The timestamp of the license's expiration.
-      - name: license_name
-        description: The name of the li ense.
+        description: The timestamp of the license's expiration. Null if multiple values exist for the same license id.
+      - name: min_expire_at
+        description: The minimum value for expire_at.
+      - name: max_expire_at
+        description: The maximum value for expire_at.
+      - name: license_names
+        description: An array with all the distinct license names reported for this license.
       - name: license_seats
-        description: The number of licensed seats.
+        description: The number of licensed seats. Null if multiple values exist for the same license id.
+      - name: min_licensed_seats
+        description: The minimum value for expire_at.
+      - name: max_licensed_seats
+        description: The maximum value for expire_at.
