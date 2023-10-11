@@ -26,4 +26,4 @@ from
     onprem_licenses op
     left join {{ ref('stg_cws__license')}} cws on op.license_id = cws.license_id
 where
-    and cws.license_id is null
+    cws.license_id is null
