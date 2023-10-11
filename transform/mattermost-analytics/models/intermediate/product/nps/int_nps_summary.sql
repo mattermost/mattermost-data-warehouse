@@ -7,6 +7,6 @@
 }}
 
 
-select * from {{ ref('int_mattermost_nps_summary') }}
+select * from {{ ref('int_mattermost_nps_nps_summary') }}
 union
-select * from {{ ref('int_plugin_prod_nps_summary') }}
+select * from {{ ref('int_mm_plugin_prod_nps_summary') }}
