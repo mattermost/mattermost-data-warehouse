@@ -1,0 +1,57 @@
+version: 2
+
+models:
+  - name: int_legacy_licenses_deduped
+    description: Deduplicated list of licenses from legacy S3 bucket
+
+    columns:
+      - name: license_id
+        description: The license id.
+        tests:
+          - not_null
+          - unique
+      - name: issued_at
+        description: The timestamp that the license was issued at.
+      - name: expire_at
+        description: The timestamp of the license's expiration.
+
+  - name: int_rudder_licenses_deduped
+    description: Deduplicated list of licenses reported by Rudderstack.
+
+    columns:
+      - name: license_id
+        description: The license id.
+        tests:
+          - not_null
+          - unique
+      - name: issued_at
+        description: The timestamp that the license was issued at.
+      - name: starts_at
+        description: The timestamp that the license starts/started.
+      - name: expire_at
+        description: The timestamp of the license's expiration.
+      - name: license_name
+        description: The name of the li ense.
+      - name: license_seats
+        description: The number of licensed seats.
+
+
+  - name: int_segment_licenses_deduped
+    description: Deduplicated list of licenses reported by Segment.
+
+    columns:
+      - name: license_id
+        description: The license id.
+        tests:
+          - not_null
+          - unique
+      - name: issued_at
+        description: The timestamp that the license was issued at.
+      - name: starts_at
+        description: The timestamp that the license starts/started.
+      - name: expire_at
+        description: The timestamp of the license's expiration.
+      - name: license_name
+        description: The name of the li ense.
+      - name: license_seats
+        description: The number of licensed seats.
