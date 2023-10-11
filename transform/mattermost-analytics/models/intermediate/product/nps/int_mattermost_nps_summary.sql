@@ -1,11 +1,3 @@
--- Materializing this intermediate table as it's used multiple times downstream.
-{{
-    config({
-        "materialized": "table",
-        "snowflake_warehouse": "transform_l"
-    })
-}}
-
 with nps as (
 select 
     distinct coalesce(f.server_id, s.server_id) server_id
