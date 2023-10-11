@@ -21,9 +21,9 @@ select
     active_licenses.license_id,
 
     -- License data
---     coalesce(cws.issued_at, rudder.issued_at) as issued_at,
---     coalesce(cws.starts_at, rudder.starts_at) as starts_at,
---     coalesce(cws.expire_at, rudder.expire_at as expire_at),
+    coalesce(cws.issued_at, rudder.issued_at) as issued_at,
+    coalesce(cws.starts_at, rudder.starts_at) as starts_at,
+    coalesce(cws.expire_at, rudder.expire_at) as expire_at,
     cws.sku,
 --     coalesce(cws.sku_short_name, get(rudder.license_names, 0)) as license_name,
     cws.is_gov_sku,
