@@ -33,8 +33,8 @@ select
     cws.customer_name,
     coalesce(cws.licensed_seats, rudder.licensed_seats) as licensed_seats,
     cws.created_at,
---     datediff(day, cws.starts_at::date, cws.expire_at::date) as duration_days,
---     datediff(month, cws.starts_at::date, cws.expire_at::date) as duration_months,
+    datediff(day, cws.starts_at::date, cws.expire_at::date) as duration_days,
+    datediff(month, cws.starts_at::date, cws.expire_at::date) as duration_months,
 
     -- Mark where the datasources reporting each license
     active_licenses.sources,
