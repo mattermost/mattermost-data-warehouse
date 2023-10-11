@@ -9,6 +9,7 @@ with source as (
         , user_id             as server_id 
         , received_at         as received_at
         , timestamp           as timestamp
+        , timestamp::date     as event_date
 
         -- NPS columns
         , user_create_at      as user_created_at
