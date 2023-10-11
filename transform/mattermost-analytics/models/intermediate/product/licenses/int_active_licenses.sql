@@ -21,9 +21,9 @@ select
     active_licenses.license_id,
 
     -- License data
-    coalesce(cws.issued_at, rudder.issued_at),
-    coalesce(cws.starts_at, rudder.starts_at),
-    coalesce(cws.expire_at, rudder.expire_at),
+    coalesce(cws.issued_at, rudder.issued_at) as issued_at,
+    coalesce(cws.starts_at, rudder.starts_at) as starts_at,
+    coalesce(cws.expire_at, rudder.expire_at as expire_at),
     cws.sku,
     coalesce(cws.sku_short_name, get(rudder.license_names, 0)) as license_name,
     cws.is_gov_sku,
@@ -31,7 +31,7 @@ select
     cws.company_name,
     cws.customer_email,
     cws.customer_name,
-    coalesce(cws.licensed_seats, rudder.licensed_seats),
+    coalesce(cws.licensed_seats, rudder.licensed_seats) as licensed_seats,
     cws.created_at,
     datediff(day, cws.starts_at::date, cws.expire_at::date) as duration_days,
     datediff(month, cws.starts_at::date, cws.expire_at::date) as duration_months,
