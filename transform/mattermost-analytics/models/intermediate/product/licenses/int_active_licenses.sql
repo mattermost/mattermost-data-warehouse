@@ -44,7 +44,7 @@ select
     cws.company_name,
     cws.customer_email,
     cws.customer_name,
-    coalesce(cws.number_of_users, number_of_users),
+    coalesce(cws.number_of_users, rudder.number_of_users),
     cws.created_at,
     datediff(day, cws.starts_at::date, cws.expire_at::date) as duration_days,
     datediff(month, cws.starts_at::date, cws.expire_at::date) as duration_months,
