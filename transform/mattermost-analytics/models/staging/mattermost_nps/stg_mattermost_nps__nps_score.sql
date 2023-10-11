@@ -18,6 +18,7 @@ with source as (
         , user_role           as user_role
         , score               as score
         , server_install_date as server_install_date
+        , server_version      as server_version
          
         -- Metadata from Segment
         , context_library_version as context_library_version
