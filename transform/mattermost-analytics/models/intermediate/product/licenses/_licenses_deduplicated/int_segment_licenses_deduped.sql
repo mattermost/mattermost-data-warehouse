@@ -5,7 +5,7 @@ select
         starts_at,
         expire_at,
         license_name,
-        license_seats
+        licensed_seats
 from
     {{ ref('stg_mattermost2__license') }}
 where
