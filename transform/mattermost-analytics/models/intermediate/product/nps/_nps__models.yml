@@ -1,0 +1,76 @@
+version: 2
+
+models:
+
+  - name: int_mm_plugin_prod_nps_summary
+    description: 
+      NPS summary combined from Staging tables feedback and score from mm_plugin_prod source.
+    
+    columns:
+      - name: server_id
+        description: The ID of the server the event originated from.
+      - name: user_id
+        description: The ID of the user that sent the event.
+      - name: event_date
+        description: The date the event was sent.
+      - name: server_version
+        description: The Server's version.
+      - name: feedback
+        description: NPS feedback submitted..
+      - name: user_role
+        description: The role of the user who submitted feedback or score.
+      - name: feedback_received_at
+        description: Timestamp registered by RudderStack when the NPS feedback event was ingested (received).
+      - name: score_received_at
+        description: Timestamp registered by RudderStack when the NPS score event was ingested (received).
+      - name: score
+        description: NPS Score submitted.
+
+
+  - name: int_mattermost_nps_nps_summary
+    description: 
+      NPS summary combined from Staging tables feedback and score from mattermost_nps source.
+    
+    columns:
+      - name: server_id
+        description: The ID of the server the event originated from.
+      - name: user_id
+        description: The ID of the user that sent the event.
+      - name: event_date
+        description: The date the event was sent.
+      - name: server_version
+        description: The Server's version.
+      - name: feedback
+        description: NPS feedback submitted..
+      - name: user_role
+        description: The role of the user who submitted feedback or score.
+      - name: feedback_received_at
+        description: Timestamp registered by RudderStack when the NPS feedback event was ingested (received).
+      - name: score_received_at
+        description: Timestamp registered by RudderStack when the NPS score event was ingested (received).
+      - name: score
+        description: NPS Score submitted.
+
+  - name: int_nps_summary
+    description: 
+      NPS summary combined from intermediate summary tables.
+    
+    columns:
+      - name: server_id
+        description: The ID of the server the event originated from.
+      - name: user_id
+        description: The ID of the user that sent the event.
+      - name: event_date
+        description: The date the event was sent.
+      - name: server_version
+        description: The Server's version.
+      - name: feedback
+        description: NPS feedback submitted..
+      - name: user_role
+        description: The role of the user who submitted feedback or score.
+      - name: feedback_received_at
+        description: Timestamp registered by RudderStack when the NPS feedback event was ingested (received).
+      - name: score_received_at
+        description: Timestamp registered by RudderStack when the NPS score event was ingested (received).
+      - name: score
+        description: NPS Score submitted.
