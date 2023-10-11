@@ -1,3 +1,4 @@
+-- Deduplicate licenses reported by Rudderstack, identifying potential error data.
 select
     license_id,
     min(issued_at) as min_issued_at,

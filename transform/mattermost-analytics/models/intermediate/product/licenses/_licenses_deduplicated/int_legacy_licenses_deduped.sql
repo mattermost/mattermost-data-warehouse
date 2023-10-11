@@ -1,3 +1,4 @@
+-- Deduplicate licenses from legacy source (S3)
 select
     distinct
         license_id,
