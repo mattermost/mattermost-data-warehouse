@@ -22,10 +22,10 @@ with active_licenses as (
         distinct
             license_id,
             issued_at,
-            start_at as starts_at,
+            starts_at,
             expire_at,
             license_name,
-            licensed_seats as number_of_users
+            licensed_seats
         from
             {{ ref('stg_mm_telemetry_prod__license') }}
         where license_id is not null
@@ -44,7 +44,7 @@ select
     cws.company_name,
     cws.customer_email,
     cws.customer_name,
-    coalesce(cws.number_of_users, rudder.number_of_users),
+    coalesce(cws.licensed_seats, rudder.licensed_seats),
     cws.created_at,
     datediff(day, cws.starts_at::date, cws.expire_at::date) as duration_days,
     datediff(month, cws.starts_at::date, cws.expire_at::date) as duration_months,

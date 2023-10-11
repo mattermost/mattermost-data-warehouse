@@ -119,7 +119,7 @@ models:
       - name: customer_email
       - name: customer_id
       - name: customer_name
-      - name: number_of_users
+      - name: licensed_seats
       - name: is_feature_advanced_logging_enabled
       - name: is_feature_announcement_enabled
       - name: is_feature_cloud_enabled

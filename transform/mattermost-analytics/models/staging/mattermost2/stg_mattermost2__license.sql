@@ -24,7 +24,7 @@ renamed as (
         , users as licensed_seats
         , try_to_timestamp_ntz(cast(issued as varchar)) as issued_at
         , try_to_timestamp_ntz(cast(expire as varchar)) as expire_at
-        , try_to_timestamp_ntz(cast(_start as varchar)) as start_at
+        , try_to_timestamp_ntz(cast(_start as varchar)) as starts_at
 
         -- Features
         , feature_cluster as is_feature_cluster_enabled

@@ -32,7 +32,7 @@ renamed as (
         , _license:customer:name::varchar as customer_name
 
         -- Feature info
-        , _license:features:users::int as number_of_users
+        , _license:features:users::int as licensed_seats
         , _license:features:advanced_logging::boolean as is_feature_advanced_logging_enabled
         , _license:features:announcement::boolean as is_feature_announcement_enabled
         , _license:features:cloud::boolean as is_feature_cloud_enabled
