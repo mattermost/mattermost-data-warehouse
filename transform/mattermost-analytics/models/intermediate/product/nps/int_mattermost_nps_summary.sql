@@ -8,13 +8,13 @@
 
 with nps as (
 select 
-    distinct coalesce(f.server_id,s.server_id) server_id
-    , coalesce(f.user_id,s.user_id) user_actual_id
-    , coalesce(f.event_date,s.event_date) event_date
-    , coalesce(f.server_version,s.server_version) server_version
+    distinct coalesce(f.server_id, s.server_id) server_id
+    , coalesce(f.user_id, s.user_id) user_actual_id
+    , coalesce(f.event_date, s.event_date) event_date
+    , coalesce(f.server_version, s.server_version) server_version
     , f.feedback feedback
-    , coalesce(f.user_role,s.user_role) user_role
-    , coalesce(f.received_at,s.received_at) received_at
+    , coalesce(f.user_role, s.user_role) user_role
+    , coalesce(f.received_at, s.received_at) received_at
     , s.score score
     from {{ ref('stg_mattermost_nps__nps_feedback') }} f
         full join {{ ref('stg_mattermost_nps__nps_score') }} s
