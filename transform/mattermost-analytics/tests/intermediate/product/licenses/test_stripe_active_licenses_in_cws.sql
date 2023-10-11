@@ -19,6 +19,9 @@ with onprem_licenses as (
         and s.created_at > '2021-04-01'
         -- Ignore invalid records
         and s.license_id is not null
+        -- License must be active
+        and to_timestamp_ntz(date_part(epoch_second, license_end_at)) >= CURRENT_DATE
+
 )
 select
     op.license_id
