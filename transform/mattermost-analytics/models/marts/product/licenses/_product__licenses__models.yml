@@ -1,0 +1,86 @@
+version: 2
+
+models:
+  - name: dim_license_customers
+    description: List of known customers with active on prem licenses.
+
+    columns:
+      - name: customer_id
+        description: A unique id for the customer. Specific to the data warehouse (not reusing id from other systems).
+        tests:
+          - unique
+          - not_null
+      - name: name
+        description: The customer's name.
+      - name: email
+        description: The customer's email.
+        tags: ['pii']
+      - name: company
+        description: The name of the customer's company.
+
+  - name: dim_license_type
+    description: A list of known license types.
+
+    columns:
+      - name: license_type_id
+        description: A unique identifier for the license type. Specific to the data warehouse (not reusing id from other systems).
+        tests:
+          - unique
+          - not_null
+      - name: sku
+        description: The license type's SKU.
+      - name: name
+        description: The license type's name.
+        tests:
+          - not_null
+      - name: product_family
+        description: The name of the product family.
+
+
+  - name: fct_active_licenses
+    description: List of active licenses for on-prem servers.
+
+    columns:
+      - name: license_id
+        description: The unique id of the license.
+        tests:
+          - unique
+          - not_null
+      - name: license_type_id
+        description: The id of the license's type.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_license_type')
+              field: license_type_id
+      - name: customer_id
+        description: The id of the customer this license is generated for.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_license_customers')
+              field: license_type_id
+      - name: issued_at
+        description: The timestamp that the license was issued at.
+      - name: starts_at
+        description: The timestamp that the license starts at.
+      - name: expire_at
+        description: The timestamp that the license expires at.
+      - name: created_at
+        description: The timestamp that the license was created at.
+      - name: is_gov_sku
+        description: Whether it's a goverment SKU
+      - name: is_trial
+        description: Whether the license is a trial license or not.
+      - name: licensed_seats
+        description: The number of seats allowed by the license.
+      - name: duration_days
+        description: |
+          Duration of the license in days. Calculated by the difference of columns `starts_at` and `expire_at`.
+      - name: duration_months
+        description: |
+          Duration of the license in months. Calculated by the difference of columns `starts_at` and `expire_at`.
+      - name: has_multiple_expiration_dates_across_sources
+        description: |
+          Whether the expiration date is consistent in case there's multiple sources that report the license. True if 
+          more than one expiration dates are reported, false else.

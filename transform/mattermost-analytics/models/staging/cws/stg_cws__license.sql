@@ -20,7 +20,7 @@ renamed as (
         , try_to_timestamp_ntz(_license:issued_at::varchar) as issued_at
         , try_to_timestamp_ntz(_license:starts_at::varchar) as starts_at
         , try_to_timestamp_ntz(_license:expires_at::varchar) as expire_at
-        , _license:sku_name::varchar as sku
+        , _license:sku_name::varchar as stripe_product_id
         , _license:sku_short_name::varchar as sku_short_name
         , _license:is_gov_sku::boolean as is_gov_sku
         , _license:is_trial::boolean as is_trial
