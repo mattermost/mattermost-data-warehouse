@@ -4,4 +4,4 @@ select
     name,
     cws_product_family as product_family
 from
-    {{ ref('stg_stripe_products') }}
+    {{ ref('stg_stripe__products') }}
