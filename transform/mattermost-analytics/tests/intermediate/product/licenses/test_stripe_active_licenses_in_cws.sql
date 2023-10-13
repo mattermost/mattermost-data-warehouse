@@ -1,4 +1,11 @@
 -- Checks that all stripe licenses exist in CWS.
+-- It's possible that Stripe data are synchronized before CWS data, resulting in a temporary inconsistency.
+-- Since syncs are hourly and the rate of license creation is not that fast, a small buffer is allowed before raising
+-- a warning. This should help tackle the race condition.
+{{ config(
+    severity = 'warn',
+    error_if = '> 3'
+) }}
 
 with onprem_licenses as (
     -- List of onprem licenses
