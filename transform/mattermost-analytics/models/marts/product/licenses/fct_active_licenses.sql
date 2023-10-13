@@ -2,7 +2,10 @@ select
     -- IDs
     license_id,
     {{ dbt_utils.generate_surrogate_key(['stripe_product_id']) }} as license_type_id,
-    {{ dbt_utils.generate_surrogate_key(['cws_customer_id', 'license_id']) }} as customer_id,
+    case
+        when cws_customer_d is not null then{{ dbt_utils.generate_surrogate_key(['cws_customer_id', 'license_id']) }}
+        else 'Unknown'
+    end as customer_id,
     -- Timestamps
     issued_at,
     starts_at,

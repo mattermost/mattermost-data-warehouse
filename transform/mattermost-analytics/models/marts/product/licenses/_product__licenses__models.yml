@@ -61,7 +61,7 @@ models:
           - not_null
           - relationships:
               to: ref('dim_license_customers')
-              field: license_type_id
+              field: customer_id
       - name: issued_at
         description: The timestamp that the license was issued at.
       - name: starts_at
