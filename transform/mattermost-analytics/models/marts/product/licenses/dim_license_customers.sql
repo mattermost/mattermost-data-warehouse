@@ -9,9 +9,10 @@ from
 
 union
 
--- Handle non-CWS licenses - customers are not known in those cases
+-- Handle non-CWS licenses - customers are not known in those cases.
+-- Using `'Unknown'` instead of null to avoid having special null checking logic in queries.
 select
     'Unknown' as customer_id,
-    null as name,
-    null as email,
-    null as company;
+    'Unknown' as name,
+    'Unknown' as email,
+    'Unknown' as company
