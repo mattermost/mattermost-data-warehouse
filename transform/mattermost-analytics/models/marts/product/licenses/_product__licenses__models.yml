@@ -2,7 +2,9 @@ version: 2
 
 models:
   - name: dim_license_customers
-    description: List of known customers with active on prem licenses.
+    description: |
+      List of known customers with active on prem licenses. Note that the same customer might appear more than once in
+      case the details are different for the given license.
 
     columns:
       - name: customer_id
