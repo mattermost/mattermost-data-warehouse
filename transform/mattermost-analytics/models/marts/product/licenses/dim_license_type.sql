@@ -5,3 +5,11 @@ select
     cws_product_family as product_family
 from
     {{ ref('stg_stripe__products') }}
+
+union
+
+select
+    'Unknown' as license_type_id,
+    'Unknown' as sku,
+    'Unknown' as name,
+    'Unknown' as product_family
