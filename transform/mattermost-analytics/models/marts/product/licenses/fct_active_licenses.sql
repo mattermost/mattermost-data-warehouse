@@ -1,8 +1,8 @@
 select
     -- IDs
     license_id,
-    {{ dbt_utils.surrogate_key(['stripe_product_id']) }} as license_type_id,
-    {{ dbt_utils.surrogate_key(['cws_customer_id']) }} as customer_id,
+    {{ dbt_utils.generate_surrogate_key(['stripe_product_id']) }} as license_type_id,
+    {{ dbt_utils.generate_surrogate_key(['cws_customer_id']) }} as customer_id,
     -- Timestamps
     issued_at,
     starts_at,
