@@ -7,7 +7,7 @@ select
     , feedback as feedback
     , user_role as user_role
     , received_at as feedback_received_at
-    from {{ ref('stg_mattermost__nps_feedback') }} 
+    from {{ ref('stg_mattermost_nps__nps_feedback') }} 
 ), mm_plugin_prod as 
 (
  select 

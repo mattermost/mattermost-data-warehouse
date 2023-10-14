@@ -7,7 +7,7 @@ select
     , score as score
     , user_role as user_role
     , received_at as score_received_at
-    from {{ ref('stg_mattermost__nps_score') }} 
+    from {{ ref('stg_mattermost_nps__nps_score') }} 
 ), mm_plugin_prod as 
 (
  select 
