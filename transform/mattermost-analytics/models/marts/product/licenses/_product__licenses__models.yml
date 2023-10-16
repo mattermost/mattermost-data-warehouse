@@ -40,7 +40,9 @@ models:
 
 
   - name: fct_active_licenses
-    description: List of active licenses for on-prem servers.
+    description: |
+      List of active licenses for on-prem servers.
+      > Note that this table contains only licenses reported by CWS
 
     columns:
       - name: license_id

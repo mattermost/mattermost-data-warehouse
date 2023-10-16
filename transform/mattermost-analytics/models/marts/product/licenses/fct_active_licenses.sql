@@ -2,13 +2,11 @@ select
     -- IDs
     license_id,
     case
+        -- Handle licenses not in stripe
         when stripe_product_id is not null then {{ dbt_utils.generate_surrogate_key(['stripe_product_id']) }}
         else 'Unknown'
     end as license_type_id,
-    case
-        when cws_customer_id is not null then {{ dbt_utils.generate_surrogate_key(['cws_customer_id', 'license_id']) }}
-        else 'Unknown'
-    end as customer_id,
+    {{ dbt_utils.generate_surrogate_key(['cws_customer_id', 'license_id']) }} as customer_id,
     -- Timestamps
     issued_at,
     starts_at,
@@ -26,3 +24,5 @@ select
     has_multiple_expiration_dates_across_sources
 from
     {{ ref('int_active_licenses') }}
+where
+    ARRAY_CONTAINS('CWS'::variant, sources)
