@@ -93,7 +93,9 @@ models:
       - name: latest_invoice_id
         description: The ID of the most recent invoice for the subscription.
       - name: current_product_id
-        description: The ID of the current product for the subscription.
+        description: | 
+          The ID of the current product for the subscription. Related to monthly cloud subscriptions. Please check
+          Confluence for more details.
       - name: renewed_from_subscription_id
         description: The ID of the subscription that this subscription was renewed from.
       - name: license_id
