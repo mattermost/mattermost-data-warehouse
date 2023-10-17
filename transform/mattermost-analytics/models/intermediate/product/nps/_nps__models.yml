@@ -13,6 +13,8 @@ models:
         description: The ID of the user that sent the event.
       - name: event_date
         description: The date the event was sent.
+      - name: timestamp
+        description: Timestamp registered by Rudderstack when the event occurred refactored to clients clock skew.
       - name: server_version
         description: The Server's version.
       - name: feedback
@@ -33,6 +35,8 @@ models:
         description: The ID of the user that sent the event.
       - name: event_date
         description: The date the event was sent.
+      - name: timestamp
+        description: Timestamp registered by Rudderstack when the event occurred refactored to clients clock skew.
       - name: server_version
         description: The Server's version.
       - name: score

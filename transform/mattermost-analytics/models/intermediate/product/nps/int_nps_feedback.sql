@@ -3,6 +3,7 @@ select
     distinct server_id as server_id
     , user_id as user_id
     , event_date as event_date
+    , timestamp as timestamp
     , server_version as server_version
     , feedback as feedback
     , user_role as user_role
@@ -14,6 +15,7 @@ select
     distinct server_id as server_id
     , user_id as user_id
     , event_date as event_date
+    , timestamp as timestamp
     , server_version as server_version
     , feedback as feedback
     , user_role as user_role
