@@ -1,3 +1,11 @@
+-- Materializing this intermediate table for test purposes.
+{{
+    config({
+        "materialized": "table",
+        "snowflake_warehouse": "transform_l"
+    })
+}}
+
 with mattermost_nps as (
 select 
     distinct server_id as server_id
