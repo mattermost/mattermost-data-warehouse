@@ -239,6 +239,14 @@ models:
           - `Unknown`: missing server info or server reports a mix of cloud and self hosted.
       - name: cloud_hostname
         description: The name of the cloud workspace. Must be in format `<name>.cloud.mattermost.com`.
+      - name: first_activity_date
+        description: |
+          The first date that this server was active. "Active server" is defined as either telemetry or security update 
+          check data are available for that date.
+      - name: last_activity_date
+        description: |
+          The last date that this server was active."Active server" is defined as either telemetry or security update 
+          check data are available for that date.
 
   - name: dim_daily_server_config
     description: Daily server configuration.
