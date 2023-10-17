@@ -243,7 +243,7 @@ models:
         description: |
           The first date that this server was active. "Active server" is defined as either telemetry or security update 
           check data are available for that date.
-      - name: first_activity_date
+      - name: fast_activity_date
         description: |
           The last date that this server was active."Active server" is defined as either telemetry or security update 
           check data are available for that date.
