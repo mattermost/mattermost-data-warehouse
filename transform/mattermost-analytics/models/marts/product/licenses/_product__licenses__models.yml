@@ -39,10 +39,13 @@ models:
         description: The name of the product family.
 
 
-  - name: fct_active_licenses
+  - name: fct_active_production_licenses
     description: |
-      List of active licenses for on-prem servers.
-      > Note that this table contains only licenses reported by CWS
+      List of active licenses for on-prem servers. All licenses provided to customers are listed in this table. 
+      
+      > ℹ️ Note #1:  This table contains only licenses reported by CWS.
+            
+      > ⚠️ Note #2:  This table may contain licenses used in test environments.
 
     columns:
       - name: license_id
