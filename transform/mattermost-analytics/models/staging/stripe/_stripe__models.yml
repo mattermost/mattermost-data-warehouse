@@ -71,105 +71,153 @@ models:
         description: The event type that updated the customer.
 
   - name: stg_stripe__subscriptions
-    description: Staging table for Stripe subscriptions
+    description: |
+      Staging table for Stripe subscriptions. Note that some of these subscriptions might have been created for one of
+      these reasons:
+      - Admin generated license
+      - SFDC migrated licenses
+      - Custom backfilling
+      
+      More details are available in Confluence:
+      - [Self-hosted](https://mattermost.atlassian.net/wiki/spaces/DATAENG/pages/2453733377/Self-Hosted+Self+Serve+Subscription+Renewals)
+      - [Cloud](https://mattermost.atlassian.net/wiki/spaces/DATAENG/pages/2455633921/Cloud+Mattermost+Cloud+Subscriptions+with+history)
+
     columns:
-      - name: billing
-        description: The billing type of the subscription (e.g., 'charge_automatically')
-      - name: billing_cycle_anchor
-        description: The date at which the current billing period ends
-      - name: cancel_at_period_end
-        description: A boolean indicating whether the subscription will be canceled at the end of the current billing period
-      - name: collection_method
-        description: The payment collection method for the subscription (e.g., 'charge_automatically')
-      - name: created_at
-        tests:
-          - not_null
-        description: The timestamp when the subscription was created
-      - name: current_period_end
-        description: The end date of the current billing period
-      - name: current_period_start
-        description: The start date of the current billing period
-      - name: customer_id
-        description: The customer to whom the subscription belongs
       - name: subscription_id
+        description: The ID of the subscription.
         tests:
           - not_null
           - unique
-        description: The ID of the subscription
-      - name: invoice_customer_balance_settings
-        description: The settings for automatic customer balance management
-      - name: items
-        description: An array of subscription line items
+      - name: customer_id
+        description: The customer to whom the subscription belongs.
       - name: latest_invoice_id
-        description: The ID of the most recent invoice for the subscription
-      - name: livemode
-        description: A boolean indicating whether the subscription is in live mode
-      - name: cws_dns
-        description: The DNS of the subscription
-      - name: cws_installation
-        description: The installation ID of the subscription
-      - name: cws_installation_state
-        description: The installation state of the subscription
-      - name: billing_type
-        description: The type of billing for the subscription
+        description: The ID of the most recent invoice for the subscription.
       - name: current_product_id
-        description: The ID of the current product for the subscription
+        description: | 
+          The ID of the current product for the subscription. Related to monthly cloud subscriptions. Please check
+          Confluence for more details.
       - name: renewed_from_subscription_id
-        description: The ID of the subscription that this subscription was renewed from
+        description: The ID of the subscription that this subscription was renewed from.
       - name: license_id
-        description: The license ID for the subscription
-      - name: migrated_license_id
-        description: The id of the license, in case of a backfilled licenses since before Stripe.
-      - name: purchase_order_num
-        description: The purchase order number for the subscription
-      - name: sfdc_migrated_opportunity_sfid
-        description: The Opportunity SFID of the migrated subscription
-      - name: sfdc_migrated_started_at
-        description: The license start date of the migrated subscription.
-      - name: renewal_type
-        description: If `sales-only`, it cannot be renewed by self-serve.
-      - name: edition
-        description: The edition of the subscription
+        description: The license ID for the subscription.
       - name: product_id
-        description: The product ID of the subscription
-      - name: converted_to_paid_at
-        description: The timestamp when the subscription was converted to paid status
-      - name: license_end_at
-        description: The end date of the subscription's license
-      - name: actual_renewal_at
-        description: The timestamp of the actual renewal date for the subscription
-      - name: pending_setup_intent
-        description: The setup intent for the subscription
-      - name: quantity
-        description: The quantity of the subscription
-      - name: start_at
-        description: The start date of the subscription
-      - name: status
-        description: The status of the subscription
-      - name: updated_at
-        description: The timestamp when the subscription was last updated
+        description: The product ID of the subscription.
+      - name: sfdc_migrated_license_id
+        description: The license id of the migrated subscription.
+      - name: sfdc_migrated_opportunity_sfid
+        description: The Opportunity SFID of the migrated subscription.
+      - name: created_at
+        tests:
+          - not_null
+        description: The timestamp when the subscription was created.
+      - name: current_period_start
+        description: The start date of the current billing period.
+      - name: current_period_end
+        description: The end date of the current billing period.
       - name: trial_start_at
         description: The start date and time of the trial period for a subscription.
-      - name: tax_percent
-        description: The tax rate applied to a subscription.
-      - name: ended_at
-        description: The date and time when a subscription ended.
       - name: trial_end_at
         description: The end date and time of the trial period for a subscription.
+      - name: start_at
+        description: The start date of the subscription.
+      - name: ended_at
+        description: The date and time when a subscription ended.
       - name: canceled_at
         description: The date and time when a subscription was canceled.
+      - name: updated_at
+        description: The timestamp when the subscription was last updated
+      - name: cancel_at
+        description: The date and time when a subscription will be canceled.
+      - name: billing
+        description: The billing type of the subscription (e.g., 'charge_automatically')
+      - name: billing_cycle_anchor
+        description: The date at which the current billing period ends.
+      - name: cancel_at_period_end
+        description: A boolean indicating whether the subscription will be canceled at the end of the current billing period.
+      - name: collection_method
+        description: The payment collection method for the subscription (e.g., 'charge_automatically').
+      - name: invoice_customer_balance_settings
+        description: The settings for automatic customer balance management.
+      - name: items
+        description: An array of subscription line items.
+      - name: livemode
+        description: A boolean indicating whether the subscription is in live mode.
+      - name: pending_setup_intent
+        description: The setup intent for the subscription.
+      - name: quantity
+        description: The quantity of the subscription.
+      - name: status
+        description: The status of the subscription.
+      - name: tax_percent
+        description: The tax rate applied to a subscription.
       - name: updated_by_event_type
         description: The type of event that triggered the last update to the record.
       - name: default_payment_method
         description: The default payment method for a customer's subscription.
-      - name: cancel_at
-        description: The date and time when a subscription will be canceled.
       - name: pause_collection
         description: A flag indicating whether collection of payment for a subscription has been paused.
       - name: discount
         description: The discount applied to a subscription.
       - name: days_until_due
         description: The number of days before a subscription is due for payment.
+      - name: cws_dns
+        description: The DNS of the subscription.
+      - name: cws_installation
+        description: The installation ID of the subscription.
+      - name: cws_installation_state
+        description: The installation state of the subscription.
+      - name: is_cloud
+        description: Whether this is a cloud or self-hosted subscription.
+      - name: is_paid_tier
+        description: |
+          This value was the main mechanism driving the "upgraded" experience in Mattermost Cloud. When a customer added
+          a payment method, we'd adjust the value for this variable to true. A workspace in the paid tier would not be
+          limited by the 10 user creation limit, and wouldn’t see any banners/etc prompting them to "subscribe".
+      - name: sfdc_migrated_started_at
+        description: The license start date of the migrated subscription.
+      - name: actual_renewal_at
+        description: The timestamp of the actual renewal date for the subscription
+      - name: license_start_at
+        description: |
+          The start date of the subscription's license. The priority for deciding which field or value should be used
+          for the license's start date is the following:
+          - If it's an SFDC migrated license, then value of `sfdc_migrated_started_at`.
+          - In case of a bug where license start date from CWS doesn't exist but end date exists, then derive it as 1 year from start.
+          - If both license start and end date from CWS is equal to 0 (bug), then use current period start.
+          - Otherwise use value from CWS metadata.
+        tests:
+          - dbt_utils.expression_is_true:
+              # Must be recent
+              expression: '>= ''2010-01-01'''
+      - name: license_end_at
+        description: |
+          The end date of the subscription's license. The priority for deciding which field or value should be used for
+          the license's start date is the following:
+          - If license end date from CWS is available, then use this date.
+          - If the license is marked as migrated from SFDC, then use `current_period_end_at`
+          - Otherwise use `current_period_end_at`.
+        tests:
+          - dbt_utils.expression_is_true:
+              # Must be recent
+              expression: '>= ''2010-01-01'''
+      - name: purchase_order_num
+        description: The purchase order number for the subscription.
+      - name: billing_type
+        description: The type of billing for the subscription.
+      - name: is_admin_generated_license
+        description: Whether the license is an admin generated license.
+      - name: renewal_type
+        description: If `sales-only`, it cannot be renewed by self-serve.
+      - name: edition
+        description: The edition of the subscription.
+      - name: converted_to_paid_at
+        description: The timestamp when the subscription was converted to paid status.
+      - name: purchase_source
+        description: The source that recorded the purchase.
+    tests:
+      - dbt_utils.expression_is_true:
+          name: license_start_date_before_end_Date
+          expression: 'license_start_at <= license_end_at'
 
   - name: stg_stripe__products
     description: A staging table for Stripe products data.

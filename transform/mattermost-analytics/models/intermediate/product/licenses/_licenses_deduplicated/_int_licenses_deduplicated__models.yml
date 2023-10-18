@@ -1,0 +1,89 @@
+version: 2
+
+models:
+  - name: int_legacy_licenses_deduped
+    description: Deduplicated list of licenses from legacy S3 bucket
+
+    columns:
+      - name: license_id
+        description: The license id.
+        tests:
+          - not_null
+          - unique
+      - name: issued_at
+        description: The timestamp that the license was issued at.
+      - name: expire_at
+        description: The timestamp of the license's expiration.
+
+  - name: int_rudder_licenses_deduped
+    description: Deduplicated list of licenses reported by Rudderstack.
+
+    columns:
+      - name: license_id
+        description: The license id.
+        tests:
+          - not_null
+          - unique
+      - name: issued_at
+        description: The timestamp that the license was issued at. Null if multiple values exist for the same license id.
+      - name: min_issued_at
+        description: The minimum value for issued_at.
+      - name: max_issued_at
+        description: The maximum value for issued_at.
+      - name: starts_at
+        description: The timestamp that the license starts/started. Null if multiple values exist for the same license id.
+      - name: min_starts_at
+        description: The minimum value for starts_at.
+      - name: max_starts_at
+        description: The maximum value for starts_at.
+      - name: expire_at
+        description: The timestamp of the license's expiration. Null if multiple values exist for the same license id.
+      - name: min_expire_at
+        description: The minimum value for expire_at.
+      - name: max_expire_at
+        description: The maximum value for expire_at.
+      - name: license_names
+        description: An array with all the distinct license names reported for this license.
+      - name: license_seats
+        description: The number of licensed seats. Null if multiple values exist for the same license id.
+      - name: min_licensed_seats
+        description: The minimum value for licensed seats.
+      - name: max_licensed_seats
+        description: The maximum value for licensed seats.
+
+
+  - name: int_segment_licenses_deduped
+    description: Deduplicated list of licenses reported by Segment.
+
+    columns:
+      - name: license_id
+        description: The license id.
+        tests:
+          - not_null
+          - unique
+      - name: issued_at
+        description: The timestamp that the license was issued at. Null if multiple values exist for the same license id.
+      - name: min_issued_at
+        description: The minimum value for issued_at.
+      - name: max_issued_at
+        description: The maximum value for issued_at.
+      - name: starts_at
+        description: The timestamp that the license starts/started. Null if multiple values exist for the same license id.
+      - name: min_starts_at
+        description: The minimum value for starts_at.
+      - name: max_starts_at
+        description: The maximum value for starts_at.
+      - name: expire_at
+        description: The timestamp of the license's expiration. Null if multiple values exist for the same license id.
+      - name: min_expire_at
+        description: The minimum value for expire_at.
+      - name: max_expire_at
+        description: The maximum value for expire_at.
+      - name: license_names
+        description: An array with all the distinct license names reported for this license.
+      - name: license_seats
+        description: The number of licensed seats. Null if multiple values exist for the same license id.
+      - name: min_licensed_seats
+        description: The minimum value for licensed seats.
+      - name: max_licensed_seats
+        description: The maximum value for licensed seats.

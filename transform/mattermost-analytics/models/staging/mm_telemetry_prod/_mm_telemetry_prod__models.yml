@@ -260,7 +260,7 @@ models:
         description: The number of licensed seats for the current license.
       - name: issued_at
         description: The date and time the license was issued at.
-      - name: start_at
+      - name: starts_at
         description: The date and time the license started at.
       - name: expire_at
         description: The date and time the license expires at.
