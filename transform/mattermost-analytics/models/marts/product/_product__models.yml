@@ -137,10 +137,32 @@ models:
         tests:
           - unique
           - not_null
-      - name: reasons
-        description: A list of reasons this server should be excluded.
-        tests:
-          - not_null
+      - name: has_reason_single_day_security_only
+        description: Whether the server has a single day of reported data from security update check endpoint.
+      - name: has_reason_custom_build_version_format
+        description: Whether the server reported a custom build version format in security update check endpoint.
+      - name: has_reason_single_day_server_side_telemetry_only
+        description: Whether the server has reported telemetry (from server) only for a single day.
+      - name: has_reason_single_day_telemetry_only
+        description: Whether the server has reported telemetry (both from front-end and server) only for a single day.
+      - name: has_reason_ran_tests
+        description: Whether the server reported tests ran in security update check.
+      - name: has_reason_active_users__registered_users
+        description: Whether the server reports more active users than registered users.
+      - name: has_reason_no_stripe_installation_found
+        description: Whether the server has no installation registered in stripe.
+      - name: has_reason_single_day_user_telemetry_only
+        description: Whether the server has reported telemetry (from front-end) only for a single day.
+      - name: has_reason_restricted_ip
+        description: Whether the server's IP belongs to the list of restricted IP addresses.
+      - name: has_reason_invalid_server_id
+        description: Whether the server has reported an invalid server id.
+      - name: has_reason_internal_email
+        description: Whether the server is registered with an internal email (i.e. `@mattermost.com`).
+      - name: has_reason_test_server
+        description: Whether the server is in the seed file with known test servers. Data originates from seed file.
+      - name: has_reason_community
+        description: Whether the server is the community server. Data originated from seed file.
 
   - name: dim_version
     description: List of known server versions
