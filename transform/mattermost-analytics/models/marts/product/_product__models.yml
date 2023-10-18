@@ -137,10 +137,7 @@ models:
         tests:
           - unique
           - not_null
-      - name: reasons
-        description: A list of reasons this server should be excluded.
-        tests:
-          - not_null
+
 
   - name: dim_version
     description: List of known server versions
