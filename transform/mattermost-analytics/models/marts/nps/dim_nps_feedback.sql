@@ -19,3 +19,4 @@ select distinct nf.server_id as server_id
         on nf.server_id = ns.server_id and nf.user_id = ns.user_id and nf.event_date = ns.event_date
     left join {{ ref('dim_server_info') }} si 
         on nf.server_id = si.server_id
+    where nf.feedback is not null
