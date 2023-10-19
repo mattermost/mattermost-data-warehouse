@@ -33,7 +33,7 @@ models:
       - name: server_install_date
         description: Server installation date.  
       - name: server_version
-        description: The Servers version.  
+        description: The Server's version.  
       - name: context_library_version
         description: The version of Segment library used to send this event.   
       - name: context_library_name
@@ -74,7 +74,7 @@ models:
       - name: server_install_date
         description: Server installation date.
       - name: server_version
-        description: The Servers version.   
+        description: The Server's version.   
       - name: context_library_version
         description: The version of Segment library used to send this event.   
       - name: context_library_name

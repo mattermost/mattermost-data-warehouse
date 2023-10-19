@@ -28,4 +28,6 @@ models:
         description: The date the feedback event was sent.     
       - name: score_date
         description: The date the feedback event was sent.
+      - name: registered_users
+        description: Number of registered users at the time the feedback was submitted.
 
