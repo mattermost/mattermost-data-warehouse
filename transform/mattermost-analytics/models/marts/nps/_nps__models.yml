@@ -12,6 +12,8 @@ models:
           - not_null
       - name: user_id
         description: The ID of the user that sent the event.
+        tests:
+          - not_null  
       - name: feedback
         description: NPS feedback submitted.
       - name: score
