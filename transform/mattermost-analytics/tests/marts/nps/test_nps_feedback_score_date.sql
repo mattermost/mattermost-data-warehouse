@@ -17,4 +17,5 @@ with test_data as (
         when score_date is not null  
         and score_date != feedback_date then 'FAIL' END 
         as status
-from test_data
+from test_data 
+where status = 'FAIL'

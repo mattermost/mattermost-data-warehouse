@@ -14,8 +14,6 @@ models:
         description: The ID of the user that sent the event.
       - name: feedback
         description: NPS feedback submitted.
-        tests:
-          - not_null
       - name: score
         description: NPS score submitted.
       - name: server_version
