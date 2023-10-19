@@ -9,12 +9,7 @@ with test_data as (
     from {{ ref('dim_nps_feedback') }}
     where score is not null
 ) select
-    case
-        when score_date is not null and score_date != feedback_date then
-            'FAIL' as status,
-            'score_date should be equal to feedback_date when not null' as message
-        else
-            'PASS' as status,
-            null as message
+    case when score_date is not null and score_date != feedback_date then 'FAIL'
+        else 'PASS'
     end as status
 from test_data;
