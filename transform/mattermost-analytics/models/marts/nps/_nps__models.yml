@@ -27,8 +27,5 @@ models:
       - name: feedback_date
         description: The date the feedback event was sent.     
       - name: score_date
-        description: The date the feedback event was sent.        
-        tests:
-          config:
-            where: "CASE WHEN score_date is not null THEN score_date = feedback_date END"
+        description: The date the feedback event was sent.
 
