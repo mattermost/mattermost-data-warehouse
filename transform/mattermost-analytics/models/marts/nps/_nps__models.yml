@@ -29,7 +29,6 @@ models:
       - name: score_date
         description: The date the feedback event was sent.        
         tests:
-          - name: equal_to_feedback_date
-            assert:
-              condition: '{{ score_date is not null and score_date != feedback_date }}'
-              warning: 'score_date should be equal to feedback_date when not null'
+          config:
+            where: "CASE WHEN score_date is not null THEN score_date = feedback_date END"
+
