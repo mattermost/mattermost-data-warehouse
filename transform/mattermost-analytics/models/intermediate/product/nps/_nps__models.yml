@@ -10,7 +10,9 @@ models:
       - name: server_id
         description: The ID of the server the event originated from.
       - name: user_id
-        description: The ID of the user that sent the event.
+        description: The ID of the user that sent the event.\
+      - name: license_id
+        description: The license id.
       - name: event_date
         description: The date the event was sent.
       - name: timestamp
@@ -33,6 +35,8 @@ models:
         description: The ID of the server the event originated from.
       - name: user_id
         description: The ID of the user that sent the event.
+      - name: license_id
+        description: The license id.
       - name: event_date
         description: The date the event was sent.
       - name: timestamp

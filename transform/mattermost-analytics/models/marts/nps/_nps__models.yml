@@ -12,8 +12,8 @@ models:
           - not_null
       - name: user_id
         description: The ID of the user that sent the event.
-        tests:
-          - not_null  
+      - name: license_id
+        description: The license id.
       - name: feedback
         description: NPS feedback submitted.
       - name: score
