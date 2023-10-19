@@ -3,7 +3,7 @@
 -- Custom test to check that score_date is equal to feedback_date when not null
 
 {{ config(
-    severity = 'warn'
+    severity = 'warn',
     error_if != 0
 ) }}
 
