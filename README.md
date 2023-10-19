@@ -4,26 +4,23 @@ This repo contains the code for loading data to Mattermost's data warehouse, per
 data to other tools.
 
 <!-- TOC -->
-* [Repository structure](#repository-structure)
-* [What does this repo contain?](#what-does-this-repo-contain)
-  * [Extract](#extract)
-  * [Transform](#transform)
-  * [Load](#load)
-  * [Billing](#billing)
-  * [Utils](#utils)
-  * [DAGs](#dags)
-* [Running locally](#running-locally)
-  * [Prerequisites](#prerequisites)
-  * [Setup](#setup)
-  * [Starting a bash shell with DBT](#starting-a-bash-shell-with-dbt)
-  * [Building docs and serving them locally](#building-docs-and-serving-them-locally)
-* [Developing](#developing)
-  * [Requirements](#requirements)
-  * [Install dependencies](#install-dependencies)
-  * [Adding dependencies](#adding-dependencies)
-* [Configuration](#configuration)
-  * [Snowflake connections](#snowflake-connections)
-* [Airflow](#airflow)
+* [mattermost-data-warehouse](#mattermost-data-warehouse)
+  * [Repository structure](#repository-structure)
+  * [What does this repo contain?](#what-does-this-repo-contain)
+    * [Extract](#extract)
+    * [Transform](#transform)
+    * [Load](#load)
+    * [Billing](#billing)
+    * [Utils](#utils)
+    * [DAGs](#dags)
+  * [DBT setup & development](#dbt-setup--development)
+  * [Python Development](#python-development)
+    * [Requirements](#requirements)
+    * [Install dependencies](#install-dependencies)
+    * [Adding dependencies](#adding-dependencies)
+  * [Configuration](#configuration)
+    * [Snowflake connections](#snowflake-connections)
+  * [Airflow](#airflow)
 <!-- TOC -->
 
 ## Repository structure
@@ -32,7 +29,6 @@ data to other tools.
 .
 ├── dags                    <--- Airflow DAGs. DAGs mostly use KubernetesOperator to run a job.
 ├── extract                 <--- Python scripts that extract data from various locations.
-│  ├── pg_import            <--- Generic utility that copies data from Snowflake to Postgres
 │  └── s3_extract           <--- Various utilities for importing data from S3 to Snowflake
 ├── k8s                     <--- Pod definitions for Pipelinewise
 ├── load        
@@ -79,79 +75,14 @@ A set of Python scripts performing custom ETLs. The utilities run as part of Air
 
 Airflow DAGs that orchestrate ETL pipelines.
 
-## Running locally
+## DBT setup & development
 
-### Prerequisites
+Please see [DBT setup instructions](docs/DBT.md) for setting up DBT and for performing common operations.
 
-- Docker & docker compose
-- Snowflake access with proper roles (ask the team which role to use)
+[DBT development guidelines](docs/DBT-dev.md) contains instructions about the DBT development environment, as well as for
+common development operations.
 
-### Setup
-
-Copy `.dbt.env.example` to `.dbt.env`. Edit the file and replace placeholder with appropriate values.
-
-### Starting a bash shell with DBT
-
-At the home of the repo run:
-
-```bash
-make dbt-bash
-```
-
-This command creates a container with `dbt` pre-installed and connects you to the bash shell.
-
-To test that everything is working as expected, try to generate dbt docs:
-
-```bash
-dbt docs generate -t prod
-```
-
-If the output looks similar to:
-```
-...
-
-07:28:30  Found 289 models, 10 tests, 0 snapshots, 0 analyses, 407 macros, 0 operations, 15 seed files, 263 sources, 0 exposures, 0 metrics
-07:28:30  
-07:29:00  Concurrency: 8 threads (target='prod')
-07:29:00  
-07:32:04  Done.
-07:32:04  Building catalog
-07:44:19  Catalog written to /usr/app/target/catalog.json
-```
-
-then the setup is working.
-
-Alternatively, you can run 
-
-```bash
-make dbt-mattermost-analytics
-```
-
-to start a bash shell for the new project. 
-
-### Building docs and serving them locally
-
-At the home of the repo run:
-
-```bash
-make dbt-docs
-```
-
-This command will generate the docs and serve them at [http://localhost:8081](http://localhost:8081).
-
-### Overriding profile
-
-All dbt commands that are part of the `Makefile` use by default profiles under [transform/snowflake-dbt/profile](transform/snowflake-dbt/profile).
-This directory can be overriden by setting `DBT_PROFILE_PATH` environment variable:
-
-```bash
-DBT_PROFILE_PATH=/path/to/profile make dbt-bash
-```
-
-> Note that `DBT_PROFILE_PATH` can use either absolute or relative paths. For relative paths, the base is the [build](build) 
-> directory of this project.
-
-## Developing
+## Python Development
 
 ### Requirements
 

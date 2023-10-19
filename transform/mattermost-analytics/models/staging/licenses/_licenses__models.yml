@@ -19,5 +19,6 @@ models:
         description: The ID of the Stripe customer
       - name: issued_at
         description: The timestamp when the license was issued at.
-      - name: expires_at
+      - name: expire_at
+        description: The timestamp when the license expires at.
         

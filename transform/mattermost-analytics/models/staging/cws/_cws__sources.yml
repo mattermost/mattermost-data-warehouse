@@ -90,6 +90,9 @@ sources:
             description: Date that this record was created at.
           - name: id
             description: The license ID
+            tests:
+              - unique
+              - not_null
           - name: ispending
           - name: payload
             description: |

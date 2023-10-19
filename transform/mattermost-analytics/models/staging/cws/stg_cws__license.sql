@@ -17,10 +17,10 @@ renamed as (
             else subscriptionid
         end as subscription_id
         , mattermost_analytics.extract_license_data(payload) as _license
-        , to_timestamp(_license:issued_at::int / 1000) as issued_at
-        , to_timestamp(_license:starts_at::int / 1000) as starts_at
-        , to_timestamp(_license:expires_at::int / 1000) as expires_at
-        , _license:sku_name::varchar as sku
+        , try_to_timestamp_ntz(_license:issued_at::varchar) as issued_at
+        , try_to_timestamp_ntz(_license:starts_at::varchar) as starts_at
+        , try_to_timestamp_ntz(_license:expires_at::varchar) as expire_at
+        , _license:sku_name::varchar as stripe_product_id
         , _license:sku_short_name::varchar as sku_short_name
         , _license:is_gov_sku::boolean as is_gov_sku
         , _license:is_trial::boolean as is_trial
@@ -32,7 +32,7 @@ renamed as (
         , _license:customer:name::varchar as customer_name
 
         -- Feature info
-        , _license:features:users::int as number_of_users
+        , _license:features:users::int as licensed_seats
         , _license:features:advanced_logging::boolean as is_feature_advanced_logging_enabled
         , _license:features:announcement::boolean as is_feature_announcement_enabled
         , _license:features:cloud::boolean as is_feature_cloud_enabled
