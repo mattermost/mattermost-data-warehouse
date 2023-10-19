@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: dim_nps_feedback
+    description: |
+      List of known customers with active on prem licenses.
+
+    columns:
+      - name: server_id
+        description: The ID of the server the event originated from..
+        tests:
+          - not_null
+      - name: user_id
+        description: The ID of the user that sent the event.
+      - name: feedback
+        description: NPS feedback submitted.
+        tests:
+          - not_null
+      - name: score
+        description: NPS score submitted.
+      - name: server_version
+        description: The Server's version.
+      - name: installation_type
+        description: The installation type of the server.        
+      - name: user_role
+        description: The role of the user who submitted feedback.        
+      - name: feedback_date
+        description: The date the feedback event was sent.     
+      - name: score_date
+        description: The date the feedback event was sent.        
+        tests:
+          - test_nps_feedback_score_date  
