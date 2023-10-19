@@ -8,7 +8,7 @@
 select nf.feedback as feedback
        , ns.score as score
        , nf.server_version as server_version
-       , si.installation_type as installation_type
+       , si.hosting_type as installation_type
        , nf.user_role as user_role
        , nf.event_date feedback_date
        , ns.event_date score_date
