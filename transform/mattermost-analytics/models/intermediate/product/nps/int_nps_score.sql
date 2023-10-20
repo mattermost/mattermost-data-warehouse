@@ -17,6 +17,7 @@ select
     , score as score
     , user_role as user_role
     , received_at as score_received_at
+    , ROW_NUMBER() over (PARTITION BY event_date, user_id ORDER BY timestamp DESC) as rownum
     from {{ ref('stg_mattermost_nps__nps_score') }} 
 ), mm_plugin_prod as 
 (
@@ -30,8 +31,27 @@ select
     , score as score
     , user_role as user_role
     , received_at as score_received_at
+    , ROW_NUMBER() over (PARTITION BY event_date, user_id ORDER BY timestamp DESC) as rownum
     from {{ ref('stg_mm_plugin_prod__nps_score') }}    
 ) 
-select * from mattermost_nps
+select server_id
+        , user_id
+        , license_id
+        , event_date
+        , timestamp
+        , server_version
+        , score
+        , user_role
+        , score_received_at 
+from mattermost_nps where rownum = 1
 union
-select * from mm_plugin_prod
+select server_id
+        , user_id
+        , license_id
+        , event_date
+        , timestamp
+        , server_version
+        , score
+        , user_role
+        , score_received_at  
+from mm_plugin_prod where rownum = 1
