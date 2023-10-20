@@ -35,7 +35,4 @@ select
 from
     metrics m
     left join {{ ref('int_server_active_days_spined')}} sas on m.daily_server_id = sas.daily_server_id
-where
-    m.server_id not in (
-        select server_id from {{ ref('dim_excludable_servers') }}
-    )
+
