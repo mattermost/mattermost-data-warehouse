@@ -60,7 +60,7 @@ models:
       - name: plugin_id
         description: The ID of the plugin.
       - name: server_version
-        description: The Server's version.
+        description: The server's version.
       - name: plugin_version      
         description: The plugin's version.
       - name: context_library_version
@@ -110,7 +110,7 @@ models:
       - name: plugin_id
         description: The ID of the plugin.
       - name: server_version
-        description: The Server's version.
+        description: The server's version.
       - name: plugin_version      
         description: The plugin's version.
       - name: context_library_version

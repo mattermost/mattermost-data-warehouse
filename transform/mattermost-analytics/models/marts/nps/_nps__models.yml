@@ -19,7 +19,7 @@ models:
       - name: score
         description: NPS score submitted.
       - name: server_version
-        description: The Server's version.
+        description: The server's version.
       - name: installation_type
         description: The installation type of the server.        
       - name: user_role
@@ -27,7 +27,7 @@ models:
       - name: feedback_date
         description: The date the feedback event was sent.     
       - name: score_date
-        description: The date the feedback event was sent.
+        description: The date the score event was sent.
       - name: registered_users
         description: Number of registered users at the time the feedback was submitted.
 
