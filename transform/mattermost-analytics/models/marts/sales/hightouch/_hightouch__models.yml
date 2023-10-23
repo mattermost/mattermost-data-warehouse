@@ -59,7 +59,7 @@ models:
               to: ref('country_codes')
               field: name
               config:
-                where: "country_name not in ('', 'Viet Nam', 'Iran, Islamic Republic of', 'United Kingdom of Great Britain and Northern Ireland')"
+                where: "country_name not in ('', 'AD', 'Viet Nam', 'Iran, Islamic Republic of', 'United Kingdom of Great Britain and Northern Ireland')"
         tags: ['pii']
       - name: trial_start_at
         description: The starting date of the trial.
