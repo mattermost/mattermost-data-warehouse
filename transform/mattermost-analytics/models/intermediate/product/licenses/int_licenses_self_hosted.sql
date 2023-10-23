@@ -8,9 +8,9 @@
 
 with cws_licenses as (
     select distinct license_id
-        , customer_id 
-        , customer_email 
-        , company_name 
+        , customer_id as customer_id
+        , customer_email as email
+        , company_name as company_name
     from {{ ref('stg_cws__license') }}
 ), stripe_licenses as (
     select distinct license_id
