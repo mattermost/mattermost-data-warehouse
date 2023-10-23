@@ -58,7 +58,7 @@ select
     tr.normalized_email,
     -- If field is a valid country code, use the corresponding country name, else treat the current value as a country
     -- name. The second step is required in order to be backwards-compatible with existing fields.
-    coalesce(cc.name, tr.country_name) as country_name,
+    coalesce(cc.name, tr.country) as country_name,
     tr.trial_start_at,
     tr.num_users,
     l.lead_id is not null as is_existing_lead,
