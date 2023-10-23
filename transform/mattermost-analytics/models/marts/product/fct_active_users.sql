@@ -22,7 +22,7 @@ with metrics as (
 )
 select
     -- Client telemetry
-    , m.daily_server_id
+    m.daily_server_id
     , m.activity_date
     , m.server_id
     {% for metric, column in column_map.items() %}
