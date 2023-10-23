@@ -26,9 +26,9 @@ select
     , m.activity_date
     , m.server_id
     {% for metric, column in column_map.items() %}
-    , coalesce(daily_{{column}}, 0) as daily_{{column}}
-    , coalesce(weekly_{{column}}, 0) as weekly_{{column}}
-    , coalesce(monthly_{{column}}, 0) as monthly_{{column}}
+    , coalesce(m.daily_{{column}}, 0) as daily_{{column}}
+    , coalesce(m.weekly_{{column}}, 0) as weekly_{{column}}
+    , coalesce(m.monthly_{{column}}, 0) as monthly_{{column}}
     {% endfor %}
     -- Server-reported activity
     , coalesce(sas.daily_active_users, 0) as server_daily_active_users
