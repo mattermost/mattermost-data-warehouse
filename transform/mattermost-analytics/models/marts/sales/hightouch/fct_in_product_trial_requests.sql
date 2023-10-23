@@ -39,7 +39,7 @@ with trial_requests as (
            -- Fix inconsistency in country name so that it matches values expected by SF
            when country_name = 'United States of America' then 'United States'
            else country_name
-        end as country_name,                                -- Mapped to field country
+        end as country,                                     -- Mapped to field country - Can be either name or country code
         start_at as trial_start_at,                         -- Mapped to request_a_trial_date__c and Click_to_Accept_Date_Time_Trial__c
         num_users                                           -- Mapped to field numberofemployees of lead
     from
@@ -49,7 +49,18 @@ with trial_requests as (
 )
 select
     -- Lead fields
-    tr.*,
+    tr.trial_request_id,
+    tr.name,
+    tr.first_name,
+    tr.last_name,
+    tr.company_size,
+    tr.company_name,
+    tr.normalized_email,
+    -- If field is a valid country code, use the corresponding country name, else treat the current value as a country
+    -- name. The second step is required in order to be backwards-compatible with existing fields.
+    coalesce(cc.name, tr.country_name) as country_name,
+    tr.trial_start_at,
+    tr.num_users,
     l.lead_id is not null as is_existing_lead,
     -- Campaign member fields
     cm.campaign_member_id is not null as is_existing_campaign_member,
@@ -60,6 +71,8 @@ select
     {{ validate_email('tr.normalized_email') }} as is_valid_email
 from
     trial_requests tr
+    -- Used for normalizing the mix of country codes/country names
+    left join {{ ref('country_codes') }} cc on tr.country = cc.code
     left join {{ ref('stg_salesforce__lead') }} l on tr.normalized_email = l.email
     left join {{ ref('stg_salesforce__campaign_member') }} cm
         on l.lead_id = cm.lead_id and tr.normalized_email = cm.email and cm.campaign_id = '{{ var('in_product_trial_campaign_id') }}'
