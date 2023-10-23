@@ -76,4 +76,4 @@ select
 from
     agg_activity_dates aad
     left join {{ ref('telemetry_days') }} all_days
-        on aad.date_day >= sadr.first_active_day and all_days.date_day <= aad.last_active_day
+        on all_days.date_day >= aad.first_active_day and all_days.date_day <= aad.last_active_day
