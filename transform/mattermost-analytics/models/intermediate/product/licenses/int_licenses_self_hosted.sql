@@ -29,6 +29,7 @@ with cws_licenses as (
         , customer_id 
         , contact_email as email
         , company_name 
+        , NULL as edition
         , 'Legacy' as source
     from {{ ref('stg_licenses__licenses')}} 
 ), all_licenses as (
