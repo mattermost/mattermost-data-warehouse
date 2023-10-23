@@ -42,5 +42,5 @@ select
 from
     metrics m
     -- Use full outer as there might be servers without front-end telemetry
-    full outer {{ ref('int_server_active_days_spined')}} sas on m.daily_server_id = sas.daily_server_id
+    full outer join {{ ref('int_server_active_days_spined')}} sas on m.daily_server_id = sas.daily_server_id
 
