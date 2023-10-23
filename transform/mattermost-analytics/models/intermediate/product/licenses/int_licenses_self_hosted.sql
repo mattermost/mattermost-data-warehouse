@@ -16,7 +16,8 @@ with cws_licenses as (
     select distinct license_id
         , c.portal_customer_id as customer_id
         , c.email as email
-        , c.name as company_name from {{ ref('stg_stripe__subscriptions')}}  s 
+        , c.name as company_name 
+    from {{ ref('stg_stripe__subscriptions')}}  s 
     join {{ ref('stg_stripe__customers')}}  c on s.customer_id = c.customer_id
     where license_id is not null
 ), legacy_licenses as (
@@ -31,7 +32,7 @@ with cws_licenses as (
     select * from stripe_licenses
     union
     select * from legacy_licenses
-) select al.license_id
+) select distinct al.license_id
     , coalesce(l1.server_id, l2.server_id) as server_id
     , al.customer_id
     , al.email
