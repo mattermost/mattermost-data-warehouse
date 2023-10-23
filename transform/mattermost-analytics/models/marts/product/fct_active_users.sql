@@ -22,9 +22,9 @@ with metrics as (
 )
 select
     -- Client telemetry
-    m.daily_server_id
-    , m.activity_date
-    , m.server_id
+    coalesce(m.daily_server_id, sas.daily_server_id) as daily_server_id
+    , coalesce(m.activity_date, sas.activity_date) as activity_date
+    , coalesce(m.server_id, sas.server_id) as server_id
     {% for metric, column in column_map.items() %}
     , coalesce(m.daily_{{column}}, 0) as daily_{{column}}
     , coalesce(m.weekly_{{column}}, 0) as weekly_{{column}}
@@ -38,6 +38,9 @@ select
     , coalesce(sas.is_missing_activity_data, true) as is_missing_server_activity_data
     -- Extra dimensions
     , {{ dbt_utils.generate_surrogate_key(['sas.version_full']) }} AS version_id
+    -- Metadata
+    , m.server_id is not null as has_user_telemetry_data
+    , sas.server_id is not null as has_server_telemetry_data
 
 from
     metrics m
