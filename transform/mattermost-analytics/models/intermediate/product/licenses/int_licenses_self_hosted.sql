@@ -11,6 +11,7 @@ with cws_licenses as (
         , customer_id as customer_id
         , customer_email as email
         , company_name as company_name
+        , sku_short_name as edition
         , 'CWS' as source
     from {{ ref('stg_cws__license') }}
 ), stripe_licenses as (
@@ -18,6 +19,7 @@ with cws_licenses as (
         , c.portal_customer_id as customer_id
         , c.email as email
         , c.name as company_name
+        , s.edition as edition
         , 'Stripe' as source
     from {{ ref('stg_stripe__subscriptions')}}  s 
     join {{ ref('stg_stripe__customers')}}  c on s.customer_id = c.customer_id
@@ -40,6 +42,7 @@ with cws_licenses as (
     , al.customer_id
     , al.email
     , al.company_name 
+    , coalesce(al.edition, l1.license_name, l2.license_name) as edition
     , al.source
 from all_licenses al 
 left join {{ ref('stg_mm_telemetry_prod__license')}} l1 on al.license_id = l1.license_id
