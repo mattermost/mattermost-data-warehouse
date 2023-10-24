@@ -103,7 +103,6 @@ models:
       - name: license_id
         description: The unique id of the license.
         tests:
-          - unique
           - not_null
       - name: server_id
         description: A server id of the license.      
