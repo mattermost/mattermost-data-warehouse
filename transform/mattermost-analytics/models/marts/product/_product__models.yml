@@ -63,8 +63,6 @@ models:
         description: Total number of users, including deleted users. Reported by mattermost server.
       - name: count_registered_deactivated_users
         description: Total number of inactive (deleted) users. Reported by mattermost server.
-      - name: is_missing_activity_data
-        description: Whether there are missing server activity data for the given date.
       - name: version_id
         description: The id of the server's version for the given date.
         tests:
@@ -72,6 +70,13 @@ models:
           - relationships:
               to: ref('dim_version')
               field: version_id
+      - name: is_missing_activity_data
+        description: Whether there are missing server activity data for the given date.
+      - name: has_user_telemetry_data
+        description: Whether there are data reported for that server and date from front-end telemetry.
+      - name: has_server_telemetry_data
+        description: Whether there are data reported for that server and date from server-side telemetry.
+
     tests:
       # A date should only appear once per server
       - dbt_utils.unique_combination_of_columns:

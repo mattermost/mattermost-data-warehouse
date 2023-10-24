@@ -35,10 +35,10 @@ select
     , coalesce(sas.monthly_active_users, 0) as server_monthly_active_users
     , coalesce(sas.count_registered_users, 0) as count_registered_users
     , coalesce(sas.count_registered_deactivated_users, 0) as count_registered_deactivated_users
-    , coalesce(sas.is_missing_activity_data, true) as is_missing_server_activity_data
     -- Extra dimensions
     , {{ dbt_utils.generate_surrogate_key(['sas.version_full']) }} AS version_id
     -- Metadata
+    , coalesce(sas.is_missing_activity_data, true) as is_missing_server_activity_data
     , m.server_id is not null as has_user_telemetry_data
     , sas.server_id is not null as has_server_telemetry_data
 
