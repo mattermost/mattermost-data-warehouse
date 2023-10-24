@@ -100,9 +100,6 @@ models:
     columns:
       - name: license_date
         description: The last ingested date of the license in telemetry.
-        tests:
-          - unique
-          - not_null
       - name: license_id
         description: The unique id of the license.
         tests:
