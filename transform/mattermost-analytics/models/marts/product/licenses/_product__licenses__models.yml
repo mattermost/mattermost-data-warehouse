@@ -117,3 +117,29 @@ models:
         description: The edition or plan of the customer.
       - name: source
         description: The original source of the license information.
+
+  - name: dim_cloud_customers
+    description: |
+      List of known Cloud customers with active or inactive installation along with their server details. 
+      Note that the same customer/server might appear more than once in case the details are different for the given installation.
+
+    columns:
+      - name: installation_date
+        description: The last ingested date of the installation in telemetry.
+      - name: installation_id
+        description: The unique id of the installation.
+        tests:
+          - not_null
+      - name: server_id
+        description: A server id of the cloud installation.      
+      - name: customer_id
+        description: The id of the customer this cloud installation is generated for.
+      - name: customer_email
+        description: The customer's email.
+        tags: ['pii']
+      - name: company_name
+        description: The company's name.
+      - name: edition
+        description: The edition or plan of the customer.
+      - name: source
+        description: The original source of the cloud installation information.
