@@ -1,4 +1,5 @@
-select distinct a.license_id as license_id
+select distinct a.license_date
+    , a.license_id as license_id
     , a.server_id as server_id
     , a.customer_id as customer_id
     , b.email as customer_email
