@@ -6,7 +6,7 @@ select timestamp::date as installation_date
     , license_name as edition
 from {{ ref('stg_mm_telemetry_prod__license')}} 
 where license_name in ('CLD')
-and license_id is not null
+and installation_id is not null
 qualify row_number() over (partition by installation_date, server_id order by timestamp desc) = 1
 ), mattermost2_license as (
 select timestamp::date as installation_date
@@ -16,7 +16,7 @@ select timestamp::date as installation_date
     , license_name as edition
 from {{ ref('stg_mattermost2__license')}} 
 where license_name in ('CLD')
-and license_id is not null
+and installation_id is not null
 qualify row_number() over (partition by installation_date, server_id order by timestamp desc) = 1
 ) select * from mm_telemetry_prod_license
     union
