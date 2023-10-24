@@ -24,8 +24,7 @@ with cws_licenses as (
         , NULL as edition
         , 'Legacy' as source
     from {{ ref('stg_licenses__licenses')}} 
-), all_licenses as (
-    select * from cws_licenses
+) select * from cws_licenses
     union
     select * from stripe_licenses
     union
