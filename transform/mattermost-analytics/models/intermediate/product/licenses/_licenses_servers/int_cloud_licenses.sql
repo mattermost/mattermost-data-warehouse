@@ -1,5 +1,5 @@
 with stripe_licenses as (
-    select distinct installation_id
+    select distinct cws_installation as installation_id
         , c.portal_customer_id as customer_id
         , c.email as email
         , c.name as company_name
@@ -7,5 +7,5 @@ with stripe_licenses as (
         , 'Stripe' as source
     from {{ ref('stg_stripe__subscriptions')}}  s 
     join {{ ref('stg_stripe__customers')}}  c on s.customer_id = c.customer_id
-    where installation_id is not null
+    where cws_installation is not null
 ) select * from stripe_licenses
