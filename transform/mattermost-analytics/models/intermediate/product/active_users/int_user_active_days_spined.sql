@@ -28,7 +28,8 @@ with user_active_days as (
     select
         server_id,
         user_id,
-        min(activity_date) as first_active_day
+        min(activity_date) as first_active_day,
+        max(activity_date) as last_active_day
     from
         user_active_days
     where
