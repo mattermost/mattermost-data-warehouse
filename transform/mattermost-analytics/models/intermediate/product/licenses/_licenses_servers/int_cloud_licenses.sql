@@ -7,5 +7,5 @@ with stripe_licenses as (
         , 'Stripe' as source
     from {{ ref('stg_stripe__subscriptions')}}  s 
     join {{ ref('stg_stripe__customers')}}  c on s.customer_id = c.customer_id
-    where installation is not null
+    where installation_id is not null
 ) select * from stripe_licenses
