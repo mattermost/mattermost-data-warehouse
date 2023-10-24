@@ -11,8 +11,8 @@ SELECT
     fields:parent.id::INTEGER AS parent_id,
     fields:parent.key::VARCHAR AS parent_key,
     -- Project
-    fields:project.id AS project_id,
-    fields:project.key AS project_key,
+    fields:project.id::integer AS project_id,
+    fields:project.key::varchar AS project_key,
     -- Description
     fields:summary::VARCHAR AS summary,
     fields:description::VARCHAR AS description,
