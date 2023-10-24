@@ -91,3 +91,33 @@ models:
         description: |
           Whether the expiration date is consistent in case there's multiple sources that report the license. True if 
           more than one expiration dates are reported, false else.
+
+  - name: dim_self_hosted_customers
+    description: |
+      List of known self-hosted customers with active or inactive licenses along with their server details. 
+      Note that the same customer/server might appear more than once in case the details are different for the given license.
+
+    columns:
+      - name: license_date
+        description: The last ingested date of the license in telemetry.
+        tests:
+          - unique
+          - not_null
+      - name: license_id
+        description: The unique id of the license.
+        tests:
+          - unique
+          - not_null
+      - name: server_id
+        description: A server id of the license.      
+      - name: customer_id
+        description: The id of the customer this license is generated for.
+      - name: customer_email
+        description: The customer's email.
+        tags: ['pii']
+      - name: company_name
+        description: The company's name.
+      - name: edition
+        description: The edition or plan of the customer.
+      - name: source
+        description: The original source of the license information.
