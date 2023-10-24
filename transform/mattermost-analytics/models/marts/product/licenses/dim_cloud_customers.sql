@@ -4,7 +4,7 @@ select distinct a.installation_date
     , a.customer_id as customer_id
     , b.email as customer_email
     , b.company_name as company_name
-    , coalesce(a.edition, b.edition) as edition
+    , coalesce(a.license_name, b.license_name) as license_name
     , b.source as source
 from {{ ref('int_cloud_servers')}} a 
 left join {{ ref('int_cloud_licenses')}} b 

@@ -3,7 +3,7 @@ with cws_licenses as (
         , customer_id as customer_id
         , customer_email as email
         , company_name as company_name
-        , sku_short_name as edition
+        , sku_short_name as license_name
         , 'CWS' as source
     from {{ ref('stg_cws__license') }}
 ), stripe_licenses as (
@@ -11,7 +11,7 @@ with cws_licenses as (
         , c.portal_customer_id as customer_id
         , c.email as email
         , c.name as company_name
-        , s.edition as edition
+        , s.edition as license_name
         , 'Stripe' as source
     from {{ ref('stg_stripe__subscriptions')}}  s 
     join {{ ref('stg_stripe__customers')}}  c on s.customer_id = c.customer_id
@@ -21,7 +21,7 @@ with cws_licenses as (
         , customer_id 
         , contact_email as email
         , company_name 
-        , NULL as edition
+        , NULL as license_name
         , 'Legacy' as source
     from {{ ref('stg_licenses__licenses')}} 
 ) select * from cws_licenses

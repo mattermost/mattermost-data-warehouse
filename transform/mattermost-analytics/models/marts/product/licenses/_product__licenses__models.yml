@@ -114,7 +114,7 @@ models:
       - name: company_name
         description: The company's name.
       - name: edition
-        description: The edition or plan of the customer.
+        description: The name of the license or plan of the customer.
       - name: source
         description: The original source of the license information.
 
@@ -139,7 +139,7 @@ models:
         tags: ['pii']
       - name: company_name
         description: The company's name.
-      - name: edition
-        description: The edition or plan of the customer.
+      - name: license_name
+        description: The name of the license or plan of the customer.
       - name: source
         description: The original source of the cloud installation information.
