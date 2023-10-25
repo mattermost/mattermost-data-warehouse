@@ -9,8 +9,9 @@ select
     , feedback as feedback
     , user_role as user_role
     , received_at as feedback_received_at
-    , CASE WHEN license_id = '{{ var('cloud_license_id') }}' THEN 'Cloud' ELSE 'Self-Hosted' END hosting_type
-    from {{ ref('stg_mattermost_nps__nps_feedback') }} 
+    , CASE WHEN license_id = '{{ var('cloud_license_id') }}' THEN 'Cloud' 
+     WHEN license_id is not null and license_id <> '{{ var('cloud_license_id') }}' THEN 'Self-Hosted' END hosting_type
+    from {{ ref('stg_mattermost_nps__nps_feedback') }}
 ), mm_plugin_prod as 
 (
  select 
@@ -23,7 +24,8 @@ select
     , feedback as feedback
     , user_role as user_role
     , received_at as feedback_received_at
-    , CASE WHEN license_id = '{{ var('cloud_license_id') }}' THEN 'Cloud' ELSE 'Self-Hosted' END hosting_type
+    , CASE WHEN license_id = '{{ var('cloud_license_id') }}' THEN 'Cloud' 
+     WHEN license_id is not null and license_id <> '{{ var('cloud_license_id') }}' THEN 'Self-Hosted' END hosting_type
     from {{ ref('stg_mm_plugin_prod__nps_feedback') }}    
 ) 
 select * from mattermost_nps

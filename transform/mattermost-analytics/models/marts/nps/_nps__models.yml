@@ -24,8 +24,14 @@ models:
         description: The type of hosting of the server cloud or self-hosted.        
       - name: user_role
         description: The role of the user who submitted feedback.        
+      - name: company_name
+        description: The name of the company of the user who submitted feedback.  
+        tags: [ 'pii' ]
+      - name: customer_email
+        description: The license email of the customer from the user's feedback.
+        tags: [ 'pii' ]
       - name: feedback_date
-        description: The date the feedback event was sent.     
+        description: The date the feedback event was sent.            
       - name: score_date
         description: The date the score event was sent.
       - name: registered_users
