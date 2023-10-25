@@ -17,7 +17,7 @@ select distinct nf.server_id as server_id
     left join {{ ref('int_server_active_days_spined') }} fau 
         on nf.server_id = fau.server_id and nf.event_date = fau.activity_date
     left join {{ ref('int_cloud_customers') }} cc 
-        on nf.server_id = cc.server_id
+        on nf.server_id = cc.server_id 
     left join {{ ref('int_self_hosted_customers') }} sh
-        on nf.server_id = cc.server_id
+        on nf.server_id = sh.server_id or nf.license_id = sh.license_id
     where nf.feedback is not null
