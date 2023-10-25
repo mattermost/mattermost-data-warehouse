@@ -20,8 +20,8 @@ models:
         description: NPS score submitted.
       - name: server_version
         description: The server's version.
-      - name: installation_type
-        description: The installation type of the server.        
+      - name: hosting_type
+        description: The type of hosting of the server cloud or self-hosted.        
       - name: user_role
         description: The role of the user who submitted feedback.        
       - name: feedback_date
