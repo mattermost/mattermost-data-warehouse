@@ -132,8 +132,6 @@ models:
           - not_null
       - name: server_id
         description: A server id of the cloud installation.      
-      - name: customer_id
-        description: The id of the customer this cloud installation is generated for.
       - name: customer_email
         description: The customer's email.
         tags: ['pii']
