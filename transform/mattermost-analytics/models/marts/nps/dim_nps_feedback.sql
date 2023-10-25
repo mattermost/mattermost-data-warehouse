@@ -1,10 +1,3 @@
--- Materializing this intermediate table for test purposes.
-{{
-    config({
-        "snowflake_warehouse": "transform_l"
-    })
-}}
-
 select distinct nf.server_id as server_id
        , nf.user_id as user_id
        , nf.license_id as license_id
