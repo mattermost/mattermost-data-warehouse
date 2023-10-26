@@ -17,4 +17,4 @@ select distinct a.installation_date
 from {{ ref('int_cloud_servers')}} a 
 left join {{ ref('int_cloud_licenses')}} b 
 on a.installation_id = b.installation_id
-where company_name is not null
+where company_name is not null or email is not null

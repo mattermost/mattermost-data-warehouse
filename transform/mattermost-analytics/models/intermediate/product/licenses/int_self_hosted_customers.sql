@@ -17,4 +17,4 @@ select distinct a.license_date
 from {{ ref('int_self_hosted_servers')}} a 
 left join {{ ref('int_self_hosted_licenses')}} b 
 on a.license_id = b.license_id or a.customer_id = b.customer_id
-where company_name is not null
+where company_name is not null or email is not null
