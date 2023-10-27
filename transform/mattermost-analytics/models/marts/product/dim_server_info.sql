@@ -74,5 +74,5 @@ select
     si.last_activity_date
 from
     server_info si
-    join latest_values l on si.server_id = l.server_id
+    left join latest_values l on si.server_id = l.server_id
     left join latest_cloud_subscription s on l.installation_id = s.installation_id
