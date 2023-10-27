@@ -28,8 +28,16 @@ with server_telemetry_summary as (
        coalesce(st.server_id, ut.server_id) as server_id,
        coalesce(st.count_is_cloud_days, 0) as count_is_cloud_days,
        coalesce(st.count_not_is_cloud_days, 0) as count_not_is_cloud_days,
-       least(st.first_activity_date, ut.first_activity_date) as first_activity_date,
-       greatest(st.last_activity_date, ut.last_activity_date) as last_activity_date
+       case
+           when st.first_activity_date is null then ut.first_activity_date
+           when ut.first_activity_date is null then st.first_activity_date
+           else least(st.first_activity_date, ut.first_activity_date)
+        end as first_activity_date,
+       case
+           when st.last_activity_date is null then ut.last_activity_date
+           when ut.last_activity_date is null then st.last_activity_date
+           else greatest(st.last_activity_date, ut.last_activity_date)
+        end as last_activity_date
     from
         server_telemetry_summary st
         full outer join user_telemetry_summary ut on st.server_id = ut.server_id
