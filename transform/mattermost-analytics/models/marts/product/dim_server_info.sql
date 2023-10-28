@@ -8,7 +8,7 @@ with server_telemetry_summary as (
         min(activity_date) as first_activity_date,
         max(activity_date) as last_activity_date
     from
-         {{ ref('int_server_active_days_spined') }}
+        {{ ref('int_server_active_days_spined') }}
     group by
         server_id
 ), user_telemetry_summary as (
@@ -18,7 +18,7 @@ with server_telemetry_summary as (
         min(activity_date) as first_activity_date,
         max(activity_date) as last_activity_date
     from
-         {{ ref('int_user_active_days_spined') }}
+        {{ ref('int_user_active_days_spined') }}
     where
         is_active_today
     group by

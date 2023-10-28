@@ -27,6 +27,9 @@ models:
         description: The server's unique id.
         tests:
           - not_null
+          - relationships:
+              to: ref('dim_server_info')
+              field: server_id
       - name: daily_active_users
         description: The number of unique active users for the given server and date.
       - name: weekly_active_users
@@ -222,6 +225,9 @@ models:
         description: The server's unique id.
         tests:
           - not_null
+          - relationships:
+              to: ref('dim_server_info')
+              field: server_id
       - name: version_id
         description: The id of the server's version.
         tests:
