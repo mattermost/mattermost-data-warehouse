@@ -8,6 +8,7 @@ WITH unparsed_fix_versions AS (
         REGEXP_SUBSTR(fix_version_name, 'v\\d+\.\\d+') AS semver,
         REGEXP_SUBSTR(semver, 'v(\\d+)', 1, 1, 'e', 1)::int AS version_major,
         REGEXP_SUBSTR(semver, '\\.(\\d+)', 1, 1, 'e', 1)::int AS version_minor,
+        REGEXP_SUBSTR(semver, '\\.(\\d+)', 1, 2, 'e', 1)::int AS version_patch,
         CASE
             WHEN fix_version_name ILIKE '%mobile%' THEN 'Mobile'
             WHEN fix_version_name ILIKE '%desktop%' THEN 'Desktop'
@@ -30,6 +31,7 @@ SELECT
     fv.semver,
     fv.version_major,
     fv.version_minor,
+    fv.version_patch,
     fv.component,
     fv.cloud_release_date,
     rd.planned_release_date
