@@ -68,6 +68,13 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               inclusive: true
+      - name: version_patch
+        description: The patch part version of the version. I.e. for `v7.5.1` it's 1. Might not exist for all versions.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+              where: "version_patch is not null"
       - name: component
         description: |
           The component that this version applies to. Valid values are Mobile, Desktop, Mobile, Playbooks,
