@@ -7,6 +7,6 @@ select
         else version_major || '.' || version_minor || '.' || version_patch
     end as semver
 from
-    {{ ref('dim_fix_version') }}
+    {{ ref('dim_fix_versions') }}
 where
     not contains(fix_version, semver)
