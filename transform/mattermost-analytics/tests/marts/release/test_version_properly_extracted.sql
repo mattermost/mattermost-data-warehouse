@@ -1,4 +1,4 @@
--- Test that major, minor and patch version has been properly extracted
+-- Test that major, minor and patch version have been properly extracted by comparing against original string
 select
     issue_id,
     fix_version,
