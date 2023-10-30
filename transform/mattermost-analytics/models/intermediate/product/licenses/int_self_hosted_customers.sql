@@ -1,11 +1,3 @@
--- Temporarily materialize during development
-{{
-    config({
-        "materialized": "table",
-        "snowflake_warehouse": "transform_l"
-    })
-}}
-
 select distinct a.license_date
     , a.license_id as license_id
     , a.server_id as server_id

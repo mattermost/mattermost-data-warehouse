@@ -1,11 +1,3 @@
--- Temporarily materialize during development
-{{
-    config({
-        "materialized": "table",
-        "snowflake_warehouse": "transform_l"
-    })
-}}
-
 select distinct a.installation_date
     , a.installation_id as installation_id
     , a.server_id as server_id
