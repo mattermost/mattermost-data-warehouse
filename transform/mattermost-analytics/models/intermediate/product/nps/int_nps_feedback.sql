@@ -16,7 +16,7 @@ select
 ), mm_plugin_prod as 
 (
  select 
-    distinct server_id as server_id
+    server_id as server_id
     , user_id as user_id
     , license_id as license_id
     , event_date as event_date
