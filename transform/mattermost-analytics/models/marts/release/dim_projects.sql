@@ -1,4 +1,4 @@
-SELECT
+select
     {{ dbt_utils.star(ref('stg_mattermost_jira__projects')) }}
-FROM
+from
     {{ ref('stg_mattermost_jira__projects') }}

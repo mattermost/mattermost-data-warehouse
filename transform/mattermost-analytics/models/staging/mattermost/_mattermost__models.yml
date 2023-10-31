@@ -15,6 +15,12 @@ models:
         description: The short format of the version, omitting patch (example `v6.3`).
         tests:
           - not_null
+      - name: version_major
+        description: The major version of the server at the time the event was submitted.
+      - name: version_minor
+        description: The minor version of the server at the time the event was submitted.
+      - name: version_patch
+        description: The patch version of the server at the time the event was submitted.
       - name: planned_release_date
         description: The planned date for the release.
         tests:
@@ -27,3 +33,7 @@ models:
         description: The issue's release number.
         tests:
           - not_null
+      - name: actual_release_date
+        description: The date the release was actually cut.
+      - name: rc1_date
+        description: The date RC1 was cut.
