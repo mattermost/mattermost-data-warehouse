@@ -1,6 +1,6 @@
-SELECT
+select
      issue_id,
      value::string as label
-FROM
+from
     {{ ref('stg_mattermost_jira__issues') }},
-    LATERAL FLATTEN(INPUT => labels)
+    lateral FLATTEN(INPUT => labels)
