@@ -36,6 +36,8 @@ sources:
             description: The date RC1 was cut for current version.
         tests:
           - dbt_utils.expression_is_true:
+              name: assert_rc1_cut_before_release
+              description: Release date must be cut before release.
               expression: "release_date > rc1_date"
               config:
                 where: "rc1_date is not null"
