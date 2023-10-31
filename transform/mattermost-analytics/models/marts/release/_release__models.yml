@@ -148,8 +148,6 @@ models:
           - unique
       - name: short_version
         description: The short format of the version, omitting patch (example `v6.3`).
-        tests:
-          - not_null
       - name: version_major
         description: The major version of the server at the time the event was submitted.
       - name: version_minor

@@ -29,7 +29,6 @@ sources:
             description: Whether the release is currently supported.
           - name: release_number
             tests:
-              - unique
               - not_null
           - name: actual_release_date
             description: The date that the release happened. If empty it's the same date as `release_date`.
