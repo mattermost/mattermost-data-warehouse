@@ -92,9 +92,10 @@ models:
       - name: is_cloud_release
         description: Whether this fix version refers to a cloud release.
     tests:
-      - dbt_utils.expression_is_true:
-          name: assert_either_on_prem_or_cloud_release
-          description: A fix version can only refer to a cloud release OR on an on-prem release, not both.
+      - name: assert_either_on_prem_or_cloud_release
+        description:
+          A fix version can only refer to a cloud release OR on an on-prem release, not both.
+        dbt_utils.expression_is_true:
           expression: "not (is_on_prem_release and is_cloud_release)"
 
 
