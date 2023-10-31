@@ -10,14 +10,14 @@ select
     regexp_substr(fix_version, '\\.(\\d+)', 1, 1, 'e', 1)::int as version_minor,
     regexp_substr(fix_version, '\\.(\\d+)', 1, 2, 'e', 1)::int as version_patch,
     case
-        when fix_version_name ilike '%mobile%' then 'Mobile'
-        when fix_version_name ilike '%desktop%' then 'Desktop'
-        when fix_version_name ilike '%playbooks%' then 'Playbooks'
-        when fix_version_name ilike '%ir%' then 'IR'
-        when fix_version_name ilike '%cloud%' then 'Cloud'
-        when fix_version_name ilike '%apps%' then 'Apps'
+        when fix_version ilike '%mobile%' then 'Mobile'
+        when fix_version ilike '%desktop%' then 'Desktop'
+        when fix_version ilike '%playbooks%' then 'Playbooks'
+        when fix_version ilike '%ir%' then 'IR'
+        when fix_version ilike '%cloud%' then 'Cloud'
+        when fix_version ilike '%apps%' then 'Apps'
     end as component,
-    to_date(regexp_substr(fix_version_name, '\\d{2}/\\d{2}/\\d{2}'), 'mm/dd/yy') as cloud_release_date,
+    to_date(regexp_substr(fix_version, '\\d{2}/\\d{2}/\\d{2}'), 'mm/dd/yy') as cloud_release_date,
     fix_version like any (
         {%- for month in months %}
             'v%({{month}}%)'{%- if not loop.last %},{% endif -%}
