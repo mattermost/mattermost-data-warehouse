@@ -122,7 +122,7 @@ vars:
   community_server_id : 93mykbogbjfrbbdqphx3zhze5c
 
     # Cloud License ID
-  cloud_license_id : 12345678901234567890123456
+  cloud_license_id : 12345678901234567890123456 #default value of every Cloud license
 
   # Salesforce variables
   in_product_trial_campaign_id: 7013p000001NkNoAAK

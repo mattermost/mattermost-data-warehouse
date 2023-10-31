@@ -11,7 +11,8 @@ select
     , received_at as feedback_received_at
     , case when license_id = '{{ var('cloud_license_id') }}' then 'Cloud' 
      when license_id is not null and license_id <> '{{ var('cloud_license_id') }}' then 'Self-Hosted' end hosting_type
-    from {{ ref('stg_mattermost_nps__nps_feedback') }}
+    from {{ ref('stg_mattermost_nps__nps_feedback') }} 
+    where feedback is not null
     qualify row_number() over (partition by user_id, feedback order by timestamp desc) = 1
 ), mm_plugin_prod as 
 (
@@ -28,6 +29,7 @@ select
     , case when license_id = '{{ var('cloud_license_id') }}' then 'Cloud' 
      when license_id is not null and license_id <> '{{ var('cloud_license_id') }}' then 'Self-Hosted' end hosting_type
     from {{ ref('stg_mm_plugin_prod__nps_feedback') }}
+    where feedback is not null
     qualify row_number() over (partition by user_id, feedback order by timestamp desc) = 1
 ) 
 select * from mattermost_nps
