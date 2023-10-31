@@ -1,14 +1,19 @@
-WITH rd AS (
-    SELECT
+with rd as (
+    select
         *
-    FROM
+    from
         {{ source('mattermost', 'version_release_dates') }}
 )
-SELECT
-    version AS version,
-    'v' || REGEXP_SUBSTR(version, '^\\d+\\.\\d+') AS short_version,
-    release_date::DATE AS planned_release_date,
-    supported::BOOLEAN AS is_supported,
-    release_number::INT AS release_number
-FROM
+select
+    version,
+    'v' || REGEXP_SUBSTR(version, '^\\d+\\.\\d+') as short_version,
+    split_part(version, '.', 1) as version_major,
+    split_part(version, '.', 2) as version_minor,
+    split_part(version, '.', 3) as version_patch,
+    release_date::date as planned_release_date,
+    supported::boolean as is_supported,
+    release_number::int as release_number,
+    coalesce(actual_release_date::date, planned_release_date) as actual_release_date,
+    rc1_date::date as rc1_date
+from
     rd

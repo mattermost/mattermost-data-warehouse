@@ -12,11 +12,31 @@ sources:
 
     tables:
       - name: version_release_dates
+        description: |
+          List of release dates per version. Also includes extra metadata.
+          
+          > Note that this is not a real source, but a reference to the seed file in `snowflake-dbt` project. It is
+          > configured this way in order to avoid replicating and maintaining the seed file in two projects.
         columns:
           - name: version
+            description: The semantic version of the release.
             tests:
               - unique
               - not_null
           - name: release_date
+            description: The planned date for the release.
           - name: supported
+            description: Whether the release is currently supported.
           - name: release_number
+            tests:
+              - unique
+              - not_null
+          - name: actual_release_date
+            description: The date that the release happened. If empty it's the same date as `release_date`.
+          - name: rc1_date
+            description: The date RC1 was cut for current version.
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "release_date > rc1_date"
+              config:
+                where: "rc1_date is not null"

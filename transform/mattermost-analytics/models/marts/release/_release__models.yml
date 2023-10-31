@@ -37,7 +37,10 @@ models:
           - not_null
 
   - name: dim_fix_versions
-    description: Fix versions for the given issue.
+    description: |
+      Fix versions for the given issue. Fix versions act as "tags" for each issue, essentially linking issues to the 
+      first release they will be part of. A common use case is for tagging which Cloud or Self-hosted release will 
+      contain a bug fix.
 
     columns:
       - name: issue_id
@@ -84,8 +87,10 @@ models:
               values: [ 'Mobile', 'Desktop', 'Playbooks', 'IR', 'Cloud', 'Apps', null ]
       - name: cloud_release_date
         description: The Cloud release date. Not null only when component is Cloud.
-      - name: planned_release_date
-        description: The date that the release in semver column is planned for. Applies only for Cloud/OnPrem.
+      - name: is_on_prem_release
+        description: Whether this fix version refers to an on prem release.
+      - name: is_cloud_release
+        description: Whether this fix version refers to a cloud release.
 
   - name: fct_issues_daily_snapshot
     description: Issues snapshot facts. Stores a snapshot of all issues, updated daily.
@@ -131,3 +136,33 @@ models:
               min_value: 0
               inclusive: true
 
+
+  - name: dim_releases
+    description: List of known releases.
+
+    columns:
+      - name: version
+        description: The semver string (`major.minor.patch` format).
+        tests:
+          - not_null
+          - unique
+      - name: short_version
+        description: The short format of the version, omitting patch (example `v6.3`).
+        tests:
+          - not_null
+      - name: version_major
+        description: The major version of the server at the time the event was submitted.
+      - name: version_minor
+        description: The minor version of the server at the time the event was submitted.
+      - name: version_patch
+        description: The patch version of the server at the time the event was submitted.
+      - name: planned_release_date
+        description: The planned date for the release.
+      - name: is_supported
+        description: Whether the version is supported or not.
+      - name: release_number
+        description: The issue's release number.
+      - name: actual_release_date
+        description: The date the release was actually cut.
+      - name: rc1_date
+        description: The date RC1 was cut.
