@@ -22,7 +22,7 @@ select
         {%- for month in months %}
             'v%({{month}}%)'{%- if not loop.last %},{% endif -%}
         {% endfor %}
-    ) as is_on_prem_release,
+    ) and component is null as is_on_prem_release,
     fix_version like 'Cloud%v%' as is_cloud_release
 from
     {{ ref('stg_mattermost_jira__issues') }},
