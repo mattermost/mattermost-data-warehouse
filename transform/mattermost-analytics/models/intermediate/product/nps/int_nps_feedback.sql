@@ -1,3 +1,11 @@
+-- Temporarily materialize during development
+{{
+    config({
+        "materialized": "table",
+        "snowflake_warehouse": "transform_l"
+    })
+}}
+
 with mattermost_nps as (
 select 
     server_id as server_id
