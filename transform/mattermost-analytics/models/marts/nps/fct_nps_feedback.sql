@@ -1,3 +1,11 @@
+{{
+    config({
+        "materialized": "incremental",
+        "cluster_by": ['feedback_date'],
+        "incremental_strategy": "append",
+    })
+}}
+
 select distinct nf.server_id as server_id
        , nf.user_id as user_id
        , nf.license_id as license_id
