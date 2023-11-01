@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: dim_nps_feedback
+  - name: fct_nps_feedback
     description: |
       List of known customers with active on prem licenses.
 
@@ -36,4 +36,5 @@ models:
         description: The date the score event was sent.
       - name: registered_users
         description: Number of registered users at the time the feedback was submitted.
-
+      - name: timestamp
+        description: Timestamp registered by Rudderstack & Segment when the event occurred refactored to clients clock skew.
