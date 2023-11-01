@@ -21,4 +21,4 @@ SELECT
     user_id,
     row_count
 FROM joined_rows
-WHERE row_count > 1;
+WHERE row_count > 1
