@@ -10,15 +10,17 @@ WITH joined_rows AS (
     SELECT
         nf.server_id AS server_id,
         nf.user_id AS user_id,
+        nf.event_date,
         COUNT(*) AS row_count
     FROM {{ ref('int_nps_feedback') }} nf
     LEFT JOIN {{ ref('int_nps_score') }} ns
     ON nf.server_id = ns.server_id AND nf.user_id = ns.user_id AND nf.event_date = ns.event_date
-    GROUP BY nf.server_id, nf.user_id
+    GROUP BY nf.server_id, nf.user_id, nf.event_date
 )
 SELECT
     server_id,
     user_id,
+    event_date,
     row_count
 FROM joined_rows
 WHERE row_count > 1

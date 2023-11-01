@@ -2,7 +2,7 @@
     config({
         "materialized": "incremental",
         "cluster_by": ['feedback_date'],
-        "incremental_strategy": "append",
+        "incremental_strategy": "append"
     })
 }}
 
@@ -33,6 +33,6 @@ select distinct nf.server_id as server_id
         on nf.server_id = sh.server_id or nf.license_id = sh.license_id
     where nf.feedback is not null 
 {% if is_incremental() %}
-    and timestamp > (SELECT MAX(timestamp) FROM {{ this }} 
+    and timestamp > (SELECT MAX(timestamp) FROM {{ this }})
 {% endif %}
 
