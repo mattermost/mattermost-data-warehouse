@@ -16,4 +16,4 @@ exposures:
       - ref('dim_labels')
       - ref('dim_projects')
       - ref('dim_releases')
-      - ref('fct_issues_daily_snapshots')
+      - ref('fct_issues_daily_snapshot')
