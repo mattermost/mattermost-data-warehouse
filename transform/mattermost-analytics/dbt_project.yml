@@ -57,25 +57,25 @@ models:
       tags: ['marts']
       data_eng:
         schema: mart_data_eng
-        tags: ['nightly']
+        tags: ['nightly', 'data-eng']
       product:
         schema: mart_product
-        tags: ['nightly']
+        tags: ['nightly', 'product']
       web_app:
         schema: mart_web_app
-        tags: ['nightly']
+        tags: ['nightly', 'webapp'']
       release:
         schema: mart_release
-        tags: ['nightly']
+        tags: ['nightly', 'release']
       sales:
         schema: mart_sales
-        tags: ['nightly']
+        tags: ['nightly', 'sales']
         hightouch:
           # Hightouch syncs should be as close to real time as possible.
-          tags: ['hourly']
+          tags: ['hourly', 'hightouch']
       marketing:
         schema: mart_marketing
-        tags: ['nightly']
+        tags: ['nightly', 'marketing']
     utilities:
       +materialized: table
       schema: utilities
