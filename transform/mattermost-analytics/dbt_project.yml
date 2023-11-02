@@ -63,7 +63,7 @@ models:
         tags: ['nightly', 'product']
       web_app:
         schema: mart_web_app
-        tags: ['nightly', 'webapp'']
+        tags: ['nightly', 'webapp']
       release:
         schema: mart_release
         tags: ['nightly', 'release']
