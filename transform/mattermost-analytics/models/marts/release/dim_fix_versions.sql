@@ -56,4 +56,4 @@ select
     rv.next_release_version
 from
     fix_versions fv
-    left join release_versions rv on fv.fix_version = rv.short_version
+    left join release_versions rv on fv.semver = rv.short_version and (fv. is_on_prem_release or fv.is_cloud_release)
