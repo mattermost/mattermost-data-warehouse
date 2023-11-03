@@ -13,7 +13,7 @@ with server_telemetry_summary as (
    select
        server_id as server_id,
        coalesce(st.count_is_cloud_days, 0) as count_is_cloud_days,
-       coalesce(st.count_not_is_cloud_days, 0) as count_not_is_cloud_days,
+       coalesce(st.count_not_is_cloud_days, 0) as count_not_is_cloud_days
     from
         server_telemetry_summary st
 ), latest_values as (
@@ -44,7 +44,7 @@ select
         else 'Unknown'
     end as hosting_type,
     l.installation_id,
-    s.cloud_hostname,
+    s.cloud_hostname
 from
     server_info si
     left join latest_values l on si.server_id = l.server_id
