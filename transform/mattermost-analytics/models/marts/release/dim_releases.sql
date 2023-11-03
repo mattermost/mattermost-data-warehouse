@@ -9,7 +9,7 @@ with release_versions as (
         rc1_date is not null
 )
 select
-    {{ dbt_utils.star(ref('stg_mattermost__version_release_dates'))}},
+    {{ dbt_utils.star(ref('stg_mattermost__version_release_dates'), relation_alias='rd')}},
     rv.previous_release_version,
     rv.next_release_version
 from
