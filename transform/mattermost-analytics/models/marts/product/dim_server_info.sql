@@ -44,4 +44,4 @@ select
     si.last_activity_date
 from
     server_info si
-    left join {{ ref('int_server_hosting_type') }} ht as si.server_id = ht.server_id
+    left join {{ ref('int_server_hosting_type') }} ht on si.server_id = ht.server_id
