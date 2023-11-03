@@ -145,7 +145,21 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               inclusive: true
+      - name: release_timeframe_version
+        description: |
+          Reference to the version that this issue was created during its release timeframe (17th to planned release 
+          date - dates are inclusive).
 
+      - name: is_created_after_rc1_cut
+        description: |
+          True if the issue has been created after RC1 cut date of the release timeframe, False if between 17th 
+          (inclusive) and RC1 cut date (exclusive).
+      - name: created_after_release_version
+        description: |
+          Reference to the version that this issue was created during the week after its actual release date 
+          (actual release date + 7 days - dates are inclusive).
+        
+        
 
   - name: dim_releases
     description: List of known releases.

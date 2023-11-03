@@ -28,9 +28,12 @@ select
     ji.status_name as status,
     ji.resolution_name as resolution,
     {{ datediff("ji.created_at", "closed_at", "day") }} as lead_time_in_days,
+    -- Reference to release version if issue created during a release timeframe
     rt.version as release_timeframe_version,
+    -- Flag whether the issue has been created after RC1 cut date
     rt.version is not null and ji.created_at >= rt.rc1_date and ji.created_at <= rt.planned_release_date as is_created_after_rc1_cut,
-    ar.version as is_created_week_after_version
+    -- Reference to release version if issue created during the week after the actual release date
+    ar.version as created_after_release_version
 from
     {{ ref('stg_mattermost_jira__issues') }} ji
     -- Release timeframe
