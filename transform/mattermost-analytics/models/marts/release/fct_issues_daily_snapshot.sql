@@ -5,7 +5,11 @@ with release_versions as (
         short_version,
         rc1_date,
         planned_release_date,
-        actual_release_date
+        actual_release_date,
+        -- Calculate 17th of previous month
+        dateadd(month, -1, planned_release_date) as _month_before_release,
+        dateadd(day, 17 - DAYOFMONTH(month_before_release), _month_before_release) as release_timeframe_start,
+        dateadd(day, 7, actual_release_date) as week_after_release
     from
         {{ ref('stg_mattermost__version_release_dates') }}
     where
@@ -30,7 +34,7 @@ from
     {{ ref('stg_mattermost_jira__issues') }} ji
     -- Release timeframe
     left join release_versions rt
-        on ji.created_at > dateadd(month, -1, rt.planned_release_date) and ji.created_at <= rt.planned_release_date
+        on ji.created_at > rt.release_timeframe_start and ji.created_at <= rt.planned_release_date
     -- Week after release
     left join release_versions ar
-        on  ji.created_at >= ar.actual_release_date and ji.created_at <= dateadd(day, 7, ar.actual_release_date)
+        on  ji.created_at >= ar.actual_release_date and ji.created_at <= ar.week_after_release
