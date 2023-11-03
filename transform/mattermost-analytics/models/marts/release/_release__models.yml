@@ -99,7 +99,7 @@ models:
         description: |
           The version of the last release before the fix version's release. Patch versions are ignored. 
           For example, let's assume that known versions are `7.8`, `7.9`, `7.10`, `8.0` and `8.1`. Previous version of
-          `7.9` is `7.8`, next version of `8.0` is `7.10` etc.
+          `7.9` is `7.8`, previous version of `8.0` is `7.10` etc.
       - name: next_release_version
         description: |
           The version of the release following the fix version's release. Patch versions are ignored. For example, let's
