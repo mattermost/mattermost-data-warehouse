@@ -22,7 +22,7 @@ select
     ji.issue_type_name as issue_type,
     ji.status_name as status,
     ji.resolution_name as resolution,
-    {{ datediff("ji.created_at", "ji.closed_at", "day") }} as lead_time_in_days,
+    {{ datediff("ji.created_at", "closed_at", "day") }} as lead_time_in_days,
     rt.version as release_timeframe_version,
     rt.versions is not null and ji.created_at >= rt.rc1_date and ji.created_at <= rt.planned_release_date as is_created_after_rc1_cut,
     ar.version as is_created_week_after_version
