@@ -14,4 +14,4 @@ select
     rv.next_release_version
 from
     {{ ref('stg_mattermost__version_release_dates') }} rd
-    join release_versions rv on rd.short_version = rv.short_verion
+    join release_versions rv on rd.short_version = rv.short_version
