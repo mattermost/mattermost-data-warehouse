@@ -38,7 +38,7 @@ from
     {{ ref('stg_mattermost_jira__issues') }} ji
     -- Release timeframe
     left join release_versions rt
-        on ji.created_at > rt.release_timeframe_start and ji.created_at <= rt.planned_release_date
+        on ji.created_at >= rt.release_timeframe_start and ji.created_at <= rt.planned_release_date
     -- Week after release
     left join release_versions ar
         on  ji.created_at >= ar.actual_release_date and ji.created_at <= ar.week_after_release
