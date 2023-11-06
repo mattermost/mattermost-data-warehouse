@@ -11,11 +11,12 @@ with server_telemetry_summary as (
         server_id
 ), server_info as (
    select
-       server_id as server_id,
+       coalesce(st.server_id, ut.server_id) as server_id,
        coalesce(st.count_is_cloud_days, 0) as count_is_cloud_days,
        coalesce(st.count_not_is_cloud_days, 0) as count_not_is_cloud_days
     from
-        server_telemetry_summary st
+        server_telemetry_summary st full outer join
+        {{ ref('int_user_active_days_spined') }} ut on st.server_id = ut.server_id
 ), latest_values as (
     -- Get latest values for installation id (if exists) and full version string
     select
