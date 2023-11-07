@@ -145,7 +145,21 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               inclusive: true
+      - name: release_timeframe_version
+        description: |
+          Reference to the version that this issue was created during its release timeframe (17th to planned release 
+          date - dates are inclusive).
 
+      - name: is_created_after_rc1_cut
+        description: |
+          True if the issue has been created after RC1 cut date of the release timeframe, False if between 17th 
+          (inclusive) and RC1 cut date (exclusive).
+      - name: created_after_release_version
+        description: |
+          Reference to the version that this issue was created during the week after its actual release date 
+          (actual release date + 7 days - dates are inclusive).
+        
+        
 
   - name: dim_releases
     description: List of known releases.
@@ -174,3 +188,14 @@ models:
         description: The date the release was actually cut.
       - name: rc1_date
         description: The date RC1 was cut.
+      - name: previous_release_version
+        description: |
+          The short version (major and minor parts) of the last release before current release. Patch versions are
+          ignored. For example, let's assume that known release versions are `7.8.0`, `7.8.1`, `7.9.0`, `7.10.0`, 
+          `8.0.0` and `8.1.0`. Previous release version of `7.9.0` is `7.8.0`, previous version of `8.0.0` is `7.10.0`
+          etc.
+      - name: next_release_version
+        description: |
+          The short version (major and minor parts) of the release following the current release. Patch versions are 
+          ignored. For example, let's assume that known release versions are `7.8.0`, `7.8.1`, `7.9.0`, `7.10.0`,
+          `8.0.0` and `8.1.0`. Next release version of `7.8.0` is `7.9.0`, next  version of `7.10.0` is `8.0.0` etc.
