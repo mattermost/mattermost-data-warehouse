@@ -1,0 +1,19 @@
+version: 2
+
+exposures:
+  - name: release_quality_dashboard
+    type: dashboard
+    description: Release Quality Metrics dashboard available in Looker.
+    url: https://mattermost.looker.com/dashboards/410
+    tags:
+      - looker
+    maturity: low
+    owner:
+      name: Ioannis Foukarakis
+      email: ioannis.foukarakis@mattermost.com
+    depends_on:
+      - ref('dim_fix_versions')
+      - ref('dim_labels')
+      - ref('dim_projects')
+      - ref('dim_releases')
+      - ref('fct_issues_daily_snapshot')

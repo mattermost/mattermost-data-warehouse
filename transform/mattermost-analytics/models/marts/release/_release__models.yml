@@ -37,7 +37,10 @@ models:
           - not_null
 
   - name: dim_fix_versions
-    description: Fix versions for the given issue.
+    description: |
+      Fix versions for the given issue. Fix versions act as "tags" for each issue, essentially linking issues to the 
+      first release they will be part of. A common use case is for tagging which Cloud or Self-hosted release will 
+      contain a bug fix.
 
     columns:
       - name: issue_id
@@ -68,6 +71,13 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               inclusive: true
+      - name: version_patch
+        description: The patch part version of the version. I.e. for `v7.5.1` it's 1. Might not exist for all versions.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
+              where: "version_patch is not null"
       - name: component
         description: |
           The component that this version applies to. Valid values are Mobile, Desktop, Mobile, Playbooks,
@@ -77,8 +87,20 @@ models:
               values: [ 'Mobile', 'Desktop', 'Playbooks', 'IR', 'Cloud', 'Apps', null ]
       - name: cloud_release_date
         description: The Cloud release date. Not null only when component is Cloud.
-      - name: planned_release_date
-        description: The date that the release in semver column is planned for. Applies only for Cloud/OnPrem.
+      - name: is_on_prem_release
+        description: |
+          Whether this fix version refers to an on prem release. Examples of on prem fix versions are
+          `v5.15 (Sept 2019)` and `v9.0 (September 2023)`.
+      - name: is_cloud_release
+        description: |
+          Whether this fix version refers to a cloud release. Examples of Cloud fix versions are 
+          `Cloud 02/09/23 -> v7.9` and `Cloud 4/27/22 -> v6.7 May'22`.
+    tests:
+      -  dbt_utils.expression_is_true:
+          # A fix version can only refer to a cloud release OR on an on-prem release, not both.
+          name: assert_either_on_prem_or_cloud_release
+          expression: "not (is_on_prem_release and is_cloud_release)"
+
 
   - name: fct_issues_daily_snapshot
     description: Issues snapshot facts. Stores a snapshot of all issues, updated daily.
@@ -123,4 +145,57 @@ models:
           - dbt_utils.accepted_range:
               min_value: 0
               inclusive: true
+      - name: release_timeframe_version
+        description: |
+          Reference to the version that this issue was created during its release timeframe (17th to planned release 
+          date - dates are inclusive).
 
+      - name: is_created_after_rc1_cut
+        description: |
+          True if the issue has been created after RC1 cut date of the release timeframe, False if between 17th 
+          (inclusive) and RC1 cut date (exclusive).
+      - name: created_after_release_version
+        description: |
+          Reference to the version that this issue was created during the week after its actual release date 
+          (actual release date + 7 days - dates are inclusive).
+        
+        
+
+  - name: dim_releases
+    description: List of known releases.
+
+    columns:
+      - name: version
+        description: The semver string (`major.minor.patch` format).
+        tests:
+          - not_null
+          - unique
+      - name: short_version
+        description: The short format of the version, omitting patch (example `v6.3`).
+      - name: version_major
+        description: The major version of the server at the time the event was submitted.
+      - name: version_minor
+        description: The minor version of the server at the time the event was submitted.
+      - name: version_patch
+        description: The patch version of the server at the time the event was submitted.
+      - name: planned_release_date
+        description: The planned date for the release.
+      - name: is_supported
+        description: Whether the version is supported or not.
+      - name: release_number
+        description: The issue's release number.
+      - name: actual_release_date
+        description: The date the release was actually cut.
+      - name: rc1_date
+        description: The date RC1 was cut.
+      - name: previous_release_version
+        description: |
+          The short version (major and minor parts) of the last release before current release. Patch versions are
+          ignored. For example, let's assume that known release versions are `7.8.0`, `7.8.1`, `7.9.0`, `7.10.0`, 
+          `8.0.0` and `8.1.0`. Previous release version of `7.9.0` is `7.8.0`, previous version of `8.0.0` is `7.10.0`
+          etc.
+      - name: next_release_version
+        description: |
+          The short version (major and minor parts) of the release following the current release. Patch versions are 
+          ignored. For example, let's assume that known release versions are `7.8.0`, `7.8.1`, `7.9.0`, `7.10.0`,
+          `8.0.0` and `8.1.0`. Next release version of `7.8.0` is `7.9.0`, next  version of `7.10.0` is `8.0.0` etc.
