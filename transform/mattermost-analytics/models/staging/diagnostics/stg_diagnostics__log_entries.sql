@@ -75,7 +75,7 @@ renamed as (
         and to_date(logdate) <= CURRENT_DATE
 
         -- Remove invalid records
-        and NOT (cs_uri_query like any ('%BUMP_RELEASE%', '%plyr-1%'))
+        and not (cs_uri_query like any ('%BUMP_RELEASE%', '%plyr-1%'))
 )
 
 select * from renamed
