@@ -19,9 +19,17 @@ models:
       - name: version_full
         description: The full version string of the server's semver.
       - name: version_major
-        description: The major version of the server at the time the event was submitted/
+        description: The major version of the server at the time the event was submitted.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
       - name: version_minor
-        description: The minor version of the server at the time the event was submitted/
+        description: The minor version of the server at the time the event was submitted.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
       - name: version_patch
         description: The patch version of the server at the time the event was submitted.
       - name: is_enterprise_ready
