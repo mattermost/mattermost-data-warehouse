@@ -74,6 +74,8 @@ renamed as (
         -- Sanity check
         and to_date(logdate) <= CURRENT_DATE
 
+        -- Remove invalid records
+        and version_full not ilike '%BUMP_RELEASE%'
 )
 
 select * from renamed
