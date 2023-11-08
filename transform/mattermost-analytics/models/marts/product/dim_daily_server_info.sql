@@ -11,6 +11,7 @@ select
     database_type,
     database_version,
     is_enterprise_ready,
+    binary_edition,
     installation_id,
     server_ip,
     installation_type,
@@ -20,7 +21,3 @@ select
     has_diagnostics_data
 from
     {{ ref('int_server_active_days_spined') }}
-where
-    server_id not in (
-        select server_id from {{ ref('int_excludable_servers') }} where server_id is not null
-    )
