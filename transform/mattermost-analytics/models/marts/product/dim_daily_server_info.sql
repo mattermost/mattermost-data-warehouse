@@ -11,6 +11,11 @@ select
     database_type,
     database_version,
     is_enterprise_ready,
+    case
+        when is_enterprise_ready = true then 'E0'
+        when is_enterprise_ready = false then 'TE'
+        else 'Unknown'
+    end as binary_edition,
     installation_id,
     server_ip,
     installation_type,
