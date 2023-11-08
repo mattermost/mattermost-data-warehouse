@@ -34,6 +34,11 @@ models:
         description: The version of the database.
       - name: is_enterprise_ready
         description: Whether this server is an enterprise-ready build.
+      - name: binary_edition
+        description: |
+          There are two "flavours" of the server binary:
+          - TE = Team Edition (fully open source and contains no Mattermost proprietary code).
+          - E0 = Enterprise Edition (TE + Mattermost proprietary code, and with features activated with a license).
       - name: is_cloud
         description: Whether this server is a cloud installation or not.
       - name: server_ip

@@ -90,7 +90,7 @@ models:
   - name: dim_daily_server_info
     description: |
       Daily information about the server based on telemetry data. In case of multiple values in a day, the latest
-      value is kept. Does not contain servers marked for exclusion.
+      value is kept.
     columns:
       - name: daily_server_id
         description: A unique id for each server and date
@@ -116,10 +116,20 @@ models:
       - name: database_version
         description: The version of the database.
       - name: is_enterprise_ready
-        description: Whether this server is an enterprise-ready build.
+        description: |
+          Whether this server is running an enterprise-ready build.
         tests:
           - not_null:
+              # A few examples return edition equal null. These examples are caught in excludable servers.
               where: "has_telemetry_data = true"
+              config:
+                severity: "warn"
+                error_if: '> 140'
+      - name: binary_edition
+        description: |
+          There are two "flavours" of the server binary:
+          - TE = Team Edition (fully open source and contains no Mattermost proprietary code).
+          - E0 = Enterprise Edition (TE + Mattermost proprietary code, and with features activated with a license).
       - name: reported_versions
         description: The unique versions reported from the server for that date.
       - name: count_reported_versions
