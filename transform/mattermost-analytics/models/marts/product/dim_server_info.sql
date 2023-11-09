@@ -4,7 +4,7 @@ with server_telemetry_summary as (
         min(activity_date) over (partition by server_id) as first_activity_date,
         max(activity_date) over (partition by server_id ) as last_activity_date,
         first_value(binary_edition) over (partition by server_id order by activity_date asc) as first_binary_edition,
-        last_value() over ()binary_edition) over (partition by server_id order by activity_date asc) as last_binary_edition
+        last_value(binary_edition) over (partition by server_id order by activity_date asc) as last_binary_edition
     from
         {{ ref('int_server_active_days_spined') }}
     -- Keep only one row per server as the current query creates duplicates
