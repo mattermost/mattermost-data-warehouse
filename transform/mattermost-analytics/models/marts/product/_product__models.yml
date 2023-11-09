@@ -290,6 +290,16 @@ models:
         description: |
           The last date that this server was active."Active server" is defined as either telemetry or security update 
           check data are available for that date.
+      - name: first_binary_edition
+        description: The first ever reported "flavour" of the server binary.
+        tests:
+          - accepted_values:
+              values: ['TE', 'E0', 'Unknown']
+      - name: last_binary_edition
+        description: The last reported "flavour" of the server binary.
+        tests:
+          - accepted_values:
+              values: ['TE', 'E0', 'Unknown']
 
   - name: dim_daily_server_config
     description: Daily server configuration.
