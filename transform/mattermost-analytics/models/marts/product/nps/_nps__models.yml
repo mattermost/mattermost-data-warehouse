@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: dim_nps_feedback
+  - name: fct_nps_feedback
     description: |
       List of known customers with active on prem licenses.
 
