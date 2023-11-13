@@ -3,7 +3,8 @@ version: 2
 models:
   - name: fct_nps_feedback
     description: |
-      List of known customers with active on prem licenses.
+      This model contains every NPS feedback sent from Rudderstack and Segment sources.
+      Additionally contains the latest NPS score if it was sent with feedback.
 
     columns:
       - name: server_id
@@ -26,5 +27,5 @@ models:
         description: The date the feedback event was sent.            
       - name: score_date
         description: The date the score event was sent.
-      - name: timestamp
-        description: Timestamp registered by Rudderstack & Segment when the event occurred refactored to clients clock skew.
+      - name: feedback_timestamp
+        description: Timestamp registered by Rudderstack & Segment when the feedback event occurred refactored to clients clock skew.

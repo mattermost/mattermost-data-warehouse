@@ -101,13 +101,13 @@ models:
       - name: license_date
         description: The last ingested date of the license in telemetry.
       - name: license_id
-        description: The unique id of the license.
+        description: The id of the license.
         tests:
           - not_null
       - name: server_id
         description: A server id of the license.      
       - name: customer_id
-        description: The id of the customer this license is generated for.
+        description: The id of the customer this license is generated for (from Stripe, CWS or legacy, can be tracked from Source column).
       - name: customer_email
         description: The customer's email.
         tags: ['pii']

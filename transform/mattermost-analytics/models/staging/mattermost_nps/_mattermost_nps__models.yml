@@ -1,9 +1,9 @@
 version: 2
 
 models:
-  - name: stg_mattermost_nps__feedback
+  - name: stg_mattermost_nps__nps_feedback
     description: |
-      Reconstructed `tracks` table using custom properties expected to be in the events.
+      Telemetry related to NPS feedback sent from Segment source.
 
     columns:
       - name: event_id
@@ -42,9 +42,9 @@ models:
       - name: original_timestamp
       - name: server_id
 
-  - name: stg_mattermost_nps__score
+  - name: stg_mattermost_nps__nps_score
     description: |
-      Reconstructed `tracks` table using custom properties expected to be in the events.
+      Telemetry related to NPS score sent from Segment source.
 
     columns:
       - name: event_id
