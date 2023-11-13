@@ -58,7 +58,8 @@ with server_first_day_per_telemetry as (
     select
         sadr.server_id,
         all_days.date_day::date as activity_date,
-        {{ dbt_utils.generate_surrogate_key(['server_id', 'activity_date']) }} AS daily_server_id
+        {{ dbt_utils.generate_surrogate_key(['server_id', 'activity_date']) }} AS daily_server_id,
+        datediff(day, sadr.first_active_day, all_days.date_day::date) as age_in_days
     from
         server_activity_date_range sadr
         left join {{ ref('telemetry_days') }} all_days
@@ -117,6 +118,9 @@ select
     coalesce(activity.count_registered_deactivated_users, legacy_activity.count_registered_deactivated_users, 0) as count_registered_deactivated_users,
     coalesce(activity.count_registered_users, legacy_activity.count_registered_users, 0) - coalesce(activity.count_registered_deactivated_users, legacy_activity.count_registered_deactivated_users, 0) as count_registered_active_users,
 
+    -- Server lifecycle information
+    s.age_in_days,
+
     -- Metadata regarding telemetry/activity availability
     t.daily_server_id is not null as has_telemetry_data,
     l.daily_server_id is not null as has_legacy_telemetry_data,
@@ -135,5 +139,6 @@ from
     left join {{ ref('int_activity_latest_daily') }} activity on s.daily_server_id = activity.daily_server_id
     --  Activity data (segment)
     left join {{ ref('int_activity_legacy_latest_daily') }} legacy_activity on s.daily_server_id = legacy_activity.daily_server_id
+
 where
     s.server_id is not null
