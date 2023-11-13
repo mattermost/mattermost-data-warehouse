@@ -61,6 +61,8 @@ models:
         description: |
           Total number of active registered users. Calculated as 
           `count_registered_users - count_registered_deactivated_users`.
+      - name: age_in_days
+        description: Number of days since the first telemetry received from the server.
       - name: has_telemetry_data
         description: Whether there were telemetry data reported for this server on the given date.
       - name: has_legacy_telemetry_data

@@ -16,6 +16,7 @@ select
     server_ip,
     installation_type,
     count_reported_versions,
+    age_in_days,
     has_telemetry_data,
     has_legacy_telemetry_data,
     has_diagnostics_data
