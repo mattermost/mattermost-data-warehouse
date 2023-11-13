@@ -139,6 +139,8 @@ models:
               min_value: 1
               inclusive: true
               where: "has_telemetry_data or has_legacy_telemetry_data or has_diagnostics_data"
+      - name: age_in_days
+        description: The number of days since the first time the server reported telemetry.
       - name: has_telemetry_data
         description: Whether there were telemetry data reported for this server on the given date.
       - name: has_legacy_telemetry_data

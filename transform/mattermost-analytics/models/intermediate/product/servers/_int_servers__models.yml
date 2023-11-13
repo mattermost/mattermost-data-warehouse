@@ -61,6 +61,16 @@ models:
         description: |
           Total number of active registered users. Calculated as 
           `count_registered_users - count_registered_deactivated_users`.
+      - name: age_in_days
+        description: Number of days since the first telemetry received from the server.
+        tests:
+          # Value must be incremental and minimum value must be 0
+          - dbt_utils.sequential_values:
+              interval: 1
+              group_by_columns: ['server_id']
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
       - name: has_telemetry_data
         description: Whether there were telemetry data reported for this server on the given date.
       - name: has_legacy_telemetry_data
