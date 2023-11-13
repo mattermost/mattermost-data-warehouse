@@ -46,7 +46,7 @@ models:
       - name: score
         description: NPS score submitted.
         tests:
-          - accepted_range:
+          - dbt_utils.accepted_range:
               min_value: 0
               max_value: 10
               inclusive: true
