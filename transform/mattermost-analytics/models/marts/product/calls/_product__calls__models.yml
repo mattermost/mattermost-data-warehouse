@@ -3,6 +3,7 @@ version: 2
 models:
   - name: fct_calls_activity
     description: Daily calls activity per server. Includes excludable servers.
+      This model also excludes servers not present in product telemetry dim_server_info.
     columns:
       - name: daily_server_id
         description: A unique id for each server and date
