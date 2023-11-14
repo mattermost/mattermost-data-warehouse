@@ -105,7 +105,7 @@ models:
         tests:
           - not_null
       - name: server_id
-        description: A server id of the license.      
+        description: The server id of the license.      
       - name: customer_id
         description: The id of the customer this license is generated for (from Stripe, CWS or legacy, can be tracked from Source column).
       - name: customer_email
@@ -127,11 +127,11 @@ models:
       - name: installation_date
         description: The last ingested date of the installation in telemetry.
       - name: installation_id
-        description: The unique id of the installation.
+        description: The id of the installation.
         tests:
           - not_null
       - name: server_id
-        description: A server id of the cloud installation.
+        description: The server id of the cloud installation.
       - name: customer_email
         description: The customer's email.
         tags: ['pii']
