@@ -1,6 +1,7 @@
 select distinct a.installation_date
     , a.installation_id as installation_id
     , a.server_id as server_id
+    , a.license_id as license_id
     , b.customer_id as customer_id
     , b.email as customer_email
     , b.company_name as company_name

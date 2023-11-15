@@ -132,6 +132,8 @@ models:
           - not_null
       - name: server_id
         description: The server id of the cloud installation.
+      - name: license_id
+        description: The id of the license.
       - name: customer_email
         description: The customer's email.
         tags: ['pii']
