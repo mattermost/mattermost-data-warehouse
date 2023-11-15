@@ -15,7 +15,8 @@ select
     end as coalesced_license_end_at,
     license_id is null as is_missing_license_id,
     coalesced_license_start_at is null as is_missing_license_start_at,
-    coalesced_license_end_at is null as is_missing_license_end_at
+    coalesced_license_end_at is null as is_missing_license_end_at,
+    license_end_at <= license_start_at as is_invalid_date_range
 from
     {{ ref('stg_stripe__subscriptions')}} s
     left join {{ ref('stg_stripe__subscription_items')}} si on s.subscription_id = si.subscription_id
@@ -27,12 +28,18 @@ where
     and p.name <> 'Premier Support'
     -- Skip incomplete subscriptions
     and s.status <> 'incomplete_expired'
+    -- Ignoring subscriptions that come from admin portal/sales
+    and s.renewal_type is null
+    -- Data before this date might not be in-line with specification
+    and s.created_at > '2021-04-01'
     and (
         -- License id must be non null
         is_missing_license_id
-        -- License must have start and end date
+        -- License must have valid start and end date
         or is_missing_license_start_at
         or is_missing_license_end_at
+        -- License end date must be after start date
+        or is_invalid_date_range
     )
     -- Ignoring subscriptions that come from admin portal/sales
     and s.renewal_type <> 'sales-only'
