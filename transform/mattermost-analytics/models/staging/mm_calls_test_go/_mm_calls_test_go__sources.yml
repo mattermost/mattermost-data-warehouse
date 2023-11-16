@@ -12,9 +12,15 @@ sources:
       
     tags: [ 'rudderstack' ]
 
+    freshness: # Check that telemetry data have been received in the past 24 hours
+      warn_after: { count: 12, period: hour }
+      error_after: { count: 24, period: hour }
+    loaded_at_field: received_at
+
     # Omitting tables with 20 or less rows.
     tables:
       - name: call_notify_admin
+        freshness: null # No new events since 2023-01
       - name: call_ended
       - name: call_started
       - name: call_user_joined
@@ -29,6 +35,7 @@ sources:
       - name: user_share_screen
       - name: user_start_recording
       - name: user_stop_recording
+        freshness: null # Events are really sparse
       - name: user_unshare_screen
 
       - name: tracks
