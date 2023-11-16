@@ -1,11 +1,12 @@
 with cws_licenses as (
-    select distinct license_id
-        , customer_id as customer_id
-        , customer_email as email
-        , company_name as company_name
-        , sku_short_name as license_name
+    select distinct cl.license_id
+        , cl.customer_id as customer_id
+        , cl.customer_email as email
+        , cl.company_name as company_name
+        , coalesce (p.name, cl.sku_short_name) as license_name
         , 'CWS' as source
-    from {{ ref('stg_cws__license') }}
+    from {{ ref('stg_cws__license') }} cl
+    left join {{ ref('stg_stripe__products')}} p on cl.stripe_product_id = p.product_id
 ), stripe_licenses as (
     select distinct license_id
         , c.portal_customer_id as customer_id
