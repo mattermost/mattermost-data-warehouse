@@ -8,6 +8,7 @@ select nf.server_id as server_id
        , nf.event_date as feedback_date
        , ns.event_date as score_date
        , nf.timestamp as feedback_timestamp
+       , nf.user_email as user_email
     from {{ ref('int_nps_feedback') }} nf 
     left join {{ ref('int_nps_score') }} ns 
         on nf.server_id = ns.server_id and nf.user_id = ns.user_id and nf.event_date = ns.event_date
