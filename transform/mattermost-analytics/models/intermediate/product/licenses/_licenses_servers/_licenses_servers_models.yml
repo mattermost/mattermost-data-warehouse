@@ -51,7 +51,6 @@ models:
         tags: ['pii']
       - name: company_name
         description: The name of the company of the Self-Hosted instance.
-        tags: ['pii']
       - name: license_name
         description: The name of the license or plan of the customer.
       - name: source

@@ -10,7 +10,7 @@ select
     , user_role as user_role
     , received_at as score_received_at
     from {{ ref('stg_mattermost_nps__nps_score') }} 
-    qualify ROW_NUMBER() over (PARTITION BY event_date, user_id ORDER BY timestamp DESC) = 1
+    qualify ROW_NUMBER() over (partition by server_id, user_id, event_date ORDER BY timestamp DESC) = 1
 ), mm_plugin_prod as 
 (
  select 
@@ -24,7 +24,7 @@ select
     , user_role as user_role
     , received_at as score_received_at
     from {{ ref('stg_mm_plugin_prod__nps_score') }}    
-    qualify ROW_NUMBER() over (PARTITION BY event_date, user_id ORDER BY timestamp DESC) = 1
+    qualify ROW_NUMBER() over (partition by server_id, user_id, event_date ORDER BY timestamp DESC) = 1
 ) 
 select server_id
         , user_id

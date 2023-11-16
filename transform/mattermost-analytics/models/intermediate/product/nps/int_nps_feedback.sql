@@ -11,7 +11,7 @@ select
     , received_at as feedback_received_at
     from {{ ref('stg_mattermost_nps__nps_feedback') }} 
     where feedback is not null
-    qualify row_number() over (partition by user_id, feedback order by timestamp desc) = 1
+    qualify row_number() over (partition by server_id, user_id, feedback order by timestamp desc) = 1
 ), mm_plugin_prod as 
 (
  select 
@@ -26,7 +26,7 @@ select
     , received_at as feedback_received_at
     from {{ ref('stg_mm_plugin_prod__nps_feedback') }}
     where feedback is not null
-    qualify row_number() over (partition by user_id, feedback order by timestamp desc) = 1
+    qualify row_number() over (partition by server_id, user_id, feedback order by timestamp desc) = 1
 ) 
 select * from mattermost_nps
 union
