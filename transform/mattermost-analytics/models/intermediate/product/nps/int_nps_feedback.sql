@@ -9,7 +9,7 @@ select
     , feedback as feedback
     , user_role as user_role
     , received_at as feedback_received_at
-    , email as user_email
+    , user_email as user_email
     from {{ ref('stg_mattermost_nps__nps_feedback') }} 
     where feedback is not null
     qualify row_number() over (partition by server_id, user_id, feedback order by timestamp desc) = 1

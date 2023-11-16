@@ -57,6 +57,9 @@ models:
         description: NPS feedback submitted.
       - name: server_install_date      
         description: Server installation date.
+      - name: user_email
+        description: The email of the user who submitted feedback (optional).
+        tags: [pii]
       - name: plugin_id
         description: The ID of the plugin.
       - name: server_version

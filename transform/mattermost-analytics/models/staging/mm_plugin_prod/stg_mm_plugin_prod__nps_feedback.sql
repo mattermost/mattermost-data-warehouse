@@ -30,6 +30,7 @@ renamed as (
         , user_role as user_role
         , feedback as feedback
         , server_install_date as server_install_date
+        , email as user_email
 
         -- Using coalesce here, validated the data, there is no data where both are not null
         -- Same as useractualid above
