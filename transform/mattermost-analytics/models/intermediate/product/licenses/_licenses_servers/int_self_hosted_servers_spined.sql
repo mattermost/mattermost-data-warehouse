@@ -25,8 +25,8 @@ with license_telemetry_range as (
     select ltr.server_id as server_id
         , ltr.license_id as license_id
         , all_days.date_day::date as activity_date
-        , {{ dbt_utils.generate_surrogate_key(['server_id', 'license_id', 'activity_date']) }} AS daily_server_license_id
-        , {{ dbt_utils.generate_surrogate_key(['server_id', 'activity_date']) }} AS daily_server_id
+        , {{ dbt_utils.generate_surrogate_key(['ltr.server_id', 'ltr.license_id', 'activity_date']) }} AS daily_server_license_id
+        , {{ dbt_utils.generate_surrogate_key(['ltr.server_id', 'activity_date']) }} AS daily_server_id
         , datediff(day, ltr.min_license_date, all_days.date_day::date) as age_in_days
     from
         license_telemetry_range ltr
