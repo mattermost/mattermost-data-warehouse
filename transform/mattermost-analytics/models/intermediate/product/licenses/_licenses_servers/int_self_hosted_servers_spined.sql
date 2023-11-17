@@ -27,11 +27,11 @@ with license_telemetry_range as (
         , all_days.date_day::date as activity_date
         , {{ dbt_utils.generate_surrogate_key(['server_id', 'license_id', 'activity_date']) }} AS daily_server_license_id
         , {{ dbt_utils.generate_surrogate_key(['server_id', 'activity_date']) }} AS daily_server_id
-        , datediff(day, sadr.first_active_day, all_days.date_day::date) as age_in_days
+        , datediff(day, ltr.first_active_day, all_days.date_day::date) as age_in_days
     from
         license_telemetry_range ltr
         left join {{ ref('telemetry_days') }} all_days
-            on all_days.date_day >= sadr.min_license_date and all_days.date_day <= sadr.max_license_date
+            on all_days.date_day >= ltr.min_license_date and all_days.date_day <= ltr.max_license_date
 ) select s.daily_server_license_id
         , s.daily_server_id
         , s.server_id
