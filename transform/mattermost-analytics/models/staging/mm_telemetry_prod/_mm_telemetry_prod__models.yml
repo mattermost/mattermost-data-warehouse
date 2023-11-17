@@ -246,6 +246,8 @@ models:
         description: Timestamp registered by Rudderstack when the event was ingested (received).
       - name: timestamp
         description: Timestamp registered by Rudderstack when the event occured refactored to clients clock skew.
+      - name: license_date
+        description: Timestamp converted to date registered by Rudderstack when the event occured refactored to clients clock skew.
       - name: license_id
         description: The id of the license used at the time the event was sent.
       - name: customer_id
