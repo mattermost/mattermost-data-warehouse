@@ -46,4 +46,4 @@ with license_telemetry_range as (
     -- Segment Telemetry
     left join {{ ref('stg_mattermost2__license')}} sg 
         on s.server_id = sg.server_id and s.license_id = sg.license_id
-    where server_id is not null and license_id is not null
+    where s.server_id is not null and s.license_id is not null
