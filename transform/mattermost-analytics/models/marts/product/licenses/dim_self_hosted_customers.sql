@@ -13,7 +13,7 @@ with self_hosted_servers as (
     , b.company_name as company_name
     , coalesce(b.license_name, a.license_name) as license_name
     , b.source as source
-from {{ ref('self_hosted_servers')}} a 
+from self_hosted_servers a 
 left join {{ ref('int_self_hosted_licenses')}} b 
 on a.server_id = b.server_id
 where company_name is not null or email is not null

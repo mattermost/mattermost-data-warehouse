@@ -108,6 +108,11 @@ models:
         description: Role of the user who submitted NPS.
       - name: score
         description: NPS score submitted.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 10
+              inclusive: true
       - name: server_install_date      
         description: Server installation date.
       - name: plugin_id
