@@ -37,8 +37,8 @@ with license_telemetry_range as (
         , s.server_id
         , s.license_id
         , s.activity_date
-        , coalesce(rd.customer_id, sg.customer_id) as customer_id
-        , coalesce(rd.license_name, sg.license_name) as license_name
+        , rd.customer_id 
+        , rd.license_name
     from spined s
     left join {{ ref('int_self_hosted_servers')}} rd 
         on s.server_id = rd.server_id and s.license_id = rd.license_id
