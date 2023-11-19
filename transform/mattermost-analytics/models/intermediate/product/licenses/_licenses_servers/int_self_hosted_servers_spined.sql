@@ -40,10 +40,6 @@ with license_telemetry_range as (
         , coalesce(rd.customer_id, sg.customer_id) as customer_id
         , coalesce(rd.license_name, sg.license_name) as license_name
     from spined s
-    -- Rudderstack Telemetry
-    left join {{ ref('stg_mm_telemetry_prod__license')}} rd 
+    left join {{ ref('int_self_hosted_servers')}} rd 
         on s.server_id = rd.server_id and s.license_id = rd.license_id
-    -- Segment Telemetry
-    left join {{ ref('stg_mattermost2__license')}} sg 
-        on s.server_id = sg.server_id and s.license_id = sg.license_id
     where s.server_id is not null and s.license_id is not null
