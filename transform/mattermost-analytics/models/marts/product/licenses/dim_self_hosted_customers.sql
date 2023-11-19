@@ -3,7 +3,7 @@ with self_hosted_servers as (
         , license_id
         , customer_id
         , license_name
-    from {{ ref('int_server_hosted_servers_spined') }}
+    from {{ ref('int_self_hosted_servers_spined') }}
     qualify row_number() over (partition by server_id, license_id order by activity_date desc) = 1
 ) select a.activity_date as license_date
     , a.license_id as license_id
