@@ -16,5 +16,5 @@ with self_hosted_servers as (
     , b.source as source
 from self_hosted_servers a 
 left join {{ ref('int_self_hosted_licenses')}} b 
-on a.server_id = b.server_id
+on a.license_id = b.license_id
 where company_name is not null or email is not null
