@@ -38,8 +38,12 @@ with license_telemetry_range as (
         , s.license_id
         , s.activity_date
         , rd.customer_id 
-        , rd.license_name
+        , shl.email as customer_email
+        , shl.company_name as company_name
+        , coalesce(shl.license_name, rd.license_name) as license_name
     from spined s
     left join {{ ref('int_self_hosted_servers')}} rd 
         on s.server_id = rd.server_id and s.license_id = rd.license_id
+    left join {{ ref('int_self_hosted_licenses')}} shl 
+        on s.license_id = shl.license_id
     where s.server_id is not null and s.license_id is not null
