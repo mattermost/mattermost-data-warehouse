@@ -1,5 +1,6 @@
 with self_hosted_servers as (
-    select server_id
+    select activity_date
+        , server_id
         , license_id
         , customer_id
         , license_name
@@ -8,7 +9,7 @@ with self_hosted_servers as (
 ) select a.activity_date as license_date
     , a.license_id as license_id
     , a.server_id as server_id
-    , b.customer_id as customer_id
+    , a.customer_id as customer_id
     , b.email as customer_email
     , b.company_name as company_name
     , coalesce(b.license_name, a.license_name) as license_name
