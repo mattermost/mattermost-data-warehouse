@@ -1,3 +1,10 @@
+{{
+    config({
+        "materialized": "table",
+        "snowflake_warehouse": "transform_l"
+    })
+}}
+
 with cws_licenses as (
     select distinct cl.license_id
         , cl.customer_id as customer_id
