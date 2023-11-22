@@ -325,3 +325,26 @@ models:
         description: Whether OpenID with Gitlab OAuth is enabled
       - name: is_openid_office365_enabled
         description: Whether OpenID with Office365 OAuth is enabled
+
+
+  - name: rpt_tedau_at_day_28
+    description: Reporting table for calculating 28 TEDAU to server ratio
+    columns:
+      - name: server_id
+        description: The server's unique id.
+        tests:
+          - not_null
+          - unique
+      - name: active_since_date
+        description: The date the server was first reported as active.
+      - name: is_active_at_day_28
+        description: Whether the server is still active on day 28.
+      - name: daily_active_users
+        description: |
+          The number of unique active users for the given server on day 28 of the server's lifecycle. If there is no 
+          information about the specific date (i.e. server inactive or server hasn't reported telemetry), then it's 0.
+      - name: server_daily_active_users
+        description: |
+          Total number of active users for the past 24 hours prior to the timestamp of the event.
+          Bots and deleted users are excluded. Reported by mattermost server. If there is no 
+          information about the specific date (i.e. server inactive or server hasn't reported telemetry), then it's 0.
