@@ -30,7 +30,7 @@ with license_telemetry_range as (
         , datediff(day, ltr.min_license_date, all_days.date_day::date) as age_in_days
     from
         license_telemetry_range ltr
-        left join {{ ref('telemetry_days') }} all_days
+        left join {{ ref('license_telemetry_days') }} all_days
             on all_days.date_day >= ltr.min_license_date and all_days.date_day <= ltr.max_license_date
 ) select s.daily_server_license_id
         , s.daily_server_id
