@@ -7,5 +7,5 @@ select a.server_id as server_id
     , b.source as source
 from {{ ref('int_self_hosted_servers')}} a 
 left join {{ ref('int_self_hosted_licenses')}} b 
-on a.license_id = b.license_id
+on a.license_id = b.license_id and a.customer_id = b.customer_id
 where company_name is not null or email is not null
