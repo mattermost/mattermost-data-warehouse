@@ -2,7 +2,7 @@
     "materialized": "incremental",
     "schema": "events",
     "tags":"preunion",
-    "snowflake_warehouse": "transform_m",
+    "snowflake_warehouse": "transform_l",
     "on_schema_change": "append_new_columns"
   })
 }}
