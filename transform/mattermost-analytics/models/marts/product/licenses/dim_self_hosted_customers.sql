@@ -10,6 +10,6 @@ where company_name is not null or email is not null
 group by server_id 
 , license_id 
 , customer_id 
-, email
+, customer_email
 , company_name
 , license_name
