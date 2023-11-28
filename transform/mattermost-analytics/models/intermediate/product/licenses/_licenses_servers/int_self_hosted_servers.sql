@@ -1,5 +1,5 @@
 with mm_telemetry_prod_license as (
-    select timestamp::date as license_date
+    select license_date as license_date
         , license_id as license_id
         , server_id as server_id
         , customer_id as customer_id
@@ -8,7 +8,7 @@ with mm_telemetry_prod_license as (
     where license_id is not null and installation_id is null
     qualify row_number() over (partition by server_id, license_id order by timestamp desc) = 1
 ), mattermost2_license as (
-    select timestamp::date as license_date
+    select license_date as license_date
         , license_id as license_id
         , server_id as server_id
         , customer_id as customer_id

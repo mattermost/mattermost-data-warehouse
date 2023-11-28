@@ -1,12 +1,18 @@
-select distinct a.license_date
+select a.server_id as server_id
     , a.license_id as license_id
-    , a.server_id as server_id
-    , a.customer_id as customer_id
-    , b.email as customer_email
+    , b.customer_id as customer_id
+    , b.customer_email as customer_email
     , b.company_name as company_name
     , coalesce(b.license_name, a.license_name) as license_name
-    , b.source as source
+    , min(a.license_date) as first_license_telemetry_date
+    , max(a.license_date) as last_license_telemetry_date
 from {{ ref('int_self_hosted_servers')}} a 
 left join {{ ref('int_self_hosted_licenses')}} b 
 on a.license_id = b.license_id
-where company_name is not null or email is not null
+where company_name is not null or customer_email is not null
+group by server_id 
+, license_id 
+, customer_id 
+, customer_email
+, company_name
+, license_name

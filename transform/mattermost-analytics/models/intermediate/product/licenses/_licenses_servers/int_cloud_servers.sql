@@ -1,4 +1,4 @@
-select timestamp::date as installation_date
+select license_date as license_date
         , installation_id as installation_id
         , server_id as server_id
         , license_name as license_name

@@ -26,8 +26,8 @@ models:
       Contains all Cloud servers from Rudderstack telemetry.
     
     columns:
-      - name: installation_date
-        description: The date of installation of the Cloud instance.
+      - name: license_date
+        description: The date the license telemetry was received of the cloud server.
       - name: installation_id
         description: The ID of the cloud installation.
       - name: server_id
