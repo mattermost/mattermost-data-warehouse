@@ -1,7 +1,7 @@
 select a.server_id as server_id
     , a.installation_id as installation_id
     , b.customer_id as customer_id
-    , b.customer_email as customer_email
+    , b.email as customer_email
     , b.company_name as company_name
     , coalesce(b.license_name, a.license_name) as license_name
     , min(a.license_date) as first_license_telemetry_date
