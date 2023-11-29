@@ -24,7 +24,7 @@ with stripe_licenses as (
         , customer_id 
         , contact_email as email
         , company_name 
-        , NULL as license_name
+        , 'Legacy license' as license_name
         , 'Legacy' as source
     from {{ ref('stg_licenses__licenses')}} ll
     where not exists (select 1 from stripe_licenses sl where ll.license_id = sl.license_id) 
