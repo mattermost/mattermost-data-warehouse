@@ -9,7 +9,7 @@ select a.server_id as server_id
 from {{ ref('int_self_hosted_servers')}} a 
 left join {{ ref('int_self_hosted_licenses')}} b 
 on a.license_id = b.license_id
-where b.company_name is not null or b.customer_email is not null
+where b.company_name is not null or b.email is not null
 group by a.server_id
     , a.license_id 
     , b.customer_id
