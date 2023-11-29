@@ -6,7 +6,7 @@ with mm_telemetry_prod_license as (
         , license_name as license_name
     from {{ ref('stg_mm_telemetry_prod__license')}} 
     where license_id is not null and installation_id is null
-    qualify row_number() over (partition by server_id, license_id order by timestamp desc) = 1
+    qualify row_number() over (partition by server_id, license_id, license_date order by timestamp desc) = 1
 ), mattermost2_license as (
     select license_date as license_date
         , license_id as license_id
@@ -15,7 +15,7 @@ with mm_telemetry_prod_license as (
         , license_name as license_name
     from {{ ref('stg_mattermost2__license')}} 
     where license_id is not null
-    qualify row_number() over (partition by server_id, license_id order by timestamp desc) = 1
+    qualify row_number() over (partition by server_id, license_id, license_date order by timestamp desc) = 1
 ) select * from mm_telemetry_prod_license
     union
     select * from mattermost2_license

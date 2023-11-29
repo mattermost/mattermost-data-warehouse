@@ -5,6 +5,6 @@ select license_date as license_date
         , license_id as license_id
     from {{ ref('stg_mm_telemetry_prod__license')}} 
     where installation_id is not null
-    qualify row_number() over (partition by server_id order by timestamp desc) = 1
+    qualify row_number() over (partition by server_id, license_date order by timestamp desc) = 1
   
 -- Installation ID exists only in rudderstack telemetry
