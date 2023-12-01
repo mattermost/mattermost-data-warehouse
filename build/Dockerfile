@@ -30,7 +30,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
      g++=4:10.2.1-1 \
      git=1:2.30.2-1+deb11u2 && \
      rm -rf /var/lib/apt/lists/*
-
+RUN apt-get install -y curl wget
 # Sane python defaults
 ## pip timeout, don't use cache, don't check for newer version and settings
 ENV PIP_DEFAULT_TIMEOUT=100 \
