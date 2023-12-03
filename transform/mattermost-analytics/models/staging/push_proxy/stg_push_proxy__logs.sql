@@ -12,7 +12,7 @@ renamed as (
         , elb
         , client_and_port
         , target_and_port
-        , request_processing_tim
+        , request_processing_time
         , target_processing_time
         , response_processing_time
         , elb_status_code

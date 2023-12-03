@@ -16,6 +16,8 @@ sources:
 
     tables:
       - name: de_logs
+        description: Logs from EU notification server.
+
         columns:
           - name: type
             description: | 
@@ -110,6 +112,8 @@ sources:
               a malformed request, this value is set to -.
 
       - name: logs
+        description: Logs from US notification server.
+
         columns:
           - name: type
             description: | 
@@ -206,6 +210,8 @@ sources:
           - name: dash2
 
       - name: test_logs
+        description: Logs from test notification server.
+
         columns:
           - name: type
             description: | 
