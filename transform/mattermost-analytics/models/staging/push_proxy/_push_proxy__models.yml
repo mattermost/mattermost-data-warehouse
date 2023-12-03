@@ -98,7 +98,7 @@ models:
           list that can include the values described in Actions taken. If no action was taken, such as for 
           a malformed request, this value is set to -.
 
-  - name: stg_push_proxy__logs
+  - name: stg_push_proxy__us_logs
     description: Logs from US notification server.
     columns:
       - name: type
