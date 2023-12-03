@@ -1,0 +1,300 @@
+version: 2
+
+sources:
+  - name: push_proxy
+    database: 'RAW'
+    schema: push_proxy
+    description: |
+      Logs from push proxy servers. Each table contains logs for each HTTP request served by the Elastic Load Balancer.
+      AWS offers [documentation on the values of each field](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-access-logs.html).
+      The logs are loaded using a Snowflake stage. An 
+      [Airflow DAG](https://github.com/mattermost/mattermost-data-warehouse/blob/master/dags/extract/push_proxy.py)
+      triggers the loading of the job. The entrypoint to the script that performs the loading is available
+      [here](https://github.com/mattermost/mattermost-data-warehouse/blob/master/extract/s3_extract/push_proxy_job.py).
+    tags:
+      - stage
+
+    tables:
+      - name: de_logs
+        columns:
+          - name: type
+            description: | 
+              The type of request or connection. Can be 'http`, `https`, `h2`, `grpcs`, `ws`, `wss`.
+          - name: requesttime
+            description: |
+              The time when the load balancer generated a response to the client, in ISO 8601 format.
+              For WebSockets, this is the time when the connection is closed.
+          - name: elb
+            description: |
+              The resource ID of the load balancer. If you are parsing access log entries, note that resources IDs 
+              can contain forward slashes (/).
+          - name: client_and_port
+            description: |
+              The IP address and port of the requesting client. If there is a proxy in front of the load balancer, 
+              this field contains the IP address of the proxy.
+          - name: target_and_port
+            description: |
+              The IP address and port of the target that processed this request.
+          - name: request_processing_time
+            description: |
+              The total time elapsed (in seconds, with millisecond precision) from the time the load balancer received 
+              the request until the time it sent the request to a target.
+          - name: target_processing_time
+            description: |
+              The total time elapsed (in seconds, with millisecond precision) from the time the load balancer sent the
+              request to a target until the target started to send the response headers.
+          - name: response_processing_time
+            description: |
+              The total time elapsed (in seconds, with millisecond precision) from the time the load balancer received
+              the response header from the target until it started to send the response to the client. This includes
+              both the queuing time at the load balancer and the connection acquisition time from the load balancer 
+              to the client.
+          - name: elb_status_code
+            description: |
+              The status code of the response from the load balancer.
+          - name: target_status_code
+            description: |
+              The status code of the response from the target. This value is recorded only if a connection was 
+              established to the target and the target sent a response. Otherwise, it is set to -.
+          - name: received_bytes
+            description: |
+              The size of the request, in bytes, received from the client (requester). For HTTP requests, this includes 
+              the headers. For WebSockets, this is the total number of bytes received from the client on the connection.
+          - name: sent_bytes
+            description: |
+              The size of the response, in bytes, sent to the client (requester). For HTTP requests, this includes 
+              the headers. For WebSockets, this is the total number of bytes sent to the client on the connection.
+          - name: request
+            description: |
+              The request line from the client, enclosed in double quotes and logged using the following format: 
+              `HTTP method + protocol://host:port/uri + HTTP version`.
+          - name: user_agent
+            description: |
+              A User-Agent string that identifies the client that originated the request, enclosed in double quotes.
+              The string consists of one or more product identifiers, product[/version]. If the string is longer
+              than 8 KB, it is truncated.
+          - name: ssl_cipher
+            description: |
+              [HTTPS listener] The SSL cipher. This value is set to - if the listener is not an HTTPS listener.
+          - name: ssl_protocol
+            description: |
+              [HTTPS listener] The SSL protocol. This value is set to - if the listener is not an HTTPS listener.
+          - name: target_group_arn
+            description: |
+              The Amazon Resource Name (ARN) of the target group.
+          - name: trace_id
+            description: |
+              The contents of the X-Amzn-Trace-Id header, enclosed in double quotes.
+          - name: domain_name
+            description: |
+              [HTTPS listener] The SNI domain provided by the client during the TLS handshake, enclosed in double 
+              quotes. This value is set to - if the client doesn't support SNI or the domain doesn't match a certificate
+              and the default certificate is presented to the client.
+          - name: chosen_cert_arn
+            description: |
+              [HTTPS listener] The ARN of the certificate presented to the client, enclosed in double quotes. This value
+              is set to session-reused if the session is reused. This value is set to - if the listener is not an
+              HTTPS listener.
+          - name: matched_rule_priority
+            description: |
+              The priority value of the rule that matched the request. If a rule matched, this is a value from 1 to
+              50,000. If no rule matched and the default action was taken, this value is set to 0. If an error occurs 
+              during rules evaluation, it is set to -1. For any other error, it is set to -.
+          - name: request_creation_time
+            description: |
+              The time when the load balancer received the request from the client, in ISO 8601 format.
+          - name: actions_executed
+            description: |
+              The actions taken when processing the request, enclosed in double quotes. This value is a comma-separated
+              list that can include the values described in Actions taken. If no action was taken, such as for 
+              a malformed request, this value is set to -.
+
+      - name: logs
+        columns:
+          - name: type
+            description: | 
+              The type of request or connection. Can be 'http`, `https`, `h2`, `grpcs`, `ws`, `wss`.
+          - name: requesttime
+            description: |
+              The time when the load balancer generated a response to the client, in ISO 8601 format.
+              For WebSockets, this is the time when the connection is closed.
+          - name: elb
+            description: |
+              The resource ID of the load balancer. If you are parsing access log entries, note that resources IDs 
+              can contain forward slashes (/).
+          - name: client_and_port
+            description: |
+              The IP address and port of the requesting client. If there is a proxy in front of the load balancer, 
+              this field contains the IP address of the proxy.
+          - name: target_and_port
+            description: |
+              The IP address and port of the target that processed this request.
+          - name: request_processing_time
+            description: |
+              The total time elapsed (in seconds, with millisecond precision) from the time the load balancer received 
+              the request until the time it sent the request to a target.
+          - name: target_processing_time
+            description: |
+              The total time elapsed (in seconds, with millisecond precision) from the time the load balancer sent the
+              request to a target until the target started to send the response headers.
+          - name: response_processing_time
+            description: |
+              The total time elapsed (in seconds, with millisecond precision) from the time the load balancer received
+              the response header from the target until it started to send the response to the client. This includes
+              both the queuing time at the load balancer and the connection acquisition time from the load balancer 
+              to the client.
+          - name: elb_status_code
+            description: |
+              The status code of the response from the load balancer.
+          - name: target_status_code
+            description: |
+              The status code of the response from the target. This value is recorded only if a connection was 
+              established to the target and the target sent a response. Otherwise, it is set to -.
+          - name: received_bytes
+            description: |
+              The size of the request, in bytes, received from the client (requester). For HTTP requests, this includes 
+              the headers. For WebSockets, this is the total number of bytes received from the client on the connection.
+          - name: sent_bytes
+            description: |
+              The size of the response, in bytes, sent to the client (requester). For HTTP requests, this includes 
+              the headers. For WebSockets, this is the total number of bytes sent to the client on the connection.
+          - name: request
+            description: |
+              The request line from the client, enclosed in double quotes and logged using the following format: 
+              `HTTP method + protocol://host:port/uri + HTTP version`.
+          - name: user_agent
+            description: |
+              A User-Agent string that identifies the client that originated the request, enclosed in double quotes.
+              The string consists of one or more product identifiers, product[/version]. If the string is longer
+              than 8 KB, it is truncated.
+          - name: ssl_cipher
+            description: |
+              [HTTPS listener] The SSL cipher. This value is set to - if the listener is not an HTTPS listener.
+          - name: ssl_protocol
+            description: |
+              [HTTPS listener] The SSL protocol. This value is set to - if the listener is not an HTTPS listener.
+          - name: target_group_arn
+            description: |
+              The Amazon Resource Name (ARN) of the target group.
+          - name: trace_id
+            description: |
+              The contents of the X-Amzn-Trace-Id header, enclosed in double quotes.
+          - name: domain_name
+            description: |
+              [HTTPS listener] The SNI domain provided by the client during the TLS handshake, enclosed in double 
+              quotes. This value is set to - if the client doesn't support SNI or the domain doesn't match a certificate
+              and the default certificate is presented to the client.
+          - name: chosen_cert_arn
+            description: |
+              [HTTPS listener] The ARN of the certificate presented to the client, enclosed in double quotes. This value
+              is set to session-reused if the session is reused. This value is set to - if the listener is not an
+              HTTPS listener.
+          - name: matched_rule_priority
+            description: |
+              The priority value of the rule that matched the request. If a rule matched, this is a value from 1 to
+              50,000. If no rule matched and the default action was taken, this value is set to 0. If an error occurs 
+              during rules evaluation, it is set to -1. For any other error, it is set to -.
+          - name: request_creation_time
+            description: |
+              The time when the load balancer received the request from the client, in ISO 8601 format.
+          - name: actions_executed
+            description: |
+              The actions taken when processing the request, enclosed in double quotes. This value is a comma-separated
+              list that can include the values described in Actions taken. If no action was taken, such as for 
+              a malformed request, this value is set to -.
+          - name: dash1
+          - name: dash2
+
+      - name: test_logs
+        columns:
+          - name: type
+            description: | 
+              The type of request or connection. Can be 'http`, `https`, `h2`, `grpcs`, `ws`, `wss`.
+          - name: requesttime
+            description: |
+              The time when the load balancer generated a response to the client, in ISO 8601 format.
+              For WebSockets, this is the time when the connection is closed.
+          - name: elb
+            description: |
+              The resource ID of the load balancer. If you are parsing access log entries, note that resources IDs 
+              can contain forward slashes (/).
+          - name: client_and_port
+            description: |
+              The IP address and port of the requesting client. If there is a proxy in front of the load balancer, 
+              this field contains the IP address of the proxy.
+          - name: target_and_port
+            description: |
+              The IP address and port of the target that processed this request.
+          - name: request_processing_time
+            description: |
+              The total time elapsed (in seconds, with millisecond precision) from the time the load balancer received 
+              the request until the time it sent the request to a target.
+          - name: target_processing_time
+            description: |
+              The total time elapsed (in seconds, with millisecond precision) from the time the load balancer sent the
+              request to a target until the target started to send the response headers.
+          - name: response_processing_time
+            description: |
+              The total time elapsed (in seconds, with millisecond precision) from the time the load balancer received
+              the response header from the target until it started to send the response to the client. This includes
+              both the queuing time at the load balancer and the connection acquisition time from the load balancer 
+              to the client.
+          - name: elb_status_code
+            description: |
+              The status code of the response from the load balancer.
+          - name: target_status_code
+            description: |
+              The status code of the response from the target. This value is recorded only if a connection was 
+              established to the target and the target sent a response. Otherwise, it is set to -.
+          - name: received_bytes
+            description: |
+              The size of the request, in bytes, received from the client (requester). For HTTP requests, this includes 
+              the headers. For WebSockets, this is the total number of bytes received from the client on the connection.
+          - name: sent_bytes
+            description: |
+              The size of the response, in bytes, sent to the client (requester). For HTTP requests, this includes 
+              the headers. For WebSockets, this is the total number of bytes sent to the client on the connection.
+          - name: request
+            description: |
+              The request line from the client, enclosed in double quotes and logged using the following format: 
+              `HTTP method + protocol://host:port/uri + HTTP version`.
+          - name: user_agent
+            description: |
+              A User-Agent string that identifies the client that originated the request, enclosed in double quotes.
+              The string consists of one or more product identifiers, product[/version]. If the string is longer
+              than 8 KB, it is truncated.
+          - name: ssl_cipher
+            description: |
+              [HTTPS listener] The SSL cipher. This value is set to - if the listener is not an HTTPS listener.
+          - name: ssl_protocol
+            description: |
+              [HTTPS listener] The SSL protocol. This value is set to - if the listener is not an HTTPS listener.
+          - name: target_group_arn
+            description: |
+              The Amazon Resource Name (ARN) of the target group.
+          - name: trace_id
+            description: |
+              The contents of the X-Amzn-Trace-Id header, enclosed in double quotes.
+          - name: domain_name
+            description: |
+              [HTTPS listener] The SNI domain provided by the client during the TLS handshake, enclosed in double 
+              quotes. This value is set to - if the client doesn't support SNI or the domain doesn't match a certificate
+              and the default certificate is presented to the client.
+          - name: chosen_cert_arn
+            description: |
+              [HTTPS listener] The ARN of the certificate presented to the client, enclosed in double quotes. This value
+              is set to session-reused if the session is reused. This value is set to - if the listener is not an
+              HTTPS listener.
+          - name: matched_rule_priority
+            description: |
+              The priority value of the rule that matched the request. If a rule matched, this is a value from 1 to
+              50,000. If no rule matched and the default action was taken, this value is set to 0. If an error occurs 
+              during rules evaluation, it is set to -1. For any other error, it is set to -.
+          - name: request_creation_time
+            description: |
+              The time when the load balancer received the request from the client, in ISO 8601 format.
+          - name: actions_executed
+            description: |
+              The actions taken when processing the request, enclosed in double quotes. This value is a comma-separated
+              list that can include the values described in Actions taken. If no action was taken, such as for 
+              a malformed request, this value is set to -.
