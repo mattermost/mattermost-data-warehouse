@@ -19,7 +19,9 @@ renamed as (
         , target_status_code
         , received_bytes
         , sent_bytes
-        , request
+        , split_part(request, ' ', 1) as http_method
+        , split_part(request, ' ', 2) as url
+        , split_part(request, ' ', 3) as http_version
         , user_agent
         , ssl_cipher
         , ssl_protocol
@@ -32,6 +34,10 @@ renamed as (
         , actions_executed
 
     from source
+
+    where
+        -- remove invalid data
+        array_size(split(request, ' ')) = 3
 
 )
 

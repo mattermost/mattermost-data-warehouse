@@ -51,10 +51,12 @@ models:
         description: |
           The size of the response, in bytes, sent to the client (requester). For HTTP requests, this includes 
           the headers. For WebSockets, this is the total number of bytes sent to the client on the connection.
-      - name: request
-        description: |
-          The request line from the client, enclosed in double quotes and logged using the following format: 
-          `HTTP method + protocol://host:port/uri + HTTP version`.
+      - name: http_method
+        description: The HTTP method, as sent from the client.
+      - name: url
+        description: The requested URL from the client.
+      - name: http_version
+        description: The HTTP versions, as requested from the client.
       - name: user_agent
         description: |
           A User-Agent string that identifies the client that originated the request, enclosed in double quotes.
@@ -146,10 +148,12 @@ models:
         description: |
           The size of the response, in bytes, sent to the client (requester). For HTTP requests, this includes 
           the headers. For WebSockets, this is the total number of bytes sent to the client on the connection.
-      - name: request
-        description: |
-          The request line from the client, enclosed in double quotes and logged using the following format: 
-          `HTTP method + protocol://host:port/uri + HTTP version`.
+      - name: http_method
+        description: The HTTP method, as sent from the client.
+      - name: url
+        description: The requested URL from the client.
+      - name: http_version
+        description: The HTTP versions, as requested from the client.
       - name: user_agent
         description: |
           A User-Agent string that identifies the client that originated the request, enclosed in double quotes.
@@ -244,10 +248,12 @@ models:
         description: |
           The size of the response, in bytes, sent to the client (requester). For HTTP requests, this includes 
           the headers. For WebSockets, this is the total number of bytes sent to the client on the connection.
-      - name: request
-        description: |
-          The request line from the client, enclosed in double quotes and logged using the following format: 
-          `HTTP method + protocol://host:port/uri + HTTP version`.
+      - name: http_method
+        description: The HTTP method, as sent from the client.
+      - name: url
+        description: The requested URL from the client.
+      - name: http_version
+        description: The HTTP versions, as requested from the client.
       - name: user_agent
         description: |
           A User-Agent string that identifies the client that originated the request, enclosed in double quotes.
