@@ -8,7 +8,7 @@ renamed as (
 
     select
         type
-        , requesttime
+        , requesttime as request_at
         , elb
         , client_and_port
         , target_and_port
