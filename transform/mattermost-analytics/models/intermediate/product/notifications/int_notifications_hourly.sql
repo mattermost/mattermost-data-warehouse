@@ -26,7 +26,7 @@ with
         and elb_status_code = 200
         -- Only last two years worth of data are needed
         and request_at > '{{ var('notification_start_date') }}'
-    group by 1, 2
+    group by 1
 ){% if not loop.last %},{% endif %}
 {% endfor %}
 
