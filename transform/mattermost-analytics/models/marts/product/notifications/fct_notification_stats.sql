@@ -1,15 +1,6 @@
--- Temporarily materialize as table
-{{
-config({
-    "materialized": 'table',
-    "snowflake_warehouse": "transform_l"
-  })
-}}
-
-
 select
     spine.date_hour,
-    eu_logs.count_send_push as count_eu_send_push,
+    coalesce(eu_logs.count_send_push, 0) as count_eu_send_push,
     coalesce(eu_logs.count_send_ack, 0) as count_eu_send_ack,
     coalesce(us_logs.count_send_push, 0) as count_us_send_push,
     coalesce(us_logs.count_send_ack, 0) as count_us_send_ack,

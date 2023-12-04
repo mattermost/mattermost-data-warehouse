@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: fct_notification_stats
+    description: |
+      Hourly count of notification requests, broken down by server.
+
+    columns:
+      - name: date_hour
+        description: |
+          The start of the hourly aggregation. I.e. if value is `2023-12-02 14:00:00`, then values are the count of
+          requests for the period between `2023-12-02 14:00:00` and `2023-12-02 15:00:00`.
+        tests:
+          - unique
+          - not_null
+      - name: count_eu_send_push
+        description: |
+          Count of requests to send notifications in the EU server for the current period. Only includes requests with
+          status code equal to `200`.
+      - name: count_eu_send_ack
+        description: |
+          Count of notification acknowledgments in the EU server for the current period. Only includes requests with
+          status code equal to `200`.
+      - name: count_us_send_push
+        description: |
+          Count of requests to send notifications in the US server for the current period. Only includes requests with
+          status code equal to `200`.
+      - name: count_us_send_ack
+        description: |
+          Count of notification acknowledgments in the US server for the current period. Only includes requests with
+          status code equal to `200`.
+      - name: count_test_send_push
+        description: |
+          Count of requests to send notifications in the test server for the current period. Only includes requests with
+          status code equal to `200`.
+      - name: count_test_send_ack
+        description: |
+          Count of notification acknowledgments in the test server for the current period. Only includes requests with
+          status code equal to `200`.
