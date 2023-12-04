@@ -5,6 +5,7 @@ models:
   - name: int_nps_feedback
     description: 
       NPS feedback combined from Staging tables from mattermost_nps & mm_plugin_prod source.
+      NPS feedback can be duplicated based on how the plugin is configured. This model removes duplicate entries. 
     
     columns:
       - name: server_id
@@ -32,6 +33,8 @@ models:
   - name: int_nps_score
     description: 
       NPS score combined from Staging tables from mattermost_nps & mm_plugin_prod source.
+      NPS score can be submitted multiple times. This model only keeps the last submission for a given date. 
+
     
     columns:
       - name: server_id

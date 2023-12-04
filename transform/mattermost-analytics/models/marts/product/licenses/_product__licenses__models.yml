@@ -96,10 +96,14 @@ models:
     description: |
       List of known self-hosted customers with active or inactive licenses along with their server details. 
       Note that the same customer/server might appear more than once in case the details are different for the given license.
+      We are de-duplicating servers based on the latest telemetry received, there will be only 1 row per server_id
 
     columns:
       - name: server_id
         description: The server id of the license.    
+        tests:
+          - not_null
+          - unique
       - name: license_id
         description: The id of the license.
         tests:
@@ -113,19 +117,19 @@ models:
         description: The company's name.
       - name: license_name
         description: The name of the license or plan of the customer.
-      - name: first_license_telemetry_date
-        description: The first ingested telemetry date of the license.
-      - name: last_license_telemetry_date
-        description: The last ingested telemetry date of the license.
 
   - name: dim_cloud_customers
     description: |
       List of known Cloud customers with active or inactive installation along with their server details. 
       Note that the same customer/server might appear more than once in case the details are different for the given installation.
+      We are de-duplicating servers based on the latest telemetry received, there will be only 1 row per server_id.
 
     columns:
       - name: server_id
         description: The server id of the cloud installation.
+        tests:
+          - not_null
+          - unique
       - name: installation_id
         description: The id of the installation.
         tests:
@@ -139,7 +143,3 @@ models:
         description: The company's name.
       - name: license_name
         description: The name of the license or plan of the customer.
-      - name: first_license_telemetry_date
-        description: The first ingested telemetry date of the license.
-      - name: last_license_telemetry_date
-        description: The last ingested telemetry date of the license.
