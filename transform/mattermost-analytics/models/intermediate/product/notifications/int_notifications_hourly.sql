@@ -23,7 +23,7 @@ with
         http_method = 'POST'
         and url like any ('%/api/v1/send_push', '%/api/v1/ack')
         -- Need only successful requests
-        and status_code = 200
+        and elb_status_code = 200
         -- Only last two years worth of data are needed
         and request_at > '{{ var('notification_start_date') }}'
     group by 1, 2
