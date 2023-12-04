@@ -15,7 +15,6 @@ with
 {{table}}_hourly as (
     select
         date_trunc(hour, request_at) as request_date_hour,
-        elb_status_code as status_code,
         count_if(url like '%/api/v1/send_push') as send_push,
         count_if(url like '%/api/v1/ack') as send_ack
     from
@@ -23,15 +22,17 @@ with
     where
         http_method = 'POST'
         and url like any ('%/api/v1/send_push', '%/api/v1/ack')
+        -- Need only successful requests
+        and status_code = 200
+        -- Only last two years worth of data are needed
+        and request_at > '{{ var('notification_start_date' }}'
     group by 1, 2
-)
-{% if not loop.last %},{% endif %}
+),
 {% endfor %}
 
 {% for table, server in log_tables.items() %}
 select
     request_date_hour,
-    status_code,
     send_push,
     send_ack,
     '{{server}}' as server
