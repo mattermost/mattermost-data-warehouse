@@ -25,8 +25,8 @@ security_newsletter as (
         , {{ validate_email('m.email') }} as is_valid_email
     from
         marketing m
-        left join {{ ref('stg_salesforce__lead') }}  l on m.email = l.email
-        left join {{ ref('stg_salesforce__campaign_member') }} cm on l.lead_id = cm.lead_id and m.email = cm.email 
+        left join {{ ref('stg_salesforce__lead') }}  l on lower(m.email) = lower(l.email)
+        left join {{ ref('stg_salesforce__campaign_member') }} cm on l.lead_id = cm.lead_id and lower(m.email) = lower(cm.email )
         and cm.campaign_id = '{{ var('marketing_newsletter_campaign_id') }}'
         where is_valid_email
         qualify row_number() over (
