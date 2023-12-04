@@ -27,7 +27,7 @@ with
         -- Only last two years worth of data are needed
         and request_at > '{{ var('notification_start_date') }}'
     group by 1, 2
-),
+){% if not loop.last %},{% endif %}
 {% endfor %}
 
 {% for table, server in log_tables.items() %}
