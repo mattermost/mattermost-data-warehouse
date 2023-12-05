@@ -21,7 +21,8 @@ renamed as (
         , sent_bytes
         , split_part(request, ' ', 1) as http_method
         , split_part(request, ' ', 2) as url
-        , split_part(request, ' ', 3) as http_version        , user_agent
+        , split_part(request, ' ', 3) as http_version
+        , user_agent
         , ssl_cipher
         , ssl_protocol
         , target_group_arn

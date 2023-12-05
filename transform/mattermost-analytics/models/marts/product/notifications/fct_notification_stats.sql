@@ -5,7 +5,7 @@ select
     coalesce(us_logs.count_send_push, 0) as count_us_send_push,
     coalesce(us_logs.count_send_ack, 0) as count_us_send_ack,
     coalesce(test_logs.count_send_push, 0) as count_test_send_push,
-    coalesce(test_logs.count_send_ack, 0) as count_test__send_ack
+    coalesce(test_logs.count_send_ack, 0) as count_test_send_ack
 from
     {{ ref('notification_date_hour') }} spine
     left join {{ ref('int_notifications_eu_hourly') }} eu_logs on spine.date_hour = eu_logs.request_date_hour
