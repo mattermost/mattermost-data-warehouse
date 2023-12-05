@@ -1,0 +1,20 @@
+version: 2
+
+sources:
+  - name: mattermost_nps
+    database: raw
+    schema: mattermost_nps
+    loader: Segment
+    description: |
+      NPS telemetry pushed via Segment.
+      This schema contains production data.
+    tags:
+      - segment
+
+    tables:
+      - name: nps_feedback
+      - name: nps_score
+      - name: tracks
+      - name: users
+      - name: identifies
+      
