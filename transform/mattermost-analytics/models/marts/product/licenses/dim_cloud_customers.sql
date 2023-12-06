@@ -1,4 +1,4 @@
-select {{ dbt_utils.generate_surrogate_key(['server_id', 'installation_id']) }} as cloud_customer_id
+select {{ dbt_utils.generate_surrogate_key(['a.server_id', 'a.installation_id']) }} as cloud_customer_id
     , a.server_id as server_id
     , a.installation_id as installation_id
     , b.customer_id as customer_id
