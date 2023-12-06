@@ -1,5 +1,4 @@
-select {{ dbt_utils.generate_surrogate_key(['a.server_id', 'a.license_id']) }} as self_hosted_customer_id
-    , a.server_id as server_id
+select a.server_id as server_id
     , a.license_id as license_id
     , b.customer_id as customer_id
     , b.email as customer_email

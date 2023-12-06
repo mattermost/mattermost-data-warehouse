@@ -99,11 +99,6 @@ models:
       We are de-duplicating servers based on the latest telemetry received, there will be only 1 row per server_id
 
     columns:
-      - name: self_hosted_customer_id
-        description: A unique identifier for the self_hosted customer generated from server_id and license_id.
-        tests:
-          - not_null
-          - unique
       - name: server_id
         description: The server id of the license.    
         tests:
@@ -130,11 +125,6 @@ models:
       We are de-duplicating servers based on the latest telemetry received, there will be only 1 row per server_id.
 
     columns:
-      - name: cloud_customer_id
-        description: A unique identifier for the cloud customer generated from server_id and installation_id.
-        tests:
-          - not_null
-          - unique
       - name: server_id
         description: The server id of the cloud installation.
         tests:
