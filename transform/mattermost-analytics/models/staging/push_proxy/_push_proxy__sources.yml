@@ -14,6 +14,14 @@ sources:
     tags:
       - stage
 
+    freshness:
+      # Check that ELB data have been received in the past 48 hours. This value can be reduced if we orchestrate running
+      # freshness check after importing of data.
+      warn_after: { count: 24, period: hour }
+      error_after: { count: 48, period: hour }
+    loaded_at_field: requesttime
+
+
     tables:
       - name: de_logs
         description: Logs from EU notification server.
