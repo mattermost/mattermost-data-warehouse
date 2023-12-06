@@ -24,7 +24,7 @@ models:
     description: Contains all Cloud servers from Rudderstack telemetry.
     
     columns:
-      - name: license_date
+      - name: license_telemetry_date
         description: The date the license telemetry was received of the cloud server.
       - name: installation_id
         description: The ID of the cloud installation.
@@ -57,7 +57,7 @@ models:
     description: Contains all Self-Hosted servers from Segment & Rudderstack telemetry.
     
     columns:
-      - name: license_date
+      - name: license_telemetry_date
         description: The date the license telemetry was received of the self-hosted server.
       - name: license_id
         description: The ID of the license of the Self-Hosted instance.
