@@ -1,4 +1,5 @@
-select nf.server_id as server_id
+select {{ dbt_utils.generate_surrogate_key(['server_id', 'user_id', 'feedback', 'feedback_date']) }} as nps_feedback_id
+       , nf.server_id as server_id
        , nf.user_id as user_id
        , nf.license_id as license_id
        , nf.feedback as feedback

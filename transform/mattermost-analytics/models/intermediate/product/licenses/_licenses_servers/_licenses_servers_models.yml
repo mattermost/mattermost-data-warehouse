@@ -3,8 +3,7 @@ version: 2
 models:
 
   - name: int_cloud_licenses
-    description: 
-      License data from Stripe for all Cloud installations.
+    description: License data from Stripe for all Cloud installations.
 
     columns:
       - name: installation_id
@@ -22,8 +21,7 @@ models:
         description: The original source of the license information.
 
   - name: int_cloud_servers
-    description: 
-      Contains all Cloud servers from Rudderstack telemetry.
+    description: Contains all Cloud servers from Rudderstack telemetry.
     
     columns:
       - name: license_date
@@ -38,8 +36,7 @@ models:
         description: The ID of the license of the Cloud instance.
 
   - name: int_self_hosted_licenses
-    description: 
-      License data for Self-Hosted instances.
+    description: License data for Self-Hosted instances.
 
     columns:
       - name: license_id
@@ -57,8 +54,7 @@ models:
         description: The original source of the license information.
 
   - name: int_self_hosted_servers
-    description: 
-      Contains all Self-Hosted servers from Segment & Rudderstack telemetry.
+    description: Contains all Self-Hosted servers from Segment & Rudderstack telemetry.
     
     columns:
       - name: license_date

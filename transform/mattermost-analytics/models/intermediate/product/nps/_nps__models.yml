@@ -3,9 +3,10 @@ version: 2
 models:
 
   - name: int_nps_feedback
-    description: 
+    description: |
       NPS feedback combined from Staging tables from mattermost_nps & mm_plugin_prod source.
-      NPS feedback can be duplicated based on how the plugin is configured. This model removes duplicate entries. 
+      NPS feedback can be submitted multiple times by the user based on how the plugin is configured. This model removes duplicate entries and
+      only stores the last feedback received. Different feedback submitted on the same day is saved.
     
     columns:
       - name: server_id
@@ -31,9 +32,9 @@ models:
         tags: [pii]
 
   - name: int_nps_score
-    description: 
+    description: |
       NPS score combined from Staging tables from mattermost_nps & mm_plugin_prod source.
-      NPS score can be submitted multiple times. This model only keeps the last submission for a given date. 
+      NPS score can be submitted multiple times by the user. This model only keeps the last submission for a given date. 
 
     
     columns:

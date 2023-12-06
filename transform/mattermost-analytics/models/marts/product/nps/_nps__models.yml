@@ -7,6 +7,11 @@ models:
       Additionally contains the latest NPS score if it was sent with feedback.
 
     columns:
+      - name: nps_feedback_id
+        description: A unique identifier for the nps feedback generated from server_id, user_id, feedback and feedback_date.
+        tests:
+          - not_null
+          - unique
       - name: server_id
         description: The ID of the server the event originated from..
         tests:

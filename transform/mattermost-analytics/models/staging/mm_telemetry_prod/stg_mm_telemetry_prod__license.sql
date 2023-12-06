@@ -15,7 +15,7 @@ renamed as (
         , user_id        as server_id
         , received_at    as received_at
         , timestamp      as timestamp
-        , cast(timestamp as date) as license_date
+        , cast(timestamp as date) as license_telemetry_date
         -- IDs
         , license_id
         , anonymous_id
