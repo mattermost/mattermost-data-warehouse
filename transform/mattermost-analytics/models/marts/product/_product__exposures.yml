@@ -19,4 +19,4 @@ exposures:
       - ref('dim_server_info')
       - ref('dim_version')
       - ref('dim_excludable_servers')
-      - ref('rpt_teday_at_day_28')
+      - ref('rpt_tedau_at_day_28')
