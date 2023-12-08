@@ -1,0 +1,60 @@
+version: 2
+
+models:
+
+  - name: int_nps_feedback
+    description: |
+      NPS feedback combined from Staging tables from mattermost_nps & mm_plugin_prod source.
+      NPS feedback can be submitted multiple times by the user based on how the plugin is configured. This model removes duplicate entries and
+      only stores the last feedback received. Different feedback submitted on the same day is saved.
+    
+    columns:
+      - name: server_id
+        description: The ID of the server the event originated from.
+      - name: user_id
+        description: The ID of the user that sent the event.
+      - name: license_id
+        description: The license id.
+      - name: event_date
+        description: The date the event was sent.
+      - name: timestamp
+        description: Timestamp registered by Rudderstack & Segment when the event occurred refactored to clients clock skew.
+      - name: server_version
+        description: The server's version.
+      - name: feedback
+        description: NPS feedback submitted.
+      - name: user_role
+        description: The role of the user who submitted feedback.
+      - name: feedback_received_at
+        description: Timestamp registered by RudderStack & Segment when the NPS feedback event was ingested (received).
+      - name: user_email
+        description: The email of the user who submitted feedback (optional).
+        tags: [pii]
+
+  - name: int_nps_score
+    description: |
+      NPS score combined from Staging tables from mattermost_nps & mm_plugin_prod source.
+      NPS score can be submitted multiple times by the user. This model only keeps the last submission for a given date. 
+
+    
+    columns:
+      - name: server_id
+        description: The ID of the server the event originated from.
+      - name: user_id
+        description: The ID of the user that sent the event.
+      - name: license_id
+        description: The license id.
+      - name: event_date
+        description: The date the event was sent.
+      - name: timestamp
+        description: Timestamp registered by Rudderstack & Segment when the event occurred refactored to clients clock skew.
+      - name: server_version
+        description: The server's version.
+      - name: score
+        description: NPS score submitted.
+      - name: user_role
+        description: The role of the user who submitted score.
+      - name: score_received_at
+        description: Timestamp registered by RudderStack & Segment when the NPS score event was ingested (received).
+
+  

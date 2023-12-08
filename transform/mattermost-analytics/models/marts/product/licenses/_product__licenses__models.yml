@@ -91,3 +91,55 @@ models:
         description: |
           Whether the expiration date is consistent in case there's multiple sources that report the license. True if 
           more than one expiration dates are reported, false else.
+
+  - name: dim_self_hosted_customers
+    description: |
+      List of known self-hosted customers with active or inactive licenses along with their server details. 
+      Note that the same customer/server might appear more than once in case the details are different for the given license.
+      We are de-duplicating servers based on the latest telemetry received, there will be only 1 row per server_id
+
+    columns:
+      - name: server_id
+        description: The server id of the license.    
+        tests:
+          - not_null
+          - unique
+      - name: license_id
+        description: The id of the license.
+        tests:
+          - not_null
+      - name: customer_id
+        description: The id of the customer this license is generated for.
+      - name: customer_email
+        description: The customer's email.
+        tags: ['pii']
+      - name: company_name
+        description: The company's name.
+      - name: license_name
+        description: The name of the license or plan of the customer.
+
+  - name: dim_cloud_customers
+    description: |
+      List of known Cloud customers with active or inactive installation along with their server details. 
+      Note that the same customer/server might appear more than once in case the details are different for the given installation.
+      We are de-duplicating servers based on the latest telemetry received, there will be only 1 row per server_id.
+
+    columns:
+      - name: server_id
+        description: The server id of the cloud installation.
+        tests:
+          - not_null
+          - unique
+      - name: installation_id
+        description: The id of the installation.
+        tests:
+          - not_null
+      - name: license_id
+        description: The id of the license.
+      - name: customer_email
+        description: The customer's email.
+        tags: ['pii']
+      - name: company_name
+        description: The company's name.
+      - name: license_name
+        description: The name of the license or plan of the customer.

@@ -177,6 +177,8 @@ models:
         description: Timestamp registered by Segment when the event was ingested (received).
       - name: timestamp
         description: Timestamp registered by Segment when the event occured refactored to clients clock skew.
+      - name: license_telemetry_date
+        description: Timestamp converted to date registered by Segment when the event occured refactored to clients clock skew.
       - name: license_id
         description: The id of the license used at the time the event was sent.
       - name: customer_id
