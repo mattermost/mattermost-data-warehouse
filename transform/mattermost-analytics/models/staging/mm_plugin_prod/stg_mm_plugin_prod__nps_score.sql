@@ -58,3 +58,5 @@ renamed as (
 )
 
 select * from renamed
+
+
