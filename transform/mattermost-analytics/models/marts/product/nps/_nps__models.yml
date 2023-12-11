@@ -40,8 +40,9 @@ models:
 
   - name: fct_nps_score
     description: |
-      This model contains every NPS score at server level sent from Rudderstack and Segment sources.
+      This model contains NPS score calculations at server level sent from Rudderstack and Segment sources.
       Score is calculated for servers after April 2020, since some servers from Segment reported the user_id's as empty prior.
+      This raises divide by zero error with the NPS score calculation.
 
     columns:
       - name: score_id
