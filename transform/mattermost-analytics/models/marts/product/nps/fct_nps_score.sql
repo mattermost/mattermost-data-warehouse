@@ -1,6 +1,6 @@
 with nps_server_daily_score as (
-    select {{ dbt_utils.generate_surrogate_key(['event_date', 'server_id']) }} as id
-      , event_date as event_date
+    select {{ dbt_utils.generate_surrogate_key(['event_date', 'server_id']) }} as score_id
+      , event_date as score_date
       , server_id as server_id
       , server_version as server_version
       , user_role as user_role
