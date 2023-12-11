@@ -41,20 +41,20 @@ models:
   - name: fct_nps_score
     description: |
       This model contains every NPS score at server level sent from Rudderstack and Segment sources.
-      Score is calculated for servers after April 2020, since the user_id's are empty prior.
+      Score is calculated for servers after April 2020, since some servers from Segment reported the user_id's as empty prior.
 
     columns:
       - name: score_id
-        description: A unique identifier for the nps score generated from server_id, score_date.
+        description: A unique identifier for the NPS score generated from server_id, score_date, server_version and user_role.
         tests:
           - not_null
           - unique
       - name: score_date
-        description: The date the score event was sent. 
+        description: The date the NPS score event was sent. 
         tests:
           - not_null
       - name: server_id
-        description: The ID of the server the event originated from..
+        description: The ID of the server the NPS score event originated from..
         tests:
           - not_null
       - name: server_version
@@ -62,11 +62,11 @@ models:
       - name: user_role
         description: The role of the user who submitted feedback.        
       - name: promoters
-        description: The count of users who submitted score above 8 for the given server.
+        description: The count of users who submitted NPS score above 8 for the given server.
       - name: detractors
-        description: The count of users who submitted score below 7 for the given server.
+        description: The count of users who submitted NPS score below 7 for the given server.
       - name: passives
-        description: The count of users who submitted score of 7 or 8 for the given server.
+        description: The count of users who submitted NPS score of 7 or 8 for the given server.
       - name: nps_users
         description: The count of users who submitted NPS score.
       - name: nps_score
