@@ -62,12 +62,12 @@ models:
       - name: user_role
         description: The role of the user who submitted feedback.        
       - name: promoters
-        description: The count of users who submitted NPS score above 8 for the given server.
+        description: The unique count of users who submitted NPS score above 8 for the given server.
       - name: detractors
-        description: The count of users who submitted NPS score below 7 for the given server.
+        description: The unique count of users who submitted NPS score below 7 for the given server.
       - name: passives
-        description: The count of users who submitted NPS score of 7 or 8 for the given server.
+        description: The unique count of users who submitted NPS score of 7 or 8 for the given server.
       - name: nps_users
-        description: The count of users who submitted NPS score.
+        description: The unique count of users who submitted NPS score.
       - name: nps_score
         description: The percentage of promotors minus detractors denoted as NPS score of the server.
