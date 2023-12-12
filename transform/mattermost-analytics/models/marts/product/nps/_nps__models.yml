@@ -70,5 +70,3 @@ models:
         description: The unique count of users who submitted NPS score of 7 or 8 for the given server.
       - name: nps_users
         description: The unique count of users who submitted NPS score.
-      - name: nps_score
-        description: The percentage of promotors minus detractors denoted as NPS score of the server.
