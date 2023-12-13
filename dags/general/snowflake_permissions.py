@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from airflow import DAG
-from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 
 from dags.airflow_utils import PERMIFROST_IMAGE, pod_defaults, send_alert
 from dags.kube_secrets import (

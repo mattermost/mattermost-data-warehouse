@@ -2,7 +2,7 @@ import os
 from datetime import datetime, timedelta
 
 from airflow import DAG
-from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 
 from dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, PERMIFROST_IMAGE, send_alert
 
