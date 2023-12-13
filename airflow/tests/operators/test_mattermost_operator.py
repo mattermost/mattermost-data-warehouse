@@ -1,4 +1,4 @@
-from plugins.operators.mattermost_operator import MattermostOperator
+from mattermost.operators.mattermost_operator import MattermostOperator
 
 
 def test_create_full_config(dag, full_config):
