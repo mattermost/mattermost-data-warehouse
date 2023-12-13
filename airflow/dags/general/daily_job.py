@@ -3,8 +3,8 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 
-from dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, pod_defaults, send_alert
-from dags.kube_secrets import (
+from airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, pod_defaults, send_alert
+from kube_secrets import (
     NPS_WEBHOOK_URL,
     SNOWFLAKE_ACCOUNT,
     SNOWFLAKE_PASSWORD,
