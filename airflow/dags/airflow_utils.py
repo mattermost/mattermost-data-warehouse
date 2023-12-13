@@ -93,7 +93,8 @@ def send_alert(context):
 
 # To clean up Xcom after dag finished run.
 @provide_session
-def cleanup_xcom(context, session=None):
-    dag_id = context["ti"]["dag_id"]
+def cleanup_xcom(session=None, **context):
+    dag = context["dag"]
+    dag_id = dag._dag_id
     session.query(XCom).filter(XCom.dag_id == dag_id).delete()
-
+    session.commit()
