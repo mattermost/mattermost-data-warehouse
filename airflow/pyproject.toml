@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "mattermost-airflow"
+version = "0.1.0"
+description = "Airflow 2 DAGS and plugins for orchestrating common data engineering tasks"
+authors = ["Ioannis Foukarakis <ioannis.foukarakis@mattermost.com>"]
+readme = "README.md"
+packages = [
+    {include = "dags"},
+    {include = "mattermost", from = "plugins"}
+]
+
+[tool.poetry.dependencies]
+python = "<3.12,~=3.8"
+apache-airflow = "2.7.3"
+apache-airflow-providers-cncf-kubernetes = "7.11.0"
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.3"
+pytest-mock = "^3.12.0"
+pytest-responses = "^0.5.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

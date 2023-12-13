@@ -1,6 +1,6 @@
 import pytest
 
-from airflow.dags._helpers import chunk
+from dags._helpers import chunk
 
 
 @pytest.mark.parametrize(

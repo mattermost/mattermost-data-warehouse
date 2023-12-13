@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pytest
 
-from airflow.dags.general._helpers import (
+from dags.general._helpers import (
     HightouchApiException,
     hightouch_check_syncs,
     resolve_hightouch,

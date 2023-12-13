@@ -5,7 +5,7 @@ import pytest
 from airflow import DAG
 from airflow.exceptions import AirflowException
 from airflow.models.taskinstance import TaskInstance
-from airflow.operators import BaseOperator
+from airflow.models import BaseOperator
 
 
 @pytest.fixture(autouse=True)

@@ -5,7 +5,7 @@ from airflow import DAG
 
 
 def test_should_create_pod_operators():
-    from airflow.dags.monitoring.events import get_pod_operators
+    from dags.monitoring.events import get_pod_operators
 
     # GIVEN: a dag
     dag = DAG(
@@ -41,7 +41,7 @@ def test_should_create_pod_operators():
     ],
 )
 def test_table_formatter(mocker, input, output):
-    from airflow.dags.monitoring.events import table_formatter
+    from dags.monitoring.events import table_formatter
 
     # GIVEN: a list of items in xcom
     mock_ti = mocker.MagicMock()
@@ -65,7 +65,7 @@ def test_table_formatter(mocker, input, output):
     ],
 )
 def test_short_circuit(mocker, input, output):
-    from airflow.dags.monitoring.events import short_circuit_on_no_new_tables
+    from dags.monitoring.events import short_circuit_on_no_new_tables
 
     # GIVEN: an xcom response
     mock_ti = mocker.MagicMock()

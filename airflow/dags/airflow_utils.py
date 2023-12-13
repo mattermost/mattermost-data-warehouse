@@ -54,8 +54,6 @@ pod_env_vars = {
 # Warehouse variable declaration
 xs_warehouse = "'{{warehouse_name: transforming_xs}}'"
 
-clone_repo_cmd = "git clone -b master --single-branch --depth 1 https://github.com/mattermost/mattermost-data-warehouse"
-
 
 def create_alert_body(context):
     """
