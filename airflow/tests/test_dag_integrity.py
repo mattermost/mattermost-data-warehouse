@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 from airflow import models as airflow_models
-from airflow.utils.dag_cycle_tester import test_cycle
+from airflow.utils.dag_cycle_tester import test_cycle as _test_cycle
 
 
 DAG_DIR = Path(__file__).parent.parent / "dags" / "mattermost_dags"
@@ -24,7 +24,7 @@ def test_dag_integrity(dag_path):
     assert dag_objects
     # For every DAG object, test for cycles
     for dag in dag_objects:
-        test_cycle(dag)
+        _test_cycle(dag)
 
 
 def _import_file(module_name, module_path):
