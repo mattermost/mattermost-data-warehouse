@@ -2,10 +2,10 @@
 import os
 import urllib.parse
 
-from airflow.contrib.kubernetes.pod import Resources
 from airflow.models import XCom
 from airflow.utils.db import provide_session
 
+from kubernetes.client import models as k8s
 from plugins.operators.mattermost_operator import MattermostOperator
 
 PERMIFROST_IMAGE = "mattermost/mattermost-permifrost:master"
@@ -16,8 +16,6 @@ mm_webhook_url = os.getenv("MATTERMOST_WEBHOOK_URL")
 DEFAULT_AIRFLOW_NAMESPACE = "airflow-dev"  # to prevent tests from failing
 IS_DEV_MODE = os.getenv("ENVIRONMENT") == 'docker-compose'
 
-# Set the resources for the task pods
-pod_resources = Resources(request_memory="500Mi", request_cpu="500m")
 
 # Default settings for all DAGs
 pod_defaults = {
@@ -27,6 +25,16 @@ pod_defaults = {
     "is_delete_operator_pod": True,
     "namespace": os.environ.get('NAMESPACE', DEFAULT_AIRFLOW_NAMESPACE),
     "cmds": ["/bin/bash", "-c"],
+    "container_resources": k8s.V1ResourceRequirements(
+        requests={
+            "cpu": "500m",
+            "memory": "500Mi",
+        },
+        limits={
+            "cpu": "1000m",
+            "memory": "1000Mi",
+        },
+    )
 }
 
 if IS_DEV_MODE:
