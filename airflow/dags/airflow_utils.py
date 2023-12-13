@@ -27,12 +27,12 @@ pod_defaults = {
     "cmds": ["/bin/bash", "-c"],
     "container_resources": k8s.V1ResourceRequirements(
         requests={
-            "cpu": "500m",
-            "memory": "500Mi",
+            "cpu": "250m",
+            "memory": "250Mi",
         },
         limits={
-            "cpu": "1000m",
-            "memory": "1000Mi",
+            "cpu": "500m",
+            "memory": "500Mi",
         },
     )
 }
