@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from airflow.models import Variable
-from airflow.operators.python_operator import PythonOperator, ShortCircuitOperator
+from airflow.operators.python import PythonOperator, ShortCircuitOperator
 
 from airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, cleanup_xcom, pod_defaults, send_alert
 from kube_secrets import (
@@ -14,7 +14,7 @@ from kube_secrets import (
     SNOWFLAKE_PASSWORD,
     SNOWFLAKE_USER,
 )
-from plugins.operators.mattermost_operator import MattermostOperator
+from mattermost.operators.mattermost_operator import MattermostOperator
 
 doc_md = """
 ### Nightly DBT dag

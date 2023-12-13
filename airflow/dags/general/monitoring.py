@@ -3,8 +3,8 @@ from datetime import datetime
 
 from airflow import DAG
 from airflow.models import Variable
-from airflow.operators.http_operator import SimpleHttpOperator
-from airflow.operators.python_operator import PythonOperator
+from airflow.providers.http.operators.http import SimpleHttpOperator
+from airflow.operators.python import PythonOperator
 
 from airflow_utils import cleanup_xcom, send_alert
 from general._helpers import resolve_hightouch, resolve_stitch
@@ -27,7 +27,7 @@ with DAG(
         method="GET",
         endpoint=Variable.get('stitch_extractions_endpoint'),
         headers={'Content-Type': 'application/json', 'Authorization': Variable.get('stitch_secret')},
-        xcom_push=True,
+        do_xcom_push=True,
     )
     check_stitch_loads = SimpleHttpOperator(
         task_id="check_stitch_loads",
@@ -35,7 +35,7 @@ with DAG(
         method="GET",
         endpoint=Variable.get('stitch_loads_endpoint'),
         headers={'Content-Type': 'application/json', 'Authorization': Variable.get('stitch_secret')},
-        xcom_push=True,
+        do_xcom_push=True,
     )
     resolve_stitch_status = PythonOperator(
         task_id='resolve_stitch_status', provide_context=True, python_callable=resolve_stitch
@@ -46,7 +46,7 @@ with DAG(
         method="GET",
         endpoint=Variable.get('hightouch_syncs_endpoint'),
         headers={'Content-Type': 'application/json', 'Authorization': f"Bearer {Variable.get('hightouch_secret')}"},
-        xcom_push=True,
+        do_xcom_push=True,
     )
     resolve_hightouch_status = PythonOperator(
         task_id='resolve_hightouch_status', provide_context=True, python_callable=resolve_hightouch
