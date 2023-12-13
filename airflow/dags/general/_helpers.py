@@ -2,7 +2,7 @@ import json
 import logging
 from datetime import datetime, timedelta
 
-from airflow.plugins.operators.mattermost_operator import MattermostOperator
+from plugins.operators.mattermost_operator import MattermostOperator
 
 task_logger = logging.getLogger('airflow.task')
 
