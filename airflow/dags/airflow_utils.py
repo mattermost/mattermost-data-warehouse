@@ -6,7 +6,7 @@ from airflow.models import XCom
 from airflow.utils.db import provide_session
 
 from kubernetes.client import models as k8s
-from plugins.operators.mattermost_operator import MattermostOperator
+from airflow.plugins.operators.mattermost_operator import MattermostOperator
 
 PERMIFROST_IMAGE = "mattermost/mattermost-permifrost:master"
 
