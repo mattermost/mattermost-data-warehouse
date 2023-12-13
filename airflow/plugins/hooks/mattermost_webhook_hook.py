@@ -1,7 +1,7 @@
 import json
 
 from airflow import AirflowException
-from airflow.hooks.http_hook import HttpHook
+from airflow.providers.http.hooks.http import HttpHook
 from airflow.plugins_manager import AirflowPlugin
 
 

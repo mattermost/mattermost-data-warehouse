@@ -1,6 +1,6 @@
-from airflow.operators.http_operator import SimpleHttpOperator
+from airflow.providers.http.operators.http import SimpleHttpOperator
 
-from airflow.plugins.hooks.mattermost_webhook_hook import MattermostWebhookHook
+from plugins.hooks.mattermost_webhook_hook import MattermostWebhookHook
 
 
 class MattermostOperator(SimpleHttpOperator):
