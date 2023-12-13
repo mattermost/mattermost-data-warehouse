@@ -14,7 +14,7 @@ from dags.kube_secrets import (
     SNOWFLAKE_PASSWORD,
     SNOWFLAKE_USER,
 )
-from airflow.plugins.operators.mattermost_operator import MattermostOperator
+from plugins.operators.mattermost_operator import MattermostOperator
 
 doc_md = """
 ### Nightly DBT dag
