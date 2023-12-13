@@ -6,8 +6,8 @@ from airflow.models import Variable
 from airflow.providers.http.operators.http import SimpleHttpOperator
 from airflow.operators.python import PythonOperator
 
-from airflow_utils import cleanup_xcom, send_alert
-from general._helpers import resolve_hightouch, resolve_stitch
+from mattermost_dags.airflow_utils import cleanup_xcom, send_alert
+from mattermost_dags.general._helpers import resolve_hightouch, resolve_stitch
 
 task_logger = logging.getLogger('airflow.task')
 

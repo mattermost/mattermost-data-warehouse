@@ -3,8 +3,10 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 
-from airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, pod_defaults, send_alert
-from kube_secrets import (
+from mattermost_dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, pod_defaults, send_alert
+from mattermost_dags.kube_secrets import (
+    DIAGNOSTIC_LOCATION_ONE,
+    DIAGNOSTIC_LOCATION_TWO,
     SNOWFLAKE_ACCOUNT,
     SNOWFLAKE_LOAD_DATABASE,
     SNOWFLAKE_LOAD_PASSWORD,
@@ -24,7 +26,7 @@ default_args = {
 
 # Create the DAG
 dag = DAG(
-    "licenses",
+    "diagnostics",
     default_args=default_args,
     schedule_interval="0 3 * * *",
     catchup=False,
@@ -34,16 +36,17 @@ dag = DAG(
 KubernetesPodOperator(
     **pod_defaults,
     image=MATTERMOST_DATAWAREHOUSE_IMAGE,
-    task_id="licenses",
-    name="license-import",
+    task_id="diagnostics",
+    name="diagnostics",
     secrets=[
+        DIAGNOSTIC_LOCATION_ONE,
+        DIAGNOSTIC_LOCATION_TWO,
         SNOWFLAKE_LOAD_USER,
         SNOWFLAKE_LOAD_PASSWORD,
         SNOWFLAKE_ACCOUNT,
         SNOWFLAKE_LOAD_DATABASE,
         SNOWFLAKE_LOAD_WAREHOUSE,
     ],
-    env_vars={},
-    arguments=["python -m extract.s3_extract.licenses_job {{ next_ds }}"],
+    arguments=["python -m extract.s3_extract.diagnostics_job {{ ds }}"],
     dag=dag,
 )

@@ -1,6 +1,6 @@
 import pytest
 
-from dags._helpers import chunk
+from mattermost_dags._helpers import chunk
 
 
 @pytest.mark.parametrize(

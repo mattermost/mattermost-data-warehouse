@@ -136,7 +136,7 @@ dags:
 ##
 extraEnvVars:
   - name: PYTHONPATH
-    value: "/opt/bitnami/airflow/dags/git-mattermost-data-warehouse"
+    value: "/opt/bitnami/airflow/dags/git-mattermost_dags-data-warehouse"
   - name: NAMESPACE
     value: "airflow2"
   - name: MATTERMOST_WEBHOOK_URL
@@ -1040,7 +1040,7 @@ git:
         branch: "airflow2"
         ## An unique identifier for repository, must be unique for each repository
         ##
-        name: "mattermost-data-warehouse-dags"
+        name: "mattermost_dags-data-warehouse-dags"
         ## Path to a folder in the repository containing the dags
         ##
         path: "/airflow/dags"
@@ -1057,7 +1057,7 @@ git:
         branch: "airflow2"
         ## An unique identifier for repository, must be unique for each repository
         ##
-        name: "mattermost-data-warehouse-plugins"
+        name: "mattermost_dags-data-warehouse-plugins"
         ## Path to a folder in the repository containing the dags
         ##
         path: "/airflow/plugins"
@@ -1224,7 +1224,7 @@ ingress:
   apiVersion: ""
   ## @param ingress.hostname Default host for the ingress record
   ##
-  hostname: airflow2.dataeng.internal.mattermost.com
+  hostname: airflow2.dataeng.internal.mattermost_dags.com
   ## @param ingress.path Default path for the ingress record
   ## NOTE: You may need to set this to '/*' in order to use this with ALB ingress controllers
   ##

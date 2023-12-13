@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pytest
 
-from dags.general._helpers import (
+from mattermost_dags.general._helpers import (
     HightouchApiException,
     hightouch_check_syncs,
     resolve_hightouch,
@@ -75,14 +75,14 @@ def test_hightouch_check_syncs_error(load_data):
 
 
 def test_resolve_hightouch_success(task_instance, mocker):
-    mattermost_operator_mock = mocker.patch('dags.general._helpers.MattermostOperator')
+    mattermost_operator_mock = mocker.patch('mattermost_dags.general._helpers.MattermostOperator')
     resolve_hightouch(ti=task_instance(True))
     # Does not call mattermost operator since no syncs failed
     mattermost_operator_mock.assert_not_called()
 
 
 def test_resolve_hightouch_fail(task_instance, mocker):
-    mattermost_operator_mock = mocker.patch('dags.general._helpers.MattermostOperator')
+    mattermost_operator_mock = mocker.patch('mattermost_dags.general._helpers.MattermostOperator')
     resolve_hightouch(ti=task_instance(False))
     # Calls the mattermost operator once
     mattermost_operator_mock.assert_called_once()

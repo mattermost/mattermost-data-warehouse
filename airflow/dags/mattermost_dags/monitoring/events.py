@@ -5,8 +5,8 @@ from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperato
 from airflow.models import Variable
 from airflow.operators.python import PythonOperator, ShortCircuitOperator
 
-from ..airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, cleanup_xcom, pod_defaults, send_alert
-from ..kube_secrets import (
+from mattermost_dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, cleanup_xcom, pod_defaults, send_alert
+from mattermost_dags.kube_secrets import (
     SNOWFLAKE_ACCOUNT,
     SNOWFLAKE_LOAD_DATABASE,
     SNOWFLAKE_LOAD_ROLE,

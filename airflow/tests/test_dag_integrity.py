@@ -2,12 +2,13 @@ from pathlib import Path
 
 import pytest
 from airflow import models as airflow_models
+from airflow.utils.dag_cycle_tester import test_cycle
 
-DAG_DIR = Path(__file__).parent.parent
+
+DAG_DIR = Path(__file__).parent.parent / "dags" / "mattermost_dags"
 ALL_PATHS = set(DAG_DIR.rglob('*.py'))
 EXCLUDED_PATHS = (
     set(DAG_DIR.rglob('_*.py'))
-    .union(set((DAG_DIR / 'tests').rglob('*.py')))
     .union({DAG_DIR / 'airflow_utils.py', DAG_DIR / 'kube_secrets.py'})
 )
 
@@ -23,7 +24,7 @@ def test_dag_integrity(dag_path):
     assert dag_objects
     # For every DAG object, test for cycles
     for dag in dag_objects:
-        dag.test_cycle()
+        test_cycle(dag)
 
 
 def _import_file(module_name, module_path):

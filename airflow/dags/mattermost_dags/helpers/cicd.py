@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 
-from airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, PERMIFROST_IMAGE, send_alert
+from mattermost_dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, PERMIFROST_IMAGE, send_alert
 
 # Default arguments for the DAG
 default_args = {
