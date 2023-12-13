@@ -2,7 +2,6 @@ import json
 
 from airflow import AirflowException
 from airflow.providers.http.hooks.http import HttpHook
-from airflow.plugins_manager import AirflowPlugin
 
 
 class MattermostWebhookHook(HttpHook):
@@ -81,7 +80,3 @@ class MattermostWebhookHook(HttpHook):
             extra_options={'check_response': True},
         )
 
-
-class MattermostPlugin(AirflowPlugin):
-    name = "mattermost_webhook_hook"
-    hooks = [MattermostWebhookHook]
