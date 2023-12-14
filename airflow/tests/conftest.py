@@ -7,7 +7,7 @@ from airflow.exceptions import AirflowException
 from airflow.models import BaseOperator
 from airflow.utils.state import DagRunState
 from airflow.utils.types import DagRunType
-from uuid import uuid4
+from airflow.utils import db
 
 @pytest.fixture(autouse=True)
 def config_utils(monkeypatch):
@@ -24,8 +24,14 @@ def config_utils(monkeypatch):
     monkeypatch.setenv("AIRFLOW_VAR_RUDDER_MAX_AGE", '2')
 
 
+@pytest.fixture(scope="session")
+def init_db():
+    db.initdb()
+    db.resetdb()
+
+
 @pytest.fixture
-def config_alert_context(mocker):
+def config_alert_context(mocker, init_db):
     """
     Mocks airflow context passed as callback function parameter.
     Dict contains only required keys used in the function.
