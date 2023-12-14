@@ -37,10 +37,7 @@ with DAG(
         headers={'Content-Type': 'application/json', 'Authorization': Variable.get('stitch_secret')},
         do_xcom_push=True,
     )
-    resolve_stitch_status = PythonOperator(
-        task_id='resolve_stitch_status',
-        python_callable=resolve_stitch
-    )
+    resolve_stitch_status = PythonOperator(task_id='resolve_stitch_status', python_callable=resolve_stitch)
     hightouch_check_syncs = HttpOperator(
         task_id="check_hightouch_syncs",
         http_conn_id="hightouch",
@@ -49,10 +46,7 @@ with DAG(
         headers={'Content-Type': 'application/json', 'Authorization': f"Bearer {Variable.get('hightouch_secret')}"},
         do_xcom_push=True,
     )
-    resolve_hightouch_status = PythonOperator(
-        task_id='resolve_hightouch_status',
-        python_callable=resolve_hightouch
-    )
+    resolve_hightouch_status = PythonOperator(task_id='resolve_hightouch_status', python_callable=resolve_hightouch)
 
     clean_xcom = PythonOperator(
         task_id="clean_xcom",

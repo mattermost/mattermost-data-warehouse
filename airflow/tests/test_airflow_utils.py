@@ -2,7 +2,6 @@ import urllib
 
 
 def test_create_alert_body(config_alert_context):
-
     from mattermost_dags.airflow_utils import create_alert_body
 
     task_params = urllib.parse.urlencode({"execution_date": config_alert_context['ts']})
@@ -18,7 +17,6 @@ def test_create_alert_body(config_alert_context):
 
 
 def test_send_alert(config_alert_context, mocker):
-
     from mattermost_dags.airflow_utils import send_alert
 
     mattermost_operator = mocker.patch("mattermost_dags.airflow_utils.MattermostOperator")

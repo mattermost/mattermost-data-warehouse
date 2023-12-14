@@ -34,7 +34,7 @@ pod_defaults = {
             "cpu": "500m",
             "memory": "500Mi",
         },
-    )
+    ),
 }
 
 if IS_DEV_MODE:

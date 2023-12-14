@@ -7,10 +7,7 @@ from airflow.utils.dag_cycle_tester import check_cycle
 
 DAG_DIR = Path(__file__).parent.parent / "dags" / "mattermost_dags"
 ALL_PATHS = set(DAG_DIR.rglob('*.py'))
-EXCLUDED_PATHS = (
-    set(DAG_DIR.rglob('_*.py'))
-    .union({DAG_DIR / 'airflow_utils.py', DAG_DIR / 'kube_secrets.py'})
-)
+EXCLUDED_PATHS = set(DAG_DIR.rglob('_*.py')).union({DAG_DIR / 'airflow_utils.py', DAG_DIR / 'kube_secrets.py'})
 
 DAG_PATHS = ALL_PATHS - EXCLUDED_PATHS
 

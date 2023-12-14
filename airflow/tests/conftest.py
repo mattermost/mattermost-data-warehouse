@@ -13,7 +13,6 @@ from airflow.utils.types import DagRunType
 
 @pytest.fixture(autouse=True)
 def config_utils(monkeypatch):
-
     # patching environment variables used in airflow DAGs
     monkeypatch.setenv("NAMESPACE", "test_namespace")
     monkeypatch.setenv("AIRFLOW_BASE_URL", "https://test.airflow.mattermost.com")
@@ -53,8 +52,8 @@ def config_alert_context(mocker, init_db):
     dagrun = dag.create_dagrun(
         state=DagRunState.RUNNING,
         execution_date=start_time,
-        data_interval=(start_time,  start_time + timedelta(days=1)),
-        start_date= start_time + timedelta(days=1),
+        data_interval=(start_time, start_time + timedelta(days=1)),
+        start_date=start_time + timedelta(days=1),
         run_type=DagRunType.MANUAL,
     )
     task_instance = dagrun.get_task_instance(task_id=task_id)

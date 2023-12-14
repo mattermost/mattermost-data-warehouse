@@ -50,7 +50,6 @@ class MattermostWebhookHook(HttpHook):
         self.props = props
 
     def _build_endpoint(self) -> str:
-
         if not self.http_conn_id:
             raise AirflowException('Failed to create Mattermost client. No http_conn_id provided')
         conn = self.get_connection(self.http_conn_id)
@@ -79,4 +78,3 @@ class MattermostWebhookHook(HttpHook):
             headers={'Content-type': 'application/json'},
             extra_options={'check_response': True},
         )
-

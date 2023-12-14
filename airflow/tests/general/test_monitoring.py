@@ -12,7 +12,6 @@ from mattermost_dags.general._helpers import (
 
 
 def test_stitch_check_extractions_pass(load_data):
-
     response = load_data('monitoring/extractions_success.json')
     failed_extrations = stitch_check_extractions(response)
     # Expected to return empty dict as no extractions failed
@@ -33,7 +32,6 @@ def test_stitch_check_extractions_error():
 
 
 def test_stitch_check_loads_pass(load_data):
-
     response = load_data('monitoring/loads_success.json')
     failed_loads = stitch_check_loads(response)
     # Expected to return empty dict as no loads failed
