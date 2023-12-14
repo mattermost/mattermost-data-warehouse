@@ -7,7 +7,7 @@ from mattermost_dags.general._helpers import resolve_hightouch, resolve_stitch
 from airflow import DAG
 from airflow.models import Variable
 from airflow.operators.python import PythonOperator
-from airflow.providers.http.operators.http import HttpOperator
+from airflow.providers.http.operators.http import SimpleHttpOperator
 
 task_logger = logging.getLogger('airflow.task')
 
@@ -21,7 +21,7 @@ with DAG(
     schedule='@daily',
     catchup=False,
 ) as dag:
-    check_stitch_extractions = HttpOperator(
+    check_stitch_extractions = SimpleHttpOperator(
         task_id="check_stitch_extractions",
         http_conn_id="stitch",
         method="GET",
@@ -29,7 +29,7 @@ with DAG(
         headers={'Content-Type': 'application/json', 'Authorization': Variable.get('stitch_secret')},
         do_xcom_push=True,
     )
-    check_stitch_loads = HttpOperator(
+    check_stitch_loads = SimpleHttpOperator(
         task_id="check_stitch_loads",
         http_conn_id="stitch",
         method="GET",
@@ -38,7 +38,7 @@ with DAG(
         do_xcom_push=True,
     )
     resolve_stitch_status = PythonOperator(task_id='resolve_stitch_status', python_callable=resolve_stitch)
-    hightouch_check_syncs = HttpOperator(
+    hightouch_check_syncs = SimpleHttpOperator(
         task_id="check_hightouch_syncs",
         http_conn_id="hightouch",
         method="GET",
