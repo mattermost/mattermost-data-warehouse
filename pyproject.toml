@@ -85,7 +85,7 @@ contributors = "utils.github.__main__:contributors"
 
 
 [tool.pytest.ini_options]
-addopts = "--ignore=dags --ignore=plugins"
+addopts = "--ignore=airflow"
 testpaths = [ "tests" ]
 
 [tool.coverage.run]
