@@ -32,7 +32,7 @@ This DAG attempts to load the latest `master` version of the image on each run.
 dag = DAG(
     "cicd",
     default_args=default_args,
-    schedule_interval="*/5 * * * *",
+    schedule="*/5 * * * *",
     catchup=False,
     max_active_runs=1,  # Don't allow multiple concurrent dag executions
     doc_md=doc_md,
@@ -43,7 +43,7 @@ download_warehouse_image = KubernetesPodOperator(
     get_logs=True,
     image_pull_policy="Always",
     in_cluster=True,
-    is_delete_operator_pod=True,
+    on_finish_action="delete_pod",
     namespace=os.environ["NAMESPACE"],
     cmds=["/bin/bash", "-c"],
     image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
@@ -58,7 +58,7 @@ download_permifrost_image = KubernetesPodOperator(
     get_logs=True,
     image_pull_policy="Always",
     in_cluster=True,
-    is_delete_operator_pod=True,
+    on_finish_action="delete_pod",
     namespace=os.environ["NAMESPACE"],
     cmds=["/bin/bash", "-c"],
     image=PERMIFROST_IMAGE,  # Uses latest build from master

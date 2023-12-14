@@ -30,7 +30,7 @@ default_args = {
 dag = DAG(
     "weekly_job",
     default_args=default_args,
-    schedule_interval="0 12 * * 1",
+    schedule="0 12 * * 1",
     catchup=False,
     max_active_runs=1,  # Don't allow multiple concurrent dag executions
 )

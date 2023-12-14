@@ -22,7 +22,7 @@ pod_defaults = {
     "get_logs": True,
     "image_pull_policy": "IfNotPresent",
     "in_cluster": True,
-    "is_delete_operator_pod": True,
+    "on_finish_action": 'delete_pod',
     "namespace": os.environ.get('NAMESPACE', DEFAULT_AIRFLOW_NAMESPACE),
     "cmds": ["/bin/bash", "-c"],
     "container_resources": k8s.V1ResourceRequirements(

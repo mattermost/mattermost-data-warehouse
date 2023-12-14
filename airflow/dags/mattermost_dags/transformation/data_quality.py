@@ -45,7 +45,7 @@ on raw data.
 dag = DAG(
     "data_quality",
     default_args=default_args,
-    schedule_interval="0 8 * * *",
+    schedule="0 8 * * *",
     catchup=False,
     max_active_runs=1,  # Don't allow multiple concurrent dag executions
     doc_md=doc_md,

@@ -13,6 +13,7 @@ packages = [
 python = "<3.12,~=3.8"
 apache-airflow = "2.7.3"
 apache-airflow-providers-cncf-kubernetes = "7.11.0"
+pytest-cov = "^4.1.0"
 
 
 [tool.poetry.group.test.dependencies]
@@ -23,3 +24,12 @@ pytest-responses = "^0.5.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.coverage.run]
+omit = [".*", "*/site-packages/*", "tests/*"]
+source = ["dags", "plugins", "tests"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+precision = 2

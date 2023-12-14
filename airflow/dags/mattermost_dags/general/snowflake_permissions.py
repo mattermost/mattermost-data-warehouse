@@ -30,7 +30,7 @@ container_cmd = """
 """
 
 # Create the DAG
-dag = DAG("snowflake_permissions", default_args=default_args, schedule_interval="0 0 * * *")
+dag = DAG("snowflake_permissions", default_args=default_args, schedule="0 0 * * *")
 
 # Task 1
 snowflake_load = KubernetesPodOperator(

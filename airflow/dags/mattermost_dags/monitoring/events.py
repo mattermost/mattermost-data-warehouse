@@ -46,7 +46,7 @@ default_args = {
 dag = DAG(
     "event_table_monitoring",
     default_args=default_args,
-    schedule_interval="0 12 * * *",
+    schedule="0 12 * * *",
     catchup=False,
     max_active_runs=1,  # Don't allow multiple concurrent dag executions
     doc_md=doc_md,
@@ -75,7 +75,6 @@ def table_formatter(task_id):
 
 clean_xcom = PythonOperator(
     task_id="cleanup_xcom",
-    provide_context=True,  # provide context is for getting the TI (task instance ) parameters
     dag=dag,
     python_callable=cleanup_xcom,
 )
@@ -111,14 +110,12 @@ def get_pod_operators(dag):
 
         check_output = ShortCircuitOperator(
             task_id=f'short-circuit-{schema}',
-            provide_context=True,  # provide context is for getting the TI (task instance ) parameters
             dag=dag,
             python_callable=short_circuit_on_no_new_tables(f"check-new-tables-{schema}"),
         )
 
         apply_format = PythonOperator(
             task_id=f'apply-format-{schema}',
-            provide_context=True,  # provide context is for getting the TI (task instance ) parameters
             dag=dag,
             python_callable=table_formatter(f"check-new-tables-{schema}"),
         )

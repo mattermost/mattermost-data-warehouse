@@ -35,7 +35,7 @@ default_args = {
 dag = DAG(
     "dbt",
     default_args=default_args,
-    schedule_interval="5 * * * *",
+    schedule="5 * * * *",
     catchup=False,
     max_active_runs=1,  # Don't allow multiple concurrent dag executions
 )

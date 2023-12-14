@@ -1,12 +1,13 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pendulum
 import pytest
 from airflow import DAG
 from airflow.exceptions import AirflowException
-from airflow.models.taskinstance import TaskInstance
 from airflow.models import BaseOperator
-
+from airflow.utils.state import DagRunState
+from airflow.utils.types import DagRunType
+from uuid import uuid4
 
 @pytest.fixture(autouse=True)
 def config_utils(monkeypatch):
@@ -36,14 +37,23 @@ def config_alert_context(mocker):
     'task_instance': instance of TaskInstance
     'exception': instance of AirflowException
     """
-    execution_date = pendulum.datetime(2022, 11, 15, 0, 0, 0)
+
+    task_id = f"test_task"
     dag = DAG("test_utils_dag", start_date=datetime(2022, 11, 15))
-    task = BaseOperator(task_id='test_task', dag=dag)
-    task_instance = TaskInstance(task, execution_date, state=None)
+    task = BaseOperator(task_id=task_id, dag=dag)
+    start_time = pendulum.now()
+    dagrun = dag.create_dagrun(
+        state=DagRunState.RUNNING,
+        execution_date=start_time,
+        data_interval=(start_time,  start_time + timedelta(days=1)),
+        start_date= start_time + timedelta(days=1),
+        run_type=DagRunType.MANUAL,
+    )
+    task_instance = dagrun.get_task_instance(task_id=task_id)
     context = {
         'dag': dag,
-        'ts': execution_date,
-        'execution_date': execution_date,
+        'ts': start_time,
+        'execution_date': start_time,
         'task': task,
         'task_instance': task_instance,
         'exception': AirflowException('Test Exception message'),

@@ -31,7 +31,7 @@ default_args = {
 dag = DAG(
     "releases",
     default_args=default_args,
-    schedule_interval="0 3 * * *",
+    schedule="0 3 * * *",
     catchup=False,
     max_active_runs=1,  # Don't allow multiple concurrent dag executions
 )

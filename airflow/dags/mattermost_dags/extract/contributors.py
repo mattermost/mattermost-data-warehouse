@@ -42,7 +42,7 @@ Configuration variables:
 with DAG(
     "contributors_nightly",
     default_args=default_args,
-    schedule_interval="0 7 * * *",
+    schedule="0 7 * * *",
     catchup=False,
     max_active_runs=1,  # Don't allow multiple concurrent dag executions
     doc_md=doc_md,

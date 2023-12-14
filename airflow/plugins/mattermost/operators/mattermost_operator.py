@@ -1,9 +1,9 @@
-from airflow.providers.http.operators.http import SimpleHttpOperator
+from airflow.providers.http.operators.http import HttpOperator
 
 from mattermost.hooks.mattermost_webhook_hook import MattermostWebhookHook
 
 
-class MattermostOperator(SimpleHttpOperator):
+class MattermostOperator(HttpOperator):
 
     """
     Operator that allows sending messages to Mattermost. For more details on the parameters, please check
