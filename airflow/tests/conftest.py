@@ -45,7 +45,7 @@ def config_alert_context(mocker, init_db):
     'exception': instance of AirflowException
     """
 
-    task_id = f"test_task"
+    task_id = "test_task"
     dag = DAG("test_utils_dag", start_date=datetime(2022, 11, 15))
     task = BaseOperator(task_id=task_id, dag=dag)
     start_time = pendulum.now()
