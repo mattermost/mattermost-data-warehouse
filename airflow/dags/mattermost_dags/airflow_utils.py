@@ -21,6 +21,7 @@ IS_DEV_MODE = os.getenv("ENVIRONMENT") == 'docker-compose'
 pod_defaults = {
     "get_logs": True,
     "image_pull_policy": "IfNotPresent",
+    "log_pod_spec_on_failure": False,
     "in_cluster": True,
     "on_finish_action": 'delete_pod',
     "namespace": os.environ.get('NAMESPACE', DEFAULT_AIRFLOW_NAMESPACE),
