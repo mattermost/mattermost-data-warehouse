@@ -29,6 +29,9 @@ jobs:
         with:
             fetch-depth: 1
 
+      - name: Install Poetry
+        run: pipx install poetry
+
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10.10'   # This is the python version in the airflow docker image currently used
