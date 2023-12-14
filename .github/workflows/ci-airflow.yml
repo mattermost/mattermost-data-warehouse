@@ -6,16 +6,14 @@ on:
       - master
     paths:
       - '.github/workflows/ci-airflow.yml'
-      - 'dags/**'
-      - 'plugins/**'
+      - 'airflow/**'
       - 'build/requirements-airflow-dev.txt'
   pull_request:
     branches:
       - master
     paths:
       - '.github/workflows/ci-airflow.yml'
-      - 'dags/**'
-      - 'plugins/**'
+      - 'airflow/**'
       - 'build/requirements-airflow-dev.txt'
 
 jobs:
@@ -38,10 +36,7 @@ jobs:
           cache-dependency-path: 'build/requirements-airflow-dev.txt'
 
       - name: Install dependencies
-        run: pip install -r build/requirements-airflow-dev.txt
+        run: poetry install && poetry run pip install clearbit==0.1.7
 
-      # - name: Run tests
-      - name: Run plugin tests
-        run: pytest plugins dags
-        env:
-          PYTHONPATH: .
+      - name: Run tests
+        run: poetry run pytest --cov
