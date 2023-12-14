@@ -39,7 +39,9 @@ jobs:
           cache-dependency-path: 'build/requirements-airflow-dev.txt'
 
       - name: Install dependencies
-        run: poetry install && poetry run pip install clearbit==0.1.7
+        working-directory: ./airflow
+        run: poetry install
 
       - name: Run tests
+        working-directory: ./airflow
         run: poetry run pytest --cov
