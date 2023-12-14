@@ -14,6 +14,7 @@ python = "<3.12,~=3.8"
 apache-airflow = "2.7.3"
 apache-airflow-providers-cncf-kubernetes = "7.11.0"
 pytest-cov = "^4.1.0"
+pydantic = "2.4.2"
 
 
 [tool.poetry.group.test.dependencies]
