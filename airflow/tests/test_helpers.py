@@ -1,5 +1,4 @@
 import pytest
-
 from mattermost_dags._helpers import chunk
 
 

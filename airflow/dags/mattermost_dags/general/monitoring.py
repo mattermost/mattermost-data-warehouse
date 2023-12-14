@@ -1,13 +1,13 @@
 import logging
 from datetime import datetime
 
-from airflow import DAG
-from airflow.models import Variable
-from airflow.providers.http.operators.http import HttpOperator
-from airflow.operators.python import PythonOperator
-
 from mattermost_dags.airflow_utils import cleanup_xcom, send_alert
 from mattermost_dags.general._helpers import resolve_hightouch, resolve_stitch
+
+from airflow import DAG
+from airflow.models import Variable
+from airflow.operators.python import PythonOperator
+from airflow.providers.http.operators.http import HttpOperator
 
 task_logger = logging.getLogger('airflow.task')
 

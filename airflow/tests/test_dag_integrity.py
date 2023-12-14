@@ -1,9 +1,9 @@
 from pathlib import Path
 
 import pytest
+
 from airflow import models as airflow_models
 from airflow.utils.dag_cycle_tester import check_cycle
-
 
 DAG_DIR = Path(__file__).parent.parent / "dags" / "mattermost_dags"
 ALL_PATHS = set(DAG_DIR.rglob('*.py'))

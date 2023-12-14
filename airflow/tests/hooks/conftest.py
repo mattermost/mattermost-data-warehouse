@@ -1,6 +1,7 @@
 import pytest
-from airflow.models import Connection
 from responses import Response
+
+from airflow.models import Connection
 
 
 @pytest.fixture

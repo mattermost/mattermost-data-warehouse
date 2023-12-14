@@ -1,10 +1,10 @@
 import os
 from datetime import datetime, timedelta
 
+from mattermost_dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, PERMIFROST_IMAGE, send_alert
+
 from airflow import DAG
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
-
-from mattermost_dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, PERMIFROST_IMAGE, send_alert
 
 # Default arguments for the DAG
 default_args = {

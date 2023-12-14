@@ -2,12 +2,14 @@ from datetime import datetime, timedelta
 
 import pendulum
 import pytest
+
 from airflow import DAG
 from airflow.exceptions import AirflowException
 from airflow.models import BaseOperator
+from airflow.utils import db
 from airflow.utils.state import DagRunState
 from airflow.utils.types import DagRunType
-from airflow.utils import db
+
 
 @pytest.fixture(autouse=True)
 def config_utils(monkeypatch):

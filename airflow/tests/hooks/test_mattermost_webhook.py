@@ -1,7 +1,7 @@
 import pytest
-from airflow import AirflowException
-
 from mattermost.hooks.mattermost_webhook_hook import MattermostWebhookHook
+
+from airflow import AirflowException
 
 
 def test_execute_simple_message(responses, ok_response, mock_connection):

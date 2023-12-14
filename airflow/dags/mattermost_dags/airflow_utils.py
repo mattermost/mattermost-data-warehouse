@@ -2,11 +2,11 @@
 import os
 import urllib.parse
 
-from airflow.models import XCom
-from airflow.utils.db import provide_session
-
 from kubernetes.client import models as k8s
 from mattermost.operators.mattermost_operator import MattermostOperator
+
+from airflow.models import XCom
+from airflow.utils.db import provide_session
 
 PERMIFROST_IMAGE = "mattermost/mattermost-permifrost:master"
 

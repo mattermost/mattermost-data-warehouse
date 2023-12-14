@@ -1,9 +1,5 @@
 from datetime import datetime, timedelta
 
-from airflow import DAG
-from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
-from airflow.utils.trigger_rule import TriggerRule
-
 from mattermost_dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, pod_defaults, pod_env_vars, send_alert
 from mattermost_dags.kube_secrets import (
     DBT_CLOUD_API_ACCOUNT_ID,
@@ -16,6 +12,10 @@ from mattermost_dags.kube_secrets import (
     SNOWFLAKE_USER,
     SSH_KEY,
 )
+
+from airflow import DAG
+from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
+from airflow.utils.trigger_rule import TriggerRule
 
 # Load the env vars into a dict and set Secrets
 env_vars = {**pod_env_vars, **{}}

@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import pytest
+
 from airflow import DAG
 
 START_DATE = datetime(2017, 3, 20)

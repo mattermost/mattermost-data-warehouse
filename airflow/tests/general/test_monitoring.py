@@ -1,7 +1,6 @@
 from datetime import datetime
 
 import pytest
-
 from mattermost_dags.general._helpers import (
     HightouchApiException,
     hightouch_check_syncs,

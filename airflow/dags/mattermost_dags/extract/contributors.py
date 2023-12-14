@@ -1,7 +1,5 @@
 from datetime import datetime, timedelta
 
-from airflow import DAG
-from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from mattermost_dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, pod_defaults, pod_env_vars, send_alert
 from mattermost_dags.kube_secrets import (
     GITHUB_FINEGRAIN_TOKEN,
@@ -12,6 +10,9 @@ from mattermost_dags.kube_secrets import (
     SNOWFLAKE_PASSWORD,
     SNOWFLAKE_USER,
 )
+
+from airflow import DAG
+from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 
 # Default arguments for the DAG
 default_args = {
