@@ -1,0 +1,57 @@
+[tool.poetry]
+name = "mattermost-airflow"
+version = "0.1.0"
+description = "Airflow 2 DAGS and plugins for orchestrating common data engineering tasks"
+authors = ["Ioannis Foukarakis <ioannis.foukarakis@mattermost.com>"]
+readme = "README.md"
+packages = [
+    {include = "mattermost_dags", from = "dags"},
+    {include = "mattermost", from = "plugins"}
+]
+
+[tool.poetry.dependencies]
+python = "<3.12,~=3.8"
+apache-airflow = "2.7.3"
+apache-airflow-providers-cncf-kubernetes = "7.11.0"
+pytest-cov = "^4.1.0"
+pydantic = "2.4.2"
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.3"
+pytest-mock = "^3.12.0"
+pytest-responses = "^0.5.1"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.12.0"
+isort = "^5.13.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.coverage.run]
+omit = [".*", "*/site-packages/*", "tests/*"]
+source = ["dags", "plugins", "tests"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+precision = 2
+
+
+[tool.black]
+line-length = 120
+target-version = ['py37', 'py38', 'py39', 'py310']
+skip-string-normalization = true
+
+
+[tool.isort]
+append_only = true
+line_length = 120
+combine_as_imports = true
+default_section = "THIRDPARTY"
+skip = [ ".venv", ".venv-airflow"]
+skip_glob = ["*.pyi"]
+profile = "black"
