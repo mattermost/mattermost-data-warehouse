@@ -252,6 +252,7 @@ users:
         can_login: yes
         member_of:
             - rudderstack
+            - stitch
 
     - permission_bot:
         can_login: yes
