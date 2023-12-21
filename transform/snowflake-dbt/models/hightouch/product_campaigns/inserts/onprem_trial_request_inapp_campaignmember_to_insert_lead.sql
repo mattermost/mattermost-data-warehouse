@@ -1,4 +1,4 @@
-\{{config({
+{{config({
     "materialized": 'view',
     "schema": "hightouch"
   })
