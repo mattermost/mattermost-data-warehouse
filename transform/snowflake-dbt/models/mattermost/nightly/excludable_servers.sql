@@ -36,9 +36,11 @@ version_exclusions AS (
         SELECT
           CASE WHEN sec.dev_build = 1 or sec.ran_tests = 1 THEN 'Dev Build/Ran Tests'
                WHEN sec.ip_address = '194.30.0.184' THEN 'Restricted IP'
-               WHEN (regexp_substr(COALESCE(sec.version, '1.2.3'), '^[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}$') is null
-                       AND regexp_substr(COALESCE(sec.version, '1.2.3'), '^[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}$') is null) 
-                       THEN 'Custom Build Version Format'
+               WHEN (
+                    regexp_substr(COALESCE(sec.version, '1.2.3'), '^[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}$') is null
+                    AND regexp_substr(COALESCE(sec.version, '1.2.3'), '^[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}$') is null
+                    AND regexp_substr(COALESCE(sec.version, '1.2.3'), '^[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{10,}$') is null
+                ) THEN 'Custom Build Version Format'
                WHEN sec.user_count < sec.active_user_count THEN 'Active Users > Registered Users'
                ELSE NULL END    AS REASON
         , trim(sec.server_id)                AS server_id
@@ -56,7 +58,8 @@ version_exclusions AS (
       OR sec.ran_tests = 1
       OR (regexp_substr(COALESCE(sec.version, '1.2.3'), '^[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}$') is null
           AND regexp_substr(COALESCE(sec.version, '1.2.3'), '^[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}$') is null
-          AND regexp_substr(COALESCE(sec.version, '1.2.3'), '^[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}(cloud(-|\.){1}|ee_live{1})') is null)
+          AND regexp_substr(COALESCE(sec.version, '1.2.3'), '^[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}(cloud(-|\.){1}|ee_live{1})') is null
+          AND regexp_substr(COALESCE(sec.version, '1.2.3'), '^[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{1,2}\.{1}[0-9]{10,}$') is null)
       OR sec.ip_address = '194.30.0.184'
       OR sec.user_count < (sec.active_user_count + (sec.user_count * .2)))
       AND sec.date <= CURRENT_DATE - INTERVAL '1 DAY'

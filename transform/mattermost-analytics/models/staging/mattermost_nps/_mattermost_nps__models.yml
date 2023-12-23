@@ -1,0 +1,89 @@
+version: 2
+
+models:
+  - name: stg_mattermost_nps__nps_feedback
+    description: |
+      Telemetry related to NPS feedback sent from Segment source.
+
+    columns:
+      - name: event_id
+        description: The event's id.
+      - name: event_name
+        description: The name of the event.
+      - name: event_table
+        description: The name of the event table.
+      - name: user_id
+        description: The ID of the user that sent the event.
+      - name: server_id
+        description: The ID of the server the event originated from.
+      - name: received_at
+        description: Timestamp registered by Segment when the event was ingested (received).
+      - name: timestamp
+        description: Timestamp registered by Segment when the event occurred refactored to clients clock skew.
+      - name: user_created_at
+        description: Timestamp the user was created.
+      - name: license_id
+        description: The ID of the license.
+      - name: license_sku
+        description: The sku of the license.
+      - name: user_role
+        description: Role of the user who submitted NPS.   
+      - name: feedback
+        description: NPS feedback submitted.   
+      - name: server_install_date
+        description: Server installation date.  
+      - name: server_version
+        description: The server's version.  
+      - name: context_library_version
+        description: The version of Segment library used to send this event.   
+      - name: context_library_name
+        description: The name of Segment library used to send this event.   
+      - name: sent_at
+      - name: original_timestamp
+      - name: server_id
+
+  - name: stg_mattermost_nps__nps_score
+    description: |
+      Telemetry related to NPS score sent from Segment source.
+
+    columns:
+      - name: event_id
+        description: The event's id.
+      - name: event_name
+        description: The name of the event.
+      - name: event_table
+        description: The name of the event table.
+      - name: user_id
+        description: The ID of the user that sent the event.
+      - name: server_id
+        description: The ID of the server the event originated from.
+      - name: received_at
+        description: Timestamp registered by Segment when the event was ingested (received).
+      - name: timestamp
+        description: Timestamp registered by Segment when the event occurred refactored to clients clock skew.
+      - name: user_created_at
+        description: Timestamp the user was created.
+      - name: license_id
+        description: The ID of the license.
+      - name: license_sku
+        description: The sku of the license.
+      - name: user_role
+        description: Role of the user who submitted NPS.   
+      - name: score
+        description: NPS score submitted.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 10
+              inclusive: true   
+      - name: server_install_date
+        description: Server installation date.
+      - name: server_version
+        description: The server's version.   
+      - name: context_library_version
+        description: The version of Segment library used to send this event.   
+      - name: context_library_name
+        description: The name of Segment library used to send this event.   
+      - name: sent_at
+      - name: original_timestamp
+      - name: server_id 

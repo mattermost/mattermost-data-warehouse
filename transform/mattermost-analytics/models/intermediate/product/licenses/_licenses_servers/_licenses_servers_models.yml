@@ -1,0 +1,71 @@
+version: 2
+
+models:
+
+  - name: int_cloud_licenses
+    description: License data from Stripe for all Cloud installations.
+
+    columns:
+      - name: installation_id
+        description: The ID of the cloud installation.
+      - name: customer_id
+        description: The ID of the customer.
+      - name: email
+        description: The email associated to the Cloud installation.
+        tags: ['pii']
+      - name: company_name
+        description: The name of the company of the Cloud installation.
+      - name: license_name
+        description: The name of the license or plan of the customer.
+      - name: source
+        description: The original source of the license information.
+
+  - name: int_cloud_servers
+    description: Contains all Cloud servers from Rudderstack telemetry.
+    
+    columns:
+      - name: license_telemetry_date
+        description: The date the license telemetry was received of the cloud server.
+      - name: installation_id
+        description: The ID of the cloud installation.
+      - name: server_id
+        description:  The server id of the cloud installation.
+      - name: license_name
+        description: The name of the license or plan of the customer.
+      - name: license_id
+        description: The ID of the license of the Cloud instance.
+
+  - name: int_self_hosted_licenses
+    description: License data for Self-Hosted instances.
+
+    columns:
+      - name: license_id
+        description: The ID of the license of the Self-Hosted instance.
+      - name: customer_id
+        description: The ID of the customer.
+      - name: email
+        description: The email associated to the Self-Hosted instance.
+        tags: ['pii']
+      - name: company_name
+        description: The name of the company of the Self-Hosted instance.
+      - name: license_name
+        description: The name of the license or plan of the customer.
+      - name: source
+        description: The original source of the license information.
+
+  - name: int_self_hosted_servers
+    description: Contains all Self-Hosted servers from Segment & Rudderstack telemetry.
+    
+    columns:
+      - name: license_telemetry_date
+        description: The date the license telemetry was received of the self-hosted server.
+      - name: license_id
+        description: The ID of the license of the Self-Hosted instance.
+      - name: server_id
+        description:  The server id of the license.
+      - name: customer_id
+        description: The ID of the customer.
+      - name: license_name
+        description: The name of the license or plan of the customer.
+
+  
