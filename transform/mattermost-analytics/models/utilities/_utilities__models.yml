@@ -9,3 +9,15 @@ models:
     columns:
       - name: date_day
         description: Timestamp for the date of the spine. Always midnight of the day.
+
+  - name: notification_date_hour
+    description: |
+      Date spine for notification statistics. Date spines is from first telemetry date and up to current day 
+      (inclusive).
+
+    columns:
+      - name: date_hour
+        description: Timestamp rounded on the hour (i.e. `2023-12-04 13:00:00`).
+
+
+

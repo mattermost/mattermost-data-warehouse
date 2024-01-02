@@ -6,16 +6,14 @@ on:
       - master
     paths:
       - '.github/workflows/ci-airflow.yml'
-      - 'dags/**'
-      - 'plugins/**'
+      - 'airflow/**'
       - 'build/requirements-airflow-dev.txt'
   pull_request:
     branches:
       - master
     paths:
       - '.github/workflows/ci-airflow.yml'
-      - 'dags/**'
-      - 'plugins/**'
+      - 'airflow/**'
       - 'build/requirements-airflow-dev.txt'
 
 jobs:
@@ -31,17 +29,19 @@ jobs:
         with:
             fetch-depth: 1
 
+      - name: Install Poetry
+        run: pipx install poetry
+
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.6.12'   # This is the python version in the airflow docker image currently used
+          python-version: '3.10.10'   # This is the python version in the airflow docker image currently used
           cache: 'pip'               # caching pip dependencies
           cache-dependency-path: 'build/requirements-airflow-dev.txt'
 
       - name: Install dependencies
-        run: pip install -r build/requirements-airflow-dev.txt
+        working-directory: ./airflow
+        run: poetry install
 
-      # - name: Run tests
-      - name: Run plugin tests
-        run: pytest plugins dags
-        env:
-          PYTHONPATH: .
+      - name: Run tests
+        working-directory: ./airflow
+        run: poetry run pytest --cov

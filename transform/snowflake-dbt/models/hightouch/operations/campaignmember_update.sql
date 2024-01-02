@@ -1,7 +1,8 @@
 {{
     config({
-    "materialized": 'table',
-    "schema": "hightouch"
+      "materialized": 'table',
+      "schema": "hightouch",
+      "tags": ["deprecated"]
     })
 }}
 

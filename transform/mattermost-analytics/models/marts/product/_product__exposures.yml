@@ -1,0 +1,22 @@
+version: 2
+
+exposures:
+  - name: customer_journey_and_new_logo_exposure
+    type: dashboard
+    description: Customer Journey & New Logo dashboard in Looker.
+    url: https://mattermost.looker.com/dashboards/431
+    tags:
+      - looker
+    maturity: medium
+    owner:
+      name: Ioannis Foukarakis
+      email: ioannis.foukarakis@mattermost.com
+    depends_on:
+      - ref('fct_active_servers')
+      - ref('fct_active_users')
+      - ref('dim_daily_server_config')
+      - ref('dim_daily_server_info')
+      - ref('dim_server_info')
+      - ref('dim_version')
+      - ref('dim_excludable_servers')
+      - ref('rpt_tedau_at_day_28')

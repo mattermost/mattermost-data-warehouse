@@ -1,0 +1,15 @@
+version: 2
+
+exposures:
+  - name: notification_metrics_exposure
+    type: dashboard
+    description: Notification metrics explore available in Looker.
+    url: https://mattermost.looker.com/explore/product/fct_notification_stats
+    tags:
+      - looker
+    maturity: medium
+    owner:
+      name: Ioannis Foukarakis
+      email: ioannis.foukarakis@mattermost.com
+    depends_on:
+      - ref('fct_notification_stats')

@@ -26,7 +26,7 @@ services:
           read_only: True
 
     mattermost_analytics:
-      image: ghcr.io/dbt-labs/dbt-snowflake:1.4.0@sha256:055362057725989404fbbfb1ac27ead32f0392158d2363d09434a2bcfcd69bc5
+      image: ghcr.io/dbt-labs/dbt-snowflake:1.6.5@sha256:6eb3e2607dfbfcdcff1b10d176fd2768aec5274bce8accbc8c5d99684e5b30d5
       env_file:
         - ../.dbt.env
       environment:
