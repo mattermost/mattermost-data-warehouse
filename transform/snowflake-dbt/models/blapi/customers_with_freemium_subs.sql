@@ -1,7 +1,7 @@
 {{
   config({
     "schema": "hightouch",
-    "materialized": "view",
+    "unique_key":"id",
     "tags": ["hourly", "blapi", "deprecated"]
   })
 }}
