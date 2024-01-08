@@ -1,7 +1,8 @@
-{{config({
-    "schema": "blapi",
-    "unique_key":"id",
-    "tags":["hourly","blapi"]
+{{
+  config({
+    "schema": "hightouch",
+    "materialized": "view",
+    "tags": ["hourly", "blapi", "deprecated"]
   })
 }}
 

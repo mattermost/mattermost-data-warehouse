@@ -1,7 +1,8 @@
-{{config({
+{{
+  config({
     "schema": "hightouch",
-    "unique_key":"id",
-    "tags":["hourly","blapi"]
+    "materialized": "view",
+    "tags": ["hourly", "blapi", "deprecated"]
   })
 }}
 

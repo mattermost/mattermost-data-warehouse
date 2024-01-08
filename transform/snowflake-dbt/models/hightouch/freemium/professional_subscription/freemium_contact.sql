@@ -2,7 +2,7 @@
   config({
     "schema": "hightouch",
     "materialized": "view",
-    "tags":["hourly", "blapi"]
+    "tags": ["hourly", "blapi", "deprecated"]
   })
 }}
 -- create contact

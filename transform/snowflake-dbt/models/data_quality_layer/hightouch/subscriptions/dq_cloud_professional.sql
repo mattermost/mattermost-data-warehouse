@@ -1,7 +1,7 @@
 {{ config(
     { "materialized": "table",
     "schema": "data_quality",
-    "tags": "data-quality" }
+    "tags": ["data-quality", "deprecated"] }
 ) }}
 
 WITH cloud_professional_subscriptions AS (
