@@ -5,7 +5,7 @@
 SELECT
     *
 FROM
-    {{ ref("dq_cloud_professional') }}
+    {{ ref('dq_cloud_professional') }}
 WHERE
     -- Fetch all opportunities/contacts/accounts not synced into salesforce.
     (
