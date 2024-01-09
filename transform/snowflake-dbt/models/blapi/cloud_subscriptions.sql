@@ -1,7 +1,7 @@
 {{config({
     "schema": "blapi",
     "unique_key":"id",
-    "tags":["hourly","blapi"]
+    "tags": ["hourly", "blapi", "deprecated"]
   })
 }}
 
