@@ -1,8 +1,9 @@
-{{ config(
-    { "schema": "hightouch",
+{{config({
+    "schema": "hightouch",
     "materialized": "view",
-    "tags" :["hourly","blapi"] }
-) }}
+    "tags": ["hourly", "blapi", "deprecated"]
+  })
+}}
 -- lead or contact already exists
 WITH existing_leads AS (
 
