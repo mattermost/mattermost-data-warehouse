@@ -1,5 +1,5 @@
 {{ config(
-    tags = ['data-quality']
+    tags = ['data-quality', 'deprecated']
 ) }}
 
 select
