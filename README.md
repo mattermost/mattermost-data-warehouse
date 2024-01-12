@@ -98,9 +98,6 @@ common development operations.
 Run the following commands:
 ```bash
 poetry install
-
-# Clearbit cannot be installed as part of poetry dependencies, as it's a really old dependency.
-poetry run pip install clearbit==0.1.7
 ```
 
 ### Adding dependencies

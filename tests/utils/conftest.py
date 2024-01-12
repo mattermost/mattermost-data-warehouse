@@ -19,7 +19,7 @@ def mock_settings_env_vars(mocker):
     mocker.patch("utils.run_dbt_cloud_job.timeout", 35)
 
     # Mock items loaded using os.environ in method calls
-    mock_env_vars = {'GITHUB_TOKEN': 'token', 'CLEARBIT_KEY': 'clearbit-test-key'}
+    mock_env_vars = {'GITHUB_TOKEN': 'token'}
     mocker.patch.dict(os.environ, mock_env_vars, clear=True)
 
 
@@ -98,68 +98,6 @@ def user_agent_input():
     """
     with open(Path(__file__).parent / 'fixtures' / 'user_agent' / 'agents.txt') as fp:
         return fp.read().splitlines()
-
-
-@pytest.fixture()
-def mock_clearbit(mocker):
-    def _mock_clearbit(module_name):
-        # Mock clearbit client
-        mock_clearbit = mocker.patch(f"{module_name}.clearbit")
-        return mock_clearbit
-
-    return _mock_clearbit
-
-
-@pytest.fixture()
-def mock_clearbit_enrichments():
-    return _mock_clearbit_factory('enrichments')
-
-
-@pytest.fixture()
-def mock_clearbit_reveal():
-    return _mock_clearbit_factory('reveal')
-
-
-def _mock_clearbit_factory(api):
-    """
-    Creates a loader for returning responses from provided clearbit {api}.
-    """
-
-    def _load_responses(*args):
-        """
-        Lazily loads each file defined as args. The files are loaded from fixture/{api}.
-
-        Not found responses can be simulated by specifying None. For example if args is
-        ['a.json', None], then the first simulated call to clearbit will return the contents of a.json, while the second
-        will return None.
-        """
-        for filename in args:
-            if filename is None:
-                yield None
-            else:
-                with open(Path(__file__).parent / 'fixtures' / 'clearbit' / 'api' / api / filename) as fp:
-                    yield json.load(fp)
-
-    return _load_responses
-
-
-@pytest.fixture()
-def expect_data():
-    def _expect_data(type, filename):
-        with open(Path(__file__).parent / "fixtures" / "clearbit" / type / "setup" / "dataframe-schema.json") as fp:
-            schema = json.load(fp)
-            target = Path(__file__).parent / "fixtures" / "clearbit" / type / "expectations" / filename
-            df = pd.read_json(target, orient="records", dtype=False)
-            # There are some column type manipulations in cloud_clearbit.py and onprem_clearbit.py. This makes the data
-            # types of the dataframe under test different to the datatypes inferred by pandas when loading from json.
-            # To solve this, a schema file contains pinned data type of each column.
-            df = df.convert_dtypes()
-            for col, _type in schema.items():
-                if col in df.columns:
-                    df[col] = df[col].astype(_type)
-            return df
-
-    return _expect_data
 
 
 @pytest.fixture
