@@ -1,7 +1,7 @@
 {{config({
     "materialized": "incremental",
     "schema": "mattermost",
-    "tags":"union",
+    "tags": ["union", "nightly"],
     "snowflake_warehouse": "transform_l",
     "unique_key":"id"
   })
