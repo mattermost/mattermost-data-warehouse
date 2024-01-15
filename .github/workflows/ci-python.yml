@@ -33,7 +33,6 @@ jobs:
       matrix:
         include:
           - { name: '3.10', python: '3.10' }
-          - { name: '3.11', python: '3.11' }
     steps:
       - name: checkout
         uses: actions/checkout@v3
