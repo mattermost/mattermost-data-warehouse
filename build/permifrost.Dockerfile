@@ -33,7 +33,7 @@ RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Install dependencies excluding dev and current package
-RUN pip install "permifrost==0.1.0"
+RUN pip install "permifrost==0.15.4"
 
 ## ---------------------------final stage ----------------------------- ##
 
