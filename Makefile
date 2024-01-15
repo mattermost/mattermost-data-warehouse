@@ -130,8 +130,7 @@ python-test: ## to run python tests
 .PHONY: python-update-dependencies
 python-update-dependencies: ## to update python dependencies
 	$(AT)$(INFO) updating python dependencies...
-	$(AT)$(POETRY) install ${POETRY_OPTS} && \
-	    $(POETRY) run pip install clearbit==0.1.7 || ${FAIL}
+	$(AT)$(POETRY) install ${POETRY_OPTS} || ${FAIL}
 	$(AT)$(OK) updating python dependencies
 
 .PHONY: python-lint
