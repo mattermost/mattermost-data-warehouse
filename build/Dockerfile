@@ -1,4 +1,4 @@
-ARG PYTHON_IMAGE=python:3.8.15-slim@sha256:fc2f284772a4443ce7238930ba9a8d5e3c720926616fca074b99213484a3820f
+ARG PYTHON_IMAGE=python:3.10.13-slim@sha256:8f2783ef8daefbcaea50242479638d1c950ec43db2a345f066f635ef2ad1626f
 
 ## ---------------------------base stage ----------------------------- ##
 
@@ -22,13 +22,13 @@ ENV PYTHONUNBUFFERED 1
 FROM base as builder
 
 # Poetry version
-ARG POETRY_VERSION=1.2.2
+ARG POETRY_VERSION=1.7.1
 
 # Install packages needed to build pandas/numpy etc
 RUN apt-get update && apt-get install -y --no-install-recommends \
      make=4.3-4.1 \
-     g++=4:10.2.1-1 \
-     git=1:2.30.2-1+deb11u2 && \
+     g++=4:12.2.0-3 \
+     git=1:2.39.2-1.1 && \
      rm -rf /var/lib/apt/lists/*
 
 # Sane python defaults
