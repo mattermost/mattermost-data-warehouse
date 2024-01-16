@@ -26,7 +26,7 @@ default_args = {
 
 # Set the command for the container
 container_cmd = """
-    permifrost grant load/snowflake/roles.yaml
+    permifrost run load/snowflake/roles.yaml
 """
 
 # Create the DAG
