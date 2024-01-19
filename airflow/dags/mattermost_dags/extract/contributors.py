@@ -7,8 +7,8 @@ from mattermost_dags.kube_secrets import (
     SNOWFLAKE_LOAD_DATABASE,
     SNOWFLAKE_LOAD_ROLE,
     SNOWFLAKE_LOAD_WAREHOUSE,
-    SNOWFLAKE_PASSWORD,
-    SNOWFLAKE_USER,
+    SNOWFLAKE_LOAD_PASSWORD,
+    SNOWFLAKE_LOAD_USER
 )
 
 from airflow import DAG
@@ -54,8 +54,8 @@ with DAG(
         task_id="extract-github-contributors",
         name="extract-github-contributors",
         secrets=[
-            SNOWFLAKE_USER,
-            SNOWFLAKE_PASSWORD,
+            SNOWFLAKE_LOAD_USER,
+            SNOWFLAKE_LOAD_PASSWORD,
             SNOWFLAKE_ACCOUNT,
             SNOWFLAKE_LOAD_DATABASE,
             SNOWFLAKE_LOAD_WAREHOUSE,
@@ -69,6 +69,8 @@ with DAG(
             " -d ${SNOWFLAKE_LOAD_DATABASE}"
             " -w ${SNOWFLAKE_LOAD_WAREHOUSE}"
             " -r ${SNOWFLAKE_LOAD_ROLE}"
+            " -u ${SNOWFLAKE_LOAD_USER}"
+            " -p ${SNOWFLAKE_LOAD_PASSWORD}"
             " --token ${GITHUB_FINEGRAIN_TOKEN}"
         ],
     )
