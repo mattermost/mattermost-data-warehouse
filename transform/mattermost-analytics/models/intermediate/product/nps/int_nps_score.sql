@@ -1,3 +1,10 @@
+{{
+    config({
+        "materialized": "table",
+    })
+}}
+
+
 with mattermost_nps as (
 select 
     server_id as server_id
