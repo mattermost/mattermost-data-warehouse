@@ -1,6 +1,7 @@
 {{config({
     "materialized": 'view',
-    "schema": "hightouch"
+    "schema": "hightouch",
+    "tags": ["deprecated"]
   })
 }}
 

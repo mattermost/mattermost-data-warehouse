@@ -1,9 +1,10 @@
-{{ config(
-    { "schema": "hightouch",
+{{
+  config({
+    "schema": "hightouch",
     "materialized": "view",
-    "tags" :["hourly","blapi"] }
-) }}
-
+    "tags": ["hourly", "blapi", "deprecated"]
+  })
+}}
 WITH existing_contacts AS (
 
     SELECT

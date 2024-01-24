@@ -27,7 +27,11 @@ data to other tools.
 
 ```
 .
-├── dags                    <--- Airflow DAGs. DAGs mostly use KubernetesOperator to run a job.
+├── airflow                 <--- Airflow related code.
+│  ├── dags                 <--- DAGs executed by airflow.
+│  ├── plugins              <--- Custom airflow plugins used with DAGs.
+│  └── tests                <--- Tests for dags and plugins.
+├── docs                    <--- Extra documentation.
 ├── extract                 <--- Python scripts that extract data from various locations.
 │  └── s3_extract           <--- Various utilities for importing data from S3 to Snowflake
 ├── k8s                     <--- Pod definitions for Pipelinewise
@@ -37,8 +41,9 @@ data to other tools.
 ├── poetry.lock             <--- Pinned dependency versions
 ├── pyproject.toml          <--- PEP-518 build system requirements
 ├── requirements.txt        <--- Dependencies (deprecated)
+├── tests                   <--- Unit tests for python code.
 ├── transform
-│  ├── snowflake-dbt        <--- Snowflake DBT models
+│  ├── snowflake-dbt        <--- Snowflake DBT models.
 │  ├── mattermost-analytics <--- New DBT project for Mattermost analytics.
 │  └── sql                  <--- SQL scripts that get executed by DAGs
 └── utils                   <--- Various Python scripts
@@ -93,9 +98,6 @@ common development operations.
 Run the following commands:
 ```bash
 poetry install
-
-# Clearbit cannot be installed as part of poetry dependencies, as it's a really old dependency.
-poetry run pip install clearbit==0.1.7
 ```
 
 ### Adding dependencies

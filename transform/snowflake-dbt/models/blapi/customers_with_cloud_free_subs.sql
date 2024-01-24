@@ -1,7 +1,7 @@
 {{config({
     "schema": "hightouch",
     "unique_key":"id",
-    "tags":["hourly","blapi"]
+    "tags": ["hourly", "blapi", "deprecated"]
   })
 }}
 -- customer info along with current subscriptions and previous subscriptions

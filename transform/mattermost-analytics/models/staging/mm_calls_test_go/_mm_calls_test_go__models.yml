@@ -13,7 +13,9 @@ models:
       - name: event_table
         description: The name of the event table.
       - name: user_id
-        description: The ID of the user that sent the event.
+        description: |
+          The ID of the user that sent the event. 
+          The user_id is participant_id in server side event tables and actual_user_id in client side event tables, this is handled using coalesce.
       - name: server_id
         description: The ID of the server the event originated from.
       - name: received_at

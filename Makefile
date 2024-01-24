@@ -45,7 +45,7 @@ DOCKER_REGISTRY_PERMIFROST_REPO    ?= mattermost/${PERMIFROST_NAME}
 DOCKER_USER             ?= user
 DOCKER_PASSWORD         ?= password
 ## Docker Images
-DOCKER_IMAGE_PYTHON     += "python:3.8.15-slim@sha256:fc2f284772a4443ce7238930ba9a8d5e3c720926616fca074b99213484a3820f"
+DOCKER_IMAGE_PYTHON     += "python:3.10.13-slim@sha256:8f2783ef8daefbcaea50242479638d1c950ec43db2a345f066f635ef2ad1626f"
 DOCKER_IMAGE_DOCKERLINT += "hadolint/hadolint:v2.9.2@sha256:d355bd7df747a0f124f3b5e7b21e9dafd0cb19732a276f901f0fdee243ec1f3b"
 DOCKER_IMAGE_COSIGN     += "bitnami/cosign:1.8.0@sha256:8c2c61c546258fffff18b47bb82a65af6142007306b737129a7bd5429d53629a"
 
@@ -130,8 +130,7 @@ python-test: ## to run python tests
 .PHONY: python-update-dependencies
 python-update-dependencies: ## to update python dependencies
 	$(AT)$(INFO) updating python dependencies...
-	$(AT)$(POETRY) install ${POETRY_OPTS} && \
-	    $(POETRY) run pip install clearbit==0.1.7 || ${FAIL}
+	$(AT)$(POETRY) install ${POETRY_OPTS} || ${FAIL}
 	$(AT)$(OK) updating python dependencies
 
 .PHONY: python-lint

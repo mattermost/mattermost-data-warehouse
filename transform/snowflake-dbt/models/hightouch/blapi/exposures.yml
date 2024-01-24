@@ -39,6 +39,7 @@ exposures:
     tags:
       - hightouch
       - salesforce
+      - deprecated
     maturity: low
     owner:
       name: Ioannis Foukarakis

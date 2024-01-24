@@ -47,6 +47,7 @@ roles:
                     - analytics
                     - archive
                     - dev
+                    - snowflake
                 write:
                     - raw
                     - analytics
@@ -58,6 +59,7 @@ roles:
                     - analytics.*
                     - archive.*
                     - dev.*
+                    - snowflake.*
                 write:
                     - raw.*
                     - analytics.*
@@ -69,6 +71,7 @@ roles:
                     - analytics.*.*
                     - archive.*.*
                     - dev.*.*
+                    - snowflake.account_usage.*
                 write:
                     - raw.*.*
                     - analytics.*.*
@@ -104,6 +107,25 @@ roles:
                 write:
                     - raw.*.*
                     - analytics.*.*
+    - rudderstack:
+        warehouses:
+            - rudderstack_m
+        privileges:
+            databases:
+                read:
+                    - raw
+                write:
+                    - raw
+            schemas:
+                read:
+                    - raw.*
+                write:
+                    - raw.*
+            tables:
+                read:
+                    - raw.*.*
+                write:
+                    - raw.*.*
 
     - reporting:
         warehouses:
@@ -123,6 +145,7 @@ roles:
                 read:
                     - analytics.*.*
                     - snowflake.account_usage.*
+
     - reporting_all:
         warehouses:
             - reporting_s
@@ -228,6 +251,12 @@ users:
         member_of:
             - stitch
 
+    - rudderstack:
+        can_login: yes
+        member_of:
+            - rudderstack
+            - stitch
+
     - permission_bot:
         can_login: yes
         member_of:
@@ -271,4 +300,7 @@ warehouses:
         size: medium
 
     - transform_m:
+        size: medium
+
+    - rudderstack_m:
         size: medium

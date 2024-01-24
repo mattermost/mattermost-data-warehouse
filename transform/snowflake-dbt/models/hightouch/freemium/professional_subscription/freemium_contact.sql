@@ -1,8 +1,10 @@
-{{ config(
-    { "schema": "hightouch",
+{{
+  config({
+    "schema": "hightouch",
     "materialized": "view",
-    "tags" :["hourly","blapi"] }
-) }}
+    "tags": ["hourly", "blapi", "deprecated"]
+  })
+}}
 -- create contact
 WITH existing_leads AS (
 

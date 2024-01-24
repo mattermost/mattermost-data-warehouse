@@ -1,7 +1,7 @@
 {{config({
     "schema": "blapi",
     "unique_key":"id",
-    "tags":["hourly","blapi"]
+    "tags": ["hourly", "blapi", "deprecated"]
   })
 }}
 -- cloud subscriptions that do not need any payment i.e cloud starter and cloud enterprise trial(30 days)
