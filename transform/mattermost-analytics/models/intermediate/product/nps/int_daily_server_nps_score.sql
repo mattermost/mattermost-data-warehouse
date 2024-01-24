@@ -18,7 +18,7 @@ spined as (
         left join {{ ref('telemetry_days') }} all_days on all_days.date_day >= nps.min_score_date
 ), server_daily_nps_score as (
     select
-        cast(spined.date_day as date) as activity_date
+        spined.date_day as activity_date
         , spined.server_id
         , spined.server_version
         , spined.user_role
@@ -33,5 +33,9 @@ spined as (
                 and spined.server_id = nps_score.server_id
                 and spined.server_version = nps_score.server_version
                 and spined.user_role = nps_score.user_role
+        group by spined.date_day
+        , spined.server_id
+        , spined.server_version
+        , spined.user_role
 ) select * 
         from server_daily_nps_score
