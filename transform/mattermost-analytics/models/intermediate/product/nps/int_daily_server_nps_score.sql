@@ -11,12 +11,12 @@ with server_min_score_date as (
 ), 
 spined as (
         select all_days.date_day
-            , server_min_score_date.server_id as server_id
-            , server_min_score_date.server_version as server_version
-            , server_min_score_date.user_role as user_role
-        from nps_server_daily_score nps 
-        left join {{ ref('telemetry_days') }} all_days on all_days.date_day >= server_min_score_date.min_score_date
-), server_daily_nps_score_activity as (
+            , nps.server_id as server_id
+            , nps.server_version as server_version
+            , nps.user_role as user_role
+        from server_min_score_date nps 
+        left join {{ ref('telemetry_days') }} all_days on all_days.date_day >= nps.min_score_date
+), server_daily_nps_score as (
     select
         cast(spined.date_day as date) as activity_date
         , spined.server_id
@@ -34,4 +34,4 @@ spined as (
                 and spined.server_version = nps_score.server_version
                 and spined.user_role = nps_score.user_role
 ) select * 
-        from server_daily_nps_score_activity
+        from server_daily_nps_score
