@@ -139,6 +139,12 @@ models:
           - not_null
       - name: resolution
         description: The resolution of the ticket.
+      - name: environment
+        description: The environment the ticket refers to.
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string:
+              trim_whitespace: false
       - name: lead_time_in_days
         description: The lead time, defined as the number of days between `created_at` and `closed_at`. Null if the issue hasn't been closed yet.
         tests:

@@ -27,6 +27,8 @@ select
     ji.issue_type_name as issue_type,
     ji.status_name as status,
     ji.resolution_name as resolution,
+    -- Degenerate dimension
+    coalesce(ji.environment, 'Undefined') as environment,
     {{ datediff("ji.created_at", "closed_at", "day") }} as lead_time_in_days,
     -- Reference to release version if issue created during a release timeframe
     rt.version as release_timeframe_version,
