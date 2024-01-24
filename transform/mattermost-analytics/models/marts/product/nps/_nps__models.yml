@@ -45,12 +45,7 @@ models:
       This raises divide by zero error with the NPS score calculation.
 
     columns:
-      - name: score_id
-        description: A unique identifier for the NPS score generated from server_id, score_date, server_version and user_role.
-        tests:
-          - not_null
-          - unique
-      - name: score_date
+      - name: activity_date
         description: The date the NPS score event was sent. 
         tests:
           - not_null
