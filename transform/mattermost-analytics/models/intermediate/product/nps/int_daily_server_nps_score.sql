@@ -22,7 +22,7 @@ spined as (
         select all_days.date_day
             , nps.server_id as server_id
             , nps.user_id as user_id
-            , nps.erver_version
+            , nps.server_version
             , nps.user_role
         from server_min_score_date nps 
         left join {{ ref('telemetry_days') }} all_days on all_days.date_day >= nps.min_score_date
