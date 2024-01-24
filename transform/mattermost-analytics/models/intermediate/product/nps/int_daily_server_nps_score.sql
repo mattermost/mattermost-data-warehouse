@@ -15,11 +15,15 @@ with server_min_score_date as (
     where event_date >= '{{ var('telemetry_start_date')}}'
     group by server_id
         , user_id
+        , server_version
+        , user_role
 ), 
 spined as (
         select all_days.date_day
             , nps.server_id as server_id
             , nps.user_id as user_id
+            , nps.erver_version
+            , nps.user_role
         from server_min_score_date nps 
         left join {{ ref('telemetry_days') }} all_days on all_days.date_day >= nps.min_score_date
 ), server_daily_nps_score as (
