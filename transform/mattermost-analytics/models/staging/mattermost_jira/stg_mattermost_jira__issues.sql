@@ -39,6 +39,8 @@ SELECT
     fields:labels AS labels,
     -- Fix Version
     fields:fixVersions AS fix_versions,
+    -- Custom fields
+    fields:customfield_11145:value::varchar as environment,
     -- Timestamps
     CAST(fields:created AS {{ dbt.type_timestamp() }})  AS created_at,
     CAST(fields:updated AS {{ dbt.type_timestamp() }})  AS updated_at
