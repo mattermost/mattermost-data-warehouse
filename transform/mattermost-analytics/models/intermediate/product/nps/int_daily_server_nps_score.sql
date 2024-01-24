@@ -35,11 +35,9 @@ spined as (
         left join {{ ref('int_nps_score') }} nps_score
             on spined.date_day = nps_score.event_date
                 and spined.server_id = nps_score.server_id
-                and spined.server_version = nps_score.server_version
-                and spined.user_role = nps_score.user_role
         group by spined.date_day
         , spined.server_id
-        , spined.server_version
-        , spined.user_role
+        , nps_score.server_version
+        , nps_score.user_role
 ) select * 
         from server_daily_nps_score
