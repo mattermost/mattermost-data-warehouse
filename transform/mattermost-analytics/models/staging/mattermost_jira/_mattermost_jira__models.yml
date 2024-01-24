@@ -56,6 +56,8 @@ models:
         description: The id of the issue's resolution.
       - name: resolution_name
         description: The name of the resolution.
+      - name: environment
+        description: The environment the ticket refers to.
       - name: labels
         description: List of labels assigned to the given issue.
       - name: fix_versions
