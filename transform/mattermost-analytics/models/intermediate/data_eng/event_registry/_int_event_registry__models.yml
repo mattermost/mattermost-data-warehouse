@@ -328,7 +328,7 @@ models:
         tests:
           - not_null
       - name: source
-        description: The source of the event. Always `Telemetry Prod` for events of this table..
+        description: The source of the event. Always `Telemetry Prod - Segment` for events of this table..
       - name: event_table
         description: The table this event was read from.
       - name: event_name
