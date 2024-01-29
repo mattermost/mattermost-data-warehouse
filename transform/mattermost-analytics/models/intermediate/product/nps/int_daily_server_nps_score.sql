@@ -33,10 +33,10 @@ with base_cte as (
      having td.date_day::date >= min(event_date)
 )
      select spined.*
-          , sum(promoters) over (partition by server_id order by activity_date desc rows between current row and 89 following) as promoters_last_90_days
-          , sum(detractors) over (partition by server_id order by activity_date desc rows between current row and 89 following) as detractors_last_90_days
-          , sum(passives) over (partition by server_id order by activity_date desc rows between current row and 89 following) as passives_last_90_days
-          , sum(nps_users) over (partition by server_id order by activity_date desc rows between current row and 89 following) as nps_users_last_90_days
+          , sum(promoters) over (partition by activity_date order by activity_date desc rows between current row and 89 following) as promoters_last_90_days
+          , sum(detractors) over (partition by activity_date order by activity_date desc rows between current row and 89 following) as detractors_last_90_days
+          , sum(passives) over (partition by activity_date order by activity_date desc rows between current row and 89 following) as passives_last_90_days
+          , sum(nps_users) over (partition by activity_date order by activity_date desc rows between current row and 89 following) as nps_users_last_90_days
      from spined
      group by activity_date, server_id, user_role, promoters, detractors, passives, nps_users, server_version
      order by activity_date desc
