@@ -22,8 +22,6 @@ WITH performance_events AS (
       , request_count as request_count
       , timestamp::date as event_date
       , received_at::date as received_at_date
-      , timestamp::date as event_date
-      , received_at::date as received_at_date
     FROM
       {{ source('mm_telemetry_rc', 'event') }}
     WHERE CATEGORY = 'performance'
