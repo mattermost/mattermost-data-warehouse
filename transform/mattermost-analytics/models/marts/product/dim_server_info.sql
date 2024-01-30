@@ -52,8 +52,8 @@ select
     si.last_activity_date,
     si.first_binary_edition,
     si.last_binary_edition,
-    ht.first_count_registered_active_users,
-    ht.last_count_registered_active_users
+    si.first_count_registered_active_users,
+    si.last_count_registered_active_users
 from
     server_info si
     left join {{ ref('int_server_hosting_type') }} ht on si.server_id = ht.server_id
