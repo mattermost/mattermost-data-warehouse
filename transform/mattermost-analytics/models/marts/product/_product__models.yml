@@ -306,6 +306,10 @@ models:
         description: Count of registered and active users on the first day telemetry was received at.
       - name: last_count_registered_active_users
         description: Count of registered and active users on the last day that telemetry was received at.
+      - name: last_daily_active_users
+        description: Count of daily active users on the last day that telemetry was received at.
+      - name: last_monthly_active_users
+        description: Count of monthly active users on the last day that telemetry was received at.
 
   - name: dim_daily_server_config
     description: Daily server configuration.

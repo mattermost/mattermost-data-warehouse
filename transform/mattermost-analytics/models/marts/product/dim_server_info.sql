@@ -6,7 +6,9 @@ with server_telemetry_summary as (
         first_value(binary_edition) over (partition by server_id order by activity_date asc) as first_binary_edition,
         last_value(binary_edition) over (partition by server_id order by activity_date asc) as last_binary_edition,
         first_value(count_registered_active_users) over (partition by server_id order by activity_date asc) as first_count_registered_active_users,
-        last_value(count_registered_active_users) over (partition by server_id order by activity_date asc) as last_count_registered_active_users
+        last_value(count_registered_active_users) over (partition by server_id order by activity_date asc) as last_count_registered_active_users,
+        last_value(daily_active_users) over (partition by server_id order by activity_date asc) as last_daily_active_users,
+        last_value(monthly_active_users) over (partition by server_id order by activity_date asc) as last_monthly_active_users
     from
         {{ ref('int_server_active_days_spined') }}
     -- Keep only one row per server as the current query creates duplicates
@@ -38,7 +40,9 @@ with server_telemetry_summary as (
        st.first_binary_edition as first_binary_edition,
        st.last_binary_edition as last_binary_edition,
        st.first_count_registered_active_users,
-       st.last_count_registered_active_users
+       st.last_count_registered_active_users,
+       st.last_daily_active_users,
+       st.last_monthly_active_users
     from
         server_telemetry_summary st
         full outer join user_telemetry_summary ut on st.server_id = ut.server_id
@@ -53,7 +57,9 @@ select
     si.first_binary_edition,
     si.last_binary_edition,
     si.first_count_registered_active_users,
-    si.last_count_registered_active_users
+    si.last_count_registered_active_users,
+    si.last_daily_active_users,
+    si.last_monthly_active_users
 from
     server_info si
     left join {{ ref('int_server_hosting_type') }} ht on si.server_id = ht.server_id
