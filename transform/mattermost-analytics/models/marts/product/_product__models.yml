@@ -302,6 +302,10 @@ models:
         tests:
           - accepted_values:
               values: ['TE', 'E0', 'Unknown']
+      - name: first_count_registered_active_users
+        description: Count of registered and active users on the first day telemetry was received at.
+      - name: last_count_registered_active_users
+        description: Count of registered and active users on the last day that telemetry was received at.
 
   - name: dim_daily_server_config
     description: Daily server configuration.
