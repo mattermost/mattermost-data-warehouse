@@ -80,8 +80,8 @@ select
     coalesce(t.database_version, l.database_version) as database_version,
     coalesce(t.edition, l.edition, d.is_enterprise_ready) as is_enterprise_ready,
     case
-        when is_enterprise_ready = true then 'E0'
-        when is_enterprise_ready = false then 'TE'
+        when coalesce(t.edition, l.edition, d.is_enterprise_ready) = true then 'E0'
+        when coalesce(t.edition, l.edition, d.is_enterprise_ready) = false then 'TE'
         else 'Unknown'
     end as binary_edition,
     t.installation_id,

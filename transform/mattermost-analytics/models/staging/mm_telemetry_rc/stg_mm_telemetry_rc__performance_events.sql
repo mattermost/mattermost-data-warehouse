@@ -1,10 +1,10 @@
-{%- set include_columns = ["channel", "context_app_namespace", "user_actual_id"
+{%- set include_columns = [ "channel", "context_app_namespace", "user_actual_id"
 , "context_library_name", "type", "context_app_version" , "user_actual_role" 
-, "context_app_build" , "context_library_version"
-, "context_useragent", "context_app_name", "context_locale", "context_screen_density" 
+, "context_app_build" , "context_library_version", "context_app_name"
+, "context_locale", "context_screen_density" 
 , "category" , "duration" , "num_of_request", "max_api_resource_size"
 , "longest_api_resource_duration" , "user_id", "count", "request_count"] -%}
-
+        
 WITH performance_events AS (
     SELECT
       {{ get_rudderstack_columns() }}
@@ -12,6 +12,7 @@ WITH performance_events AS (
         {{ column }} AS {{ column }}
         {% if not loop.last %},{% endif %}
     {% endfor %}
+    , coalesce(context_useragent, context_user_agent) as context_user_agent
     , timestamp::date as event_date
     , received_at::date as received_at_date
     FROM
