@@ -56,4 +56,4 @@ GROUP BY
     passives,
     nps_users
 ORDER BY
-    activity_date DESC;
+    activity_date DESC
