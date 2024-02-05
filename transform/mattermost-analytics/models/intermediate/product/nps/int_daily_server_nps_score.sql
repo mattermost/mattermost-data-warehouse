@@ -26,7 +26,7 @@ WITH base_cte AS (
         SUM(CASE WHEN td.date_day::date = event_date THEN promoters ELSE 0 END) AS promoters,
         SUM(CASE WHEN td.date_day::date = event_date THEN detractors ELSE 0 END) AS detractors,
         SUM(CASE WHEN td.date_day::date = event_date THEN passives ELSE 0 END) AS passives,
-        SUM(CASE WHEN td.date_day::date = event_date THEN nps_users ELSE 0 END) AS nps_users,
+        SUM(CASE WHEN td.date_day::date = event_date THEN nps_users ELSE 0 END) AS nps_users
     FROM
         {{ ref('telemetry_days') }} td
     LEFT JOIN
