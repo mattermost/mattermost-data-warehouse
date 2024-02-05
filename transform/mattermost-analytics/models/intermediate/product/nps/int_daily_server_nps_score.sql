@@ -20,9 +20,9 @@ WITH base_cte AS (
 ), tmp AS (
     SELECT
         td.date_day::date AS activity_date,
-        server_id as server_id,
-        user_role as user_role,
-        server_version AS server_version
+        server_id AS server_id,
+        user_role AS user_role,
+        server_version AS server_version,
         SUM(CASE WHEN td.date_day::date = event_date THEN promoters ELSE 0 END) AS promoters,
         SUM(CASE WHEN td.date_day::date = event_date THEN detractors ELSE 0 END) AS detractors,
         SUM(CASE WHEN td.date_day::date = event_date THEN passives ELSE 0 END) AS passives,
