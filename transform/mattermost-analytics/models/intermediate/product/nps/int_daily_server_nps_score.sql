@@ -15,34 +15,31 @@ WITH base_cte AS (
         server_id,
         server_version,
         user_role
-),
-tmp AS (
+    ORDER BY
+        event_date DESC
+), tmp AS (
     SELECT
-        td.date_day::DATE AS activity_date,
+        td.date_day::date AS activity_date,
         server_id,
         user_role,
-        CASE WHEN td.date_day::DATE = event_date THEN promoters ELSE 0 END AS promoters,
-        CASE WHEN td.date_day::DATE = event_date THEN detractors ELSE 0 END AS detractors,
-        CASE WHEN td.date_day::DATE = event_date THEN passives ELSE 0 END AS passives,
-        CASE WHEN td.date_day::DATE = event_date THEN nps_users ELSE 0 END AS nps_users,
+        SUM(CASE WHEN td.date_day::date = event_date THEN promoters ELSE 0 END) AS promoters,
+        SUM(CASE WHEN td.date_day::date = event_date THEN detractors ELSE 0 END) AS detractors,
+        SUM(CASE WHEN td.date_day::date = event_date THEN passives ELSE 0 END) AS passives,
+        SUM(CASE WHEN td.date_day::date = event_date THEN nps_users ELSE 0 END) AS nps_users,
         MAX(server_version) AS server_version
     FROM
         {{ ref('telemetry_days') }} td
     LEFT JOIN
-        base_cte b ON td.date_day::DATE >= event_date
+        base_cte b ON td.date_day::date >= event_date
     GROUP BY
-        td.date_day::DATE,
+        td.date_day::date,
         server_id,
-        user_role,
-        CASE WHEN td.date_day::DATE = event_date THEN promoters ELSE 0 END,
-        CASE WHEN td.date_day::DATE = event_date THEN detractors ELSE 0 END,
-        CASE WHEN td.date_day::DATE = event_date THEN passives ELSE 0 END,
-        CASE WHEN td.date_day::DATE = event_date THEN nps_users ELSE 0 END
+        user_role
     HAVING
-        td.date_day::DATE >= MIN(event_date)
+        td.date_day::date >= MIN(event_date)
 )
 SELECT
-    *,
+    tmp.*,
     SUM(promoters) OVER (PARTITION BY server_id, user_role, server_version ORDER BY activity_date DESC ROWS BETWEEN CURRENT ROW AND 89 FOLLOWING) AS quarterly_promoters,
     SUM(detractors) OVER (PARTITION BY server_id, user_role, server_version ORDER BY activity_date DESC ROWS BETWEEN CURRENT ROW AND 89 FOLLOWING) AS quarterly_detractors,
     SUM(passives) OVER (PARTITION BY server_id, user_role, server_version ORDER BY activity_date DESC ROWS BETWEEN CURRENT ROW AND 89 FOLLOWING) AS quarterly_passives,
@@ -53,10 +50,10 @@ GROUP BY
     activity_date,
     server_id,
     user_role,
+    server_version,
     promoters,
     detractors,
     passives,
-    nps_users,
-    server_version
+    nps_users
 ORDER BY
-    activity_date DESC
+    activity_date DESC;
