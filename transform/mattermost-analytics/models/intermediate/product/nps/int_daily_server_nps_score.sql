@@ -15,8 +15,6 @@ WITH base_cte AS (
         server_id,
         server_version,
         user_role
-    ORDER BY
-        event_date DESC
 ), tmp AS (
     SELECT
         td.date_day::date AS activity_date,
