@@ -20,13 +20,13 @@ WITH base_cte AS (
 ), tmp AS (
     SELECT
         td.date_day::date AS activity_date,
-        server_id,
-        user_role,
+        server_id as server_id,
+        user_role as user_role,
+        server_version AS server_version
         SUM(CASE WHEN td.date_day::date = event_date THEN promoters ELSE 0 END) AS promoters,
         SUM(CASE WHEN td.date_day::date = event_date THEN detractors ELSE 0 END) AS detractors,
         SUM(CASE WHEN td.date_day::date = event_date THEN passives ELSE 0 END) AS passives,
         SUM(CASE WHEN td.date_day::date = event_date THEN nps_users ELSE 0 END) AS nps_users,
-        MAX(server_version) AS server_version
     FROM
         {{ ref('telemetry_days') }} td
     LEFT JOIN
