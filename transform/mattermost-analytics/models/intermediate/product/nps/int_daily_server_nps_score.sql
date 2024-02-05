@@ -34,7 +34,8 @@ WITH base_cte AS (
     GROUP BY
         td.date_day::date,
         server_id,
-        user_role
+        user_role,
+        server_version
     HAVING
         td.date_day::date >= MIN(event_date)
 )
