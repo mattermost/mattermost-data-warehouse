@@ -34,9 +34,9 @@ with base_fix_version as (
 )
 select
     fv.*,
-    dateadd(day, 17 - DAYOFMONTH(dateadd(month, -1, fv.planned_release_date)), dateadd(month, -1, fv.planned_release_date)) as release_start_date,
-    fv.planned_release_date,
-    fv.actual_release_date
+    rd.release_start_date,
+    rd.planned_release_date,
+    rd.actual_release_date
 
 from
     base_fix_version fv

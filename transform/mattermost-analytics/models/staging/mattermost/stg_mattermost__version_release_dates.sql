@@ -13,6 +13,7 @@ select
     release_date::date as planned_release_date,
     supported::boolean as is_supported,
     release_number::int as release_number,
+    dateadd(day, 17 - DAYOFMONTH(dateadd(month, -1, planned_release_date)), dateadd(month, -1, planned_release_date)) as release_start_date,
     coalesce(actual_release_date::date, planned_release_date) as actual_release_date,
     rc1_date::date as rc1_date
 from
