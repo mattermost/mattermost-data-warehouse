@@ -33,9 +33,11 @@ with base_fix_version as (
         regexp_like(fix_version, '.*v\\d+\.\\d+.*', 'i')
 )
 select
-    base_fix_version.*,
+    fv.*,
+    dateadd(day, 17 - DAYOFMONTH(dateadd(month, -1, fv.planned_release_date)), dateadd(month, -1, fv.planned_release_date)) as release_start_date,
     fv.planned_release_date,
     fv.actual_release_date
+
 from
     base_fix_version fv
     left join {{ ref('stg_mattermost__version_release_dates') }} rd on rd.short_version = fv.semver
