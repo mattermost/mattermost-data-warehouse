@@ -6,10 +6,7 @@ with release_versions as (
         rc1_date,
         planned_release_date,
         actual_release_date,
-        -- Calculate 17th of month before the release's month. This is required as release timeframe is 17th to planned
-        -- release date.
-        dateadd(month, -1, planned_release_date) as _month_before_release,
-        dateadd(day, 17 - DAYOFMONTH(_month_before_release), _month_before_release) as release_timeframe_start,
+        release_start_date as release_timeframe_start,
         dateadd(day, 7, actual_release_date) as week_after_release
     from
         {{ ref('stg_mattermost__version_release_dates') }}
