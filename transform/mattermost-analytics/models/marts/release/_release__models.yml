@@ -101,6 +101,8 @@ models:
         description: The planned date for the release.
       - name: actual_release_date
         description: The date the release was actually cut.
+      - name: rc1_date
+        description: The date RC1 was cut.
     tests:
       -  dbt_utils.expression_is_true:
           # A fix version can only refer to a cloud release OR on an on-prem release, not both.

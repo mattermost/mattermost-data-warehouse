@@ -35,9 +35,9 @@ with base_fix_version as (
 select
     fv.*,
     rd.release_start_date,
+    rd.rc1_date,
     rd.planned_release_date,
     rd.actual_release_date
-
 from
     base_fix_version fv
     left join {{ ref('stg_mattermost__version_release_dates') }} rd on rd.short_version = fv.semver
