@@ -15,11 +15,11 @@ select
     release_number::int as release_number,
     -- Release start date is the earliest date of (a) 17th of month prior to the planned release date and (b) release
     -- cut date. This is required to cover the edge case that usually happens on the first release of the year.
-    MIN(
+    least(
         dateadd(day, 17 - DAYOFMONTH(dateadd(month, -1, planned_release_date)),
                 dateadd(month, -1, planned_release_date)),
         rc1_date::date
-    )as release_start_date,
+    ) as release_start_date,
     coalesce(actual_release_date::date, planned_release_date) as actual_release_date,
     rc1_date::date as rc1_date
 from
