@@ -13,9 +13,13 @@ select
     release_date::date as planned_release_date,
     supported::boolean as is_supported,
     release_number::int as release_number,
-    -- Calculate 17th of month before the release's month. This is required as release timeframe is 17th to planned
-    -- release date.
-    dateadd(day, 17 - DAYOFMONTH(dateadd(month, -1, planned_release_date)), dateadd(month, -1, planned_release_date)) as release_start_date,
+    -- Release start date is the earliest date of (a) 17th of month prior to the planned release date and (b) release
+    -- cut date. This is required to cover the edge case that usually happens on the first release of the year.
+    MIN(
+        dateadd(day, 17 - DAYOFMONTH(dateadd(month, -1, planned_release_date)),
+                dateadd(month, -1, planned_release_date)),
+        rc1_date::date
+    )as release_start_date,
     coalesce(actual_release_date::date, planned_release_date) as actual_release_date,
     rc1_date::date as rc1_date
 from
