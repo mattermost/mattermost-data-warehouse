@@ -95,6 +95,14 @@ models:
         description: |
           Whether this fix version refers to a cloud release. Examples of Cloud fix versions are 
           `Cloud 02/09/23 -> v7.9` and `Cloud 4/27/22 -> v6.7 May'22`.
+      - name: release_start_date
+        description: The start date for the release.
+      - name: planned_release_date
+        description: The planned date for the release.
+      - name: actual_release_date
+        description: The date the release was actually cut.
+      - name: rc1_date
+        description: The date RC1 was cut.
     tests:
       -  dbt_utils.expression_is_true:
           # A fix version can only refer to a cloud release OR on an on-prem release, not both.

@@ -33,6 +33,8 @@ models:
         description: The issue's release number.
         tests:
           - not_null
+      - name: release_start_date
+        description: The start date for the release.
       - name: actual_release_date
         description: The date the release was actually cut.
       - name: rc1_date
@@ -43,3 +45,8 @@ models:
           name: assert_rc1_set_when_patch_is_0
           expression: "version_patch = '0'"
           where: 'rc1_date is not null'
+      -  dbt_utils.expression_is_true:
+          # Release start date must be before actual start date
+          name: assert_release_start_before_release
+          expression: "release_start_date < actual_release_date"
+          where: 'actual_release_date is not null'
