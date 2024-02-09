@@ -9,7 +9,7 @@ WITH base_cte AS (
         COUNT(DISTINCT CASE WHEN nps_score.score > 6 AND nps_score.score < 9 THEN nps_score.user_id ELSE NULL END) AS passives,
         COUNT(DISTINCT user_id) AS nps_users
     FROM
-          {{ ref('int_nps_score') }} nps_score
+          {{ ref('int_user_nps_score_latest') }} nps_score
     GROUP BY
         event_date,
         server_id,
