@@ -26,29 +26,19 @@ def post_nps():
         nps_webhook_url = os.getenv("NPS_WEBHOOK_URL")
         nps_webhook_url = nps_webhook_url.strip('\n')
         sql = '''
-        select distinct
-            feedback,
-            subcategory as category,
-            score,
-            server_version,
-            case
-                when sf.installation_id is null then 'Self-Hosted'
-                when sf.installation_id is not null then 'Cloud' end as INSTALLATION_TYPE,
-            user_role,
-            lsf.customer_name,
-            lsf.license_email,
-            sf.max_active_user_count as user_count
-        from ANALYTICS.MATTERMOST.NPS_USER_DAILY_SCORE nps
-        left join mattermost.server_fact sf on nps.server_id = sf.server_id
-        left join blp.license_server_fact lsf on nps.server_id = lsf.server_id
-        left join analytics.mattermost.nps_feedback_classification fc
-            on nps.user_id = fc.user_id
-               and nps.server_id = fc.server_id
-               and nps.last_feedback_date = fc.last_feedback_date
-        where
-            nps.last_feedback_DATE = CURRENT_DATE - 1
-            and subcategory <> 'Invalid'
-            and feedback <> ''
+        select distinct nps.feedback as feedback
+            , nps.score as score
+            , nps.server_version as server_version
+            , au.installation_type as installation_type
+            , nps.user_role as user_role
+            , coalesce(cc.company_name, shc.company_name) as company_name
+            , coalesce(cc.customer_email, shc.customer_email) as customer_email
+            , au.count_registered_active_users as registered_active_users
+        from mart_product.fct_nps_feedback nps
+        left join mart_product.fct_active_servers au on nps.server_id = au.server_id and nps.feedback_date = au.activity_date
+        left join mart_product.dim_cloud_customers cc on nps.server_id = cc.server_id
+        left join mart_product.dim_self_hosted_customers shc on nps.server_id = shc.server_id
+        where nps.feedback_date = CURRENT_DATE - 1 and feedback <> ''
         '''
 
         cur.execute(sql)
@@ -62,14 +52,13 @@ def post_nps():
                 out,
                 headers=[
                     'Feedback',
-                    'Category',
                     'Score',
                     'Server Version',
                     'Installation Type',
                     'User Role',
-                    'Customer Name',
-                    'License Email',
-                    'User Count',
+                    'Company Name',
+                    'Customer License Email',
+                    'Registered Active Users',
                 ],
                 tablefmt='github',
             )
