@@ -46,7 +46,7 @@ WITH first_score_day AS (
         CASE WHEN score_last_90_days > 8 THEN 1 ELSE 0 END AS quarterly_promoters,
         CASE WHEN score_last_90_days < 7 THEN 1 ELSE 0 END AS quarterly_detractors,
         CASE WHEN score_last_90_days > 6 AND score_last_90_days < 9 THEN 1 ELSE 0 END AS quarterly_passives,
-        CASE WHEN score_last_90_days IS NOT NULL THEN THEN 1 ELSE 0 END AS quarterly_nps_users
+        CASE WHEN score_last_90_days IS NOT NULL THEN 1 ELSE 0 END AS quarterly_nps_users
     FROM 
         spined sp
     LEFT JOIN 
