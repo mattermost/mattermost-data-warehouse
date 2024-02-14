@@ -34,8 +34,9 @@ SELECT
     user_id,
     user_role,
     server_version,
-    FIRST_VALUE(score IGNORE NULLS) OVER (PARTITION BY server_id, user_id, user_role ORDER BY activity_date DESC
-            ROWS BETWEEN CURRENT ROW AND 89 FOLLOWING) AS score
+    score,
+    FIRST_VALUE(score IGNORE NULLS) OVER (PARTITION BY server_id, user_id ORDER BY activity_date DESC
+            ROWS BETWEEN CURRENT ROW AND 89 FOLLOWING) AS score_last_90_days
 FROM 
     spined 
 ORDER BY 
