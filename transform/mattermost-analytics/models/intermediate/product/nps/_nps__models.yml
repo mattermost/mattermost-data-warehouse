@@ -57,4 +57,36 @@ models:
       - name: score_received_at
         description: Timestamp registered by RudderStack & Segment when the NPS score event was ingested (received).
 
-  
+  - name: int_daily_server_nps_score
+    description: |
+      Intermediate model for calculating nps score for an instance on a daily schedule.
+
+    columns:
+      - name: activity_date
+        description: The date the NPS score event was sent. 
+        tests:
+          - not_null
+      - name: server_id
+        description: The ID of the server the NPS score event originated from..
+        tests:
+          - not_null
+      - name: server_version
+        description: The server's version.     
+      - name: user_role
+        description: The role of the user who submitted feedback.        
+      - name: promoters
+        description: The unique count of users who submitted NPS score above 8 for the given server.
+      - name: detractors
+        description: The unique count of users who submitted NPS score below 7 for the given server.
+      - name: passives
+        description: The unique count of users who submitted NPS score of 7 or 8 for the given server.
+      - name: nps_users
+        description: The unique count of users who submitted NPS score.
+      - name: quarterly_promoters
+        description: The unique count of users who submitted NPS score above 8 for the given server in the last 90 days.
+      - name: quarterly_detractors
+        description: The unique count of users who submitted NPS score below 7 for the given server in the last 90 days.
+      - name: quarterly_passives
+        description: The unique count of users who submitted NPS score of 7 or 8 for the given server in the last 90 days.
+      - name: quarterly_nps_users
+        description: The unique count of users who submitted NPS score in the last 90 days.
