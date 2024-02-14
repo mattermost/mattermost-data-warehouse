@@ -22,7 +22,7 @@ WITH base_cte AS (
     ON 
         a.server_id = nps.server_id 
         AND a.user_id = nps.user_id 
-        AND activity_date >= event_date
+        AND activity_date >= nps.event_date
     GROUP BY 
         activity_date,
         nps.server_id,

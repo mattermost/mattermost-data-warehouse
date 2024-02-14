@@ -11,7 +11,7 @@ WITH base_cte AS (
     FROM
           {{ ref('int_user_nps_score_spined') }} nps_score
     GROUP BY
-        event_date,
+        activity_date,
         server_id,
         server_version,
         user_role
