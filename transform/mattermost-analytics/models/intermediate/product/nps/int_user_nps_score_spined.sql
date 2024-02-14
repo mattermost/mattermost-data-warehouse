@@ -1,43 +1,63 @@
-WITH base_cte AS (
-    SELECT DISTINCT
-        td.date_day::date AS activity_date,
-        b.server_id AS server_id,
-        b.user_id AS user_id
-    FROM
-         {{ ref('telemetry_days') }} td
-    LEFT JOIN
-        {{ ref('int_nps_score') }} b ON td.date_day::date >= event_date
+WITH first_score_day AS (
+    SELECT 
+        server_id,
+        user_id,
+        MIN(event_date) AS min_event_date
+    FROM 
+        {{ ref('int_nps_score') }}
+    GROUP BY 
+        ALL
 ), spined AS (
     SELECT 
-        activity_date,
-        nps.server_id,
-        nps.user_id,
-        MAX(nps.user_role) AS user_role,
-        MAX(nps.server_version) AS server_version,
-        SUM(CASE WHEN activity_date = nps.event_date THEN nps.score END) AS score
+        date_day::date AS activity_date,
+        server_id AS server_id,
+        user_id AS user_id
     FROM 
-        base_cte a 
-    JOIN 
-        {{ ref('int_nps_score') }} nps
+        first_score_day fsd
+    LEFT JOIN 
+        {{ ref('telemetry_days') }} td 
     ON 
-        a.server_id = nps.server_id 
-        AND a.user_id = nps.user_id 
-        AND activity_date >= nps.event_date
-    GROUP BY 
-        activity_date,
-        nps.server_id,
-        nps.user_id
-) 
-SELECT 
-    activity_date,
-    server_id,
-    user_id,
-    user_role,
-    server_version,
-    score,
-    FIRST_VALUE(score IGNORE NULLS) OVER (PARTITION BY server_id, user_id ORDER BY activity_date DESC
-            ROWS BETWEEN CURRENT ROW AND 89 FOLLOWING) AS score_last_90_days
+        date_day::date >= min_event_date
+), score_cte AS (
+    SELECT 
+        sp.activity_date,
+        sp.server_id,
+        sp.user_id,
+        nps_score.score,
+        COALESCE(nps_score.server_version, FIRST_VALUE(nps_score.server_version IGNORE NULLS) OVER (
+            PARTITION BY sp.server_id, sp.user_id 
+            ORDER BY activity_date DESC
+            ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+            ) AS server_version,
+        COALESCE(nps_score.user_role, FIRST_VALUE(nps_score.user_role IGNORE NULLS) OVER (
+            PARTITION BY sp.server_id, sp.user_id 
+            ORDER BY activity_date DESC
+            ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
+            ) AS user_role,
+        CASE WHEN nps_score.score > 8 THEN 1 ELSE 0 END AS promoters,
+        CASE WHEN nps_score.score < 7 THEN 1 ELSE 0 END AS detractors,
+        CASE WHEN nps_score.score > 6 AND nps_score.score < 9 THEN 1 ELSE 0 END AS passives,
+        CASE WHEN nps_score.score IS NOT NULL THEN 1 ELSE 0 END AS nps_users,
+        FIRST_VALUE(score IGNORE NULLS) OVER (
+            PARTITION BY sp.server_id, sp.user_id 
+            ORDER BY activity_date DESC
+            ROWS BETWEEN CURRENT ROW AND 89 FOLLOWING
+        ) AS score_last_90_days,
+        CASE WHEN score_last_90_days > 8 THEN 1 ELSE 0 END AS quarterly_promoters,
+        CASE WHEN score_last_90_days < 7 THEN 1 ELSE 0 END AS quarterly_detractors,
+        CASE WHEN score_last_90_days > 6 AND score_last_90_days < 9 THEN 1 ELSE 0 END AS quarterly_passives,
+        CASE WHEN score_last_90_days IS NOT NULL THEN THEN 1 ELSE 0 END AS quarterly_nps_users
+    FROM 
+        spined sp
+    LEFT JOIN 
+        {{ ref('int_nps_score') }} nps_score
+    ON 
+        sp.server_id = nps_score.server_id 
+        AND sp.user_id = nps_score.user_id 
+        AND sp.activity_date = nps_score.event_date
+)
+SELECT * 
 FROM 
-    spined 
+    score_cte 
 ORDER BY 
     activity_date DESC
