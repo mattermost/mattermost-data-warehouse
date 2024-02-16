@@ -1,4 +1,3 @@
-
 with first_server_version as 
 (
     select 
