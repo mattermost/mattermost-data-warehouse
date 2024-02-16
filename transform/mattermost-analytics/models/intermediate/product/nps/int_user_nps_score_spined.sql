@@ -1,3 +1,9 @@
+{{
+    config({
+        "materialized": "table",
+    })
+}}
+
 WITH first_score_day AS (
     SELECT 
         server_id,
