@@ -24,11 +24,6 @@ WITH first_score_day AS (
         sp.server_id,
         sp.user_id,
         nps_score.score,
-        COALESCE(nps_score.server_version, FIRST_VALUE(nps_score.server_version IGNORE NULLS) OVER (
-            PARTITION BY sp.server_id, sp.user_id 
-            ORDER BY activity_date DESC
-            ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
-            ) AS server_version,
         COALESCE(nps_score.user_role, FIRST_VALUE(nps_score.user_role IGNORE NULLS) OVER (
             PARTITION BY sp.server_id, sp.user_id 
             ORDER BY activity_date DESC
