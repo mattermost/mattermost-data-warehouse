@@ -1,4 +1,4 @@
-ARG PYTHON_IMAGE=python:3.10.13-slim@sha256:8f2783ef8daefbcaea50242479638d1c950ec43db2a345f066f635ef2ad1626f
+ARG PYTHON_IMAGE=python:3.10.13-slim@sha256:103c21c3f7539064c995afaef14a0d16e9bc6905559864b43ebfd42c9ba5abc6
 
 ## ---------------------------base stage ----------------------------- ##
 

@@ -45,7 +45,7 @@ DOCKER_REGISTRY_PERMIFROST_REPO    ?= mattermost/${PERMIFROST_NAME}
 DOCKER_USER             ?= user
 DOCKER_PASSWORD         ?= password
 ## Docker Images
-DOCKER_IMAGE_PYTHON     += "python:3.10.13-slim@sha256:8f2783ef8daefbcaea50242479638d1c950ec43db2a345f066f635ef2ad1626f"
+DOCKER_IMAGE_PYTHON     += "python:3.10.13-slim@sha256:103c21c3f7539064c995afaef14a0d16e9bc6905559864b43ebfd42c9ba5abc6"
 DOCKER_IMAGE_DOCKERLINT += "hadolint/hadolint:v2.9.2@sha256:d355bd7df747a0f124f3b5e7b21e9dafd0cb19732a276f901f0fdee243ec1f3b"
 DOCKER_IMAGE_COSIGN     += "bitnami/cosign:1.8.0@sha256:8c2c61c546258fffff18b47bb82a65af6142007306b737129a7bd5429d53629a"
 
