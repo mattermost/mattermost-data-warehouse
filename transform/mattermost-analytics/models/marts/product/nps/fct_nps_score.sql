@@ -67,6 +67,8 @@ with user_metrics as (
   ) }}
     FROM
     {{ ref('int_user_nps_score_spined') }}
+    group by activity_date
+    , server_id
 )
 SELECT a.*, 
     b.server_version AS server_version
