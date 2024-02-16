@@ -1,6 +1,7 @@
 {{config({
     "materialized": 'incremental',
-    "schema": "util"
+    "schema": "util",
+    "tags":"nightly",
   })
 }}
 
