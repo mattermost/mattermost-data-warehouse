@@ -1,7 +1,7 @@
 with user_metrics as (
-    select a.activity_date,
-    a.server_id AS server_id,
-  {{ dbt_utils.pivot(
+    select activity_date,
+    server_id AS server_id,
+    {{ dbt_utils.pivot(
       'user_role',
       dbt_utils.get_column_values(ref('int_user_nps_score_spined'), 'user_role'),
       agg='sum',
@@ -66,9 +66,9 @@ with user_metrics as (
       suffix='_quarterly_nps_users'
   ) }}
     FROM
-    {{ ref('int_user_nps_score_spined') }} a 
+    {{ ref('int_user_nps_score_spined') }}
 )
-SELECT a.*,
+SELECT a.*, 
 b.server_version AS server_version
     from user_metrics a
  {{ ref('int_nps_server_version_spined') }} b 
