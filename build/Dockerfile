@@ -1,4 +1,4 @@
-ARG PYTHON_IMAGE=python:3.10.13-slim@sha256:103c21c3f7539064c995afaef14a0d16e9bc6905559864b43ebfd42c9ba5abc6
+ARG PYTHON_IMAGE=python:3.10.13-slim@sha256:4a5330e9f281d53214299d80d98198dcda3ce97ada3f3d48f2e617d43a6e15b3
 
 ## ---------------------------base stage ----------------------------- ##
 
@@ -36,8 +36,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV PIP_DEFAULT_TIMEOUT=100 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PIP_NO_CACHE_DIR=1
-
-RUN pip install --upgrade pip
 
 # Install poetry for managing dependencies and make sure dependencies are installed under /venv
 RUN pip install "poetry==${POETRY_VERSION}" && \
