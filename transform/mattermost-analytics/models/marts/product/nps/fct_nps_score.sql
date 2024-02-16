@@ -69,7 +69,7 @@ with user_metrics as (
     {{ ref('int_user_nps_score_spined') }}
 )
 SELECT a.*, 
-b.server_version AS server_version
-    from user_metrics a
- {{ ref('int_nps_server_version_spined') }} b 
+    b.server_version AS server_version
+    from user_metrics a join
+    {{ ref('int_nps_server_version_spined') }} b 
     on a.server_id = b.server_id and a.activity_date = b.activity_date
