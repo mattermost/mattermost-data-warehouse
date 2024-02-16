@@ -28,7 +28,8 @@ ARG POETRY_VERSION=1.7.1
 RUN apt-get update && apt-get install -y --no-install-recommends \
      make=4.3-4.1 \
      g++=4:12.2.0-3 \
-     git=1:2.39.2-1.1 && \
+     git=1:2.39.2-1.1 \
+     python3-cryptography=38.0.4-3 && \
      rm -rf /var/lib/apt/lists/*
 
 # Sane python defaults
