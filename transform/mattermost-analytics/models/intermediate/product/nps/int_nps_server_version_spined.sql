@@ -18,11 +18,11 @@ with first_server_version as
     select 
         sp.activity_date
         , sp.server_id
-        , COALESCE(nps_score.server_version, FIRST_VALUE(nps_score.server_version IGNORE NULLS) OVER (
+        , FIRST_VALUE(nps_score.server_version IGNORE NULLS) OVER (
             PARTITION BY sp.server_id 
             ORDER BY activity_date DESC
             ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
-            ) AS server_version
+            AS server_version
     from spined sp 
     left join {{ ref('int_nps_score') }} nps_score 
     on sp.server_id = nps_score.server_id  and sp.activity_date = nps_score.event_date

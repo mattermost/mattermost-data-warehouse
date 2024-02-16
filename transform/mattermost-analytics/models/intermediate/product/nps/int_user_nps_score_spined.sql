@@ -24,11 +24,11 @@ WITH first_score_day AS (
         sp.server_id,
         sp.user_id,
         nps_score.score,
-        COALESCE(nps_score.user_role, FIRST_VALUE(nps_score.user_role IGNORE NULLS) OVER (
+        FIRST_VALUE(nps_score.user_role IGNORE NULLS) OVER (
             PARTITION BY sp.server_id, sp.user_id 
             ORDER BY activity_date DESC
             ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
-            ) AS user_role,
+            AS user_role,
         CASE WHEN nps_score.score > 8 THEN 1 ELSE 0 END AS promoters,
         CASE WHEN nps_score.score < 7 THEN 1 ELSE 0 END AS detractors,
         CASE WHEN nps_score.score > 6 AND nps_score.score < 9 THEN 1 ELSE 0 END AS passives,

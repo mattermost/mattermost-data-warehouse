@@ -1,24 +1,75 @@
-SELECT
-    a.activity_date,
+with user_metrics as (
+    select a.activity_date,
     a.server_id AS server_id,
-    a.user_role AS user_role,
-    b.server_version AS server_version,
-    SUM(a.promoters) AS promoters,
-    SUM(a.detractors) AS detractors,
-    SUM(a.passives) AS passives,
-    SUM(a.nps_users) AS nps_users,
-    SUM(a.quarterly_promoters) AS quarterly_promoters,
-    SUM(a.quarterly_detractors) AS quarterly_detractors,
-    SUM(a.quarterly_passives) AS quarterly_passives,
-    SUM(a.quarterly_nps_users) AS quarterly_nps_users
-FROM
+  {{ dbt_utils.pivot(
+      'user_role',
+      dbt_utils.get_column_values(ref('int_user_nps_score_spined'), 'user_role'),
+      agg='sum',
+      then_value='promoters',
+      quote_identifiers=False,
+      suffix='_promoters'
+  ) }},
+    {{ dbt_utils.pivot(
+      'user_role',
+      dbt_utils.get_column_values(ref('int_user_nps_score_spined'), 'user_role'),
+      agg='sum',
+      then_value='detractors',
+      quote_identifiers=False,
+      suffix='_detractors'
+  ) }},
+    {{ dbt_utils.pivot(
+      'user_role',
+      dbt_utils.get_column_values(ref('int_user_nps_score_spined'), 'user_role'),
+      agg='sum',
+      then_value='passives',
+      quote_identifiers=False,
+      suffix='_passives'
+  ) }},
+    {{ dbt_utils.pivot(
+      'user_role',
+      dbt_utils.get_column_values(ref('int_user_nps_score_spined'), 'user_role'),
+      agg='sum',
+      then_value='nps_users',
+      quote_identifiers=False,
+      suffix='_nps_users'
+  ) }},
+    {{ dbt_utils.pivot(
+      'user_role',
+      dbt_utils.get_column_values(ref('int_user_nps_score_spined'), 'user_role'),
+      agg='sum',
+      then_value='quarterly_promoters',
+      quote_identifiers=False,
+      suffix='_quarterly_promoters'
+  ) }},
+    {{ dbt_utils.pivot(
+      'user_role',
+      dbt_utils.get_column_values(ref('int_user_nps_score_spined'), 'user_role'),
+      agg='sum',
+      then_value='quarterly_detractors',
+      quote_identifiers=False,
+      suffix='_quarterly_detractors'
+  ) }},
+    {{ dbt_utils.pivot(
+      'user_role',
+      dbt_utils.get_column_values(ref('int_user_nps_score_spined'), 'user_role'),
+      agg='sum',
+      then_value='quarterly_passives',
+      quote_identifiers=False,
+      suffix='_quarterly_passives'
+  ) }},
+    {{ dbt_utils.pivot(
+      'user_role',
+      dbt_utils.get_column_values(ref('int_user_nps_score_spined'), 'user_role'),
+      agg='sum',
+      then_value='quarterly_nps_users',
+      quote_identifiers=False,
+      suffix='_quarterly_nps_users'
+  ) }}
+    FROM
     {{ ref('int_user_nps_score_spined') }} a 
-    join {{ ref('int_nps_server_version_spined') }} b 
+)
+SELECT a.*,
+b.server_version AS server_version
+    from user_metrics a
+ {{ ref('int_nps_server_version_spined') }} b 
     on a.server_id = b.server_id and a.activity_date = b.activity_date
-GROUP BY
-    a.activity_date,
-    a.server_id,
-    a.user_role,
-    b.server_version
-ORDER BY
-    a.activity_date DESC
