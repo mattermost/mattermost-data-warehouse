@@ -1,0 +1,17 @@
+selectors:
+  - name: skip_views_but_test_views
+    description: >
+      A default selector that will exclude materializing views without skipping tests on views. This is useful in
+      case views do not change that often (i.e. staging models). New and modified views can execute on a separate
+      job whenever they are merged to main branch.
+    default: true
+    definition:
+      union:
+        - union:
+          - method: path
+            value: "*"
+          - exclude:
+            - method: config.materialized
+              value: view
+        - method: resource_type
+          value: test
