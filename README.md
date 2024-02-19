@@ -34,7 +34,6 @@ data to other tools.
 ├── docs                    <--- Extra documentation.
 ├── extract                 <--- Python scripts that extract data from various locations.
 │  └── s3_extract           <--- Various utilities for importing data from S3 to Snowflake
-├── k8s                     <--- Pod definitions for Pipelinewise
 ├── load        
 │  └── snowflake            <--- Snowflake role definitions
 ├── README.md               <--- This file
