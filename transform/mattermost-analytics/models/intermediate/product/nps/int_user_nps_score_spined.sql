@@ -11,6 +11,7 @@ WITH first_score_day AS (
         MIN(event_date) AS min_event_date
     FROM 
         {{ ref('int_nps_score') }}
+    WHERE event_date >= '{{ var('telemetry_start_date')}}'
     GROUP BY 
         ALL
 ), spined AS (
