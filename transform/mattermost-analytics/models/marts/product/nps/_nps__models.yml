@@ -74,7 +74,7 @@ models:
       - name: quarterly_nps_users
         description: The total unique count of users who submitted NPS score in the last 90 days.
       - name: user_promoters
-        description: The unique count of user_role users who submitted NPS score above 8 for the given server.
+        description: The unique count of users who submitted NPS score above 8 for the given server.
       - name: user_detractors
         description: The unique count of users who submitted NPS score below 7 for the given server.
       - name: user_passives
