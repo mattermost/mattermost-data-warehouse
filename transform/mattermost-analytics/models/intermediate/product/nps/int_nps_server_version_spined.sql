@@ -1,33 +1,25 @@
-with first_server_version as 
+WITH first_server_version AS 
 (
-    select 
+    SELECT 
         server_id
         , min(event_date) min_event_date
-    from {{ ref('int_nps_score') }}
-    where event_date >= '{{ var('telemetry_start_date')}}'
-        group by all
+    FROM {{ ref('int_nps_score') }}
+    WHERE event_date >= '{{ var('telemetry_start_date')}}'
+        GROUP BY all
 )
-, spined as (
-    select 
-        date_day::date as activity_date
-        , server_id as server_id
-    from first_server_version fsd
-    left join {{ ref('telemetry_days') }} td 
-        on date_day::date >= min_event_date
-) 
-, server_version_cte as (
-    select 
-        sp.activity_date
-        , sp.server_id
-        , FIRST_VALUE(nps_score.server_version IGNORE NULLS) OVER (
-            PARTITION BY sp.server_id 
+, spined AS (
+    SELECT 
+        date_day::DATE AS activity_date
+        , server_id AS server_id
+        , FIRST_VALUE(server_version IGNORE NULLS) OVER (
+            PARTITION BY server_id 
             ORDER BY activity_date DESC
             ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING)
-            AS server_version
-    from spined sp 
-    left join {{ ref('int_nps_score') }} nps_score 
-    on sp.server_id = nps_score.server_id  and sp.activity_date = nps_score.event_date
-) select * from server_version_cte 
-    order by activity_date desc
+        AS server_version
+    FROM first_server_version fsd
+    LEFT JOIN {{ ref('telemetry_days') }} td 
+        ON date_day::DATE >= min_event_date
+) SELECT * FROM spined 
+    ORDER BY activity_date DESC
 
 
