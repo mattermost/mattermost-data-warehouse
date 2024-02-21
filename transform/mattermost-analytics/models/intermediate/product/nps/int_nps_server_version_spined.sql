@@ -2,6 +2,7 @@ WITH first_server_version AS
 (
     SELECT 
         server_id
+        , server_version
         , min(event_date) min_event_date
     FROM {{ ref('int_nps_score') }}
     WHERE event_date >= '{{ var('telemetry_start_date')}}'
