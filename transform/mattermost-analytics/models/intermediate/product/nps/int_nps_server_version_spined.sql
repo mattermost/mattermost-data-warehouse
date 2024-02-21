@@ -26,8 +26,8 @@ server_version_cte AS (
 SELECT 
     activity_date,
     server_id,
-    FIRST_VALUE(nps_score.server_version IGNORE NULLS) OVER (
-        PARTITION BY sp.server_id 
+    FIRST_VALUE(server_version IGNORE NULLS) OVER (
+        PARTITION BY server_id 
         ORDER BY activity_date DESC
         ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
     ) AS server_version
