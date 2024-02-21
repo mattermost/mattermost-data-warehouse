@@ -58,18 +58,66 @@ models:
       - name: user_role
         description: The role of the user who submitted feedback.        
       - name: promoters
-        description: The unique count of users who submitted NPS score above 8 for the given server.
+        description: The total unique count of users who submitted NPS score above 8 for the given server.
       - name: detractors
-        description: The unique count of users who submitted NPS score below 7 for the given server.
+        description: The total unique count of users who submitted NPS score below 7 for the given server.
       - name: passives
-        description: The unique count of users who submitted NPS score of 7 or 8 for the given server.
+        description: The total unique count of users who submitted NPS score of 7 or 8 for the given server.
       - name: nps_users
-        description: The unique count of users who submitted NPS score.
+        description: The total unique count of users who submitted NPS score.
       - name: quarterly_promoters
-        description: The unique count of users who submitted NPS score above 8 for the given server in the last 90 days.
+        description: The total unique count of users who submitted NPS score above 8 for the given server in the last 90 days.
       - name: quarterly_detractors
-        description: The unique count of users who submitted NPS score below 7 for the given server in the last 90 days.
+        description: The total unique count of users who submitted NPS score below 7 for the given server in the last 90 days.
       - name: quarterly_passives
-        description: The unique count of users who submitted NPS score of 7 or 8 for the given server in the last 90 days.
+        description: The total unique count of users who submitted NPS score of 7 or 8 for the given server in the last 90 days.
       - name: quarterly_nps_users
+        description: The total unique count of users who submitted NPS score in the last 90 days.
+      - name: user_promoters
+        description: The unique count of user_role users who submitted NPS score above 8 for the given server.
+      - name: user_detractors
+        description: The unique count of users who submitted NPS score below 7 for the given server.
+      - name: user_passives
+        description: The unique count of users who submitted NPS score of 7 or 8 for the given server.
+      - name: user_nps_users
+        description: The unique count of users who submitted NPS score.
+      - name: user_quarterly_promoters
+        description: The unique count of users who submitted NPS score above 8 for the given server in the last 90 days.
+      - name: user_quarterly_detractors
+        description: The unique count of users who submitted NPS score below 7 for the given server in the last 90 days.
+      - name: user_quarterly_passives
+        description: The unique count of users who submitted NPS score of 7 or 8 for the given server in the last 90 days.
+      - name: user_quarterly_nps_users
         description: The unique count of users who submitted NPS score in the last 90 days.
+      - name: team_admin_promoters
+        description: The unique count of team admins who submitted NPS score above 8 for the given server.
+      - name: team_admin_detractors
+        description: The unique count of team admins who submitted NPS score below 7 for the given server.
+      - name: team_admin_passives
+        description: The unique count of team admins who submitted NPS score of 7 or 8 for the given server.
+      - name: team_admin_nps_users
+        description: The unique count of team admins who submitted NPS score.
+      - name: team_admin_quarterly_promoters
+        description: The unique count of team admins who submitted NPS score above 8 for the given server in the last 90 days.
+      - name: team_admin_quarterly_detractors
+        description: The unique count of team admins who submitted NPS score below 7 for the given server in the last 90 days.
+      - name: team_admin_quarterly_passives
+        description: The unique count of team admins who submitted NPS score of 7 or 8 for the given server in the last 90 days.
+      - name: team_admin_quarterly_nps_users
+        description: The unique count of team admins who submitted NPS score in the last 90 days.
+      - name: system_admin_promoters
+        description: The unique count of system admins who submitted NPS score above 8 for the given server.
+      - name: system_admin_detractors
+        description: The unique count of system admins who submitted NPS score below 7 for the given server.
+      - name: system_admin_passives
+        description: The unique count of system admins who submitted NPS score of 7 or 8 for the given server.
+      - name: system_admin_nps_users
+        description: The unique count of system admins who submitted NPS score.
+      - name: system_admin_quarterly_promoters
+        description: The unique count of system admins who submitted NPS score above 8 for the given server in the last 90 days.
+      - name: system_admin_quarterly_detractors
+        description: The unique count of system admins who submitted NPS score below 7 for the given server in the last 90 days.
+      - name: system_admin_quarterly_passives
+        description: The unique count of system admins who submitted NPS score of 7 or 8 for the given server in the last 90 days.
+      - name: system_admin_quarterly_nps_users
+        description: The unique count of system admins who submitted NPS score in the last 90 days.
