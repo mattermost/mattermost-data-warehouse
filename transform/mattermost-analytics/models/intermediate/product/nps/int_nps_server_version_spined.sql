@@ -21,7 +21,6 @@ server_version_cte AS (
     FROM spined sp 
     LEFT JOIN {{ ref('int_nps_score') }} nps_score 
         ON sp.server_id = nps_score.server_id AND sp.activity_date = nps_score.event_date
-    GROUP BY all
 )
 SELECT 
     activity_date,
@@ -32,3 +31,4 @@ SELECT
         ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
     ) AS server_version
 FROM server_version_cte
+QUALIFY ROW_NUMBER() OVER (PARTITION BY activity_date, server_id, server_version ORDER BY activity_date DESC) = 1
