@@ -22,6 +22,7 @@ server_version_cte AS (
     FROM spined sp 
     LEFT JOIN {{ ref('int_nps_score') }} nps_score 
         ON sp.server_id = nps_score.server_id AND sp.activity_date = nps_score.event_date
+    where nps_score.event_date >= '{{ var('telemetry_start_date')}}'
 )
 SELECT 
     activity_date,
