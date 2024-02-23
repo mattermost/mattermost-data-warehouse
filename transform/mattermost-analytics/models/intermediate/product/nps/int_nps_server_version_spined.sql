@@ -3,6 +3,7 @@ WITH first_server_version AS (
         server_id,
         MIN(event_date) AS min_event_date
     FROM {{ ref('int_nps_score') }}
+    WHERE event_date >= '{{ var('telemetry_start_date')}}'
     GROUP BY all
 ),
 spined AS (
