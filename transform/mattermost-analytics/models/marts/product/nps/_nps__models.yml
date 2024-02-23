@@ -54,9 +54,12 @@ models:
         tests:
           - not_null
       - name: server_version
-        description: The server's version.     
-      - name: user_role
-        description: The role of the user who submitted feedback.        
+        description: The server's version.
+      - name: daily_server_id
+        description: A unique identifier for the nps score generated from server_id, activity_date.
+        tests:
+          - not_null
+          - unique           
       - name: promoters
         description: The total unique count of users who submitted NPS score above 8 for the given server.
       - name: detractors

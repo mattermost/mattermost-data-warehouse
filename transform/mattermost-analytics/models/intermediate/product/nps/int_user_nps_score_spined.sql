@@ -44,11 +44,11 @@ WITH first_score_day AS (
             PARTITION BY sp.server_id, sp.user_id 
             ORDER BY activity_date DESC
             ROWS BETWEEN CURRENT ROW AND 89 FOLLOWING
-        ) AS score_last_90_days,
-        CASE WHEN score_last_90_days > 8 THEN 1 ELSE 0 END AS quarterly_promoters,
-        CASE WHEN score_last_90_days < 7 THEN 1 ELSE 0 END AS quarterly_detractors,
-        CASE WHEN score_last_90_days > 6 AND score_last_90_days < 9 THEN 1 ELSE 0 END AS quarterly_passives,
-        CASE WHEN score_last_90_days IS NOT NULL THEN 1 ELSE 0 END AS quarterly_nps_users
+        ) AS score_last_90d,
+        CASE WHEN score_last_90d > 8 THEN 1 ELSE 0 END AS promoters_last90d,
+        CASE WHEN score_last_90d < 7 THEN 1 ELSE 0 END AS detractors_last90d,
+        CASE WHEN score_last_90d > 6 AND score_last_90d < 9 THEN 1 ELSE 0 END AS passives_last90d,
+        CASE WHEN score_last_90d IS NOT NULL THEN 1 ELSE 0 END AS nps_users_last90d
     FROM 
         spined sp
     LEFT JOIN 

@@ -17,7 +17,7 @@ server_version_cte AS (
     SELECT 
         sp.activity_date,
         sp.server_id,
-        MAX(nps_score.server_version) AS server_version
+        nps_score.server_version AS server_version
     FROM spined sp 
     LEFT JOIN {{ ref('int_nps_score') }} nps_score 
         ON sp.server_id = nps_score.server_id AND sp.activity_date = nps_score.event_date
