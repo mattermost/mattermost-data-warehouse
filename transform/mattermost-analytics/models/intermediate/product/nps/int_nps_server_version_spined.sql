@@ -11,7 +11,7 @@ spined AS (
         date_day::date AS activity_date,
         server_id AS server_id
     FROM first_server_version fsd
-    LEFT JOIN {{ ref('telemetry_days') }} td 
+    LEFT JOIN {{ ref('nps_days') }} td 
         ON date_day::date >= min_event_date
 ),
 server_version_cte AS (

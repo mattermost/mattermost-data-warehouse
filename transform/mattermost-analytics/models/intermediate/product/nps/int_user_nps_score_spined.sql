@@ -22,7 +22,7 @@ WITH first_score_day AS (
     FROM 
         first_score_day fsd
     LEFT JOIN 
-        {{ ref('telemetry_days') }} td 
+        {{ ref('nps_days') }} td 
     ON 
         date_day::date >= min_event_date
 ), score_cte AS (
