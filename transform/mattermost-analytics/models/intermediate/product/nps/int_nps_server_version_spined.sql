@@ -3,7 +3,7 @@ WITH first_server_version AS (
         server_id,
         MIN(event_date) AS min_event_date
     FROM {{ ref('int_nps_score') }}
-    WHERE event_date >= '{{ var('telemetry_start_date')}}'
+    WHERE event_date >= '{{ var('nps_start_date')}}'
     GROUP BY all
 ),
 spined AS (
@@ -22,7 +22,6 @@ server_version_cte AS (
     FROM spined sp 
     LEFT JOIN {{ ref('int_nps_score') }} nps_score 
         ON sp.server_id = nps_score.server_id AND sp.activity_date = nps_score.event_date
-    where nps_score.event_date >= '{{ var('telemetry_start_date')}}'
 )
 SELECT 
     activity_date,

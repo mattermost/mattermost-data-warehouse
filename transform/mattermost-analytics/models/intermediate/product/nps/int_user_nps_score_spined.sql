@@ -11,7 +11,7 @@ WITH first_score_day AS (
         MIN(event_date) AS min_event_date
     FROM 
         {{ ref('int_nps_score') }}
-    WHERE event_date >= '{{ var('telemetry_start_date')}}'
+    WHERE event_date >= '{{ var('nps_start_date')}}'
     GROUP BY 
         ALL
 ), spined AS (
@@ -57,7 +57,6 @@ WITH first_score_day AS (
         sp.server_id = nps_score.server_id 
         AND sp.user_id = nps_score.user_id 
         AND sp.activity_date = nps_score.event_date
-    where nps_score.event_date >= '{{ var('telemetry_start_date')}}'
 )
 SELECT * 
 FROM 
