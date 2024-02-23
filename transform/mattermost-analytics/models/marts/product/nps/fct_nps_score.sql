@@ -7,7 +7,7 @@ with user_metrics as (
       agg='sum',
       then_value='promoters',
       quote_identifiers=False,
-      prefix='count_'
+      prefix='count_',
       suffix='_promoters_daily'
   ) }},
     {{ dbt_utils.pivot(
@@ -16,6 +16,7 @@ with user_metrics as (
       agg='sum',
       then_value='detractors',
       quote_identifiers=False,
+      prefix='count_',
       suffix='_detractors_daily'
   ) }},
     {{ dbt_utils.pivot(
