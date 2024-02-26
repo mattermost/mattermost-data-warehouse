@@ -41,8 +41,6 @@ models:
   - name: fct_nps_score
     description: |
       This model contains NPS user count metrics on server parameters (server_id, server_version, user_role) sent from Rudderstack and Segment sources.
-      Score is calculated for servers after April 2020, since some servers from Segment reported the user_id's as empty prior.
-      This raises divide by zero error with the NPS score calculation.
 
     columns:
       - name: activity_date
