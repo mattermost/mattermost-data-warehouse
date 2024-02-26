@@ -41,7 +41,9 @@ models:
   - name: fct_nps_score
     tests:
       - dbt_utils.expression_is_true:
-          expression: "count_user_promoters_daily + count_team_admin_promoters_daily + count_system_admin_promoters_daily = count_promoters_daily"
+          expression: "count_promoters_daily + count_detractors_daily + count_passives_daily = count_nps_users_daily"
+      - dbt_utils.expression_is_true:
+          expression: "count_promoters_last90d + count_detractors_last90d + count_passives_last90d = count_nps_users_last90d"
     
     description: |
       This model contains NPS user count metrics on server parameters (server_id, server_version, user_role) sent from Rudderstack and Segment sources.
