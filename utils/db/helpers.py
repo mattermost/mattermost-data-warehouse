@@ -1,5 +1,5 @@
 from collections import namedtuple
-from typing import List
+from typing import List, Optional
 
 from snowflake.sqlalchemy import URL
 from sqlalchemy import create_engine
@@ -99,4 +99,25 @@ def move_table(
         ALTER TABLE {source_database}.{source_schema}.{table}
         RENAME TO {target_database}.{target_schema}.{table}{postfix if postfix else ''}
     '''
+    conn.execute(query)
+
+
+def max_column_value(conn: Connection, target_schema: str, table: str, column: str) -> Optional:
+    """
+    Returns the last date of a column.
+    """
+    return conn.execute(f"SELECT MAX({column})::date AS latest_date FROM {target_schema}.{table}").scalar()
+
+
+def copy_from_stage(
+    conn: Connection, stage_schema: str, stage_name: str, path: str, target_schema: str, target_table: str
+):
+    """
+    Full load the data on the target table.
+    """
+    query = f"""
+        COPY INTO {target_schema}.{target_table}
+        FROM @{stage_schema}.{stage_name}/{path}
+        ON_ERROR = 'CONTINUE';
+    """
     conn.execute(query)
