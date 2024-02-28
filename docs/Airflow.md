@@ -44,7 +44,7 @@ Specify the values you'd like to add. More details on how to manage secrets is
 
 ### Example DAG
 
-This is an example DAG that can be used for testing installation. Just copy the code in a pytho file under
+This is an example DAG that can be used for testing installation. Just copy the code in a python file under
 [airflow/dags/mattermost_dags](../airflow/dags/mattermost_dags).
 
 ```python
