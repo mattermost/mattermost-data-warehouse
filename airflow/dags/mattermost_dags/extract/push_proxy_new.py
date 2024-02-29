@@ -11,6 +11,7 @@ from mattermost_dags.kube_secrets import (
     SNOWFLAKE_ACCOUNT,
     SNOWFLAKE_LOAD_DATABASE,
     SNOWFLAKE_LOAD_WAREHOUSE,
+    SNOWFLAKE_LOAD_ROLE,
 )
 
 
@@ -38,12 +39,14 @@ def push_proxy_loader():
             SNOWFLAKE_ACCOUNT,
             SNOWFLAKE_LOAD_DATABASE,
             SNOWFLAKE_LOAD_WAREHOUSE,
+            SNOWFLAKE_LOAD_ROLE,
         ],
         env_vars={},
         arguments=[
             "push_proxy PUSH_PROXY_LOGS_US_NEW LOGS_US_NEW "
             " --prefix /AWSLogs/{{ var.value.push_proxy_aws_account_id }}/elasticloadbalancing/{{ var.value.push_proxy_aws_region }}"
             " -s {{ var.value.push_proxy_target_schema }}"
+            " -a ${SNOWFLAKE_ACCOUNT}"
             " -d ${SNOWFLAKE_LOAD_DATABASE}"
             " -w ${SNOWFLAKE_LOAD_WAREHOUSE}"
             " -r ${SNOWFLAKE_LOAD_ROLE}"
@@ -63,12 +66,14 @@ def push_proxy_loader():
             SNOWFLAKE_ACCOUNT,
             SNOWFLAKE_LOAD_DATABASE,
             SNOWFLAKE_LOAD_WAREHOUSE,
+            SNOWFLAKE_LOAD_ROLE,
         ],
         env_vars={},
         arguments=[
             "push_proxy PUSH_PROXY_LOGS_TEST_NEW LOGS_TEST_NEW "
             " --prefix /AWSLogs/{{ var.value.push_proxy_aws_account_id }}/elasticloadbalancing/{{ var.value.push_proxy_aws_region }}"
             " -s {{ var.value.push_proxy_target_schema }}"
+            " -a ${SNOWFLAKE_ACCOUNT}"
             " -d ${SNOWFLAKE_LOAD_DATABASE}"
             " -w ${SNOWFLAKE_LOAD_WAREHOUSE}"
             " -r ${SNOWFLAKE_LOAD_ROLE}"
