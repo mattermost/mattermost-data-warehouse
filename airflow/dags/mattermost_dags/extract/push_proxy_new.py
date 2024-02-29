@@ -18,7 +18,6 @@ from mattermost_dags.kube_secrets import (
     schedule=None,
     start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
     catchup=False,
-    tags=["example"],
     on_failure_callback=send_alert,
 )
 def push_proxy_loader():
@@ -50,8 +49,7 @@ def push_proxy_loader():
             " -r ${SNOWFLAKE_LOAD_ROLE}"
             " -u ${SNOWFLAKE_LOAD_USER}"
             " -p ${SNOWFLAKE_LOAD_PASSWORD}"
-        ],
-        dag=dag,
+        ]
     )
 
     extract_tpns_logs = KubernetesPodOperator(
@@ -76,14 +74,10 @@ def push_proxy_loader():
             " -r ${SNOWFLAKE_LOAD_ROLE}"
             " -u ${SNOWFLAKE_LOAD_USER}"
             " -p ${SNOWFLAKE_LOAD_PASSWORD}"
-        ],
-        dag=dag,
+        ]
     )
 
-    extract_hpns_us_logs_task_instance = extract_hpns_us_logs()
-    extract_tpns_logs_task_instance = extract_tpns_logs()
-
-    extract_hpns_us_logs_task_instance >> extract_tpns_logs_task_instance
+    extract_hpns_us_logs >> extract_tpns_logs
 
 
-push_proxy_loader()
+dag = push_proxy_loader()
