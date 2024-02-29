@@ -49,7 +49,7 @@ def push_proxy_loader():
             " -r ${SNOWFLAKE_LOAD_ROLE}"
             " -u ${SNOWFLAKE_LOAD_USER}"
             " -p ${SNOWFLAKE_LOAD_PASSWORD}"
-        ]
+        ],
     )
 
     extract_tpns_logs = KubernetesPodOperator(
@@ -74,7 +74,7 @@ def push_proxy_loader():
             " -r ${SNOWFLAKE_LOAD_ROLE}"
             " -u ${SNOWFLAKE_LOAD_USER}"
             " -p ${SNOWFLAKE_LOAD_PASSWORD}"
-        ]
+        ],
     )
 
     extract_hpns_us_logs >> extract_tpns_logs
