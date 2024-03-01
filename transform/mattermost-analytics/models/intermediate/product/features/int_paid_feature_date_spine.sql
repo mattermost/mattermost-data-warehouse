@@ -1,3 +1,10 @@
+{{
+    config({
+        "materialized": "table",
+    })
+}}
+
+
 with paid_feature_daily_usage as (
     select
     {{ dbt_utils.star(from=ref('int_feature_daily_usage_per_user'), relation_alias='u') }},
