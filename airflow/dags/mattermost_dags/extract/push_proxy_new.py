@@ -16,7 +16,7 @@ from mattermost_dags.kube_secrets import (
 
 
 @dag(
-    schedule=None,
+    schedule="0 3 * * *",
     start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
     catchup=False,
     on_failure_callback=send_alert,
