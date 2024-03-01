@@ -3,7 +3,7 @@
         "materialized": "incremental",
         "incremental_strategy": "merge",
         "merge_update_columns": ['received_at_date'],
-        "unique_key": ['daily_user_id'],
+        "unique_key": ['_daily_user_event_key'],
         "cluster_by": ['received_at_date'],
         "snowflake_warehouse": "transform_l"
     })
@@ -19,6 +19,18 @@ select
     , category
     , event_type
     , count(*) as event_count
+    , {{
+        dbt_utils.generate_surrogate_key([
+            'received_at_date',
+            'activity_date',
+            'server_id',
+            'user_id',
+            'event_name',
+            'category',
+            'event_type'
+        ])
+    }} as _daily_user_event_key
+
 from
     {{ ref('stg_mm_telemetry_prod__tracks') }}
 where
