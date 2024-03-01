@@ -1,0 +1,37 @@
+version: 2
+
+seeds:
+  - name: paid_features
+    description: List of events per paid feature.
+    columns:
+      - name: event_name
+        description: | 
+          The name of the event assigned to the paid feature. Note that client events usually define `event` as the value.
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+      - name: category
+        description: The category of the event.
+      - name: event_type
+        description: The type of the event
+      - name: feature_name
+        description: The name of the feature.
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+
+
+  - name: paid_feature_aliases
+    description: Aliases for the paid features. Used internally to help pivoting data.
+    columns:
+      - name: alias
+        description: | 
+          An alias for the feature name. Must contain characters `a-z`, `a-Z`, `0-9` or `_`.
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+      - name: feature_name
+        description: The name of the feature.
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string

@@ -9,9 +9,6 @@
     })
 }}
 
---
--- Store number of events per user per day and per event name.
---
 
 select
     cast(received_at as date) as received_at_date
