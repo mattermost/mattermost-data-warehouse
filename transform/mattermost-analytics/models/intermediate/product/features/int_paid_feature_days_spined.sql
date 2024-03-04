@@ -1,9 +1,8 @@
 {{
     config({
-        "materialized": "table",
+        "materialized": "table"
     })
 }}
--- TODO: make incremental
 
 {%- set mau_days = 29 -%}
 {%- set features = dbt_utils.get_column_values(ref('paid_feature_aliases'), 'alias') -%}
@@ -28,7 +27,8 @@ with server_paid_feature_date_range as (
     from
         server_paid_feature_date_range sd
         left join {{ ref('telemetry_days') }} all_days
-            on all_days.date_day >= sd.first_active_day and all_days.date_day <= least(current_date, dateadd(day, sd.last_active_day, {{mau_days}}))
+            on all_days.date_day >= sd.first_active_day and all_days.date_day <= sd.last_active_day
+    -- least(current_date, dateadd(day, sd.last_active_day, {{mau_days}}))
 )
 select
     daily_server_id
