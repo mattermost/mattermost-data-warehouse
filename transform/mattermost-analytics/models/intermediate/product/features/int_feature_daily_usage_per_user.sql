@@ -18,7 +18,6 @@ select
     , event_name
     , category
     , event_type
-    , count(*) as event_count
     , {{
         dbt_utils.generate_surrogate_key([
             'received_at_date',
@@ -30,7 +29,7 @@ select
             'event_type'
         ])
     }} as _daily_user_event_key
-
+    , count(*) as event_count
 from
     {{ ref('stg_mm_telemetry_prod__tracks') }}
 where
