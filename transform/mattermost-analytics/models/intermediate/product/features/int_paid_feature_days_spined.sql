@@ -47,3 +47,4 @@ select
 from
     spine
     left join {{ ref('int_paid_feature_daily_usage_per_user') }} paid_features
+        on spine.server_id = paid_features.server_id and spine.user_id = paid_features.user_id and spine.activity_date = paid_features.activity_date
