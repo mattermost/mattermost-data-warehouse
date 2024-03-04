@@ -54,7 +54,7 @@ models:
         tests:
           - not_null
       - name: server_id
-        description: The ID of the server the NPS score event originated from..
+        description: The ID of the server the NPS score event originated from.
         tests:
           - not_null
       - name: server_version
