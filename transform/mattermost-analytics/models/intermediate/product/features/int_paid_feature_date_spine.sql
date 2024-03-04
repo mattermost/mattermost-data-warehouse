@@ -39,3 +39,5 @@ select
     }}
 from
     paid_feature_daily_usage
+group by
+    activity_date, server_id, user_id
