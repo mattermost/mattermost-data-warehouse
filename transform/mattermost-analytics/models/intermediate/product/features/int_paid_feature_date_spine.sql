@@ -20,7 +20,7 @@ with feature_aliases as (
         u.activity_date
         , u.server_id
         , u.user_id
-        , f.feature_name,
+        , f.feature_name
         , u.event_count
     from
         {{ ref('int_feature_daily_usage_per_user') }} u
