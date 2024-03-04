@@ -6,7 +6,7 @@
 -- TODO: make incremental
 
 {%- set mau_days = 29 -%}
-{%- set features =  dbt_utils.get_column_values(ref('paid_feature_aliases') -%}
+{%- set features = dbt_utils.get_column_values(ref('paid_feature_aliases'), 'alias') -%}
 
 with server_paid_feature_date_range as (
     select
