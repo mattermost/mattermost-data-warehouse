@@ -1,4 +1,4 @@
-{{ set mau_days = 29 }}
+{%- set mau_days = 29 -%}
 
 with server_paid_feature_date_range as (
     select
