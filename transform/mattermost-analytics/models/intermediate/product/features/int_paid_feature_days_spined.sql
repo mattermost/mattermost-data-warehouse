@@ -18,7 +18,7 @@ with server_paid_feature_date_range as (
     where
         server_date >= '{{ var('telemetry_start_date')}}'
     group by
-        server_id
+        server_id, user_id
 ), spine as (
     select
         sd.server_id
@@ -35,13 +35,15 @@ select
     , server_id
     , activity_date
 {% for feature_column in features %}
-    {%- set column_name = adapter.quote('feature_' ~ feature_column) -%}
+    {%- set column_name = adapter.slugify('feature_' ~ feature_column) -%}
 
-    , {{ column_name }} as {{  adapter.quote(column_name ~ '_daily') }}
-    , max({{column_name}}) over(
-        partition by spine.server_id, spine.user_id order by spined.date_day
-        rows between {{ mau_days }} preceding and current row
-    ) as {{  adapter.quote(column_name ~ '_monthly') }}
+    , coalesce({{ column_name }}, 0) as {{ adapter.slugify('feature_' ~ feature_column ~ '_daily') }}
+    , coalesce (
+        max ({{column_name}}) over(
+            partition by spine.server_id, spine.user_id order by spined.date_day
+            rows between {{ mau_days }} preceding and current row
+        ), 0
+    )as {{  adapter.slugify('feature_' ~ feature_column ~ '_monthly') }}
 {% endfor %}
 
 from

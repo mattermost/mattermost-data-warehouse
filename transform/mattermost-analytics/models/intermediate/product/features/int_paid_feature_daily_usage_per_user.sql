@@ -8,6 +8,7 @@
 -- Creates a table where each row holds which paid features were used by each server/user.
 --
 with feature_aliases as (
+    -- Get feature alias for each feature. This is required to get each feature as a column.
     select
         f.event_name
         , f.category
@@ -18,6 +19,7 @@ with feature_aliases as (
         join {{ ref('paid_feature_aliases') }} a on f.feature_name = a.feature_name
 
 ), paid_feature_daily_usage as (
+    -- Keep only events for paid features.
     select
         u.activity_date
         , u.server_id
@@ -28,6 +30,7 @@ with feature_aliases as (
         {{ ref('int_feature_daily_usage_per_user') }} u
         join feature_aliases f on u.event_name = f.event_name and u.category = f.category and f.event_type = u.event_type
 )
+-- Row per date, server, user. Contains one column per paid feature.
 select
     activity_date
     , server_id
@@ -36,7 +39,8 @@ select
         dbt_utils.pivot(
             'feature_name',
             dbt_utils.get_column_values(ref('paid_feature_aliases'), 'alias'),
-            prefix='feature_'
+            prefix='feature_',
+            quote_identifiers=False
         )
     }}
 from
