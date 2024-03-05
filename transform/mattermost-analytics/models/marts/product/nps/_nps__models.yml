@@ -40,11 +40,11 @@ models:
 
   - name: fct_nps_score
     tests:
-      - name: count_nps_users_check_daily
-        dbt_utils.expression_is_true:
+      - dbt_utils.expression_is_true:
+          name: count_nps_users_check_daily
           expression: "count_promoters_daily + count_detractors_daily + count_passives_daily = count_nps_users_daily"
-      - name: count_nps_users_check_last90d
-        dbt_utils.expression_is_true:
+      - dbt_utils.expression_is_true:
+          name: count_nps_users_check_daily
           expression: "count_promoters_last90d + count_detractors_last90d + count_passives_last90d = count_nps_users_last90d"
     
     description: |
