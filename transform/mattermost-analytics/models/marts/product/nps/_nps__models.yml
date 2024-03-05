@@ -37,3 +37,96 @@ models:
       - name: user_email
         description: The email of the user who submitted feedback (optional).
         tags: [pii]
+
+  - name: fct_nps_score
+    tests:
+      - dbt_utils.expression_is_true:
+          name: count_nps_users_check_daily
+          expression: "count_promoters_daily + count_detractors_daily + count_passives_daily = count_nps_users_daily"
+      - dbt_utils.expression_is_true:
+          name: count_nps_users_check_last90d
+          expression: "count_promoters_last90d + count_detractors_last90d + count_passives_last90d = count_nps_users_last90d"
+    
+    description: |
+      This model contains NPS user count metrics on server parameters (server_id, server_version, user_role) sent from Rudderstack and Segment sources.
+
+    columns:
+      - name: activity_date
+        description: The date the NPS score event was sent. 
+        tests:
+          - not_null
+      - name: server_id
+        description: The ID of the server the NPS score event originated from.
+        tests:
+          - not_null
+      - name: server_version
+        description: The server's version.
+      - name: daily_server_id
+        description: A unique identifier for the nps score generated from server_id, activity_date.
+        tests:
+          - not_null
+          - unique           
+      - name: count_promoters_daily
+        description: The total unique count of users who submitted NPS score above 8 for the given server.
+      - name: count_detractors_daily
+        description: The total unique count of users who submitted NPS score below 7 for the given server.
+      - name: count_passives_daily
+        description: The total unique count of users who submitted NPS score of 7 or 8 for the given server.
+      - name: count_nps_users_daily
+        description: The total unique count of users who submitted NPS score.
+      - name: count_promoters_last90d
+        description: The total unique count of users who submitted NPS score above 8 for the given server in the last 90 days.
+      - name: count_detractors_last90d
+        description: The total unique count of users who submitted NPS score below 7 for the given server in the last 90 days.
+      - name: count_passives_last90d
+        description: The total unique count of users who submitted NPS score of 7 or 8 for the given server in the last 90 days.
+      - name: count_nps_users_last90d
+        description: The total unique count of users who submitted NPS score in the last 90 days.
+      - name: count_user_promoters_daily
+        description: The unique count of users who submitted NPS score above 8 for the given server.
+      - name: count_user_detractors_daily
+        description: The unique count of users who submitted NPS score below 7 for the given server.
+      - name: count_user_passives_daily
+        description: The unique count of users who submitted NPS score of 7 or 8 for the given server.
+      - name: count_user_nps_users_daily
+        description: The unique count of users who submitted NPS score.
+      - name: count_user_promoters_last90d
+        description: The unique count of users who submitted NPS score above 8 for the given server in the last 90 days.
+      - name: count_user_detractors_last90d
+        description: The unique count of users who submitted NPS score below 7 for the given server in the last 90 days.
+      - name: count_user_passives_last90d
+        description: The unique count of users who submitted NPS score of 7 or 8 for the given server in the last 90 days.
+      - name: count_user_nps_users_last90d
+        description: The unique count of users who submitted NPS score in the last 90 days.
+      - name: count_team_admin_promoters_daily
+        description: The unique count of team admins who submitted NPS score above 8 for the given server.
+      - name: count_team_admin_detractors_daily
+        description: The unique count of team admins who submitted NPS score below 7 for the given server.
+      - name: count_team_admin_passives_daily
+        description: The unique count of team admins who submitted NPS score of 7 or 8 for the given server.
+      - name: count_team_admin_nps_users_daily
+        description: The unique count of team admins who submitted NPS score.
+      - name: count_team_admin_promoters_last90d
+        description: The unique count of team admins who submitted NPS score above 8 for the given server in the last 90 days.
+      - name: count_team_admin_detractors_last90d
+        description: The unique count of team admins who submitted NPS score below 7 for the given server in the last 90 days.
+      - name: count_team_admin_passives_last90d
+        description: The unique count of team admins who submitted NPS score of 7 or 8 for the given server in the last 90 days.
+      - name: count_team_admin_nps_users_last90d
+        description: The unique count of team admins who submitted NPS score in the last 90 days.
+      - name: count_system_admin_promoters_daily
+        description: The unique count of system admins who submitted NPS score above 8 for the given server.
+      - name: count_system_admin_detractors_daily
+        description: The unique count of system admins who submitted NPS score below 7 for the given server.
+      - name: count_system_admin_passives_daily
+        description: The unique count of system admins who submitted NPS score of 7 or 8 for the given server.
+      - name: count_system_admin_nps_users_daily
+        description: The unique count of system admins who submitted NPS score.
+      - name: count_system_admin_promoters_last90d
+        description: The unique count of system admins who submitted NPS score above 8 for the given server in the last 90 days.
+      - name: count_system_admin_detractors_last90d
+        description: The unique count of system admins who submitted NPS score below 7 for the given server in the last 90 days.
+      - name: count_system_admin_passives_last90d
+        description: The unique count of system admins who submitted NPS score of 7 or 8 for the given server in the last 90 days.
+      - name: count_system_admin_nps_users_last90d
+        description: The unique count of system admins who submitted NPS score in the last 90 days.
