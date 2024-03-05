@@ -11,12 +11,12 @@ with server_paid_feature_date_range as (
     select
         server_id
         , user_id
-        , min(server_date) as first_server_date
-        , max(server_date) as last_server_date
+        , min(activity_date) as first_active_day
+        , max(activity_date) as last_active_day
     from
         {{ ref('int_paid_feature_daily_usage_per_user') }}
     where
-        server_date >= '{{ var('telemetry_start_date')}}'
+        activity_date >= '{{ var('telemetry_start_date')}}'
     group by
         server_id, user_id
 ), spine as (
@@ -31,19 +31,19 @@ with server_paid_feature_date_range as (
     -- least(current_date, dateadd(day, sd.last_active_day, {{mau_days}}))
 )
 select
-    daily_server_id
-    , server_id
-    , activity_date
+    spine.server_id
+    , spine.user_id
+    , spine.activity_date
 {% for feature_column in features %}
-    {%- set column_name = adapter.slugify('feature_' ~ feature_column) -%}
+    {%- set column_name = dbt_utils.slugify('feature_' ~ feature_column) -%}
 
-    , coalesce({{ column_name }}, 0) as {{ adapter.slugify('feature_' ~ feature_column ~ '_daily') }}
+    , coalesce({{ column_name }}, 0) as {{ dbt_utils.slugify(column_name ~ '_daily') }}
     , coalesce (
         max ({{column_name}}) over(
             partition by spine.server_id, spine.user_id order by spined.date_day
             rows between {{ mau_days }} preceding and current row
         ), 0
-    )as {{  adapter.slugify('feature_' ~ feature_column ~ '_monthly') }}
+    )as {{  dbt_utils.slugify(column_name ~ '_monthly') }}
 {% endfor %}
 
 from
