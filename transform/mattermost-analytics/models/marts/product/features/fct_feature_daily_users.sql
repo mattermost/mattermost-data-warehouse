@@ -19,15 +19,18 @@ with server_date_range as (
     from
         server_date_range sd
         left join {{ ref('telemetry_days') }} all_days
-            on all_days.date_day >= sd.first_active_day and all_days.date_day <= least(current_date, dateadd(day, sd.last_active_day, {{mau_days}}))
+            on all_days.date_day >= sd.first_active_day and all_days.date_day <= least(current_date, dateadd(day, {{mau_days}}, sd.last_active_day))
 )
 select
     server_spine.server_id
     , server_spine.activity_date
-{% for metric_column in metric_cols %}
+{% for metric_column in metric_cols -%}
     , coalesce(sum({{metric_column}}), 0) as count_{{metric_column}}
-{% endfor %}
+{%- endfor %}
 from
     server_spine
     left join {{ ref('int_paid_feature_days_spined') }} feature_spine
         on server_spine.server_id = feature_spine.server_id and server_spine.activity_date = feature_spine.activity_date
+group by
+    server_spine.server_id
+    , server_spine.activity_date
