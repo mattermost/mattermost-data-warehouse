@@ -40,7 +40,7 @@ select
     , coalesce({{ column_name }}, 0) as {{ dbt_utils.slugify(column_name ~ '_daily') }}
     , coalesce (
         max ({{column_name}}) over(
-            partition by spine.server_id, spine.user_id order by spine.date_day
+            partition by spine.server_id, spine.user_id order by spine.activity_date
             rows between {{ mau_days }} preceding and current row
         ), 0
     ) as {{  dbt_utils.slugify(column_name ~ '_monthly') }}
