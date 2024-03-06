@@ -34,15 +34,15 @@ select
     , spine.user_id
     , spine.activity_date
 {% for feature_column in features %}
-    {%- set column_name = dbt_utils.slugify('feature_' ~ feature_column) -%}
+    {%- set column_name = dbt_utils.slugify('count_feature_' ~ feature_column ~ '_events') -%}
 
-    , coalesce({{ column_name }}, 0) as {{ dbt_utils.slugify('count_events_' ~ column_name ~ '_daily') }}
+    , coalesce({{ column_name }}, 0) as {{ dbt_utils.slugify(column_name ~ '_daily') }}
     , coalesce (
         sum ({{column_name}}) over(
             partition by spine.server_id, spine.user_id order by spine.activity_date
             rows between {{ mau_days }} preceding and current row
         ), 0
-    ) as {{ dbt_utils.slugify('count_events_' ~ column_name ~ '_monthly') }}
+    ) as {{ dbt_utils.slugify(column_name ~ '_monthly') }}
 {% endfor %}
 from
     spine

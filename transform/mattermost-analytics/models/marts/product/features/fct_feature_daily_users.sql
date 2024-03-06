@@ -1,5 +1,5 @@
 {%- set mau_days = 29 -%}
-{%- set metric_cols = dbt_utils.get_filtered_columns_in_relation(ref('int_paid_feature_days_spined'), except=['server_id', 'user_id', 'activity_date']) -%}
+{%- set features = dbt_utils.get_column_values(ref('paid_feature_aliases'), 'alias') -%}
 
 with server_date_range as (
     select
@@ -26,7 +26,7 @@ select
     , server_spine.activity_date
 {% for metric_column in metric_cols -%}
     , coalesce(sum({{metric_column}}), 0) as {{metric_column}}
-    , count_if({{metric_column}} > 0) as {{ dbt_utils.slugify('count_events_' ~ column_name ~ '_users') }}
+    , count_if({{metric_column}} > 0) as {{ dbt_utils.slugify(column_name ~ '_users') }}
 {%- endfor %}
 from
     server_spine

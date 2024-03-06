@@ -42,6 +42,7 @@ select
             agg='sum',
             then_value='event_count',
             prefix='count_feature_',
+            suffix='_events'
             quote_identifiers=False
         )
     }}
