@@ -1,4 +1,3 @@
-{%- set mau_days = 29 -%}
 {%- set metric_cols = dbt_utils.get_filtered_columns_in_relation(ref('int_paid_feature_days_spined'), except=['server_id', 'user_id', 'activity_date']) -%}
 
 with server_date_range as (
@@ -19,7 +18,7 @@ with server_date_range as (
     from
         server_date_range sd
         left join {{ ref('telemetry_days') }} all_days
-            on all_days.date_day >= sd.first_active_day and all_days.date_day <= least(current_date, dateadd(day, {{mau_days}}, sd.last_active_day))
+            on all_days.date_day >= sd.first_active_day and all_days.date_day <= sd.last_active_day
 )
 select
     server_spine.server_id

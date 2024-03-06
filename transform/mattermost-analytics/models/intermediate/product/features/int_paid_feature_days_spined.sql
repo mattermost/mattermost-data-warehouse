@@ -27,7 +27,7 @@ with server_paid_feature_date_range as (
     from
         server_paid_feature_date_range sd
         left join {{ ref('telemetry_days') }} all_days
-            on all_days.date_day >= sd.first_active_day and all_days.date_day <= sd.last_active_day
+            on all_days.date_day >= sd.first_active_day and all_days.date_day <= least(current_date, dateadd(day, {{mau_days}}, sd.last_active_day))
 )
 select
     spine.server_id
