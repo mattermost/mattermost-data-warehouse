@@ -26,7 +26,7 @@ select
     , server_spine.activity_date
 {% for metric_column in metric_cols -%}
     , coalesce(sum({{metric_column}}), 0) as {{metric_column}}
-    , count_if({{metric_column}} > 0) as {{ dbt_utils.slugify(column_name ~ '_users') }}
+    , count_if({{metric_column}} > 0) as {{ dbt_utils.slugify(metric_column ~ '_users') }}
 {%- endfor %}
 from
     server_spine
