@@ -39,7 +39,9 @@ select
         dbt_utils.pivot(
             'feature_name',
             dbt_utils.get_column_values(ref('paid_feature_aliases'), 'alias'),
-            prefix='feature_',
+            agg='sum',
+            then_value='event_count',
+            prefix='count_feature_',
             quote_identifiers=False
         )
     }}
