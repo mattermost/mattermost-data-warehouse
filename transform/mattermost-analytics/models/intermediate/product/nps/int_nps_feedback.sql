@@ -6,7 +6,8 @@ select
     , event_date as event_date
     , timestamp as timestamp
     -- server_version only contains major and minor
-    , server_version_major || '.' || server_version_major as server_version,    , feedback as feedback
+    , server_version_major || '.' || server_version_minor as server_version,    
+    , feedback as feedback
     , user_role as user_role
     , received_at as feedback_received_at
     , null as user_email
@@ -22,7 +23,8 @@ select
     , event_date as event_date
     , timestamp as timestamp
     -- server_version only contains major and minor
-    , server_version_major || '.' || server_version_major as server_version,    , feedback as feedback
+    , server_version_major || '.' || server_version_minor as server_version,    
+    , feedback as feedback
     , user_role as user_role
     , received_at as feedback_received_at
     , user_email as user_email
