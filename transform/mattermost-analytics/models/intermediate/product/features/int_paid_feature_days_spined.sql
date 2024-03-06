@@ -28,22 +28,21 @@ with server_paid_feature_date_range as (
         server_paid_feature_date_range sd
         left join {{ ref('telemetry_days') }} all_days
             on all_days.date_day >= sd.first_active_day and all_days.date_day <= sd.last_active_day
-    -- least(current_date, dateadd(day, sd.last_active_day, {{mau_days}}))
 )
 select
     spine.server_id
     , spine.user_id
     , spine.activity_date
 {% for feature_column in features %}
-    {%- set column_name = dbt_utils.slugify('count_feature_' ~ feature_column) -%}
+    {%- set column_name = dbt_utils.slugify('feature_' ~ feature_column) -%}
 
-    , coalesce({{ column_name }}, 0) as {{ dbt_utils.slugify(column_name ~ '_daily') }}
+    , coalesce({{ column_name }}, 0) as {{ dbt_utils.slugify('count_events_' ~ column_name ~ '_daily') }}
     , coalesce (
         sum ({{column_name}}) over(
             partition by spine.server_id, spine.user_id order by spine.activity_date
             rows between {{ mau_days }} preceding and current row
         ), 0
-    ) as {{  dbt_utils.slugify(column_name ~ '_monthly') }}
+    ) as {{ dbt_utils.slugify('count_events_' ~ column_name ~ '_monthly') }}
 {% endfor %}
 from
     spine
