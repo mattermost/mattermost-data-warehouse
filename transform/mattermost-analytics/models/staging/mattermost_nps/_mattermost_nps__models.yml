@@ -33,7 +33,13 @@ models:
       - name: server_install_date
         description: Server installation date.  
       - name: server_version
-        description: The server's version.  
+        description: The full version string of the server's semver.
+      - name: server_version_major
+        description: The major version of the server at the time the event was submitted.
+      - name: server_version_minor
+        description: The minor version of the server at the time the event was submitted.
+      - name: server_version_patch
+        description: The patch version of the server at the time the event was submitted.
       - name: context_library_version
         description: The version of Segment library used to send this event.   
       - name: context_library_name
@@ -79,7 +85,13 @@ models:
       - name: server_install_date
         description: Server installation date.
       - name: server_version
-        description: The server's version.   
+        description: The full version string of the server's semver.
+      - name: server_version_major
+        description: The major version of the server at the time the event was submitted.
+      - name: server_version_minor
+        description: The minor version of the server at the time the event was submitted.
+      - name: server_version_patch
+        description: The patch version of the server at the time the event was submitted.  
       - name: context_library_version
         description: The version of Segment library used to send this event.   
       - name: context_library_name
