@@ -1,5 +1,5 @@
 {%- set mau_days = 29 -%}
-{%- set features = dbt_utils.get_column_values(ref('paid_feature_aliases'), 'alias') -%}
+{%- set metric_cols = dbt_utils.get_filtered_columns_in_relation(ref('int_paid_feature_days_spined'), except=['server_id', 'user_id', 'activity_date']) -%}
 
 with server_date_range as (
     select
