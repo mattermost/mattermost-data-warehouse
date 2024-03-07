@@ -35,8 +35,6 @@ select
             dbt_utils.get_column_values(ref('feature_aliases'), 'alias'),
             agg='sum',
             then_value='event_count',
-            prefix='count_',
-            suffix='_events',
             quote_identifiers=False
         )
     }}

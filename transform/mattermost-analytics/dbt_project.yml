@@ -100,14 +100,14 @@ seeds:
           name: varchar(50)
     features:
       +schema: seed_product_features
-      paid_features:
+      event_to_feature_mapping:
         # Override column types
         +column_types:
           event_name: varchar(100)
           category: varchar(100)
           event_type: varchar(200)
           feature_name: varchar(50)
-      paid_feature_aliases:
+      feature_aliases:
         # Override column types
         +column_types:
           alias: varchar(20)

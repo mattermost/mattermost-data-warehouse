@@ -35,24 +35,22 @@ select
     , spine.user_id
     , spine.activity_date
 {% for feature_column in features %}
-    {%- set column_name = dbt_utils.slugify('count_' ~ feature_column) -%}
-
-    , coalesce({{ column_name }}, 0) as {{ dbt_utils.slugify(column_name ~ '_events_daily') }}
-    , iff(coalesce({{ column_name }}, 0) > 0, 1, 0) as {{ dbt_utils.slugify(column_name ~ '_users_daily') }}
+    , coalesce({{ feature_column }}, 0) as {{ dbt_utils.slugify('count_' ~ feature_column ~ '_events_daily') }}
+    , iff(coalesce({{ feature_column }}, 0) > 0, 1, 0) as {{ dbt_utils.slugify('count_' ~ feature_column ~ '_users_daily') }}
     , coalesce (
-        sum ({{column_name}}) over(
+        sum ({{feature_column}}) over(
             partition by spine.server_id, spine.user_id order by spine.activity_date
             rows between {{var('monthly_days')}} preceding and current row
         ), 0
-    ) as {{ dbt_utils.slugify(column_name ~ '_events_monthly') }}
+    ) as {{ dbt_utils.slugify('count_' ~ feature_column ~ '_events_monthly') }}
     , iff(
         coalesce (
-            sum ({{column_name}}) over(
+            sum ({{feature_column}}) over(
                 partition by spine.server_id, spine.user_id order by spine.activity_date
                 rows between {{var('monthly_days')}} preceding and current row
             ), 0
         ) > 0, 1, 0
-    ) as {{ dbt_utils.slugify(column_name ~ '_users_monthly') }}
+    ) as {{ dbt_utils.slugify('count_' ~ feature_column ~ '_users_monthly') }}
 {% endfor %}
 from
     spine
