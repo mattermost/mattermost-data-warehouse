@@ -1,4 +1,4 @@
-{%- set metric_cols = dbt_utils.get_filtered_columns_in_relation(ref('int_paid_feature_days_spined'), except=['server_id', 'user_id', 'activity_date']) -%}
+{%- set metric_cols = dbt_utils.get_filtered_columns_in_relation(ref('int_feature_daily_spine'), except=['server_id', 'user_id', 'activity_date']) -%}
 
 with server_date_range as (
     select
@@ -6,7 +6,7 @@ with server_date_range as (
         , min(activity_date) as first_active_day
         , max(activity_date) as last_active_day
     from
-        {{ ref('int_paid_feature_days_spined') }}
+        {{ ref('int_feature_daily_spine') }}
     where
         activity_date >= '{{ var('telemetry_start_date')}}'
     group by

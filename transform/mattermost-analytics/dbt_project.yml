@@ -143,6 +143,11 @@ vars:
   calls_telemetry_start_date: "2022-03-11"
   marketing_newsletter_campaign_id: 701Dm000000gnMlIAI
 
+  # Variables to enforce common practices
+  # Number of days prior to current to consider when calculating rolling monthly. I.e. 29 means 29 prior plus today
+  # equals to a total of 30 days.
+  monthly_days: 29
+
 on-run-start:
   -  '{{ create_parse_qs_udf()}}'
   -  '{{ create_extract_license_data_udf()}}'

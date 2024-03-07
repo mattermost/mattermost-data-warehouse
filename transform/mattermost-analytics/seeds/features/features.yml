@@ -1,12 +1,12 @@
 version: 2
 
 seeds:
-  - name: paid_features
-    description: List of events per paid feature.
+  - name: event_to_feature_mapping
+    description: List of events per feature.
     columns:
       - name: event_name
         description: | 
-          The name of the event assigned to the paid feature. Note that client events usually define `event` as the value.
+          The name of the event assigned to the feature. Note that client events usually define `event` as the value.
         tests:
           - not_null
           - dbt_utils.not_empty_string
@@ -21,8 +21,8 @@ seeds:
           - dbt_utils.not_empty_string
 
 
-  - name: paid_feature_aliases
-    description: Aliases for the paid features. Used internally to help pivoting data.
+  - name: feature_aliases
+    description: Aliases for the features. Used internally to help pivoting data.
     columns:
       - name: alias
         description: | 
