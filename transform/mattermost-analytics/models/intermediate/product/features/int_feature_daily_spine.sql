@@ -1,4 +1,4 @@
--- Materialization required in order for downstream model to be able to
+-- Materialization required in order for downstream model to be able to get list of columns.
 {{
     config({
         "materialized": "table",
@@ -35,14 +35,16 @@ select
     , spine.user_id
     , spine.activity_date
 {% for feature_column in features %}
+    -- For each feature, count the number of of daily and monthly events
     , coalesce({{ feature_column }}, 0) as {{ dbt_utils.slugify('count_' ~ feature_column ~ '_events_daily') }}
-    , iff(coalesce({{ feature_column }}, 0) > 0, 1, 0) as {{ dbt_utils.slugify('count_' ~ feature_column ~ '_users_daily') }}
     , coalesce (
         sum ({{feature_column}}) over(
             partition by spine.server_id, spine.user_id order by spine.activity_date
             rows between {{var('monthly_days')}} preceding and current row
         ), 0
     ) as {{ dbt_utils.slugify('count_' ~ feature_column ~ '_events_monthly') }}
+    -- For each feature, flag the user for daily and monthly
+    , iff(coalesce({{ feature_column }}, 0) > 0, 1, 0) as {{ dbt_utils.slugify('count_' ~ feature_column ~ '_users_daily') }}
     , iff(
         coalesce (
             sum ({{feature_column}}) over(
