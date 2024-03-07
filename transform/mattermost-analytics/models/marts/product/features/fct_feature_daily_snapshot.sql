@@ -15,13 +15,14 @@ with server_date_range as (
     select
         sd.server_id
         , all_days.date_day::date as activity_date
+        , {{ dbt_utils.generate_surrogate_key(['server_id', 'activity_date']) }} AS daily_server_id
     from
         server_date_range sd
         left join {{ ref('telemetry_days') }} all_days
             on all_days.date_day >= sd.first_active_day and all_days.date_day <= sd.last_active_day
 )
 select
-    {{ dbt_utils.generate_surrogate_key(['server_id', 'activity_date']) }} AS daily_server_id
+    server_spine.daily_server_id
     , server_spine.server_id
     , server_spine.activity_date
 {% for metric_column in metric_cols -%}
