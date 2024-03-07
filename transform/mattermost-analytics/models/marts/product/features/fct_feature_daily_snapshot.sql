@@ -28,7 +28,7 @@ select
 {%- endfor %}
 from
     server_spine
-    left join {{ ref('int_paid_feature_days_spined') }} feature_spine
+    left join {{ ref('int_feature_daily_spine') }} feature_spine
         on server_spine.server_id = feature_spine.server_id and server_spine.activity_date = feature_spine.activity_date
 group by
     server_spine.server_id
