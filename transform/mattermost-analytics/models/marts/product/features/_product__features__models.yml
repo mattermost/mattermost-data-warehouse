@@ -1,0 +1,45 @@
+version: 2
+
+models:
+  - name: fct_feature_daily_snapshot
+    description: Daily snapshot of feature usage per server. Uses only known features.
+    columns:
+      - name: daily_server_id
+        description: A unique id for each server and date
+        tests:
+          - unique
+          - not_null
+      - name: activity_date
+        description: The date for the measurement.
+        tests:
+          - not_null
+      - name: server_id
+        description: The server's unique id.
+        tests:
+          - not_null
+      - name: count_message_ack_events_daily
+        description: The number of events related to Message Acknowledgement feature for the current day.
+      - name: count_message_ack_events_monthly
+        description: The number of events related to Message Acknowledgement feature for the current day and past 29 days.
+      - name: count_message_ack_users_daily
+        description: The number of unique users related to Message Acknowledgement feature for the current day.
+      - name: count_message_ack_users_monthly
+        description: The number of unique users related to Message Acknowledgement feature for the current day and past 29 days.
+
+      - name: count_custom_ug_events_daily
+        description: The number of events related to Custom user groups feature for the current day.
+      - name: count_custom_ug_events_monthly
+        description: The number of events related to Custom user groups feature for the current day and past 29 days.
+      - name: count_custom_ug_users_daily
+        description: The number of unique users related to Custom user groups feature for the current day.
+      - name: count_custom_ug_users_monthly
+        description: The number of unique users related to Custom user groups feature for the current day and past 29 days.
+
+      - name: count_guest_accounts_events_daily
+        description: The number of events related to Guest Accounts feature for the current day.
+      - name: count_guest_accounts_events_monthly
+        description: The number of events related to Guest Accounts feature for the current day and past 29 days.
+      - name: count_guest_accounts_users_daily
+        description: The number of unique users related to Guest Accounts feature for the current day.
+      - name: count_guest_accounts_users_monthly
+        description: The number of unique users related to Guest Accounts feature for the current day and past 29 days.

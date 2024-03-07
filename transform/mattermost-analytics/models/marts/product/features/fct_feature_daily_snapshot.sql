@@ -21,7 +21,8 @@ with server_date_range as (
             on all_days.date_day >= sd.first_active_day and all_days.date_day <= sd.last_active_day
 )
 select
-    server_spine.server_id
+    {{ dbt_utils.generate_surrogate_key(['server_id', 'activity_date']) }} AS daily_server_id
+    , server_spine.server_id
     , server_spine.activity_date
 {% for metric_column in metric_cols -%}
     , coalesce(sum({{metric_column}}), 0) as {{metric_column}}
