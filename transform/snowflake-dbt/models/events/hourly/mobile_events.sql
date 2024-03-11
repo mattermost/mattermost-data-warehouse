@@ -1,7 +1,7 @@
 {{config({
     "materialized": "incremental",
     "schema": "events",
-    "tags":"preunion",
+    "tags":["preunion", "nightly"]
     "snowflake_warehouse": "transform_l",
   })
 }}
