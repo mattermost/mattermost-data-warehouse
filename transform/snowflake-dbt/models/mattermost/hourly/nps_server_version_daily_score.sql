@@ -1,7 +1,8 @@
 {{config({
     "materialized": 'incremental',
     "unique_key": 'id',
-    "schema": "mattermost"
+    "schema": "mattermost",
+    "tags":"nightly"
   })
 }}
 {% if is_incremental() %}

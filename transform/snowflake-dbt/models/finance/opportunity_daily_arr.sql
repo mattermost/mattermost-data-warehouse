@@ -1,6 +1,7 @@
 {{config({
     "materialized": "table",
-    "schema": "finance"
+    "schema": "finance",
+    "tags":"nightly"
   })
 }}
 
