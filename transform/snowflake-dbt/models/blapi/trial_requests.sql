@@ -2,7 +2,7 @@
     "materialized": "incremental",
     "schema": "blapi",
     "unique_key":"license_id",
-    "tags":["hourly","blapi", "deprecated"]
+    "tags":["hourly","blapi"]
   })
 }}
 
