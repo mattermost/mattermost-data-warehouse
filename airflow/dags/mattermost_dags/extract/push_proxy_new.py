@@ -71,7 +71,7 @@ def push_proxy_loader():
         env_vars={},
         arguments=[
             "push_proxy PUSH_PROXY_LOGS_TEST_NEW LOGS_TEST_NEW "
-            " --prefix /AWSLogs/{{ var.value.push_proxy_aws_account_id }}/elasticloadbalancing/{{ var.value.push_proxy_aws_region_eu }}"
+            " --prefix /AWSLogs/{{ var.value.push_proxy_aws_account_id }}/elasticloadbalancing/{{ var.value.push_proxy_aws_region }}"
             " -s {{ var.value.push_proxy_target_schema }}"
             " -a ${SNOWFLAKE_ACCOUNT}"
             " -d ${SNOWFLAKE_LOAD_DATABASE}"
@@ -98,7 +98,7 @@ def push_proxy_loader():
         env_vars={},
         arguments=[
             "push_proxy PUSH_PROXY_LOGS_EU_NEW LOGS_EU_NEW "
-            " --prefix /AWSLogs/{{ var.value.push_proxy_aws_account_id }}/elasticloadbalancing/{{ var.value.push_proxy_aws_region }}"
+            " --prefix /AWSLogs/{{ var.value.push_proxy_aws_account_id }}/elasticloadbalancing/{{ var.value.push_proxy_aws_region_eu }}"
             " -s {{ var.value.push_proxy_target_schema }}"
             " -a ${SNOWFLAKE_ACCOUNT}"
             " -d ${SNOWFLAKE_LOAD_DATABASE}"
