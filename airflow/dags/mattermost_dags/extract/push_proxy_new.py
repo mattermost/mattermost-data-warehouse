@@ -58,8 +58,8 @@ def push_proxy_loader():
     extract_hpns_eu_logs = KubernetesPodOperator(
         **pod_defaults,
         image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
-        task_id="task-push-proxy-us",
-        name=f"push-proxy-us",
+        task_id="task-push-proxy-eu",
+        name=f"push-proxy-eu",
         secrets=[
             SNOWFLAKE_LOAD_USER,
             SNOWFLAKE_LOAD_PASSWORD,
