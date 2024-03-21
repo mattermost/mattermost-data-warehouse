@@ -25,13 +25,22 @@ select
     server_spine.daily_server_id
     , server_spine.server_id
     , server_spine.activity_date
+    -- Feature activity
 {% for metric_column in metric_cols -%}
     , coalesce(sum({{metric_column}}), 0) as {{metric_column}}
 {%- endfor %}
+    -- Server-reported activity
+    , coalesce(sas.daily_active_users, 0) as server_daily_active_users
+    , coalesce(sas.monthly_active_users, 0) as server_monthly_active_users
+    , coalesce(sas.count_registered_users, 0) as count_registered_users
+    , coalesce(sas.count_registered_deactivated_users, 0) as count_registered_deactivated_users
+
 from
     server_spine
     left join {{ ref('int_feature_daily_spine') }} feature_spine
         on server_spine.server_id = feature_spine.server_id and server_spine.activity_date = feature_spine.activity_date
+    left join {{ ref('int_server_active_days_spined')}} server_active_days
+        on server_spine.server_id = server_active_days.server_id and server_spine.activity_date = user_active_days.activity_date
 group by
     server_spine.daily_server_id
     , server_spine.server_id
