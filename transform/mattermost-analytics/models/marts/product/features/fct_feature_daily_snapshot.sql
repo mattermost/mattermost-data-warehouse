@@ -41,7 +41,7 @@ with server_date_range as (
 )
 -- Merge with other sources
 select
-    m.*,
+    m.*
     -- Server-reported activity
     , coalesce(sas.daily_active_users, 0) as server_daily_active_users
     , coalesce(sas.monthly_active_users, 0) as server_monthly_active_users
