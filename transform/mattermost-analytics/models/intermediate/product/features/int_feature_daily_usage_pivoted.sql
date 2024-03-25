@@ -19,7 +19,7 @@ with feature_aliases as (
         , u.server_id
         , u.user_id
         -- Mark known features and use a bucket for the rest
-        , coalesce(f.feature_name, 'unknown')
+        , coalesce(f.feature_name, 'unknown') as feature_name
         , u.event_count
     from
         {{ ref('int_feature_daily_usage_per_user') }} u
