@@ -43,3 +43,33 @@ models:
         description: The number of unique users related to Guest Accounts feature for the current day.
       - name: count_guest_accounts_users_monthly
         description: The number of unique users related to Guest Accounts feature for the current day and past 29 days.
+
+      - name: count_unknown_events_daily
+        description: The number of events not in the list of known features for the current day.
+      - name: count_unknown_events_monthly
+        description: The number of events not in the list of known features for the current day and past 29 days.
+      - name: count_unknown_users_daily
+        description: The number of unique users not in the list of known features for the current day.
+      - name: count_unknown_users_monthly
+        description: The number of unique users not in the list of known features for the current day and past 29 days.
+
+      - name: client_daily_active_users
+        description: The number of unique active users for the given server and date.
+        tests:
+          - not_null
+      - name: client_monthly_active_users
+        description: The number of unique active users for the date and previous 29 days.
+        tests:
+          - not_null
+      - name: server_daily_active_users
+        description: |
+          Total number of active users for the past 24 hours prior to the timestamp of the event.
+          Bots and deleted users are excluded. Reported by mattermost server.
+      - name: server_monthly_active_users
+        description: |
+          Total number of active users for the past 31 days prior to the timestamp of the event.
+          Bots and deleted users are excluded. Reported by mattermost server.
+      - name: count_registered_users
+        description: Total number of users, including deleted users. Reported by mattermost server.
+      - name: count_registered_deactivated_users
+        description: Total number of inactive (deleted) users. Reported by mattermost server.
