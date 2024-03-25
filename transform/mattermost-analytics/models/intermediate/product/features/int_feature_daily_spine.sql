@@ -54,7 +54,7 @@ select
         ) > 0, 1, 0
     ) as {{ dbt_utils.slugify('count_' ~ feature_column ~ '_users_monthly') }}
 {% endfor %}
-    , ifnull(features.server_id, 0, 1) as is_active
+    , iff(features.server_id is null, 0, 1) as is_active
 from
     spine
     left join {{ ref('int_feature_daily_usage_pivoted') }} features
