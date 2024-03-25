@@ -55,12 +55,8 @@ models:
 
       - name: client_daily_active_users
         description: The number of unique active users for the given server and date.
-        tests:
-          - not_null
       - name: client_monthly_active_users
         description: The number of unique active users for the date and previous 29 days.
-        tests:
-          - not_null
       - name: server_daily_active_users
         description: |
           Total number of active users for the past 24 hours prior to the timestamp of the event.
