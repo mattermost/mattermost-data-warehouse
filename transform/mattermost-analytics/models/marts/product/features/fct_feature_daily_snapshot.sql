@@ -30,6 +30,8 @@ with server_date_range as (
     {% for metric_column in metric_cols -%}
         , coalesce(sum({{metric_column}}), 0) as {{metric_column}}
     {%- endfor %}
+        , sum(is_active) as client_daily_active_users
+        , sum(is_active_monthly) as client_monthly_active_users
     from
         server_spine
         left join {{ ref('int_feature_daily_spine') }} feature_spine
