@@ -6,7 +6,7 @@
 }}
 
 {# List of known features #}
-{%- set features = dbt_utils.get_column_values(ref('feature_aliases'), 'alias') -%}
+{%- set features = dbt_utils.get_column_values(ref('feature_aliases'), 'alias') + ['unknown'] -%}
 
 with server_feature_date_range as (
     select
@@ -54,6 +54,7 @@ select
         ) > 0, 1, 0
     ) as {{ dbt_utils.slugify('count_' ~ feature_column ~ '_users_monthly') }}
 {% endfor %}
+    , iff(features.server_id is not null, 1, 0) as is_active
 from
     spine
     left join {{ ref('int_feature_daily_usage_pivoted') }} features
