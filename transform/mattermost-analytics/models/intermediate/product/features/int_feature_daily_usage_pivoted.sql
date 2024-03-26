@@ -13,12 +13,13 @@ with feature_aliases as (
         join {{ ref('feature_aliases') }} a on f.feature_name = a.feature_name
 
 ), feature_daily_usage as (
-    -- Keep only events for known features.
+    -- Create a matrix of daily feature usage per user.
     select
         u.activity_date
         , u.server_id
         , u.user_id
-        , f.feature_name
+        -- Mark known features and use a bucket for the rest
+        , coalesce(f.feature_name, 'unknown') as feature_name
         , u.event_count
     from
         {{ ref('int_feature_daily_usage_per_user') }} u
@@ -32,7 +33,7 @@ select
     , {{
         dbt_utils.pivot(
             'feature_name',
-            dbt_utils.get_column_values(ref('feature_aliases'), 'alias'),
+            dbt_utils.get_column_values(ref('feature_aliases'), 'alias') + ['unknown'],
             agg='sum',
             then_value='event_count',
             quote_identifiers=False
