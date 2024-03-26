@@ -45,13 +45,17 @@ models:
         description: The number of unique users related to Guest Accounts feature for the current day and past 29 days.
 
       - name: count_unknown_events_daily
-        description: The number of events not in the list of known features for the current day.
+        description: The number of events captured the current day that cannot (yet) be mapped to a feature.
       - name: count_unknown_events_monthly
-        description: The number of events not in the list of known features for the current day and past 29 days.
+        description: The number of events captured the current day and past 29 days that cannot (yet) be mapped to a feature.
       - name: count_unknown_users_daily
-        description: The number of unique users not in the list of known features for the current day.
+        description: |
+          The number of unique users captured the current day performing an action that cannot (yet) be mapped to
+          a feature.
       - name: count_unknown_users_monthly
-        description: The number of unique users not in the list of known features for the current day and past 29 days.
+        description: | 
+          The number of unique users captured the current day and past 29 days performing an action that cannot (yet) 
+          be mapped to a feature.
 
       - name: client_daily_active_users
         description: The number of unique active users for the given server and date.
