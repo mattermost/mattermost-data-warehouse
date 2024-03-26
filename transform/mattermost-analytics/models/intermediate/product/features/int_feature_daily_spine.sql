@@ -61,14 +61,14 @@ select
 {% endfor %}
 
     -- Aggregations for unknown features
-    , coalesce({{ unknown_feature }}, 0) as count_unknown_feature_events_daily
+    , coalesce({{ unknown_feature }}, 0) as count_unknown_features_events_daily
     , coalesce (
         sum ({{unknown_feature}}) over(
             partition by spine.server_id, spine.user_id order by spine.activity_date
             rows between {{var('monthly_days')}} preceding and current row
         ), 0
-    ) as count_unknown_feature_events_monthly
-    , iff(coalesce({{ unknown_feature }}, 0) > 0, 1, 0) as count_unknown_feature_usersdaily
+    ) as count_unknown_features_events_monthly
+    , iff(coalesce({{ unknown_feature }}, 0) > 0, 1, 0) as count_unknown_features_users_daily
     , iff(
         coalesce (
             sum ({{ unknown_feature }}) over(
@@ -76,7 +76,7 @@ select
                 rows between {{var('monthly_days')}} preceding and current row
             ), 0
         ) > 0, 1, 0
-    ) as count_unknown_feature_users_monthly
+    ) as count_unknown_features_users_monthly
 
 
     -- Aggregation for known features. To be used for comparing users using any paid feature.
