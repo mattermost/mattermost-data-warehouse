@@ -91,6 +91,9 @@ models:
     tests:
       - dbt_utils.expression_is_true:
           name: count_users_daily
+          # A user might trigger events for either known or unknown features. As a result, a user may be counted in
+          # either of the two groups. This possibility of counting the user twice is the reason behind the >= in
+          # the following expression.
           expression: "count_unknown_feature_users_daily + count_known_feature_users_daily >= client_daily_active_users"
       - dbt_utils.expression_is_true:
           name: count_users_monthly
