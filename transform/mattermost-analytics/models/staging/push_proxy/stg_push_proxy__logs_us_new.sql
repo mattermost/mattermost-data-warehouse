@@ -36,7 +36,7 @@ renamed as (
         , error_reason
         , target_port_list
         , target_status_code_list
-        , classification, 
+        , classification
         , classification_reason
 
     from source

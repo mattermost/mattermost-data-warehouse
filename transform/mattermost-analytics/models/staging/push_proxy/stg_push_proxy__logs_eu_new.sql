@@ -1,6 +1,6 @@
 with source as (
 
-    select * from {{ source('push_proxy', 'de_logs') }}
+    select * from {{ source('push_proxy', 'logs_eu_new') }}
 
 ),
 
@@ -32,6 +32,12 @@ renamed as (
         , matched_rule_priority
         , request_creation_time
         , actions_executed
+        , redirect_url 
+        , error_reason
+        , target_port_list
+        , target_status_code_list
+        , classification
+        , classification_reason
 
     from source
 
