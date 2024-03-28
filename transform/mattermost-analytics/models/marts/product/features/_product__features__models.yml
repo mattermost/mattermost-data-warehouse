@@ -44,18 +44,32 @@ models:
       - name: count_guest_accounts_users_monthly
         description: The number of unique users related to Guest Accounts feature for the current day and past 29 days.
 
-      - name: count_unknown_events_daily
+      - name: count_unknown_features_events_daily
         description: The number of events captured the current day that cannot (yet) be mapped to a feature.
-      - name: count_unknown_events_monthly
+      - name: count_unknown_features_events_monthly
         description: The number of events captured the current day and past 29 days that cannot (yet) be mapped to a feature.
-      - name: count_unknown_users_daily
+      - name: count_unknown_features_users_daily
         description: |
           The number of unique users captured the current day performing an action that cannot (yet) be mapped to
           a feature.
-      - name: count_unknown_users_monthly
+      - name: count_unknown_features_users_monthly
         description: | 
           The number of unique users captured the current day and past 29 days performing an action that cannot (yet) 
           be mapped to a feature.
+
+      - name: count_known_features_events_daily
+        description: The number of events captured the current day that can be mapped to any known feature.
+      - name: count_known_features_events_monthly
+        description: The number of events captured the current day and past 29 days that can be mapped to any known feature.
+      - name: count_known_features_users_daily
+        description: |
+          The number of unique users captured the current day performing an action that can be mapped to any known
+          feature.
+      - name: count_known_features_users_monthly
+        description: | 
+          The number of unique users captured the current day and past 29 days performing an action that can be mapped
+          to any known
+          feature.
 
       - name: client_daily_active_users
         description: The number of unique active users for the given server and date.
@@ -73,3 +87,14 @@ models:
         description: Total number of users, including deleted users. Reported by mattermost server.
       - name: count_registered_deactivated_users
         description: Total number of inactive (deleted) users. Reported by mattermost server.
+
+    tests:
+      - dbt_utils.expression_is_true:
+          name: count_users_daily
+          # A user might trigger events for either known or unknown features. As a result, a user may be counted in
+          # either of the two groups. This possibility of counting the user twice is the reason behind the >= in
+          # the following expression.
+          expression: "count_unknown_features_users_daily + count_known_features_users_daily >= client_daily_active_users"
+      - dbt_utils.expression_is_true:
+          name: count_users_monthly
+          expression: "count_unknown_features_users_monthly + count_known_features_users_monthly >= client_monthly_active_users"
