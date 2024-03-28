@@ -296,7 +296,7 @@ models:
           a malformed request, this value is set to -.
 
   - name: stg_push_proxy__logs_test_new
-    description: Logs from test notification server.
+    description: Logs from new test notification server.
     columns:
       - name: type
         description: | 
@@ -399,7 +399,7 @@ models:
       - name: classification_reason
 
   - name: stg_push_proxy__logs_us_new
-    description: Logs from test notification server.
+    description: Logs from new US notification server.
     columns:
       - name: type
         description: | 
@@ -502,7 +502,7 @@ models:
       - name: classification_reason
 
   - name: stg_push_proxy__logs_eu_new
-    description: Logs from test notification server.
+    description: Logs from new EU notification server.
     columns:
       - name: type
         description: | 
