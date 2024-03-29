@@ -11,7 +11,6 @@ with feature_aliases as (
     from
         {{ ref('event_to_feature_mapping') }} f
         join {{ ref('feature_aliases') }} a on f.feature_name = a.feature_name
-
 ), feature_daily_usage as (
     -- Create a matrix of daily feature usage per user.
     select
@@ -30,15 +29,13 @@ select
     activity_date
     , server_id
     , user_id
-    , {{
-        dbt_utils.pivot(
+    , {{ dbt_utils.pivot(
             'feature_name',
             dbt_utils.get_column_values(ref('feature_aliases'), 'alias') + ['unknown'],
             agg='sum',
             then_value='event_count',
             quote_identifiers=False
-        )
-    }}
+        ) }}
 from
     feature_daily_usage
 group by

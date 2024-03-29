@@ -81,7 +81,7 @@ select
 
     -- Aggregation for known features. To be used for comparing users using any paid feature.
     , {% for feature_column in known_features -%}
-        {{ dbt_utils.slugify('count_' ~ feature_column ~ '_events_daily') }} {%- if not loop.last -%} + {%- endif -%}
+        {{ dbt_utils.slugify('count_' ~ feature_column ~ '_events_daily') }} {%- if not loop.last %} + {% endif -%}
     {%- endfor %} as count_known_features_events_daily
     , {% for feature_column in known_features -%}
         {{ dbt_utils.slugify('count_' ~ feature_column ~ '_events_monthly') }} {%- if not loop.last -%} + {%- endif -%}
