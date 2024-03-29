@@ -82,12 +82,12 @@ select
     -- Aggregation for known features. To be used for comparing users using any paid feature.
     , {% for feature_column in known_features -%}
         {{ dbt_utils.slugify('count_' ~ feature_column ~ '_events_daily') }} {%- if not loop.last -%} + {%- endif -%}
-    {%- endfor %} as count_events_known_features_daily
+    {%- endfor %} as count_known_features_events_daily
     , {% for feature_column in known_features -%}
         {{ dbt_utils.slugify('count_' ~ feature_column ~ '_events_monthly') }} {%- if not loop.last -%} + {%- endif -%}
-    {%- endfor %} as count_events_known_features_monthly
-    , iff(count_events_known_features_daily > 0, 1, 0) as count_known_features_users_daily
-    , iff(count_events_known_features_monthly > 0, 1, 0) as count_known_features_users_monthly
+    {%- endfor %} as count_known_features_events_monthly
+    , iff(count_known_features_events_daily > 0, 1, 0) as count_known_features_users_daily
+    , iff(count_known_features_events_monthly > 0, 1, 0) as count_known_features_users_monthly
     -- DAU/MAU
     , iff(features.server_id is null, 0, 1) as is_active
     , max(is_active) over(
