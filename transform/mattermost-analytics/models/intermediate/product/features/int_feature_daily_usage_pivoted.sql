@@ -22,7 +22,7 @@ with feature_aliases as (
         , u.event_count
     from
         {{ ref('int_feature_daily_usage_per_user') }} u
-        join feature_aliases f on u.event_name = f.event_name and u.category = f.category and f.event_type = u.event_type
+        left join feature_aliases f on u.event_name = f.event_name and u.category = f.category and f.event_type = u.event_type
 )
 -- Row per date, server, user. Contains one column per known feature.
 select
