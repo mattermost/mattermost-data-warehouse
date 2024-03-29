@@ -1,6 +1,5 @@
 {%- set metric_cols = dbt_utils.get_filtered_columns_in_relation(ref('int_feature_daily_spine'), except=['server_id', 'user_id', 'activity_date', 'is_active', 'is_active_monthly']) -%}
 
-
 with server_date_range as (
     select
         server_id
