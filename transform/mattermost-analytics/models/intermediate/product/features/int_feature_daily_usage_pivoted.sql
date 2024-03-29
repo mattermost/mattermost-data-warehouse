@@ -11,6 +11,15 @@ with feature_aliases as (
     from
         {{ ref('event_to_feature_mapping') }} f
         join {{ ref('feature_aliases') }} a on f.feature_name = a.feature_name
+), servers_with_known_features as (
+    -- Keep only servers with at least one known feature. This reduces the execution time of the current query.
+    -- This filter can be removed in the future if there's a need to expand the breakdown even for servers without any
+    -- known features.
+    select
+        u.server_id
+    from
+        {{ ref('int_feature_daily_usage_per_user') }} u
+        join feature_aliases f on u.event_name = f.event_name and u.category = f.category and f.event_type = u.event_type
 ), feature_daily_usage as (
     -- Create a matrix of daily feature usage per user.
     select
@@ -22,6 +31,7 @@ with feature_aliases as (
         , u.event_count
     from
         {{ ref('int_feature_daily_usage_per_user') }} u
+        join servers_with_known_features s on u.server_id = s.server_id
         left join feature_aliases f on u.event_name = f.event_name and u.category = f.category and f.event_type = u.event_type
 )
 -- Row per date, server, user. Contains one column per known feature.
