@@ -103,6 +103,7 @@ seeds:
       event_to_feature_mapping:
         # Override column types
         +column_types:
+          source: varchar(50)
           event_name: varchar(100)
           category: varchar(100)
           event_type: varchar(200)

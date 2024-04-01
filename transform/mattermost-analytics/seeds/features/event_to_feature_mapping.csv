@@ -1,5 +1,5 @@
-event_name,category,event_type,feature_name
-event,api,api_posts_ack,Message Acknowledgement (Prof)
-event,ui,ui_channels_create_user_group,Custom user groups (Prof)
-event,api,api_groups_get_associated_to_channel,Custom user groups (Prof)
-event,api,api_teams_invite_guests,Guest Accounts (Prof)
+source,event_name,category,event_type,feature_name
+Mattermost,event,api,api_posts_ack,Message Acknowledgement (Prof)
+Mattermost,event,ui,ui_channels_create_user_group,Custom user groups (Prof)
+Mattermost,event,api,api_groups_get_associated_to_channel,Custom user groups (Prof)
+Mattermost,event,api,api_teams_invite_guests,Guest Accounts (Prof)

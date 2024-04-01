@@ -4,6 +4,8 @@ seeds:
   - name: event_to_feature_mapping
     description: List of events per feature.
     columns:
+      - name: source
+        description: The source system for the events. Used to avoid conflicts in naming across systems.
       - name: event_name
         description: | 
           The name of the event assigned to the feature. Note that client events usually define `event` as the value.

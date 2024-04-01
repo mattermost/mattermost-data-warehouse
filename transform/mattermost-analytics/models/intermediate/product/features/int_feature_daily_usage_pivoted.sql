@@ -19,7 +19,7 @@ with feature_aliases as (
         u.server_id
     from
         {{ ref('int_feature_daily_usage_per_user') }} u
-        join feature_aliases f on u.event_name = f.event_name and u.category = f.category and f.event_type = u.event_type
+        join feature_aliases f on u.event_name = f.event_name and u.category = f.category and f.event_type = u.event_type and u.source = f.source
 ), feature_daily_usage as (
     -- Create a matrix of daily feature usage per user.
     select
@@ -32,7 +32,7 @@ with feature_aliases as (
     from
         {{ ref('int_feature_daily_usage_per_user') }} u
         join servers_with_known_features s on u.server_id = s.server_id
-        left join feature_aliases f on u.event_name = f.event_name and u.category = f.category and f.event_type = u.event_type
+        left join feature_aliases f on u.event_name = f.event_name and u.category = f.category and f.event_type = u.event_type and u.source = f.source
 )
 -- Row per date, server, user. Contains one column per known feature.
 select
