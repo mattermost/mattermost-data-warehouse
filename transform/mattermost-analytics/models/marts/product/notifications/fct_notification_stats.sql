@@ -1,7 +1,7 @@
 select
     spine.date_hour,
     coalesce(eu_logs.count_send_push + logs_eu.count_send_push, 0) as count_eu_send_push,
-    coalesce(eu_logs.count_send_ack + logss_eu.count_send_ack, 0) as count_eu_send_ack,
+    coalesce(eu_logs.count_send_ack + logs_eu.count_send_ack, 0) as count_eu_send_ack,
     coalesce(us_logs.count_send_push + logs_us.count_send_push, 0) as count_us_send_push,
     coalesce(us_logs.count_send_ack + logs_us.count_send_ack, 0) as count_us_send_ack,
     coalesce(test_logs.count_send_push + logs_test.count_send_push, 0) as count_test_send_push,
