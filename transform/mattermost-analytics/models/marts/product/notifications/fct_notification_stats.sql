@@ -1,11 +1,11 @@
 select
     spine.date_hour,
-    coalesce(eu_logs.count_send_push + logs_eu.count_send_push, 0) as count_eu_send_push,
-    coalesce(eu_logs.count_send_ack + logs_eu.count_send_ack, 0) as count_eu_send_ack,
-    coalesce(us_logs.count_send_push + logs_us.count_send_push, 0) as count_us_send_push,
-    coalesce(us_logs.count_send_ack + logs_us.count_send_ack, 0) as count_us_send_ack,
-    coalesce(test_logs.count_send_push + logs_test.count_send_push, 0) as count_test_send_push,
-    coalesce(test_logs.count_send_ack + logs_test.count_send_ack, 0) as count_test_send_ack
+    {{ dbt_utils.safe_add('eu_logs.count_send_push', 'logs_eu.count_send_push') }} as count_eu_send_push,
+    {{ dbt_utils.safe_add('eu_logs.count_send_ack', 'logs_eu.count_send_ack') }} as count_eu_send_ack,
+    {{ dbt_utils.safe_add('us_logs.count_send_push', 'logs_us.count_send_push') }} as count_us_send_push,
+    {{ dbt_utils.safe_add('us_logs.count_send_ack', 'logs_us.count_send_ack') }} as count_us_send_ack,
+    {{ dbt_utils.safe_add('test_logs.count_send_push', 'logs_test.count_send_push') }} as count_test_send_push,
+    {{ dbt_utils.safe_add('test_logs.count_send_ack', 'logs_test.count_send_ack') }} as count_test_send_ack
 from
     {{ ref('notification_date_hour') }} spine
     left join {{ ref('int_notifications_eu_hourly') }} eu_logs on spine.date_hour = eu_logs.request_date_hour
