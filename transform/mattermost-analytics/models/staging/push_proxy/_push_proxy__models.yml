@@ -392,11 +392,27 @@ models:
           list that can include the values described in Actions taken. If no action was taken, such as for 
           a malformed request, this value is set to -.
       - name: redirect_url
+        description: |
+            The URL of the redirect target for the location header of the HTTP response, enclosed in double quotes. If no redirect actions were taken, this value is set to -.
       - name: error_reason
+        description: |
+          The error reason code, enclosed in double quotes. If the actions taken do not include an authenticate action or the target is not a Lambda function, this value is set to -.
       - name: target_port_list
+        description: |
+          A space-delimited list of IP addresses and ports for the targets that processed this request, enclosed in double quotes. Currently, this list can contain one item and it matches the target:port field.
+          If the client didn't send a full request, the load balancer can't dispatch the request to a target, and this value is set to -.
+          If the target is a Lambda function, this value is set to -. If the request is blocked by AWS WAF, this value is set to - and the value of elb_status_code is set to 403.
       - name: target_status_code_list
+        description: |
+          A space-delimited list of status codes from the responses of the targets, enclosed in double quotes. Currently, this list can contain one item and it matches the target_status_code field.
+          This value is recorded only if a connection was established to the target and the target sent a response. Otherwise, it is set to -.
       - name: classification
+        description: |
+          The classification for desync mitigation, enclosed in double quotes. If the request does not comply with RFC 7230, the possible values are Acceptable, Ambiguous, and Severe.
+          If the request complies with RFC 7230, this value is set to -.
       - name: classification_reason
+        description: |
+          The classification reason code, enclosed in double quotes. If the request complies with RFC 7230, this value is set to -.
 
   - name: stg_push_proxy__logs_us_new
     description: Logs from new US notification server.
@@ -495,11 +511,27 @@ models:
           list that can include the values described in Actions taken. If no action was taken, such as for 
           a malformed request, this value is set to -.
       - name: redirect_url
+        description: |
+            The URL of the redirect target for the location header of the HTTP response, enclosed in double quotes. If no redirect actions were taken, this value is set to -.
       - name: error_reason
+        description: |
+          The error reason code, enclosed in double quotes. If the actions taken do not include an authenticate action or the target is not a Lambda function, this value is set to -.
       - name: target_port_list
+        description: |
+          A space-delimited list of IP addresses and ports for the targets that processed this request, enclosed in double quotes. Currently, this list can contain one item and it matches the target:port field.
+          If the client didn't send a full request, the load balancer can't dispatch the request to a target, and this value is set to -.
+          If the target is a Lambda function, this value is set to -. If the request is blocked by AWS WAF, this value is set to - and the value of elb_status_code is set to 403.
       - name: target_status_code_list
+        description: |
+          A space-delimited list of status codes from the responses of the targets, enclosed in double quotes. Currently, this list can contain one item and it matches the target_status_code field.
+          This value is recorded only if a connection was established to the target and the target sent a response. Otherwise, it is set to -.
       - name: classification
+        description: |
+          The classification for desync mitigation, enclosed in double quotes. If the request does not comply with RFC 7230, the possible values are Acceptable, Ambiguous, and Severe.
+          If the request complies with RFC 7230, this value is set to -.
       - name: classification_reason
+        description: |
+          The classification reason code, enclosed in double quotes. If the request complies with RFC 7230, this value is set to -.
 
   - name: stg_push_proxy__logs_eu_new
     description: Logs from new EU notification server.
@@ -598,8 +630,24 @@ models:
           list that can include the values described in Actions taken. If no action was taken, such as for 
           a malformed request, this value is set to -.
       - name: redirect_url
+        description: |
+            The URL of the redirect target for the location header of the HTTP response, enclosed in double quotes. If no redirect actions were taken, this value is set to -.
       - name: error_reason
+        description: |
+          The error reason code, enclosed in double quotes. If the actions taken do not include an authenticate action or the target is not a Lambda function, this value is set to -.
       - name: target_port_list
+        description: |
+          A space-delimited list of IP addresses and ports for the targets that processed this request, enclosed in double quotes. Currently, this list can contain one item and it matches the target:port field.
+          If the client didn't send a full request, the load balancer can't dispatch the request to a target, and this value is set to -.
+          If the target is a Lambda function, this value is set to -. If the request is blocked by AWS WAF, this value is set to - and the value of elb_status_code is set to 403.
       - name: target_status_code_list
+        description: |
+          A space-delimited list of status codes from the responses of the targets, enclosed in double quotes. Currently, this list can contain one item and it matches the target_status_code field.
+          This value is recorded only if a connection was established to the target and the target sent a response. Otherwise, it is set to -.
       - name: classification
+        description: |
+          The classification for desync mitigation, enclosed in double quotes. If the request does not comply with RFC 7230, the possible values are Acceptable, Ambiguous, and Severe.
+          If the request complies with RFC 7230, this value is set to -.
       - name: classification_reason
+        description: |
+          The classification reason code, enclosed in double quotes. If the request complies with RFC 7230, this value is set to -.

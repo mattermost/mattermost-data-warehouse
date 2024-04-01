@@ -314,7 +314,7 @@ sources:
               a malformed request, this value is set to -.
 
       - name: logs_eu_new
-        description: Logs from test notification server.
+        description: Logs from new EU notification server.
 
         columns:
           - name: type
@@ -432,7 +432,7 @@ sources:
               The classification reason code, enclosed in double quotes. If the request complies with RFC 7230, this value is set to -.
 
       - name: logs_test_new
-        description: Logs from test notification server.
+        description: Logs from new test notification server.
 
         columns:
           - name: type
@@ -550,7 +550,7 @@ sources:
               The classification reason code, enclosed in double quotes. If the request complies with RFC 7230, this value is set to -.
 
       - name: logs_us_new
-        description: Logs from test notification server.
+        description: Logs from new US notification server.
 
         columns:
           - name: type
