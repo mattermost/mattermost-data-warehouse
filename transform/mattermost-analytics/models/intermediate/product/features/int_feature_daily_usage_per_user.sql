@@ -2,7 +2,7 @@
     dbt_utils.union_relations(
         relations=[
             ref('int_mm_feature_daily_usage_per_user'),
-            ref('int_playbook_daily_usage_per_user'),
+            ref('int_playbook_feature_daily_usage_per_user'),
         ],
         source_column_name=None
     )
