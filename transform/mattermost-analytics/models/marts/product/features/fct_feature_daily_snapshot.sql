@@ -1,6 +1,5 @@
 {%- set metric_cols = dbt_utils.get_filtered_columns_in_relation(ref('int_feature_daily_spine'), except=['server_id', 'user_id', 'activity_date', 'is_active', 'is_active_monthly']) -%}
 
-
 with server_date_range as (
     select
         server_id
@@ -28,9 +27,9 @@ with server_date_range as (
         , server_spine.server_id
         , server_spine.activity_date
         -- Feature activity - dynamic due to dynamic list of features
-    {% for metric_column in metric_cols -%}
+    {% for metric_column in metric_cols %}
         , coalesce(sum({{metric_column}}), 0) as {{metric_column}}
-    {%- endfor %}
+    {% endfor %}
         , coalesce(sum(is_active), 0) as client_daily_active_users
         , coalesce(sum(is_active_monthly), 0) as client_monthly_active_users
     from
