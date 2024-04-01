@@ -428,8 +428,8 @@ sources:
               The classification for desync mitigation, enclosed in double quotes. If the request does not comply with RFC 7230, the possible values are Acceptable, Ambiguous, and Severe.
               If the request complies with RFC 7230, this value is set to -.
           - name: classification_reason
-              description: |
-                The classification reason code, enclosed in double quotes. If the request complies with RFC 7230, this value is set to -.
+            description: |
+              The classification reason code, enclosed in double quotes. If the request complies with RFC 7230, this value is set to -.
 
       - name: logs_test_new
         description: Logs from test notification server.
@@ -546,8 +546,8 @@ sources:
               The classification for desync mitigation, enclosed in double quotes. If the request does not comply with RFC 7230, the possible values are Acceptable, Ambiguous, and Severe.
               If the request complies with RFC 7230, this value is set to -.
           - name: classification_reason
-              description: |
-                The classification reason code, enclosed in double quotes. If the request complies with RFC 7230, this value is set to -.
+            description:
+              The classification reason code, enclosed in double quotes. If the request complies with RFC 7230, this value is set to -.
 
       - name: logs_us_new
         description: Logs from test notification server.
@@ -664,5 +664,5 @@ sources:
               The classification for desync mitigation, enclosed in double quotes. If the request does not comply with RFC 7230, the possible values are Acceptable, Ambiguous, and Severe.
               If the request complies with RFC 7230, this value is set to -.
           - name: classification_reason
-              description: |
-                The classification reason code, enclosed in double quotes. If the request complies with RFC 7230, this value is set to -.
+            description: |
+              The classification reason code, enclosed in double quotes. If the request complies with RFC 7230, this value is set to -.
