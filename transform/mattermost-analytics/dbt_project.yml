@@ -149,6 +149,9 @@ vars:
   # equals to a total of 30 days.
   monthly_days: 29
 
+  # Placeholder for Unknown values
+  unknown: 'Unknown'
+
 on-run-start:
   -  '{{ create_parse_qs_udf()}}'
   -  '{{ create_extract_license_data_udf()}}'
