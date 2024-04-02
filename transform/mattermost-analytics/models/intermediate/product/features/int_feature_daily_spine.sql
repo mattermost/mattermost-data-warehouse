@@ -2,11 +2,14 @@
 {{
     config({
         "materialized": "table",
+        "snowflake_warehouse": "transform_l"
     })
 }}
 
 {# List of known features #}
-{%- set features = dbt_utils.get_column_values(ref('feature_aliases'), 'alias') -%}
+{%- set known_features = dbt_utils.get_column_values(ref('feature_aliases'), 'alias') -%}
+
+{%- set unknown_feature ='unknown' -%}
 
 with server_feature_date_range as (
     select
@@ -31,10 +34,13 @@ with server_feature_date_range as (
             on all_days.date_day >= sd.first_active_day and all_days.date_day <= least(current_date, dateadd(day, {{var('monthly_days')}}, sd.last_active_day))
 )
 select
+    -- Spine fields
     spine.server_id
     , spine.user_id
     , spine.activity_date
-{% for feature_column in features %}
+
+    -- Aggregation per known feature
+{% for feature_column in known_features %}
     -- For each feature, count the number of of daily and monthly events
     , coalesce({{ feature_column }}, 0) as {{ dbt_utils.slugify('count_' ~ feature_column ~ '_events_daily') }}
     , coalesce (
@@ -54,6 +60,41 @@ select
         ) > 0, 1, 0
     ) as {{ dbt_utils.slugify('count_' ~ feature_column ~ '_users_monthly') }}
 {% endfor %}
+
+    -- Aggregations for unknown features
+    , coalesce({{ unknown_feature }}, 0) as count_unknown_features_events_daily
+    , coalesce (
+        sum ({{unknown_feature}}) over(
+            partition by spine.server_id, spine.user_id order by spine.activity_date
+            rows between {{var('monthly_days')}} preceding and current row
+        ), 0
+    ) as count_unknown_features_events_monthly
+    , iff(coalesce({{ unknown_feature }}, 0) > 0, 1, 0) as count_unknown_features_users_daily
+    , iff(
+        coalesce (
+            sum ({{ unknown_feature }}) over(
+                partition by spine.server_id, spine.user_id order by spine.activity_date
+                rows between {{var('monthly_days')}} preceding and current row
+            ), 0
+        ) > 0, 1, 0
+    ) as count_unknown_features_users_monthly
+
+
+    -- Aggregation for known features. To be used for comparing users using any paid feature.
+    , {% for feature_column in known_features -%}
+        {{ dbt_utils.slugify('count_' ~ feature_column ~ '_events_daily') }} {%- if not loop.last %} + {% endif -%}
+    {%- endfor %} as count_known_features_events_daily
+    , {% for feature_column in known_features -%}
+        {{ dbt_utils.slugify('count_' ~ feature_column ~ '_events_monthly') }} {%- if not loop.last -%} + {%- endif -%}
+    {%- endfor %} as count_known_features_events_monthly
+    , iff(count_known_features_events_daily > 0, 1, 0) as count_known_features_users_daily
+    , iff(count_known_features_events_monthly > 0, 1, 0) as count_known_features_users_monthly
+    -- DAU/MAU
+    , iff(features.server_id is null, 0, 1) as is_active
+    , max(is_active) over(
+                partition by spine.server_id, spine.user_id order by spine.activity_date
+                rows between {{var('monthly_days')}} preceding and current row
+    ) as is_active_monthly
 from
     spine
     left join {{ ref('int_feature_daily_usage_pivoted') }} features
