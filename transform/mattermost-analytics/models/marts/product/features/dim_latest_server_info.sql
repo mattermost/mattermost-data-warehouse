@@ -15,7 +15,5 @@ select
     sdr.server_id
     , sdr.first_active_day
     , sdr.last_active_day
-    ,
 from
     server_date_range sdr
-    left join {{ ref('int_server_hosting_type') }} ht on si.server_id = ht.server_id
