@@ -56,7 +56,7 @@ all_servers as (
 license_data as (
     -- Gather all self-hosted license data from CWS and legacy licenses.
     select
-        license_id.
+       license_id
        , company_name
        , customer_email as contact_email
        , sku_short_name
@@ -68,7 +68,7 @@ license_data as (
     union
 
     select
-        license_id
+       license_id
        , company_name
        , contact_email
        , 'Unknown' as sku_short_name
