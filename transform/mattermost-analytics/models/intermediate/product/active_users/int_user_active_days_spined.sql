@@ -20,8 +20,8 @@ with user_active_days as (
         s.server_id is not null and client_type = 'desktop' as is_latest_desktop,
         s.server_id is not null and client_type = 'webapp' as is_latest_webapp,
         m.server_id is not null as is_mobile,
-        l.server_id is not null and client_type = 'desktop' as  as is_legacy_desktop,
-        l.server_id is not null and client_type = 'webapp' as  as is_legacy_webapp
+        l.server_id is not null and client_type = 'desktop' as is_legacy_desktop,
+        l.server_id is not null and client_type = 'webapp' as is_legacy_webapp
     from
         {{ ref('int_user_active_days_latest_telemetry') }} s
         full outer join {{ ref('int_user_active_days_mobile_telemetry') }} m on s.daily_user_id = m.daily_user_id
