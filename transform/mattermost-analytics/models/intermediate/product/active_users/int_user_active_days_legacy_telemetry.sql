@@ -15,7 +15,7 @@ with tmp as (
         cast(timestamp as date) as activity_date,
         server_id,
         user_id,
-        case when user_id is not null then mattermost_analytics.parse_user_agent(context_user_agent):browser_family end as client_type
+        case when context_user_agent is not null mattermost_analytics.parse_user_agent(context_user_agent):browser_family end as client_type
     from
         {{ ref('stg_mattermost2__tracks') }}
     where
