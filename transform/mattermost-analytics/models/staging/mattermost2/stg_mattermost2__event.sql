@@ -3,7 +3,8 @@ WITH events AS (
     SELECT
         *
     FROM
-        {{ source('mattermost2', 'event') }})
+        {{ source('mattermost2', 'event') }}
+)
 SELECT
      id               AS event_id
      , event          AS event_table
