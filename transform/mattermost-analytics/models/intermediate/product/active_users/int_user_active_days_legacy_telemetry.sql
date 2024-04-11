@@ -17,7 +17,7 @@ with tmp as (
         user_id,
         mattermost_analytics.parse_user_agent(context_user_agent):browser_family as client_type
     from
-        {{ ref('stg_mattermost2__event') }}
+        {{ ref('stg_mattermost2__tracks') }}
     where
         -- Exclude items without user ids, such as server side telemetry etc
         user_id is not null
