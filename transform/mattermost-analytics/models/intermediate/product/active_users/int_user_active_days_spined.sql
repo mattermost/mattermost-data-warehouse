@@ -17,11 +17,11 @@ with user_active_days as (
         coalesce(s.server_id, m.server_id, l.server_id) as server_id,
         coalesce(s.user_id, m.user_id, l.user_id) as user_id,
         coalesce(s.is_active, m.is_active, l.is_active) as is_active,
-        s.server_id is not null and client_type = 'desktop' as is_latest_desktop,
-        s.server_id is not null and client_type = 'webapp' as is_latest_webapp,
+        case when s.server_id is not null and client_type = 'desktop' then true else false end as is_latest_desktop,        
+        case when s.server_id is not null and client_type = 'webapp' then true else false end as is_latest_webapp,
         m.server_id is not null as is_mobile,
-        l.server_id is not null and client_type = 'desktop' as is_legacy_desktop,
-        l.server_id is not null and client_type = 'webapp' as is_legacy_webapp
+        case when l.server_id is not null and client_type = 'desktop' then true else false end as is_legacy_desktop,
+        case when l.server_id is not null and client_type = 'webapp' then true else false end as is_legacy_webapp
     from
         {{ ref('int_user_active_days_latest_telemetry') }} s
         full outer join {{ ref('int_user_active_days_mobile_telemetry') }} m on s.daily_user_id = m.daily_user_id
