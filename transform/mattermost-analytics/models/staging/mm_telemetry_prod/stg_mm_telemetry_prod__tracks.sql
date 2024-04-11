@@ -15,4 +15,5 @@ SELECT
      , user_actual_id AS user_id
      , received_at    AS received_at
      , timestamp      AS timestamp
+     , LOWER(coalesce(context_useragent, context_user_agent)) context_user_agent
 FROM tracks

@@ -1,3 +1,5 @@
+{%- set include_columns = [ "context_useragent", "context_user_agent"] -%}
+
 {%- set relations = get_event_relations('mm_telemetry_prod', database='RAW') -%}
 
 {{
