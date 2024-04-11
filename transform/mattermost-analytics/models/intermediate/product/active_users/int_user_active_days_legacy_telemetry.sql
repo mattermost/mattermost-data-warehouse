@@ -14,7 +14,8 @@ with tmp as (
         cast(received_at as date) as received_at_date,
         cast(timestamp as date) as activity_date,
         server_id,
-        user_id
+        user_id,
+        client_type
     from
         {{ ref('stg_mattermost2__event') }}
     where
@@ -38,6 +39,7 @@ select
     , activity_date
     , server_id
     , user_id
+    , client_type
     , true as is_active
     -- Required for incremental loading
     , received_at_date
