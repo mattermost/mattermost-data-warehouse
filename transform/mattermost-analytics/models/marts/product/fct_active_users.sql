@@ -1,9 +1,11 @@
 {%
     set column_map = {
         'is_active': 'active_users',
-        'is_desktop_or_server': 'desktop_active_users',
+        'is_latest_desktop': 'latest_desktop_active_users',
+        'is_latest_webapp': 'latest_webapp_active_users',
         'is_mobile': 'mobile_active_users',
-        'is_old_server': 'legacy_active_users'
+        'is_legacy_desktop': 'legacy_desktop_active_users'
+        'is_legacy_webapp': 'legacy_webapp_active_users'
     }
 %}
 
