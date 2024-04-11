@@ -4,7 +4,7 @@
         'is_latest_desktop': 'latest_desktop_active_users',
         'is_latest_webapp': 'latest_webapp_active_users',
         'is_mobile': 'mobile_active_users',
-        'is_legacy_desktop': 'legacy_desktop_active_users'
+        'is_legacy_desktop': 'legacy_desktop_active_users',
         'is_legacy_webapp': 'legacy_webapp_active_users'
     }
 %}
