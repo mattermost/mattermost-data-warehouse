@@ -39,7 +39,7 @@ user_activity as (
     select
         distinct server_id, activity_date
     from
-        {{ ref('int_user_active_days_server_telemetry') }}
+        {{ ref('int_user_active_days_latest_telemetry') }}
 ),
 user_summary as (
     -- User telemetry summary
