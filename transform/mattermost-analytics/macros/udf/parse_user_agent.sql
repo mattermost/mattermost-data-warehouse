@@ -11,9 +11,6 @@ $$
 from ua_parser import user_agent_parser
 
 def parse_user_agent(useragent):
-    if useragent is None:
-        return {} 
-
     parsed_string = user_agent_parser.Parse(useragent)
     return {
         'browser_family': parsed_string.get('user_agent', {}).get('family'),
