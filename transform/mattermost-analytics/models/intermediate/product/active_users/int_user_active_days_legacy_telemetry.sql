@@ -15,7 +15,7 @@ with tmp as (
         cast(timestamp as date) as activity_date,
         server_id,
         user_id,
-        client_type
+        mattermost_analytics.parse_user_agent(context_user_agent):browser_family as client_type
     from
         {{ ref('stg_mattermost2__event') }}
     where
@@ -39,7 +39,8 @@ select
     , activity_date
     , server_id
     , user_id
-    , client_type
+    , case when user_id is not null and lower(client_type) = 'electron' then 'Desktop' 
+        when user_id is not null and lower(client_type) != 'electron' then 'Webapp' end as client_type    
     , true as is_active
     -- Required for incremental loading
     , received_at_date
