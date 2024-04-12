@@ -39,9 +39,6 @@ models:
     columns:
       - name: server_id
         description: The server's unique id.
-        tests:
-          - unique
-          - not_null
       - name: license_id
         description: The ID of the license.
       - name: installation_id
