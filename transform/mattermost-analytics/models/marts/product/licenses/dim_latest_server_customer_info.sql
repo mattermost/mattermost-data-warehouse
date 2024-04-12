@@ -10,9 +10,9 @@ select
     , cloud_plan_name as cloud_plan_name
     , coalesce(license_source, cloud_source) as source
     -- Metadata
-    , l.license_id is not null as found_matching_license_data
-    , c.installation_id is not null as found_matching_stripe_entry
-    , s.last_license_telemetry_date
-    , s.last_installation_id_date
+    , license_id is not null as found_matching_license_data
+    , installation_id is not null as found_matching_stripe_entry
+    , last_license_telemetry_date
+    , last_installation_id_date
 from
     {{ ref('int_latest_server_customer_info') }}
