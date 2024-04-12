@@ -110,7 +110,7 @@ select
         , c.contact_email as cloud_contact_email
         , c.plan_name as cloud_plan_name
         , c.sku as cloud_sku
-        , c.license_id is not null as found_matching_license
+        , l.license_id is not null as found_matching_license
         , c.installation_id is not null as found_matching_stripe_entry
         , c.source as cloud_source
 from
