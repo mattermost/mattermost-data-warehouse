@@ -15,8 +15,7 @@ with tmp as (
         cast(timestamp as date) as activity_date,
         server_id,
         user_id,
-        case when context_user_agent is not null and context_user_agent like '%electron%' then 'Desktop' 
-        when context_user_agent is not null and context_user_agent not like '%electron%' then 'Webapp' end as client_type
+        iff(context_user_agent is not null, parse_user_agent(context_user_agent), null) as client_type
     from
         {{ ref('stg_mattermost2__tracks') }}
     where
@@ -40,7 +39,8 @@ select
     , activity_date
     , server_id
     , user_id
-    , client_type    
+    , case when lower(client_type:browser_family) = 'electron' then 'Desktop' 
+    when lower(client_type:browser_family) != 'electron' then 'Webapp' end as client_type    
     , true as is_active
     -- Required for incremental loading
     , received_at_date
