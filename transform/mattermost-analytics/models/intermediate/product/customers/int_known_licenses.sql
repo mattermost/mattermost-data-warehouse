@@ -14,4 +14,4 @@ select
     end as source
 from
     {{ ref('stg_cws__license') }} cws
-    full outer join {{ ref('stg_licenses__licenses') }} legacy
+    full outer join {{ ref('stg_licenses__licenses') }} legacy on cws.license_id = legacy.license_id
