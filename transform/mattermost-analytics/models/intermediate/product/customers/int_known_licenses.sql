@@ -1,5 +1,12 @@
 -- List of all self-hosted license data from CWS and legacy licenses.
 -- Performs deduplication in case a license exists both in CWS and legacy licenses.
+with deduped_legacy_licenses as (
+    select
+        {{ dbt_utils.star(ref('stg_licenses__licenses')) }}
+    from
+        {{ ref('stg_licenses__licenses') }}
+    group by all
+)
 select
     coalesce(cws.license_id, legacy.license_id) as license_id
     , coalesce(cws.company_name, legacy.company_name) as company_name
@@ -14,4 +21,4 @@ select
     end as source
 from
     {{ ref('stg_cws__license') }} cws
-    full outer join {{ ref('stg_licenses__licenses') }} legacy on cws.license_id = legacy.license_id
+    full outer join deduped_legacy_licenses legacy on cws.license_id = legacy.license_id
