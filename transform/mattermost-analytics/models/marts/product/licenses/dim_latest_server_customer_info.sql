@@ -5,7 +5,7 @@ select
     , coalesce(license_company_name, cloud_company_name) as company_name
     , coalesce(license_contact_email, cloud_contact_email) as contact_email
     , coalesce(license_sku, cloud_sku) as sku
-    , expire_at as license_expire_at
+    , license_expire_at as license_expire_at
     , is_trial as is_trial_license
     , plan_name as cloud_plan_name
     , coalesce(license_source, cloud_source) as source
