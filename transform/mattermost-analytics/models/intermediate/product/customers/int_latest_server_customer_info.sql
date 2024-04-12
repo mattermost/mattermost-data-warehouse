@@ -56,28 +56,30 @@ all_servers as (
 license_data as (
     -- Gather all self-hosted license data from CWS and legacy licenses.
     select
-       license_id
-       , company_name
-       , customer_email as contact_email
-       , sku_short_name
-       , expire_at
-       , is_trial
+        license_id
+        , company_name
+        , customer_email as contact_email
+        , sku_short_name
+        , expire_at
+        , is_trial
+        , 'CWS' as source
     from
         {{ ref('stg_cws__license') }}
 
     union
 
     select
-       license_id
-       , company_name
-       , contact_email
-       , 'Unknown' as sku_short_name
-       , expire_at
-       , false as is_trial
+        license_id
+        , company_name
+        , contact_email
+        , 'Unknown' as sku_short_name
+        , expire_at
+        , false as is_trial
+        , 'Legacy' as source
     from
         {{ ref('stg_licenses__licenses') }}
-), stripe_information as (
-    -- Customer information from stripe
+), cloud_information as (
+    -- Customer information from stripe. No other source for now.
     select
         s.cws_installation as installation_id
         , c.email as contact_email
@@ -103,14 +105,16 @@ select
         , l.contact_email as license_contact_email
         , l.sku_short_name as license_sku
         , l.is_trial
-        , si.company_name as stripe_company_name
-        , si.contact_email as stripe_contact_email
-        , si.plan_name as stripe_plan_name
-        , si.sku as stripe_sku
-        , l.license_id is not null as found_matching_license
-        , si.installation_id is not null as found_matching_stripe_entry
+        , l.source as license_source
+        , c.company_name as cloud_company_name
+        , c.contact_email as cloud_contact_email
+        , c.plan_name as cloud_plan_name
+        , c.sku as cloud_sku
+        , c.license_id is not null as found_matching_license
+        , c.installation_id is not null as found_matching_stripe_entry
+        , c.source as cloud_source
 from
     all_servers s
     left join license_data l on s.license_id = l.license_id
-    left join stripe_information si on s.installation_id = si.installation_id
+    left join cloud_information c on s.installation_id = c.installation_id
 
