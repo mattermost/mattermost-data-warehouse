@@ -1,11 +1,3 @@
-{{
-    config({
-        "materialized": "table",
-        "snowflake_warehouse": "transform_l"
-    })
-}}
-
-
 -- Create mapping of server id to license id by keeping the last license id reported by each server.
 with telemetry_licenses as (
     select

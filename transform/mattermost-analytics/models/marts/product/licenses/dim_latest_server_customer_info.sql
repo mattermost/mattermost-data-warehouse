@@ -7,7 +7,7 @@ select
     , coalesce(license_sku, cloud_sku) as sku
     , license_expire_at as license_expire_at
     , is_trial as is_trial_license
-    , plan_name as cloud_plan_name
+    , cloud_plan_name as cloud_plan_name
     , coalesce(license_source, cloud_source) as source
     -- Metadata
     , l.license_id is not null as found_matching_license_data
