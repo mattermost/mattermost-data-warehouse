@@ -6,7 +6,7 @@ select
     , coalesce(license_contact_email, cloud_contact_email) as contact_email
     , coalesce(license_sku, cloud_sku) as sku
     , license_expire_at as license_expire_at
-    , is_trial as is_trial_license
+    , coalesce(is_trial, false) as is_trial_license
     , cloud_plan_name as cloud_plan_name
     , coalesce(license_source, cloud_source) as source
     -- Metadata
