@@ -52,32 +52,6 @@ all_servers as (
     from
         latest_telemetry_licenses l
         full outer join latest_telemetry_installation_ids i on l.server_id = i.server_id
-),
-license_data as (
-    -- Gather all self-hosted license data from CWS and legacy licenses.
-    select
-        license_id
-        , company_name
-        , customer_email as contact_email
-        , sku_short_name
-        , expire_at
-        , is_trial
-        , 'CWS' as source
-    from
-        {{ ref('stg_cws__license') }}
-
-    union
-
-    select
-        license_id
-        , company_name
-        , contact_email
-        , 'Unknown' as sku_short_name
-        , expire_at
-        , false as is_trial
-        , 'Legacy' as source
-    from
-        {{ ref('stg_licenses__licenses') }}
 ), cloud_information as (
     -- Customer information from stripe. No other source for now.
     select
@@ -115,6 +89,6 @@ select
         , c.source as cloud_source
 from
     all_servers s
-    left join license_data l on s.license_id = l.license_id
+    left join {{ ref('int_known_licenses') }} l on s.license_id = l.license_id
     left join cloud_information c on s.installation_id = c.installation_id
 
