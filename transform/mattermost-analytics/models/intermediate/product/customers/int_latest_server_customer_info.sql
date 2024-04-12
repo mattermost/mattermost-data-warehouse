@@ -26,7 +26,7 @@ with telemetry_licenses as (
 ), latest_telemetry_licenses as (
     -- Keep only the last mapping of server id to license id, even in cases where telemetry has been sent both to rudder and segment.
     select
-        server_id, license_id, timestamp::date as last_license_date
+        server_id, license_id, timestamp::date as last_license_telemetry_date
     from
         telemetry_licenses
     qualify row_number() over (partition by server_id order by timestamp desc) = 1
@@ -46,7 +46,7 @@ all_servers as (
     select
         coalesce(l.server_id, i.server_id) as server_id
         , l.license_id
-        , l.last_license_date
+        , l.last_license_telemetry_date
         , i.installation_id
         , i.last_installation_id_date
     from
@@ -72,21 +72,23 @@ all_servers as (
 select
         s.server_id
         , s.license_id
-        , s.last_license_date
+        , s.last_license_telemetry_date
         , s.installation_id
         , s.last_installation_id_date
         , l.company_name as license_company_name
         , l.contact_email as license_contact_email
         , l.sku_short_name as license_sku
+        , l.expire_at as license_expire_at
         , l.is_trial
         , l.source as license_source
         , c.company_name as cloud_company_name
         , c.contact_email as cloud_contact_email
         , c.plan_name as cloud_plan_name
         , c.sku as cloud_sku
-        , l.license_id is not null as found_matching_license
-        , c.installation_id is not null as found_matching_stripe_entry
         , c.source as cloud_source
+        , l.license_id is not null as found_matching_license_data
+        , c.installation_id is not null as found_matching_stripe_entry
+
 from
     all_servers s
     left join {{ ref('int_known_licenses') }} l on s.license_id = l.license_id
