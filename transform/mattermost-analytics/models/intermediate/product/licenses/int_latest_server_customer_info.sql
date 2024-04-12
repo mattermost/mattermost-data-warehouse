@@ -72,9 +72,7 @@ all_servers as (
 select
         s.server_id
         , s.license_id
-        , s.last_license_telemetry_date
         , s.installation_id
-        , s.last_installation_id_date
         , l.company_name as license_company_name
         , l.contact_email as license_contact_email
         , l.sku_short_name as license_sku
@@ -88,6 +86,8 @@ select
         , c.source as cloud_source
         , l.license_id is not null as found_matching_license_data
         , c.installation_id is not null as found_matching_stripe_entry
+        , s.last_license_telemetry_date
+        , s.last_installation_id_date
 
 from
     all_servers s

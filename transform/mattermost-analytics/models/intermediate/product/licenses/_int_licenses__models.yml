@@ -9,6 +9,9 @@ models:
     columns:
       - name: license_id
         description: The ID of the license.
+        tests:
+          - unique
+          - not_null
       - name: company_name
         description: The name of the company that this license has been issued for.
       - name: contact_email
@@ -36,12 +39,15 @@ models:
     columns:
       - name: server_id
         description: The server's unique id.
+        tests:
+          - unique
+          - not_null
       - name: license_id
         description: The ID of the license.
-      - name: last_license_telemetry_date
-        description: The last date that license data was available for the current server ID over telemetry.
       - name: installation_id
         description: The ID of the cloud installation.
+
+      # License data
       - name: license_company_name
         description: The name of the company that this license has been issued for, as it appears in license data.
       - name: license_contact_email
@@ -59,6 +65,7 @@ models:
         description: |
           The source of the license data. One of `CWS`, `Legacy` or `CWS and Legacy`.
 
+      # Cloud data
       - name: cloud_company_name
         description: The name of the company that this license has been issued for, as it appears in cloud data.
       - name: cloud_contact_email
@@ -71,14 +78,18 @@ models:
       - name: cloud_source
         description: The source of data for cloud.
 
+      # Metadata
       - name: found_matching_license_data
         description: | 
           Boolean flag, indicating whether license data have been found for the current license id. 
           - True if matching data have been found.
           - False if no license id has been found or if no matching license exists.
-
       - name: found_matching_stripe_entry
         description: | 
           Boolean flag, indicating whether data for the current installation ID are available in Stripe. 
           - True if matching data have been found.
           - False if no data have been found or if there's no installation ID.
+      - name: last_license_telemetry_date
+        description: The last date that license data was available for the current server ID over telemetry.
+      - name: last_installation_id_date
+        description: The last date that installation id data was available for the current server ID over telemetry.
