@@ -19,7 +19,7 @@ with tmp as (
         context_user_agent is not null        
 {% if is_incremental() %}
         -- this filter will only be applied on an incremental run
-        and timestamp >= (select max(timestamp) from {{ ref('stg_mm_telemetry_prod__tracks') }} where source = 'mm_telemetry_prod')
+        and timestamp >= (select max(timestamp) from {{ this }} where source = 'mm_telemetry_prod')
 {% endif %}
 union
     select 'mattermost2' as source,
