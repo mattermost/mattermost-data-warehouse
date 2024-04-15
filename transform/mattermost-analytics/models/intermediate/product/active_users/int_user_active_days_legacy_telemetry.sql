@@ -26,7 +26,7 @@ with tmp as (
         -- Exclude items without server ids
         and server_id is not null
         -- Exclude items with missing timestamps
-        and timestamp is not null
+        and m2t.timestamp is not null
         and received_at <= current_timestamp
 {% if is_incremental() %}
         -- this filter will only be applied on an incremental run
