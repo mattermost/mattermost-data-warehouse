@@ -41,8 +41,8 @@ select
     , activity_date
     , server_id
     , user_id
-    , case when lower(client_type) = 'electron' then 'Desktop' 
-    when lower(client_type) != 'electron' then 'Webapp' end as client_type    
+    , case when lower(client_type:browser_family) = 'electron' then 'Desktop' 
+    when lower(client_type:browser_family) != 'electron' then 'Webapp' end as client_type    
     , true as is_active
     -- Required for incremental loading
     , received_at_date
