@@ -12,7 +12,7 @@
 with tmp as (
     select
         cast(received_at as date) as received_at_date,
-        cast(timestamp as date) as activity_date,
+        cast(m2t.timestamp as date) as activity_date,
         server_id,
         user_id,
         client_type

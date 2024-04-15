@@ -12,10 +12,10 @@
 with tmp as (
     select
         cast(received_at as date) as received_at_date,
-        cast(timestamp as date) as activity_date,
+        cast(mtp.timestamp as date) as activity_date,
         server_id,
         user_id,
-        client_type
+        uap.client_type
         from {{ ref('stg_mm_telemetry_prod__tracks') }} mtp 
     left join {{ ref('int_user_agent_parser') }} uap 
         on mtp.context_user_agent = uap.context_user_agent
