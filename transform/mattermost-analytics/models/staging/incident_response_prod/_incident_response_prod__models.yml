@@ -12,6 +12,8 @@ models:
         description: The name of the event.
       - name: event_table
         description: The name of the event table.
+      - name: event_action
+        description: The name of the action that th event tracks.
       - name: user_id
         description: The ID of the user that sent the event.
       - name: server_id

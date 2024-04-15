@@ -35,3 +35,15 @@ seeds:
         tests:
           - not_null
           - dbt_utils.not_empty_string
+
+  - name: playbook_events
+    description: List of known playbook events. Events are broken down by action.
+    columns:
+      - name: event_name
+        description: | 
+          The name of the event assigned to the feature. Note that client events usually define `event` as the value.
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+      - name: event_action
+        description: The action of the event.
