@@ -39,7 +39,8 @@ union
 {% if is_incremental() %}
 ),
 previously_parsed as (
-    select user_agent_id
+    select user_agent_id,
+        user_agent
     from {{ this }}
 {% endif %}
 ),
@@ -48,7 +49,7 @@ parsed as (
     {% if is_incremental() %}
         case 
             when previously_parsed.user_agent_id is not null 
-            then user_agent
+            then previously_parsed.user_agent
             else coalesce(parse_user_agent(context_user_agent), null)
         end as user_agent
     from tmp
