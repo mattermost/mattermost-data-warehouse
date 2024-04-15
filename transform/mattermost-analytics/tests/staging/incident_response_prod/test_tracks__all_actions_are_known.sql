@@ -4,15 +4,16 @@ with telemetry_actions as (
         event_name, event_action, count(*)
     from
         {{ ref('stg_incident_response_prod__tracks') }}
-    where
-        user_id is not null
     group by event_name, event_action
 )
 select
     t.event_name, t.event_action
 from
     telemetry_actions t
-    left join {{ ref('playbook_events') }} pe on t.event_name = pe.event_name and (t.event_action = pe.event_action or pe.event_action is null)
+    left join {{ ref('playbook_events') }} pe
+        on t.event_name = pe.event_name
+            -- Handle nulls in event_action
+            and ((t.event_action = pe.event_action) or (t.event_action is null and pe.event_action is null))
 where
     pe.event_name is null
    or pe.event_action is null
