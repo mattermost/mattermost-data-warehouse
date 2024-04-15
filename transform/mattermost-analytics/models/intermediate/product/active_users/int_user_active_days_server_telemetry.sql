@@ -18,7 +18,7 @@ with tmp as (
         ua.user_agent:browser_family as client_type
         from {{ ref('stg_mm_telemetry_prod__tracks') }} mtp 
     left join {{ ref('int_user_agents') }} ua
-        on mtp.context_user_agent = uap.context_user_agent
+        on mtp.context_user_agent = ua.context_user_agent
     where
         -- Exclude items without user ids, such as server side telemetry etc
         user_id is not null
