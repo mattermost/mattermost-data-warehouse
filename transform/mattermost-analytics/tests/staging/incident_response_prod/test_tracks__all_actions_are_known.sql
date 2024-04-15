@@ -16,4 +16,4 @@ from
             and ((t.event_action = pe.event_action) or (t.event_action is null and pe.event_action is null))
 where
     pe.event_name is null
-   or pe.event_action is null
+    and pe.event_action is null
