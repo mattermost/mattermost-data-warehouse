@@ -2,7 +2,8 @@
     config({
         "materialized": "incremental",
         "unique_key": ['user_agent_id'],
-        "snowflake_warehouse": "transform_l"
+        "snowflake_warehouse": "transform_l", 
+        "incremental_strategy": "append",
     })
 }}
 
@@ -12,7 +13,7 @@ with tmp as (
         timestamp as timestamp,
         context_user_agent as context_user_agent,
         md5(context_user_agent) as user_agent_id
-        from {{ ref('stg_mm_telemetry_prod__tracks') }}
+    from {{ ref('stg_mm_telemetry_prod__tracks') }}
     where
     -- Exclude rows without context_user_agent
         context_user_agent is not null        
@@ -25,7 +26,7 @@ union
         current_timestamp as timestamp,
         context_user_agent as context_user_agent,
         md5(context_user_agent) as user_agent_id
-        from {{ ref('stg_mattermost2__tracks') }}
+    from {{ ref('stg_mattermost2__tracks') }}
     where
     -- Exclude rows without context_user_agent
         context_user_agent is not null  

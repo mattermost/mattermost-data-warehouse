@@ -116,3 +116,19 @@ models:
         description: |
           Indicates whether the user was active on the specific date and previous 29 days, and for the specific server.
           Only for old (<= 5.25.0) servers.
+
+  - name: int_user_agents
+    description: |
+      Contains the context_user_agent data for client and legacy telemetry.
+
+    columns:
+      - name: source
+        description: The source of the context_user_agent (between Rudderstack or Segement).
+      - name: timestamp
+        description: Timestamp registered by RudderStack or Segment when the event occurred refactored to clients clock skew.
+      - name: context_user_agent
+        description: The user agent of the device that being tracked.
+      - name: user_agent_id
+        description: A 32-character hex-encoded string containing the 128-bit MD5 context_user_agent digest.
+      - name: client_type
+        description: The client_type of the user_agent.
