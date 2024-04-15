@@ -1,7 +1,7 @@
 -- Check if there are actions sent via telemetry that are not in the list of known events/actions.
 with telemetry_actions as (
     select
-        event_name, event_action, count(*)
+        event_name, event_action, count(*) as total_events
     from
         {{ ref('stg_incident_response_prod__tracks') }}
     group by event_name, event_action
@@ -17,3 +17,5 @@ from
 where
     pe.event_name is null
     and pe.event_action is null
+    -- Heuristic to exclude low cardinality spam messages
+    and t.total_events > 10
