@@ -74,7 +74,7 @@ rudder_licenses as (
 ), license_data as (
     -- Gather all self-hosted license data from CWS and legacy licenses.
     select
-        license_id.
+        license_id
        , company_name
        , customer_email as contact_email
        , sku_short_name
