@@ -18,7 +18,7 @@ with tmp as (
         client_type
     from
         {{ ref('stg_mattermost2__tracks') }} m2t 
-    left join {{ ref('int_user_agent_parser') }} uap 
+    left join {{ ref('int_user_agents') }} uap 
         on m2t.context_user_agent = uap.context_user_agent
     where
         -- Exclude items without user ids, such as server side telemetry etc
@@ -37,7 +37,7 @@ with tmp as (
 )
 select
     -- Surrogate key required as it's both a good practice, as well as allows merge incremental strategy.
-    {{ dbt_utils.generate_surrogate_key(['received_at_date', 'activity_date', 'server_id', 'user_id']) }} as daily_user_id
+    {{ dbt_utils.generate_surrogate_key(['received_at_date', 'activity_date', 'server_id', 'user_id', 'client_type']) }} as daily_user_id
     , activity_date
     , server_id
     , user_id
