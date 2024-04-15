@@ -8,15 +8,7 @@
 }}
 
     SELECT
-        event_id AS event_id,
-        event_table AS event_table,
-        event_name AS event_name,
-        category AS category,
-        event_type AS event_type,
-        server_id AS server_id,
-        user_id AS user_id,
-        received_at AS received_at,
-        timestamp AS timestamp,
+        {{ dbt_utils.star(ref('stg_mm_telemetry_prod__tracks'), except=["context_user_agent"]) }},
         'stg_mm_telemetry_prod__tracks' AS _source_relation,
         received_at::date AS received_at_date
      FROM

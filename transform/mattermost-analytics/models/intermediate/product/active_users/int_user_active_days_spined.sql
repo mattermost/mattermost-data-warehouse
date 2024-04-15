@@ -7,7 +7,7 @@
     })
 }}
 
-{% set metrics = ['is_active', 'is_client_desktop', 'is_client_webapp', 'is_mobile', 'is_legacy_desktop', 'is_legacy_webapp'] %}
+{% set metrics = ['is_active', 'is_client_desktop', 'is_client_webapp', 'is_mobile', 'is_legacy_desktop', 'is_legacy_webapp', 'is_desktop', 'is_webapp'] %}
 
 with user_active_days as (
     -- Merge mobile with server data
@@ -21,7 +21,10 @@ with user_active_days as (
         case when s.server_id is not null and s.client_type = 'Webapp' then true else false end as is_client_webapp,
         m.server_id is not null as is_mobile,
         case when l.server_id is not null and l.client_type = 'Desktop' then true else false end as is_legacy_desktop,
-        case when l.server_id is not null and l.client_type = 'Webapp' then true else false end as is_legacy_webapp
+        case when l.server_id is not null and l.client_type = 'Webapp' then true else false end as is_legacy_webapp,
+        case when coalesce(s.server_id, l.server_id) is not null and coalesce(s.client_type, l.client_type) = 'Desktop' then true else false end as is_desktop
+        case when coalesce(s.server_id, l.server_id) is not null and coalesce(s.client_type, l.client_type) = 'Webapp' then true else false end as is_webapp
+
     from
         {{ ref('int_user_active_days_server_telemetry') }} s
         full outer join {{ ref('int_user_active_days_mobile_telemetry') }} m on s.daily_user_id = m.daily_user_id

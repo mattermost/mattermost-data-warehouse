@@ -5,7 +5,9 @@
         'is_client_webapp': 'client_webapp_active_users',
         'is_mobile': 'mobile_active_users',
         'is_legacy_desktop': 'legacy_desktop_active_users',
-        'is_legacy_webapp': 'legacy_webapp_active_users'
+        'is_legacy_webapp': 'legacy_webapp_active_users',
+        'is_desktop': desktop_active_users,
+        'is_webapp': webapp_active_users
     }
 %}
 
@@ -32,12 +34,6 @@ select
     , coalesce(m.weekly_{{column}}, 0) as weekly_{{column}}
     , coalesce(m.monthly_{{column}}, 0) as monthly_{{column}}
     {% endfor %}
-    , daily_client_desktop_active_users + daily_legacy_desktop_active_users as daily_desktop_active_users
-    , daily_client_webapp_active_users + daily_legacy_webapp_active_users as daily_webapp_active_users
-    , weekly_client_desktop_active_users + weekly_legacy_desktop_active_users as weekly_desktop_active_users
-    , weekly_client_webapp_active_users + weekly_legacy_webapp_active_users as weekly_webapp_active_users
-    , monthly_client_desktop_active_users + monthly_legacy_desktop_active_users as monthly_desktop_active_users
-    , monthly_client_webapp_active_users + monthly_legacy_webapp_active_users as monthly_webapp_active_users
     -- Server-reported activity
     , coalesce(sas.daily_active_users, 0) as server_daily_active_users
     , coalesce(sas.monthly_active_users, 0) as server_monthly_active_users
