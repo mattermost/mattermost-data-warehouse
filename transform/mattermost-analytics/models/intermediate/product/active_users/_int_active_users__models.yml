@@ -130,5 +130,5 @@ models:
         description: The user agent of the device that being tracked.
       - name: user_agent_id
         description: A 32-character hex-encoded string containing the 128-bit MD5 context_user_agent digest.
-      - name: client_type
-        description: The client_type of the user_agent.
+      - name: user_agent
+        description: The parsed user agent from the context_user_agent field.

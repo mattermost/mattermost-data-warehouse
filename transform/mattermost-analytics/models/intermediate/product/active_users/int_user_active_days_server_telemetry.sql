@@ -15,9 +15,9 @@ with tmp as (
         cast(mtp.timestamp as date) as activity_date,
         server_id,
         user_id,
-        uap.client_type
+        ua.user_agent:browser_family as client_type
         from {{ ref('stg_mm_telemetry_prod__tracks') }} mtp 
-    left join {{ ref('int_user_agents') }} uap 
+    left join {{ ref('int_user_agents') }} ua
         on mtp.context_user_agent = uap.context_user_agent
     where
         -- Exclude items without user ids, such as server side telemetry etc
@@ -40,8 +40,8 @@ select
     , activity_date
     , server_id
     , user_id
-    , case when lower(client_type:browser_family) = 'electron' then 'Desktop' 
-    when lower(client_type:browser_family) != 'electron' and (client_type:browser_family) is not null then 'Webapp' end as client_type
+    , case when lower(to_varchar(client_type)) = 'electron' then 'Desktop' 
+    when lower(to_varchar(client_type)) != 'electron' and client_type is not null then 'Webapp' end as client_type
     , true as is_active
     -- Required for incremental loading
     , received_at_date
