@@ -49,7 +49,7 @@ parsed as (
         case 
             when previously_parsed.user_agent_id is not null 
             then client_type
-            else iff(context_user_agent is not null, parse_user_agent(context_user_agent), null)
+            else coalesce(parse_user_agent(context_user_agent), null)
         end as client_type
     from tmp
     left join previously_parsed on tmp.user_agent_id = previously_parsed.user_agent_id
