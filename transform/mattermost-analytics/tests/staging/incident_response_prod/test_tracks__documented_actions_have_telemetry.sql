@@ -14,7 +14,7 @@ select
     pe.event_name, pe.event_action
 from
     {{ ref('playbook_events') }} pe
-    left join telemetry_actions t on t.event_name = pe.event_name and (t.event_action = pe.event_action or pe.event_action = '')
+    left join telemetry_actions t on t.event_name = pe.event_name and (t.event_action = pe.event_action or pe.event_action is null)
 where
     t.event_name is null
     or t.event_action is null
