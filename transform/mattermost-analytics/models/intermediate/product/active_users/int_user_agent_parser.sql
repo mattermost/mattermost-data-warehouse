@@ -13,7 +13,7 @@ with tmp as (
         from {{ ref('stg_mm_telemetry_prod__tracks') }}
     where
     -- Exclude rows without context_user_agent
-        and context_user_agent is not null        
+        context_user_agent is not null        
 {% if is_incremental() %}
         -- this filter will only be applied on an incremental run
         and timestamp >= (select max(timestamp) from {{ this }})
@@ -27,7 +27,7 @@ union
         from {{ ref('stg_mattermost2__tracks') }}
     where
     -- Exclude rows without context_user_agent
-        and context_user_agent is not null  
+        context_user_agent is not null  
 {% if is_incremental() %}
         -- this filter will only be applied on an incremental run
         and timestamp >= (select max(timestamp) from {{ this }})
