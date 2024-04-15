@@ -54,7 +54,7 @@ parsed as (
     from tmp
     left join previously_parsed on tmp.user_agent_id = previously_parsed.user_agent_id
     {% else %}
-    iff(context_user_agent is not null, parse_user_agent(context_user_agent), null)
+    iff(context_user_agent is not null, parse_user_agent(context_user_agent), null) as client_type
     from tmp
     {% endif %}
 )
