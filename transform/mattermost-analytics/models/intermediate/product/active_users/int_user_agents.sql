@@ -34,18 +34,23 @@ union
         -- this filter will only be applied on an incremental run
         and timestamp >= (select max(timestamp) from {{ this }} where source = 'mattermost2')
 {% endif %}
+{% if is_incremental() %}
 ),
 previously_parsed as (
     select user_agent_id
     from {{ this }}
+{% endif %}
 ),
 parsed as (
     select tmp.*, 
+    {% if is_incremental() %}
         case 
             when previously_parsed.user_agent_id is not null 
             then client_type
-            else parse_user_agent(tmp.context_user_agent) 
+            else iff(context_user_agent is not null, parse_user_agent(context_user_agent), null)
         end as client_type
+    {% endif %}
+    iff(context_user_agent is not null, parse_user_agent(context_user_agent), null) as client_type
     from tmp
     left join previously_parsed on tmp.user_agent_id = previously_parsed.user_agent_id
 )
