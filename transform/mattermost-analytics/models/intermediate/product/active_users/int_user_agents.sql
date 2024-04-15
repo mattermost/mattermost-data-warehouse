@@ -35,6 +35,7 @@ union
         -- this filter will only be applied on an incremental run
         and timestamp >= (select max(timestamp) from {{ this }} where source = 'mattermost2')
 {% endif %}
+    group by context_user_agent
 {% if is_incremental() %}
 ),
 previously_parsed as (
