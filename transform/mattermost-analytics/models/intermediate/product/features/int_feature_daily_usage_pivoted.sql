@@ -1,3 +1,11 @@
+-- Materialization required in order for downstream model to be able to get list of columns.
+-- Temporarily materialize
+{{
+    config({
+        "materialized": "table",
+        "snowflake_warehouse": "transform_l"
+    })
+}}
 --
 -- Creates a table where each row holds which known features were used by each server/user.
 --
@@ -31,8 +39,7 @@ with servers_with_known_features as (
     from
         {{ ref('int_mattermost_daily_usage_per_user') }} u
     where
-        userver_id
-        join servers_with_known_features s on u.server_id = s.server_id
+        server id in (select server_id from servers_with_known_features)
 
 
     union all
@@ -45,8 +52,8 @@ with servers_with_known_features as (
         , u.event_count
     from
         {{ ref('int_playbooks_daily_usage_per_user') }} u
-        join servers_with_known_features s on u.server_id = s.server_id
-
+    where
+        server id in (select server_id from servers_with_known_features)
 )
 -- Row per date, server, user. Contains one column per known feature.
 select
