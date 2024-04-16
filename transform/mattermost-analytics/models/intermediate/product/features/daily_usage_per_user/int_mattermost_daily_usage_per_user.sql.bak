@@ -68,7 +68,7 @@ select
     , e._daily_user_event_key
     , e.event_count
     -- Mark known features and use a bucket for the rest
-    , coalesce(f.feature_name, 'unknown') as feature_name
+    , coalesce(f.feature_alias, 'unknown') as feature_alias
 from
     aggregated_events e
     left join feature_aliases f on e.event_name = e.event_name and e.category = f.category and e.event_type = f.event_type

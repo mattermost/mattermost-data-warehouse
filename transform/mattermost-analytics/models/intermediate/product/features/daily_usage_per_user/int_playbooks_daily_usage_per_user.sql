@@ -12,8 +12,9 @@
 with feature_aliases as (
     -- Get feature alias for each feature. This is required to get each feature as a column.
     select
-        {{dbt_utils.star(ref('playbook_events'))}}
-        , a.alias as feature_name
+        f.event_name
+        , f.event_action
+        , a.alias as feature_alias
     from
         {{ ref('playbook_events') }} f
         join {{ ref('feature_aliases') }} a on f.feature_name = a.feature_name
@@ -63,7 +64,7 @@ select
     , e._daily_user_event_key
     , e.event_count
     -- Mark known features and use a bucket for the rest
-    , coalesce(f.feature_name, 'unknown') as feature_name
+    , coalesce(f.feature_alias, 'unknown') as feature_alias
 from
     aggregated_events e
     left join feature_aliases f
