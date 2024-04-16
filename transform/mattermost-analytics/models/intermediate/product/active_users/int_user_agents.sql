@@ -25,7 +25,7 @@ with tmp as (
         -- this filter will only be applied on an incremental run
         and coalesce(mtp.timestamp, mm2.timestamp) >= (select max(max_timestamp) from {{ this }})
 {% endif %}
-    group by context_user_agent
+    group by coalesce(mtp.context_user_agent, mm2.context_user_agent)
 ),
 parsed as (
     select tmp.*, 
