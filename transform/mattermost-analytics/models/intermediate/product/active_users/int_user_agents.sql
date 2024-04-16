@@ -12,7 +12,7 @@
 with tmp as (
     select coalesce(mtp.context_user_agent, mm2.context_user_agent) as context_user_agent,
         max(coalesce(mtp.timestamp, mm2.timestamp)) as timestamp,
-        md5(context_user_agent) as user_agent_id
+        md5(coalesce(mtp.context_user_agent, mm2.context_user_agent)) as user_agent_id
     from {{ ref('stg_mm_telemetry_prod__tracks') }} mtp
         full outer join {{ ref('stg_mattermost2__tracks') }} mm2 
         on mtp.context_user_agent = mm2.context_user_agent
