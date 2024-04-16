@@ -3,9 +3,7 @@ SELECT
              last_feedback_date
            , server_id
            , user_id
-           , CASE WHEN subcategory IN ('Miscellanious Admin', 'Reporting/Statistics', 'SSO', 'User/Team Management',
-                                      'Compliance')
-                                                               THEN 'Admin Feedback'
+           , CASE
                  WHEN subcategory IN ('Audio/Video Calling', 'Away Status', 'Block User', 'Channel Sidebar',
                                       'Corporate Slack Import', 'Custom Statuses', 'Emoji/GIF Options',
                                       'Group Mentions', 'Integrations', 'Mark as Unread', 'Message Tagging',
@@ -39,66 +37,6 @@ SELECT
                     , n1.server_id
                     , n1.user_id
                     , CASE
-                        WHEN (REGEXP_SUBSTR(LOWER(n1.feedback),
-                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)(system) (ui|ux|layout|design|experience|button|control|adjust|set|enable|enabled|disable|disabled)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
-                            REGEXP_SUBSTR(LOWER(n1.feedback),
-                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)(console) (ui|ux|layout|design|experience|button|control|adjust|set|enable|enabled|disable|disabled)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
-                            REGEXP_SUBSTR(LOWER(n1.feedback),
-                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)(admin) (ui|ux|layout|design|experience|button|control|adjust|set|enable|enabled|disable|disabled)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL)                       
-                        THEN 'System Console UX'
-                        WHEN (REGEXP_SUBSTR(LOWER(n1.feedback),
-                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)stat(istic|istics)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
-                            REGEXP_SUBSTR(LOWER(n1.feedback),
-                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)report(ing|s)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
-                            REGEXP_SUBSTR(LOWER(n1.feedback),
-                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)metric(s)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
-                            REGEXP_SUBSTR(LOWER(n1.feedback),
-                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)chart(s)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
-                             REGEXP_SUBSTR(LOWER(n1.feedback),
-                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)graph(s)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
-                             REGEXP_SUBSTR(LOWER(n1.feedback),
-                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)site statistic|team statistic(s)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL)                       
-                        THEN 'Reporting/Statistics'
-                        WHEN (REGEXP_SUBSTR(LOWER(n1.feedback),
-                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)manag(e|ing|ement|es)(|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
-                                REGEXP_SUBSTR(LOWER(n1.feedback),
-                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)restric(t|ts|ting|ted)(|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
-                                REGEXP_SUBSTR(LOWER(n1.feedback),
-                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)archiv(e|ing|es|ed)(|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
-                                REGEXP_SUBSTR(LOWER(n1.feedback),
-                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)disabl(e|es|ing|ed)(|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL) AND
-                               (REGEXP_SUBSTR(LOWER(n1.feedback),
-                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)(role|group|team|channel|permission|feature|link|video)(s|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL)
-                              THEN 'User/Team Management'
-                          WHEN (REGEXP_SUBSTR(LOWER(n1.feedback),
-                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)system(s|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
-                                REGEXP_SUBSTR(LOWER(n1.feedback),
-                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)server(s|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL) AND
-                               (REGEXP_SUBSTR(LOWER(n1.feedback),
-                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)confi(g|gs|guration|gurations|gurating|gurate|gurated|gurates)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
-                                REGEXP_SUBSTR(LOWER(n1.feedback),
-                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)settin(g|gs)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
-                                REGEXP_SUBSTR(LOWER(n1.feedback),
-                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)disabl(e|ed|ing|es)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
-                                REGEXP_SUBSTR(LOWER(n1.feedback),
-                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)ba(n|nning|nned|ns)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
-                                REGEXP_SUBSTR(LOWER(n1.feedback),
-                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)bloc(k|king|ked|ks)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
-                                REGEXP_SUBSTR(LOWER(n1.feedback),
-                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)delet(e|ing|ed|es)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL)
-                              THEN ''Miscellaneous Admin'
-                          WHEN REGEXP_SUBSTR(LOWER(n1.feedback),
-                                             '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)system console(s|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL
-                              THEN ''Miscellaneous Admin'
-                          WHEN REGEXP_SUBSTR(LOWER(n1.feedback),
-                                             '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)admin(s|istrate|istrator|istrators|istrater|istraters|istration|istrating|istrated)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL
-                              THEN 'Miscellaneous Admin'
-                          WHEN REGEXP_SUBSTR(LOWER(n1.feedback),
-                                             '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)(sso|single sign on|single-sign-on|single signon|single sign-on|single-sign on)(^|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL
-                              THEN 'Admin Feedback'
-                        WHEN (REGEXP_SUBSTR(LOWER(n1.feedback),
-                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)compliant|comply|compliance(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR)                       
-                        THEN 'Compliance',
                           WHEN REGEXP_SUBSTR(LOWER(n1.feedback),
                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)oaut(h|h2|hs|hentication)(^|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL
                               THEN 'Account Authorization'
@@ -108,7 +46,9 @@ SELECT
                           WHEN REGEXP_SUBSTR(LOWER(n1.feedback),
                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)authenticat(e|ion|ed|es|ed|ing|or|er)(^|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL
                               THEN 'Account Authorization'
-
+                          WHEN REGEXP_SUBSTR(LOWER(n1.feedback),
+                                             '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)(sso|single sign on|single-sign-on|single signon|single sign-on|single-sign on)(^|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL
+                              THEN 'Account Authorization'
                           WHEN REGEXP_SUBSTR(LOWER(n1.feedback),
                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)(quit|stop) (bugging|annoying|spamming|surveying) me(s|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL
                               THEN 'Invalid'
@@ -920,7 +860,41 @@ SELECT
                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)(font|fonts|formatting|color|colored|colors|fancy|fancier|fanciness|fancyness|design)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL
                               THEN 'UI/UX Polish'
                           WHEN REGEXP_SUBSTR(LOWER(n1.feedback),
+                                             '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)admin(s|istrate|istrator|istrators|istrater|istraters|istration|istrating|istrated)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL
+                              THEN 'System Administration'
+                          WHEN REGEXP_SUBSTR(LOWER(n1.feedback),
                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)se(t|ting) up(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL
+                              THEN 'System Administration'
+                          WHEN (REGEXP_SUBSTR(LOWER(n1.feedback),
+                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)system(s|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
+                                REGEXP_SUBSTR(LOWER(n1.feedback),
+                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)server(s|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL) AND
+                               (REGEXP_SUBSTR(LOWER(n1.feedback),
+                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)confi(g|gs|guration|gurations|gurating|gurate|gurated|gurates)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
+                                REGEXP_SUBSTR(LOWER(n1.feedback),
+                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)settin(g|gs)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
+                                REGEXP_SUBSTR(LOWER(n1.feedback),
+                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)disabl(e|ed|ing|es)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
+                                REGEXP_SUBSTR(LOWER(n1.feedback),
+                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)ba(n|nning|nned|ns)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
+                                REGEXP_SUBSTR(LOWER(n1.feedback),
+                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)bloc(k|king|ked|ks)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
+                                REGEXP_SUBSTR(LOWER(n1.feedback),
+                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)delet(e|ing|ed|es)(\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL)
+                              THEN 'System Administration'
+                          WHEN REGEXP_SUBSTR(LOWER(n1.feedback),
+                                             '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)system console(s|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL
+                              THEN 'System Administration'
+                          WHEN (REGEXP_SUBSTR(LOWER(n1.feedback),
+                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)manag(e|ing|ement|es)(|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
+                                REGEXP_SUBSTR(LOWER(n1.feedback),
+                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)restric(t|ts|ting|ted)(|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
+                                REGEXP_SUBSTR(LOWER(n1.feedback),
+                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)archiv(e|ing|es|ed)(|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL OR
+                                REGEXP_SUBSTR(LOWER(n1.feedback),
+                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)disabl(e|es|ing|ed)(|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL) AND
+                               (REGEXP_SUBSTR(LOWER(n1.feedback),
+                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)(role|group|team|channel|permission|feature|link|video)(s|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL)
                               THEN 'System Administration'
                           WHEN REGEXP_SUBSTR(LOWER(n1.feedback),
                                              '(^| |\\.|\;|,|:|\n|\t|\-|\"|\'|\/)electron(^|\\.|\;|,| |\/|\n|\t|\-|\"|\'|\\?|\!|$)') IS NOT NULL
