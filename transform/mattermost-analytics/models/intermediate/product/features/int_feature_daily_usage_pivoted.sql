@@ -39,7 +39,7 @@ with servers_with_known_features as (
     from
         {{ ref('int_mattermost_daily_usage_per_user') }} u
     where
-        server id in (select server_id from servers_with_known_features)
+        server_id in (select server_id from servers_with_known_features)
 
 
     union all
@@ -53,7 +53,7 @@ with servers_with_known_features as (
     from
         {{ ref('int_playbooks_daily_usage_per_user') }} u
     where
-        server id in (select server_id from servers_with_known_features)
+        server_id in (select server_id from servers_with_known_features)
 )
 -- Row per date, server, user. Contains one column per known feature.
 select
