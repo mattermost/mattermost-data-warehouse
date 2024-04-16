@@ -47,3 +47,7 @@ seeds:
           - dbt_utils.not_empty_string
       - name: event_action
         description: The action of the event.
+      - name: deprecated
+        description: Whether the event has been deprecated.
+      - name: deprecation_reason
+        description: The reason why this event is considered as deprecated.
