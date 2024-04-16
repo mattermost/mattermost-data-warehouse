@@ -15,7 +15,7 @@ with feature_aliases as (
         f.event_name
         , f.category
         , f.event_type
-        , a.alias as feature_name
+        , a.alias as feature_alias
     from
         {{ ref('event_to_feature_mapping') }} f
         join {{ ref('feature_aliases') }} a on f.feature_name = a.feature_name
