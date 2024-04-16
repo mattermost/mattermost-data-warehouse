@@ -119,7 +119,7 @@ models:
 
   - name: int_user_agents
     description: |
-      Contains the context_user_agent data for client and legacy telemetry.
+      Contains all user agent strings that have been detected from all telemetry sources.
 
     columns:
       - name: source

@@ -7,7 +7,8 @@
         'is_legacy_desktop': 'legacy_desktop_active_users',
         'is_legacy_webapp': 'legacy_webapp_active_users',
         'is_desktop': 'desktop_active_users',
-        'is_webapp': 'webapp_active_users'
+        'is_webapp': 'webapp_active_users',
+        'is_unknown': 'unknown_active_users'
     }
 %}
 
