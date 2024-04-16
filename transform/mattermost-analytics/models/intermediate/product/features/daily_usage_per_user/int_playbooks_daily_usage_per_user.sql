@@ -66,5 +66,8 @@ select
     , coalesce(f.feature_name, 'unknown') as feature_name
 from
     aggregated_events e
-    left join feature_aliases f on e.event_name = e.event_name and e.category = f.category and e.event_type = f.event_type
+    left join feature_aliases f
+        on e.event_name = f.event_name
+            -- Handle nulls in event_action
+            and ((e.event_action = f.event_action) or (e.event_action is null and f.event_action is null))
 
