@@ -10,31 +10,20 @@
 
 
 with tmp as (
-    select 'mm_telemetry_prod' as source,
-        context_user_agent as context_user_agent,
+    select coalesce(mtp.context_user_agent, mm2.context_user_agent) as context_user_agent,
         max(timestamp) as timestamp,
         md5(context_user_agent) as user_agent_id
-    from {{ ref('stg_mm_telemetry_prod__tracks') }}
+    from {{ ref('stg_mm_telemetry_prod__tracks') }} mtp
+        full outer join {{ ref('stg_mattermost2__tracks') }} mm2 
+        on mtp.context_user_agent = mm2.context_user_agent
     where
     -- Exclude rows without context_user_agent
-        context_user_agent is not null        
+        mtp.context_user_agent is not null 
+        and 
+        mm2.context_user_agent is not null        
 {% if is_incremental() %}
         -- this filter will only be applied on an incremental run
-        and timestamp >= (select max(timestamp) from {{ this }} where source = 'mm_telemetry_prod')
-{% endif %}
-    group by context_user_agent
-union
-    select 'mattermost2' as source,
-        context_user_agent as context_user_agent,
-        max(timestamp) as timestamp,
-        md5(context_user_agent) as user_agent_id
-    from {{ ref('stg_mattermost2__tracks') }}
-    where
-    -- Exclude rows without context_user_agent
-        context_user_agent is not null  
-{% if is_incremental() %}
-        -- this filter will only be applied on an incremental run
-        and timestamp >= (select max(timestamp) from {{ this }} where source = 'mattermost2')
+        and timestamp >= (select max(timestamp) from {{ this }} )
 {% endif %}
     group by context_user_agent
 ),
