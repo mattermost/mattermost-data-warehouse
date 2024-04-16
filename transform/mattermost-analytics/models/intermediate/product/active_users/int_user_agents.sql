@@ -11,7 +11,7 @@
 
 with tmp as (
     select coalesce(mtp.context_user_agent, mm2.context_user_agent) as context_user_agent,
-        max(timestamp) as timestamp,
+        max(coalesce(mtp.timestamp, mm2.timestamp)) as timestamp,
         md5(context_user_agent) as user_agent_id
     from {{ ref('stg_mm_telemetry_prod__tracks') }} mtp
         full outer join {{ ref('stg_mattermost2__tracks') }} mm2 
@@ -19,11 +19,11 @@ with tmp as (
     where
     -- Exclude rows without context_user_agent
         mtp.context_user_agent is not null 
-        and 
+        or 
         mm2.context_user_agent is not null        
 {% if is_incremental() %}
         -- this filter will only be applied on an incremental run
-        and timestamp >= (select max(timestamp) from {{ this }} )
+        and coalesce(mtp.timestamp, mm2.timestamp) >= (select max(max_timestamp) from {{ this }})
 {% endif %}
     group by context_user_agent
 ),
