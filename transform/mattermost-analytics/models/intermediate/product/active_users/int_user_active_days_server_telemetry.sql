@@ -44,7 +44,7 @@ select
     , true as is_active
     -- Required for incremental loading
     , received_at_date
-    , {{ dbt_utils.pivot('client_type', ['is_desktop', 'is_webapp']) }}
+    , {{ dbt_utils.pivot('client_type', [is_desktop, is_webapp]) }}
 from
     tmp
 where
