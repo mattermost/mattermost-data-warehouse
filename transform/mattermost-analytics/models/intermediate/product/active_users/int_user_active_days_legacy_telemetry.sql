@@ -33,7 +33,7 @@ with tmp as (
         -- this filter will only be applied on an incremental run
         and received_at >= (select max(received_at_date) from {{ this }})
 {% endif %}
-    group by received_at_date, activity_date, server_id, user_id
+    group by received_at_date, activity_date, server_id, user_id, client_type
     order by received_at_date
 )
 select
