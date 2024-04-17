@@ -1,0 +1,42 @@
+version: 2
+
+models:
+  - name: int_user_agents
+    description: |
+      Contains all user agent strings that have been detected from all telemetry sources.
+
+    columns:
+      - name: context_user_agent
+        description: The user agent of the device that being tracked.
+      - name: user_agent_id
+        description: A 32-character hex-encoded string containing the 128-bit MD5 context_user_agent digest.
+      - name: user_agent
+        description: The parsed user agent from the context_user_agent field.
+
+  - name: int_mm_telemetry_prod__user_agents
+    description: |
+      Contains all user agent strings that have been detected from all telemetry sources.
+
+    columns:
+      - name: timestamp
+        description: Timestamp registered by RudderStack or Segment when the event occurred refactored to clients clock skew.
+      - name: context_user_agent
+        description: The user agent of the device that being tracked.
+      - name: user_agent_id
+        description: A 32-character hex-encoded string containing the 128-bit MD5 context_user_agent digest.
+      - name: user_agent
+        description: The parsed user agent from the context_user_agent field.
+
+  - name: int_mattermost2__user_agents
+    description: |
+      Contains all user agent strings that have been detected from all telemetry sources.
+
+    columns:
+      - name: timestamp
+        description: Timestamp registered by RudderStack or Segment when the event occurred refactored to clients clock skew.
+      - name: context_user_agent
+        description: The user agent of the device that being tracked.
+      - name: user_agent_id
+        description: A 32-character hex-encoded string containing the 128-bit MD5 context_user_agent digest.
+      - name: user_agent
+        description: The parsed user agent from the context_user_agent field.
