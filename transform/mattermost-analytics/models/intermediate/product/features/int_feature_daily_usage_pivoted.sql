@@ -16,7 +16,7 @@ with feature_aliases as (
     -- This filter can be removed in the future if there's a need to expand the breakdown even for servers without any
     -- known features.
     select
-        u.server_id
+        distinct u.server_id
     from
         {{ ref('int_feature_daily_usage_per_user') }} u
         join feature_aliases f on u.event_name = f.event_name and u.category = f.category and f.event_type = u.event_type
