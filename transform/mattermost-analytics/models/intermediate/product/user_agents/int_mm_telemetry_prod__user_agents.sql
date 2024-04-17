@@ -17,6 +17,6 @@ select context_user_agent as context_user_agent,
         context_user_agent is not null        
 {% if is_incremental() %}
         -- this filter will only be applied on an incremental run
-        and timestamp >= (select max(max_timestamp) from {{ this }})
+        and timestamp >= (select max(timestamp) from {{ this }})
 {% endif %}
     group by context_user_agent
