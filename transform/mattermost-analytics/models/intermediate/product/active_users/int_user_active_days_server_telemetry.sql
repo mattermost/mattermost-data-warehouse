@@ -15,8 +15,8 @@ with tmp as (
         cast(mtp.timestamp as date) as activity_date,
         server_id,
         user_id,
-        case when lower(to_varchar(ua.user_agent:browser_family)) = 'electron' then 'Desktop'  
-        when lower(to_varchar(ua.user_agent:browser_family)) != 'electron' and ua.user_agent:browser_family is not null then 'Webapp' end as client_type
+        case when lower(to_varchar(ua.user_agent:browser_family)) = 'electron' then 'is_desktop'  
+        when lower(to_varchar(ua.user_agent:browser_family)) != 'electron' and ua.user_agent:browser_family is not null then 'is_webapp' end as client_type
         from {{ ref('stg_mm_telemetry_prod__tracks') }} mtp 
     left join {{ ref('int_user_agents') }} ua
         on mtp.context_user_agent = ua.context_user_agent
@@ -44,7 +44,7 @@ select
     , true as is_active
     -- Required for incremental loading
     , received_at_date
-    , {{ dbt_utils.pivot('client_type', ['Desktop', 'Webapp']) }}
+    , {{ dbt_utils.pivot('client_type', ['is_desktop', 'is_webapp']) }}
 from
     tmp
 where
