@@ -16,7 +16,7 @@ with tmp as (
         server_id,
         user_id,
         {{ dbt_utils.pivot(case when lower(to_varchar(ua.user_agent:browser_family)) = 'electron' then 'IS_DESKTOP'  
-        when lower(to_varchar(ua.user_agent:browser_family)) != 'electron' and ua.user_agent:browser_family is not null then 'IS_WEBAPP' end, ['IS_DESKTOP', 'IS_WEBAPP']) }}
+        when lower(to_varchar(ua.user_agent:browser_family)) != 'electron' and ua.user_agent:browser_family is not null then 'IS_WEBAPP' end), ['IS_DESKTOP', 'IS_WEBAPP']) }}
         from {{ ref('stg_mm_telemetry_prod__tracks') }} mtp 
     left join {{ ref('int_user_agents') }} ua
         on mtp.context_user_agent = ua.context_user_agent
