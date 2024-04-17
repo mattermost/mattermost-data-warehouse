@@ -15,8 +15,8 @@ with tmp as (
         cast(m2t.timestamp as date) as activity_date,
         server_id,
         user_id,
-        case when lower(to_varchar(ua.user_agent:browser_family)) = 'electron' then 'IS_DESKTOP'  
-        when lower(to_varchar(ua.user_agent:browser_family)) != 'electron' and ua.user_agent:browser_family is not null then 'IS_WEBAPP' end as client_type
+        {{ dbt_utils.pivot(case when lower(to_varchar(ua.user_agent:browser_family)) = 'electron' then 'IS_DESKTOP'  
+        when lower(to_varchar(ua.user_agent:browser_family)) != 'electron' and ua.user_agent:browser_family is not null then 'IS_WEBAPP' end, ['IS_DESKTOP', 'IS_WEBAPP']) }}
     from
         {{ ref('stg_mattermost2__tracks') }} m2t 
     left join {{ ref('int_user_agents') }} ua
@@ -33,7 +33,7 @@ with tmp as (
         -- this filter will only be applied on an incremental run
         and received_at >= (select max(received_at_date) from {{ this }})
 {% endif %}
-    group by received_at_date, activity_date, server_id, user_id, client_type
+    group by received_at_date, activity_date, server_id, user_id
     order by received_at_date
 )
 select
@@ -45,9 +45,9 @@ select
     , true as is_active
     -- Required for incremental loading
     , received_at_date
-    , {{ dbt_utils.pivot('client_type', ['IS_DESKTOP', 'IS_WEBAPP']) }}
-from
-    tmp
+    , is_desktop
+    , is_webapp
+    from tmp
 where
     activity_date >= '{{ var('telemetry_start_date')}}'
 group by 
