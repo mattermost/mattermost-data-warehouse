@@ -24,7 +24,7 @@ with user_active_days as (
         case when l.server_id is not null and l.is_webapp > 0 then true else false end as is_legacy_webapp,
         case when coalesce(s.server_id, l.server_id) is not null and (s.is_desktop > 0 or l.is_desktop > 0) then true else false end as is_desktop,
         case when coalesce(s.server_id, l.server_id) is not null and (s.is_webapp > 0 or l.is_webapp > 0) then true else false end as is_webapp,
-        case when coalesce(s.server_id, l.server_id) is not null and (s.is_desktop = 0 and l.is_desktop = 0 and s.is_webapp = 0 and l.is_webapp = 0) then true else false end as is_unknown,
+        case when coalesce(s.server_id, l.server_id) is not null and (s.is_desktop = 0 and l.is_desktop = 0 and s.is_webapp = 0 and l.is_webapp = 0) then true else false end as is_unknown
     from
         {{ ref('int_user_active_days_server_telemetry') }} s
         full outer join {{ ref('int_user_active_days_mobile_telemetry') }} m on s.daily_user_id = m.daily_user_id
