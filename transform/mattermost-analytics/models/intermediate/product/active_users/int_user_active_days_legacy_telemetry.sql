@@ -15,7 +15,8 @@ with tmp as (
         cast(m2t.timestamp as date) as activity_date,
         server_id,
         user_id,
-        {{ dbt_utils.pivot((case when lower(to_varchar(ua.user_agent:browser_family)) = 'electron' then 'IS_DESKTOP' when lower(to_varchar(ua.user_agent:browser_family)) != 'electron' and ua.user_agent:browser_family is not null then 'IS_WEBAPP' end), ['IS_DESKTOP', 'IS_WEBAPP']) }}
+        {{ dbt_utils.pivot('case when lower(to_varchar(ua.user_agent:browser_family)) = 'electron' then 'IS_DESKTOP' 
+        when lower(to_varchar(ua.user_agent:browser_family)) != 'electron' and ua.user_agent:browser_family is not null then 'IS_WEBAPP' end', ['IS_DESKTOP', 'IS_WEBAPP']) }}
     from
         {{ ref('stg_mattermost2__tracks') }} m2t 
     left join {{ ref('int_user_agents') }} ua
