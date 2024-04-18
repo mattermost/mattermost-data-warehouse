@@ -44,6 +44,15 @@ models:
       - name: count_guest_accounts_users_monthly
         description: The number of unique users related to Guest Accounts feature for the current day and past 29 days.
 
+      - name: count_playbook_events_daily
+        description: The number of events related to Playbooks feature for the current day.
+      - name: count_playbook_events_monthly
+        description: The number of events related to Playbooks feature for the current day and past 29 days.
+      - name: count_playbook_users_daily
+        description: The number of unique users related to Playbooks feature for the current day.
+      - name: count_playbook_users_monthly
+        description: The number of unique users related to Playbooks feature for the current day and past 29 days.
+
       - name: count_unknown_features_events_daily
         description: The number of events captured the current day that cannot (yet) be mapped to a feature.
       - name: count_unknown_features_events_monthly
