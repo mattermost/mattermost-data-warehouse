@@ -107,3 +107,34 @@ sources:
           - name: _sdc_received_at
           - name: _sdc_sequence
           - name: _sdc_table_version
+
+      - name: trialrequestlicenses
+        columns:
+          - name: licenseid
+            data_type: varchar
+            description: The id of the license.
+            tests:
+              - relationships:
+                  to: ref('license')
+                  field: id
+          - name: trialrequestid
+            data_type: varchar
+            description: The id of the trial request.
+            tests:
+              - relationships:
+                  to: ref('trial_requests')
+                  field: id
+          ## Stitch columns
+          - name: _sdc_batched_at
+            data_type: timestamp_tz
+          - name: _sdc_received_at
+            data_type: timestamp_tz
+          - name: _sdc_sequence
+            data_type: number
+          - name: _sdc_table_version
+            data_type: number
+        tests:
+          - dbt_utils.unique_combination_of_columns:
+              combination_of_columns:
+                - licenseid
+                - trialrequestid

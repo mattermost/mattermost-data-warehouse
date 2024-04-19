@@ -65,6 +65,11 @@ models:
         description: The starting date of the trial.
       - name: num_users
         description: Number of end users for the server.
+      - name: request_source
+        description: The source of the trial request.
+        tests:
+          - accepted_values:
+              values: [ 'Website', 'In-Product' ]
       - name: is_existing_lead
         description: Whether there's already a lead with the same email.
       - name: is_existing_campaign_member

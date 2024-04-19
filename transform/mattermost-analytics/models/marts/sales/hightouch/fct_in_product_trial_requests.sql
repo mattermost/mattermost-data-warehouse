@@ -41,7 +41,11 @@ with trial_requests as (
            else country_name
         end as country,                                     -- Mapped to field country - Can be either name or country code
         start_at as trial_start_at,                         -- Mapped to request_a_trial_date__c and Click_to_Accept_Date_Time_Trial__c
-        num_users                                           -- Mapped to field numberofemployees of lead
+        num_users,                                          -- Mapped to field numberofemployees of lead
+        case
+            when lower(site_url) = 'https://mattermost.com' then 'Website'
+            else 'In-Product'
+        end as request_source
     from
         {{ ref('stg_cws__trial_requests')}}
     -- Sync the most recent trial
@@ -61,6 +65,7 @@ select
     coalesce(cc.name, tr.country) as country_name,
     tr.trial_start_at,
     tr.num_users,
+    tr.request_source,
     l.lead_id is not null as is_existing_lead,
     -- Campaign member fields
     cm.campaign_member_id is not null as is_existing_campaign_member,
