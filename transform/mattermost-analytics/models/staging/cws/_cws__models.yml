@@ -156,6 +156,6 @@ models:
     description: Mapping of trial requests to their responding licenses.
     columns:
       - name: license_id
-        description: Unique Identifier for licenses
+        description: Unique Identifier for licenses.
       - name: trial_request_id
         description: The trial request's ID.

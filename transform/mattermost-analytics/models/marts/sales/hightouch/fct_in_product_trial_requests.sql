@@ -67,6 +67,10 @@ select
     tr.num_users,
     tr.request_source,
     l.lead_id is not null as is_existing_lead,
+    -- License information
+    trl.license_id,
+    trl.activation_date as license_activation_date,
+    trl.server_ids as server_ids,
     -- Campaign member fields
     cm.campaign_member_id is not null as is_existing_campaign_member,
     l.lead_id,
@@ -81,6 +85,7 @@ from
     left join {{ ref('stg_salesforce__lead') }} l on tr.normalized_email = l.email
     left join {{ ref('stg_salesforce__campaign_member') }} cm
         on l.lead_id = cm.lead_id and tr.normalized_email = cm.email and cm.campaign_id = '{{ var('in_product_trial_campaign_id') }}'
+    left join {{ ref('int_onprem_trial_license_information') }} tli on tli.trial_request_id = tr.trial_request_id
 where
     -- Skip invalid emails
     is_valid_email

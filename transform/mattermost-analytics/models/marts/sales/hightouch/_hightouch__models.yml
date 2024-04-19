@@ -72,6 +72,12 @@ models:
               values: [ 'Website', 'In-Product' ]
       - name: is_existing_lead
         description: Whether there's already a lead with the same email.
+      - name: license_id
+        description: The license's unique id.
+      - name: license_activation_date
+        description: The first date that the license was reported via telemetry.
+      - name: server_ids
+        description: A list of the server ids that have reported the license.
       - name: is_existing_campaign_member
         description: Whether there's already a campaign member for the same email and lead.
       - name: is_valid_email
