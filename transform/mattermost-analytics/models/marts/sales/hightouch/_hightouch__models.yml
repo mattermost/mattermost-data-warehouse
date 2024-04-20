@@ -3,7 +3,8 @@ version: 2
 models:
   - name: fct_in_product_trial_requests
     description: |
-      Trial request data from Customer Web Server to be synced to Salesforce.
+      Trial request data from Customer Web Server to be synced to Salesforce and to power Looker dashboards for
+      insights on trial flows.
 
     columns:
       - name: trial_request_id

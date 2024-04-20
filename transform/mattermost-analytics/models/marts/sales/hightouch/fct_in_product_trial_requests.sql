@@ -68,9 +68,9 @@ select
     tr.request_source,
     l.lead_id is not null as is_existing_lead,
     -- License information
-    trl.license_id,
-    trl.activation_date as license_activation_date,
-    trl.server_ids as server_ids,
+    tli.license_id,
+    tli.activation_date as license_activation_date,
+    tli.server_ids as server_ids,
     -- Campaign member fields
     cm.campaign_member_id is not null as is_existing_campaign_member,
     l.lead_id,

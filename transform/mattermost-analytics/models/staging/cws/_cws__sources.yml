@@ -115,14 +115,14 @@ sources:
             description: The id of the license.
             tests:
               - relationships:
-                  to: ref('license')
+                  to: source('cws', 'license')
                   field: id
           - name: trialrequestid
             data_type: varchar
             description: The id of the trial request.
             tests:
               - relationships:
-                  to: ref('trial_requests')
+                  to: source('cws', 'trial_requests')
                   field: id
           ## Stitch columns
           - name: _sdc_batched_at
