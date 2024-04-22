@@ -152,7 +152,7 @@ models:
       - name: created_at
         description: The row created time.
 
-  - name: stg_cws_trial_request_licenses
+  - name: stg_cws__trial_request_licenses
     description: Mapping of trial requests to their responding licenses.
     columns:
       - name: license_id
