@@ -1,0 +1,7 @@
+version: 2
+
+models:
+  - name: rpt_active_user_base
+    description: |
+      Contains the current status of the active user base. Includes server that have been active the last day and with
+      at least one monthly active user.

@@ -37,7 +37,7 @@ from
     left join last_known_ip_address on fct_active_users.server_id = last_known_ip_address.server_id
 where
     -- Keep servers with at least one user reported on the previous day. This is the last day with full data.
-    date_trunc(fct_active_users.activity_date) = add_days(current_date, -1))
+    fct_active_users.activity_date = dateadd(day, -1, current_date)
     and (fct_active_users.server_monthly_active_users ) > 0
     -- Exclusion reasons
     and (
