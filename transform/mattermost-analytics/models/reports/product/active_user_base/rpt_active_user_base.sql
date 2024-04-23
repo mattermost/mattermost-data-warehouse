@@ -17,7 +17,7 @@ select
     fct_active_users.count_registered_users,
     fct_active_users.count_registered_deactivated_users,
     case
-      when fct_active_users.server_monthly_active_users < 50 then '< 50'
+      when fct_active_users.server_monthly_active_users < 50 then '1-50'
       when (fct_active_users.server_monthly_active_users >= 50) and (fct_active_users.server_monthly_active_users < 500) THEN '50-500'
       when (fct_active_users.server_monthly_active_users >= 500) and (fct_active_users.server_monthly_active_users < 1000) THEN '500-1000'
       when fct_active_users.server_monthly_active_users >= 1000 then '>= 1000'
