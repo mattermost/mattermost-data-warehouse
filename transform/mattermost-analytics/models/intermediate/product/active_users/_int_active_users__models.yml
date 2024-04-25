@@ -66,7 +66,7 @@ models:
 
   - name: int_user_active_days_spined
     description: |
-      Contains record per user per day since the user's first active date. Uses data from new & old servers, as well as 
+      Contains record per user per day since the user's first active date. Uses data from Rudderstack & Segment, but not
       from mobile. Performs deduplication for servers that sent data both via Rudderstack and Segment.
 
     columns:
@@ -96,16 +96,6 @@ models:
         description: |
           Indicates whether the user was active on the specific date and previous 29 days, and for the specific server.
           Only for new (>= 5.23.0) servers.
-      - name: is_mobile_today
-        description: Indicates whether the user was active on the specific date and server. Only for mobile users.
-      - name: is_mobile-last_7_days
-        description: |
-          Indicates whether the user was active on the specific date and previous 6 days, and for the specific server.
-          Only for mobile users.
-      - name: is_mobile_last_30_days
-        description: |
-          Indicates whether the user was active on the specific date and previous 29 days, and for the specific server.
-          Only for mobile users.
       - name: is_old_server_today
         description: Indicates whether the user was active on the specific date and server. Only for old (<= 5.25.0) servers.
       - name: is_old_server_last_7_days
