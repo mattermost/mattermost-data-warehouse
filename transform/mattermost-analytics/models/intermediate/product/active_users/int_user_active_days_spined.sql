@@ -19,7 +19,6 @@ with user_active_days as (
         coalesce(s.is_active, l.is_active) as is_active,
         case when s.server_id is not null and s.is_desktop > 0 then true else false end as is_client_desktop,        
         case when s.server_id is not null and s.is_webapp > 0 then true else false end as is_client_webapp,
-        m.server_id is not null as is_mobile,
         case when l.server_id is not null and l.is_desktop > 0 then true else false end as is_legacy_desktop,
         case when l.server_id is not null and l.is_webapp > 0 then true else false end as is_legacy_webapp,
         case when coalesce(s.server_id, l.server_id) is not null and coalesce(s.is_desktop, l.is_desktop) > 0 then true else false end as is_desktop,
