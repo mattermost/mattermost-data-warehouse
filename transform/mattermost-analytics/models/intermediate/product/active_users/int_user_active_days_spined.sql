@@ -10,7 +10,7 @@
 {% set metrics = ['is_active', 'is_client_desktop', 'is_client_webapp', 'is_mobile', 'is_legacy_desktop', 'is_legacy_webapp', 'is_desktop', 'is_webapp', 'is_unknown'] %}
 
 with user_active_days as (
-    -- Merge mobile with server data
+    -- Merge Rudderstack and segment
     select
         -- Load only required columns
         coalesce(s.activity_date, m.activity_date, l.activity_date) as activity_date,
@@ -27,7 +27,6 @@ with user_active_days as (
         case when coalesce(s.server_id, l.server_id) is not null and coalesce(s.is_desktop, l.is_desktop) = 0 and coalesce(s.is_webapp, l.is_webapp) = 0 then true else false end as is_unknown
     from
         {{ ref('int_user_active_days_server_telemetry') }} s
-        full outer join {{ ref('int_user_active_days_mobile_telemetry') }} m on s.daily_user_id = m.daily_user_id
         full outer join {{ ref('int_user_active_days_legacy_telemetry') }} l on s.daily_user_id = l.daily_user_id
 ), user_first_active_day as (
     select
