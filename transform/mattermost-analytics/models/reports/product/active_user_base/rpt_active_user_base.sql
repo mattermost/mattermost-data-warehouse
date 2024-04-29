@@ -3,7 +3,10 @@ with last_known_ip_address as (
         si.server_id,
         si.server_ip,
         si.activity_date,
-        l.country_name
+        case
+            when parse_ip(si.server_ip, 'INET', 1) is not null then 'Unknown'
+            else l.country_name
+        end as country_name
     from
         {{ ref('dim_daily_server_info') }} si
         left join {{ ref('int_ip_country_lookup') }} l
