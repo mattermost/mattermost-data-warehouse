@@ -26,11 +26,11 @@ select
     end
     as server_mau_bucket,
     last_known_ip_address.server_ip as last_known_server_ip,
-            case
-            when parse_ip(si.server_ip, 'INET', 1) is not null then 'Unknown'
-            else l.country_name
-        end as country_name as last_known_ip_country,
-    last_known_ip_address.activity_date as last_known_server_ip_date,
+    case
+        when parse_ip(si.server_ip, 'INET', 1) is not null then 'Unknown'
+        else l.country_name
+    end as last_known_ip_country,
+last_known_ip_address.activity_date as last_known_server_ip_date,
     {{ dbt_utils.star(ref('dim_latest_server_customer_info'), except=['server_id'], relation_alias='dim_latest_server_customer_info') }}
 
 from
