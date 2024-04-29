@@ -59,9 +59,10 @@ sources:
               and GeoLite2-City.
 
       - name: city_locations
+        description: City location information.
         columns:
           - name: geoname_id
-            description: A unique identifier for the network's location
+            description: A unique identifier for the network's location.
             tests:
               - not_null
               - unique
@@ -107,6 +108,9 @@ sources:
               It is 0 otherwise.
 
       - name: country_ipv4
+        description: |
+          Lookup table for mapping IPv4 address to a country. More info available in
+          [MaxMind documentation]https://dev.maxmind.com/geoip/docs/databases/city-and-country#blocks-files).
         columns:
           - name: network
             description: The IPv4 network in CIDR format such as "2.21.92.0/29".
@@ -129,9 +133,10 @@ sources:
               and GeoLite2-City.
 
       - name: country_locations
+        description: Country location information.
         columns:
           - name: geoname_id
-            description: A unique identifier for the network's location
+            description: A unique identifier for the network's location.
             tests:
               - not_null
               - unique
