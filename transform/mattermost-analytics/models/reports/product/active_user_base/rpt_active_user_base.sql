@@ -7,7 +7,7 @@ with last_known_ip_address as (
     from
         {{ ref('dim_daily_server_info') }} si
         left join {{ ref('int_ip_country_lookup') }} l
-            on parse_ip(si.server_ip, 'INET'):ipv4 between l.ipv4_range_start and l.ipv4_range_start
+            on parse_ip(si.server_ip, 'INET', 1):ipv4 between l.ipv4_range_start and l.ipv4_range_start
     where
         si.server_ip is not null
     qualify row_number() over (partition by si.server_id order by si.activity_date desc) = 1
