@@ -20,7 +20,7 @@ def test_download_country_partial(responses, given_request_to):
     # WHEN: request to download given file but only partial results in file
     client = MaxMindClient('account', 'license')
     with tempfile.TemporaryDirectory() as target_dir, pytest.raises(ValueError) as excinfo:
-        files = client.download(Edition.COUNTRY, target_dir)
+        client.download(Edition.COUNTRY, target_dir)
 
     # THEN: expect proper error message
     assert "Not all expected files found in zip file" in str(excinfo.value)
@@ -84,7 +84,7 @@ def test_download_error_code(responses):
                 "1.1.1.1/32,,2077456,,0,0,\n"
                 "1.1.1.2/31,6252001,2077456,,0,0,",
                 # Second file
-                "geoname_id,locale_code,continent_code,continent_name,country_iso_code,country_name,is_in_european_union\n"  # noqa: E5017
+                "geoname_id,locale_code,continent_code,continent_name,country_iso_code,country_name,is_in_european_union\n"  # noqa: E501
                 "2077456,en,OC,Oceania,AU,Australia,0",
             ],
             id="country",
