@@ -9,7 +9,6 @@ from utils.geolite.service import Edition, MaxMindClient
 # Customize defaults for given_request_to
 __MOCK_REQUEST_DEFAULTS = {
     'dir': 'geolite',
-    'headers': {"Authorization": "Token test-dbt-key", "Content-Type": "application/zip"},
 }
 
 
