@@ -1,13 +1,16 @@
 with last_known_ip_address as (
     select
-        server_id,
-        server_ip,
-        activity_date
+        si.server_id,
+        si.server_ip,
+        si.activity_date,
+        l.country_name
     from
-        {{ ref('dim_daily_server_info') }}
+        {{ ref('dim_daily_server_info') }} si
+        left join {{ ref('int_ip_country_lookup') }} l
+            on si.parse_ip(server_ip, 'INET'):ipv4 between l.ipv4_range_start and l.ipv4_range_start
     where
-        server_ip is not null
-    qualify row_number() over (partition by server_id order by activity_date desc) = 1
+        si.server_ip is not null
+    qualify row_number() over (partition by si.server_id order by si.activity_date desc) = 1
 )
 select
     fct_active_users.server_id,
@@ -25,6 +28,7 @@ select
     end
     as server_mau_bucket,
     last_known_ip_address.server_ip as last_known_server_ip,
+    last_known_ip_address.country_name as last_known_ip_country,
     last_known_ip_address.activity_date as last_known_server_ip_date,
     {{ dbt_utils.star(ref('dim_latest_server_customer_info'), except=['server_id'], relation_alias='dim_latest_server_customer_info') }}
 
