@@ -1,4 +1,9 @@
-  select
+{{
+    config({
+        "materialized": "incremental",
+    })
+}}
+select
         l.country_name
        , parse_ip(network, 'INET'):ipv4_range_start as ipv4_range_start
        , parse_ip(network, 'INET'):ipv4_range_end as ipv4_range_end
