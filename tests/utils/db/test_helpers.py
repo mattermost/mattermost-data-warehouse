@@ -108,7 +108,7 @@ def test_should_upload_file_to_table(mocker):
             call('TRUNCATE TABLE test-schema.a-table'),
             call('CREATE TEMPORARY STAGE IF NOT EXISTS test-schema.a-table'),
             call('PUT file:///tmp/upload.csv @test-schema.a-table OVERWRITE=TRUE'),
-            call('COPY INTO test-schema.a-table FROM @test-schema.a-table FILE_FORMAT = (TYPE = CSV SKIP_HEADER = 1)'),
+            call("COPY INTO test-schema.a-table FROM @test-schema.a-table FILE_FORMAT = (TYPE = CSV SKIP_HEADER = 1 FIELD_OPTIONALLY_ENCLOSED_BY = '\"')"),  # noqa: E501
         ]
     )
 
