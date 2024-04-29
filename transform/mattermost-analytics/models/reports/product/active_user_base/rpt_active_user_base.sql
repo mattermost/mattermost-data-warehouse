@@ -27,7 +27,7 @@ select
     as server_mau_bucket,
     last_known_ip_address.server_ip as last_known_server_ip,
     case
-        when parse_ip(last_known_ip_address.server_ip, 'INET', 1) is not null then 'Unknown'
+        when parse_ip(last_known_ip_address.server_ip, 'INET', 1):error is not null then 'Unknown'
         else l.country_name
     end as last_known_ip_country,
 last_known_ip_address.activity_date as last_known_server_ip_date,
