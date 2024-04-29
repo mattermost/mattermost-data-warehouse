@@ -29,6 +29,8 @@ models:
               values: [ '1-50', '50-500', '500-1000', '>= 1000' ]
       - name: last_known_server_ip
         description: Last known IP reported by the server either via telemetry or diagnostics.
+      - name: last_known_ip_country
+        description: Country for the last known IP address.
       - name: last_known_server_ip_date
         description: Date that the last known server IP was recorded.
       - name: license_id

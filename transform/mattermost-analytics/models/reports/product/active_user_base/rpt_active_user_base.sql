@@ -1,13 +1,14 @@
 with last_known_ip_address as (
     select
-        server_id,
-        server_ip,
-        activity_date
+        si.server_id,
+        si.server_ip,
+        si.activity_date
     from
-        {{ ref('dim_daily_server_info') }}
+        {{ ref('dim_daily_server_info') }} si
+
     where
-        server_ip is not null
-    qualify row_number() over (partition by server_id order by activity_date desc) = 1
+        si.server_ip is not null
+    qualify row_number() over (partition by si.server_id order by si.activity_date desc) = 1
 )
 select
     fct_active_users.server_id,
@@ -25,7 +26,11 @@ select
     end
     as server_mau_bucket,
     last_known_ip_address.server_ip as last_known_server_ip,
-    last_known_ip_address.activity_date as last_known_server_ip_date,
+    case
+        when parse_ip(last_known_ip_address.server_ip, 'INET', 1):error is not null then 'Unknown'
+        else l.country_name
+    end as last_known_ip_country,
+last_known_ip_address.activity_date as last_known_server_ip_date,
     {{ dbt_utils.star(ref('dim_latest_server_customer_info'), except=['server_id'], relation_alias='dim_latest_server_customer_info') }}
 
 from
@@ -35,6 +40,8 @@ from
     left join {{ ref('dim_latest_server_customer_info') }} as dim_latest_server_customer_info
         on fct_active_users.server_id = dim_latest_server_customer_info.server_id
     left join last_known_ip_address on fct_active_users.server_id = last_known_ip_address.server_id
+    left join {{ ref('int_ip_country_lookup') }} l
+            on parse_ip(last_known_ip_address.server_ip, 'INET', 1):ipv4 between l.ipv4_range_start and l.ipv4_range_start
 where
     -- Keep servers with at least one user reported on the previous day. This is the last day with full data.
     fct_active_users.activity_date = dateadd(day, -1, current_date)
