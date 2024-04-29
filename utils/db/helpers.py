@@ -69,10 +69,12 @@ def upload_csv_as_table(engine: Engine, file: str, schema: str, table: str) -> N
     """
     # Truncate table, upload file and replace table content's within a transaction.
     with engine.begin() as conn:
-        conn.execute(f"TRUNCATE TABLE {schema}.{table}")
+        conn.execute(f"TRUNCATE TABLE IF EXISTS {schema}.{table}")
         conn.execute(f"CREATE TEMPORARY STAGE IF NOT EXISTS {schema}.{table}")
         conn.execute(f"PUT file://{file} @{schema}.{table} OVERWRITE=TRUE")
-        conn.execute(f"COPY INTO {schema}.{table} FROM @{schema}.{table} FILE_FORMAT = (TYPE = CSV SKIP_HEADER = 1)")
+        conn.execute(
+            f"COPY INTO {schema}.{table} FROM @{schema}.{table} FILE_FORMAT = (TYPE = CSV SKIP_HEADER = 1 FIELD_OPTIONALLY_ENCLOSED_BY = '\"')"  # noqa: E501
+        )
 
 
 def move_table(

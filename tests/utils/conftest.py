@@ -40,8 +40,10 @@ def given_request_to(request, responses):
             if config.get('dir')
             else Path(__file__).parent / 'fixtures' / response_file
         )
-        with open(target) as fp:
-            rsp = Response(method=method, url=url, status=status, headers=config.get('headers', {}), body=fp.read())
+        with open(target, 'rb') as fp:
+            rsp = Response(
+                method=method, url=url, status=status, headers=config.get('headers', {}), body=fp.read(), stream=True
+            )
             responses.add(rsp)
 
     return _given_request_to
