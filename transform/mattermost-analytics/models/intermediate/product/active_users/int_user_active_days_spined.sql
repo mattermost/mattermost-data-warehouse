@@ -7,16 +7,16 @@
     })
 }}
 
-{% set metrics = ['is_active', 'is_client_desktop', 'is_client_webapp', 'is_mobile', 'is_legacy_desktop', 'is_legacy_webapp', 'is_desktop', 'is_webapp', 'is_unknown'] %}
+{% set metrics = ['is_active', 'is_client_desktop', 'is_client_webapp', 'is_legacy_desktop', 'is_legacy_webapp', 'is_desktop', 'is_webapp', 'is_unknown'] %}
 
 with user_active_days as (
     -- Merge Rudderstack and segment
     select
         -- Load only required columns
-        coalesce(s.activity_date, m.activity_date, l.activity_date) as activity_date,
-        coalesce(s.server_id, m.server_id, l.server_id) as server_id,
-        coalesce(s.user_id, m.user_id, l.user_id) as user_id,
-        coalesce(s.is_active, m.is_active, l.is_active) as is_active,
+        coalesce(s.activity_date, l.activity_date) as activity_date,
+        coalesce(s.server_id, l.server_id) as server_id,
+        coalesce(s.user_id, l.user_id) as user_id,
+        coalesce(s.is_active, l.is_active) as is_active,
         case when s.server_id is not null and s.is_desktop > 0 then true else false end as is_client_desktop,        
         case when s.server_id is not null and s.is_webapp > 0 then true else false end as is_client_webapp,
         m.server_id is not null as is_mobile,

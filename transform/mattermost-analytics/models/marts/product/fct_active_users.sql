@@ -3,7 +3,6 @@
         'is_active': 'active_users',
         'is_client_desktop': 'client_desktop_active_users',
         'is_client_webapp': 'client_webapp_active_users',
-        'is_mobile': 'mobile_active_users',
         'is_legacy_desktop': 'legacy_desktop_active_users',
         'is_legacy_webapp': 'legacy_webapp_active_users',
         'is_desktop': 'desktop_active_users',
