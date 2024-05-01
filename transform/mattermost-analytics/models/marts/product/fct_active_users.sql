@@ -2,7 +2,6 @@
     set column_map = {
         'is_active': 'active_users',
         'is_desktop_or_server': 'desktop_active_users',
-        'is_mobile': 'mobile_active_users',
         'is_old_server': 'legacy_active_users'
     }
 %}

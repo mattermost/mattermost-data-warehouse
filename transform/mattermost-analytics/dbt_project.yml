@@ -75,6 +75,13 @@ models:
       marketing:
         schema: mart_marketing
         tags: ['nightly', 'marketing']
+    reports:
+      +materialized: table
+      tags: ['reports']
+      product:
+        schema: reports_product
+        tags: [ 'nightly', 'product' ]
+
     utilities:
       +materialized: table
       schema: utilities
@@ -128,8 +135,12 @@ vars:
     # Set test and doc coverage to 75% (default is 100%)
     documentation_coverage_target: 75
     test_coverage_target: 75
+    model_types: [ 'staging', 'intermediate', 'marts', 'other', 'reports' ]
     staging_prefixes: ['stg_', 'base_']
     marts_prefixes: ['fct_', 'dim_', 'grp_']
+    reports_folder_name: reports
+    reports_prefixes: [ 'rpt_' ]
+
 
     # Community Server ID
   community_server_id : 93mykbogbjfrbbdqphx3zhze5c

@@ -7,22 +7,20 @@
     })
 }}
 
-{% set metrics = ['is_active', 'is_desktop_or_server', 'is_mobile', 'is_old_server'] %}
+{% set metrics = ['is_active', 'is_desktop_or_server', 'is_old_server'] %}
 
 with user_active_days as (
-    -- Merge mobile with server data
+    -- Merge Rudderstack and segment
     select
         -- Load only required columns
-        coalesce(s.activity_date, m.activity_date, l.activity_date) as activity_date,
-        coalesce(s.server_id, m.server_id, l.server_id) as server_id,
-        coalesce(s.user_id, m.user_id, l.user_id) as user_id,
-        coalesce(s.is_active, m.is_active, l.is_active) as is_active,
+        coalesce(s.activity_date, l.activity_date) as activity_date,
+        coalesce(s.server_id, l.server_id) as server_id,
+        coalesce(s.user_id, l.user_id) as user_id,
+        coalesce(s.is_active, l.is_active) as is_active,
         s.server_id is not null as is_desktop_or_server,
-        m.server_id is not null as is_mobile,
         l.server_id is not null as is_old_server
     from
         {{ ref('int_user_active_days_server_telemetry') }} s
-        full outer join {{ ref('int_user_active_days_mobile_telemetry') }} m on s.daily_user_id = m.daily_user_id
         full outer join {{ ref('int_user_active_days_legacy_telemetry') }} l on s.daily_user_id = l.daily_user_id
 ), user_first_active_day as (
     select

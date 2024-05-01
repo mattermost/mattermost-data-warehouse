@@ -41,7 +41,11 @@ with trial_requests as (
            else country_name
         end as country,                                     -- Mapped to field country - Can be either name or country code
         start_at as trial_start_at,                         -- Mapped to request_a_trial_date__c and Click_to_Accept_Date_Time_Trial__c
-        num_users                                           -- Mapped to field numberofemployees of lead
+        num_users,                                          -- Mapped to field numberofemployees of lead
+        case
+            when lower(site_url) = 'https://mattermost.com' then 'Website'
+            else 'In-Product'
+        end as request_source
     from
         {{ ref('stg_cws__trial_requests')}}
     -- Sync the most recent trial
@@ -61,7 +65,12 @@ select
     coalesce(cc.name, tr.country) as country_name,
     tr.trial_start_at,
     tr.num_users,
+    tr.request_source,
     l.lead_id is not null as is_existing_lead,
+    -- License information
+    tli.license_id,
+    tli.activation_date as license_activation_date,
+    tli.server_ids as server_ids,
     -- Campaign member fields
     cm.campaign_member_id is not null as is_existing_campaign_member,
     l.lead_id,
@@ -76,6 +85,7 @@ from
     left join {{ ref('stg_salesforce__lead') }} l on tr.normalized_email = l.email
     left join {{ ref('stg_salesforce__campaign_member') }} cm
         on l.lead_id = cm.lead_id and tr.normalized_email = cm.email and cm.campaign_id = '{{ var('in_product_trial_campaign_id') }}'
+    left join {{ ref('int_onprem_trial_license_information') }} tli on tli.trial_request_id = tr.trial_request_id
 where
     -- Skip invalid emails
     is_valid_email
