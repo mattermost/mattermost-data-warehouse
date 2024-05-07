@@ -14,13 +14,6 @@ sources:
     tags:
       - stage
 
-    freshness:
-      # Check that ELB data have been received in the past 48 hours. This value can be reduced if we orchestrate running
-      # freshness check after importing of data.
-      warn_after: { count: 24, period: hour }
-      error_after: { count: 48, period: hour }
-    loaded_at_field: requesttime
-
 
     tables:
       - name: de_logs
@@ -316,6 +309,13 @@ sources:
       - name: logs_eu_new
         description: Logs from new EU notification server.
 
+        freshness:
+          # Check that ELB data have been received in the past 48 hours. This value can be reduced if we orchestrate running
+          # freshness check after importing of data.
+          warn_after: { count: 24, period: hour }
+          error_after: { count: 48, period: hour }
+        loaded_at_field: time
+
         columns:
           - name: type
             description: | 
@@ -434,6 +434,13 @@ sources:
       - name: logs_test_new
         description: Logs from new test notification server.
 
+        freshness:
+          # Check that ELB data have been received in the past 48 hours. This value can be reduced if we orchestrate running
+          # freshness check after importing of data.
+          warn_after: { count: 24, period: hour }
+          error_after: { count: 48, period: hour }
+        loaded_at_field: time
+
         columns:
           - name: type
             description: | 
@@ -551,6 +558,13 @@ sources:
 
       - name: logs_us_new
         description: Logs from new US notification server.
+
+        freshness:
+          # Check that ELB data have been received in the past 48 hours. This value can be reduced if we orchestrate running
+          # freshness check after importing of data.
+          warn_after: { count: 24, period: hour }
+          error_after: { count: 48, period: hour }
+        loaded_at_field: time
 
         columns:
           - name: type
