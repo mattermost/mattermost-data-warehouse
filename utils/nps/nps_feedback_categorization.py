@@ -13,6 +13,7 @@ import snowflake.connector
 from tabulate import tabulate
 from dotenv import load_dotenv
 import pandas as pd
+from tqdm import tqdm
 
 
 
@@ -192,8 +193,9 @@ def cosine(sentence, threshold=0.8):
     
     for topic, keywords in topics.items():
         topic_embedding = embed_sentence(" ".join(keywords))
-        sim_score = cosine_similarity(sentence_embedding, topic_embedding)
-        scores[topic] = sim_score
+
+    sim_score = cosine_similarity(sentence_embedding, topic_embedding)
+    scores[topic] = sim_score
     
     if not any(scores.values()):
         return "Unknown"  # If no category found, return "Unknown"
@@ -201,37 +203,68 @@ def cosine(sentence, threshold=0.8):
     max_score_topic = max(scores, key=scores.get)
     return max_score_topic
 
+
 def fetch_and_classify_data():
     try:
         cur = conn.cursor()
 
         # Adjust your query as needed
         sql = '''
-        select distinct server_id as server_id,
-            user_id as user_id,
-            feedback as feedback,
-            feedback_date as feedback_date,
-            server_version as server_version
-        from mart_product.fct_nps_feedback nps
-        where nps.feedback_DATE = CURRENT_DATE - 1
-        order by server_id, user_id
+        select feedback_id
+        , feedback
+        from dbt_cloud_pr_226810_1462.dim_nps_feedback_category
+        where feedback_category = '' 
         '''
-
         cur.execute(sql)
-        rows = cur.fetchall()
-        columns = [col[0] for col in cur.description]
         
-        # Create DataFrame from fetched data
-        df = pd.DataFrame(rows, columns=columns)
-        print("Data fetched successfully.")
+        # Initialize a variable to keep track of row updates
+        updates_count = 0
         
-        # Classify each feedback entry and add it to a new column 'Category'
-        df['CATEGORY'] = df['FEEDBACK'].apply(cosine)
-        return df
+        while True:
+            rows = cur.fetchmany(5000)
+            if not rows:
+                break
+            columns = [col[0] for col in cur.description]
+            print(columns)
+        
+            # Create DataFrame from fetched data
+            df = pd.DataFrame(rows, columns=columns)
+            print(f"Data fetched successfully. Number of rows fetched: {len(df)}")
+
+            # Classify each feedback entry and add it to a new column 'Category'
+            df['CATEGORY'] = df['FEEDBACK'].apply(cosine)
+
+            # Initialize a progress bar
+            pbar = tqdm(total=len(df), desc="Updating database")
+
+            # Update the database with the new category information
+            for index, row in df.iterrows():
+                sql_update = '''
+                UPDATE dbt_cloud_pr_226810_1462.dim_nps_feedback_category
+                SET feedback_category = %s
+                WHERE feedback_id = %s
+                '''
+                cur.execute(sql_update, (row['CATEGORY'], row['FEEDBACK_ID']))
+                updates_count += 1
+
+                if updates_count % 100 == 0:  # Every 100 updates, commit
+                    conn.commit()
+                    print(f"Committed {updates_count} updates so far.")
+
+                pbar.update(1)  # Update the progress bar by one
+
+            # Commit any remaining updates not covered by the above condition
+            conn.commit()
+            print("Final data updated successfully")
+
+            # Ensure the progress bar is closed upon completion
+            pbar.close()
+
+    except Exception as e:
+        print("An error occurred:", e)
 
     finally:
         cur.close()
         conn.close()
 
-df_classified = fetch_and_classify_data()
-print(df_classified)
+fetch_and_classify_data()

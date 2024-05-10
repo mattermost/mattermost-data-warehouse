@@ -19,3 +19,4 @@ select nf.user_id
        -- this filter will only be applied on an incremental run
       and nf.timestamp >= (select max(feedback_timestamp) from {{ this }})
     {% endif %}
+
