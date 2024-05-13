@@ -28,7 +28,7 @@ select
       else 'Unknown'
     end
     as server_mau_bucket,
-    last_known_ip_address.server_ip as last_known_server_ip,
+    last_known_server_info.server_ip as last_known_server_ip,
     case
         -- TODO: separate IPv6 from `Unknown`
         when parse_ip(last_known_server_info.server_ip, 'INET', 1):error is not null then 'Unknown'
@@ -45,9 +45,9 @@ from
         on fct_active_users.server_id = dim_excludable_servers.server_id
     left join {{ ref('dim_latest_server_customer_info') }} as dim_latest_server_customer_info
         on fct_active_users.server_id = dim_latest_server_customer_info.server_id
-    left join last_known_server_info on fct_active_users.server_id = last_known_ip_address.server_id
+    left join last_known_server_info on fct_active_users.server_id = last_known_server_info.server_id
     left join {{ ref('int_ip_country_lookup') }} l
-            on parse_ip(last_known_ip_address.server_ip, 'INET', 1):ipv4 between l.ipv4_range_start and l.ipv4_range_end
+            on parse_ip(last_known_server_info.server_ip, 'INET', 1):ipv4 between l.ipv4_range_start and l.ipv4_range_end
 where
     -- Keep servers with at least one user reported on the previous day. This is the last day with full data.
     fct_active_users.activity_date = dateadd(day, -1, current_date)
