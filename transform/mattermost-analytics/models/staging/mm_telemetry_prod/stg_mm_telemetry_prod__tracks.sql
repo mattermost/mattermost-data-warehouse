@@ -15,4 +15,5 @@ SELECT
      , user_actual_id AS user_id
      , received_at    AS received_at
      , timestamp      AS timestamp
+     , coalesce(context_useragent, context_user_agent) AS context_user_agent
 FROM tracks

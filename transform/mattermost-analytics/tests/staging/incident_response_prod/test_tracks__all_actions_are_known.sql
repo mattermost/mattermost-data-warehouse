@@ -19,3 +19,7 @@ where
     and pe.event_action is null
     -- Heuristic to exclude low cardinality spam messages
     and t.total_events > 10
+    -- Excluded as indirect user actions
+    and pe.event_name not in ('channel_action')
+    -- Exclude auto-follow
+    and not (pe.event_name = 'incident' and pe.event_action = 'follow')

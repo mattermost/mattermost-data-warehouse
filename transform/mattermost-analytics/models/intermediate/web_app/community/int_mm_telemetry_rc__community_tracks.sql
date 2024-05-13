@@ -8,7 +8,7 @@
 }}
 
     SELECT
-        {{dbt_utils.star(ref('stg_mm_telemetry_rc__tracks'))}},
+        {{ dbt_utils.star(ref('stg_mm_telemetry_rc__tracks')) }},
         'stg_mm_telemetry_rc__tracks' AS _source_relation,
         received_at::date as received_at_date
      FROM
