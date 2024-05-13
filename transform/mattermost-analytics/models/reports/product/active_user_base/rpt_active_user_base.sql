@@ -2,13 +2,12 @@ with last_known_info as (
     select
         si.server_id,
         si.server_ip,
-        si.activity_date,
-        si.installation_type,
-        si.binary_edition,
-        si.age_in_days
+--         si.installation_type,
+--         si.binary_edition,
+--         si.age_in_days
+         si.activity_date
     from
         {{ ref('dim_daily_server_info') }} si
-
     where
         si.server_ip is not null
     qualify row_number() over (partition by si.server_id order by si.activity_date desc) = 1
@@ -34,9 +33,9 @@ select
         else coalesce(l.country_name, 'Unknown')
     end as last_known_ip_country,
     last_known_info.activity_date as last_known_info_date,
-    last_known_info.installation_type,
-    last_known_info.binary_edition,
-    last_known_info.age_in_days,
+--     last_known_info.installation_type,
+--     last_known_info.binary_edition,
+--     last_known_info.age_in_days,
     {{ dbt_utils.star(ref('dim_latest_server_customer_info'), except=['server_id'], relation_alias='dim_latest_server_customer_info') }}
 
 from
