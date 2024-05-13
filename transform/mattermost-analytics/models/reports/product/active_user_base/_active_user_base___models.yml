@@ -34,8 +34,19 @@ models:
         description: Last known IP reported by the server either via telemetry or diagnostics.
       - name: last_known_ip_country
         description: Country for the last known IP address.
-      - name: last_known_server_ip_date
-        description: Date that the last known server IP was recorded.
+      - name: installation_type
+        description: |
+          The type of installation for this server. Values can be `deb_package`, `docker`, `gitlab_omnibus`, 
+          `kubernetes-operator`, `manual, `omnibus` or null.
+      - name: binary_edition
+        description: |
+          There are two "flavours" of the server binary:
+          - TE = Team Edition (fully open source and contains no Mattermost proprietary code).
+          - E0 = Enterprise Edition (TE + Mattermost proprietary code, and with features activated with a license).
+      - name: age_in_days
+        description: Number of days since the first telemetry received from the server.
+      - name: last_known_server_info_date
+        description: Date that the last known server information (IP, installation type, binary edition, age) was recorded.
       - name: license_id
         description: The unique ID of the license (if any), as detected via telemetry.
       - name: installation_id
