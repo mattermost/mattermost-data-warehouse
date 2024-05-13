@@ -35,7 +35,9 @@ models:
       - name: last_known_ip_country
         description: Country for the last known IP address.
       - name: installation_type
-        description: The type of installation for this server.
+        description: |
+          The type of installation for this server. Values can be `deb_package`, `docker`, `gitlab_omnibus`, 
+          `kubernetes-operator`, `manual, `omnibus` or null.
       - name: binary_edition
         description: |
           There are two "flavours" of the server binary:
