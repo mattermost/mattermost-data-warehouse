@@ -27,7 +27,7 @@ with last_known_server_info as (
         {{ ref('dim_daily_server_config') }}
     where
         has_rudderstack_telemetry_data or has_segment_telemetry_data
-    qualify row_number() over (partition by si.server_id order by si.activity_date desc) = 1
+    qualify row_number() over (partition by server_id order by activity_date desc) = 1
 )
 select
     fct_active_users.server_id,
