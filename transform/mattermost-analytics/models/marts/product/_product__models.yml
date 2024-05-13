@@ -312,6 +312,10 @@ models:
         tests:
           - unique
           - not_null
+      - name: server_id
+        description: The server's unique id.
+      - name: activity_date
+        description: The date the current data point responds to.
       - name: is_office365_enabled
         description: Whether Office365 OAuth is enabled
       - name: is_google_enabled
@@ -326,7 +330,10 @@ models:
         description: Whether OpenID with Gitlab OAuth is enabled
       - name: is_openid_office365_enabled
         description: Whether OpenID with Office365 OAuth is enabled
-
+      - name: has_segment_telemetry_data
+        description: True if data for given server and date were found on Segment, false else.
+      - name: has_rudderstack_telemetry_data
+        description: True if data for given server and date were found on Rudderstack, false else.
 
   - name: rpt_tedau_at_day_28
     description: Reporting table for calculating 28 TEDAU to server ratio

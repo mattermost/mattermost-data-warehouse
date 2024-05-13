@@ -12,6 +12,22 @@ with last_known_server_info as (
     where
         si.server_ip is not null
     qualify row_number() over (partition by si.server_id order by si.activity_date desc) = 1
+), last_known_oauth_info as (
+    select
+        server_id,
+        activity_date,
+        is_office365_enabled,
+        is_google_enabled,
+        is_gitlab_enabled,
+        is_openid_enabled,
+        is_openid_google_enabled,
+        is_openid_gitlab_enabled,
+        is_openid_office365_enabled
+    from
+        {{ ref('dim_daily_server_config') }}
+    where
+        has_rudderstack_telemetry_data or has_segment_telemetry_data
+    qualify row_number() over (partition by si.server_id order by si.activity_date desc) = 1
 )
 select
     fct_active_users.server_id,
@@ -38,6 +54,14 @@ select
     last_known_server_info.binary_edition,
     last_known_server_info.age_in_days,
     last_known_server_info.activity_date as last_known_server_info_date,
+    oauth.is_office365_enabled,
+    oauth.is_google_enabled,
+    oauth.is_gitlab_enabled,
+    oauth.is_openid_enabled,
+    oauth.is_openid_google_enabled,
+    oauth.is_openid_gitlab_enabled,
+    oauth.is_openid_office365_enabled,
+    oauth.activity_date as last_known_oauth_info_date,
     {{ dbt_utils.star(ref('dim_latest_server_customer_info'), except=['server_id'], relation_alias='dim_latest_server_customer_info') }}
 from
     {{ ref('fct_active_users') }} as fct_active_users
@@ -48,6 +72,7 @@ from
     left join last_known_server_info on fct_active_users.server_id = last_known_server_info.server_id
     left join {{ ref('int_ip_country_lookup') }} l
             on parse_ip(last_known_server_info.server_ip, 'INET', 1):ipv4 between l.ipv4_range_start and l.ipv4_range_end
+    left join last_known_oauth_info oauth on fct_active_users.server_id = oauth.server_id
 where
     -- Keep servers with at least one user reported on the previous day. This is the last day with full data.
     fct_active_users.activity_date = dateadd(day, -1, current_date)
