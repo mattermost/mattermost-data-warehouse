@@ -8,6 +8,9 @@ models:
     columns:
       - name: server_id
         description: The server's unique id.
+        tests:
+          - unique
+          - not_null
       - name: server_monthly_active_users
         description: |
           Total number of active users for the past 30 days prior to the timestamp of the event.
