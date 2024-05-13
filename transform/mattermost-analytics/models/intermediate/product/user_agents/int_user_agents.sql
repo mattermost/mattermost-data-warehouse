@@ -27,7 +27,7 @@ parsed as (
     from tmp tmp 
         left join {{ this }} previously_parsed on tmp.user_agent_id = previously_parsed.user_agent_id
     {% else %}
-    iff(context_user_agent is not null, parse_user_agent(context_user_agent), null) as user_agent
+    iff(context_user_agent is not null, mattermost_analytics.parse_user_agent(context_user_agent), null) as user_agent
     from tmp
     {% endif %}
 )
