@@ -159,3 +159,20 @@ models:
         description: Unique Identifier for licenses.
       - name: trial_request_id
         description: The trial request's ID.
+
+  - name: stg_cws__subscription_history
+    description: |
+      CWS subscription active seat history.
+
+    columns:
+      - name: subscription_history_event_id
+        description: Unique Identifier for subscription history.
+        tests:
+          - not_null
+          - unique
+      - name: subscription_id
+        description: The Stripe subscription ID
+      - name: licensed_seats
+        description: The maximum number of active seats on the subscription
+      - name: created_at
+        description: The date at which this subscription history event was created - also known as the date that the given seats value was reached.

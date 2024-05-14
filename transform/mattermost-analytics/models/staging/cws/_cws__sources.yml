@@ -83,6 +83,20 @@ sources:
           - name: _sdc_sequence
           - name: _sdc_table_version
           - name: __sdc_primary_key
+      
+      - name: subscriptionhistory
+        columns:
+          - name: id
+            description: A unique identifier for this subscription history event
+            tests:
+              - unique
+              - not_null
+          - name: subscriptionid
+            description: The Stripe subscription ID
+          - name: seats
+            description: The maximum number of active seats on the subscription
+          - name: createat
+            description: The date at which this subscription history event was created - also known as the date that the given seats value was reached.
 
       - name: license
         columns:

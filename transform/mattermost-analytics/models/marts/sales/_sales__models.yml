@@ -1,0 +1,17 @@
+version: 2
+
+
+models:
+  - name: fct_subscription_history
+    description: |
+      Cloud subscription seat history data.
+    columns:
+    - name: subscription_history_id
+      description: The subscription history's ID.
+    - name: subscription_id
+      description: The subscription's ID.
+    - name: licensed_seats
+      description: The number of licensed seats active at the time of this event.
+    - name: created_at
+      description: The creation timestamp of this subscription history event
+
