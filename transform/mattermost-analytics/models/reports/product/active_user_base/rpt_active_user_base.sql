@@ -61,6 +61,7 @@ with servers as (
 )
 select
     servers.*,
+    last_known_server_info.server_ip as last_known_server_ip,
     case
         -- TODO: separate IPv6 from `Unknown`
         when parse_ip(last_known_server_info.server_ip, 'INET', 1):error is not null then 'Unknown'
