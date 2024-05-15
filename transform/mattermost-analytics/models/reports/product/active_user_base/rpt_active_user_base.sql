@@ -86,4 +86,4 @@ from
     left join last_known_server_info on servers.server_id = last_known_server_info.server_id
     left join {{ ref('int_ip_country_lookup') }} l
             on parse_ip(last_known_server_info.server_ip, 'INET', 1):ipv4 between l.ipv4_range_start and l.ipv4_range_end
-    left join last_known_oauth_info oauth on fct_active_users.server_id = oauth.server_id
+    left join last_known_oauth_info oauth on servers.server_id = oauth.server_id
