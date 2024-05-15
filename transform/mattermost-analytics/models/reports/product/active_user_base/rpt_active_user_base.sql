@@ -73,9 +73,8 @@ from
             on parse_ip(last_known_server_info.server_ip, 'INET', 1):ipv4 between l.ipv4_range_start and l.ipv4_range_end
     left join last_known_oauth_info oauth on fct_active_users.server_id = oauth.server_id
 where
-    -- Keep servers with at least one user reported on the last couple of days. This is the last day with full data.
-    -- Note that as telemetry might be send over the date, last date for a server might be either today or yesterday.
-    fct_active_users.activity_date >=  dateadd(day, -1, current_date)
+    -- Keep servers with at least one user reported on the last 30 days.
+    fct_active_users.activity_date >=  dateadd(day, -30, current_date)
     and (fct_active_users.server_monthly_active_users ) > 0
     -- Exclusion reasons - any server with any exclusion reason is excluded by default
     and dim_excludable_servers.server_id is null
