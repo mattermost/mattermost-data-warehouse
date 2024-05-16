@@ -61,8 +61,8 @@ models:
               field: name
               config:
                 where: "country_name <> ''"
-                error_if: ">1"
-                warn_if: ">0"
+                error_if: ">2"
+                warn_if: ">1"
         tags: ['pii']
       - name: trial_start_at
         description: The starting date of the trial.
