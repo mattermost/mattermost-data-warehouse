@@ -149,7 +149,7 @@ vars:
   in_product_trial_campaign_id: 7013p000001NkNoAAK
   salesforce_default_ownerid: 0053p0000064nt8AAA #default value for salesforce ownerid
   cloud_enterprise_trial_campaign_id: 701Dm000000gpPZIAY
-  telemetry_start_date: "2020-04-01"
+  telemetry_start_date: "2017-01-01"
   nps_start_date: "2019-03-27"
   notification_start_date: "2021-01-01"
   calls_telemetry_start_date: "2022-03-11"
