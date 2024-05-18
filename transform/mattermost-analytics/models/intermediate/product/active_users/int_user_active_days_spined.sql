@@ -36,7 +36,7 @@ with user_active_days as (
     from
         user_active_days
     where
-        activity_date >= '{{ var('telemetry_start_date')}}'
+        activity_date >= '{{ var('telemetry_start_date')}}'   -- Dummy change to force re-run
     group by 1, 2
 ), spined as (
     -- Use date spine to fill in missing days

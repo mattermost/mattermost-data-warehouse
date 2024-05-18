@@ -48,6 +48,6 @@ select
     , {{ dbt_utils.pivot('client_type', ['IS_DESKTOP', 'IS_WEBAPP']) }}
     from tmp
 where
-    activity_date >= '{{ var('telemetry_start_date')}}'
+    activity_date >= '{{ var('telemetry_start_date')}}'  -- Dummy change to force re-run
 group by 
     activity_date, server_id, user_id, received_at_date

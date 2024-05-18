@@ -12,7 +12,7 @@ with server_first_day_per_telemetry as (
     from
         {{ ref('int_server_telemetry_legacy_latest_daily') }}
     where
-        server_date >= '{{ var('telemetry_start_date')}}'
+        server_date >= '{{ var('telemetry_start_date')}}'  -- Dummy change to force re-run
     group by
         server_id
 
@@ -25,7 +25,7 @@ with server_first_day_per_telemetry as (
     from
         {{ ref('int_server_telemetry_latest_daily') }}
     where
-        server_date >= '{{ var('telemetry_start_date')}}'
+        server_date >= '{{ var('telemetry_start_date')}}'  -- Dummy change to force re-run
     group by
         server_id
 
@@ -38,7 +38,7 @@ with server_first_day_per_telemetry as (
     from
         {{ ref('int_server_security_update_latest_daily') }}
     where
-        server_date >= '{{ var('telemetry_start_date')}}'
+        server_date >= '{{ var('telemetry_start_date')}}'  -- Dummy change to force re-run
     group by
         server_id
 ), server_activity_date_range as (
