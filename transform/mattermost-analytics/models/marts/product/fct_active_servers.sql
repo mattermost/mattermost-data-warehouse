@@ -31,3 +31,5 @@ select
     is_missing_activity_data
 from
     {{ ref('int_server_active_days_spined') }}
+
+-- Dummy to trigger re-run
