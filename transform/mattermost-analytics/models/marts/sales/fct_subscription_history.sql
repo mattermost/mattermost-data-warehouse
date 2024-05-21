@@ -10,4 +10,3 @@ select
 from
     dbt_staging.stg_cws__subscription_history sh
     left join dbt_staging.stg_stripe__subscriptions s on sh.subscription_id = s.subscription_id
-;
