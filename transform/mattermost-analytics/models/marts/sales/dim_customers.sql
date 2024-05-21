@@ -6,4 +6,3 @@ select
     , email
 from 
     dbt_staging.stg_stripe__customers
-;
