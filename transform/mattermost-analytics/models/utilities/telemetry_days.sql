@@ -4,4 +4,3 @@
     start_date="'" + var('telemetry_start_date') + "'",
     end_date="dateadd(day, 1, current_date)"
 ) }}
--- Modified
