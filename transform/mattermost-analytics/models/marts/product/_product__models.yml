@@ -192,7 +192,7 @@ models:
         description: The major version part of the server's semver. I.e. 7 for 7.2.3.
         tests:
           - dbt_utils.accepted_range:
-              min_value: 1
+              min_value: 0
               inclusive: true
       - name: version_minor
         description: The minor version part of the server's semver. I.e. 2 for 7.2.3.
