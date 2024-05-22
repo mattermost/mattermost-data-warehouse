@@ -1,6 +1,5 @@
 version: 2
 
-
 models:
   - name: fct_subscription_history
     description: |
@@ -12,8 +11,35 @@ models:
         description: The subscription history's ID.
       - name: subscription_id
         description: The subscription's ID.
+      - name: customer_id
+        description: The customer's ID.
+        relationship: 
+          to: ref('dim_self_serve_customers')
+          field: customer_id
       - name: licensed_seats
         description: The number of licensed seats active at the time of this event.
       - name: created_at
         description: The creation timestamp of this subscription history event
+      - name: cws_dns
+        description: The workspace DNS for the given subscription.
+      - name: cws_installation
+        description: The workspace installation ID for the given subscription.
+      - name: is_latest
+        description: Whether this is the latest subscription history event for the given subscription.
+  - name: dim_self_serve_customers
+    description: |
+      Self-serve customer information from Stripe
+    tags: ['team_cloud_platform']
+
+    columns: 
+      - name: customer_id
+        description: The customer's ID.
+      - name: contact_first_name
+        description: The customer's first name.
+      - name: contact_last_name
+        description: The customer's last name.
+      - name: email
+        description: The customer's email address.
+      - name: name
+        description: The customer's name in Stripe - this is typically the name of the company
 
