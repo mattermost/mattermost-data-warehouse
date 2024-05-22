@@ -5,4 +5,4 @@ select
     , name
     , email
 from 
-    dbt_staging.stg_stripe__customers
+    {{ ref('stg_stripe__customers') }}
