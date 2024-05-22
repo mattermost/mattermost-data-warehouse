@@ -66,7 +66,7 @@ subscriptions as (
             -- Handle bug whenever license start date doesn't exist but end date exists
             when metadata:"cws-license-start-date"::int = 0 and metadata:"cws-license-end-date"::int > 0 then TIMEADD(year, -1, TO_TIMESTAMP_NTZ(metadata:"cws-license-end-date"::int))
             -- Handle Cloud Licensed Subscriptions, sales serve (fields set by humans, formatted 2024-05-22)
-            when metadata:"license-start-date"::timestamp != '' then metadata:"license-start-date"::timestamp
+            when metadata:"license-start-date"::varchar != '' then TRY_TO_TIMESTAMP_NTZ(metadata:"license-start-date"::varchar)
             -- Handle bug where both license start and end date is 0
             when metadata:"cws-license-start-date"::int = 0 and metadata:"cws-license-end-date"::int = 0 then current_period_start_at
             else TRY_TO_TIMESTAMP_NTZ(metadata:"cws-license-start-date"::varchar)
@@ -75,7 +75,7 @@ subscriptions as (
             -- License data available
             when metadata:"cws-license-end-date"::int > 0 then TRY_TO_TIMESTAMP_NTZ(metadata:"cws-license-end-date"::varchar)
             -- Cloud Licensed Subscriptions, sales serve (fields set by humans, formatted 2024-05-22)
-            when metadata:"license-end-at"::timestamp  != '' then metadata:"license-end-at"::timestamp 
+            when metadata:"license-end-at"::varchar  != '' then TRY_TO_TIMESTAMP_NTZ(metadata:"license-end-at"::varchar)
             -- Handle backfills
             when sfdc_migrated_license_id is not null then current_period_end_at
             -- Handle bug where both license start and end date is 0
