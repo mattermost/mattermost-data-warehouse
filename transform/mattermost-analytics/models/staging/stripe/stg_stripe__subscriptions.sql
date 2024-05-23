@@ -75,7 +75,7 @@ subscriptions as (
             -- License data available
             when metadata:"cws-license-end-date"::int > 0 then TRY_TO_TIMESTAMP_NTZ(metadata:"cws-license-end-date"::varchar)
             -- Cloud Licensed Subscriptions, sales serve (fields set by humans, formatted 2024-05-22)
-            when metadata:"license-end-at"::varchar  != '' then TRY_TO_TIMESTAMP_NTZ(metadata:"license-end-at"::varchar)
+            when metadata:"license-end-at"::varchar  != '' then TRY_TO_TIMESTAMP_NTZ(metadata:"license-end-date"::varchar)
             -- Handle backfills
             when sfdc_migrated_license_id is not null then current_period_end_at
             -- Handle bug where both license start and end date is 0
