@@ -11,7 +11,7 @@ select
     , s.billing_type
     , s.status
     , CASE 
-        WHEN sh.subscription_id IS NULL THEN NULL -- Return NULL if no history found, so looker can filter for NULL OR TRUE
+        WHEN sh.subscription_id IS NULL THEN true -- If there isn't a matching subscription history value this is treated as the latest one
         ELSE ROW_NUMBER() OVER (PARTITION BY sh.subscription_id ORDER BY sh.created_at DESC) = 1 
     END AS is_latest
 from
