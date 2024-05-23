@@ -24,6 +24,14 @@ models:
         description: The workspace DNS for the given subscription.
       - name: cws_installation
         description: The workspace installation ID for the given subscription.
+      - name: license_start_at
+        description: The start date of the current term of the subscription.
+      - name: license_end_at
+        description: The end date of the current term of the subscription.
+      - name: billing_type
+        description: The billing type of the subscription.
+      - name: status
+        description: The status of the subscription.
       - name: is_latest
         description: Whether this is the latest subscription history event for the given subscription.
   - name: dim_self_serve_customers

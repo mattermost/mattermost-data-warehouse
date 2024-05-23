@@ -6,6 +6,10 @@ select
     , sh.created_at
     , s.cws_dns
     , s.cws_installation
+    , s.license_start_at
+    , s.license_end_at
+    , s.billing_type
+    , s.status
     , row_number() over(partition by sh.subscription_id order by sh.created_at desc) = 1 as is_latest
 from
     {{ ref('stg_cws__subscription_history') }} sh
