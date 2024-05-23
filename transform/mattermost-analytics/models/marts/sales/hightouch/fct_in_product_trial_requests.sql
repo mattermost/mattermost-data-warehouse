@@ -38,6 +38,7 @@ with trial_requests as (
         case
            -- Fix inconsistency in country name so that it matches values expected by SF
            when country_name = 'United States of America' then 'United States'
+           when country_name is null then ''
            else country_name
         end as country,                                     -- Mapped to field country - Can be either name or country code
         start_at as trial_start_at,                         -- Mapped to request_a_trial_date__c and Click_to_Accept_Date_Time_Trial__c
