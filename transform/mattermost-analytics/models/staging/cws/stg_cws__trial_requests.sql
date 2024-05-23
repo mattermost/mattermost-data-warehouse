@@ -50,7 +50,7 @@ renamed as (
         -- Company info
         companycountry as country_name,
         case
-            when companyname = '' then null
+            when trim(companyname) = '' then null
             else companyname
         end as company_name,
         companysize as company_size_bucket,
