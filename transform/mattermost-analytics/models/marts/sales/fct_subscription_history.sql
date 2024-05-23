@@ -1,6 +1,6 @@
 select 
     sh.subscription_history_event_id
-    , sh.subscription_id
+    , s.subscription_id
     , s.customer_id
     , COALESCE(sh.licensed_seats, s.quantity) as licensed_seats
     , sh.created_at
@@ -10,7 +10,11 @@ select
     , s.license_end_at
     , s.billing_type
     , s.status
-    , row_number() over(partition by sh.subscription_id order by sh.created_at desc) = 1 as is_latest
+    , CASE 
+        WHEN sh.subscription_id IS NULL THEN NULL -- Return NULL if no history found, so looker can filter for NULL OR TRUE
+        ELSE ROW_NUMBER() OVER (PARTITION BY sh.subscription_id ORDER BY sh.created_at DESC) = 1 
+    END AS is_latest
 from
     {{ ref('stg_cws__subscription_history') }} sh
-    left join {{ ref('stg_stripe__subscriptions') }} s on sh.subscription_id = s.subscription_id
+    right join {{ ref('stg_stripe__subscriptions') }} s on sh.subscription_id = s.subscription_id
+    where s.cws_installation IS NOT NULL
