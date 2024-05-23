@@ -48,7 +48,11 @@ renamed as (
         end as contact_email,
 
         -- Company info
-        companycountry as country_name,
+        case
+            when companycountry = 'Unknown' then null
+            when companycountry = '' then null
+            else companycountry
+        end as country_name,
         case
             when trim(companyname) = '' then null
             else companyname
