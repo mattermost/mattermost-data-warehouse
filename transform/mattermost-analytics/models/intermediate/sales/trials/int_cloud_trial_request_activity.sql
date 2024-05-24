@@ -18,7 +18,8 @@ subscriptions as (
         customer_id,
         trial_start_at,
         trial_end_at,
-        product_id
+        product_id,
+        created_at
     FROM
         {{ ref('stg_stripe__subscriptions') }}
 ),
