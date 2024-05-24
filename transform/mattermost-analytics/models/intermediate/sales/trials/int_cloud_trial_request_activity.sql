@@ -31,7 +31,7 @@ products as (
         {{ ref('stg_stripe__products') }}
 )
 select
-    'stripe:' || subscriptions.id as activity_id,
+    'stripe:' || subscriptions.subscription_id as activity_id,
     subscriptions.created_at as timestamp,
     'Trial Requested' as activity,
     'stripe' as source,
