@@ -1,6 +1,6 @@
 select
     'cws:' || tr.trial_request_id as activity_id,
-    subscriptions.created_at as timestamp
+    subscriptions.created_at as timestamp,
     'Trial Requested' as activity,
     'cws' as source,
     l.customer_id as customer_id,

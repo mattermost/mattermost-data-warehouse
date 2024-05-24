@@ -32,7 +32,7 @@ products as (
 )
 select
     'stripe:' || subscriptions.id as activity_id,
-    subscriptions.created_at as timestamp
+    subscriptions.created_at as timestamp,
     'Trial Requested' as activity,
     'stripe' as source,
     customers.customer_id as customer_id,
