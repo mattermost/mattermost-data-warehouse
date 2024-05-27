@@ -71,8 +71,3 @@ where
     not (
         t.email ilike any ('%@mattermost.com', '%@wearehackerone.com')
     )
-    -- and l.company_type__c in (
-    --     'Federal', 'MME'
-    -- )
-order by 1 desc
-;
