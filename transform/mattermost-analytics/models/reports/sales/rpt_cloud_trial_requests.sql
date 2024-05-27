@@ -25,7 +25,7 @@ subscriptions as (
         {{ ref('stg_stripe__subscriptions') }}
 ), cloud_trial_requests as (
     select
-        'stripe:' + subscriptions.subscription_id as trial_request_id,
+        'stripe:' || subscriptions.subscription_id as trial_request_id,
         subscriptions.created_at::date as trial_created_at,
         customers.email,
         customers.contact_first_name,
