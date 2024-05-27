@@ -58,7 +58,7 @@ select
     l.lead_id,
     l.is_deleted,
     l.converted_contact_id,
-    coalesce(a.account_id, ca.account_id),
+    coalesce(a.account_id, ca.account_id) as account_id,
     coalesce(a.parent_id, ca.parent_id) is not null as has_parent_account
 from
     cloud_trial_requests t
