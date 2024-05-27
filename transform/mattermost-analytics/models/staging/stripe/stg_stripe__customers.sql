@@ -18,10 +18,16 @@ customers as (
         invoice_prefix,
         invoice_settings,
         livemode,
-        COALESCE(metadata:"contactfirstname"::string, 
-        metadata:"cws-additional-contact-first-name"::string) as contact_first_name,
-        COALESCE(metadata:"contactlastname"::string, 
-        metadata:"cws-additional-contact-last-name"::string) as contact_last_name,
+        coalesce(
+            metadata:"contactfirstname"::string,
+            metadata:"ContactFirstName"::string,
+            metadata:"cws-additional-contact-first-name"::string
+        ) as contact_first_name,
+        coalesce(
+            metadata:"contactlastname"::string,
+            metadata:"ContactLastName"::string,
+            metadata:"cws-additional-contact-last-name"::string
+        ) as contact_last_name,
         metadata:"cws-customer"::varchar as portal_customer_id,
         metadata,
         name,
