@@ -81,6 +81,9 @@ models:
       product:
         schema: reports_product
         tags: [ 'nightly', 'product' ]
+      sales:
+        schema: mart_sales
+        tags: ['nightly', 'sales']
 
     utilities:
       +materialized: table
