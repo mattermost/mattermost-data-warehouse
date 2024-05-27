@@ -5,14 +5,14 @@ with customers as (
         name,
         contact_first_name,
         contact_last_name,
-        portal_customer_id,
+        portal_customer_id
     FROM
         {{ ref('stg_stripe__customers') }}
     where
         created_at >= '2023-04-27' -- only select customers after the release.
 ),
 subscriptions as (
-    SELECT
+    select
         subscription_id,
         cws_installation,
         cws_dns,
@@ -21,7 +21,7 @@ subscriptions as (
         trial_end_at,
         product_id,
         created_at
-    FROM
+    from
         {{ ref('stg_stripe__subscriptions') }}
 ), cloud_trial_requests as (
     select
@@ -40,7 +40,6 @@ subscriptions as (
         customers
         -- Will lead to rows fanning out since a customer can have many subscriptions
         left join subscriptions on subscriptions.customer_id = customers.customer_id
-        left join products on subscriptions.product_id = products.product_id
     where
         -- Only get trial subscriptions
         subscriptions.trial_start_at is not null
