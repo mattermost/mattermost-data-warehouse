@@ -54,7 +54,7 @@ select
     t.company_name,
     t.email,
     a.name as account_name,
-    coalesce(a.company_type__c, ca.company_type__c) as company_type,
+    coalesce(l.company_type__c, a.company_type__c, ca.company_type__c) as company_type,
     l.lead_id,
     l.is_deleted,
     l.converted_contact_id,
