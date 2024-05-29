@@ -63,3 +63,5 @@ select
 from
     server_info si
     left join {{ ref('int_server_hosting_type') }} ht on si.server_id = ht.server_id
+
+-- Temporarily trigger in branch
