@@ -304,6 +304,15 @@ models:
       - name: last_monthly_active_users
         description: Count of monthly active users on the last day that telemetry was received at.
 
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          name: valid_bucket_names
+          combination_of_columns:
+            - server_id
+            - installation_id
+          config:
+            where: "installation_id is not null"
+
   - name: dim_daily_server_config
     description: Daily server configuration.
     columns:
