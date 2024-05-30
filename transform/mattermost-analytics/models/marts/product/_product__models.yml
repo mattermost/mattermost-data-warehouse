@@ -356,3 +356,47 @@ models:
           Total number of active users for the past 24 hours prior to the timestamp of the event.
           Bots and deleted users are excluded. Reported by mattermost server. If there is no 
           information about the specific date (i.e. server inactive or server hasn't reported telemetry), then it's 0.
+
+  - name: dim_installation_summary
+    description: | 
+      Summary of each installation based on the telemetry data. Contains data for servers with an existing 
+      installation id only.
+
+    columns:
+      - name: installation_id
+        description: The id of the installation.
+        tests:
+          - not_null
+          - unique
+      - name: installation_id
+        description: The id of the installation. Exists only for cloud installations.
+      - name: first_activity_date
+        description: |
+          The first date that this server was active. "Active server" is defined as either telemetry or security update 
+          check data are available for that date.
+      - name: last_activity_date
+        description: |
+          The last date that this server was active."Active server" is defined as either telemetry or security update 
+          check data are available for that date.
+      - name: first_binary_edition
+        description: The first ever reported "flavour" of the server binary.
+        tests:
+          - accepted_values:
+              values: ['TE', 'E0', 'Unknown']
+      - name: last_binary_edition
+        description: The last reported "flavour" of the server binary.
+        tests:
+          - accepted_values:
+              values: ['TE', 'E0', 'Unknown']
+      - name: first_count_registered_active_users
+        description: Count of registered and active users on the first day telemetry was received at.
+      - name: last_count_registered_active_users
+        description: Count of registered and active users on the last day that telemetry was received at.
+      - name: last_daily_active_users
+        description: Count of daily active users on the last day that telemetry was received at.
+      - name: last_monthly_active_users
+        description: Count of monthly active users on the last day that telemetry was received at.
+      - name: last_server_id
+        description: The most recent server id reporting the current installation id.
+      - name: count_server_id
+        description: The number of unique server ids reporting the current installation id.
