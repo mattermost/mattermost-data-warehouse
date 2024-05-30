@@ -1,4 +1,4 @@
--- depends_on: {{ ref('tracking_plans') }}
+-- depends_on: {{ ref('tracking_plan') }}
 
 {# Temporarily materialize #}
 {{
@@ -9,7 +9,7 @@
 
 {# Load rules from tracking plan #}
 {%- call statement('rules', fetch_result=True) -%}
-    select * from {{ ref('tracking_plans') }}
+    select * from {{ ref('tracking_plan') }}
 {%- endcall -%}
 
 {%- set rules = load_result('rules')['data'] %}
