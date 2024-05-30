@@ -1,3 +1,5 @@
+-- depends_on: {{ ref('tracking_plans') }}
+
 {# Temporarily materialize #}
 {{
     config(
