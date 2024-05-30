@@ -27,7 +27,7 @@ select
     , event_id
     , event_name
     , category
-    , event_type
+    , type as event_type
 from
     {{ ref('stg_mm_telemetry_prod__event') }}
 where
