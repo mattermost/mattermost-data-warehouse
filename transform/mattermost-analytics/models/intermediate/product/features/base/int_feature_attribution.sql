@@ -1,5 +1,3 @@
--- depends_on: {{ ref('tracking_plans') }}
-
 {# Load rules from tracking plan #}
 {%- call statement('rules', fetch_result=True) -%}
     select * from {{ ref('tracking_plans') }}
