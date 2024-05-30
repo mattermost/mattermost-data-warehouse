@@ -12,9 +12,11 @@
     select * from {{ ref('tracking_plan') }}
 {%- endcall -%}
 
-{%- set rules = load_result('rules')['data'] %}
-{%- set rules_status = states['response'] -%}
-{{ log(rules) }}
+{%- set rules = load_result('rules') -%}
+{%- set rules_data = rules['data'] -%}
+{%- set rules_status = rules['response'] -%}
+
+{{ log(rules_data) }}
 {{ log(rules_status) }}
 
 select
