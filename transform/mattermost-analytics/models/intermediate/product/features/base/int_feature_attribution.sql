@@ -1,3 +1,10 @@
+{# Temporarily materialize #}
+{{
+    config(
+        materialized='table',
+    )
+}}
+
 {# Load rules from tracking plan #}
 {%- call statement('rules', fetch_result=True) -%}
     select * from {{ ref('tracking_plans') }}
