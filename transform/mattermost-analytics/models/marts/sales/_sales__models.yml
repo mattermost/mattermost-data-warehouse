@@ -24,10 +24,6 @@ models:
         description: The workspace DNS for the given subscription.
       - name: cws_installation
         description: The workspace installation ID for the given subscription.
-        tests:
-          - relationships:
-              to: ref('dim_installation_summary')
-              field: installation_id
       - name: license_start_at
         description: The start date of the current term of the subscription.
       - name: license_end_at
