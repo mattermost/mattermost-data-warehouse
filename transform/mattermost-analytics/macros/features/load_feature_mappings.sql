@@ -4,11 +4,11 @@
         select * from {{ ref('tracking_plan') }} order by feature_name
     {%- endcall -%}
 
-    {%- set result = load_result('rules') -%}
+    {%- set rules_result = load_result('rules') -%}
 
     {%- set rules = {} -%}
 
-    {%- for key, group in result.table.rows | groupby('FEATURE_NAME') -%}
+    {%- for key, group in rules_result.table.rows | groupby('FEATURE_NAME') -%}
         {% do rules.update({key: list(group)}) %}
     {%- endfor -%}
 
