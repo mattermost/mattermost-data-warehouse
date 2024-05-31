@@ -9,7 +9,7 @@
 
 {# Load rules from tracking plan #}
 
-{%- set rules = load_feature_mappings() -%}
+{%- set feature_mappings = load_feature_mappings() -%}
 
 select
     cast(received_at as date) as received_at_date
@@ -19,6 +19,16 @@ select
     , event_id
     , event_name
     , category
+    , event_type
+
+{%- for feature, rules in feature_mappings.items() -%}
+    , case
+        {%- for rule in rules -%}
+            -- TODO: Add properties logic
+            when event_name = '{{ rule.event_name }}' and category = '{{ rule.category }}' and event_type = '{{ rule.event_type }}' then '{{ rule.event_type}}'
+        {%- endfor -%}
+    end as is_{{ feature }}
+{%- endfor -%}
 from
     {{ ref('stg_mm_telemetry_prod__event') }}
 where

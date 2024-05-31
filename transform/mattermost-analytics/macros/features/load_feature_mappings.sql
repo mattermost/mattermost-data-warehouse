@@ -20,8 +20,5 @@
         {%- endfor -%}
     {%- endif -%}
 
-
-    {{ log(rules) }}
     {{ return(rules) }}
-
 {% endmacro %}

@@ -13,10 +13,13 @@ renamed as (
         id               as event_id
         , event          as event_table
         , event_text     as event_name
+        , category
+        , type          as event_type
         , user_id        as server_id
         , user_actual_id as user_id
         , received_at    as received_at
         , timestamp      as timestamp
+
 
         -- Event properties
         , priority
@@ -36,7 +39,6 @@ renamed as (
         , caller_info
         , card
         , card_template_id
-        , category
         , catggory
         , channel
         , channel_id
@@ -278,7 +280,6 @@ renamed as (
         , todo
         , total_duration
         , total_size
-        , type
         , type_location
         , typeform_source
         , u
