@@ -15,9 +15,11 @@
 {%- set rules = load_result('rules') -%}
 {%- set rules_data = rules['data'] -%}
 {%- set rules_status = rules['response'] -%}
+{%- set rules_table = rules['table'] -%}
 
 {{ log(rules_data) }}
 {{ log(rules_status) }}
+{{ log(rules_table) }}
 
 select
     cast(received_at as date) as received_at_date
