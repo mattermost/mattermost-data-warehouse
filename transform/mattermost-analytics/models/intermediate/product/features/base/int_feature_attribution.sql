@@ -57,4 +57,3 @@ where
     -- this filter will only be applied on an incremental run
     and received_at >= (select max(received_at_date) from {{ this }})
 {% endif %}
-limit 1000
