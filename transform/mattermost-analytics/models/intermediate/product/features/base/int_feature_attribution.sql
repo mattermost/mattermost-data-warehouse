@@ -21,9 +21,9 @@ select
     , category
     , event_type
 
-{%- for feature, rules in feature_mappings.items() -%}
+{%- for feature, rules in feature_mappings.items() %}
     , case
-    {%- for rule in rules -%}
+    {%- for rule in rules %}
         when
             event_name = '{{ rule["EVENT_NAME"] }}'
             and category = '{{ rule["EVENT_CATEGORY"] }}'
@@ -32,10 +32,10 @@ select
             and {{rule["PROPERTY_NAME"] }} is not null
         {% endif -%}
             then true
-    {%- endfor -%}
+    {% endfor -%}
         else false
     end as is_{{ feature }}
-{%- endfor %}
+{% endfor %}
 from
     {{ ref('stg_mm_telemetry_prod__event') }}
 where
