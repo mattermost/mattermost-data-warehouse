@@ -4,8 +4,6 @@
         select * from {{ ref('tracking_plan') }} order by feature_name
     {%- endcall -%}
 
-
-    {% set itertools = modules.itertools %}
     {%- set result = load_result('rules') -%}
 
     {%- set rules = {} -%}
