@@ -8,8 +8,13 @@
     {% set itertools = modules.itertools %}
     {%- set result = load_result('rules') -%}
 
+    {%- set rules = {} -%}
 
-    {%- set rules = dict([ (k, list(v)) for k, v in  modules.itertools.groupby(result.table.rows, key=lambda x: x['FEATURE_NAME'])]) -%}
+    {%- for key, group in  modules.itertools.groupby(result.table.rows, key=lambda x: x['FEATURE_NAME']) -%}
+        {% do rules.update({key: list(group)}) %}
+    {%- endfor -%}
+
+
 
     {{ log(rules) }}
 
