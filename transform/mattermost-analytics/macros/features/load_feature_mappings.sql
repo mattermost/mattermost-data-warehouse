@@ -14,7 +14,7 @@
         {%- for group in rules_result | groupby('FEATURE_NAME') -%}
             {%- set rows = [] -%}
             {%- for row in group.list -%}
-                {% do rows.update(row.dict()) %}
+                {% do rows.append(row.dict()) %}
             {%- endfor -%}
             {% do rules.update({group.grouper: rows}) %}
         {%- endfor -%}
