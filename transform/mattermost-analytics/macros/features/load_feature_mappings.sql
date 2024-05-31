@@ -6,9 +6,10 @@
 
 
     {% set itertools = modules.itertools %}
-    {%- set raw_rules = load_result('rules') -%}
+    {%- set result = load_result('rules') -%}
 
-    {%- set rules = modules.itertools.groupby(raw_rules.table.rows, key=lambda r: r['FEATURE_NAME']) -%}
+
+    {%- set rules = { k: list(v) for k, v in  modules.itertools.groupby(result.table.rows, key=lambda x: x['feature_name'])} -%}
 
     {{ log(rules) }}
 
