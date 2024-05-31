@@ -12,7 +12,11 @@
         {%- set rules_result = load_result('get_query_results').table.rows -%}
 
         {%- for group in rules_result | groupby('FEATURE_NAME') -%}
-            {% do rules.update({group.grouper: group.list}) %}
+            {%- set rows = [] -%}
+            {%- for row in group.list -%}
+                {% do rows.update(row.dict()) %}
+            {%- endfor -%}
+            {% do rules.update({group.grouper: rows}) %}
         {%- endfor -%}
     {%- endif -%}
 
