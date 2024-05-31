@@ -8,18 +8,8 @@
 }}
 
 {# Load rules from tracking plan #}
-{%- call statement('rules', fetch_result=True) -%}
-    select * from {{ ref('tracking_plan') }}
-{%- endcall -%}
 
-{%- set rules = load_result('rules') -%}
-{%- set rules_data = rules['data'] -%}
-{%- set rules_status = rules['response'] -%}
-{%- set rules_table = rules['table'] -%}
-
-{{ log(rules_data) }}
-{{ log(rules_status) }}
-{{ log(rules_table) }}
+{%- set rules = load_feature_mappings() -%}
 
 select
     cast(received_at as date) as received_at_date
@@ -29,7 +19,6 @@ select
     , event_id
     , event_name
     , category
-    , type as event_type
 from
     {{ ref('stg_mm_telemetry_prod__event') }}
 where
