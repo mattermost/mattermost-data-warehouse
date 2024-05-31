@@ -41,6 +41,7 @@ select
         else false
     end as {{ feature }}
 {% endfor %}
+    , not ({{ ' or '.join(feature_mappings.keys()) }}) as unknown
 from
     {{ ref('stg_mm_telemetry_prod__event') }}
 where
@@ -56,3 +57,4 @@ where
     -- this filter will only be applied on an incremental run
     and received_at >= (select max(received_at_date) from {{ this }})
 {% endif %}
+limit 1000
