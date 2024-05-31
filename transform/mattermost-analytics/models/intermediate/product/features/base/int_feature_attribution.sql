@@ -35,10 +35,10 @@ select
             and {{ rule["PROPERTY_NAME"] }} = '{{ rule["PROPERTY_VALUE"] }}'
         {% endif -%}
             then true
-    {%- endfor -%}
+    {%- endfor %}
         else false
     end as is_{{ feature }}
-{% endfor %}
+{% endfor -%}
 from
     {{ ref('stg_mm_telemetry_prod__event') }}
 where
