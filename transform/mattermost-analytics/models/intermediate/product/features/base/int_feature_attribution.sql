@@ -24,17 +24,12 @@ select
 {%- for feature, rules in feature_mappings.items() -%}
     , case
     {%- for rule in rules -%}
-            -- TODO: Add properties logic
-                {%- for rule in rules -%}
         when
             event_name = '{{ rule["EVENT_NAME"] }}'
             and category = '{{ rule["EVENT_CATEGORY"] }}'
             and event_type = '{{ rule["EVENT_NAME"] }}'
         {%- if rule["PROPERTY_NAME"] %}
             and {{rule["PROPERTY_NAME"] }} is not null
-            {%- if rule["PROPERTY_VALUE"] %}
-            and {{rule["PROPERTY_NAME"] }} = '{{rule["PROPERTY_VALUE"] }}'
-            {%- endif %}
         {% endif -%}
             then true
     {%- endfor -%}
