@@ -20,8 +20,7 @@ select
     , event_name
     , category
     , event_type
-
-{%- for feature, rules in feature_mappings.items() %}
+{% for feature, rules in feature_mappings.items() -%}
     , case
     {%- for rule in rules %}
         when
@@ -37,8 +36,8 @@ select
             then true
     {%- endfor %}
         else false
-    end as is_{{ feature }}
-{% endfor -%}
+    end as {{ feature }}
+{%- endfor -%}
 from
     {{ ref('stg_mm_telemetry_prod__event') }}
 where
