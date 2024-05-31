@@ -23,12 +23,24 @@ select
 
 {%- for feature, rules in feature_mappings.items() -%}
     , case
-        {%- for rule in rules -%}
+    {%- for rule in rules -%}
             -- TODO: Add properties logic
-            when event_name = '{{ rule.event_name }}' and category = '{{ rule.category }}' and event_type = '{{ rule.event_type }}' then '{{ rule.event_type}}'
-        {%- endfor -%}
+                {%- for rule in rules -%}
+        when
+            event_name = '{{ rule["EVENT_NAME"] }}'
+            and category = '{{ rule["EVENT_CATEGORY"] }}'
+            and event_type = '{{ rule["EVENT_NAME"] }}'
+        {%- if rule["PROPERTY_NAME"] %}
+            and {{rule["PROPERTY_NAME"] }} is not null
+            {%- if rule["PROPERTY_VALUE"] %}
+            and {{rule["PROPERTY_NAME"] }} = '{{rule["PROPERTY_VALUE"] }}'
+            {%- endif %}
+        {% endif -%}
+            then true
+    {%- endfor -%}
+        else false
     end as is_{{ feature }}
-{%- endfor -%}
+{%- endfor %}
 from
     {{ ref('stg_mm_telemetry_prod__event') }}
 where
