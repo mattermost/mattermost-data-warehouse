@@ -1,10 +1,12 @@
 -- depends_on: {{ ref('tracking_plan') }}
 
-{# Temporarily materialize #}
 {{
-    config(
-        materialized='table',
-    )
+    config({
+        "materialized": "incremental",
+        "incremental_strategy": "delete+insert",
+        "unique_key": ['event_id'],
+        "cluster_by": ['received_at_date'],
+    })
 }}
 
 {# Load rules from tracking plan #}
@@ -53,4 +55,3 @@ where
     -- this filter will only be applied on an incremental run
     and received_at >= (select max(received_at_date) from {{ this }})
 {% endif %}
-limit 1000
