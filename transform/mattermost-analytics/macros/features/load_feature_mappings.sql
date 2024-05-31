@@ -11,8 +11,8 @@
 
         {%- set rules_result = load_result('get_query_results').table.rows -%}
 
-        {%- for key, group in rules_result | groupby('FEATURE_NAME') -%}
-            {% do rules.update({key: group.list}) %}
+        {%- for group in rules_result | groupby('FEATURE_NAME') -%}
+            {% do rules.update({group.grouper: group.list}) %}
         {%- endfor -%}
     {%- endif -%}
 
