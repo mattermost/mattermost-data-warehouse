@@ -6,6 +6,7 @@
         "incremental_strategy": "delete+insert",
         "unique_key": ['event_id'],
         "cluster_by": ['received_at_date'],
+        "snowflake_warehouse": "transform_l"
     })
 }}
 
