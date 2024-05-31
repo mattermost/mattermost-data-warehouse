@@ -9,8 +9,9 @@
     {%- set result = load_result('rules') -%}
 
     {%- set rules = {} -%}
+    {%- set group_key = lambda row: row['FEATURE_NAME'] -%}
 
-    {%- for key, group in  modules.itertools.groupby(result.table.rows, key=lambda x: x['FEATURE_NAME']) -%}
+    {%- for key, group in  modules.itertools.groupby(result.table.rows, key=group_key) -%}
         {% do rules.update({key: list(group)}) %}
     {%- endfor -%}
 
