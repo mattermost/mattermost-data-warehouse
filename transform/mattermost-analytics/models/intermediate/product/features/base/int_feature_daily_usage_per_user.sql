@@ -1,7 +1,6 @@
 {{
     config({
         "materialized": "incremental",
-        -- Merge incremental strategy won't work as the number of columns to update is dynamic.
         "incremental_strategy": "delete+insert",
         "unique_key": ['daily_user_id'],
         "cluster_by": ['received_at_date']
