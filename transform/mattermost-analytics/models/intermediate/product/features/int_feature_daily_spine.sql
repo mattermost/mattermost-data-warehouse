@@ -14,7 +14,7 @@
 %}
 
 {%
-    set count_feature_columns = [c for c in count_columns if c != 'count_unknown']
+    set count_feature_columns = count_columns | difference(['count_unknown'])
 %}
 
 
