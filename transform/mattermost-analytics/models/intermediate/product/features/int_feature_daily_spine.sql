@@ -6,10 +6,13 @@
     })
 }}
 
-{# List of known features #}
-{%- set known_features = dbt_utils.get_column_values(ref('feature_aliases'), 'alias') -%}
+{%
+    set count_columns = dbt_utils.get_filtered_columns_in_relation(
+        from=ref('int_feature_daily_usage_pivoted'),
+        except=["daily_user_id", "activity_date", "server_id", "user_id", "received_at_date"]
+    )
+%}
 
-{%- set unknown_feature ='unknown' -%}
 
 with server_feature_date_range as (
     select
@@ -40,52 +43,33 @@ select
     , spine.activity_date
 
     -- Aggregation per known feature
-{% for feature_column in known_features %}
+{% for column in count_columns %}
     -- For each feature, count the number of of daily and monthly events
-    , coalesce({{ feature_column }}, 0) as {{ dbt_utils.slugify('count_' ~ feature_column ~ '_events_daily') }}
+    , coalesce({{ column }}, 0) as {{ dbt_utils.slugify(column ~ '_events_daily') }}
     , coalesce (
-        sum ({{feature_column}}) over(
+        sum ({{column}}) over(
             partition by spine.server_id, spine.user_id order by spine.activity_date
             rows between {{var('monthly_days')}} preceding and current row
         ), 0
-    ) as {{ dbt_utils.slugify('count_' ~ feature_column ~ '_events_monthly') }}
+    ) as {{ dbt_utils.slugify(column ~ '_events_monthly') }}
     -- For each feature, flag the user for daily and monthly
-    , iff(coalesce({{ feature_column }}, 0) > 0, 1, 0) as {{ dbt_utils.slugify('count_' ~ feature_column ~ '_users_daily') }}
+    , iff(coalesce({{ column }}, 0) > 0, 1, 0) as {{ dbt_utils.slugify(column ~ '_users_daily') }}
     , iff(
         coalesce (
-            sum ({{feature_column}}) over(
+            sum ({{column}}) over(
                 partition by spine.server_id, spine.user_id order by spine.activity_date
                 rows between {{var('monthly_days')}} preceding and current row
             ), 0
         ) > 0, 1, 0
-    ) as {{ dbt_utils.slugify('count_' ~ feature_column ~ '_users_monthly') }}
+    ) as {{ dbt_utils.slugify(column ~ '_users_monthly') }}
 {% endfor %}
 
-    -- Aggregations for unknown features
-    , coalesce({{ unknown_feature }}, 0) as count_unknown_features_events_daily
-    , coalesce (
-        sum ({{unknown_feature}}) over(
-            partition by spine.server_id, spine.user_id order by spine.activity_date
-            rows between {{var('monthly_days')}} preceding and current row
-        ), 0
-    ) as count_unknown_features_events_monthly
-    , iff(coalesce({{ unknown_feature }}, 0) > 0, 1, 0) as count_unknown_features_users_daily
-    , iff(
-        coalesce (
-            sum ({{ unknown_feature }}) over(
-                partition by spine.server_id, spine.user_id order by spine.activity_date
-                rows between {{var('monthly_days')}} preceding and current row
-            ), 0
-        ) > 0, 1, 0
-    ) as count_unknown_features_users_monthly
-
-
     -- Aggregation for known features. To be used for comparing users using any paid feature.
-    , {% for feature_column in known_features -%}
-        {{ dbt_utils.slugify('count_' ~ feature_column ~ '_events_daily') }} {%- if not loop.last %} + {% endif -%}
+    , {% for column in count_columns - ['count_unknown'] -%}
+        {{ dbt_utils.slugify(column ~ '_events_daily') }} {%- if not loop.last %} + {% endif -%}
     {%- endfor %} as count_known_features_events_daily
-    , {% for feature_column in known_features -%}
-        {{ dbt_utils.slugify('count_' ~ feature_column ~ '_events_monthly') }} {%- if not loop.last -%} + {%- endif -%}
+    , {% for column in count_columns - ['count_unknown']  -%}
+        {{ dbt_utils.slugify(column ~ '_events_monthly') }} {%- if not loop.last -%} + {%- endif -%}
     {%- endfor %} as count_known_features_events_monthly
     , iff(count_known_features_events_daily > 0, 1, 0) as count_known_features_users_daily
     , iff(count_known_features_events_monthly > 0, 1, 0) as count_known_features_users_monthly
