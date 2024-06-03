@@ -13,6 +13,10 @@
     )
 %}
 
+{%
+    set count_feature_columns = [c for c in count_columns if c != 'count_unknown']
+%}
+
 
 with server_feature_date_range as (
     select
@@ -65,10 +69,10 @@ select
 {% endfor %}
 
     -- Aggregation for known features. To be used for comparing users using any paid feature.
-    , {% for column in count_columns - ['count_unknown'] -%}
+    , {% for column in count_feature_columns -%}
         {{ dbt_utils.slugify(column ~ '_events_daily') }} {%- if not loop.last %} + {% endif -%}
     {%- endfor %} as count_known_features_events_daily
-    , {% for column in count_columns - ['count_unknown']  -%}
+    , {% for column in count_feature_columns  -%}
         {{ dbt_utils.slugify(column ~ '_events_monthly') }} {%- if not loop.last -%} + {%- endif -%}
     {%- endfor %} as count_known_features_events_monthly
     , iff(count_known_features_events_daily > 0, 1, 0) as count_known_features_users_daily
