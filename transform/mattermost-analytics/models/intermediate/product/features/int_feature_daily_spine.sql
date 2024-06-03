@@ -78,8 +78,8 @@ select
     , {% for column in count_feature_columns  -%}
         {{ dbt_utils.slugify(column ~ '_events_monthly') }} {%- if not loop.last -%} + {%- endif -%}
     {%- endfor %} as count_known_features_events_monthly
-    , iff(count_known_features_events_daily > 0, 1, 0) as count_known_features_users_daily
-    , iff(count_known_features_events_monthly > 0, 1, 0) as count_known_features_users_monthly
+    , iff(count_known_features_events_daily > 0, 1, 0) as count_known_feature_users_daily
+    , iff(count_known_features_events_monthly > 0, 1, 0) as count_known_feature_users_monthly
     -- DAU/MAU
     , iff(features.server_id is null, 0, 1) as is_active
     , max(is_active) over(
