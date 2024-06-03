@@ -1,3 +1,6 @@
+-- Forcing dependency due to load_feature_mappings macro
+-- depends_on: {{ ref('tracking_plan') }}
+
 {{
     config({
         "materialized": "incremental",
