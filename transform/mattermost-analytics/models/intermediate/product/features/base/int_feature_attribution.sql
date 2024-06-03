@@ -40,7 +40,7 @@ select
         else false
     end as {{ feature }}
 {% endfor %}
-    , not ({{ ' or '.join(feature_mappings.keys()) }}) as unknown
+    , not ({{ ' or '.join(feature_mappings.keys()) }}) as unknown_feature
 from
     {{ ref('stg_mm_telemetry_prod__event') }}
 where
