@@ -23,6 +23,7 @@ select
 {% for feature, rules in feature_mappings.items() %}
     , count_if({{feature}}}}_count > 0) as count_{{feature}}
 {% endfor %}
+    , count(event_id) as count_total_events
 from
     {{ ref('int_feature_attribution') }}
 {% if is_incremental() %}
