@@ -22,8 +22,8 @@ select
     , server_id
     , user_id
     , received_at_date
-{% for feature, rules in feature_mappings.items() %}
-    , count_if({{feature}}}}_count > 0) as count_{{feature}}
+{% for feature in feature_mappings.keys() %}
+    , count_if({{feature}}) as count_{{feature}}
 {% endfor %}
     , count(event_id) as count_total_events
 from
