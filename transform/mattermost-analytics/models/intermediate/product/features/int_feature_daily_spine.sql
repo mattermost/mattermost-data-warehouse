@@ -14,7 +14,10 @@
 %}
 
 {%
-    set count_feature_columns = count_columns | difference(['count_unknown'])
+    set count_feature_columns = dbt_utils.get_filtered_columns_in_relation(
+        from=ref('int_feature_daily_usage_pivoted'),
+        except=["daily_user_id", "activity_date", "server_id", "user_id", "received_at_date", "count_unknown"]
+    )
 %}
 
 
