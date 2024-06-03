@@ -25,6 +25,13 @@ select
 {% for feature in feature_mappings.keys() %}
     , count_if({{feature}}) as count_{{feature}}
 {% endfor %}
+    , count_if(
+        not (
+{% for feature in feature_mappings.keys() %}
+            {{feature}} {% if not loop.last %}or{% endif %}
+{% endfor %}
+        )
+    ) as count_{{feature}}
     , count(event_id) as count_total_events
 from
     {{ ref('int_feature_attribution') }}
