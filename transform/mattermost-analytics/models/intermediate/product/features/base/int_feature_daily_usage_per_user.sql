@@ -3,7 +3,7 @@
         "materialized": "incremental",
         "incremental_strategy": "delete+insert",
         "unique_key": ['daily_user_id'],
-        "cluster_by": ['received_at_date']
+        "cluster_by": ['received_at_date'],
         "snowflake_warehouse": "transform_l"
     })
 }}
