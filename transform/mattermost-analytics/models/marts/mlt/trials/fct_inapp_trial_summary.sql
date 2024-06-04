@@ -30,8 +30,8 @@ select
     , tr.end_at
     , coalesce(tr.country_name, 'Unknown') as country_name
     , tr.num_users
-    , row_number() over(partition by tr.trial_email order by tr.start_at asc) = 1 as is_first_trial
-    , row_number() over(partition by tr.trial_email order by tr.start_at desc) = 1 as is_last_trial
+    , row_number() over(partition by trial_email order by tr.start_at asc) = 1 as is_first_trial
+    , row_number() over(partition by trial_email order by tr.start_at desc) = 1 as is_last_trial
     , agg.count as total_trials
     , agg.first_trial_start_at
     , agg.last_trial_start_at
