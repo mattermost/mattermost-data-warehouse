@@ -18,15 +18,20 @@ with deduped_trial_requests as (
 select
     tr.trial_request_id
     , coalesce(tr.contact_email, tr.email) as trial_email
+    , tr.server_id
     , split_part(trial_email, '@', 2) as email_domain
     , tr.email
     , tr.contact_email
     , {{ validate_email('trial_email') }} as is_valid_trial_email
     , tr._name as name
+    , coalesce(company_name, 'Unknown') as company_name
     , tr.company_size_bucket
-    , tr.server_id
     , tr.site_name
     , tr.site_url
+    , case
+        when lower(site_url) = 'https://mattermost.com' then 'Website'
+        else 'In-Product'
+    end as request_source
     , tr.start_at
     , tr.end_at
     , coalesce(tr.country_name, 'Unknown') as country_name
