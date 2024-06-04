@@ -13,8 +13,6 @@ with deduped_trial_requests as (
         , max(tr.start_at) as last_trial_start_at
     from
         deduped_trial_requests tr
-    where
-        lead.is_deleted = false
     group by all
 )
 select
