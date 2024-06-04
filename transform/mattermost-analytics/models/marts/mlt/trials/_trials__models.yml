@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: fct_active_users
+  - name: fct_inapp_trial_requests
     desription: |
       This model contains the list of in app product trial requests, as well as some extra metadata
 
