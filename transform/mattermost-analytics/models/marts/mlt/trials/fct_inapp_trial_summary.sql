@@ -8,7 +8,7 @@ with deduped_trial_requests as (
 ), aggregates as (
     select
         coalesce(contact_email, email) as trial_email
-        , count(distinct trial_request_id)
+        , count(distinct trial_request_id) as total_trial_requests
         , min(start_at) as first_trial_start_at
         , max(start_at) as last_trial_start_at
     from
@@ -32,7 +32,7 @@ select
     , tr.num_users
     , row_number() over(partition by trial_email order by tr.start_at asc) = 1 as is_first_trial
     , row_number() over(partition by trial_email order by tr.start_at desc) = 1 as is_last_trial
-    , agg.count as total_trials
+    , agg.total_trial_requests
     , agg.first_trial_start_at
     , agg.last_trial_start_at
 from
