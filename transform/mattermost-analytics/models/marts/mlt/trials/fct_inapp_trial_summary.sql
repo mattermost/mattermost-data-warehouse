@@ -13,6 +13,7 @@ with deduped_trial_requests as (
         , max(start_at) as last_trial_start_at
     from
         deduped_trial_requests
+    group by all
 )
 select
     tr.trial_request_id
