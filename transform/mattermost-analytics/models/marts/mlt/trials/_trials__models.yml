@@ -31,7 +31,7 @@ models:
           - accepted_values:
               values: ['ONE_TO_50', 'FIFTY_TO_100', 'ONE_HUNDRED_TO_500', 'FIVE_HUNDRED_TO_1000', 'ONE_THOUSAND_TO_2500', 'TWO_THOUSAND_FIVE_HUNDRED_AND_UP']
               config:
-                where: "company_size_bucket is not null"
+                where: "company_size_bucket != 'Unknown'"
       - name: site_name
         description: The name of the Mattermost site.
       - name: site_url
@@ -70,12 +70,3 @@ models:
         description: The timestamp of the first trial request from the given email.
       - name: last_trial_start_at
         description: The timestamp of the last trial request from the given email.
-      - name: company_type
-        description: The company type for the trial requests. Uses Salesforce lead information to get these data.
-      - name: number_of_company_types
-        description: The total number of distinct company types for all leads matching the current trial request's email.
-        tests:
-          - dbt_utils.accepted_range:
-              min_value: 0
-              max_value: 1
-              inclusive: true
