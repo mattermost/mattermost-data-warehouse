@@ -14,7 +14,7 @@ with deduped_trial_requests as (
         , array_unique_agg(lead.company_type__c)[0]::varchar as company_type
         , count(distinct lead.company_type__c) as number_of_company_types
     from
-        deduped_trial_requests
+        deduped_trial_requests tr
         left join dbt_staging.stg_salesforce__lead lead on tr.contact_email = lead.email or tr.email = lead.email
     where
         lead.is_deleted = false
