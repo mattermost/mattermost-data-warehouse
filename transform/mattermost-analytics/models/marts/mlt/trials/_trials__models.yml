@@ -70,3 +70,10 @@ models:
         description: The timestamp of the last trial request from the given email.
       - name: company_type
         description: The company type for the trial requests. Uses Salesforce lead information to get these data.
+      - name: number_of_company_types
+        description: The total number of distinct company types for all leads matching the current trial request's email.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+              inclusive: true

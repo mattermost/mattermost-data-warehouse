@@ -12,6 +12,7 @@ with deduped_trial_requests as (
         , min(tr.start_at) as first_trial_start_at
         , max(tr.start_at) as last_trial_start_at
         , array_unique_agg(lead.company_type__c)[0]::varchar as company_type
+        , count(distinct lead.company_type__c) as number_of_company_types
     from
         deduped_trial_requests
         left join dbt_staging.stg_salesforce__lead lead on tr.contact_email = lead.email or tr.email = lead.email
@@ -46,6 +47,7 @@ select
     , agg.first_trial_start_at
     , agg.last_trial_start_at
     , agg.company_type
+    , agg.number_of_company_types
 from
     deduped_trial_requests tr
     left join aggregates agg on coalesce(tr.contact_email, tr.email) = agg.trial_email
