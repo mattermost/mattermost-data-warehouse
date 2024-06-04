@@ -57,6 +57,9 @@ models:
       data_eng:
         schema: mart_data_eng
         tags: ['nightly', 'data-eng']
+      mlt:
+        schema: mart_mlt
+        tags: [ 'nightly', 'mlt' ]
       product:
         schema: mart_product
         tags: ['nightly', 'product']
