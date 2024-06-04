@@ -18,9 +18,11 @@ models:
       - name: email_domain
         description: The domain of the trial email.
       - name: email
-        description: TODO - define difference between email and contact email.
+        description: |
+          Email for backwards compatibility with BLAPI. Should be the same with contact email whenever contact 
+          email is defined.
       - name: contact_email
-        description: TODO - define difference between email and contact email.
+        description: Email provided by the user in the input box when requesting trial request.
       - name: name
         description: The name of the trial user.
       - name: company_name
