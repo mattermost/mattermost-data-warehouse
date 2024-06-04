@@ -42,7 +42,8 @@ models:
           air-gapped environments.
         tests:
           - not_null
-          - accepted_values: [ 'Website', 'In-Product' ]
+          - accepted_values:
+              values: [ 'Website', 'In-Product' ]
       - name: start_at
         description: The timestamp when the trial started.
         tests:
