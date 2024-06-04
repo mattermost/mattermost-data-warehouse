@@ -23,7 +23,7 @@ select
     , {{ validate_email('trial_email') }} as is_valid_trial_email
     , tr._name as name
     , tr.company_size_bucket
-    , tr.server_id,
+    , tr.server_id
     , tr.site_name
     , tr.site_url
     , tr.start_at
