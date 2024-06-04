@@ -39,4 +39,3 @@ select
 from
     deduped_trial_requests tr
     left join aggregates agg on coalesce(tr.contact_email, tr.email) = agg.trial_email
-group by 1
