@@ -56,7 +56,7 @@ select
     , agg.num_company_types
 {% for company_type in company_types %}
     , agg.marked_as_{{ company_type.lower().replace('-', '_') }}
-{% endfor %
+{% endfor %}
 from
     deduped_trial_requests tr
     left join aggregates agg on coalesce(tr.contact_email, tr.email) = agg.trial_email
