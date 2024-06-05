@@ -1,9 +1,10 @@
 version: 2
 
 models:
-  - name: fct_inapp_trial_requests
+  - name: fct_onprem_trial_requests
     desription: |
-      This model contains the list of in app product trial requests, as well as some extra metadata
+      This model contains the list of on-prem product trial requests, as well as some extra metadata. Contains trial 
+      requests both from in-app and the website.
 
     columns:
       - name: trial_request_id
