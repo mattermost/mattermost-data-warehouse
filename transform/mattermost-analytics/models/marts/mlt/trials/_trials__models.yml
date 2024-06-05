@@ -72,3 +72,19 @@ models:
         description: The timestamp of the first trial request from the given email.
       - name: last_trial_start_at
         description: The timestamp of the last trial request from the given email.
+      - name: num_company_types
+        description: The number of different company types that are matching the current trial request.
+      - name: marked_as_smb
+        description: Whether the trial request is marked as belonging to a SMB organization.
+      - name: marked_as_enterprise
+        description: Whether the trial request is marked as belonging to an Enterprise organization.
+      - name: marked_as_midmarket
+        description: Whether the trial request is marked as belonging to a Midmarket organization.
+      - name: marked_as_federal
+        description: Whether the trial request is marked as belonging to a Federal organization.
+      - name: marked_as_academic
+        description: Whether the trial request is marked as belonging to an Academic organization.
+      - name: marked_as_mme
+        description: Whether the trial request is marked as belonging to a MME organization.
+      - name: marked_as_non_profit
+        description: Whether the trial request is marked as belonging to a Non-Profit organization.-
