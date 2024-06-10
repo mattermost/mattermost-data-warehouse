@@ -2,7 +2,7 @@ select
     sh.subscription_history_event_id
     , s.subscription_id
     , s.customer_id
-    , COALESCE(sh.licensed_seats, s.quantity) as licensed_seats
+    , COALESCE(sh.licensed_seats, s.metadata:"license-seats", s.quantity) as licensed_seats
     , sh.created_at
     , s.cws_dns
     , s.cws_installation
