@@ -19,7 +19,12 @@
 
 
 {%
-    set count_columns = count_feature_columns + [ "count_known_feature", "count_unknown_feature", "count_total_events" ]
+    set count_columns = dbt_utils.get_filtered_columns_in_relation(
+        from=ref('int_feature_daily_usage_pivoted'),
+        except=[
+            "daily_user_id", "activity_date", "server_id", "user_id", "received_at_date"
+        ]
+    )
 %}
 
 with server_feature_date_range as (
