@@ -10,13 +10,16 @@
 {%
     set count_feature_columns = dbt_utils.get_filtered_columns_in_relation(
         from=ref('int_feature_daily_usage_pivoted'),
-        except=["daily_user_id", "activity_date", "server_id", "user_id", "received_at_date", "count_unknown_feature", "count_total_events"]
+        except=[
+            "daily_user_id", "activity_date", "server_id", "user_id", "received_at_date",
+            "count_known_feature", "count_unknown_feature", "count_total_events"
+        ]
     )
 %}
 
 
 {%
-    set count_columns = count_feature_columns + [ "count_unknown_feature", "count_total_events" ]
+    set count_columns = count_feature_columns + [ "count_known_feature", "count_unknown_feature", "count_total_events" ]
 %}
 
 with server_feature_date_range as (
@@ -26,9 +29,11 @@ with server_feature_date_range as (
         , min(activity_date) as first_active_day
         , max(activity_date) as last_active_day
     from
-        {{ ref('int_feature_daily_usage_pivoted') }}
+        {{ ref('int_feature_daily_usage_per_user') }}
     where
         activity_date >= '{{ var('telemetry_start_date')}}'
+        -- Keep only server with at least one known feature
+        and count_known_feature > 0
     group by
         server_id, user_id
 ), spine as (
@@ -69,15 +74,6 @@ select
     ) as {{ dbt_utils.slugify(column ~ '_users_monthly') }}
 {% endfor %}
 
-    -- Aggregation for known features. To be used for comparing users using any paid feature.
-    , {% for column in count_feature_columns -%}
-        {{ dbt_utils.slugify(column ~ '_events_daily') }} {%- if not loop.last %} + {% endif -%}
-    {%- endfor %} as count_known_feature_events_daily
-    , {% for column in count_feature_columns  -%}
-        {{ dbt_utils.slugify(column ~ '_events_monthly') }} {%- if not loop.last %} + {% endif -%}
-    {%- endfor %} as count_known_feature_events_monthly
-    , iff(count_known_feature_events_daily > 0, 1, 0) as count_known_feature_users_daily
-    , iff(count_known_feature_events_monthly > 0, 1, 0) as count_known_feature_users_monthly
     -- DAU/MAU
     , iff(features.server_id is null, 0, 1) as is_active
     , max(is_active) over(
@@ -86,5 +82,5 @@ select
     ) as is_active_monthly
 from
     spine
-    left join {{ ref('int_feature_daily_usage_pivoted') }} features
+    left join {{ ref('int_feature_daily_usage_per_user') }} features
         on spine.server_id = features.server_id and spine.user_id = features.user_id and spine.activity_date = features.activity_date
