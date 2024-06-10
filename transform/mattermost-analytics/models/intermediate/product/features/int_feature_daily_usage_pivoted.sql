@@ -8,7 +8,7 @@
 {%
     set column_names = dbt_utils.get_filtered_columns_in_relation(
         from=ref('int_feature_daily_usage_per_user'),
-        except=["daily_user_id", "activity_date", "server_id", "user_id", "received_at_date", "count_unknown"]
+        except=["daily_user_id", "activity_date", "server_id", "user_id", "received_at_date", "count_unknown_feature"]
     )
 %}
 

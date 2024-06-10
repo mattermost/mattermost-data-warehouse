@@ -6,20 +6,18 @@
     })
 }}
 
-{%
-    set count_columns = dbt_utils.get_filtered_columns_in_relation(
-        from=ref('int_feature_daily_usage_pivoted'),
-        except=["daily_user_id", "activity_date", "server_id", "user_id", "received_at_date"]
-    )
-%}
 
 {%
     set count_feature_columns = dbt_utils.get_filtered_columns_in_relation(
         from=ref('int_feature_daily_usage_pivoted'),
-        except=["daily_user_id", "activity_date", "server_id", "user_id", "received_at_date", "count_unknown"]
+        except=["daily_user_id", "activity_date", "server_id", "user_id", "received_at_date", "count_unknown_feature", "count_total_events"]
     )
 %}
 
+
+{%
+    set count_columns = count_feature_columns + [ "count_unknown_feature", "count_total_events" ]
+%}
 
 with server_feature_date_range as (
     select
@@ -76,7 +74,7 @@ select
         {{ dbt_utils.slugify(column ~ '_events_daily') }} {%- if not loop.last %} + {% endif -%}
     {%- endfor %} as count_known_feature_events_daily
     , {% for column in count_feature_columns  -%}
-        {{ dbt_utils.slugify(column ~ '_events_monthly') }} {%- if not loop.last -%} + {%- endif -%}
+        {{ dbt_utils.slugify(column ~ '_events_monthly') }} {%- if not loop.last %} + {% endif -%}
     {%- endfor %} as count_known_feature_events_monthly
     , iff(count_known_feature_events_daily > 0, 1, 0) as count_known_feature_users_daily
     , iff(count_known_feature_events_monthly > 0, 1, 0) as count_known_feature_users_monthly
