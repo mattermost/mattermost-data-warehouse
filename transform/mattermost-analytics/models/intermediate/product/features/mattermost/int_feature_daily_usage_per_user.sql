@@ -17,7 +17,7 @@
 
 select
     -- Surrogate key required as it's both a good practice, as well as allows merge incremental strategy.
-    {{ dbt_utils.generate_surrogate_key(['received_at_date', 'activity_date', 'server_id', 'user_id']) }} as daily_user_id
+    {{ dbt_utils.generate_surrogate_key(['activity_date', 'server_id', 'user_id']) }} as daily_user_id
     , activity_date
     , server_id
     , user_id
