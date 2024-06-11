@@ -27,7 +27,14 @@
     )
 %}
 
-with server_feature_date_range as (
+with servers_with_known_features as (
+    select
+        server_id, count_if(count_known_feature > 0) as days_with_known_features
+    from
+        {{ ref('int_daily_usage_per_user_full') }}
+    having
+        days_with_known_features > 0
+), server_feature_date_range as (
     select
         server_id
         , user_id
@@ -37,8 +44,8 @@ with server_feature_date_range as (
         {{ ref('int_daily_usage_per_user_full') }}
     where
         activity_date >= '{{ var('telemetry_start_date')}}'
-        -- Keep only server with at least one known feature
-        and count_known_feature > 0
+        -- Keep only servers with at least one known feature
+        and server_id in (select server_id from servers_with_known_features)
     group by
         server_id, user_id
 ), spine as (
