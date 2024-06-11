@@ -31,5 +31,5 @@ from
     {{ ref('int_feature_daily_usage_per_user') }} m
     full outer join {{ ref('int_playbooks_daily_usage_per_user') }} p
         on  {% for column in common_columns %}
-            {%- if not loop.first %} and {% endif -%} m.{{column}} = p.{{column}})
+            {%- if not loop.first %} and {% endif -%} m.{{column}} = p.{{column}}
         {% endfor %}
