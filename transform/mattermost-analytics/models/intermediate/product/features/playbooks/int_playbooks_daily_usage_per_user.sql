@@ -13,7 +13,7 @@ select
     , cast(timestamp as date) as activity_date
     , server_id
     , user_id
-    {{ dbt_utils.generate_surrogate_key(['received_at_date', 'activity_date', 'server_id', 'user_id']) }} as daily_user_id
+    , {{ dbt_utils.generate_surrogate_key(['received_at_date', 'activity_date', 'server_id', 'user_id']) }} as daily_user_id
     , count_if(tp.feature_name = 'playbooks') as count_playbooks
     , count_playbooks as count_known_feature
     , count_if(tp.feature_name is null) as count_unknown_feature
