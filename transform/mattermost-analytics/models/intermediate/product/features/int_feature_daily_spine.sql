@@ -9,7 +9,7 @@
 
 {%
     set count_feature_columns = dbt_utils.get_filtered_columns_in_relation(
-        from=ref('int_feature_daily_usage_per_user'),
+        from=ref('int_daily_usage_per_user_full'),
         except=[
             "daily_user_id", "activity_date", "server_id", "user_id", "received_at_date",
             "count_known_feature", "count_unknown_feature", "count_total_events"
@@ -20,7 +20,7 @@
 
 {%
     set count_columns = dbt_utils.get_filtered_columns_in_relation(
-        from=ref('int_feature_daily_usage_per_user'),
+        from=ref('int_daily_usage_per_user_full'),
         except=[
             "daily_user_id", "activity_date", "server_id", "user_id", "received_at_date"
         ]
@@ -34,7 +34,7 @@ with server_feature_date_range as (
         , min(activity_date) as first_active_day
         , max(activity_date) as last_active_day
     from
-        {{ ref('int_feature_daily_usage_per_user') }}
+        {{ ref('int_daily_usage_per_user_full') }}
     where
         activity_date >= '{{ var('telemetry_start_date')}}'
         -- Keep only server with at least one known feature
@@ -87,5 +87,5 @@ select
     ) as is_active_monthly
 from
     spine
-    left join {{ ref('int_feature_daily_usage_per_user') }} features
+    left join {{ ref('int_daily_usage_per_user_full') }} features
         on spine.server_id = features.server_id and spine.user_id = features.user_id and spine.activity_date = features.activity_date
