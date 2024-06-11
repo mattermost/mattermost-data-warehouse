@@ -9,12 +9,12 @@ select
     -- Mattermost features
     {% set cols = dbt_utils.get_filtered_columns_in_relation(ref('int_feature_daily_usage_per_user'), common_columns + agg_columns) %}
     {%- for col in cols %}
-        , {% endif -%} coalesce(m.{{column}}, 0) as {{column}}
+        , coalesce(m.{{column}}, 0) as {{column}}
     {%- endfor -%}
     -- Playbook features
     {% set cols = dbt_utils.get_filtered_columns_in_relation(ref('int_playbooks_daily_usage_per_user'), common_columns + agg_columns) %}
     {%- for col in cols %}
-        , {% endif -%} coalesce(p.{{column}}, 0) as {{column}}
+        , coalesce(p.{{column}}, 0) as {{column}}
     {%- endfor -%}
     , {{ dbt_utils.star(from=ref('int_feature_daily_usage_per_user'), except=common_columns + agg_columns, relation_alias='m') }}
     , {{ dbt_utils.star(from=ref('int_playbooks_daily_usage_per_user'), except=common_columns + agg_columns, relation_alias='p') }}
