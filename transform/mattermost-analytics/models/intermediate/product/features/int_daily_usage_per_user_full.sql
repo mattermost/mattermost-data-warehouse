@@ -5,7 +5,7 @@
     })
 }}
 
-{%- set common_columns = ['daily_user_id', 'activity_date', 'server_id', 'user_id', 'received_at_date'] -%}
+{%- set common_columns = ['daily_user_id', 'activity_date', 'server_id', 'user_id'] -%}
 {%- set agg_columns = ['count_known_feature', 'count_unknown_feature', 'count_total_events'] -%}
 
 -- Contains all daily feature usage data per user/server/date and from all sources
