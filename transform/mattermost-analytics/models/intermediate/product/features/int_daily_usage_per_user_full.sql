@@ -14,12 +14,12 @@ select
     {%- if not loop.first %} , {% endif -%} coalesce(m.{{column}}, p.{{column}}) as {{column}}
 {% endfor %}
     -- Mattermost features
-{% set cols = dbt_utils.get_filtered_columns_in_relation(ref('int_feature_daily_usage_per_user'), common_columns + agg_columns) %}
+{% set cols = dbt_utils.get_filtered_columns_in_relation(from=ref('int_feature_daily_usage_per_user'), except=common_columns + agg_columns) %}
 {%- for col in cols %}
     , coalesce(m.{{ adapter.quote(col)|trim }}, 0) as {{ adapter.quote(col)|trim }}
 {%- endfor -%}
     -- Playbook features
-{% set cols = dbt_utils.get_filtered_columns_in_relation(ref('int_playbooks_daily_usage_per_user'), common_columns + agg_columns) %}
+{% set cols = dbt_utils.get_filtered_columns_in_relation(from=ref('int_playbooks_daily_usage_per_user'), except=common_columns + agg_columns) %}
 {%- for col in cols %}
     , coalesce(p.{{ adapter.quote(col)|trim }}, 0) as {{ adapter.quote(col)|trim }}
 {%- endfor -%}
