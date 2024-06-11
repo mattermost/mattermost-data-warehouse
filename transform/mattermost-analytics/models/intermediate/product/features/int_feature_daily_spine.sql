@@ -28,10 +28,13 @@
 %}
 
 with servers_with_known_features as (
+    -- Keep servers with at least one day with at least one known feature
     select
         server_id, count_if(count_known_feature > 0) as days_with_known_features
     from
         {{ ref('int_daily_usage_per_user_full') }}
+    group by
+        server_id
     having
         days_with_known_features > 0
 ), server_feature_date_range as (
