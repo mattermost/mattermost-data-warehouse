@@ -14,17 +14,15 @@ select
     {%- if not loop.first %} , {% endif -%} coalesce(m.{{column}}, p.{{column}}) as {{column}}
 {% endfor %}
     -- Mattermost features
-    {% set cols = dbt_utils.get_filtered_columns_in_relation(ref('int_feature_daily_usage_per_user'), common_columns + agg_columns) %}
-    {%- for col in cols %}
-        , coalesce(m.{{column}}, 0) as {{column}}
-    {%- endfor -%}
+{% set cols = dbt_utils.get_filtered_columns_in_relation(ref('int_feature_daily_usage_per_user'), common_columns + agg_columns) %}
+{%- for col in cols %}
+    , coalesce(m.{{ adapter.quote(col)|trim }}, 0) as {{ adapter.quote(col)|trim }}
+{%- endfor -%}
     -- Playbook features
-    {% set cols = dbt_utils.get_filtered_columns_in_relation(ref('int_playbooks_daily_usage_per_user'), common_columns + agg_columns) %}
-    {%- for col in cols %}
-        , coalesce(p.{{column}}, 0) as {{column}}
-    {%- endfor -%}
-    , {{ dbt_utils.star(from=ref('int_feature_daily_usage_per_user'), except=common_columns + agg_columns, relation_alias='m') }}
-    , {{ dbt_utils.star(from=ref('int_playbooks_daily_usage_per_user'), except=common_columns + agg_columns, relation_alias='p') }}
+{% set cols = dbt_utils.get_filtered_columns_in_relation(ref('int_playbooks_daily_usage_per_user'), common_columns + agg_columns) %}
+{%- for col in cols %}
+    , coalesce(p.{{ adapter.quote(col)|trim }}, 0) as {{ adapter.quote(col)|trim }}
+{%- endfor -%}
     -- Aggregate columns are joined by summing up the values from all sources
 {% for column in agg_columns %}
     , coalesce(m.{{column}}, 0) + coalesce(p.{{column}}, 0) as {{column}}
