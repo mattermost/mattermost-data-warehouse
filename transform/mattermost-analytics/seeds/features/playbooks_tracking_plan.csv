@@ -125,6 +125,6 @@ notify_admins,start_trial_to_restrict_playbook_access,false,,playbooks
 start_trial,start_trial_to_view_timeline,false,,playbooks
 frontend,playbookrun_get_involved_join,true,"Replaced by playbookrun_participate",playbooks
 frontend,todo_runsinprogress_clicked,true,"Not found in code",playbooks
-frontend,timeline_tab_filter_selected,"Not found in code",playbooks
+frontend,timeline_tab_filter_selected,true,"Not found in code",playbooks
 incident,restart,false,,playbooks
 incident,change_stage,true,"Not found in code",playbooks
