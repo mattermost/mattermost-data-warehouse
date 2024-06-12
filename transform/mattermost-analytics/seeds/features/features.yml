@@ -1,42 +1,7 @@
 version: 2
 
 seeds:
-  - name: event_to_feature_mapping
-    description: List of events per feature.
-    columns:
-      - name: event_name
-        description: | 
-          The name of the event assigned to the feature. Note that client events usually define `event` as the value.
-        tests:
-          - not_null
-          - dbt_utils.not_empty_string
-      - name: category
-        description: The category of the event.
-      - name: event_type
-        description: The type of the event
-      - name: feature_name
-        description: The name of the feature.
-        tests:
-          - not_null
-          - dbt_utils.not_empty_string
-
-
-  - name: feature_aliases
-    description: Aliases for the features. Used internally to help pivoting data.
-    columns:
-      - name: alias
-        description: | 
-          An alias for the feature name. Must contain characters `a-z`, `a-Z`, `0-9` or `_`.
-        tests:
-          - not_null
-          - dbt_utils.not_empty_string
-      - name: feature_name
-        description: The name of the feature.
-        tests:
-          - not_null
-          - dbt_utils.not_empty_string
-
-  - name: playbook_events
+  - name: playbooks_tracking_plan
     description: List of known playbook events. Events are broken down by action.
     columns:
       - name: event_name
@@ -51,6 +16,16 @@ seeds:
         description: Whether the event has been deprecated.
       - name: deprecation_reason
         description: The reason why this event is considered as deprecated.
+      - name: feature_name
+        description: The name of the feature.
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - event_name
+            - event_action
 
   - name: tracking_plan
     description: List of tracking plan events. Used for mapping events to features.
@@ -87,4 +62,3 @@ seeds:
             - event_type
             - property_name
             - property_value
-            - feature_name

@@ -110,18 +110,6 @@ seeds:
           name: varchar(50)
     features:
       +schema: seed_product_features
-      event_to_feature_mapping:
-        # Override column types
-        +column_types:
-          event_name: varchar(100)
-          category: varchar(100)
-          event_type: varchar(200)
-          feature_name: varchar(50)
-      feature_aliases:
-        # Override column types
-        +column_types:
-          alias: varchar(20)
-          feature_name: varchar(50)
       tracking_plan:
         # Override column types
         +column_types:
@@ -131,6 +119,15 @@ seeds:
           property_name: varchar(100)
           property_value: varchar(200)
           feature_name: varchar(50)
+      playbooks_tracking_plan:
+        # Override column types
+        +column_types:
+          event_name: varchar(100)
+          event_action: varchar(100)
+          deprecated: boolean
+          deprecation_reason: varchar(200)
+          feature_name: varchar(50)
+
 
 tests:
   dbt_project_evaluator:
