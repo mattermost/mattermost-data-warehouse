@@ -3,10 +3,7 @@
 
 {{
     config({
-        "materialized": "incremental",
-        "incremental_strategy": "delete+insert",
-        "unique_key": ['daily_user_id'],
-        "cluster_by": ['received_at_date'],
+        "materialized": "table"
         "snowflake_warehouse": "transform_l"
     })
 }}
@@ -21,7 +18,6 @@ select
     , activity_date
     , server_id
     , user_id
-    , received_at_date
 {% for feature in feature_mappings.keys() %}
     , count_if({{feature}}) as count_{{feature}}
 {% endfor %}
@@ -34,14 +30,8 @@ select
     , count(event_id) as count_total_events
 from
     {{ ref('int_feature_attribution') }}
-{% if is_incremental() %}
-where
-    -- this filter will only be applied on an incremental run
-    received_at_date >= (select max(received_at_date) from {{ this }})
-{% endif %}
 group by
     daily_user_id
     , activity_date
     , server_id
     , user_id
-    , received_at_date

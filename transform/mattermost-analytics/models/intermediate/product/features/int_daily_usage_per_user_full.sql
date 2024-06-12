@@ -16,14 +16,14 @@ select
 {% endfor %}
     -- Mattermost features
 {% set cols = dbt_utils.get_filtered_columns_in_relation(from=ref('int_feature_daily_usage_per_user'), except=skip_columns) %}
-{%- for col in cols %}
+{% for col in cols %}
     , coalesce(m.{{ adapter.quote(col)|trim }}, 0) as {{ adapter.quote(col)|trim }}
-{%- endfor -%}
+{% endfor %}
     -- Playbook features
 {% set cols = dbt_utils.get_filtered_columns_in_relation(from=ref('int_playbooks_daily_usage_per_user'), except=skip_columns) %}
-{%- for col in cols %}
+{% for col in cols %}
     , coalesce(p.{{ adapter.quote(col)|trim }}, 0) as {{ adapter.quote(col)|trim }}
-{%- endfor -%}
+{% endfor %}
     -- Aggregate columns are joined by summing up the values from all sources
 {% for column in agg_columns %}
     , coalesce(m.{{column}}, 0) + coalesce(p.{{column}}, 0) as {{column}}
