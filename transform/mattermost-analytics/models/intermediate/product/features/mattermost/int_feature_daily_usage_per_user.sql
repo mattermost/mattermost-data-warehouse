@@ -3,7 +3,7 @@
 
 {{
     config({
-        "materialized": "table"
+        "materialized": "table",
         "snowflake_warehouse": "transform_l"
     })
 }}
