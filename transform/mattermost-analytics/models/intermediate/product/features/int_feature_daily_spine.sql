@@ -12,7 +12,7 @@
         from=ref('int_daily_usage_per_user_full'),
         except=[
             "daily_user_id", "activity_date", "server_id", "user_id", "received_at_date",
-            "count_known_feature", "count_unknown_feature", "count_total_events"
+            "count_known_features", "count_unknown_features", "count_total_events"
         ]
     )
 %}
@@ -30,7 +30,7 @@
 with servers_with_known_features as (
     -- Keep servers with at least one day with at least one known feature
     select
-        server_id, count_if(count_known_feature > 0) as days_with_known_features
+        server_id, count_if(count_known_features > 0) as days_with_known_features
     from
         {{ ref('int_daily_usage_per_user_full') }}
     group by
