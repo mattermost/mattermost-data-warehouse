@@ -29,10 +29,10 @@ select
             event_name = '{{ rule["EVENT_NAME"] }}'
             and category = '{{ rule["CATEGORY"] }}'
             and event_type = '{{ rule["EVENT_TYPE"] }}'
-        {%- if rule["PROPERTY_NAME"] and not rule["PROPERTY_VALUE"] -%}
+        {%- if rule["PROPERTY_NAME"] and rule["PROPERTY_VALUE"] is null -%}
             and {{rule["PROPERTY_NAME"] }} is not null
         {% endif %}
-        {%- if rule["PROPERTY_NAME"] and rule["PROPERTY_VALUE"] -%}
+        {%- if rule["PROPERTY_NAME"] and rule["PROPERTY_VALUE"] is not null -%}
             and {{ rule["PROPERTY_NAME"] }} = '{{ rule["PROPERTY_VALUE"] }}'
         {% endif %}
             then true
