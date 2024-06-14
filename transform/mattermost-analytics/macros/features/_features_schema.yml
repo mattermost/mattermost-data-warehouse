@@ -1,0 +1,7 @@
+version: 2
+
+macros:
+
+  - name: load_feature_mappings
+    description: |
+      Loads the list of known feature mappings from `tracking_plan` seed file and returns them, grouped by feature name. 
