@@ -23,7 +23,12 @@ renamed as (
         , _license:sku_name::varchar as stripe_product_id
         , _license:sku_short_name::varchar as sku_short_name
         , _license:is_gov_sku::boolean as is_gov_sku
-        , _license:is_trial::boolean as is_trial
+        , case
+            -- Handle backfills from SFDC.
+            when _license:customer:company::varchar = 'sfdc-migration' and starts_at <'2023-04-01' then false
+            else _license:is_trial::boolean
+        end as is_trial
+
 
         -- Company information
         , _license:customer:company::varchar as company_name
