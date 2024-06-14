@@ -6,18 +6,6 @@
     })
 }}
 
-
-{%
-    set count_feature_columns = dbt_utils.get_filtered_columns_in_relation(
-        from=ref('int_daily_usage_per_user_full'),
-        except=[
-            "daily_user_id", "activity_date", "server_id", "user_id", "received_at_date",
-            "count_known_features", "count_unknown_features", "count_total_events"
-        ]
-    )
-%}
-
-
 {%
     set count_columns = dbt_utils.get_filtered_columns_in_relation(
         from=ref('int_daily_usage_per_user_full'),
