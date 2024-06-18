@@ -75,7 +75,10 @@ select
     coalesce(t.operating_system, l.operating_system, d.operating_system) as operating_system,
     coalesce(t.database_type, l.database_type, d.database_type) as database_type,
     coalesce(t.database_version, l.database_version) as database_version,
-    coalesce(t.edition, l.edition, d.is_enterprise_ready) as is_enterprise_ready,
+    case
+        when coalesce(t.edition, l.edition, d.is_enterprise_ready) = true then true
+        else false
+    end as is_enterprise_ready,
     case
         when coalesce(t.edition, l.edition, d.is_enterprise_ready) = true then 'E0'
         when coalesce(t.edition, l.edition, d.is_enterprise_ready) = false then 'TE'
