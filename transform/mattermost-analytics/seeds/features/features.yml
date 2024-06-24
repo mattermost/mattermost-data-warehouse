@@ -1,0 +1,64 @@
+version: 2
+
+seeds:
+  - name: playbooks_tracking_plan
+    description: List of known playbook events. Events are broken down by action.
+    columns:
+      - name: event_name
+        description: | 
+          The name of the event assigned to the feature. Note that client events usually define `event` as the value.
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+      - name: event_action
+        description: The action of the event.
+      - name: deprecated
+        description: Whether the event has been deprecated.
+      - name: deprecation_reason
+        description: The reason why this event is considered as deprecated.
+      - name: feature_name
+        description: The name of the feature.
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - event_name
+            - event_action
+
+  - name: tracking_plan
+    description: List of tracking plan events. Used for mapping events to features.
+    columns:
+      - name: event_name
+        description: | 
+          The name of the event assigned to the feature. Note that client events usually define `event` as the value.
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+      - name: category
+        description: The category of the event.
+      - name: event_type
+        description: The type of the event
+      - name: property_name
+        description: |
+          The name of the property to be used as indication for the feature. If not defined, no matching on the 
+          property will occur.
+      - name: property_value
+        description: |
+          The value of the property to be used as indication for the feature. 
+          - If value is defined, the property will be compared against the value.
+          - If value is not defined, the property will be checked against `null`.
+      - name: feature_name
+        description: The name of the feature.
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - event_name
+            - category
+            - event_type
+            - property_name
+            - property_value

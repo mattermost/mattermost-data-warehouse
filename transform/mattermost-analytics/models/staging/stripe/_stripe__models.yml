@@ -184,6 +184,7 @@ models:
           - If it's an SFDC migrated license, then value of `sfdc_migrated_started_at`.
           - In case of a bug where license start date from CWS doesn't exist but end date exists, then derive it as 1 year from start.
           - If both license start and end date from CWS is equal to 0 (bug), then use current period start.
+          - If a value for `license-start-date` exists, its a sales-ops set field for a licensed cloud subscription, so use that value.
           - Otherwise use value from CWS metadata.
         tests:
           - dbt_utils.expression_is_true:
@@ -195,6 +196,7 @@ models:
           the license's start date is the following:
           - If license end date from CWS is available, then use this date.
           - If the license is marked as migrated from SFDC, then use `current_period_end_at`
+          - If a value for `license-end-at` exists, its a sales-ops set field for a licensed cloud subscription, so use that value.
           - Otherwise use `current_period_end_at`.
         tests:
           - dbt_utils.expression_is_true:
@@ -446,7 +448,7 @@ models:
       - name: proration_details
         description: Additional details for proration line items
       - name: quantity
-        description: Quantity of units for the invoice item.
+        description: Quantity of units for the invoice item. This quantity represents the number of seats purchased.
       - name: subscription_id
         description: The subscription that this invoice item has been created for, if any.
       - name: subscription_item

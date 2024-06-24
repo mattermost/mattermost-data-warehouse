@@ -1,0 +1,92 @@
+version: 2
+
+models:
+  - name: int_known_licenses
+    description: |
+      List of all self-hosted license data from CWS and legacy licenses. Performs deduplication in case a license exists
+      both in CWS and legacy licenses. In case both CWS and legacy data are found, CWS data are preferred.
+
+    columns:
+      - name: license_id
+        description: The ID of the license.
+        tests:
+          - unique
+          - not_null
+      - name: company_name
+        description: The name of the company that this license has been issued for.
+      - name: contact_email
+        description: The email to be used for contacting the license's holder.
+        tags: ['pii']
+      - name: sku_short_name.
+        description: The SKU for the license or `Unknown` if it's not known (i.e. in legacy licenses).
+      - name: expire_at
+        description: The expiration date of the license.
+      - name: is_trial
+        description: |
+          Whether the license is a trial license or not. Legacy licenses do not contain this information and this flag 
+          is automatically set to `false`.
+      - name: source
+        description: |
+          The source of the license data. One of `CWS`, `Legacy` or `CWS and Legacy`.
+
+  - name: int_latest_server_customer_info
+    description: |
+      Contains the latest customer info for each server. Data contains any values available either from
+        - License sources (CWS, legacy licenses) or
+        - Cloud sources (Stripe).
+      In case multiple data rows are available on each of this sources, only the latest entry is considered.
+
+    columns:
+      - name: server_id
+        description: The server's unique id.
+      - name: license_id
+        description: The ID of the license.
+      - name: installation_id
+        description: The ID of the cloud installation.
+
+      # License data
+      - name: license_company_name
+        description: The name of the company that this license has been issued for, as it appears in license data.
+      - name: license_contact_email
+        description: The email to be used for contacting the license's holder, as it appears in license data.
+        tags: [ 'pii' ]
+      - name: license_sku_short_name.
+        description: The SKU for the license or `Unknown` if it's not known (i.e. in legacy licenses).
+      - name: license_expire_at
+        description: The expiration date of the license.
+      - name: is_trial
+        description: |
+          Whether the license is a trial license or not. Legacy licenses do not contain this information and this flag 
+          is automatically set to `false`.
+      - name: license_source
+        description: |
+          The source of the license data. One of `CWS`, `Legacy` or `CWS and Legacy`.
+
+      # Cloud data
+      - name: cloud_company_name
+        description: The name of the company that this license has been issued for, as it appears in cloud data.
+      - name: cloud_contact_email
+        description: The email to be used for contacting the server's owner, as it appears in cloud data.
+        tags: [ 'pii' ]
+      - name: cloud_plan_name
+        description: The name of the cloud plan.
+      - name: cloud_sku
+        description: The SKU for the current cloud plan.
+      - name: cloud_source
+        description: The source of data for cloud.
+
+      # Metadata
+      - name: found_matching_license_data
+        description: | 
+          Boolean flag, indicating whether license data have been found for the current license id. 
+          - True if matching data have been found.
+          - False if no license id has been found or if no matching license exists.
+      - name: found_matching_stripe_entry
+        description: | 
+          Boolean flag, indicating whether data for the current installation ID are available in Stripe. 
+          - True if matching data have been found.
+          - False if no data have been found or if there's no installation ID.
+      - name: last_license_telemetry_date
+        description: The last date that license data was available for the current server ID over telemetry.
+      - name: last_installation_id_date
+        description: The last date that installation id data was available for the current server ID over telemetry.

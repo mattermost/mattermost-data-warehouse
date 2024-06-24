@@ -1,0 +1,161 @@
+version: 2
+
+sources:
+  - name: geolite
+    database: 'RAW'
+    schema: maxmind_geolite
+    description: |
+      Data on geolocation and network information.
+    tags:
+      - stage
+
+    tables:
+      - name: asn_ipv4
+        description: Lookup table for autonomous system number and autonomous system organization for IPv4.
+        columns:
+          - name: network
+            description: The network address and mask for the current ASN. I.e. `1.1.0.0/16`.
+          - name: autonomous_system_number
+            description: |
+              The [autonomous system number](https://en.wikipedia.org/wiki/Autonomous_system_(Internet))
+              associated with the IP address.
+          - name: autonomous_system_organization
+            description: |
+              The organization associated with the registered autonomous system number for the IP address.
+
+      - name: city_ipv4
+        description: | 
+          Lookup table for mapping IPv4 address to city. More info available in
+          [MaxMind documentation]https://dev.maxmind.com/geoip/docs/databases/city-and-country#blocks-files).
+        columns:
+          - name: network
+            description: The IPv4 network in CIDR format such as "2.21.92.0/29".
+            tests:
+              - not_null
+              - unique
+          - name: geoname_id
+            description: A unique identifier for the network's location
+          - name: registered_country_geoname_id
+            description: The registered country is the country in which the ISP has registered the network.
+          - name: represented_country_geoname_id
+            description: The represented country is the country which is represented by users of the IP address.
+          - name: is_anonymous_proxy
+            description: Deprecated
+          - name: is_satellite_provider
+            description: Deprecated
+          - name: postal_code
+            description: |
+              A postal code close to the user's location. Note that for some countries only a subset of the
+              postal code's digits will be available.
+          - name: latitude
+            description: The approximate WGS84 latitude of the location associated with the network.
+          - name: longitude
+            description: The approximate WGS84 longitude of the location associated with the network.
+          - name: accuracy_radius
+            description: The radius in kilometers around the specified location where the IP address is likely to be.
+          - name: is_anycast
+            description: |
+              This is 1 if the network is an anycast network. This column will be empty in GeoLite2-Country
+              and GeoLite2-City.
+
+      - name: city_locations
+        description: City location information.
+        columns:
+          - name: geoname_id
+            description: A unique identifier for the network's location.
+            tests:
+              - not_null
+              - unique
+          - name: locale_code
+            description: |
+              The locale that the names in this row are in. This will always correspond to the locale name of the file.
+          - name: continent_code
+            description: The continent code for this location.
+            tests:
+              - accepted_values:
+                  values: [ 'AF', 'AN', 'AS', 'EU', 'NA', 'OC', 'SA' ]
+          - name: continent_name
+            description: The continent name for this location in the file's locale.
+          - name: country_iso_code
+            description: A two-character ISO 3166-1 country code for the country associated with the location.
+          - name: country_name
+            description: The country name for this location in the file's locale.
+          - name: subdivision_1_iso_code
+            description: |
+              A string of up to three characters containing the region-portion of the ISO 3166-2 code for the first 
+              level region associated with the IP address. Some countries have two levels of subdivisions,
+              in which case this is the least specific. For example, in the United Kingdom this will be a country like 
+              "England", not a county like "Devon".
+          - name: subdivision_1_name
+            description: The subdivision name for this location in the file's locale.
+          - name: subdivision_2_iso_code
+            description: |
+              A string of up to three characters containing the region-portion of the ISO 3166-2 code for the second
+              level region associated with the IP address.
+          - name: subdivision_2_name
+            description: The subdivision name for this location in the file's locale.
+          - name: city_name
+            description: The city name for this location in the file's locale.
+          - name: metro_code
+            description: Metro code is a geolocation target code from Google.
+          - name: time_zone
+            description: |
+              The time zone associated with location, as specified by the IANA Time Zone Database,
+              e.g., “America/New_York”.
+          - name: is_in_european_union
+            description: |
+              This is 1 if the country associated with the location is a member state of the European Union. 
+              It is 0 otherwise.
+
+      - name: country_ipv4
+        description: |
+          Lookup table for mapping IPv4 address to a country. More info available in
+          [MaxMind documentation]https://dev.maxmind.com/geoip/docs/databases/city-and-country#blocks-files).
+        columns:
+          - name: network
+            description: The IPv4 network in CIDR format such as "2.21.92.0/29".
+            tests:
+              - not_null
+              - unique
+          - name: geoname_id
+            description: A unique identifier for the network's location
+          - name: registered_country_geoname_id
+            description: The registered country is the country in which the ISP has registered the network.
+          - name: represented_country_geoname_id
+            description: The represented country is the country which is represented by users of the IP address.
+          - name: is_anonymous_proxy
+            description: Deprecated
+          - name: is_satellite_provider
+            description: Deprecated
+          - name: is_anycast
+            description: |
+              This is 1 if the network is an anycast network. This column will be empty in GeoLite2-Country
+              and GeoLite2-City.
+
+      - name: country_locations
+        description: Country location information.
+        columns:
+          - name: geoname_id
+            description: A unique identifier for the network's location.
+            tests:
+              - not_null
+              - unique
+          - name: locale_code
+            description: |
+              The locale that the names in this row are in. This will always correspond to the locale name of the file.
+          - name: continent_code
+            description: The continent code for this location.
+            tests:
+              - accepted_values:
+                  values: [ 'AF', 'AN', 'AS', 'EU', 'NA', 'OC', 'SA' ]
+          - name: continent_name
+            description: The continent name for this location in the file's locale.
+          - name: country_iso_code
+            description: A two-character ISO 3166-1 country code for the country associated with the location.
+          - name: country_name
+            description: The country name for this location in the file's locale.
+          - name: is_in_european_union
+            description: |
+              This is 1 if the country associated with the location is a member state of the European Union. 
+              It is 0 otherwise.
+

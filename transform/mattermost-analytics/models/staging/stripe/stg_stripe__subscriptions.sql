@@ -39,7 +39,10 @@ subscriptions as (
         items,
         livemode,
         pending_setup_intent,
-        quantity,
+        case 
+            when metadata:"license-seats"::int > 0 then metadata:"license-seats"::int
+            else quantity
+        end as quantity,
         status,
         tax_percent,
         updated_by_event_type,
@@ -65,6 +68,8 @@ subscriptions as (
             when sfdc_migrated_license_id is not null then sfdc_migrated_started_at
             -- Handle bug whenever license start date doesn't exist but end date exists
             when metadata:"cws-license-start-date"::int = 0 and metadata:"cws-license-end-date"::int > 0 then TIMEADD(year, -1, TO_TIMESTAMP_NTZ(metadata:"cws-license-end-date"::int))
+            -- Handle Cloud Licensed Subscriptions, sales serve (fields set by humans, formatted 2024-05-22)
+            when metadata:"license-start-date"::varchar != '' then TRY_TO_TIMESTAMP_NTZ(metadata:"license-start-date"::varchar)
             -- Handle bug where both license start and end date is 0
             when metadata:"cws-license-start-date"::int = 0 and metadata:"cws-license-end-date"::int = 0 then current_period_start_at
             else TRY_TO_TIMESTAMP_NTZ(metadata:"cws-license-start-date"::varchar)
@@ -72,6 +77,8 @@ subscriptions as (
         case
             -- License data available
             when metadata:"cws-license-end-date"::int > 0 then TRY_TO_TIMESTAMP_NTZ(metadata:"cws-license-end-date"::varchar)
+            -- Cloud Licensed Subscriptions, sales serve (fields set by humans, formatted 2024-05-22)
+            when metadata:"license-end-date"::varchar  != '' then TRY_TO_TIMESTAMP_NTZ(metadata:"license-end-date"::varchar)
             -- Handle backfills
             when sfdc_migrated_license_id is not null then current_period_end_at
             -- Handle bug where both license start and end date is 0

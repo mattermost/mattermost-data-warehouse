@@ -3,7 +3,7 @@
     "schema": "blapi",
     "unique_key":"id",
     "alias":"customers",
-    "tags":["hourly","blapi"]
+    "tags":["hourly","blapi", "deprecated"]
   })
 }}
 

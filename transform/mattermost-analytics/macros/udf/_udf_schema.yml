@@ -7,3 +7,9 @@ macros:
       Creates a new UDF called `parse_qs`. This UDF accepts a query string as input and returns an object with all
       the query parameters. Note that current implementation returns only the first value in case there are multiple
       values for the same query parameter.
+
+
+  - name: create_parse_user_agent_udf
+    description: |
+      Creates a new UDF called `parse_user_agent`. This UDF accepts a user agent string as input and returns an object
+      with all data extracted from the user agent.

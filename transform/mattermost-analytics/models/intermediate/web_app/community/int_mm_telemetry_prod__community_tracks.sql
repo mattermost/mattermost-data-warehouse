@@ -8,9 +8,9 @@
 }}
 
     SELECT
-        {{dbt_utils.star(ref('stg_mm_telemetry_prod__tracks'))}},
+        {{ dbt_utils.star(ref('stg_mm_telemetry_prod__tracks'), except=["context_user_agent"]) }},
         'stg_mm_telemetry_prod__tracks' AS _source_relation,
-        received_at::date as received_at_date
+        received_at::date AS received_at_date
      FROM
        {{ ref('stg_mm_telemetry_prod__tracks') }}
     WHERE server_id = '{{ var("community_server_id") }}'

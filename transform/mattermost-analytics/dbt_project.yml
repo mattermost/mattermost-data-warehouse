@@ -57,6 +57,9 @@ models:
       data_eng:
         schema: mart_data_eng
         tags: ['nightly', 'data-eng']
+      mlt:
+        schema: mart_mlt
+        tags: [ 'nightly', 'mlt' ]
       product:
         schema: mart_product
         tags: ['nightly', 'product']
@@ -75,6 +78,13 @@ models:
       marketing:
         schema: mart_marketing
         tags: ['nightly', 'marketing']
+    reports:
+      +materialized: table
+      tags: ['reports']
+      product:
+        schema: reports_product
+        tags: [ 'nightly', 'product' ]
+
     utilities:
       +materialized: table
       schema: utilities
@@ -98,6 +108,26 @@ seeds:
         +column_types:
           code: varchar(2)
           name: varchar(50)
+    features:
+      +schema: seed_product_features
+      tracking_plan:
+        # Override column types
+        +column_types:
+          event_name: varchar(100)
+          category: varchar(100)
+          event_type: varchar(200)
+          property_name: varchar(100)
+          property_value: varchar(200)
+          feature_name: varchar(50)
+      playbooks_tracking_plan:
+        # Override column types
+        +column_types:
+          event_name: varchar(100)
+          event_action: varchar(100)
+          deprecated: boolean
+          deprecation_reason: varchar(200)
+          feature_name: varchar(50)
+
 
 tests:
   dbt_project_evaluator:
@@ -114,8 +144,12 @@ vars:
     # Set test and doc coverage to 75% (default is 100%)
     documentation_coverage_target: 75
     test_coverage_target: 75
+    model_types: [ 'staging', 'intermediate', 'marts', 'other', 'reports' ]
     staging_prefixes: ['stg_', 'base_']
     marts_prefixes: ['fct_', 'dim_', 'grp_']
+    reports_folder_name: reports
+    reports_prefixes: [ 'rpt_' ]
+
 
     # Community Server ID
   community_server_id : 93mykbogbjfrbbdqphx3zhze5c
@@ -124,12 +158,18 @@ vars:
   in_product_trial_campaign_id: 7013p000001NkNoAAK
   salesforce_default_ownerid: 0053p0000064nt8AAA #default value for salesforce ownerid
   cloud_enterprise_trial_campaign_id: 701Dm000000gpPZIAY
-  telemetry_start_date: "2020-04-01"
+  telemetry_start_date: "2018-01-01"
   nps_start_date: "2019-03-27"
   notification_start_date: "2021-01-01"
   calls_telemetry_start_date: "2022-03-11"
   marketing_newsletter_campaign_id: 701Dm000000gnMlIAI
 
+  # Variables to enforce common practices
+  # Number of days prior to current to consider when calculating rolling monthly. I.e. 29 means 29 prior plus today
+  # equals to a total of 30 days.
+  monthly_days: 29
+
 on-run-start:
   -  '{{ create_parse_qs_udf()}}'
   -  '{{ create_extract_license_data_udf()}}'
+  -  '{{ create_parse_user_agent_udf()}}'

@@ -83,6 +83,20 @@ sources:
           - name: _sdc_sequence
           - name: _sdc_table_version
           - name: __sdc_primary_key
+      
+      - name: subscriptionhistory
+        columns:
+          - name: id
+            description: A unique identifier for this subscription history event
+            tests:
+              - unique
+              - not_null
+          - name: subscriptionid
+            description: The Stripe subscription ID
+          - name: seats
+            description: The maximum number of active seats on the subscription
+          - name: createat
+            description: The date at which this subscription history event was created - also known as the date that the given seats value was reached.
 
       - name: license
         columns:
@@ -107,3 +121,34 @@ sources:
           - name: _sdc_received_at
           - name: _sdc_sequence
           - name: _sdc_table_version
+
+      - name: trialrequestlicenses
+        columns:
+          - name: licenseid
+            data_type: varchar
+            description: The id of the license.
+            tests:
+              - relationships:
+                  to: source('cws', 'license')
+                  field: id
+          - name: trialrequestid
+            data_type: varchar
+            description: The id of the trial request.
+            tests:
+              - relationships:
+                  to: source('cws', 'trial_requests')
+                  field: id
+          ## Stitch columns
+          - name: _sdc_batched_at
+            data_type: timestamp_tz
+          - name: _sdc_received_at
+            data_type: timestamp_tz
+          - name: _sdc_sequence
+            data_type: number
+          - name: _sdc_table_version
+            data_type: number
+        tests:
+          - dbt_utils.unique_combination_of_columns:
+              combination_of_columns:
+                - licenseid
+                - trialrequestid

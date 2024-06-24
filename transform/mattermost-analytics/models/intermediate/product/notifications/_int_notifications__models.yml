@@ -42,3 +42,45 @@ models:
         description: Number of requests to `/api/v1/send_push` endpoint. Only requests with HTTP status `200` are counted.
       - name: count_send_ack
         description: Number of requests to `/api/v1/ack` endpoint. Only requests with HTTP status `200` are counted.
+
+  - name: int_notifications_logs_us_hourly
+    description: Pre-aggregated counts of requests to notification endpoints for new US server.
+
+    columns:
+      - name: request_date_hour
+        description: The date and hour requests are grouped by. Hour is always round in the beginning of 1-hour period.
+        tests:
+          - not_null
+          - unique
+      - name: count_send_push
+        description: Number of requests to `/api/v1/send_push` endpoint. Only requests with HTTP status `200` are counted.
+      - name: count_send_ack
+        description: Number of requests to `/api/v1/ack` endpoint. Only requests with HTTP status `200` are counted.
+
+  - name: int_notifications_logs_eu_hourly
+    description: Pre-aggregated counts of requests to notification endpoints for new EU server.
+
+    columns:
+      - name: request_date_hour
+        description: The date and hour requests are grouped by. Hour is always round in the beginning of 1-hour period.
+        tests:
+          - not_null
+          - unique
+      - name: count_send_push
+        description: Number of requests to `/api/v1/send_push` endpoint. Only requests with HTTP status `200` are counted.
+      - name: count_send_ack
+        description: Number of requests to `/api/v1/ack` endpoint. Only requests with HTTP status `200` are counted.
+
+  - name: int_notifications_logs_test_hourly
+    description: Pre-aggregated counts of requests to notification endpoints for new test server.
+
+    columns:
+      - name: request_date_hour
+        description: The date and hour requests are grouped by. Hour is always round in the beginning of 1-hour period.
+        tests:
+          - not_null
+          - unique
+      - name: count_send_push
+        description: Number of requests to `/api/v1/send_push` endpoint. Only requests with HTTP status `200` are counted.
+      - name: count_send_ack
+        description: Number of requests to `/api/v1/ack` endpoint. Only requests with HTTP status `200` are counted.

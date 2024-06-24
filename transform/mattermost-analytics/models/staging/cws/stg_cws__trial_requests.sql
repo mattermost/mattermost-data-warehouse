@@ -48,9 +48,13 @@ renamed as (
         end as contact_email,
 
         -- Company info
-        companycountry as country_name,
         case
-            when companyname = '' then null
+            when companycountry = 'Unknown' then null
+            when companycountry = '' then null
+            else companycountry
+        end as country_name,
+        case
+            when trim(companyname) = '' then null
             else companyname
         end as company_name,
         companysize as company_size_bucket,
@@ -95,5 +99,6 @@ where
         'fhp9ab3ndif4udr1hxcwyhmfhr',
         'jkat884rkfdydy1eeo8xoonxfh',
         '8m5ewgixcbdf7xfdc88ptnxhqh',
-        '9ym578hnc7fwbdm66y19d5aa1o'
+        '9ym578hnc7fwbdm66y19d5aa1o',
+        'qbi41takhtndpy67y15cigkxge'
     )

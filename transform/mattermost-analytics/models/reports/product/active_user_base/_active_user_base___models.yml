@@ -1,0 +1,100 @@
+version: 2
+
+models:
+  - name: rpt_active_user_base
+    description: |
+      Contains the current status of the active user base. Includes server that have been active the last day and with
+      at least one monthly active user.
+    columns:
+      - name: server_id
+        description: The server's unique id.
+        tests:
+          - unique
+          - not_null
+      - name: server_monthly_active_users
+        description: |
+          Total number of active users for the past 30 days prior to the timestamp of the event.
+          Reported by mattermost server.
+      - name: client_daily_active_users
+        description: The number of unique active users for the given server and date.
+      - name: client_monthly_active_users
+        description: The number of unique active users for the date and previous 29 days.
+      - name: count_registered_users
+        description: Total number of registered users. Includes deleted users.
+      - name: count_registered_deactivated_users
+        description: Number of deleted users.
+      - name: server_mau_bucket
+        description: |
+          Group size for the given server. Valid values are `1-50`, `50-500`, `500-1000`, `>= 1000`. Lower bound is
+          inclusive while upper bound is exclusive.
+        tests:
+          - accepted_values:
+              values: [ '1-50', '50-500', '500-1000', '>= 1000' ]
+      - name: last_known_server_ip
+        description: Last known IP reported by the server either via telemetry or diagnostics.
+      - name: last_known_ip_country
+        description: Country for the last known IP address.
+      - name: installation_type
+        description: |
+          The type of installation for this server. Values can be `deb_package`, `docker`, `gitlab_omnibus`, 
+          `kubernetes-operator`, `manual, `omnibus` or null.
+      - name: binary_edition
+        description: |
+          There are two "flavours" of the server binary:
+          - TE = Team Edition (fully open source and contains no Mattermost proprietary code).
+          - E0 = Enterprise Edition (TE + Mattermost proprietary code, and with features activated with a license).
+      - name: age_in_days
+        description: Number of days since the first telemetry received from the server.
+      - name: last_known_server_info_date
+        description: Date that the last known server information (IP, installation type, binary edition, age) was recorded.
+      - name: is_office365_enabled
+        description: Whether Office365 OAuth is enabled
+      - name: is_google_enabled
+        description: Whether Google OAuth is enabled
+      - name: is_gitlab_enabled
+        description: Whether Gitlab OAuth is enabled
+      - name: is_openid_enabled
+        description: Whether OpenID OAuth is enabled
+      - name: is_openid_google_enabled
+        description: Whether OpenID with Google OAuth is enabled
+      - name: is_openid_gitlab_enabled
+        description: Whether OpenID with Gitlab OAuth is enabled
+      - name: is_openid_office365_enabled
+        description: Whether OpenID with Office365 OAuth is enabled
+      - name: last_known_oauth_info_date
+        description: Date that the last known OAuth information for the server was recorded.
+      - name: license_id
+        description: The unique ID of the license (if any), as detected via telemetry.
+      - name: installation_id
+        description: The ID of the cloud installation.
+      - name: company_name
+        description: The name of the company that this license has been issued for.
+      - name: contact_email
+        description: The email to be used for contacting the license's holder, as it appears in license data.
+        tags: [ 'pii' ]
+      - name: sku
+        description: The SKU for the license or `Unknown` if it's not known (i.e. in legacy licenses).
+      - name: license_expire_at
+        description: The expiration date of the license. Exists only if license data have been found.
+      - name: is_trial_license
+        description: |
+          Whether the license is a trial license or not. Legacy licenses do not contain this information and this flag 
+          is automatically set to `false`. If no license is found, then it's automatically set to false.
+      - name: source
+        description: |
+          The source of the license data. One of `CWS`, `Legacy`,  `CWS and Legacy`, 'Stripe'.
+      - name: found_matching_license_data
+        description: | 
+          Boolean flag, indicating whether license data have been found for the current license id. 
+          - True if matching data have been found.
+          - False if no license id has been found or if no matching license exists.
+
+      - name: found_matching_stripe_entry
+        description: | 
+          Boolean flag, indicating whether data for the current installation ID are available in Stripe. 
+          - True if matching data have been found.
+          - False if no data have been found or if there's no installation ID.
+      - name: last_license_telemetry_date
+        description: The last date that license data was available for the current server ID over telemetry.
+      - name: last_installation_id_date
+        description: The last date that installation id data was available for the current server ID over telemetry.

@@ -73,6 +73,46 @@ sources:
           warn_after: { count: 24, period: hour }
           error_after: { count: 48, period: hour }
       - name: plugins
-      - name: server
       - name: tracks
       - name: users
+
+      - name: server
+        description: Daily server information.
+        columns:
+          - name: id
+            data_type: varchar
+          - name: system_admins
+            data_type: number
+          - name: timestamp
+            data_type: timestamp_ntz
+          - name: version
+            data_type: varchar
+          - name: event_text
+            data_type: varchar
+          - name: received_at
+            data_type: timestamp_ntz
+          - name: context_library_version
+            data_type: varchar
+          - name: edition
+            data_type: varchar
+            tests:
+              - accepted_values:
+                  values: ['true', 'false', null]
+          - name: operating_system
+            data_type: varchar
+          - name: sent_at
+            data_type: timestamp_ntz
+          - name: user_id
+            data_type: varchar
+          - name: uuid_ts
+            data_type: timestamp_ntz
+          - name: context_library_name
+            data_type: varchar
+          - name: database_type
+            data_type: varchar
+          - name: event
+            data_type: varchar
+          - name: original_timestamp
+            data_type: varchar
+          - name: database_version
+            data_type: varchar

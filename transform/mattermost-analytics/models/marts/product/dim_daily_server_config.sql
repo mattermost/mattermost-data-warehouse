@@ -29,13 +29,18 @@ with segment_oauth as (
 )
 select
     spine.daily_server_id,
+    spine.server_id,
+    spine.activity_date,
     coalesce(r.is_office365_enabled, s.is_office365_enabled) as is_office365_enabled,
     coalesce(r.is_google_enabled, s.is_google_enabled) as is_google_enabled,
     coalesce(r.is_gitlab_enabled, s.is_gitlab_enabled) as is_gitlab_enabled,
     case when r.is_openid_enabled = true then true else false end as is_openid_enabled,
     case when r.is_openid_google_enabled = true then true else false end as is_openid_google_enabled,
     case when r.is_openid_gitlab_enabled = true then true else false end as is_openid_gitlab_enabled,
-    case when r.is_openid_office365_enabled = true then true else false end as is_openid_office365_enabled
+    case when r.is_openid_office365_enabled = true then true else false end as is_openid_office365_enabled,
+    -- Metadata
+    s.server_id is not null as has_segment_telemetry_data,
+    r.server_id is not null as has_rudderstack_telemetry_data
 from
     {{ ref('int_server_active_days_spined') }} spine
     left join segment_oauth s on spine.daily_server_id = s.daily_server_id
