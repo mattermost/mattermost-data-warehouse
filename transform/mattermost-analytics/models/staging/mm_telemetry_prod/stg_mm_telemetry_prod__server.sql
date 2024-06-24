@@ -26,7 +26,11 @@ with source as (
         , operating_system
         , database_type
         , database_version
-        , edition
+        , case
+            when edition = 'true' then true
+            when edition = 'false' then false
+            else null
+        end as edition
 
         -- Metadata from segment
         , context_library_version
