@@ -199,6 +199,68 @@ sources:
 
       - name: server
         description: Daily server data
+        columns:
+          - name: received_at
+            data_type: timestamp_ntz
+          - name: version
+            data_type: varchar
+          - name: system_admins
+            data_type: number
+          - name: sent_at
+            data_type: timestamp_ntz
+          - name: database_version
+            data_type: varchar
+          - name: edition
+            data_type: varchar
+            tests:
+              - accepted_values:
+                  values: ['true', 'false', null]
+          - name: event_text
+            data_type: varchar
+          - name: id
+            data_type: varchar
+          - name: original_timestamp
+            data_type: timestamp_ntz
+          - name: operating_system
+            data_type: varchar
+          - name: user_id
+            data_type: varchar
+          - name: uuid_ts
+            data_type: timestamp_ntz
+          - name: event
+            data_type: varchar
+          - name: anonymous_id
+            data_type: varchar
+          - name: database_type
+            data_type: varchar
+          - name: timestamp
+            data_type: timestamp_ntz
+          - name: context_ip
+            data_type: varchar
+          - name: channel
+            data_type: varchar
+          - name: context_library_name
+            data_type: varchar
+          - name: context_library_version
+            data_type: varchar
+          - name: context_traits_installationid
+            data_type: varchar
+          - name: installation_type
+            data_type: varchar
+          - name: context_request_ip
+            data_type: varchar
+          - name: context_traits_installation_id
+            data_type: varchar
+          - name: context_destination_type
+            data_type: varchar
+          - name: context_source_id
+            data_type: varchar
+          - name: context_source_type
+            data_type: varchar
+          - name: context_destination_id
+            data_type: varchar
+          - name: server_id
+            data_type: varchar
 
       - name: teams
         freshness: null # do not check freshness for this table - contains only a few records
