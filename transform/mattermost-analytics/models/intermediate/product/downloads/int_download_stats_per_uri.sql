@@ -1,7 +1,7 @@
 select
     uri
     , avg(response_bytes) as avg_response_bytes
-    , stddev(response_bytes) as std_response_bytes
+    , stddev(response_bytes) as stddev_response_bytes
     , max(response_bytes) as max_response_bytes
 from
     {{ ref('stg_releases__log_entries') }}
