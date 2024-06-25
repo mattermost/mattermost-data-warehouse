@@ -34,7 +34,7 @@ select
     , version_patch
 from
     {{ ref('stg_releases__log_entries') }} le
-    left join {{ ref('int_download_stats_per_uri') }} ds on le.uri = de.uri
+    left join {{ ref('int_download_stats_per_uri') }} ds on le.uri = ds.uri
 where
     -- Keep only requests with responses at least 1 mb
     response_bytes > 1000000
