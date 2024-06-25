@@ -2,8 +2,8 @@ version: 2
 
 sources:
   - name: stripe
-    database: 'ANALYTICS'
-    schema: stripe_raw
+    database: 'RAW'
+    schema: stripe_prod_2024_06
     loader: Stitch
     description: |
       Copy of Stripe raw data.
