@@ -12,7 +12,7 @@ models:
       - name: daily_ip_id
         description: A unique id for each IP and date
       - name: log_date
-        description: The date that the download request occured.
+        description: The date that the download request occurred.
       - name: log_at
         description: The timestamp when the download request was made.
       - name: client_ip
@@ -21,10 +21,6 @@ models:
         description: The number of bytes sent by the server to the client in response to the request, including headers.
       - name: http_method
         description: The HTTP method that the viewer used to request the object.
-        # Temporary
-        tests:
-          - accepted_values:
-              values: ['GET']
       - name: host_header
         description: The host part of the URL, as taken from 'Host' header.
       - name: uri
