@@ -13,6 +13,7 @@ sources:
 
     tables:
       - name: log_entries
+        description: Contains the log entries. Note that the table might contain duplicate rows.
         columns:
           - name: logdate
             data_type: varchar

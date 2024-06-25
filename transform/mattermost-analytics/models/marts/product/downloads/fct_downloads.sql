@@ -1,7 +1,7 @@
 {{
 config({
     "materialized": 'incremental',
-    "incremental_strategy": "merge",
+    "incremental_strategy": "delete+insert",
     "unique_key": ['request_id'],
     "cluster_by": ['log_date'],
     "snowflake_warehouse": "transform_l"
@@ -51,3 +51,5 @@ where
     -- this filter will only be applied on an incremental run
     and log_at >= (select max(log_at) from {{ this }})
     {% endif %}
+-- Deduplicate requests with the same request_id. This happens rarely, but still happens.
+qualify row_number() over (partition by request_id order by log_at) = 1

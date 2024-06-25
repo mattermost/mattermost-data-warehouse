@@ -68,7 +68,6 @@ renamed as (
         -- , file_encrypted_fields
 
     from source
-
 )
 
 select * from renamed
