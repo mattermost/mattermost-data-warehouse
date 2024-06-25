@@ -19,7 +19,6 @@ renamed as (
         , creferrer
         , useragent
         , cs_uri_query
-        , mattermost_analytics.parse_qs(cs_uri_query) as _parsed_cs_uri_query,
         , cookie
         , x_edge_result_type
         , x_edge_request_id
