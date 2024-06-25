@@ -10,27 +10,27 @@ renamed as (
         to_date(logdate) as log_date
         , to_timestamp(logdate|| ' ' || logtime) as log_at
         , edge
-        , bytessent
-        , cip as viewer_ip
-        , method
+        , bytessent as response_bytes
+        , cip as client_ip
+        , method as http_method
         , host
         , uri
         , status
-        , creferrer
-        , useragent
-        , cs_uri_query
+        , creferrer as referrer_url
+        , useragent as user_agent
+        , cs_uri_query as query_string
         , cookie
         , x_edge_result_type
         , x_edge_request_id
         , x_host_header
         , protocol
-        , cs_bytes
+        , cs_bytes as request_bytes
         , time_taken
         , x_forwarded_for
         , ssl_protocol
         , ssl_cipher
         , x_edge_response_result_type
-        , cs_protocol_version
+        , cs_protocol_version as http_protocol_version
 
         -- Derived fields
         , case
@@ -40,7 +40,15 @@ renamed as (
              when regexp_like(uri, '^\/desktop\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*') then 'desktop'
              else null
         end as download_type
-        -- TODO: OS
+        , case
+            -- Desktop client
+            when download_type = 'desktop' and uri like '%linux%' then 'linux'
+            when download_type = 'desktop' and regexp_like(uri, '.*msi$|.*win[0-9]{2}.*$|.*\-win\-.*$|.*\-win\.[a-z]{3}$') then 'windows'
+            when download_type = 'desktop' and regexp_like(uri, '.*mac\.[a-z]{3}$|.*\-osx\..*$') THEN 'mac'
+            when download_type <> 'desktop' and uri like '%linux%' then 'linux'
+            when download_type <> 'desktop' and regexp_like(uri, '.*\-windows\-.*$') THEN 'windows'
+            else null
+        end as operating_system
         , case
             when regexp_like(uri, '^\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*') then split_part(uri, '/', 2)
             when regexp_like(uri, '^\/desktop\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*') then split_part(uri, '/', 3)
