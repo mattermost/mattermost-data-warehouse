@@ -1,0 +1,94 @@
+version: 2
+
+models:
+  - name: fct_downloads
+    description: List of all successful download requests.
+    columns:
+      - name: request_id
+        description: A unique id for each download request.
+        tests:
+          - unique
+          - not_null
+      - name: daily_ip_id
+        description: A unique id for each IP and date
+      - name: log_date
+        description: The date that the download request occured.
+      - name: log_at
+        description: The timestamp when the download request was made.
+      - name: client_ip
+        description: The IP address of the client that made the request.
+      - name: response_bytes
+        description: The number of bytes sent by the server to the client in response to the request, including headers.
+      - name: http_method
+        description: The HTTP method that the viewer used to request the object.
+        # Temporary
+        tests:
+          - accepted_values:
+              values: ['GET']
+      - name: host_header
+        description: The host part of the URL, as taken from 'Host' header.
+      - name: uri
+        description: The portion of the URI that identifies the path and object.
+      - name: status
+        description: The HTTP status code that CloudFront returned to the viewer. Should be 2xx
+      - name: referrer_url
+        description: The value of the Referer field in the request header.
+      - name: user_agent
+        description: The value of the User-Agent field in the request header.
+      - name: ua_browser_family
+        description: The browser family of the user agent.
+      - name: ua_os_family
+        description: The OS family of the user agent.
+      - name: query_string
+        description: The query string portion of the URI, if any.
+      - name: cookie
+        description: The Cookie header in the request, including name-value pairs and any attributes.
+      - name: protocol
+        description: The protocol used for the request.
+      - name: request_bytes
+        description: |
+          The total number of bytes that the viewer sent in the request, including headers.
+      - name: time_taken
+        description: |
+          The number of seconds (to the thousandth of a second, for example, 0.082) from when the server receives 
+          the viewer's request to when the server writes the last byte of the response to the output queue, as
+          measured on the server. From the perspective of the viewer, the total time to get the full response will
+          be longer than this value because of network latency and TCP buffering.
+      - name: download_type
+        description: |
+          They type of the download. Can be `team` for team edition server, `enterprise` for enterprise edition server,
+          `desktop` for desktop app or null for unknown.
+      - name: operating_system
+        description: |
+          They operating system the download is compatible with. Can be `linux`, `windows`, `mac` or null for unknown.
+      - name: version
+        description: |
+          The version of the download. Can be `5.0.0` for example.
+      - name: version_major
+        description: The major part of the version. I.e. for `5.1.2` it would be `5`.
+      - name: version_minor
+        description: The minor part of the version.  I.e. for `5.1.2` it would be `1`.
+      - name: version_patch
+        description: The patch part of the version. I.e. for `5.1.2` it would be `2`.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          # For each URI only a single value download type and operating system should be expected.
+          combination_of_columns:
+            - uri
+            - download_type
+            - operating_system
+
+  - name: dim_ip_daily_summary
+    description: Summary of daily download activity per IP.
+    columns:
+      - name: daily_ip_id
+        description: A unique id for each IP and date
+        tests:
+          - unique
+          - not_null
+      - name: log_date
+        description: The date for the measurement.
+      - name: client_ip
+        description: The IP address of the client that made the request.
+      - name: first_download_timestamp
+        description: The timestamp of the first download request for the given IP and date.

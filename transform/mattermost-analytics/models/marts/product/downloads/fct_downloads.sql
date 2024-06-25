@@ -16,11 +16,13 @@ select
     , client_ip
     , response_bytes
     , http_method
-    , host
+    , x_host_header as host_header
     , le.uri
     , status
     , referrer_url
     , user_agent
+    , ua_browser_family
+    , ua_os_family
     , query_string
     , cookie
     , protocol
@@ -32,8 +34,7 @@ select
     , version_major
     , version_minor
     , version_patch
-    , ua_browser_family
-    , ua_os_family
+
 from
     {{ ref('stg_releases__log_entries') }} le
     left join {{ ref('int_download_stats_per_uri') }} ds on le.uri = ds.uri
