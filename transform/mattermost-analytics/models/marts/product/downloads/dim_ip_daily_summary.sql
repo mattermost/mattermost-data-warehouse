@@ -12,4 +12,6 @@ where
     and status like '2%'
     -- Keep only requests to download specific version
     and version is not null
-group by uri
+group by
+    log_date
+    , client_ip
