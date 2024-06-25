@@ -13,7 +13,7 @@ select
     , {{ dbt_utils.generate_surrogate_key(['log_date', 'client_ip']) }} as daily_ip_id
     , log_date
     , log_at
-    ,  client_ip
+    , client_ip
     , response_bytes
     , http_method
     , host
@@ -32,6 +32,8 @@ select
     , version_major
     , version_minor
     , version_patch
+    , ua_browser_family
+    , ua_os_family
 from
     {{ ref('stg_releases__log_entries') }} le
     left join {{ ref('int_download_stats_per_uri') }} ds on le.uri = ds.uri

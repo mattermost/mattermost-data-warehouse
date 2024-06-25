@@ -114,3 +114,7 @@ models:
         description: The minor part of the version.  I.e. for `5.1.2` it would be `1`.
       - name: version_patch
         description: The patch part of the version. I.e. for `5.1.2` it would be `2`.
+      - name: ua_browser_family
+        description: The browser family of the user agent.
+      - name: ua_os_family
+        description: The operating system family of the user agent.
