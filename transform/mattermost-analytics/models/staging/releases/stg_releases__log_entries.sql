@@ -21,7 +21,7 @@ renamed as (
         , cs_uri_query as query_string
         , cookie
         , x_edge_result_type
-        , x_edge_request_id
+        , x_edge_request_id as request_id
         , x_host_header
         , protocol
         , cs_bytes as request_bytes
