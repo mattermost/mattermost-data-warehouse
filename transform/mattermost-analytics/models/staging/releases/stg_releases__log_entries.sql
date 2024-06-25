@@ -42,8 +42,8 @@ renamed as (
         end as download_type
         -- TODO: OS
         , case
-            when regexp_like(uri, '^\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*') then split_part(log_entries.uri, '/', 2)
-            when regexp_like(uri, '^\/desktop\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*') then split_part(log_entries.uri, '/', 3)
+            when regexp_like(uri, '^\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*') then split_part(uri, '/', 2)
+            when regexp_like(uri, '^\/desktop\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*') then split_part(uri, '/', 3)
             else null
         end as version
         , split_part(version, '.', 1) as version_major
