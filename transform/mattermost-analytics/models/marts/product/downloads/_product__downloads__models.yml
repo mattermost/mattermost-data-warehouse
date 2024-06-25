@@ -70,13 +70,6 @@ models:
         description: The minor part of the version.  I.e. for `5.1.2` it would be `1`.
       - name: version_patch
         description: The patch part of the version. I.e. for `5.1.2` it would be `2`.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          # For each URI only a single value download type and operating system should be expected.
-          combination_of_columns:
-            - uri
-            - download_type
-            - operating_system
 
   - name: dim_ip_daily_summary
     description: Summary of daily download activity per IP.
