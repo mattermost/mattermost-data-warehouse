@@ -17,7 +17,7 @@ select
     , response_bytes
     , http_method
     , host
-    , uri
+    , le.uri
     , status
     , referrer_url
     , user_agent
