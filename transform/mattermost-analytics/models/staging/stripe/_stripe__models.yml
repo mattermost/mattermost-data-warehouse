@@ -448,7 +448,7 @@ models:
       - name: proration_details
         description: Additional details for proration line items
       - name: quantity
-        description: Quantity of units for the invoice item.
+        description: Quantity of units for the invoice item. This quantity represents the number of seats purchased.
       - name: subscription_id
         description: The subscription that this invoice item has been created for, if any.
       - name: subscription_item

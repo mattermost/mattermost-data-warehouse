@@ -10,7 +10,7 @@ select
     t.event_name, t.event_action
 from
     telemetry_actions t
-    left join {{ ref('playbook_events') }} pe
+    left join {{ ref('playbooks_tracking_plan') }} pe
         on t.event_name = pe.event_name
             -- Handle nulls in event_action
             and ((t.event_action = pe.event_action) or (t.event_action is null and pe.event_action is null))

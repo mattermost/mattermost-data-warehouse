@@ -39,7 +39,10 @@ subscriptions as (
         items,
         livemode,
         pending_setup_intent,
-        quantity,
+        case 
+            when metadata:"license-seats"::int > 0 then metadata:"license-seats"::int
+            else quantity
+        end as quantity,
         status,
         tax_percent,
         updated_by_event_type,

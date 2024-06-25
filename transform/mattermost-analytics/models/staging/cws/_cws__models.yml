@@ -115,6 +115,16 @@ models:
       - name: sku_short_name
       - name: is_gov_sku
       - name: is_trial
+        description: |
+          Whether the license is a trial license or not. This value is not always taken directly from field value, as
+          it may be set to true for licenses that are not actually trial licenses. One such case is backfilled licenses
+          from Salesforce to Stripe.
+        tests:
+            - accepted_values:
+                # Backfilled licenses from Salesforce to Stripe are not trial licenses.
+                values: [ false ]
+                config:
+                    where: "company_name = 'sfdc-migration' and starts_at <'2023-04-01'"
       - name: company_name
       - name: customer_email
       - name: customer_id
