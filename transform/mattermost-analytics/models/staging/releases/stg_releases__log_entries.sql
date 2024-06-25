@@ -17,7 +17,7 @@ renamed as (
         , uri
         , status
         , creferrer as referrer_url
-        , replace(useragent, '%20', ' ') as user_agent
+        , replace(replace(useragent,'%2520', ' '), '%20', ' ') as user_agent
         , cs_uri_query as query_string
         , cookie
         , x_edge_result_type
@@ -60,8 +60,8 @@ renamed as (
 
         -- User agent extracted
         , case when user_agent is not null then mattermost_analytics.parse_user_agent(user_agent) else null end as _parsed_user_agent
-        , _parsed_user_agent::browser_family:varchar as ua_browser_family
-        , _parsed_user_agent::os_family:varchar as ua_os_family
+        , _parsed_user_agent:browser_family::varchar as ua_browser_family
+        , _parsed_user_agent:os_family::varchar as ua_os_family
 
         -- Ignoring as always null
         -- , file_status
