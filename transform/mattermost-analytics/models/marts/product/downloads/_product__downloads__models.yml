@@ -11,6 +11,8 @@ models:
           - not_null
       - name: daily_ip_id
         description: A unique id for each IP and date
+      - name: client_fingerprint
+        description: A hash to help distinguish between different clients from the same IP address.
       - name: log_date
         description: The date that the download request occurred.
       - name: log_at

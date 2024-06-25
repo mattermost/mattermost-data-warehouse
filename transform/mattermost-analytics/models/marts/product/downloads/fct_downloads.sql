@@ -11,6 +11,7 @@ config({
 select
     request_id
     , {{ dbt_utils.generate_surrogate_key(['log_date', 'client_ip']) }} as daily_ip_id
+    , {{ dbt_utils.generate_surrogate_key(['client_ip', 'user_agent']) }} as client_fingerprint
     , log_date
     , log_at
     , client_ip
