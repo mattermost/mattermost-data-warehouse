@@ -38,7 +38,6 @@ select
 
 from
     {{ ref('stg_releases__log_entries') }} le
-    left join {{ ref('int_download_stats_per_uri') }} ds on le.uri = ds.uri
 where
     -- Keep only requests with responses at least 1 mb
     response_bytes > 1000000
@@ -46,8 +45,8 @@ where
     and status like '2%'
     -- Keep only requests to download specific version
     and version is not null
-    -- Keep only downloads one standard deviation to the avg
-    and abs(response_bytes - ds.avg_response_bytes) < ds.stddev_response_bytes
+    -- Keep only GET requests
+    and http_method = 'GET'
     {% if is_incremental() %}
     -- this filter will only be applied on an incremental run
     and log_at >= (select max(log_at) from {{ this }})
