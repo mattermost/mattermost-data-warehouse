@@ -42,7 +42,6 @@ customers as (
         tax_ids,
         address,
         default_card,
-        discount,
         updated_by_event_type
 
     from source
