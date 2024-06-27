@@ -394,7 +394,6 @@ sources:
           - name: _sdc_sequence
           - name: _sdc_table_version
           - name: unit_label
-          - name: deactivate_on
 
       - name: subscription_items
         columns:

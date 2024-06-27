@@ -21,7 +21,6 @@ products as (
         type,
         updated AS updated_at,
         unit_label,
-        deactivate_on
 
     from source
 

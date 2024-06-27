@@ -253,8 +253,6 @@ models:
         description: The label used to indicate the unit of measurement for a product.
       - name: updated_by_event_type
         description: The type of event that triggered the last update to the record.
-      - name: deactivate_on
-        description: The date and time when a product will be deactivated or no longer available.
 
   - name: stg_stripe__invoices
     description: Staging table for Stripe Invoices
