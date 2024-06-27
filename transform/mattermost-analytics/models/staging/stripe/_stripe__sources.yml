@@ -137,7 +137,6 @@ sources:
           - name: tax_ids
           - name: address
           - name: default_card
-          - name: discount
           - name: updated_by_event_type
 
       - name: disputes
