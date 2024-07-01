@@ -9,7 +9,7 @@ with deduped_trial_requests as (
 select
     -- Normalize columns appearing both in on-prem and cloud trials.
     'cws:' || tr.trial_request_id as trial_request_id
-    , coalesce(tr.contact_email, tr.email) as trial_email
+    , lower(coalesce(tr.contact_email, tr.email)) as trial_email
     , split_part(trial_email, '@', 2) as email_domain
     , {{ validate_email('trial_email') }} as is_valid_trial_email
     , tr.extracted_first_name as first_name

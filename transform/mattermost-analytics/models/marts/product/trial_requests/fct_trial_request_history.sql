@@ -27,7 +27,7 @@ with all_trial_requests as (
 
 select
     tr.trial_request_id
-    , lower(tr.trial_email)
+    , tr.trial_email
     , tr.email_domain
     , tr.first_name
     , tr.last_name
@@ -38,6 +38,9 @@ select
     , tr.end_at
     , tr.request_source
     , tr.request_type
+    , agg.first_trial_start_at
+    , agg.last_trial_start_at
+    , agg.num_company_types
 {% for company_type in company_types %}
     , agg.marked_as_{{ company_type.lower().replace('-', '_') }}
 {% endfor %}
