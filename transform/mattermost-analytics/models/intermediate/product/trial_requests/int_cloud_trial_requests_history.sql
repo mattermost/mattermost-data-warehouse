@@ -30,7 +30,7 @@ select
     , customers.email as trial_email
     , split_part(trial_email, '@', 2) as email_domain
     , {{ validate_email('trial_email') }} as is_valid_trial_email
-    , customers.contact_first_name as first_name,
+    , customers.contact_first_name as first_name
     , customers.contact_last_name as last_name
     , customers.name as company_name
     , subscriptions.cws_dns as site_url
