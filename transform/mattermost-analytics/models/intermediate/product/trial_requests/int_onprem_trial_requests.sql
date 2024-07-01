@@ -1,10 +1,3 @@
--- Temporarily materialize
-{{
-    config({
-        "materialized": "table",
-        "snowflake_warehouse": "transform_l"
-    })
-}}
 
 {% set company_types = ['SMB', 'Enterprise', 'Midmarket', 'Federal', 'Academic', 'MME', 'Non-Profit'] %}
 
@@ -35,7 +28,7 @@ with deduped_trial_requests as (
 )
 select
     -- Normalize columns appearing both in on-prem and cloud trials.
-    tr.trial_request_id
+    'cws:' || tr.trial_request_id as trial_request_id
     , coalesce(tr.contact_email, tr.email) as trial_email
     , split_part(trial_email, '@', 2) as email_domain
     , {{ validate_email('trial_email') }} as is_valid_trial_email
@@ -49,6 +42,7 @@ select
         when lower(site_url) = 'https://mattermost.com' then 'Website'
         else 'In-Product'
     end as request_source
+    , 'in-product' as request_type
     -- Aggregates
     , agg.total_trial_requests
     , agg.first_trial_start_at
