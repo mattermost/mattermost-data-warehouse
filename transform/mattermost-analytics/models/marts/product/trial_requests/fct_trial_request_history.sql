@@ -19,15 +19,17 @@ with all_trial_requests as (
 {% endfor %}
     from
         all_trial_requests tr
-        left join {{ ref('stg_salesforce__lead')}} l on l.email = tr.contact_email or l.email = tr.email
+        -- Join on either contact email or user email to improve join coverage.
+        left join {{ ref('stg_salesforce__lead')}} l on l.email = tr.contact_email or l.email = tr.user_email
     where
         not l.is_deleted
     group by all
 )
-
 select
     tr.trial_request_id
     , tr.trial_email
+    , tr.contact_email
+    , tr.user_email
     , tr.email_domain
     , tr.first_name
     , tr.last_name

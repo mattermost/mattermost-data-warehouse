@@ -27,6 +27,8 @@ subscriptions as (
 select
     'stripe:' || subscriptions.subscription_id as trial_request_id
     , customers.email as trial_email
+    , customers.email as contact_email
+    , null as user_email
     , split_part(trial_email, '@', 2) as email_domain
     , {{ validate_email('trial_email') }} as is_valid_trial_email
     , customers.contact_first_name as first_name
