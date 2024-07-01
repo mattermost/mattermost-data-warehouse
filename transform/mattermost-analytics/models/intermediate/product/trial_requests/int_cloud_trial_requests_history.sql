@@ -26,7 +26,6 @@ subscriptions as (
 )
 select
     'stripe:' || subscriptions.subscription_id as trial_request_id
-    , subscriptions.created_at::date as trial_created_at
     , customers.email as trial_email
     , split_part(trial_email, '@', 2) as email_domain
     , {{ validate_email('trial_email') }} as is_valid_trial_email
@@ -34,6 +33,7 @@ select
     , customers.contact_last_name as last_name
     , customers.name as company_name
     , subscriptions.cws_dns as site_url
+    , subscriptions.created_at::date as created_at
     , subscriptions.trial_start_at as start_at
     , subscriptions.trial_end_at as end_at
     , 'stripe' as request_source

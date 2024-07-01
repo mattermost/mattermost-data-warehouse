@@ -36,6 +36,7 @@ select
     , tr.extracted_last_name as last_name
     , coalesce(company_name, 'Unknown') as company_name
     , tr.site_url
+    , tr.start_at::date as created_at
     , tr.start_at
     , tr.end_at
     , case
