@@ -51,7 +51,7 @@ from
     left join aggregates agg on tr.trial_email = agg.trial_email
 where
     is_valid_trial_email
-    and not trial_email ilike any (
+    and not tr.trial_email ilike any (
         '%mattermost.com'
         , '%wearehackerone.com'
         , '%example.com'
