@@ -33,10 +33,10 @@ with servers as (
     select
         si.server_id,
         si.server_ip,
-        parse_ip(lki.server_ip, 'INET'):ipv4 as parsed_server_ip,
+        parse_ip(si.server_ip, 'INET'):ipv4 as parsed_server_ip,
         case
-            when parse_ip(lki.server_ip, 'INET'):error is null
-                then parse_ip(server_ip || '/7', 'INET'):ipv4_range_start
+            when parse_ip(si.server_ip, 'INET'):error is null
+                then parse_ip(si.server_ip || '/7', 'INET'):ipv4_range_start
             else null
         end as ip_bucket,
         si.installation_type,
