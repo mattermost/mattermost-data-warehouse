@@ -77,6 +77,7 @@ sources:
       - name: pageview_deployment_selection
       - name: pageview_getting_started
       - name: pageview_verify_email
+        description: Page in the signup flow that user reaches after email is validated.
       - name: password_validation_error
       - name: purchase_complete_create_portal_account
       - name: purchase_fail_clicked_try_again
