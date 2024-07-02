@@ -38,7 +38,7 @@ select
     , subscriptions.created_at::date as created_at
     , subscriptions.trial_start_at as start_at
     , subscriptions.trial_end_at as end_at
-    , 'stripe' as request_source
+    , 'Stripe' as request_source
     , 'cloud' as request_type
 from
     customers
