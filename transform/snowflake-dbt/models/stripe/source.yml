@@ -2,8 +2,8 @@ version: 2
 
 sources:
   - name: stripe_raw
-    database: ANALYTICS
-    schema: stripe_raw
+    database: RAW
+    schema: stripe_prod_2024_06
     loader: Stitch
     description: Stripe raw data to warehouse, loaded using stitch.
     tags:

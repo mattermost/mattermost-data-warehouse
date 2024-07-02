@@ -2,8 +2,8 @@ version: 2
 
 sources:
   - name: stripe
-    database: 'ANALYTICS'
-    schema: stripe_raw
+    database: 'RAW'
+    schema: stripe_prod_2024_06
     loader: Stitch
     description: |
       Copy of Stripe raw data.
@@ -137,7 +137,6 @@ sources:
           - name: tax_ids
           - name: address
           - name: default_card
-          - name: discount
           - name: updated_by_event_type
 
       - name: disputes
@@ -292,7 +291,6 @@ sources:
           - name: payment
           - name: forgiven
           - name: billing
-          - name: tax_percent
           - name: finalized_at
           - name: closed
           - name: updated_by_event_type
@@ -395,8 +393,6 @@ sources:
           - name: _sdc_sequence
           - name: _sdc_table_version
           - name: unit_label
-          - name: updated_by_event_type
-          - name: deactivate_on
 
       - name: subscription_items
         columns:
@@ -445,7 +441,6 @@ sources:
           - name: _sdc_sequence
           - name: _sdc_table_version
           - name: trial_start
-          - name: tax_percent
           - name: ended_at
           - name: trial_end
           - name: canceled_at
