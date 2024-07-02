@@ -1,0 +1,17 @@
+version: 2
+
+exposures:
+  - name: subscription_history
+    type: dashboard
+    description: |
+      Full subscription history
+
+    url: https://mattermost.looker.com/dashboards/441?Cws+Dns=
+    tags:
+      - looker
+    maturity: medium
+    owner:
+      name: Nick Misasi
+    depends_on:
+      - ref('fct_subscription_history')
+
