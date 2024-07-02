@@ -87,6 +87,6 @@ from
         on servers.server_id = dim_latest_server_customer_info.server_id
     left join last_known_server_info on servers.server_id = last_known_server_info.server_id
     left join {{ ref('int_ip_country_lookup') }} l
-            on last_known_sever_info.ip_bucket = l.join_bucket
+            on last_known_server_info.ip_bucket = l.join_bucket
                 and parse_ip(last_known_server_info.server_ip, 'INET', 1):ipv4 between l.ipv4_range_start and l.ipv4_range_end
     left join last_known_oauth_info oauth on servers.server_id = oauth.server_id
