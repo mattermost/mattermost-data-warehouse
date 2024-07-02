@@ -6,7 +6,7 @@
 select
     l.country_name
     , ip.join_bucket
-    , ip.pv4_range_start
+    , ip.ipv4_range_start
     , ip.ipv4_range_end
 from
     {{ ref('stg_geolite__ipv4_to_country') }} ip
