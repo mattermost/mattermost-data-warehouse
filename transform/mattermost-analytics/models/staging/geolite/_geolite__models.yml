@@ -40,7 +40,7 @@ models:
           Used to speedup range queries.
       - name: ipv4_range_start
         description: |
-            Numeric start address of the network, displayed when a subnet mask is included in the input. See
+          Numeric start address of the network, displayed when a subnet mask is included in the input. See
           [Snowflake documentation for more details](https://docs.snowflake.com/en/sql-reference/functions/parse_ip#usage-notes).
       - name: ipv4_range_start
         description: |
