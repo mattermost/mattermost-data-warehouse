@@ -42,6 +42,6 @@ exposures:
       - ref('dim_server_info')
       - ref('dim_version')
       - ref('dim_excludable_servers')
-      - ref('dim_board_customers)
+      - ref('dim_board_customers')
       - ref('dim_cloud_customers')
       - ref('dim_self_hosted_customers')
