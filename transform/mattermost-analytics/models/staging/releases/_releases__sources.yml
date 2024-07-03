@@ -1,0 +1,147 @@
+version: 2
+
+sources:
+  - name: releases
+    database: 'RAW'
+    schema: releases
+    description: |
+      Logs from downloads of Mattermost server and client applications. Contains a single table (`log_entries`) with 
+      logs from AWS CloudFront. AWS offers [documentation on the value of each field](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html#LogFileFormat).
+      The logs are loaded using a Snowflake stage. An [Airflow DAG](https://github.com/mattermost/mattermost-data-warehouse/blob/master/airflow/dags/mattermost_dags/extract/releases.py)
+      triggers loading the logs into the stage. The entrypoint to the script that performs the loading is available
+      [here](https://github.com/mattermost/mattermost-data-warehouse/blob/master/extract/s3_extract/release_job.py).
+
+    tables:
+      - name: log_entries
+        description: Contains the log entries. Note that the table might contain duplicate rows.
+        columns:
+          - name: logdate
+            data_type: varchar
+            description: |
+              The date on which the event occurred in the format `YYYY-MM-DD`. For example, `2019-06-30`. The date and 
+              time are in Coordinated Universal Time (UTC). For WebSocket connections, this is the date when the
+              connection closed.
+          - name: logtime
+            data_type: varchar
+            description: |
+              The time when the CloudFront server finished responding to the request (in UTC), for example, `01:42:39`. 
+              For WebSocket connections, this is the time when the connection is closed.
+          - name: edge
+            data_type: varchar
+            description: |
+              The edge location that served the request. For WebSocket connections, this is the edge location that 
+              closed the connection.
+          - name: bytessent
+            data_type: number
+            description: |
+              The number of bytes sent by the server to the client in response to the request, including headers.
+          - name: cip
+            data_type: varchar
+            description: |
+              The IP address of the client that made the request. For WebSocket connections, this is the IP address of 
+              the client that initiated the connection.
+          - name: method
+            data_type: varchar
+            description: |
+                The HTTP method that the viewer used to request the object. For WebSocket connections, this is the 
+                method that the client used to connect to the CloudFront server.
+          - name: host
+            data_type: varchar
+            description: |
+              The domain name of the CloudFront distribution, for example, `d111111abcdef8.cloudfront.net`.
+          - name: uri
+            data_type: varchar
+            description: |
+              The portion of the URI that identifies the path and object, for example, `/images/daily-ad.jpg`.
+          - name: status
+            data_type: varchar
+            description: |
+              Contains one of the following values:
+              - The HTTP status code that CloudFront returned to the viewer. For example, `200`.
+              - `000`, which indicates that the viewer closed the connection before the server could respond to the request. If the viewer closes the connection after the server starts to send the response, this field contains the HTTP status code of the response that the server started to send.
+          - name: creferrer
+            data_type: varchar
+            description: |
+              The value of the Referer field in the request header. For example, `http://www.example.com/start.html`.
+          - name: useragent
+            data_type: varchar
+            description: |
+              The value of the User-Agent field in the request header. For example, `Mozilla/4.0`.
+          - name: cs_uri_query
+            data_type: varchar
+            description: |
+              The query string portion of the URI, if any. For example, `?value1=abc&value2=123`.
+          - name: cookie
+            data_type: varchar
+            description: |
+              The Cookie header in the request, including name-value pairs and any attributes.
+          - name: x_edge_result_type
+            data_type: varchar
+            description: |
+              How the server classified the response after the last byte left the server. In some cases, the result
+              type can change between the time that the server is ready to send the response and the time that it 
+              finishes sending the response. Possible values include:
+              - `Hit` – The server served the object to the viewer from the cache.
+              - `RefreshHit` – The server found the object in the cache but the object had expired, so the server contacted the origin to verify that the cache had the latest version of the object.
+              - `Miss` – The request could not be satisfied by an object in the cache, so the server forwarded the request to the origin and returned the result to the viewer.
+              - `LimitExceeded` – The request was denied because a CloudFront quota (formerly referred to as a limit) was exceeded.
+              - `CapacityExceeded` – The server returned an HTTP 503 status code because it didn't have enough capacity at the time of the request to serve the object.
+              - `Error` – Typically, this means the request resulted in a client error (the value of the sc-status field is in the 4xx range) or a server error (the value of the sc-status field is in the 5xx range). If the value of the sc-status field is 200, or if the value of this field is Error and the value of the x-edge-response-result-type field is not Error, it means the HTTP request was successful but the client disconnected before receiving all of the bytes.
+              - `Redirect` – The server redirected the viewer from HTTP to HTTPS according to the distribution settings.
+          - name: x_edge_request_id
+            data_type: varchar
+            description: |
+              A unique identifier for the request. For WebSocket connections, this is the unique identifier for the connection.
+          - name: x_host_header
+            data_type: varchar
+            description: |
+              The value of the Host header in the request. For example, `d111111abcdef8.cloudfront.net`.
+          - name: protocol
+            data_type: varchar
+            description: |
+                The protocol of the viewer request (http, https, ws, or wss).
+          - name: cs_bytes
+            data_type: number
+            description: |
+              The total number of bytes that the viewer sent in the request, including headers.
+          - name: time_taken
+            data_type: varchar
+            description: |
+              The number of seconds (to the thousandth of a second, for example, 0.082) from when the server receives 
+              the viewer's request to when the server writes the last byte of the response to the output queue, as
+              measured on the server. From the perspective of the viewer, the total time to get the full response will
+              be longer than this value because of network latency and TCP buffering.
+          - name: x_forwarded_for
+            data_type: varchar
+            description: |
+              If the viewer used an HTTP proxy or a load balancer to send the request, the value of the c-ip field is 
+              the IP address of the proxy or load balancer. In that case, this field is the IP address of the viewer
+              that originated the request. This field can contain multiple comma-separated IP addresses. Each IP address
+              can be an IPv4 address (for example, 192.0.2.183) or an IPv6 address (for example, 
+              2001:0db8:85a3::8a2e:0370:7334).
+              If the viewer did not use an HTTP proxy or a load balancer, the value of this field is a hyphen (-).
+          - name: ssl_protocol
+            data_type: varchar
+            description: |
+              When the request is made using HTTPS, this field contains the SSL/TLS protocol that the viewer negotiated.
+          - name: ssl_cipher
+            data_type: varchar
+            description: |
+                When the request is made using HTTPS, this field contains the SSL/TLS cipher that the viewer negotiated.
+          - name: x_edge_response_result_type
+            data_type: varchar
+            description: |
+              How the server classified the response after the last byte left the server. See `x_edge_result_type`.
+          - name: cs_protocol_version
+            data_type: varchar
+            description: |
+              The HTTP version that the viewer specified in the request. Possible values include HTTP/0.9, HTTP/1.0,
+              HTTP/1.1, HTTP/2.0, and HTTP/3.0.
+          - name: file_status
+            data_type: varchar
+            description: |
+              Always null in this use case.
+          - name: file_encrypted_fields
+            data_type: varchar
+            description: |
+              Always null in this use case.

@@ -1,7 +1,7 @@
 {{config({
     "materialized": 'incremental',
     "schema": "util",
-    "tags":"nightly",
+    "tags":["nightly"],
   })
 }}
 

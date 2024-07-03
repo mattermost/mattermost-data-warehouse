@@ -1,0 +1,120 @@
+version: 2
+
+models:
+  - name: stg_releases__log_entries
+    columns:
+      - name: log_date
+        description: |
+          The date on which the event occurred.
+      - name: log_at
+        description: |
+          The timestamp when the CloudFront server finished responding to the request (in UTC).
+      - name: edge
+        description: |
+          The edge location that served the request. For WebSocket connections, this is the edge location that 
+          closed the connection.
+      - name: response_bytes
+        description: |
+          The number of bytes sent by the server to the client in response to the request, including headers.
+      - name: client_ip
+        description: |
+          The IP address of the client that made the request. For WebSocket connections, this is the IP address of 
+          the client that initiated the connection.
+      - name: htto_method
+        description: |
+            The HTTP method that the viewer used to request the object. For WebSocket connections, this is the 
+            method that the client used to connect to the CloudFront server.
+      - name: host
+        description: |
+          The domain name of the CloudFront distribution, for example, `d111111abcdef8.cloudfront.net`.
+      - name: uri
+        description: |
+          The portion of the URI that identifies the path and object, for example, `/images/daily-ad.jpg`.
+      - name: status
+        description: |
+          Contains one of the following values:
+          - The HTTP status code that CloudFront returned to the viewer. For example, `200`.
+          - `000`, which indicates that the viewer closed the connection before the server could respond to the request. If the viewer closes the connection after the server starts to send the response, this field contains the HTTP status code of the response that the server started to send.
+      - name: referrer_url
+        description: |
+          The value of the Referer field in the request header. For example, `http://www.example.com/start.html`.
+      - name: user_agent
+        description: |
+          The value of the User-Agent field in the request header. For example, `Mozilla/4.0`.
+      - name: query_string
+        description: |
+          The query string portion of the URI, if any. For example, `?value1=abc&value2=123`.
+      - name: cookie
+        description: |
+          The Cookie header in the request, including name-value pairs and any attributes.
+      - name: x_edge_result_type
+        description: |
+          How the server classified the response after the last byte left the server. In some cases, the result
+          type can change between the time that the server is ready to send the response and the time that it 
+          finishes sending the response. Possible values include:
+          - `Hit` – The server served the object to the viewer from the cache.
+          - `RefreshHit` – The server found the object in the cache but the object had expired, so the server contacted the origin to verify that the cache had the latest version of the object.
+          - `Miss` – The request could not be satisfied by an object in the cache, so the server forwarded the request to the origin and returned the result to the viewer.
+          - `LimitExceeded` – The request was denied because a CloudFront quota (formerly referred to as a limit) was exceeded.
+          - `CapacityExceeded` – The server returned an HTTP 503 status code because it didn't have enough capacity at the time of the request to serve the object.
+          - `Error` – Typically, this means the request resulted in a client error (the value of the sc-status field is in the 4xx range) or a server error (the value of the sc-status field is in the 5xx range). If the value of the sc-status field is 200, or if the value of this field is Error and the value of the x-edge-response-result-type field is not Error, it means the HTTP request was successful but the client disconnected before receiving all of the bytes.
+          - `Redirect` – The server redirected the viewer from HTTP to HTTPS according to the distribution settings.
+      - name: x_edge_request_id
+        description: |
+          A unique identifier for the request. For WebSocket connections, this is the unique identifier for the connection.
+      - name: x_host_header
+        description: |
+          The value of the Host header in the request. For example, `d111111abcdef8.cloudfront.net`.
+      - name: protocol
+        description: |
+            The protocol of the viewer request (http, https, ws, or wss).
+      - name: request_bytes
+        description: |
+          The total number of bytes that the viewer sent in the request, including headers.
+      - name: time_taken
+        description: |
+          The number of seconds (to the thousandth of a second, for example, 0.082) from when the server receives 
+          the viewer's request to when the server writes the last byte of the response to the output queue, as
+          measured on the server. From the perspective of the viewer, the total time to get the full response will
+          be longer than this value because of network latency and TCP buffering.
+      - name: x_forwarded_for
+        description: |
+          If the viewer used an HTTP proxy or a load balancer to send the request, the value of the c-ip field is 
+          the IP address of the proxy or load balancer. In that case, this field is the IP address of the viewer
+          that originated the request. This field can contain multiple comma-separated IP addresses. Each IP address
+          can be an IPv4 address (for example, 192.0.2.183) or an IPv6 address (for example, 
+          2001:0db8:85a3::8a2e:0370:7334).
+          If the viewer did not use an HTTP proxy or a load balancer, the value of this field is a hyphen (-).
+      - name: ssl_protocol
+        description: |
+          When the request is made using HTTPS, this field contains the SSL/TLS protocol that the viewer negotiated.
+      - name: ssl_cipher
+        description: |
+            When the request is made using HTTPS, this field contains the SSL/TLS cipher that the viewer negotiated.
+      - name: x_edge_response_result_type
+        description: |
+          How the server classified the response after the last byte left the server. See `x_edge_result_type`.
+      - name: http_protocol_version
+        description: |
+          The HTTP version that the viewer specified in the request. Possible values include HTTP/0.9, HTTP/1.0,
+          HTTP/1.1, HTTP/2.0, and HTTP/3.0.
+      - name: download_type
+        description: |
+          They type of the download. Can be `team` for team edition server, `enterprise` for enterprise edition server,
+          `desktop` for desktop app or null for unknown.
+      - name: operating_system
+        description: |
+          They operating system the download is compatible with. Can be `linux`, `windows`, `mac` or null for unknown.
+      - name: version
+        description: |
+          The version of the download. Can be `5.0.0` for example.
+      - name: version_major
+        description: The major part of the version. I.e. for `5.1.2` it would be `5`.
+      - name: version_minor
+        description: The minor part of the version.  I.e. for `5.1.2` it would be `1`.
+      - name: version_patch
+        description: The patch part of the version. I.e. for `5.1.2` it would be `2`.
+      - name: ua_browser_family
+        description: The browser family of the user agent.
+      - name: ua_os_family
+        description: The operating system family of the user agent.

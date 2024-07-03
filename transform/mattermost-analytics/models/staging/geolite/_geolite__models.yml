@@ -27,6 +27,27 @@ models:
     columns:
       - name: network
         description: The IPv4 network in CIDR format such as "2.21.92.0/29".
+      - name: cidr_network_size
+        description: |
+          The CIDR suffix Network Size (CIDR Suffix) from the address. I.e. for "2.21.92.0/5" it is "5". See 
+          [here](https://docs.digitalocean.com/glossary/cidr/) for more information.
+        tests:
+          - dbt_utils.accepted_range:
+              # Accept that the smaller possible value is the one used for creating buckets of ip addresses
+              min_value: 7
+              inclusive: true
+      - name: join_bucket
+        description: |
+          Bucket that the network belongs to. Derived from the network's start IP range, using `/7` as the mask.
+          Used to speedup range queries.
+      - name: ipv4_range_start
+        description: |
+          Numeric start address of the network, displayed when a subnet mask is included in the input. See
+          [Snowflake documentation for more details](https://docs.snowflake.com/en/sql-reference/functions/parse_ip#usage-notes).
+      - name: ipv4_range_start
+        description: |
+          Numeric end address of the network, displayed when a subnet mask is included in the input. See
+          [Snowflake documentation for more details](https://docs.snowflake.com/en/sql-reference/functions/parse_ip#usage-notes).
       - name: geoname_id
         description: A unique identifier for the network's location
       - name: registered_country_geoname_id
