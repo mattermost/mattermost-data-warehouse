@@ -27,8 +27,10 @@ models:
     columns:
       - name: network
         description: The IPv4 network in CIDR format such as "2.21.92.0/29".
-      - name: cidr_prefix
-        description: The CIDR prefix from the address. I.e. for "2.21.92.0/5" it is "5".
+      - name: cidr_network_size
+        description: |
+          The CIDR suffix Network Size (CIDR Suffix) from the address. I.e. for "2.21.92.0/5" it is "5". See 
+          [here](https://docs.digitalocean.com/glossary/cidr/) for more information.
         tests:
           - dbt_utils.accepted_range:
               # Accept that the smaller possible value is the one used for creating buckets of ip addresses
@@ -36,7 +38,7 @@ models:
               inclusive: true
       - name: join_bucket
         description: |
-          Bucket that the network belongs to. Derived from the network's start IP range, using `/7` as teh mask.
+          Bucket that the network belongs to. Derived from the network's start IP range, using `/7` as the mask.
           Used to speedup range queries.
       - name: ipv4_range_start
         description: |
