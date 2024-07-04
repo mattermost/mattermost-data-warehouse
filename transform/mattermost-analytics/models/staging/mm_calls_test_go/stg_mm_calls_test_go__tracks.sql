@@ -9,5 +9,7 @@ SELECT
     , server_version as server_version
     , plugin_build as plugin_build
     , plugin_version as plugin_version
+    , context_feature_name as feature_name
+    , context_feature_skus as feature_skus
     FROM
         {{ ref ('base_mm_calls_test_go__tracks') }}
