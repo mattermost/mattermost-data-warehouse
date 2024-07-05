@@ -151,7 +151,7 @@ vars:
     reports_prefixes: [ 'rpt_' ]
 
 
-    # Community Server ID
+  # Community Server ID
   community_server_id : 93mykbogbjfrbbdqphx3zhze5c
 
   # Salesforce variables
@@ -168,6 +168,9 @@ vars:
   # Number of days prior to current to consider when calculating rolling monthly. I.e. 29 means 29 prior plus today
   # equals to a total of 30 days.
   monthly_days: 29
+
+  # List of Known SKUs
+  known_skus: ["professional", "enterprise"]
 
 on-run-start:
   -  '{{ create_parse_qs_udf()}}'
