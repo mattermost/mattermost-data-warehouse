@@ -52,7 +52,7 @@ select
     -- Aggregate columns are joined by summing up the values from all sources
 {% for column in agg_columns %}
     , {% for alias in partial_daily_models.values() %}
-    {%- if not loop.first -%} + {% endif -%} spine.{{column}} coalesce({{alias}}.{{column}}, 0)
+    {%- if not loop.first -%} + {% endif -%} coalesce({{alias}}.{{column}}, 0)
     {% endfor %}
        as {{column}}
 {% endfor %}
