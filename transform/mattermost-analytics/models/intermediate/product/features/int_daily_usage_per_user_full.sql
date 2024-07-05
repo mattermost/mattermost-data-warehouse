@@ -56,6 +56,8 @@ select
     {% endfor %}
        as {{column}}
 {% endfor %}
+
+
 from
     user_daily_presence spine
 {% for model, alias in partial_daily_models.items() %}
