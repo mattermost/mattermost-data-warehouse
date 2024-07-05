@@ -28,3 +28,7 @@ models:
         description: The Build ID of the plugin.
       - name: plugin_version 
         description: The version of the plugin.
+      - name: feature_name
+        description: The name of the feature. Always `Calls` for calls.
+      - name: feature_skus
+        description: An array with the SKUs that this event may be triggered from.
