@@ -32,7 +32,7 @@ models:
         description: The name of the feature. Always `Calls` for calls.
       - name: feature_skus
         description: An array with the SKUs that this event may be triggered from.
-        tests:
-          - dbt_utils.expression_is_true:
-              name: assert_valid_sku_names
-              expression: "array_size(array_except(feature_skus, {{ var('known_skus') }})) = 0 "
+    tests:
+      - dbt_utils.expression_is_true:
+          name: assert_valid_sku_names
+          expression: "array_size(array_except(feature_skus, {{ var('known_skus') }})) = 0 "
