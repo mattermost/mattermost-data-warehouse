@@ -25,7 +25,7 @@ with user_daily_presence as (
 
     select
     {% for column in join_columns %}
-        {%- if not loop.first %} , {% endif -%} coalesce(m.{{column}}, p.{{column}}) as {{column}}
+        {%- if not loop.first %} , {% endif -%}{{column}}
     {% endfor %}
     from
         {{ model }}
