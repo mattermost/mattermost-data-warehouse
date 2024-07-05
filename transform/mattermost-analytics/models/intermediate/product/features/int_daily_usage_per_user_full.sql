@@ -59,7 +59,7 @@ select
 from
     user_daily_presence spine
 {% for model, alias in partial_daily_models.items() %}
-    left join {{ ref('int_feature_daily_usage_per_user') }} {{ alias }}
+    left join {{ model }} {{ alias }}
         on  {% for column in join_columns %}
             {%- if not loop.first %} and {% endif -%} spine.{{column}} = {{alias}}.{{column}}
         {% endfor %}
