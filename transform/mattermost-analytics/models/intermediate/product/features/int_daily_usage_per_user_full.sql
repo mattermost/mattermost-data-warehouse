@@ -37,7 +37,7 @@ with user_daily_presence as (
 -- Contains all daily feature usage data per user/server/date and from all sources
 select
 {% for column in join_columns %}
-    {%- if not loop.first %} , {% endif -%} spine.{{column}})
+    {%- if not loop.first %} , {% endif -%} spine.{{column}}
 {% endfor %}
     -- Mattermost features
 {% set cols = dbt_utils.get_filtered_columns_in_relation(from=ref('int_feature_daily_usage_per_user'), except=skip_columns) %}
