@@ -45,7 +45,7 @@ select
     -- {{ alias }} features
     {% set cols = dbt_utils.get_filtered_columns_in_relation(from=model, except=skip_columns) %}
     {% for col in cols %}
-        , coalesce(m.{{ adapter.quote(col)|trim }}, 0) as {{ adapter.quote(col)|trim }}
+        , coalesce({{alias}}.{{ adapter.quote(col)|trim }}, 0) as {{ adapter.quote(col)|trim }}
     {% endfor %}
 {% endfor %}
 
