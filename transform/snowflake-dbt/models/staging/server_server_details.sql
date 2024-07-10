@@ -2,7 +2,7 @@
     "materialized": "incremental",
     "schema": "staging",
     "incremental_strategy": "delete+insert",
-    "unique_key": ['id'],
+    "unique_key":'id',
     "tags":'hourly'
   })
 }}
