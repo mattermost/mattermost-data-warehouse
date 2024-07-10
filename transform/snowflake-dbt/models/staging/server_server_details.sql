@@ -1,7 +1,8 @@
 {{config({
     "materialized": "incremental",
     "schema": "staging",
-    "unique_key":'id',
+    "incremental_strategy": "delete+insert",
+    "unique_key": ['id'],
     "tags":'hourly'
   })
 }}
