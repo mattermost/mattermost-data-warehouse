@@ -5,7 +5,13 @@ select
     daily_active_users,
     monthly_active_users,
     count_registered_users,
-    count_registered_deactivated_users
+    count_registered_deactivated_users,
+    count_public_channels,
+    count_private_channels,
+    count_teams,
+    count_slash_commands,
+    count_direct_message_channels,
+    count_posts
 from
     {{ ref('stg_mm_telemetry_prod__activity') }}
 where

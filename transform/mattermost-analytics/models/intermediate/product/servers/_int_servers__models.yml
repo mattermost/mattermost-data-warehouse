@@ -61,6 +61,18 @@ models:
         description: |
           Total number of active registered users. Calculated as 
           `count_registered_users - count_registered_deactivated_users`.
+      - name: count_count_public_channels
+        description: Number of public channels
+      - name: count_private_channels
+        description: Number of private channels
+      - name: count_teams
+        description: Number of teams
+      - name: count_slash_commands
+        description: Number of slash commands
+      - name: count_direct_message_channels
+        description: Number of DMs
+      - count_posts
+        description: Number of posts
       - name: age_in_days
         description: Number of days since the first telemetry received from the server.
         tests:
