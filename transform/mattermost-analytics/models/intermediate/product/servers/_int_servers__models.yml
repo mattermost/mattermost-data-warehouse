@@ -61,7 +61,7 @@ models:
         description: |
           Total number of active registered users. Calculated as 
           `count_registered_users - count_registered_deactivated_users`.
-      - name: count_count_public_channels
+      - name: count_public_channels
         description: Number of public channels
       - name: count_private_channels
         description: Number of private channels
