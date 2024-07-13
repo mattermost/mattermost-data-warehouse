@@ -61,6 +61,10 @@ models:
       - name: license_source
         description: |
           The source of the license data. One of `CWS`, `Legacy` or `CWS and Legacy`.
+      - name: license_name
+        description: The license name
+      - name: license_licensed_seats
+        description: Number of licensed seats
 
       # Cloud data
       - name: cloud_company_name
@@ -74,6 +78,8 @@ models:
         description: The SKU for the current cloud plan.
       - name: cloud_source
         description: The source of data for cloud.
+      - name: cloud_licensed_seats
+        description: Number of licensed seats
 
       # Metadata
       - name: found_matching_license_data

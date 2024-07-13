@@ -14,5 +14,7 @@ select
     , installation_id is not null as found_matching_stripe_entry
     , last_license_telemetry_date
     , last_installation_id_date
+    , license_name
+    , coalesce(license_licensed_seats, cloud_licensed_seats) as licensed_seats
 from
     {{ ref('int_latest_server_customer_info') }}
