@@ -1,7 +1,7 @@
 {{config({
     "materialized": "incremental",
     "schema": "incident_collaboration",
-    "tags":"hourly",
+    "tags":"[nightly]",
     "unique_key":"server_id",
     "warehouse":"ANALYST_XS"
   })
