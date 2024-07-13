@@ -1,7 +1,7 @@
 {{config({
     "materialized": "incremental",
     "schema": "focalboard",
-    "tags":"[nightly]",
+    "tags":["nightly"],
     "unique_key":"id"
   })
 }}
