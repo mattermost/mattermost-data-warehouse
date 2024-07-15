@@ -1,7 +1,7 @@
 -- Create mapping of server id to license id by keeping the last license id reported by each server.
 with telemetry_licenses as (
     select
-        server_id, license_id, license_name, timestamp
+        server_id, license_id, timestamp, license_name
     from
         {{ ref('stg_mm_telemetry_prod__license') }}
     where
@@ -10,7 +10,7 @@ with telemetry_licenses as (
     union
 
     select
-        server_id, license_id, license_name, timestamp
+        server_id, license_id, timestamp, license_name
     from
         {{ ref('stg_mattermost2__license') }}
     where
@@ -18,7 +18,7 @@ with telemetry_licenses as (
 ), latest_telemetry_licenses as (
     -- Keep only the last mapping of server id to license id, even in cases where telemetry has been sent both to rudder and segment.
     select
-        server_id, license_id, timestamp::date as last_license_telemetry_date
+        server_id, license_id, timestamp::date as last_license_telemetry_date, license_name
     from
         telemetry_licenses
     qualify row_number() over (partition by server_id order by timestamp desc) = 1
@@ -38,8 +38,8 @@ all_servers as (
     select
         coalesce(l.server_id, i.server_id) as server_id
         , l.license_id
-        , l.license_name
         , l.last_license_telemetry_date
+        , l.license_name
         , i.installation_id
         , i.last_installation_id_date
     from
@@ -82,9 +82,9 @@ select
         , c.installation_id is not null as found_matching_stripe_entry
         , s.last_license_telemetry_date
         , s.last_installation_id_date
-        , l.license_name
         , l.licensed_seats as license_licensed_seats
         , s.licensed_seats as cloud_licensed_seats
+        , l.license_name
 
 from
     all_servers s
