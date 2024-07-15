@@ -84,7 +84,7 @@ select
         , s.last_installation_id_date
         , l.licensed_seats as license_licensed_seats
         , c.licensed_seats as cloud_licensed_seats
-        , l.license_name
+        , s.license_name
 
 from
     all_servers s
