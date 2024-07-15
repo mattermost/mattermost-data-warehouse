@@ -83,7 +83,7 @@ select
         , s.last_license_telemetry_date
         , s.last_installation_id_date
         , l.licensed_seats as license_licensed_seats
-        , s.licensed_seats as cloud_licensed_seats
+        , c.licensed_seats as cloud_licensed_seats
         , l.license_name
 
 from
