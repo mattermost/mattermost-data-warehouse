@@ -6,7 +6,6 @@ select
     , actual_user_id as user_id
     , received_at as received_at
     , timestamp  as timestamp
-    , server_version as server_version
     -- Backfill past events
     , coalesce(context_feature_name, 'Copilot') as feature_name
     , parse_json(coalesce(context_feature_skus, '[]'))::array as feature_skus
