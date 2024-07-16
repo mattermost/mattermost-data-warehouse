@@ -19,6 +19,7 @@ sources:
 
     tables:
       - name: copilot_apps_bar_clicked
+      - name: summarize_thread
       - name: user_started_conversation
 
       - name: tracks
