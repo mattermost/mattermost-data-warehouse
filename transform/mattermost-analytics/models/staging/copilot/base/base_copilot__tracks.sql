@@ -2,7 +2,7 @@
     "actual_user_id", "context_feature_name", "context_feature_skus"
 ] -%}
 
-{%- set relations = get_event_relations('copilot_plugin_prod', database='RAW') -%}
+{%- set relations = get_event_relations('copilot_plugin_prod', database='RAW', min_rows=1) -%}
 
 {{
     dbt_utils.union_relations(
