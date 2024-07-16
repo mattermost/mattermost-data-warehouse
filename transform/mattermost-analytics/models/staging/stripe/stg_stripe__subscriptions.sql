@@ -44,7 +44,6 @@ subscriptions as (
             else quantity
         end as quantity,
         status,
-        tax_percent,
         updated_by_event_type,
         default_payment_method,
         pause_collection,
