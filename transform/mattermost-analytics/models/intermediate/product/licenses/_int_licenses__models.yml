@@ -64,7 +64,7 @@ models:
       - name: license_name
         description: The license name
       - name: license_licensed_seats
-        description: Number of licensed seats
+        description: Number of self-hosted licensed seats
 
       # Cloud data
       - name: cloud_company_name
@@ -79,7 +79,7 @@ models:
       - name: cloud_source
         description: The source of data for cloud.
       - name: cloud_licensed_seats
-        description: Number of licensed seats
+        description: Number of cloud licensed seats
 
       # Metadata
       - name: found_matching_license_data
