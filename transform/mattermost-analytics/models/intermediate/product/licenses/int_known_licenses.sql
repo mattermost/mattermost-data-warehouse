@@ -20,6 +20,7 @@ select
         when cws.license_id is null and legacy.license_id is not null then 'Legacy'
         when cws.license_id is not null and legacy.license_id is not null then 'CWS and Legacy'
     end as source
+    , coalesce(cws.licensed_seats, 0) as licensed_seats
 from
     {{ ref('stg_cws__license') }} cws
     full outer join deduped_legacy_licenses legacy on cws.license_id = legacy.license_id
