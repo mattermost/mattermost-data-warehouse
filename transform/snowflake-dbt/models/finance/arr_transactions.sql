@@ -152,7 +152,7 @@ group by 1,2,3
       --this field is not consistently populated and could be overwritten
       ,opp.original_opportunityid__c as original_id_renewed
       ,s.edition
-      ,active_licenses__c as active_licenses
+      ,acct.active_licenses__c as active_licenses
     from {{ ref( 'opportunity') }} opp
     --from analytics.orgm.opportunity opp
     left join (select * from {{ref('subscriptions')}} where status = 'active') s 
