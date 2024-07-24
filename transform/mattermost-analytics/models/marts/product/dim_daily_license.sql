@@ -19,7 +19,7 @@ select
 
     -- Metadata to be used for tests
     , l.expire_at = k.expire_at as is_matching_expiration_date
-    , l.licensed_seats = k.licensed_seats
+    , l.licensed_seats = k.licensed_seats as is_telemetry_matching_license_seats
 from
     {{ ref('int_server_license_daily') }} l
     left join {{ ref('int_known_licenses') }} k on l.license_id = k.license_id
