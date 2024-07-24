@@ -225,6 +225,8 @@ models:
           - relationships:
               to: ref('dim_daily_license')
               field: daily_server_id
+              config:
+                where: "not is_missing_license_data"
       - name: activity_date
         description: The date for the measurement.
         tests:

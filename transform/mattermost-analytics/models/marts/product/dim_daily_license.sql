@@ -18,6 +18,5 @@ select
     , l.expire_at = k.expire_at as is_matching_expiration_date
     , l.licensed_seats = k.licensed_seats as is_matching_license_seats
 from
-    {{ ref('int_server_active_days_spined') }} spine
-    left join {{ ref('int_server_license_daily') }} l on spine.daily_server_id = l.daily_server_id
+    {{ ref('int_server_license_daily') }} l
     left join {{ ref('int_known_licenses') }} k on l.license_id = k.license_id
