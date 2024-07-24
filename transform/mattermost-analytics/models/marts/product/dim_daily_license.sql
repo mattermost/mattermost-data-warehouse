@@ -2,7 +2,7 @@ select
     spine.daily_server_id
     , coalesce(l.license_id, 'Unknown') as license_id
     , coalesce(l.customer_id, 'Unknown') as customer_id
-    , coalesce(l.license_name, 'Unknown') as
+    , coalesce(l.license_name, 'Unknown') as license_name
     , coalesce(l.licensed_seats, 0) as licensed_seats
     , l.issued_at
     , l.starts_at

@@ -420,10 +420,6 @@ models:
         tests:
           - unique
           - not_null
-      - name: server_id
-        description: The server's unique id.
-      - name: license_telemetry_date
-        description: The date the license was reported by telemetry.
       - name: license_id
         description: The license's unique identifier.
       - name: customer_id
