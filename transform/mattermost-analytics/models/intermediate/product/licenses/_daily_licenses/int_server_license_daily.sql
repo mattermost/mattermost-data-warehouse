@@ -33,7 +33,7 @@ with daily_licenses as (
         {{ ref('stg_mattermost2__license') }}
 )
 select
-    {{ dbt_utils.generate_surrogate_key(['server_id', 'license_telemetry_date']) }} AS daily_server_id,
+    {{ dbt_utils.generate_surrogate_key(['server_id', 'license_telemetry_date']) }} AS daily_server_id
     , server_id
     , license_telemetry_date
     , license_id
