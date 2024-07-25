@@ -1,9 +1,9 @@
 version: 2
 
 models:
-  - name: stg_copilot__tracks
+  - name: grp_copilot_tracks
     description: |
-      Reconstructed `tracks` table using custom properties expected to be in the events.
+      Copilot events. Offers a semi-structured view of raw data.
 
     columns:
       - name: event_id
@@ -22,6 +22,8 @@ models:
         description: Timestamp registered by RudderStack when the event was ingested (received).
       - name: timestamp
         description: Timestamp registered by RudderStack when the event occurred refactored to clients clock skew.
+      - name: event_date
+        description: The date that the event was received at.
       - name: feature_name
         description: The name of the feature. Always `Copilot` for Copilot Plugin.
       - name: feature_skus

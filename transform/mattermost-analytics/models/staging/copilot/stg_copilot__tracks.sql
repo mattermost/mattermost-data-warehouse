@@ -9,5 +9,11 @@ select
     -- Backfill past events
     , coalesce(context_feature_name, 'Copilot') as feature_name
     , parse_json(coalesce(context_feature_skus, '[]'))::array as feature_skus
+    -- Extras for group
+    , plugin_version
+    , plugin_build
+    , server_version
+    , bot_id
+    , bot_service_type
 from
     {{ ref ('base_copilot__tracks') }}
