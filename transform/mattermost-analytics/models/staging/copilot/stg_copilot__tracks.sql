@@ -3,7 +3,7 @@ select
     , event as event_table
     , event_text as event_name
     , user_id as server_id
-    , user_actual_id as user_id
+    , coalesce(actual_user_id, user_actual_id) as user_id
     , received_at as received_at
     , timestamp  as timestamp
     -- Backfill past events
