@@ -1,5 +1,7 @@
 {%- set include_columns = [
-    "actual_user_id", "context_feature_name", "context_feature_skus"
+    "actual_user_id", "context_feature_name", "context_feature_skus",
+    -- Extra columns appearing in most tables.
+    "plugin_version", "plugin_build", "server_version", "bot_id", "bot_service_type"
 ] -%}
 
 {%- set relations = get_event_relations('copilot_plugin_prod', database='RAW', min_rows=1) -%}

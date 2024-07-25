@@ -26,6 +26,17 @@ models:
         description: The name of the feature. Always `Copilot` for Copilot Plugin.
       - name: feature_skus
         description: An array with the SKUs that this event may be triggered from.
+      # Extra columns appearing in majority of events
+      - name: plugin_version
+        description: The version of the copilot plugin.
+      - name: plugin_build
+        description: The build of the copilot plugin.
+      - name: server_version
+        description: The version of the server running the copilot plugin.
+      - name: bot_id
+        description: The id of the bot.
+      - name: bot_service_type
+        description: The service type of the bot.
     tests:
       - dbt_utils.expression_is_true:
           name: assert_valid_sku_names
