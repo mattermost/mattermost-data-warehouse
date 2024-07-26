@@ -222,6 +222,11 @@ models:
         tests:
           - unique
           - not_null
+          - relationships:
+              to: ref('dim_daily_license')
+              field: daily_server_id
+              config:
+                where: "not is_missing_license_data"
       - name: activity_date
         description: The date for the measurement.
         tests:
@@ -258,6 +263,10 @@ models:
         description: Whether there were security update server data reported for this server on the given date.
       - name: is_missing_activity_data
         description: Whether server activity data are available for the given date and server id.
+      - name: licensed_seats
+        description: The number of licensed seats, as reported by telemetry.
+      - name: is_missing_license_data
+        description: Whether license data are unavailable for the date.
 
   - name: dim_server_info
     description: Static information for a given server.
@@ -400,3 +409,52 @@ models:
         description: The most recent server id reporting the current installation id.
       - name: count_server_id
         description: The number of unique server ids reporting the current installation id.
+
+
+  - name: dim_daily_license
+    description: | 
+      Summary of license information for each server, based on license reported by telemetry. License is enriched with 
+      CWS data.
+
+    columns:
+      - name: daily_server_id
+        description: A unique id for each server and date
+        tests:
+          - unique
+          - not_null
+      - name: license_id
+        description: The license's unique identifier.
+      - name: customer_id
+        description: The id of the customer assigned to the license. Taken from telemetry data.
+      - name: license_name
+        description: The name of the current license.
+      - name: licensed_seats
+        description: The number of licensed seats for the current license.
+      - name: issued_at
+        description: The date and time the license was issued at.
+      - name: starts_at
+        description: The date and time the license started at.
+      - name: expire_at
+        description: The date and time the license expires at.
+      - name: has_license_expired
+        description: Whether the server reported a license that has expired.
+      - name: is_trial
+        description: Whether the license is a trial license or not.
+      - name: company_name
+        description: The name of the company that this license has been issued for.
+      - name: contact_email
+        description: The email to be used for contacting the license's holder.
+        tags: ['pii']
+      - name: sku_short_name.
+        description: The SKU for the license or `Unknown` if it's not known (i.e. in legacy licenses).
+      - name: source
+        description: |
+          The source of extra data for license. Currently "CWS" for CWS, "Legacy" for legacy license data from S3,
+          or both.
+      - name: is_matching_expiration_date
+        description: |
+          Whether the expiration date reported via telemetry is matching the telemetry date from license information.
+      - name: is_matching_license_seats
+        description: |
+          Whether the licensed seats reported via telemetry is matching the number of licensed seats from license 
+          information.
