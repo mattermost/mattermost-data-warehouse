@@ -44,7 +44,7 @@ select
     , coalesce(cws.company_name, legacy.company_name, sf.account_name) as company_name
     , coalesce(cws.customer_email, legacy.contact_email) as contact_email
     , coalesce(cws.sku_short_name, 'Unknown') as sku_short_name
-    , coalesce(cws.starts_at, l.issued_at, sf.starts_at) as starts_at
+    , coalesce(cws.starts_at, legacy.issued_at, sf.starts_at) as starts_at
     , coalesce(cws.expire_at, legacy.expire_at, sf.expire_at) as expire_at
     , coalesce(cws.is_trial, false) as is_trial
     , coalesce(cws.licensed_seats, sf.seats_from_name) as licensed_seats
