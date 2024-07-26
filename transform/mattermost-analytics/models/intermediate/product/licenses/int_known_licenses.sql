@@ -52,7 +52,7 @@ select
     , cws.licensed_seats as cws_licensed_seats
     , sf.seats_from_name as opportunity_licensed_seats
     -- Metadata related to source of information for each license.
-    , cws_license_id is not null as in_cws
+    , cws.license_id is not null as in_cws
     , legacy.license_id is not null as in_legacy
     , sf.license_id is not null as in_salesforce
 from
