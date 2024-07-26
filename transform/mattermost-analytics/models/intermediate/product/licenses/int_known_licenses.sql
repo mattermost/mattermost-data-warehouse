@@ -1,5 +1,5 @@
--- List of all self-hosted license data from CWS and legacy licenses.
--- Performs deduplication in case a license exists both in CWS and legacy licenses.
+-- List of all self-hosted license data from CWS, Salesforce and legacy licenses.
+-- Performs deduplication in case a license exists in multiple sources.
 -- In case both CWS and legacy data are found, CWS data are preferred.
 with deduped_legacy_licenses as (
     select
@@ -7,20 +7,55 @@ with deduped_legacy_licenses as (
     from
         {{ ref('stg_licenses__licenses') }}
     group by all
+), salesforce_licenses as (
+    select
+        o.opportunity_id,
+        a.account_id,
+        a.name as account_name,
+        license_key__c as license_id,
+        license_start_date__c as starts_at,
+        license_end_date__c as expire_at,
+        seats_from_name
+    from
+        {{ ref('stg_salesforce__opportunity') }} o
+        left join {{ ref('stg_salesforce__account') }} a  on o.account_id = a.account_id
+    where
+        license_key__c is not null
+        and o.stage_name = '6. Closed Won'
+        -- License reported in multiple accounts or license has invalid value - temporarily remove
+        and o.opportunity_id not in (
+            '0063p00000yaF7lAAE',
+            '0063p00000xRa3LAAS',
+            '006S6000003skaPIAQ',
+            '0063p00000zwAvlAAE',
+            '006S6000003tQoKIAU',
+            '006S6000003tXzJIAU',
+            '0063600000g45XMAAY',
+            '0063600000i6ZFsAAM',
+            '006S6000003scWPIAY',
+            '0063p00000yDKMNAA4'
+        )
+        and len(license_key__c) = 26
+    -- In case of a license appearing multiple times, keep the latest opportunity
+    qualify row_number() over (partition by license_key__c order by o.created_at desc) = 1
 )
 select
-    coalesce(cws.license_id, legacy.license_id) as license_id
-    , coalesce(cws.company_name, legacy.company_name) as company_name
+    coalesce(cws.license_id, legacy.license_id, sf.license_id) as license_id
+    , coalesce(cws.company_name, legacy.company_name, sf.account_name) as company_name
     , coalesce(cws.customer_email, legacy.contact_email) as contact_email
     , coalesce(cws.sku_short_name, 'Unknown') as sku_short_name
-    , coalesce(cws.expire_at, legacy.expire_at) as expire_at
+    , coalesce(cws.starts_at, l.issued_at, sf.starts_at) as starts_at
+    , coalesce(cws.expire_at, legacy.expire_at, sf.expire_at) as expire_at
     , coalesce(cws.is_trial, false) as is_trial
-    , case
-        when cws.license_id is not null and legacy.license_id is null then 'CWS'
-        when cws.license_id is null and legacy.license_id is not null then 'Legacy'
-        when cws.license_id is not null and legacy.license_id is not null then 'CWS and Legacy'
-    end as source
-    , coalesce(cws.licensed_seats, 0) as licensed_seats
+    , coalesce(cws.licensed_seats, sf.seats_from_name) as licensed_seats
+    -- Add seats from different sources in order to allow for comparison and detection of inconsistencies
+    , cws.licensed_seats as cws_licensed_seats
+    , sf.seats_from_name as opportunity_licensed_seats
+    -- Metadata related to source of information for each license.
+    , cws_license_id is not null as in_cws
+    , legacy.license_id is not null as in_legacy
+    , sf.license_id is not null as in_salesforce
 from
     {{ ref('stg_cws__license') }} cws
-    full outer join deduped_legacy_licenses legacy on cws.license_id = legacy.license_id
+    full outer join deduped_legacy_licenses legacy using(license_id)
+    full outer join salesforce_licenses sf using(license_id)

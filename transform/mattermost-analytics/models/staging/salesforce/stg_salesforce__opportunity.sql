@@ -159,7 +159,28 @@ renamed as (
         total_net_new_arr__c,
         total_net_new_arr_with_override__c,
         trial_license_id__c,
-        use_case__c
+        use_case__c,
+
+        -- Derived columns
+        replace(
+            coalesce(
+                regexp_substr(o.name, '(\\d+,\\d+)\\s+Total', 1, 1, 'ei', 1),
+                regexp_substr(o.name, '(\\d+)\\s+Total', 1, 1, 'ei', 1),
+                regexp_substr(o.name, '(\\d+,\\d+)\\s+Seats Total', 1, 1, 'ei', 1),
+                regexp_substr(o.name, '(\\d+)\\s+Seats Total', 1, 1, 'ei', 1),
+                regexp_substr(o.name, 'Total\\s+(\\d+,\\d+)', 1, 1, 'ei', 1),
+                regexp_substr(o.name, 'Total\\s+(\\d+)', 1, 1, 'ei', 1),
+                regexp_substr(o.name, '(\\d+,\\d+)\\s+Seat', 1, 1, 'ei', 1),
+                regexp_substr(o.name, '(\\d+)\\s+Seat', 1, 1, 'ei', 1),
+                regexp_substr(o.name, '(\\d+) - Seat', 1, 1, 'ei', 1),
+                regexp_substr(o.name, '(\\d+)_seat', 1, 1, 'ei', 1),
+                regexp_substr(o.name, 'qty:(\\d+)', 1, 1, 'ei', 1),
+                regexp_substr(o.name, '(\\d+)\\s+Users', 1, 1, 'ei', 1),
+                regexp_substr(o.name, '(\\d+)-Users', 1, 1, 'ei', 1),
+                regexp_substr(o.name, 'E10/(\\d+)', 1, 1, 'ei', 1),
+                regexp_substr(o.name, 'E10-(\\d+)', 1, 1, 'ei', 1)
+            ), ','
+        )::int as seats_from_name
 
         -- Stitch columns omitted
 
