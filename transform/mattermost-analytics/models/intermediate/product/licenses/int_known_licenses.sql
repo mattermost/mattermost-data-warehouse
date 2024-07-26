@@ -1,4 +1,4 @@
--- List of all self-hosted license data from CWS, Salesforce and legacy licenses.
+-- List of all self-hosted license data from CWS, Salesforce, telemetry and legacy licenses.
 -- Performs deduplication in case a license exists in multiple sources.
 -- In case both CWS and legacy data are found, CWS data are preferred.
 with deduped_legacy_licenses as (
@@ -48,9 +48,16 @@ select
     , coalesce(cws.expire_at, legacy.expire_at, sf.expire_at) as expire_at
     , coalesce(cws.is_trial, false) as is_trial
     , coalesce(cws.licensed_seats, sf.seats_from_name) as licensed_seats
-    -- Add seats from different sources in order to allow for comparison and detection of inconsistencies
+    -- Raw data from different sources in order to allow for comparison and detection of inconsistencies
     , cws.licensed_seats as cws_licensed_seats
     , sf.seats_from_name as opportunity_licensed_seats
+    , cws.starts_at as cws_starts_at
+    , legacy.issued_at as legacy_issued_at
+    , sf.starts_at as salesforce_starts_at
+    , cws.starts_at as cws_expire_at
+    , legacy.issued_at as legacy_expire_at
+    , sf.starts_at as cws_expire_at
+
     -- Metadata related to source of information for each license.
     , cws.license_id is not null as in_cws
     , legacy.license_id is not null as in_legacy
