@@ -50,7 +50,7 @@ renamed as (
         amount_in_pipeline__c,
         available_renewal__c,
         billing_city__c,
-        billing_country__c,|
+        billing_country__c,
         billing_country_code__c,
         billing_partner_name__c,
         billing_state_province__c,
