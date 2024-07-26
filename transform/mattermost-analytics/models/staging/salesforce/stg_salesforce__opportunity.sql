@@ -164,21 +164,21 @@ renamed as (
         -- Derived columns
         replace(
             coalesce(
-                regexp_substr(o.name, '(\\d+,\\d+)\\s+Total', 1, 1, 'ei', 1),
-                regexp_substr(o.name, '(\\d+)\\s+Total', 1, 1, 'ei', 1),
-                regexp_substr(o.name, '(\\d+,\\d+)\\s+Seats Total', 1, 1, 'ei', 1),
-                regexp_substr(o.name, '(\\d+)\\s+Seats Total', 1, 1, 'ei', 1),
-                regexp_substr(o.name, 'Total\\s+(\\d+,\\d+)', 1, 1, 'ei', 1),
-                regexp_substr(o.name, 'Total\\s+(\\d+)', 1, 1, 'ei', 1),
-                regexp_substr(o.name, '(\\d+,\\d+)\\s+Seat', 1, 1, 'ei', 1),
-                regexp_substr(o.name, '(\\d+)\\s+Seat', 1, 1, 'ei', 1),
-                regexp_substr(o.name, '(\\d+) - Seat', 1, 1, 'ei', 1),
-                regexp_substr(o.name, '(\\d+)_seat', 1, 1, 'ei', 1),
-                regexp_substr(o.name, 'qty:(\\d+)', 1, 1, 'ei', 1),
-                regexp_substr(o.name, '(\\d+)\\s+Users', 1, 1, 'ei', 1),
-                regexp_substr(o.name, '(\\d+)-Users', 1, 1, 'ei', 1),
-                regexp_substr(o.name, 'E10/(\\d+)', 1, 1, 'ei', 1),
-                regexp_substr(o.name, 'E10-(\\d+)', 1, 1, 'ei', 1)
+                regexp_substr(name, '(\\d+,\\d+)\\s+Total', 1, 1, 'ei', 1),
+                regexp_substr(name, '(\\d+)\\s+Total', 1, 1, 'ei', 1),
+                regexp_substr(name, '(\\d+,\\d+)\\s+Seats Total', 1, 1, 'ei', 1),
+                regexp_substr(name, '(\\d+)\\s+Seats Total', 1, 1, 'ei', 1),
+                regexp_substr(name, 'Total\\s+(\\d+,\\d+)', 1, 1, 'ei', 1),
+                regexp_substr(name, 'Total\\s+(\\d+)', 1, 1, 'ei', 1),
+                regexp_substr(name, '(\\d+,\\d+)\\s+Seat', 1, 1, 'ei', 1),
+                regexp_substr(name, '(\\d+)\\s+Seat', 1, 1, 'ei', 1),
+                regexp_substr(name, '(\\d+) - Seat', 1, 1, 'ei', 1),
+                regexp_substr(name, '(\\d+)_seat', 1, 1, 'ei', 1),
+                regexp_substr(name, 'qty:(\\d+)', 1, 1, 'ei', 1),
+                regexp_substr(name, '(\\d+)\\s+Users', 1, 1, 'ei', 1),
+                regexp_substr(name, '(\\d+)-Users', 1, 1, 'ei', 1),
+                regexp_substr(name, 'E10/(\\d+)', 1, 1, 'ei', 1),
+                regexp_substr(name, 'E10-(\\d+)', 1, 1, 'ei', 1)
             ), ','
         )::int as seats_from_name
 
