@@ -176,12 +176,6 @@ models:
           is automatically set to `false`. If no license is found, then it's automatically set to false.
         tests:
           - not_null
-      - name: source
-        description: |
-          The source of the license data. One of `CWS`, `Legacy`,  `CWS and Legacy`, 'Stripe'.
-        tests:
-          - accepted_values:
-              values: ['CWS', 'Legacy', 'CWS and Legacy', 'Stripe']
 
       - name: found_matching_license_data
         description: | 
