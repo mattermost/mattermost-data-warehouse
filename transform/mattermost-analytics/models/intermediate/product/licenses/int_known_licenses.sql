@@ -78,7 +78,7 @@ select
     , sf.seats_from_name as opportunity_licensed_seats
     , t.licensed_seats as telemetry_licensed_sesats
     , cws.starts_at as cws_starts_at
-    , legacy.starts_at as legacy_starts_at
+    , legacy.issued_at as legacy_starts_at
     , sf.starts_at as salesforce_starts_at
     , t.starts_at as telemetry_starts_at
     , cws.expire_at as cws_expire_at
