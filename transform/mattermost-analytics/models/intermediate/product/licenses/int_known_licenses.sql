@@ -69,7 +69,7 @@ select
     , coalesce(cws.customer_email, legacy.contact_email) as contact_email
     , coalesce(
         cws.sku_short_name,
-        iff(f.license_name in ('E10', 'E20',  'starter', 'professional', 'enterprise'), f.license_name, null),
+        iff(t.license_name in ('E10', 'E20',  'starter', 'professional', 'enterprise'), t.license_name, null),
         'Unknown'
     ) as sku_short_name
     , t.license_name
