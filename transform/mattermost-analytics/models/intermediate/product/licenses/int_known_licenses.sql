@@ -71,11 +71,11 @@ select
     , t.license_name
     , coalesce(cws.starts_at, legacy.issued_at, sf.starts_at, t.starts_at) as starts_at
     , coalesce(cws.expire_at, legacy.expire_at, sf.expire_at, t.expire_at) as expire_at
-    , coalesce(cws.is_trial, false) as is_trial
+    , cws.is_trial as is_trial
     , coalesce(cws.licensed_seats, sf.seats_from_name, t.licensed_seats) as licensed_seats
     -- Raw data from different sources in order to allow for comparison and detection of inconsistencies
     , cws.licensed_seats as cws_licensed_seats
-    , sf.seats_from_name as opportunity_licensed_seats
+    , sf.seats_from_name as salesforce_licensed_seats
     , t.licensed_seats as telemetry_licensed_sesats
     , cws.starts_at as cws_starts_at
     , legacy.issued_at as legacy_starts_at

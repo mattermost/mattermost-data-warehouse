@@ -6,11 +6,11 @@ select
     , license_name
     , starts_at
     , expire_at
-    , expire_at > current_date as is_expired
+    , expire_at < current_date as has_expired
     , is_trial
     , licensed_seats
     , cws_licensed_seats
-    , opportunity_licensed_seats
+    , salesforce_licensed_seats
     , telemetry_licensed_sesats
     , cws_starts_at
     , legacy_starts_at
