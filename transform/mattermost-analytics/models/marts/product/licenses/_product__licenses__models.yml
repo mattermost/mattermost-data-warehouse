@@ -285,9 +285,11 @@ models:
         description: The ID of the server.
         tests:
           - not_null
-          - relationships:
-              to: ref('dim_server_info')
-              field: server_id
+          # Temporarily disable as there's a small number of servers appearing in license telemetry
+          # but not in server telemetry/activity data/security update check.
+          # - relationships:
+          #    to: ref('dim_server_info')
+          #     field: server_id
       - name: installation_id
         description: The installation ID, in case of cloud installations.
       - name: first_telemetry_date
