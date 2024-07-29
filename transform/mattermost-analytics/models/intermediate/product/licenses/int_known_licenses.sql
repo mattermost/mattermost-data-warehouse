@@ -7,7 +7,25 @@ with deduped_legacy_licenses as (
     from
         {{ ref('stg_licenses__licenses') }}
     group by all
-), salesforce_licenses as (
+), telemetry_licenses as (
+    select
+        license_id,
+        , min(license_name) as license_name
+        , min(licensed_seats) as licensed_seats
+        , min(issued_at) as issued_at
+        , min(starts_at) as starts_at
+        , min(expire_at) as expire_at
+    from
+        {{ ref('int_server_license_daily') }}
+    group by license_id
+    -- Filter out licenses with ambiguous data
+    having
+        count(distinct licensed_seats) = 1
+        and count(distinct starts_at) = 1
+        and count(distinct expire_at) = 1
+        and count(distinct customer_id) = 1
+
+) , salesforce_licenses as (
     select
         o.opportunity_id,
         a.account_id,
@@ -40,29 +58,34 @@ with deduped_legacy_licenses as (
     qualify row_number() over (partition by license_key__c order by o.created_at desc) = 1
 )
 select
-    coalesce(cws.license_id, legacy.license_id, sf.license_id) as license_id
+    coalesce(cws.license_id, legacy.license_id, sf.license_id, t.license_id) as license_id
     , coalesce(cws.company_name, legacy.company_name, sf.account_name) as company_name
     , coalesce(cws.customer_email, legacy.contact_email) as contact_email
-    , coalesce(cws.sku_short_name, 'Unknown') as sku_short_name
-    , coalesce(cws.starts_at, legacy.issued_at, sf.starts_at) as starts_at
-    , coalesce(cws.expire_at, legacy.expire_at, sf.expire_at) as expire_at
+    , coalesce(cws.sku_short_name, t.license_name, 'Unknown') as license_name
+    , coalesce(cws.starts_at, legacy.issued_at, sf.starts_at, t.starts_at) as starts_at
+    , coalesce(cws.expire_at, legacy.expire_at, sf.expire_at, t.expire-at) as expire_at
     , coalesce(cws.is_trial, false) as is_trial
-    , coalesce(cws.licensed_seats, sf.seats_from_name) as licensed_seats
+    , coalesce(cws.licensed_seats, sf.seats_from_name, t.licensed_seats) as licensed_seats
     -- Raw data from different sources in order to allow for comparison and detection of inconsistencies
     , cws.licensed_seats as cws_licensed_seats
     , sf.seats_from_name as opportunity_licensed_seats
+    , t.licensed_seats as telemetry_licensed_sesats
     , cws.starts_at as cws_starts_at
     , legacy.issued_at as legacy_issued_at
     , sf.starts_at as salesforce_starts_at
-    , cws.starts_at as cws_expire_at
-    , legacy.issued_at as legacy_expire_at
-    , sf.starts_at as cws_expire_at
+    , t.starts_at as telemetry_starts_at
+    , cws.expire_at as cws_expire_at
+    , legacy.expire_at as legacy_expire_at
+    , sf.expire_at as cws_expire_at
+    , t.expire_at as telemetry_expire_at
 
     -- Metadata related to source of information for each license.
     , cws.license_id is not null as in_cws
     , legacy.license_id is not null as in_legacy
     , sf.license_id is not null as in_salesforce
+    , t.license_id is not null as in_telemetry
 from
     {{ ref('stg_cws__license') }} cws
     full outer join deduped_legacy_licenses legacy using(license_id)
     full outer join salesforce_licenses sf using(license_id)
+    full outer join telemetry_licenses t using(license_id)
