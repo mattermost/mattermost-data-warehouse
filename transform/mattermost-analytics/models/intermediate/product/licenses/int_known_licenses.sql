@@ -67,7 +67,8 @@ select
     coalesce(cws.license_id, legacy.license_id, sf.license_id, t.license_id) as license_id
     , coalesce(cws.company_name, legacy.company_name, sf.account_name) as company_name
     , coalesce(cws.customer_email, legacy.contact_email) as contact_email
-    , coalesce(cws.sku_short_name, t.license_name, 'Unknown') as license_name
+    , coalesce(cws.sku_short_name, 'Unknown') as sku_short_name
+    , t.license_name
     , coalesce(cws.starts_at, legacy.issued_at, sf.starts_at, t.starts_at) as starts_at
     , coalesce(cws.expire_at, legacy.expire_at, sf.expire_at, t.expire_at) as expire_at
     , coalesce(cws.is_trial, false) as is_trial
