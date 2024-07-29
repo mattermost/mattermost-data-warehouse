@@ -283,6 +283,11 @@ models:
               field: license_id
       - name: server_id
         description: The ID of the server.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_server_info')
+              field: server_id
       - name: installation_id
         description: The installation ID, in case of cloud installations.
       - name: first_telemetry_date
