@@ -213,8 +213,13 @@ models:
           The contact email attached to the license. Available only if license information is reported in CWS or legacy.
         tags: ["pii"]
       - name: sku_short_name
-        description: | The SKU short name of the license. Available only if license information is reported in CWS or
-          telemetry and is one of the expected valid values ('E10', 'E20',  'starter', 'professional', 'enterprise').
+        description: | 
+          The SKU short name of the license. Available only if license information is reported in CWS or telemetry and 
+          is one of the expected valid values ('E10', 'E20',  'starter', 'professional', 'enterprise'). 'Unknown' if a 
+          value is not found.
+        tests:
+          - accepted_values:
+              values: ['E10', 'E20',  'starter', 'professional', 'enterprise', 'Unknown']
       - name: license_name
         description: The name of the license. Available only if license information is reported in telemetry.
       - name: starts_at
