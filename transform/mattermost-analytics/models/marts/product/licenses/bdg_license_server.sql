@@ -1,5 +1,5 @@
 -- Bridge table to map license ID to server ID
-with filtered_licenses (
+with filtered_licenses as (
 
     select
         license_id
