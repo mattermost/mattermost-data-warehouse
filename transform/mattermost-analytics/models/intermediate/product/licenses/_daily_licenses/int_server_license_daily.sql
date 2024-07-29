@@ -1,3 +1,7 @@
+{{config({
+    "materialized": 'table'
+  })
+}}
 with daily_licenses as (
     select
         server_id
