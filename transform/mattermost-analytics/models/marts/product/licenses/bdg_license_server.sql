@@ -24,4 +24,4 @@ select
 from
     {{ ref('int_server_license_daily') }} l
     join filtered_licenses fl on l.license_id = fl.license_id
-group by license_id, server_id, installation_id
+group by l.license_id, l.server_id, l.installation_id
