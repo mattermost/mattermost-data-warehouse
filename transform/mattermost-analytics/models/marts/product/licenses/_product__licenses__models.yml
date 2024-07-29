@@ -268,13 +268,13 @@ models:
         tests:
           - not_null
           - unique
-          - relationships:
-              to: ref('fct_licenses')
-              field: license_id
       - name: license_id
         description: The ID of the license.
         tests:
           - not_null
+          - relationships:
+              to: ref('fct_licenses')
+              field: license_id
       - name: server_id
         description: The ID of the server.
       - name: installation_id
