@@ -2,14 +2,17 @@
 -- Performs deduplication in case a license exists in multiple sources.
 -- In case both CWS and legacy data are found, CWS data are preferred.
 with deduped_legacy_licenses as (
+
     select
         {{ dbt_utils.star(ref('stg_licenses__licenses')) }}
     from
         {{ ref('stg_licenses__licenses') }}
     group by all
+
 ), telemetry_licenses as (
-    select
-        license_id,
+
+   select
+        license_id
         , min(license_name) as license_name
         , min(licensed_seats) as licensed_seats
         , min(issued_at) as issued_at
@@ -26,6 +29,7 @@ with deduped_legacy_licenses as (
         and count(distinct customer_id) = 1
 
 ) , salesforce_licenses as (
+
     select
         o.opportunity_id,
         a.account_id,
@@ -56,7 +60,9 @@ with deduped_legacy_licenses as (
         and len(license_key__c) = 26
     -- In case of a license appearing multiple times, keep the latest opportunity
     qualify row_number() over (partition by license_key__c order by o.created_at desc) = 1
+
 )
+
 select
     coalesce(cws.license_id, legacy.license_id, sf.license_id, t.license_id) as license_id
     , coalesce(cws.company_name, legacy.company_name, sf.account_name) as company_name
