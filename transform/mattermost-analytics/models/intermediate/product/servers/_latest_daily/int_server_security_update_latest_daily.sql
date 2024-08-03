@@ -20,7 +20,7 @@ select
     count(distinct version_full) over (partition by server_id, server_date) as count_reported_versions,
     array_unique_agg(version_full) over (partition by server_id, server_date) as reported_versions,
     count_teams,
-    active_users,
+    count_users,
     count_active_users
 from
     {{ ref('stg_diagnostics__log_entries') }}

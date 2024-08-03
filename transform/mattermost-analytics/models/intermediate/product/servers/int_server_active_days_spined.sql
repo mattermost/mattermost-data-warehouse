@@ -113,7 +113,7 @@ select
     coalesce(activity.monthly_active_users, legacy_activity.monthly_active_users, 0) as monthly_active_users,
     coalesce(activity.count_registered_users, legacy_activity.count_registered_users, 0) as count_registered_users,
     coalesce(activity.count_registered_deactivated_users, legacy_activity.count_registered_deactivated_users, 0) as count_registered_deactivated_users,
-    coalesce(activity.count_registered_users, legacy_activity.count_registered_users, 0) - coalesce(activity.count_registered_deactivated_users, legacy_activity.count_registered_deactivated_users, d.active_users, 0) as count_registered_active_users,
+    coalesce(activity.count_registered_users, legacy_activity.count_registered_users, 0) - coalesce(activity.count_registered_deactivated_users, legacy_activity.count_registered_deactivated_users, d.count_users, 0) as count_registered_active_users,
 
     coalesce(activity.count_public_channels, legacy_activity.count_public_channels, 0) as count_public_channels,
     coalesce(activity.count_private_channels, legacy_activity.count_private_channels, 0) as count_private_channels,
