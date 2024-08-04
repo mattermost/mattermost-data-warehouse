@@ -249,6 +249,8 @@ models:
         description: The method used for installing the Mattermost server (docker, deb package, ...).
       - name: registered_user_bin
         description: The group the server belongs based on the number of active (non deleted) registered users.
+      - name: daily_active_users
+        description: The number of daily active users.
       - name: count_registered_active_users
         description: The number of active (not deleted) registered users.
       - name: is_enterprise_ready
