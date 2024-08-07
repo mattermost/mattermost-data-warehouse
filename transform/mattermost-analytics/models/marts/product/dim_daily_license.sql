@@ -12,7 +12,9 @@ select
     , coalesce(k.company_name, 'Unknown') as company_name
     , coalesce(k.contact_email, 'Unknown') as contact_email
     , coalesce(k.sku_short_name, 'Unknown') as sku_short_name
-    , coalesce(k.source, 'None') as source
+    , coalesce(k.in_cws, false) as in_cws
+    , coalesce(k.in_legacy, false) as in_legacy
+    , coalesce(k.in_salesforce, false) as in_salesforce
 
     -- Metadata to be used for tests
     , l.expire_at = k.expire_at as is_matching_expiration_date
