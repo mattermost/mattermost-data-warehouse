@@ -80,7 +80,7 @@ select
     -- Raw data from different sources in order to allow for comparison and detection of inconsistencies
     , cws.licensed_seats as cws_licensed_seats
     , sf.seats_from_name as salesforce_licensed_seats
-    , t.licensed_seats as telemetry_licensed_sesats
+    , t.licensed_seats as telemetry_licensed_seats
     , cws.starts_at as cws_starts_at
     , legacy.issued_at as legacy_starts_at
     , sf.starts_at as salesforce_starts_at

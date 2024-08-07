@@ -11,7 +11,7 @@ select
     , licensed_seats
     , cws_licensed_seats
     , salesforce_licensed_seats
-    , telemetry_licensed_sesats
+    , telemetry_licensed_seats
     , cws_starts_at
     , legacy_starts_at
     , salesforce_starts_at
