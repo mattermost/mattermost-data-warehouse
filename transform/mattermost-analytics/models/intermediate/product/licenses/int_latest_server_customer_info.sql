@@ -72,7 +72,6 @@ select
         , l.sku_short_name as license_sku
         , l.expire_at as license_expire_at
         , l.is_trial
-        , l.source as license_source
         , c.company_name as cloud_company_name
         , c.contact_email as cloud_contact_email
         , c.plan_name as cloud_plan_name

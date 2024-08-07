@@ -1386,6 +1386,9 @@ models:
       - name: use_case__c
         description: ""
 
+      - name: seats_from_name
+        description: Number of seats, as extracted from the opportunity's name.
+
   - name: stg_salesforce__opportunity_line_item
     description: |
       Opportunity Line Items are the Products which are associated to an Opportunity.
