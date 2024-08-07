@@ -8,7 +8,6 @@ select
     , license_expire_at
     , coalesce(is_trial, false) as is_trial_license
     , cloud_plan_name
-    , coalesce(license_source, cloud_source) as source
     -- Metadata
     , license_id is not null as found_matching_license_data
     , installation_id is not null as found_matching_stripe_entry
