@@ -13,7 +13,7 @@ select
     , date_day = last_day(date_day::date, 'week') as is_last_day_of_week
     , date_day = last_day_of_month as is_last_day_of_month
     {% for day in days %}
-    , case
+    , date_day = case
         when date_trunc('month', date_day) = date_trunc('month', current_date) and dayname(current_date) = '{{ day }}' then current_date
         when date_trunc('month', date_day) = date_trunc('month', current_date) and dayname(current_date) <> '{{ day }}' then previous_day(current_date, '{{ day }}')
         else previous_day(last_day_of_month, '{{ day }}')
