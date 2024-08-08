@@ -54,6 +54,9 @@ models:
     marts:
       +materialized: table
       tags: ['marts']
+      common:
+        schema: mart_common
+        tags: ['nightly', 'common']
       data_eng:
         schema: mart_data_eng
         tags: ['nightly', 'data-eng']
