@@ -16,8 +16,8 @@ select
     , case
         when date_trunc('month', date_day) = date_trunc('month', current_date) and dayname(current_date) = '{{ day }}' then current_date
         when date_trunc('month', date_day) = date_trunc('month', current_date) and dayname(current_date) <> '{{ day }}' then previous_day(current_date, '{{ day }}')
-        else previous_day(last_day_of_month, 'th')
+        else previous_day(last_day_of_month, '{{ day }}')
     end as is_last_{{ day.lower() }}_of_month
     {% endfor %}
 from
-    {{ ref('telemetry_days') }}``
+    {{ ref('telemetry_days') }}
