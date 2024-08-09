@@ -12,7 +12,8 @@ WHERE
         'd\';waitfor/**/delay\'0:0:0\'/**/--/**/',
         's\');waitfor/**/delay\'0:0:0\'/**/--/**/',
         'v\';waitfor/**/delay\'0:0:2\'/**/--/**/',
-        'o\');waitfor/**/delay\'0:0:0\'/**/--/**/'
+        'o\');waitfor/**/delay\'0:0:0\'/**/--/**/',
+        'z\';waitfor/**/delay\'0:0:0\'/**/--/**/'
     )
 {% if is_incremental() %}
    and received_at > (SELECT MAX(received_at) FROM {{ this }})
