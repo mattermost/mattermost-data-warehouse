@@ -1,6 +1,7 @@
 {{config({
     "materialized": "table",
     "schema": "blp"
+    "tags":["nightly"],
   })
 }}
 

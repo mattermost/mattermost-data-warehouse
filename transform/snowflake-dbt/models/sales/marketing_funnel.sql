@@ -1,7 +1,8 @@
 {{
   config({
     "materialized": 'table',
-    "schema": "sales"
+    "schema": "sales",
+    "tags":["nightly"]
   })
 }}
 
