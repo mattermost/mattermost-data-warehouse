@@ -2,7 +2,8 @@
     config({
         "materialized": "incremental",
         "cluster_by": ['event_date'],
-        "incremental_strategy": "append",
+        "unique_key": 'id',
+        "incremental_strategy": "delete+insert",
         "snowflake_warehouse": "transform_l"
     })
 }}
@@ -29,9 +30,8 @@ performance_prod AS (
 {% if is_incremental() %}
     WHERE received_at > (SELECT MAX(received_at) FROM {{ this }} 
     WHERE _source_relation = 'int_mm_telemetry_prod_performance_events')  
-
 {% endif %}
 )
-  SELECT * FROM performance_rc
-  UNION ALL
-  SELECT * FROM performance_prod
+SELECT * FROM performance_rc
+UNION ALL
+SELECT * FROM performance_prod
