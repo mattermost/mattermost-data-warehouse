@@ -109,15 +109,15 @@ select
     )) as count_reported_versions,
 
     -- Activity data
-    coalesce(activity.daily_active_users, legacy_activity.daily_active_users, 0) as daily_active_users,
+    coalesce(activity.daily_active_users, legacy_activity.daily_active_users, d.count_active_users, 0) as daily_active_users,
     coalesce(activity.monthly_active_users, legacy_activity.monthly_active_users, 0) as monthly_active_users,
     coalesce(activity.count_registered_users, legacy_activity.count_registered_users, 0) as count_registered_users,
     coalesce(activity.count_registered_deactivated_users, legacy_activity.count_registered_deactivated_users, 0) as count_registered_deactivated_users,
-    coalesce(activity.count_registered_users, legacy_activity.count_registered_users, 0) - coalesce(activity.count_registered_deactivated_users, legacy_activity.count_registered_deactivated_users, 0) as count_registered_active_users,
+    coalesce(activity.count_registered_users, legacy_activity.count_registered_users, 0) - coalesce(activity.count_registered_deactivated_users, legacy_activity.count_registered_deactivated_users, d.count_users, 0) as count_registered_active_users,
 
     coalesce(activity.count_public_channels, legacy_activity.count_public_channels, 0) as count_public_channels,
     coalesce(activity.count_private_channels, legacy_activity.count_private_channels, 0) as count_private_channels,
-    coalesce(activity.count_teams, legacy_activity.count_teams, 0) as count_teams,
+    coalesce(activity.count_teams, legacy_activity.count_teams, d.count_teams, 0) as count_teams,
     coalesce(activity.count_slash_commands, legacy_activity.count_slash_commands, 0) as count_slash_commands,
     coalesce(activity.count_direct_message_channels, legacy_activity.count_direct_message_channels, 0) as count_direct_message_channels,
     coalesce(activity.count_posts, legacy_activity.count_posts, 0) as count_posts,

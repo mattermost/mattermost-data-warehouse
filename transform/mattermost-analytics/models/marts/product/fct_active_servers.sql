@@ -21,6 +21,7 @@ select
     end as registered_user_bin,
 
     -- Facts
+    s.daily_active_users,
     s.count_registered_active_users,
     s.is_enterprise_ready,
     s.count_reported_versions,
