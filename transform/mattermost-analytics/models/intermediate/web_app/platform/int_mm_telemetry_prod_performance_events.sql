@@ -11,13 +11,8 @@ SELECT
 FROM
     {{ ref('stg_mm_telemetry_prod__performance_events') }}
 WHERE
-    id not in (
-        'd\';waitfor/**/delay\'0:0:0\'/**/--/**/',
-        's\');waitfor/**/delay\'0:0:0\'/**/--/**/',
-        'v\';waitfor/**/delay\'0:0:2\'/**/--/**/',
-        'o\');waitfor/**/delay\'0:0:0\'/**/--/**/',
-        'z\';waitfor/**/delay\'0:0:0\'/**/--/**/'
-    )
+    -- Exclude non-UUID strings
+    not id ilike '%waitfor%'
 {% if is_incremental() %}
     and received_at > (SELECT MAX(received_at) FROM {{ this }})
 {% endif %}
