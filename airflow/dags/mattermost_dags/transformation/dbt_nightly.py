@@ -69,7 +69,7 @@ dbt_run_cloud_nightly = KubernetesPodOperator(
         SNOWFLAKE_TRANSFORM_SCHEMA,
         SSH_KEY,
     ],
-    env_vars={**env_vars, "DBT_JOB_TIMEOUT": "4200"},
+    env_vars={**env_vars, "DBT_JOB_TIMEOUT": "4800"},
     arguments=["python -m utils.run_dbt_cloud_job 19427 \"Airflow dbt nightly\""],
     dag=dag,
 )
