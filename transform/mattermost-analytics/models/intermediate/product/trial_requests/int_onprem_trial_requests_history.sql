@@ -21,6 +21,9 @@ select
     , tr.start_at::date as created_at
     , tr.start_at
     , tr.end_at
+    , null as product_id
+    , null as converted_to_paid_at
+    , null as status
     , case
         when lower(site_url) = 'https://mattermost.com' then 'Website'
         else 'In-Product'
