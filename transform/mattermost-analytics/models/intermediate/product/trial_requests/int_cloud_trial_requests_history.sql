@@ -21,6 +21,7 @@ subscriptions as (
         , trial_end_at
         , product_id
         , created_at
+        , converted_to_paid_at
         , status
     from
         {{ ref('stg_stripe__subscriptions') }}
