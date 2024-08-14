@@ -9,6 +9,7 @@ with deduped_trial_requests as (
 select
     -- Normalize columns appearing both in on-prem and cloud trials.
     'cws:' || tr.trial_request_id as trial_request_id
+    , tr.server_id
     , lower(coalesce(tr.contact_email, tr.email)) as trial_email
     , tr.contact_email
     , tr.email as user_email

@@ -27,6 +27,7 @@ with all_trial_requests as (
 )
 select
     tr.trial_request_id
+    , tr.server_id
     , tr.trial_email
     , tr.contact_email
     , tr.user_email
