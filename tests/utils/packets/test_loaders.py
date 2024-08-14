@@ -172,4 +172,4 @@ def test_load_with_missing_questions_in_responses():
         load_user_survey(SURVEY_DIR / 'valid_metadata.json', SURVEY_DIR / 'responses_small.csv')
 
     # THEN: expect proper issue to be raised
-    assert str(exc.value) == 'Feedback submitted before survey start time'
+    assert str(exc.value) == 'Questions appearing in metadata are missing from metadata file'

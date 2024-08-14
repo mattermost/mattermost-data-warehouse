@@ -45,4 +45,7 @@ def load_user_survey(survey_metadata_path: str | os.PathLike, survey_data_path: 
     if (df[UserSurveyFixedColumns.submitted_at.value].dt.date < metadata.start_time).any():
         raise ValueError('Feedback submitted before survey start time')
 
+    if set(df['Question'].unique().tolist()) != set(question_types.keys()):
+        raise ValueError('Questions appearing in metadata are missing from metadata file')
+
     return df
