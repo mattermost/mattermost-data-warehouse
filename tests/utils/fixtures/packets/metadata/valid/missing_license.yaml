@@ -1,0 +1,8 @@
+version: 1
+type: plugin-packet
+generated_at: 1721728796871
+server_version: 9.11.0
+server_id: p7j6wmx6269jan410vjrylfb2u
+extras:
+  plugin_id: com.mattermost.plugin
+  plugin_version: 1.0.1
