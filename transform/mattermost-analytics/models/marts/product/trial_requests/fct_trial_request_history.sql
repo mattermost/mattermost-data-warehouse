@@ -26,25 +26,26 @@ with all_trial_requests as (
     group by all
 )
 select
-    Ytr.trial_request_id
-    Y, tr.trial_email
-    Y, tr.contact_email
-    Y, tr.user_email
-    Y, tr.email_domain
-    Y, tr.first_name
-    Y, tr.last_name
-    Y, tr.company_name
-    Y, tr.site_url
-    Y, tr.created_at
-    Y, tr.start_at
-    Y, tr.end_at
-    Y, tr.request_source
-    Y, tr.request_type
-    Y, tr.stripe_product_id
-    Y, tr.converted_to_paid_at
-    Y, tr.status
-    Y, agg.first_trial_start_at
-    Y, agg.last_trial_start_at
+    tr.trial_request_id
+    , tr.server_id
+    , tr.trial_email
+    , tr.contact_email
+    , tr.user_email
+    , tr.email_domain
+    , tr.first_name
+    , tr.last_name
+    , tr.company_name
+    , tr.site_url
+    , tr.created_at
+    , tr.start_at
+    , tr.end_at
+    , tr.request_source
+    , tr.request_type
+    , tr.stripe_product_id
+    , tr.converted_to_paid_at
+    , tr.status
+    , agg.first_trial_start_at
+    , agg.last_trial_start_at
     , agg.num_company_types
 {% for company_type in company_types %}
     , agg.marked_as_{{ company_type.lower().replace('-', '_') }}
