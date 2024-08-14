@@ -19,8 +19,10 @@ subscriptions as (
         , customer_id
         , trial_start_at
         , trial_end_at
-        , product_id
+        , product_id as stripe_product_id
         , created_at
+        , converted_to_paid_at
+        , status
     from
         {{ ref('stg_stripe__subscriptions') }}
 )
@@ -38,6 +40,9 @@ select
     , subscriptions.created_at::date as created_at
     , subscriptions.trial_start_at as start_at
     , subscriptions.trial_end_at as end_at
+    , subscriptions.stripe_product_id as stripe_product_id
+    , subscriptions.converted_to_paid_at as converted_to_paid_at
+    , subscriptions.status as status
     , 'Stripe' as request_source
     , 'cloud' as request_type
 from
