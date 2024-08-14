@@ -40,7 +40,7 @@ select
     , tr.end_at
     , tr.request_source
     , tr.request_type
-    , tr.product_id
+    , tr.stripe_product_id
     , tr.converted_to_paid_at
     , tr.status
     , agg.first_trial_start_at
