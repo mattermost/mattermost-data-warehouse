@@ -13,6 +13,8 @@ models:
         tests:
           - unique
           - not_null
+      - name: server_id
+        description: The unique identifier of the server
       - name: trial_email
         description: |
           The email requesting the trial. It is the contact email provided in the signup form. If not filled in, it's 
@@ -53,6 +55,12 @@ models:
         description: The source of the request. Can be `In-Product`, `Website` or `Stripe`.
       - name: request_type
         description: The type of the request. Can be `cloud` or `in-product`.
+      - name: stripe_product_id
+        description: id of the product (from Stripe).
+      - name: converted_to_paid_at
+        description: The timestamp when the subscription was converted to paid status.
+      - name: status
+        description: The status of the subscription.
       - name: first_trial_start_at
         description: The start time of the first trial for the given `trial_email`.
       - name: last_trial_start_at

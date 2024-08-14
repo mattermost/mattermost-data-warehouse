@@ -13,8 +13,6 @@ models:
         tests:
           - unique
           - not_null
-      - name: server_id
-        description: The unique identifier for the server
       - name: trial_email
         description: The trial's email. Contact email is preferred if present, otherwise the user's email is used.
       - name: server_id
