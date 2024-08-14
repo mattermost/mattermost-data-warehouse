@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: fct_onprem_trial_requests_history
-    desription: |
+    description: |
       This model contains the full history of on-prem product trial requests, as well as some extra metadata. Contains 
       trial requests both from in-app and the website. Note that multiple trial requests can be made by the same user.
       This model doesn't filter duplicate trial requests.
@@ -89,4 +89,94 @@ models:
       - name: marked_as_mme
         description: Whether the trial request is marked as belonging to a MME organization.
       - name: marked_as_non_profit
-        description: Whether the trial request is marked as belonging to a Non-Profit organization.-
+        description: Whether the trial request is marked as belonging to a Non-Profit organization.
+
+  - name: fct_trial_requests_history
+    description: |
+      This model contains the full history of on-prem product trial requests, as well as some extra metadata. Contains 
+      trial requests both from in-app and the website. Note that multiple trial requests can be made by the same user.
+      This model doesn't filter duplicate trial requests.
+
+    columns:
+      - name: trial_request_id
+        description: The unique identifier for the trial request
+        tests:
+          - unique
+          - not_null
+      - name: trial_email
+        description: The trial's email. Contact email is preferred if present, otherwise the user's email is used.
+      - name: server_id
+        description: The unique identifier for the server.
+      - name: email_domain
+        description: The domain of the trial email.
+      - name: email
+        description: |
+          Email for backwards compatibility with BLAPI. Should be the same with contact email whenever contact 
+          email is defined.
+      - name: contact_email
+        description: Email provided by the user in the input box when requesting trial request.
+      - name: name
+        description: The name of the trial user.
+      - name: company_name
+        description: The name of the company, or `Unknown` if not provided.
+      - name: company_size_bucket
+        description: The size of the company, bucketed into ranges.
+        tests:
+          - accepted_values:
+              values: ['ONE_TO_50', 'FIFTY_TO_100', 'ONE_HUNDRED_TO_500', 'FIVE_HUNDRED_TO_1000', 'ONE_THOUSAND_TO_2500', 'TWO_THOUSAND_FIVE_HUNDRED_AND_UP']
+              config:
+                where: "company_size_bucket != 'Unknown'"
+      - name: site_name
+        description: The name of the Mattermost site.
+      - name: site_url
+        description: The URL of the Mattermost site.
+      - name: request_source
+        description: |
+          The source of the trial request. Either website or in-product. Website requests are used for 
+          air-gapped environments.
+        tests:
+          - not_null
+          - accepted_values:
+              values: [ 'Website', 'In-Product' ]
+      - name: start_at
+        description: The timestamp when the trial started.
+        tests:
+          - not_null
+      - name: end_at
+        description: The timestamp when the trial ends/ended.
+        tests:
+          - not_null
+      - name: country_name
+        description: The name of the country, or `Unknown` if not provided.
+      - name: num_users
+        description: The number of the users in the trial.
+      - name: is_first_trial
+        description: |
+          Whether this is the first trial for the user. This is determined by the start date of the trial request,
+          grouped by the trial's email.
+      - name: is_last_trial
+        description: |
+          Whether this is the last trial for the user. This is determined by the start date of the trial request,
+          grouped by the trial's email.
+      - name: total_trial_requests
+        description: The total number of trial requests from the given email.
+      - name: first_trial_start_at
+        description: The timestamp of the first trial request from the given email.
+      - name: last_trial_start_at
+        description: The timestamp of the last trial request from the given email.
+      - name: num_company_types
+        description: The number of different company types that are matching the current trial request.
+      - name: marked_as_smb
+        description: Whether the trial request is marked as belonging to a SMB organization.
+      - name: marked_as_enterprise
+        description: Whether the trial request is marked as belonging to an Enterprise organization.
+      - name: marked_as_midmarket
+        description: Whether the trial request is marked as belonging to a Midmarket organization.
+      - name: marked_as_federal
+        description: Whether the trial request is marked as belonging to a Federal organization.
+      - name: marked_as_academic
+        description: Whether the trial request is marked as belonging to an Academic organization.
+      - name: marked_as_mme
+        description: Whether the trial request is marked as belonging to a MME organization.
+      - name: marked_as_non_profit
+        description: Whether the trial request is marked as belonging to a Non-Profit organization.
