@@ -14,9 +14,9 @@ with source as (
         -- Server info
         , system_admins  as count_system_admins
         , version        as version_full
-        , split_part(version, '.', 1) as version_major
-        , split_part(version, '.', 2) as version_minor
-        , split_part(version, '.', 3) as version_patch
+        , try_to_decimal(split_part(version, '.', 1)) as version_major
+        , try_to_decimal(split_part(version, '.', 2)) as version_minor
+        , try_to_decimal(split_part(version, '.', 3)) as version_patch
         , coalesce(context_traits_installationid,  context_traits_installation_id) as installation_id
         , installation_type
         , anonymous_id
