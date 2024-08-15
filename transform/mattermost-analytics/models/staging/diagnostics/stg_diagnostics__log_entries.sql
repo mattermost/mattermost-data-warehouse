@@ -18,7 +18,7 @@ renamed as (
         try_to_decimal(split_part(_security_build, '.', 1)) as version_major,
         try_to_decimal(split_part(_security_build, '.', 2)) as version_minor,
         try_to_decimal(split_part(_security_build, '.', 3)) as version_patch,
-        version_major || '.' || version_minor || '.' || version_patch as version_full,
+        split_part(_security_build, '.', 1) || '.' || split_part(_security_build, '.', 2) || '.' || split_part(_security_build, '.', 3) as version_full,
         _parsed_cs_uri_query:be::varchar = 'true' as is_enterprise_ready,
         _parsed_cs_uri_query:db::varchar as database_type,
         _parsed_cs_uri_query:os::varchar as operating_system,
