@@ -22,6 +22,6 @@ class SupportPacketMetadata(BaseModel, extra='ignore'):
     generated_at: datetime
     server_version: str
     server_id: str = Field(min_length=26, max_length=26)
-    license_id: str | None = Field(None, min_length=26, max_length=26)
-    customer_id: str | None = Field(None, min_length=26, max_length=26)
+    license_id: str | None = Field(None, min_length=0, max_length=26)
+    customer_id: str | None = Field(None, min_length=0, max_length=26)
     extras: Extras
