@@ -54,9 +54,9 @@ renamed as (
             when regexp_like(uri, '^\/desktop\/[1-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}\/.*') then split_part(uri, '/', 3)
             else null
         end as version
-        , split_part(version, '.', 1) as version_major
-        , split_part(version, '.', 2) as version_minor
-        , split_part(version, '.', 3) as version_patch
+        , try_to_decimal(split_part(version, '.', 1)) as version_major
+        , try_to_decimal(split_part(version, '.', 2)) as version_minor
+        , try_to_decimal(split_part(version, '.', 3)) as version_patch
 
         -- User agent extracted
         , case when user_agent is not null then mattermost_analytics.parse_user_agent(user_agent) else null end as _parsed_user_agent
