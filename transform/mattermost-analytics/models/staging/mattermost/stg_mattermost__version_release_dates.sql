@@ -7,9 +7,9 @@ with rd as (
 select
     version,
     'v' || REGEXP_SUBSTR(version, '^\\d+\\.\\d+') as short_version,
-    split_part(version, '.', 1) as version_major,
-    split_part(version, '.', 2) as version_minor,
-    split_part(version, '.', 3) as version_patch,
+    try_to_decimal(split_part(version, '.', 1)) as version_major,
+    try_to_decimal(split_part(version, '.', 2)) as version_minor,
+    try_to_decimal(split_part(version, '.', 3)) as version_patch,
     release_date::date as planned_release_date,
     supported::boolean as is_supported,
     release_number::int as release_number,
