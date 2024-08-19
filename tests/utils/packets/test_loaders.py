@@ -289,7 +289,7 @@ def test_load_support_packet_full():
             status='success',
             progress=0,
             data={
-                'last_done': '{"current_table":"ChannelMembers","last_team_id":"crro7gj13bdzfjm4rmm6ept6sa","last_channel_id":"mpmdxijsftdodkzbehncatthcr","last_user":"wg94o7yd4jyxjbxoihettwgmah"}',   # noqa: E501
+                'last_done': '{"current_table":"ChannelMembers","last_team_id":"crro7gj13bdzfjm4rmm6ept6sa","last_channel_id":"mpmdxijsftdodkzbehncatthcr","last_user":"wg94o7yd4jyxjbxoihettwgmah"}',  # noqa: E501
                 'migration_key': 'migration_advanced_permissions_phase_2',
             },
         )
