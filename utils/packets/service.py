@@ -3,7 +3,7 @@ from logging import getLogger
 
 from click import ClickException
 
-from utils.packets.loaders import UserSurveyFixedColumns, load_user_survey_package, load_support_package_file
+from utils.packets.loaders import UserSurveyFixedColumns, load_support_package_file, load_user_survey_package
 
 logger = getLogger(__name__)
 
