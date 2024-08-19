@@ -55,4 +55,4 @@ where
     -- Only get trial subscriptions
     subscriptions.trial_start_at is not null
     -- Only get cloud subscriptions
-    AND cws_installation is not null
+    AND installation_id is not null
