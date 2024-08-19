@@ -226,7 +226,7 @@ models:
               to: ref('dim_daily_license')
               field: daily_server_id
               config:
-                where: "activity_date < current_date and not is_missing_license_data"
+                where: "activity_date < dateadd(day, -1, current_date) and not is_missing_license_data"
       - name: activity_date
         description: The date for the measurement.
         tests:
