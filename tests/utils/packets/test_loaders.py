@@ -196,7 +196,7 @@ def test_load_valid_user_survey_package():
     # WHEN: attempt to load a valid user survey package
     metadata, survey = load_user_survey_package(SURVEY_DIR / 'valid.zip')
 
-    # THEN: expect medata to be loaded correctly
+    # THEN: expect metadata to be loaded correctly
     assert metadata == SupportPacketMetadata(
         version=1,
         type=SupportPacketTypeEnum.plugin_packet,
