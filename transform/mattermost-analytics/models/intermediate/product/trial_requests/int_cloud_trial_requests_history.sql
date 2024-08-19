@@ -14,7 +14,7 @@ with customers as (
 subscriptions as (
     select
         subscription_id
-        , cws_installation
+        , cws_installation as installation_id
         , cws_dns
         , customer_id
         , trial_start_at
@@ -29,6 +29,7 @@ subscriptions as (
 select
     'stripe:' || subscriptions.subscription_id as trial_request_id
     , null as server_id
+    , installation_id
     , customers.email as trial_email
     , customers.email as contact_email
     , null as user_email
