@@ -3,7 +3,7 @@ from logging import getLogger
 
 from click import ClickException
 
-from utils.packets.loaders import UserSurveyFixedColumns, load_user_survey_package
+from utils.packets.loaders import UserSurveyFixedColumns, load_user_survey_package, load_support_package_file
 
 logger = getLogger(__name__)
 
@@ -19,9 +19,32 @@ def ingest_survey_packet(survey_packet: str | os.PathLike):
         logger.info('Loaded survey packet')
         logger.info(f' -> Server ID: {metadata.server_id}')
         logger.info(f' -> License ID: {metadata.license_id}')
-        logger.info('\n')
+        logger.info('')
         logger.info(f' Total {df[UserSurveyFixedColumns.user_id.value].nunique()} unique users')
 
         # TODO: ingest in database
     except ValueError as e:
         raise ClickException(f'Error loading survey packet: {e}')
+
+
+def ingest_support_package(support_package: str | os.PathLike):
+    """
+    Load support package data and metadata.
+
+    :support_package: The path to the survey packet file.
+    """
+    try:
+        metadata, sp = load_support_package_file(support_package)
+        logger.info('Loaded survey packet')
+        if metadata:
+            logger.info(f' -> Server ID: {metadata.server_id}')
+            logger.info(f' -> License ID: {metadata.license_id}')
+        else:
+            logger.info('Support package does not include metadata file')
+        logger.info('')
+        logger.info(f' Server: {sp.server_version} ({sp.server_os} {sp.server_architecture})')
+        logger.info(f' Database: {sp.database_type} {sp.database_version} (schema {sp.database_schema_version})')
+
+        # TODO: ingest in database
+    except ValueError as e:
+        raise ClickException(f'Error loading support package: {e}')

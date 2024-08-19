@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 import pandas as pd
@@ -6,12 +6,20 @@ import pytest
 from pandas.testing import assert_frame_equal
 from pydantic import ValidationError
 
-from utils.packets.loaders import load_metadata, load_user_survey, load_user_survey_package
+from utils.packets.loaders import (
+    load_metadata,
+    load_support_package_file,
+    load_support_packet_info,
+    load_user_survey,
+    load_user_survey_package,
+)
 from utils.packets.models.metadata import Extras, SupportPacketMetadata, SupportPacketTypeEnum
+from utils.packets.models.support import JobV1
 
 FIXTURE_DIR = Path(__file__).parent.parent / 'fixtures' / 'packets'
 METADATA_DIR = FIXTURE_DIR / 'metadata'
 SURVEY_DIR = FIXTURE_DIR / 'user_survey'
+SUPPORT_DIR = FIXTURE_DIR / 'support'
 
 
 #
@@ -78,7 +86,6 @@ def test_load_full_metadata(metadata, expected):
     [
         pytest.param(METADATA_DIR / 'invalid' / 'invalid_timestamp.yaml', [('generated_at',)], id='invalid timestamp'),
         pytest.param(METADATA_DIR / 'invalid' / 'invalid_type.yaml', [('type',)], id='invalid type'),
-        pytest.param(METADATA_DIR / 'invalid' / 'missing_extras.yaml', [('extras',)], id='missing extras'),
         pytest.param(
             METADATA_DIR / 'invalid' / 'missing_fields.yaml',
             [('generated_at',), ('server_id',), ('server_version',)],
@@ -233,3 +240,109 @@ def test_load_invalid_plugin_id():
 
     # THEN: expect proper issue to be raised
     assert str(exc.value) == 'Not a user survey packet - packet type is com.mattermost.plugin'
+
+
+#
+# Support packet loader tests
+#
+
+
+def test_load_support_packet_full():
+    # WHEN: attempt to load a full support packet
+    with open(SUPPORT_DIR / 'full.yaml', 'r') as fp:
+        sp = load_support_packet_info(fp)
+
+    # THEN: expect support package to be loaded correctly
+    assert sp.license_to == 'Mattermost'
+    assert sp.server_os == 'linux'
+    assert sp.server_architecture == 'amd64'
+    assert sp.build_hash == '4c83724516242843802cc75840b08ead6afbd37b'
+    assert sp.database_type == 'postgres'
+    assert sp.database_version == '13.10'
+    assert sp.database_schema_version == '113'
+    assert sp.active_users == 1
+    assert sp.license_supported_users == 200000
+    assert sp.total_channels == 2
+    assert sp.total_posts == 6
+    assert sp.total_teams == 1
+    assert sp.daily_active_users == 1
+    assert sp.monthly_active_users == 1
+    assert sp.websocket_connections == 0
+    assert sp.master_db_connections == 14
+    assert sp.read_db_connections == 0
+    assert sp.inactive_user_count == 0
+    assert sp.elastic_post_indexing_jobs == []
+    assert sp.elastic_post_aggregation_jobs == []
+    assert sp.ldap_sync_jobs == []
+    assert sp.message_export_jobs == []
+    assert sp.data_retention_jobs == []
+    assert sp.compliance_jobs == []
+    assert sp.bleve_post_indexing_jobs is None
+    assert sp.migration_jobs == [
+        JobV1(
+            id='4555h6cxb38q3rhnyfu95dypxh',
+            type='migrations',
+            priority=0,
+            createat=datetime(2024, 8, 15, 15, 16, 6, 121000, timezone.utc),
+            startat=datetime(2024, 8, 15, 15, 16, 20, 530000, timezone.utc),
+            lastactivityat=datetime(2024, 8, 15, 15, 16, 21, 2000, timezone.utc),
+            status='success',
+            progress=0,
+            data={
+                'last_done': '{"current_table":"ChannelMembers","last_team_id":"crro7gj13bdzfjm4rmm6ept6sa","last_channel_id":"mpmdxijsftdodkzbehncatthcr","last_user":"wg94o7yd4jyxjbxoihettwgmah"}',
+                'migration_key': 'migration_advanced_permissions_phase_2',
+            },
+        )
+    ]
+
+
+def test_support_packet_invalid():
+    # WHEN: attempt to load an invalid support packet
+    with pytest.raises(ValidationError) as exc, open(SUPPORT_DIR / 'invalid.yaml', 'r') as fp:
+        load_support_packet_info(fp)
+
+    assert sorted([e['loc'] for e in exc.value.errors()]) == [
+        ('database_schema_version',),  # Int instead of string
+        ('server_version',),  # Missing
+    ]
+
+
+#
+# Full loader for support package v1
+#
+
+
+def test_load_full_support_package_v1_with_metadata():
+    # WHEN: attempt to load a valid support package
+    metadata, sp = load_support_package_file(SUPPORT_DIR / 'valid_with_metadata.zip')
+
+    # THEN: expect metadata to be loaded correctly
+    assert metadata == SupportPacketMetadata(
+        version=1,
+        type=SupportPacketTypeEnum.support_packet,
+        generated_at=datetime(2024, 8, 19, 13, 46, 45, 94000, tzinfo=timezone.utc),
+        server_version='9.11.0',
+        server_id='rmg9ib5rspy93jxswyc454bwzo',
+        license_id='mud3ihm4938dxncqasxt14xxch',
+        customer_id='p9un369a67gimj4yd6i6ib39wh',
+    )
+
+    # THEN: expect responses to be loaded correctly
+    assert sp.license_to == 'Mattermost'
+    assert sp.server_os == 'linux'
+    assert sp.server_architecture == 'amd64'
+    assert sp.build_hash == '0bc2ddd42375a75ab14e63f038165150d4f07659'
+
+
+def test_load_full_support_package_v1_without_metadata():
+    # WHEN: attempt to load a valid support package
+    metadata, sp = load_support_package_file(SUPPORT_DIR / 'valid_without_metadata.zip')
+
+    # THEN: expect metadata to be loaded correctly
+    assert metadata is None
+
+    # THEN: expect responses to be loaded correctly
+    assert sp.license_to == 'Mattermost'
+    assert sp.server_os == 'linux'
+    assert sp.server_architecture == 'amd64'
+    assert sp.build_hash == '4c83724516242843802cc75840b08ead6afbd37b'
