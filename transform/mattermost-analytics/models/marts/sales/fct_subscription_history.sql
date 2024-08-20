@@ -11,6 +11,8 @@ select
     , s.license_end_at
     , s.billing_type
     , s.status
+    , s.product_id
+    , s.current_product_id
     , CASE 
         WHEN sh.subscription_id IS NULL THEN true -- If there isn't a matching subscription history value this is treated as the latest one
         ELSE ROW_NUMBER() OVER (PARTITION BY sh.subscription_id ORDER BY sh.created_at DESC) = 1 
