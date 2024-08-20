@@ -17,7 +17,9 @@ select
         WHEN sh.subscription_id IS NULL THEN true -- If there isn't a matching subscription history value this is treated as the latest one
         ELSE ROW_NUMBER() OVER (PARTITION BY sh.subscription_id ORDER BY sh.created_at DESC) = 1 
     END AS is_latest
+    , p.name as product_name
 from
     {{ ref('stg_cws__subscription_history') }} sh
     right join {{ ref('stg_stripe__subscriptions') }} s on sh.subscription_id = s.subscription_id
+    left join {{ ref('stg_stripe__products')}} p on coalesce(s.product_id, s.current_product_id) = p.product_id
     where s.cws_installation IS NOT NULL
