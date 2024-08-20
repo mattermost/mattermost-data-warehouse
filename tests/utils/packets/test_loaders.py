@@ -8,7 +8,7 @@ from pydantic import ValidationError
 
 from utils.packets.loaders import (
     load_metadata,
-    load_support_package_file,
+    load_support_packet_file,
     load_support_packet_info,
     load_user_survey,
     load_user_survey_package,
@@ -252,7 +252,7 @@ def test_load_support_packet_full():
     with open(SUPPORT_DIR / 'full.yaml', 'r') as fp:
         sp = load_support_packet_info(fp)
 
-    # THEN: expect support package to be loaded correctly
+    # THEN: expect support packet to be loaded correctly
     assert sp.license_to == 'Mattermost'
     assert sp.server_os == 'linux'
     assert sp.server_architecture == 'amd64'
@@ -308,13 +308,13 @@ def test_support_packet_invalid():
 
 
 #
-# Full loader for support package v1
+# Full loader for support packet v1
 #
 
 
-def test_load_full_support_package_v1_with_metadata():
-    # WHEN: attempt to load a valid support package
-    metadata, sp = load_support_package_file(SUPPORT_DIR / 'valid_with_metadata.zip')
+def test_load_full_support_packet_v1_with_metadata():
+    # WHEN: attempt to load a valid support packet
+    metadata, sp = load_support_packet_file(SUPPORT_DIR / 'valid_with_metadata.zip')
 
     # THEN: expect metadata to be loaded correctly
     assert metadata == SupportPacketMetadata(
@@ -334,9 +334,9 @@ def test_load_full_support_package_v1_with_metadata():
     assert sp.build_hash == '0bc2ddd42375a75ab14e63f038165150d4f07659'
 
 
-def test_load_full_support_package_v1_without_metadata():
-    # WHEN: attempt to load a valid support package
-    metadata, sp = load_support_package_file(SUPPORT_DIR / 'valid_without_metadata.zip')
+def test_load_full_support_packet_v1_without_metadata():
+    # WHEN: attempt to load a valid support packet
+    metadata, sp = load_support_packet_file(SUPPORT_DIR / 'valid_without_metadata.zip')
 
     # THEN: expect metadata to be loaded correctly
     assert metadata is None

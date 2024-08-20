@@ -3,7 +3,7 @@ from logging import getLogger
 
 from click import ClickException
 
-from utils.packets.loaders import UserSurveyFixedColumns, load_support_package_file, load_user_survey_package
+from utils.packets.loaders import UserSurveyFixedColumns, load_support_packet_file, load_user_survey_package
 
 logger = getLogger(__name__)
 
@@ -27,20 +27,20 @@ def ingest_survey_packet(survey_packet: str | os.PathLike):
         raise ClickException(f'Error loading survey packet: {e}')
 
 
-def ingest_support_package(support_package: str | os.PathLike):
+def ingest_support_packet(support_packet: str | os.PathLike):
     """
     Load support package data and metadata.
 
     :support_package: The path to the survey packet file.
     """
     try:
-        metadata, sp = load_support_package_file(support_package)
-        logger.info('Loaded survey packet')
+        metadata, sp = load_support_packet_file(support_packet)
+        logger.info('Loaded support packet')
         if metadata:
             logger.info(f' -> Server ID: {metadata.server_id}')
             logger.info(f' -> License ID: {metadata.license_id}')
         else:
-            logger.info('Support package does not include metadata file')
+            logger.info('Support packet does not include metadata file')
         logger.info('')
         logger.info(f' Server: {sp.server_version} ({sp.server_os} {sp.server_architecture})')
         logger.info(f' Database: {sp.database_type} {sp.database_version} (schema {sp.database_schema_version})')

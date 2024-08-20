@@ -3,7 +3,7 @@ import logging
 import click
 
 from utils.helpers import initialize_cli_logging
-from utils.packets.service import ingest_support_package, ingest_survey_packet
+from utils.packets.service import ingest_support_packet, ingest_survey_packet
 
 initialize_cli_logging(logging.INFO, 'stderr')
 
@@ -34,8 +34,8 @@ def support_v1(
     input: click.Path,
 ) -> None:
     """
-    Ingest a support package using the original support package specification.
+    Ingest a support packet using the original support package specification.
 
     :param input: The zip file with the support package.
     """
-    ingest_support_package(input)
+    ingest_support_packet(input)
