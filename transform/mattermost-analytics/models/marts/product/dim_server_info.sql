@@ -48,7 +48,7 @@ with server_telemetry_summary as (
        parse_ip(st.last_server_ip, 'INET', 1) as parsed_server_ip,
         case
             when parsed_server_ip:error is null
-                then parse_ip(si.last_server_ip || '/7', 'INET'):ipv4_range_start
+                then parse_ip(st.last_server_ip || '/7', 'INET'):ipv4_range_start
             else null
         end as ip_bucket
     from
