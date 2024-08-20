@@ -68,14 +68,14 @@ select
     si.last_count_registered_active_users,
     si.last_daily_active_users,
     si.last_monthly_active_users,
-    si.last_server_ip,
-    case
-        when si.parsed_server_ip:error is not null then 'Unknown'
-        else coalesce(l.country_name, 'Unknown')
-    end as last_known_ip_country
+    si.last_server_ip
+--     case
+--         when si.parsed_server_ip:error is not null then 'Unknown'
+--         else coalesce(l.country_name, 'Unknown')
+--     end as last_known_ip_country
 from
     server_info si
     left join {{ ref('int_server_hosting_type') }} ht on si.server_id = ht.server_id
-    left join {{ ref('int_ip_country_lookup') }} l
-                on si.ip_bucket = l.join_bucket
-                    and si.parsed_server_ip:ipv4 between l.ipv4_range_start and l.ipv4_range_end
+--     left join {{ ref('int_ip_country_lookup') }} l
+--                 on si.ip_bucket = l.join_bucket
+--                     and si.parsed_server_ip:ipv4 between l.ipv4_range_start and l.ipv4_range_end
