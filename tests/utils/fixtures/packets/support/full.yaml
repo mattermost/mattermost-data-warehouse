@@ -1,0 +1,37 @@
+license_to: Mattermost
+server_os: linux
+server_architecture: amd64
+server_version: 8.1.9
+build_hash: 4c83724516242843802cc75840b08ead6afbd37b
+database_type: postgres
+database_version: "13.10"
+database_schema_version: "113"
+active_users: 1
+license_supported_users: 200000
+total_channels: 2
+total_posts: 6
+total_teams: 1
+daily_active_users: 1
+monthly_active_users: 1
+websocket_connections: 0
+master_db_connections: 14
+read_db_connections: 0
+inactive_user_count: 0
+elastic_post_indexing_jobs: []
+elastic_post_aggregation_jobs: []
+ldap_sync_jobs: []
+message_export_jobs: []
+data_retention_jobs: []
+compliance_jobs: []
+migration_jobs:
+- id: 4555h6cxb38q3rhnyfu95dypxh
+  type: migrations
+  priority: 0
+  createat: 1723734966121
+  startat: 1723734980530
+  lastactivityat: 1723734981002
+  status: success
+  progress: 0
+  data:
+    last_done: '{"current_table":"ChannelMembers","last_team_id":"crro7gj13bdzfjm4rmm6ept6sa","last_channel_id":"mpmdxijsftdodkzbehncatthcr","last_user":"wg94o7yd4jyxjbxoihettwgmah"}'
+    migration_key: migration_advanced_permissions_phase_2
