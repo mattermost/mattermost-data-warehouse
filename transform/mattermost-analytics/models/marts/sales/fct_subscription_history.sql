@@ -1,4 +1,5 @@
-select 
+select
+    {{ dbt_utils.generate_surrogate_key(['sh.subscription_history_event_id', 's.subscription_id']) }} AS subscription_history_id
     sh.subscription_history_event_id
     , s.subscription_id
     , s.customer_id
