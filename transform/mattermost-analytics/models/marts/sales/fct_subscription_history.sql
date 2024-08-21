@@ -4,6 +4,7 @@ select
     , s.customer_id
     , COALESCE(sh.licensed_seats, s.quantity) as licensed_seats
     , sh.created_at
+    , s.created_at as subscription_created_at
     , s.converted_to_paid_at
     , s.cws_dns
     , s.cws_installation
