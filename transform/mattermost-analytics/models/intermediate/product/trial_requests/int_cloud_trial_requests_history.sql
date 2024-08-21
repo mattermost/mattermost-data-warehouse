@@ -23,6 +23,8 @@ subscriptions as (
         , created_at
         , converted_to_paid_at
         , status
+        , license_start_at
+        , license_end_at
     from
         {{ ref('stg_stripe__subscriptions') }}
 )
