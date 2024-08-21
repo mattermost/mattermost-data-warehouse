@@ -45,6 +45,8 @@ select
     , tr.stripe_product_id
     , tr.converted_to_paid_at
     , tr.status
+    , tr.license_start_at
+    , tr.license_end_at
     , agg.first_trial_start_at
     , agg.last_trial_start_at
     , agg.num_company_types

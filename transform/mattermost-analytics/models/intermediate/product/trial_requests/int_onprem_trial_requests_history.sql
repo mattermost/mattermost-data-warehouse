@@ -26,6 +26,8 @@ select
     , null as stripe_product_id
     , null as converted_to_paid_at
     , null as status
+    , null as license_start_at
+    , null as license_end_at
     , case
         when lower(site_url) = 'https://mattermost.com' then 'Website'
         else 'In-Product'
