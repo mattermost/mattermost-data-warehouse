@@ -176,6 +176,8 @@ models:
         description: Whether the server is in the seed file with known test servers. Data originates from seed file.
       - name: has_reason_community
         description: Whether the server is the community server. Data originated from seed file.
+      - name: has_reason_country
+        description: Whether the server's IP is in a list of excluded countries.
 
   - name: dim_version
     description: List of known server versions
