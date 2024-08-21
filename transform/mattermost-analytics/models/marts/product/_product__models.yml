@@ -316,6 +316,11 @@ models:
         description: Count of daily active users on the last day that telemetry was received at.
       - name: last_monthly_active_users
         description: Count of monthly active users on the last day that telemetry was received at.
+      - name: last_server_ip
+        description: The most recent IP address of the server.
+      - name: last_known_ip_country
+        description: The last known country the server is running on, as derived from the last known IP address.
+
 
   - name: dim_daily_server_config
     description: Daily server configuration.

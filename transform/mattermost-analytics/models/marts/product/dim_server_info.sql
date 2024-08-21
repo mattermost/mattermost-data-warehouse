@@ -47,7 +47,7 @@ select
     si.last_daily_active_users,
     si.last_monthly_active_users,
     si.last_server_ip,
-    ip.last_known_ip_country
+    coalesce(ip.last_known_ip_country, 'Unknown') as last_known_ip_country
 from
     server_info si
     left join {{ ref('int_server_hosting_type') }} ht on si.server_id = ht.server_id
