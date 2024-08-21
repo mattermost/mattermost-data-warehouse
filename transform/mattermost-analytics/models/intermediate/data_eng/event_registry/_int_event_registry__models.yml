@@ -368,3 +368,32 @@ models:
         description: The name of the event.
       - name: event_count
         description: The number of events with specified name, category, type etc for date in `received_at_date`.
+
+
+  - name: int_copilot_aggregated_to_date
+    description: Copilot events, aggregated by date.
+
+    columns:
+      - name: event_id
+        description: Surrogate key representing a group of events with specific name, category, type.
+        tests:
+          - not_null
+      - name: daily_event_id
+        description: |
+          Surrogate key representing a group of events with specific name, category, type for a specific date.
+          Multiple `daily_event_id`'s may exist for the same event id.
+        tests:
+          - not_null
+          - unique
+      - name: received_at_date
+        description: the date that the event was ingested at.
+        tests:
+          - not_null
+      - name: source
+        description: The source of the event. Always `Copilot` for events of this table.
+      - name: event_table
+        description: The table this event was read from.
+      - name: event_name
+        description: The name of the event.
+      - name: event_count
+        description: The number of events with specified name, category, type etc for date in `received_at_date`.
