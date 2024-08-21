@@ -62,6 +62,7 @@ models:
       - name: request_count
       - name: event_date
       - name: received_at_date
+      - name: fresh
 
 
   - name: stg_mm_telemetry_prod__server
