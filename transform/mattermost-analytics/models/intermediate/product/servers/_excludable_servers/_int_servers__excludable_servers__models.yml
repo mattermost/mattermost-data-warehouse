@@ -52,3 +52,12 @@ models:
         description: The server id.
       - name: reason
         description: The reason that this server is excluded.
+
+
+  - name: int_excludable_servers_country
+    description: List of servers with a last known country in the list of excluded countries.
+    columns:
+      - name: server_id
+        description: The server id.
+      - name: reason
+        description: The reason that this server is excluded.

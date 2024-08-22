@@ -175,6 +175,9 @@ vars:
   # List of Known SKUs
   known_skus: ["professional", "enterprise"]
 
+  # List of excludable countries
+  excluded_countries: ["Russia", "Iran", "North Korea"]
+
 on-run-start:
   -  '{{ create_parse_qs_udf()}}'
   -  '{{ create_extract_license_data_udf()}}'
