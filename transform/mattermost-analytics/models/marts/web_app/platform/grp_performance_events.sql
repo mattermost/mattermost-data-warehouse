@@ -23,7 +23,7 @@ WITH performance_rc AS (
 ), 
 performance_prod AS (
     SELECT
-        'I' AS _source_relation,
+        'int_mm_telemetry_prod_performance_events' AS _source_relation,
         {{dbt_utils.star(ref('int_mm_telemetry_prod_performance_events'))}}
      FROM
        {{ ref('int_mm_telemetry_prod_performance_events') }}
