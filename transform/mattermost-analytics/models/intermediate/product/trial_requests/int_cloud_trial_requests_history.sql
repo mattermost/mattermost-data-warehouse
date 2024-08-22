@@ -23,6 +23,8 @@ subscriptions as (
         , created_at
         , converted_to_paid_at
         , status
+        , license_start_at
+        , license_end_at
     from
         {{ ref('stg_stripe__subscriptions') }}
 )
@@ -45,6 +47,8 @@ select
     , subscriptions.stripe_product_id as stripe_product_id
     , subscriptions.converted_to_paid_at as converted_to_paid_at
     , subscriptions.status as status
+    , subscriptions.license_start_at
+    , subscriptions.license_end_at
     , 'Stripe' as request_source
     , 'cloud' as request_type
 from
