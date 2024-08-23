@@ -175,6 +175,54 @@ vars:
   # List of Known SKUs
   known_skus: ["professional", "enterprise"]
 
+  # List of excludable countries
+  excluded_countries: ["Russia", "Iran", "North Korea"]
+
+  # List of properties for performance metrics
+  performance_metrics_properties:
+    # Event and user properties
+    - "category"
+    - "user_id"
+    - "type"
+    - "user_actual_id"
+    # Context properties
+    - "context_app_namespace"
+    - "context_library_name"
+    - "context_app_version"
+    - "context_app_build"
+    - "context_library_version"
+    - "context_app_name"
+    - "context_locale"
+    - "context_screen_density"
+    # Properties
+    - "after"
+    - "channel"
+    - "count"
+    - "duration"
+    - "first"
+    - "first_effectiveness"
+    - "first_recomputations"
+    - "fresh"
+    - "is_first_preload"
+    - "longest_api_resource"
+    - "longest_api_resource_duration"
+    - "max_api_resource_size"
+    - "num_high"
+    - "num_low"
+    - "num_medium"
+    - "num_of_request"
+    - "num_total"
+    - "request_count"
+    - "second"
+    - "second_effectiveness"
+    - "second_recomputations"
+    - "third"
+    - "third_effectiveness"
+    - "third_recomputations"
+    - "total_duration"
+    - "total_size"
+    - "user_actual_role"
+
 on-run-start:
   -  '{{ create_parse_qs_udf()}}'
   -  '{{ create_extract_license_data_udf()}}'
