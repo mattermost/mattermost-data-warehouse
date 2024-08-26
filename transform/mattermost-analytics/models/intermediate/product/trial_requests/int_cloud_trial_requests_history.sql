@@ -8,8 +8,6 @@ with customers as (
         , portal_customer_id
     FROM
         {{ ref('stg_stripe__customers') }}
-    where
-        created_at >= '2023-04-27' -- only select customers after the release.
 ),
 subscriptions as (
     select
@@ -27,6 +25,8 @@ subscriptions as (
         , license_end_at
     from
         {{ ref('stg_stripe__subscriptions') }}
+    where
+        created_at >= '2023-04-27' -- only select subscriptions after the release.
 )
 select
     'stripe:' || subscriptions.subscription_id as trial_request_id
@@ -52,9 +52,9 @@ select
     , 'Stripe' as request_source
     , 'cloud' as request_type
 from
-    customers
+    subscriptions
     -- Will lead to rows fanning out since a customer can have many subscriptions
-    left join subscriptions on subscriptions.customer_id = customers.customer_id
+    left join customers on subscriptions.customer_id = customers.customer_id
 where
     -- Only get trial subscriptions
     subscriptions.trial_start_at is not null
