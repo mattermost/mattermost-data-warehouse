@@ -53,6 +53,49 @@ dag = DAG(
     doc_md=doc_md,
 )
 
+# Previously hourly jobs for old project
+
+# Parse user agents and update table
+user_agent = KubernetesPodOperator(
+    **pod_defaults,
+    image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
+    task_id="user-agent",
+    name="user-agent",
+    secrets=[
+        SNOWFLAKE_USER,
+        SNOWFLAKE_PASSWORD,
+        SNOWFLAKE_ACCOUNT,
+        SNOWFLAKE_TRANSFORM_WAREHOUSE,
+    ],
+    env_vars=env_vars,
+    arguments=["python -m utils.user_agent_parser"],
+    dag=dag,
+)
+
+# Old hourly job
+dbt_run_cloud = KubernetesPodOperator(
+    **pod_defaults,
+    image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
+    task_id="dbt-cloud-run",
+    name="dbt-cloud-run",
+    secrets=[
+        DBT_CLOUD_API_ACCOUNT_ID,
+        DBT_CLOUD_API_KEY,
+        SNOWFLAKE_ACCOUNT,
+        SNOWFLAKE_USER,
+        SNOWFLAKE_PASSWORD,
+        SNOWFLAKE_TRANSFORM_ROLE,
+        SNOWFLAKE_TRANSFORM_WAREHOUSE,
+        SNOWFLAKE_TRANSFORM_SCHEMA,
+        SSH_KEY,
+    ],
+    env_vars={**env_vars, "DBT_JOB_TIMEOUT": "4200"},
+    arguments=["python -m  utils.run_dbt_cloud_job 19444 \"Airflow dbt hourly\""],
+    dag=dag,
+)
+
+
+# Old project nightly
 dbt_run_cloud_nightly = KubernetesPodOperator(
     **pod_defaults,
     image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
@@ -74,6 +117,7 @@ dbt_run_cloud_nightly = KubernetesPodOperator(
     dag=dag,
 )
 
+# New project nightly
 dbt_run_cloud_mattermost_analytics_nightly = KubernetesPodOperator(
     **pod_defaults,
     image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
@@ -97,4 +141,4 @@ dbt_run_cloud_mattermost_analytics_nightly = KubernetesPodOperator(
     dag=dag,
 )
 
-dbt_run_cloud_nightly >> dbt_run_cloud_mattermost_analytics_nightly
+user_agent >> dbt_run_cloud >> dbt_run_cloud_nightly >> dbt_run_cloud_mattermost_analytics_nightly
