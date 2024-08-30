@@ -31,6 +31,10 @@ models:
               field: server_id
       - name: daily_active_users
         description: The number of unique active users for the given server and date.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
       - name: monthly_active_users
         description: The number of unique active users for the date and previous 29 days.
       - name: weekly_active_users
@@ -57,8 +61,16 @@ models:
           Bots and deleted users are excluded. Reported by mattermost server.
       - name: count_registered_users
         description: Total number of users, including deleted users. Reported by mattermost server.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
       - name: count_registered_deactivated_users
         description: Total number of inactive (deleted) users. Reported by mattermost server.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
       - name: version_id
         description: The id of the server's version for the given date.
         tests:
