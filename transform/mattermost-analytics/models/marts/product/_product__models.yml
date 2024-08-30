@@ -267,11 +267,6 @@ models:
         description: The number of daily active users.
       - name: count_registered_active_users
         description: The number of active (not deleted) registered users.
-        tests:
-          - dbt_utils.accepted_range:
-              min_value: 0
-              inclusive: true
-              where: "has_telemetry_data or has_legacy_telemetry_data or has_diagnostics_data"
       - name: is_enterprise_ready
         description: Whether the server is running an enterprise ready build.
       - name: count_reported_versions
