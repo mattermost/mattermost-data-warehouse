@@ -16,4 +16,3 @@ snowflake:
       warehouse: "TRANSFORM_XS"
       schema: "{{ env_var('SNOWFLAKE_TRANSFORM_SCHEMA') }}"
       client_session_keep_alive: True
-      query_tag: '{"project": "mattermost_analytics"}'
