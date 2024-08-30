@@ -153,6 +153,8 @@ vars:
     reports_folder_name: reports
     reports_prefixes: [ 'rpt_' ]
 
+  env_vars_to_query_tag_list: ['DBT_CLOUD_PR_ID', 'DBT_CLOUD_PROJECT_ID']
+
 
   # Community Server ID
   community_server_id : 93mykbogbjfrbbdqphx3zhze5c
@@ -227,3 +229,14 @@ on-run-start:
   -  '{{ create_parse_qs_udf()}}'
   -  '{{ create_extract_license_data_udf()}}'
   -  '{{ create_parse_user_agent_udf()}}'
+
+dispatch:
+  - macro_namespace: dbt
+    search_order:
+      - mattermost_analytics
+      - dbt_snowflake_query_tags
+      - dbt
+
+query-comment:
+  comment: '{{ dbt_snowflake_query_tags.get_query_comment(node) }}'
+  append: true # Snowflake removes prefixed comments.
