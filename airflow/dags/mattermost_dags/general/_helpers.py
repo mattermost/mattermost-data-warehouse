@@ -104,9 +104,7 @@ def hightouch_check_syncs(response):
     try:
         if ('data' not in syncs) or len(syncs) == 0:
             raise HightouchApiException('Invalid response from syncs api')
-        failed_syncs = [
-            sync for sync in syncs.get('data') if sync['status'] not in ('success', 'disabled')
-        ]
+        failed_syncs = [sync for sync in syncs.get('data') if sync['status'] not in ('success', 'disabled')]
     except KeyError as e:
         task_logger.error('Error in check syncs ...', exc_info=True)
         raise e
@@ -130,7 +128,14 @@ def resolve_hightouch(ti=None, **kwargs):
         task_logger.info('There are no failed syncs')
     else:
         status = ':red_circle:'
-        msg = tabulate([(sync['slug'], sync['status']) for sync in failed_syncs)], headers=['Sync', 'Status'], tablefmt='github')
+        msg = tabulate(
+            [
+                (f"[{sync['slug']}](https://app.hightouch.com/mattermost-com/syncs/{sync['id']})", sync['status'])
+                for sync in failed_syncs
+            ],
+            headers=['Sync', 'Status'],
+            tablefmt='github',
+        )
 
         message = f"**HIGHTOUCH**: {status}\n{msg}"
         MattermostOperator(mattermost_conn_id='mattermost', text=message, task_id='resolve_hightouch_message').execute(
