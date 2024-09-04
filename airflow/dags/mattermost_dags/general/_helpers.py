@@ -3,6 +3,7 @@ import logging
 from datetime import datetime, timedelta
 
 from mattermost.operators.mattermost_operator import MattermostOperator
+from tabulate import tabulate
 
 task_logger = logging.getLogger('airflow.task')
 
@@ -99,13 +100,13 @@ def hightouch_check_syncs(response):
     status = fail or warning, fail
     """
     syncs = json.loads(''.join(response))
-    failed_syncs = {}
+    failed_syncs = []
     try:
         if ('data' not in syncs) or len(syncs) == 0:
             raise HightouchApiException('Invalid response from syncs api')
-        failed_syncs = {
-            sync['slug']: sync['status'] for sync in syncs.get('data') if sync['status'] not in ('success', 'disabled')
-        }
+        failed_syncs = [
+            sync for sync in syncs.get('data') if sync['status'] not in ('success', 'disabled')
+        ]
     except KeyError as e:
         task_logger.error('Error in check syncs ...', exc_info=True)
         raise e
@@ -129,7 +130,9 @@ def resolve_hightouch(ti=None, **kwargs):
         task_logger.info('There are no failed syncs')
     else:
         status = ':red_circle:'
-        message = f"**HIGHTOUCH**: {status}\nFailed syncs: {failed_syncs}"
+        msg = tabulate([(sync['slug'], sync['status']) for sync in failed_syncs)], headers=['Sync', 'Status'], tablefmt='github')
+
+        message = f"**HIGHTOUCH**: {status}\n{msg}"
         MattermostOperator(mattermost_conn_id='mattermost', text=message, task_id='resolve_hightouch_message').execute(
             None
         )
