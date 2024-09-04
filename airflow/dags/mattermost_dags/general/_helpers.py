@@ -137,7 +137,7 @@ def resolve_hightouch(ti=None, **kwargs):
             tablefmt='github',
         )
 
-        message = f"**HIGHTOUCH**: {status}\n{msg}"
+        message = f"**HIGHTOUCH**: {status}\n\n{msg}"
         MattermostOperator(mattermost_conn_id='mattermost', text=message, task_id='resolve_hightouch_message').execute(
             None
         )
