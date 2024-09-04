@@ -19,15 +19,19 @@ with trial_requests as (
         -- Salesforce lowercases email
         lower(coalesce(contact_email, email)) as normalized_email, -- Mapped to field email of lead
         left(split_part(normalized_email, '@', 1), 40) as email_prefix, -- To be used in case name is missing.
-        coalesce(
-            first_name,
-            case when extracted_first_name = '' then null else extracted_first_name end,
-            email_prefix
+        left(
+            coalesce(
+                first_name,
+                case when extracted_first_name = '' then null else extracted_first_name end,
+                email_prefix
+            ), 40
         ) as first_name,                                        -- Mapped to field first_name of lead
-        coalesce(
-            last_name,
-            case when extracted_last_name = '' then null else extracted_last_name end,
-            email_prefix
+        left(
+            coalesce(
+                last_name,
+                case when extracted_last_name = '' then null else extracted_last_name end,
+                email_prefix
+            ), 40
         ) as last_name,         -- Mapped to field last_name of lead
         case
         {% for bucket, size_lower in size_buckets.items() -%}
