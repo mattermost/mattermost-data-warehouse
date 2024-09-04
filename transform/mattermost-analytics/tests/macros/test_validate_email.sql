@@ -13,10 +13,10 @@ with test_values as (
             ('a!b@test.com'),
             ('<user@test.com>'),
             ('a“b@test.com')
-    ) as t(test_emails)
+    ) as t(test_email)
 )
 select
-    {{ validate_email('trial_email') }} as is_valid_email
+    {{ validate_email('test_email') }} as is_valid_email
 from
     test_values
 where
