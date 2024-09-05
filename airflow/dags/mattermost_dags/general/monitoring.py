@@ -18,7 +18,7 @@ with DAG(
     'monitoring',
     default_args=default_args,
     start_date=datetime(2017, 3, 20),
-    schedule='@daily',
+    schedule="0 10 * * *",
     catchup=False,
 ) as dag:
     check_stitch_extractions = SimpleHttpOperator(
