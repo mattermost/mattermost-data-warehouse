@@ -56,4 +56,12 @@ with source as (
         id is not null
 )
 
-select * from renamed
+select
+    renamed.*
+from
+    renamed
+    -- Filter installation id/server id pairs that are blacklisted
+    left join {{ ref('server_blacklist') }} sb
+        on renamed.server_id = sb.server_id and renamed.installation_id = sb.installation_id
+where
+    sb.server_id is null
