@@ -110,10 +110,6 @@ models:
         description: The date that server sent the information.
         tests:
           - not_null
-      - name: installation_type
-        description: The method used for installing the Mattermost server (docker, deb package, ...).
-      - name: server_ip
-        description: The IP address of the server.
       - name: operating_system
         description: The name of the operating system the server is installed at.
       - name: database_type
@@ -135,8 +131,12 @@ models:
           There are two "flavours" of the server binary:
           - TE = Team Edition (fully open source and contains no Mattermost proprietary code).
           - E0 = Enterprise Edition (TE + Mattermost proprietary code, and with features activated with a license).
-      - name: reported_versions
-        description: The unique versions reported from the server for that date.
+      - name: installation_id
+        description: The installation ID reported by the server. Exists only for cloud installations.
+      - name: server_ip
+        description: The IP address of the server.
+      - name: installation_type
+        description: The method used for installing the Mattermost server (docker, deb package, ...).
       - name: count_reported_versions
         description: The total number of distinct versions reported for the given date & server.
         tests:
@@ -152,6 +152,13 @@ models:
         description: Whether there were legacy (segment) telemetry data reported for this server on the given date.
       - name: has_diagnostics_data
         description: Whether there were security update server data reported for this server on the given date.
+    tests:
+      # A combination of server id/installation id must be unique per day
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - activity_date
+            - server_id
+            - installation_id
 
   - name: dim_excludable_servers
     description: List of known excludable servers
