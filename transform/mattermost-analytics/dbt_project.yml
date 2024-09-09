@@ -135,6 +135,7 @@ seeds:
         +column_types:
           installation_id: varchar(100)
           server_id: varchar(100)
+          reason: varchar(200)
 
 tests:
   dbt_project_evaluator:
