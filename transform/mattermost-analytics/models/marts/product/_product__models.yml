@@ -294,6 +294,10 @@ models:
           - unique
       - name: installation_id
         description: The id of the installation. Exists only for cloud installations.
+        tests:
+          # An installation ID should exist only for a specific server id
+          - unique:
+              where: "installation_id is not null"
       - name: hosting_type
         description: |
           Type of hosting for this server. Can be one of:
@@ -332,7 +336,12 @@ models:
         description: The most recent IP address of the server.
       - name: last_known_ip_country
         description: The last known country the server is running on, as derived from the last known IP address.
-
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          #
+          combination_of_columns:
+            - server_id
+            - installation_id
 
   - name: dim_daily_server_config
     description: Daily server configuration.
