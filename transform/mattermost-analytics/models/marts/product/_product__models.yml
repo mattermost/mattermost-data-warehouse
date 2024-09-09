@@ -338,7 +338,7 @@ models:
         description: The last known country the server is running on, as derived from the last known IP address.
     tests:
       - dbt_utils.unique_combination_of_columns:
-          #
+          # Server id with installation id must have a 1:1 relationship
           combination_of_columns:
             - server_id
             - installation_id
