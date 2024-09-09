@@ -19,8 +19,8 @@ with source as (
         , try_to_decimal(split_part(version, '.', 3)) as version_patch
         , case
             -- Handle special case of community migration
-            when server_id = '{{ var("community_server_id") }}' then 'rxocmq9isjfm3dgyf4ujgnfz3c'
-            else coalesce(context_traits_installationid,  context_traits_installation_id)
+            when user_id = '{{ var("community_server_id") }}' and coalesce(context_traits_installationid, context_traits_installation_id) is not null then 'rxocmq9isjfm3dgyf4ujgnfz3c'
+            else coalesce(context_traits_installationid, context_traits_installation_id)
         end as installation_id
         , installation_type
         , anonymous_id
