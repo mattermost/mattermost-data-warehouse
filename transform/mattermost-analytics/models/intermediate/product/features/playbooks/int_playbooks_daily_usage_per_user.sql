@@ -10,10 +10,10 @@ select
     , server_id
     , user_id
     , {{ dbt_utils.generate_surrogate_key(['activity_date', 'server_id', 'user_id']) }} as daily_user_id
-    , count_if(tp.feature_name = 'playbooks') as count_playbooks
+    , count(distinct case when tp.feature_name = 'playbooks' then event_id end) as count_playbooks
     , count_playbooks as count_known_features
-    , count_if(tp.feature_name is null) as count_unknown_features
-    , count(event_id) as count_total
+    , count(distinct case when tp.feature_name is null then event_id end) as count_unknown_features
+    , count(distinct event_id) as count_total
 from
     {{ ref('stg_incident_response_prod__tracks') }} e
     left join {{ ref('playbooks_tracking_plan' ) }} tp on e.event_name = tp.event_name

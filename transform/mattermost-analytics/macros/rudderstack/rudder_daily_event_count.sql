@@ -8,7 +8,7 @@ WITH tmp AS (
         {% for column_name in by_columns %}
         , {{ column_name }}
         {% endfor %}
-        , COUNT(*) AS event_count
+        , COUNT(distinct event_id) AS event_count
         {% if source_name %}
         , '{{ source_name }}' AS source
         {% else %}
