@@ -19,4 +19,4 @@ WHERE
     and received_at >= (SELECT MAX(received_at) FROM {{ this }})
 {% endif %}
 -- Dedup events in the same batch
-qualify row_number() over (partition by event_id order by timestamp desc) = 1
+qualify row_number() over (partition by id order by timestamp desc) = 1
