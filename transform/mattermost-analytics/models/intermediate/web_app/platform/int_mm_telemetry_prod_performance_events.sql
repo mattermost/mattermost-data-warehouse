@@ -2,6 +2,8 @@
     config({
         "materialized": "incremental",
         "cluster_by": ['received_at_date'],
+        "incremental_strategy": "delete+insert",
+        "unique_key": ['event_id'],
         "snowflake_warehouse": "transform_l"
     })
 }}
@@ -14,5 +16,7 @@ WHERE
     -- Exclude non-UUID strings
     not id ilike '%waitfor%'
 {% if is_incremental() %}
-    and received_at > (SELECT MAX(received_at) FROM {{ this }})
+    and received_at >= (SELECT MAX(received_at) FROM {{ this }})
 {% endif %}
+-- Dedup events in the same batch
+qualify row_number() over (partition by event_id order by timestamp desc) = 1
