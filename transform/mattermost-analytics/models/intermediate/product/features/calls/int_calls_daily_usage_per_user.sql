@@ -10,10 +10,10 @@ select
     , server_id
     , user_id
     , {{ dbt_utils.generate_surrogate_key(['activity_date', 'server_id', 'user_id']) }} as daily_user_id
-    , count_if(feature_name = 'Calls' and array_size(feature_skus) > 0) as count_calls
+    , count(distinct case when feature_name = 'Calls' and array_size(feature_skus) > 0 then event_id end) as count_calls
     , count_calls as count_known_features
-    , count_if(array_size(feature_skus) = 0) as count_unknown_features
-    , count(event_id) as count_total
+    , count(distinct case when array_size(feature_skus) = 0 then event_id end) as count_unknown_features
+    , count(distinct event_id) as count_total
 from
     {{ ref('stg_mm_calls_test_go__tracks') }} e
 where
