@@ -490,7 +490,7 @@ models:
           or both.
       - name: is_matching_expiration_date
         description: |
-          Whether the expiration date reported via telesmetry is matching the telemetry date from license information.
+          Whether the expiration date reported via telemetry is matching the telemetry date from license information.
       - name: is_matching_license_seats
         description: |
           Whether the licensed seats reported via telemetry is matching the number of licensed seats from license 
