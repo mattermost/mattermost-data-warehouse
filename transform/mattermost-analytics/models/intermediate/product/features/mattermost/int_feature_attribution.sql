@@ -3,8 +3,7 @@
 {{
     config({
         "materialized": "incremental",
-        "incremental_strategy": "delete+insert",
-        "unique_key": ['event_id'],
+        "incremental_strategy": "append",
         "snowflake_warehouse": "transform_l"
     })
 }}
