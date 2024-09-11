@@ -17,7 +17,11 @@ with source as (
         , try_to_decimal(split_part(version, '.', 1)) as version_major
         , try_to_decimal(split_part(version, '.', 2)) as version_minor
         , try_to_decimal(split_part(version, '.', 3)) as version_patch
-        , coalesce(context_traits_installationid,  context_traits_installation_id) as installation_id
+        , case
+            -- Handle special case of community migration
+            when user_id = '{{ var("community_server_id") }}' and coalesce(context_traits_installationid, context_traits_installation_id) is not null then 'rxocmq9isjfm3dgyf4ujgnfz3c'
+            else coalesce(context_traits_installationid, context_traits_installation_id)
+        end as installation_id
         , installation_type
         , anonymous_id
         , context_ip as server_ip
@@ -56,4 +60,12 @@ with source as (
         id is not null
 )
 
-select * from renamed
+select
+    renamed.*
+from
+    renamed
+    -- Filter installation id/server id pairs that are blacklisted
+    left join {{ ref('server_blacklist') }} sb
+        on renamed.server_id = sb.server_id and renamed.installation_id = sb.installation_id
+where
+    sb.server_id is null
