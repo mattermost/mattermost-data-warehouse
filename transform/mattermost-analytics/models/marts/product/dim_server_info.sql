@@ -67,7 +67,7 @@ select
     coalesce(ip.last_known_ip_country, 'Unknown') as last_known_ip_country,
     case
         when ht.hosting_type = 'Self-hosted' then coalesce(k.company_name, 'Unknown')
-        when ht.hosting_type = 'Self-hosted' then coalesce(cus.name, 'Unknown')
+        when ht.hosting_type = 'Cloud' then coalesce(cus.name, 'Unknown')
         when ht.hosting_type = 'Unknown' then  coalesce(k.company_name, cus.name, 'Unknown')
     end as company_name
 from
@@ -76,5 +76,4 @@ from
     left join {{ ref('int_server_ip_to_country') }} ip on si.server_id = ip.server_id
     left join latest_license ll on si.server_id = ll.server_id
     left join {{ ref('int_known_licenses') }} k on ll.license_id = k.license_id
-    left join {{ ref('_int_server_installation_id_bridge') }} ib on si.server_id = ib.server_id
-    left join latest_stripe_customer cus on ib.installation_id = cus.cws_installation
+    left join latest_stripe_customer cus on ht.installation_id = cus.cws_installation
