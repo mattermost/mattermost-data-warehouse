@@ -5,6 +5,7 @@
         "materialized": "incremental",
         "incremental_strategy": "delete+insert",
         "unique_key": ['event_id'],
+        "cluster_by": ['received_at_date'],
         "snowflake_warehouse": "transform_l"
     })
 }}
@@ -56,5 +57,3 @@ where
     -- this filter will only be applied on an incremental run
     and received_at >= (select max(received_at_date) from {{ this }})
 {% endif %}
--- Dedup events in the same batch
-qualify row_number() over (partition by event_id order by timestamp desc) = 1
