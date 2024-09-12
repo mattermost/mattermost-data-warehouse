@@ -29,12 +29,12 @@ select
          count_{{feature}}  {%- if not loop.last %} + {% endif -%}
     {% endfor %}
     ) as count_known_features
-    , count_if(unknown_feature) as count_unknown_features
---     , count(event_id) as count_total
+    -- , count_if(unknown_feature) as count_unknown_features
+    -- , count(event_id) as count_total
     -- Dedupe version
     , ARRAY_SIZE(ARRAY_UNIQUE_AGG(case when unknown_feature then event_id end)) as count_unknown_features
     -- , count(distinct case when unknown_feature then event_id end) as count_unknown_features
-    -- , count(distinct event_id) as count_total
+    , count(distinct event_id) as count_total
 from
     {{ ref('int_feature_attribution') }}
 group by
