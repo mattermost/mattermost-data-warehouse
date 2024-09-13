@@ -4,7 +4,8 @@
     config({
         "materialized": "incremental",
         "incremental_strategy": "append",
-        "snowflake_warehouse": "transform_l"
+        "snowflake_warehouse": "transform_l",
+        "cluster_by": ["activity_date"],
     })
 }}
 
@@ -21,8 +22,7 @@ select
     , event_name
     , category
     , event_type
-    , lower(left(event_id, 4)) as uuid_bucket
-{% for feature, rules in feature_mappings.items() %}
+    {% for feature, rules in feature_mappings.items() %}
     , case
     {% for rule in rules %}
         when
