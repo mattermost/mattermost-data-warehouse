@@ -21,6 +21,7 @@ select
     , event_name
     , category
     , event_type
+    , lower(left(event_id, 4)) as uuid_bucket
 {% for feature, rules in feature_mappings.items() %}
     , case
     {% for rule in rules %}
