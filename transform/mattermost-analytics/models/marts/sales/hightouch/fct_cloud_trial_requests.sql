@@ -29,7 +29,7 @@ cloud_trial_requests as (
         END as campaign_member_status,
         -- Extra validation
         {{ validate_email('ctr.email') }} as is_valid_email,
-        {{ is_blacklisted_email('trial_email') }} as is_blacklisted_email
+        {{ is_blacklisted_email('ctr.email') }} as is_blacklisted_email
     from
         cloud_trial_requests_pre ctr
         left join {{ ref('stg_salesforce__lead') }} l on ctr.email = l.email
