@@ -187,13 +187,13 @@ vars:
 
   # List of country top-level domains blacklisted in SF
   blacklisted_country_tlds:
-    - ".ru"
     - ".by"
     - ".cu"
     - ".ir"
     - ".kp"
-    - ".sy"
     - ".mm"
+    - ".ru"
+    - ".sy"
     - ".ve"
 
 
