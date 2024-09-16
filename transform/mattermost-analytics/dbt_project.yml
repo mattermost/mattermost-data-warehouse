@@ -185,6 +185,18 @@ vars:
   # List of excludable countries
   excluded_countries: ["Russia", "Iran", "North Korea"]
 
+  # List of country top-level domains blacklisted in SF
+  blacklisted_country_tlds:
+    - ".by"
+    - ".cu"
+    - ".ir"
+    - ".kp"
+    - ".mm"
+    - ".ru"
+    - ".sy"
+    - ".ve"
+
+
   # List of properties for performance metrics
   performance_metrics_properties:
     # Event and user properties

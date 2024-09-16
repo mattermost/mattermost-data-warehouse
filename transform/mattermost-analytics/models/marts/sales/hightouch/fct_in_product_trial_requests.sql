@@ -82,7 +82,8 @@ select
     'Responded' as campaign_member_status,
     '{{ var('in_product_trial_campaign_id') }}' as campaign_id,
     -- Extra validation
-    {{ validate_email('tr.normalized_email') }} as is_valid_email
+    {{ validate_email('tr.normalized_email') }} as is_valid_email,
+    {{ is_blacklisted_email('tr.normalized_email') }} as is_blacklisted_email
 from
     trial_requests tr
     -- Used for normalizing the mix of country codes/country names
