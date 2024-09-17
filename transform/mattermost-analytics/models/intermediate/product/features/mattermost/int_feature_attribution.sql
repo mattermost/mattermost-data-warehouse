@@ -5,7 +5,7 @@
         "materialized": "incremental",
         "incremental_strategy": "append",
         "snowflake_warehouse": "transform_l",
-        "cluster_by": ["activity_date"],
+        "automatic_clustering": true,
     })
 }}
 
