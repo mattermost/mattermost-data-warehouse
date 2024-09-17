@@ -1,20 +1,18 @@
-with lead_account_link as (
-    select
-        l.lead_id,
-        coalesce(l.existing_account__c, a.account_id) as account_id,
-        a.created_at as account_created_at
-    from
-        {{ ref('stg_salesforce__lead') }} l
-        left join {{ ref('stg_salesforce__account')}} on a.cbit__clearbitdomain__c = split_part(email,'@',2)
-    where
-        l.converted_at is null
-        and existing_account__c is null
-)
 select
-    lead_account_link.*
+    l.lead_id,
+    a.account_id,
+    l.email,
+    a.name,
+    a.cbit__clearbitdomain__c
 from
-    lead_update_account_link
-    join {{ ref('stg_salesforce__lead') }} on lead.sfid = lead_update_account_link.sfid
+    {{ ref('stg_salesforce__lead') }} l
+    left join {{ ref('stg_salesforce__account')}} a on a.cbit__clearbitdomain__c = split_part(l.email,'@',2)
 where
-  lead.existing_account__c is distinct from coalesce(lead.existing_account__c, lead_update_account_link.account_id)
-qualify row_count() over(partition by lead_id order by created_at desc) = 1
+    -- Only update non-converted leads
+    l.converted_at is null
+    -- Only update leads with no existing account
+    and l.existing_account__c is null
+    -- Only update leads where a matching account exists
+    and a.account_id is not null
+-- Keep only first account
+qualify row_number() over(partition by l.lead_id order by a.created_at asc) = 1
