@@ -22,7 +22,7 @@ select
     , event_name
     , category
     , event_type
-{% for feature, rules in feature_mappings.items() %}
+    {% for feature, rules in feature_mappings.items() %}
     , case
     {% for rule in rules %}
         when
