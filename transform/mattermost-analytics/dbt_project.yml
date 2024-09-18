@@ -111,6 +111,9 @@ seeds:
         +column_types:
           code: varchar(2)
           name: varchar(50)
+      email_domain_blacklist:
+        +column_types:
+          email_domain: varchar(50)
     features:
       +schema: seed_product_features
       tracking_plan:
