@@ -154,7 +154,7 @@ vars:
     test_coverage_target: 75
     model_types: [ 'staging', 'intermediate', 'marts', 'other', 'reports' ]
     staging_prefixes: ['stg_', 'base_']
-    marts_prefixes: ['fct_', 'dim_', 'grp_', 'bdg_']
+    marts_prefixes: ['fct_', 'dim_', 'grp_', 'bdg_', 'sync_']
     reports_folder_name: reports
     reports_prefixes: [ 'rpt_' ]
 

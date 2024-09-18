@@ -1,9 +1,9 @@
 select
     l.lead_id,
     a.account_id,
-    l.email,
-    a.name,
-    a.cbit__clearbitdomain__c
+    l.email as lead_eamil,
+    a.name as account_name,
+    a.cbit__clearbitdomain__c as clearbit_domain
 from
     {{ ref('stg_salesforce__lead') }} l
     left join {{ ref('stg_salesforce__account')}} a on a.cbit__clearbitdomain__c = split_part(l.email,'@',2)
