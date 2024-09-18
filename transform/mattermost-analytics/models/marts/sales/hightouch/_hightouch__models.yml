@@ -114,3 +114,22 @@ models:
         #       values: ['Account created', 'Email verified', 'Workspace created', null]
       - name: is_valid_email
         description: Whether the email is valid. Used to skip invalid emails.
+
+  - name: sync_lead_account_link
+    description: |
+      Assigns leads to specific accounts. This model is used to sync the lead to account link to Salesforce.
+
+    columns:
+      - name: lead_id
+        description: The Salesforce id of the lead.
+        tests:
+          - not_null
+          - unique
+      - name: account_id
+        description: The salesforce id of the account.
+      - name: lead_email
+        description: The email of the lead.
+      - name: account_name
+        description: The name of the account.
+      - name: clearbit_domain
+        description: The email domain assigned to the account via Clearbit.
