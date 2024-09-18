@@ -20,8 +20,6 @@ select
     , user_id
 {% for feature in feature_mappings.keys() %}
     , count_if({{feature}}) as count_{{feature}}
-    -- Dedupe version
-    -- , count(distinct case when {{feature}} then event_id end) as count_{{feature}}
 {% endfor %}
     , (
     {% for feature in feature_mappings.keys() %}
@@ -30,9 +28,6 @@ select
     ) as count_known_features
     , count_if(unknown_feature) as count_unknown_features
     , count(event_id) as count_total
-    -- Dedupe version
-    -- , count(distinct case when unknown_feature then event_id end) as count_unknown_features
-    -- , count(distinct event_id) as count_total
 from
     {{ ref('int_feature_attribution') }}
 group by
