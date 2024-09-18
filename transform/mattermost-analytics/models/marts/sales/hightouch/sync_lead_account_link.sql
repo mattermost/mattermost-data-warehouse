@@ -1,7 +1,7 @@
 select
     l.lead_id,
     a.account_id,
-    l.email as lead_eamil,
+    l.email as lead_email,
     a.name as account_name,
     a.cbit__clearbitdomain__c as clearbit_domain
 from
