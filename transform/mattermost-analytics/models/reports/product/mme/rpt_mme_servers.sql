@@ -25,7 +25,7 @@ with account_hierarchy as (
         o.license_end_date__c as license_end_at,
         a.smb_mme__c as account_type,
         p.smb_mme__c as root_account_type,
-        o.createddate as created_at,
+        o.created_date as created_at,
         row_number() over(partition by a.id order by created_at desc) = 1 as is_latest
     from
         {{ ref('stg_salesforce__opportunity') }} o
@@ -33,10 +33,10 @@ with account_hierarchy as (
         left join account_hierarchy ar on ar.account_id = a.id
         left join {{ ref('stg_salesforce__account') }} p on ar.root_account_id = p.id
     where
-        StageName ='6. Closed Won'
+        stage_name ='6. Closed Won'
         and license_end_at > current_date
         and license_id is not null
-        and not o.isdeleted
+        and not o.is_deleted
 ), mm_telemetry_prod_license as (
     select license_telemetry_date as license_telemetry_date
         , license_id as license_id
