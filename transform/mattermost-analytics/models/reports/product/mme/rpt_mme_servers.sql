@@ -56,9 +56,9 @@ with account_hierarchy as (
     where license_id is not null
     qualify row_number() over (partition by server_id, license_id, license_telemetry_date order by timestamp desc) = 1
 ), all_telemetry_reported_licenses as (
-    select license_id from mm_telemetry_prod_license
+    select license_id, server_id from mm_telemetry_prod_license
     union
-    select license_id from mattermost2_license
+    select license_id, server_id from mattermost2_license
 )
 select
     account_id,
