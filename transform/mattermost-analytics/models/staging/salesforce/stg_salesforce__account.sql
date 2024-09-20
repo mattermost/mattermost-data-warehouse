@@ -132,6 +132,7 @@ renamed as (
         , sector__c as sector__c
         , server_version__c as server_version__c
         , signed_nda__c as signed_nda__c
+        , SMB_MME__c as smb_mme__c
         , sponsor__c as sponsor__c
         , telemetry_accuracy__c as telemetry_accuracy__c
         , territoryid__c as territoryid__c
