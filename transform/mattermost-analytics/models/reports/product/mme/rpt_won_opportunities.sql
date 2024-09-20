@@ -73,11 +73,10 @@ select
     , account_arr
     , root_account_arr
     , is_latest
-    , kl.sku_short_name as license_name
+    , kl.sku_short_name as license_sku
     , kl.licensed_seats
     , kl.expire_at
     , l.license_id is not null as has_telemetry
-    , array_unique_agg(l.license_id) as licenses
     , array_unique_agg(l.server_id) as servers
 from
     opportunities o
