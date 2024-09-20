@@ -63,20 +63,24 @@ with account_hierarchy as (
     select license_id, server_id from mattermost2_license
 )
 select
-    opportunity_id,
-    account_id,
-    account_name,
-    root_account_id,
-    root_account_name,
-    account_type,
-    root_account_type,
-    account_arr,
-    root_account_arr,
-    is_latest,
-    l.license_id is not null as has_telemetry,
-    array_unique_agg(l.license_id) as licenses,
-    array_unique_agg(l.server_id) as servers
+    opportunity_id
+    , account_id
+    , account_name
+    , root_account_id
+    , root_account_name
+    , account_type
+    , root_account_type
+    , account_arr
+    , root_account_arr
+    , is_latest
+    , kl.sku_short_name as license_name
+    , kl.licensed_seats
+    , kl.expire_at
+    , l.license_id is not null as has_telemetry
+    , array_unique_agg(l.license_id) as licenses
+    , array_unique_agg(l.server_id) as servers
 from
     opportunities o
     left join all_telemetry_reported_licenses l on o.license_id = l.license_id
+    left join {{ ref('int_known_licenses') }} kl on o.license_id = kl.license_id
 group by all
