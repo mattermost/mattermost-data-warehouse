@@ -8,8 +8,8 @@ with account_hierarchy as (
         CONNECT_BY_ROOT name AS root_account_name
     from
         {{ ref('stg_salesforce__account') }}
-        start with parentid is null
-        connect by parentid = prior id
+        start with parent_id is null
+        connect by parent_id = prior account_id
 ), opportunities as (
     select
         a.account_id,
