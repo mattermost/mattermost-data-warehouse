@@ -16,7 +16,7 @@ with account_hierarchy as (
         a.name as account_name,
         ar.root_account_id,
         ar.root_account_name,
-        o.opportunity_id ,
+        o.opportunity_id,
         o.amount,
         o.is_won,
         o.type,
@@ -25,6 +25,8 @@ with account_hierarchy as (
         o.license_end_date__c as license_end_at,
         a.smb_mme__c as account_type,
         p.smb_mme__c as root_account_type,
+        a.arr_current__c as account_arr,
+        p.arr_current__c as root_account_arr,
         o.created_at,
         row_number() over(partition by a.account_id order by o.created_at desc) = 1 as is_latest
     from
@@ -61,14 +63,18 @@ with account_hierarchy as (
     select license_id, server_id from mattermost2_license
 )
 select
+    opportunity_id,
     account_id,
     account_name,
     root_account_id,
     root_account_name,
     account_type,
     root_account_type,
-    max(l.license_id is not null) as has_telemetry,
-    array_unique_agg(l.license_id) as license,
+    account_arr,
+    root_account_arr,
+    is_latest,
+    l.license_id is not null as has_telemetry,
+    array_unique_agg(l.license_id) as licenses,
     array_unique_agg(l.server_id) as servers
 from
     opportunities o
