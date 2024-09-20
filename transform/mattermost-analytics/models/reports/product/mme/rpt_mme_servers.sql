@@ -25,7 +25,7 @@ with account_hierarchy as (
         o.license_end_date__c as license_end_at,
         a.smb_mme__c as account_type,
         p.smb_mme__c as root_account_type,
-        o.created_date as created_at,
+        o.created_at,
         row_number() over(partition by a.id order by created_at desc) = 1 as is_latest
     from
         {{ ref('stg_salesforce__opportunity') }} o
