@@ -1,0 +1,40 @@
+version: 2
+
+models:
+  - name: rpt_won_opportunities
+    description: |
+      Contains the list of closed won opportunities, as well as related license info.
+    columns:
+      - name: opportunity_id
+        description: The opportunity's unique id.
+        tests:
+          - unique
+          - not_null
+      - name: account_id
+        description: The id of the account associated with the opportunity.
+      - name: account_name
+        description: The name of the account associated with the opportunity.
+      - name: root_account_id
+        description: The id of the root account associated with the opportunity.
+      - name: root_account_name
+        description: The name of the root account associated with the opportunity.
+      - name: account_type
+        description: The type of account associated with the opportunity.
+      - name: root_account_type
+        description: The type of root account associated with the opportunity.
+      - name: account_arr
+        description: The account's ARR, as reported in Salesforce.
+      - name: root_account_arr
+        description: The root account's ARR, as reported in Salesforce.
+      - name: is_latest
+        description: Whether this is the latest closed won opportunity for the account.
+      - name: license_sku
+        description: The SKU of the license associated with the opportunity.
+      - name: licensed_seats
+        description: The number of licensed seats associated with the opportunity, as taken from license information.
+      - name: expire_at
+        description: The expiration date of the license associated with the opportunity.
+      - name: has_telemetry
+        description: Whether telemetry data is available for the license associated with the opportunity.
+      - name: servers
+        description: The id of  theservers associated with the license.
