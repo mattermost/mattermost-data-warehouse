@@ -26,7 +26,7 @@ with account_hierarchy as (
         a.smb_mme__c as account_type,
         p.smb_mme__c as root_account_type,
         o.created_at,
-        row_number() over(partition by a.account_id order by created_at desc) = 1 as is_latest
+        row_number() over(partition by a.account_id order by o.created_at desc) = 1 as is_latest
     from
         {{ ref('stg_salesforce__opportunity') }} o
         left join {{ ref('stg_salesforce__account') }} a on o.account_id = a.account_id
