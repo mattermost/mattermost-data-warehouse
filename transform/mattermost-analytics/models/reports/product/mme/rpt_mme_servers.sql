@@ -26,12 +26,12 @@ with account_hierarchy as (
         a.smb_mme__c as account_type,
         p.smb_mme__c as root_account_type,
         o.created_at,
-        row_number() over(partition by a.id order by created_at desc) = 1 as is_latest
+        row_number() over(partition by a.account_id order by created_at desc) = 1 as is_latest
     from
         {{ ref('stg_salesforce__opportunity') }} o
-        left join {{ ref('stg_salesforce__account') }} a on o.accountid = a.id
-        left join account_hierarchy ar on ar.account_id = a.id
-        left join {{ ref('stg_salesforce__account') }} p on ar.root_account_id = p.id
+        left join {{ ref('stg_salesforce__account') }} a on o.account_id = a.account_id
+        left join account_hierarchy ar on ar.account_id = a.account_id
+        left join {{ ref('stg_salesforce__account') }} p on ar.root_account_id = p.account_id
     where
         stage_name ='6. Closed Won'
         and license_end_at > current_date
