@@ -40,7 +40,8 @@ with account_hierarchy as (
         and license_id is not null
         and not o.is_deleted
 ), mm_telemetry_prod_license as (
-    select license_telemetry_date as license_telemetry_date
+    select
+        license_telemetry_date as license_telemetry_date
         , license_id as license_id
         , server_id as server_id
         , customer_id as customer_id
@@ -49,7 +50,8 @@ with account_hierarchy as (
     where license_id is not null and installation_id is null
     qualify row_number() over (partition by server_id, license_id, license_telemetry_date order by timestamp desc) = 1
 ), mattermost2_license as (
-    select license_telemetry_date as license_telemetry_date
+    select
+        license_telemetry_date as license_telemetry_date
         , license_id as license_id
         , server_id as server_id
         , customer_id as customer_id
@@ -58,9 +60,20 @@ with account_hierarchy as (
     where license_id is not null
     qualify row_number() over (partition by server_id, license_id, license_telemetry_date order by timestamp desc) = 1
 ), all_telemetry_reported_licenses as (
-    select license_id, server_id from mm_telemetry_prod_license
+    select license_id, server_id, license_telemetry_date from mm_telemetry_prod_license
     union
-    select license_id, server_id from mattermost2_license
+    select license_id, server_id, license_telemetry_date from mattermost2_license
+), latest_active_users as (
+    select
+        server_id
+        , last_activity_date
+        , last_daily_active_users
+        , last_monthly_active_users
+        , last_count_registered_active_users
+       st.last_server_ip
+    from
+        {{ ref('int_server_telemetry_summary') }}
+    where server_id in (select server_id from all_telemetry_reported_licenses)
 )
 select
     opportunity_id
@@ -77,9 +90,12 @@ select
     , kl.licensed_seats
     , kl.expire_at
     , l.license_id is not null as has_telemetry
+    , l.license_telemetry_date as last_telemetry_date
     , array_unique_agg(l.server_id) as servers
+    , array_unique_agg(l.customer_id) as customers
 from
     opportunities o
     left join all_telemetry_reported_licenses l on o.license_id = l.license_id
     left join {{ ref('int_known_licenses') }} kl on o.license_id = kl.license_id
+    left join last_active_users lau on l.server_id = lau.server_id
 group by all
