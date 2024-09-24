@@ -3,7 +3,7 @@
 create function if not exists {{target.schema}}.parse_qs(value varchar)
 returns object
 language python
-runtime_version = '3.8'
+runtime_version = '3.10'
 handler = 'parse_query_string'
 as
 
