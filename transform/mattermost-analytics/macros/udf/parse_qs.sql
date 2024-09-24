@@ -1,6 +1,6 @@
 {% macro create_parse_qs_udf() %}
 
-create function if not exists {{target.schema}}.parse_qs(value varchar)
+create or replace function {{target.schema}}.parse_qs(value varchar)
 returns object
 language python
 runtime_version = '3.10'
