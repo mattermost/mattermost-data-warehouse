@@ -93,7 +93,7 @@ select
     , min(datediff('day', l.license_telemetry_date, current_date)) as days_since_last_license_telemetry
     -- Only keep active servers with telemetry in the past 7 days
     , array_unique_agg(st.server_id) as recent_servers
-    , array_size(servers) > 0 as has_recent_telemetry
+    , array_size(recent_servers) > 0 as has_recent_telemetry
     , min(datediff('day', st.last_activity_date, current_date)) as days_since_last_activity
 from
     opportunities o
