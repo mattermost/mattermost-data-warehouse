@@ -70,7 +70,6 @@ with account_hierarchy as (
         , last_daily_active_users
         , last_monthly_active_users
         , last_count_registered_active_users
-       st.last_server_ip
     from
         {{ ref('int_server_telemetry_summary') }}
     where server_id in (select server_id from all_telemetry_reported_licenses)
