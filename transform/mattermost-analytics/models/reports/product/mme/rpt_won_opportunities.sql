@@ -91,9 +91,11 @@ select
     , kl.expire_at
     , l.license_id is not null as has_telemetry
     , l.license_telemetry_date as last_telemetry_date
-    -- Only keep active servers with telemetry in the past 7 days
-    , array_unique_agg(st.server_id) as servers
     , array_unique_agg(l.customer_id) as customers
+    , array_unique_agg(l.server_id) as servers
+    -- Only keep active servers with telemetry in the past 7 days
+    , array_unique_agg(st.server_id) as recent_servers
+    , array_size(servers) > 0 as has_recent_telemetry
 from
     opportunities o
     left join all_telemetry_reported_licenses l on o.license_id = l.license_id
