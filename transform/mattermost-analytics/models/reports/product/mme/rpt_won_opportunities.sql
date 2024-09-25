@@ -90,17 +90,17 @@ select
     , kl.expire_at
     , l.license_id is not null as has_telemetry
     , array_unique_agg(l.server_id) as servers
+    , min(datediff('day', l.license_telemetry_date, current_date)) as days_since_last_license_telemetry
     -- Only keep active servers with telemetry in the past 7 days
     , array_unique_agg(st.server_id) as recent_servers
     , array_size(servers) > 0 as has_recent_telemetry
+    , min(datediff('day', st.last_activity_date, current_date)) as days_since_last_activity
 from
     opportunities o
     left join all_telemetry_reported_licenses l on o.license_id = l.license_id
     left join {{ ref('int_known_licenses') }} kl on o.license_id = kl.license_id
-    -- Keep only servers with telemetry in the past 14 days
+    -- Keep only servers with telemetry and active users
     left join latest_active_users st on
         l.server_id = st.server_id
         and st.last_monthly_active_users > 0
-        and st.last_activity_date > dateadd('day', -14, current_date)
-        and l.license_telemetry_date >= dateadd('day', -14, current_date)
 group by all
