@@ -75,32 +75,32 @@ with account_hierarchy as (
     where server_id in (select server_id from all_telemetry_reported_licenses)
 )
 select
-    opportunity_id
-    , account_id
-    , account_name
-    , root_account_id
-    , root_account_name
-    , account_type
-    , root_account_type
-    , account_arr
-    , root_account_arr
-    , is_latest
+    o.opportunity_id
+    , o.account_id
+    , o.account_name
+    , o.root_account_id
+    , o.root_account_name
+    , o.account_type
+    , o.root_account_type
+    , o.account_arr
+    , o.root_account_arr
+    , o.is_latest
+    , o.license_id
     , kl.sku_short_name as license_sku
     , kl.licensed_seats
     , kl.expire_at
     , l.license_id is not null as has_telemetry
-    , array_unique_agg(l.server_id) as servers
     , min(datediff('day', l.license_telemetry_date, current_date)) as days_since_last_license_telemetry
-    -- Only keep active servers with telemetry in the past 7 days
+     , array_unique_agg(l.server_id) as servers
+    -- Consider active servers with MAU > 0
     , array_unique_agg(st.server_id) as recent_servers
     , array_size(recent_servers) > 0 as has_recent_telemetry
     , min(datediff('day', st.last_activity_date, current_date)) as days_since_last_activity
+    , max(st.last_monthly_active_users) as max_last_monthly_active_users
 from
     opportunities o
     left join all_telemetry_reported_licenses l on o.license_id = l.license_id
     left join {{ ref('int_known_licenses') }} kl on o.license_id = kl.license_id
     -- Keep only servers with telemetry and active users
-    left join latest_active_users st on
-        l.server_id = st.server_id
-        and st.last_monthly_active_users > 0
+    left join latest_active_users st on l.server_id = st.server_id and st.last_monthly_active_users > 0
 group by all
