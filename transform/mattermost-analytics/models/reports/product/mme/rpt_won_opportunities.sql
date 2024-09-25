@@ -40,7 +40,8 @@ with account_hierarchy as (
         and license_id is not null
         and not o.is_deleted
 ), mm_telemetry_prod_license as (
-    select license_telemetry_date as license_telemetry_date
+    select
+        license_telemetry_date as license_telemetry_date
         , license_id as license_id
         , server_id as server_id
         , customer_id as customer_id
@@ -49,7 +50,8 @@ with account_hierarchy as (
     where license_id is not null and installation_id is null
     qualify row_number() over (partition by server_id, license_id, license_telemetry_date order by timestamp desc) = 1
 ), mattermost2_license as (
-    select license_telemetry_date as license_telemetry_date
+    select
+        license_telemetry_date as license_telemetry_date
         , license_id as license_id
         , server_id as server_id
         , customer_id as customer_id
@@ -58,28 +60,47 @@ with account_hierarchy as (
     where license_id is not null
     qualify row_number() over (partition by server_id, license_id, license_telemetry_date order by timestamp desc) = 1
 ), all_telemetry_reported_licenses as (
-    select license_id, server_id from mm_telemetry_prod_license
+    select license_id, server_id, license_telemetry_date from mm_telemetry_prod_license
     union
-    select license_id, server_id from mattermost2_license
+    select license_id, server_id, license_telemetry_date from mattermost2_license
+), latest_active_users as (
+    select
+        server_id
+        , last_activity_date
+        , last_daily_active_users
+        , last_monthly_active_users
+        , last_count_registered_active_users
+    from
+        {{ ref('int_server_telemetry_summary') }}
+    where server_id in (select server_id from all_telemetry_reported_licenses)
 )
 select
-    opportunity_id
-    , account_id
-    , account_name
-    , root_account_id
-    , root_account_name
-    , account_type
-    , root_account_type
-    , account_arr
-    , root_account_arr
-    , is_latest
+    o.opportunity_id
+    , o.account_id
+    , o.account_name
+    , o.root_account_id
+    , o.root_account_name
+    , o.account_type
+    , o.root_account_type
+    , o.account_arr
+    , o.root_account_arr
+    , o.is_latest
+    , o.license_id
     , kl.sku_short_name as license_sku
     , kl.licensed_seats
     , kl.expire_at
     , l.license_id is not null as has_telemetry
-    , array_unique_agg(l.server_id) as servers
+    , min(datediff('day', l.license_telemetry_date, current_date)) as days_since_last_license_telemetry
+     , array_unique_agg(l.server_id) as servers
+    -- Consider active servers with MAU > 0
+    , array_unique_agg(st.server_id) as active_servers
+    , array_size(active_servers) > 0 as has_user_activity
+    , min(datediff('day', st.last_activity_date, current_date)) as days_since_last_activity
+    , max(st.last_monthly_active_users) as max_last_monthly_active_users
 from
     opportunities o
     left join all_telemetry_reported_licenses l on o.license_id = l.license_id
     left join {{ ref('int_known_licenses') }} kl on o.license_id = kl.license_id
+    -- Keep only servers with telemetry and active users
+    left join latest_active_users st on l.server_id = st.server_id and st.last_monthly_active_users > 0
 group by all
