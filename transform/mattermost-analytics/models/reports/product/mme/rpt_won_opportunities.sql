@@ -93,8 +93,8 @@ select
     , min(datediff('day', l.license_telemetry_date, current_date)) as days_since_last_license_telemetry
      , array_unique_agg(l.server_id) as servers
     -- Consider active servers with MAU > 0
-    , array_unique_agg(st.server_id) as recent_servers
-    , array_size(recent_servers) > 0 as has_recent_telemetry
+    , array_unique_agg(st.server_id) as active_servers
+    , array_size(recent_servers) > 0 as has_user_activity
     , min(datediff('day', st.last_activity_date, current_date)) as days_since_last_activity
     , max(st.last_monthly_active_users) as max_last_monthly_active_users
 from
