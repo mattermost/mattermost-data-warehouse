@@ -100,6 +100,6 @@ from
     left join all_telemetry_reported_licenses l on o.license_id = l.license_id
     left join {{ ref('int_known_licenses') }} kl on o.license_id = kl.license_id
     left join latest_active_users st on
-        l.server_id = st.server_id and abs(date_diff('day' st.last_activity_date, current_date)) <= 14 and st.last_monthly_active_users > 0
+        l.server_id = st.server_id and abs(date_diff('day', st.last_activity_date, current_date)) <= 14 and st.last_monthly_active_users > 0
 
 group by all
