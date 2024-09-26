@@ -95,7 +95,7 @@ select
     -- Consider active servers with MAU > 0
     , array_unique_agg(st.server_id) as active_servers
     , array_size(active_servers) > 0 as has_user_activity
-    , min(datediff('day', st.last_activity_date, current_date)) as days_since_last_activity
+    , min(datediff('day', st.last_activity_date, current_date)) as days_since_last_user_activity
     , max(st.last_monthly_active_users) as max_last_monthly_active_users
 from
     opportunities o
