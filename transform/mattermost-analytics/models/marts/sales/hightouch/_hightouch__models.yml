@@ -114,6 +114,12 @@ models:
         #       values: ['Account created', 'Email verified', 'Workspace created', null]
       - name: is_valid_email
         description: Whether the email is valid. Used to skip invalid emails.
+      - name: workspace_dns
+        description: The workspace DNS for the given trial
+      - name: workspace_id
+        description: The workspace ID for the given trial
+      - name: trial_start_at
+        description: The starting date of the trial. In Cloud, this is also the activation date of the trial
 
   - name: sync_lead_account_link
     description: |

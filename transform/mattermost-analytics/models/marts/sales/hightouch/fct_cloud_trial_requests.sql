@@ -1,7 +1,8 @@
 with cloud_trial_requests_pre as (
     select
         email,
-        cws_installation, 
+        cws_installation,
+        cws_dns, 
         trial_start_at,
         trial_end_at
     from
@@ -15,13 +16,14 @@ with cloud_trial_requests_pre as (
 cloud_trial_requests as (
     select
         ctr.email,
-        ctr.trial_start_at,
-        ctr.trial_end_at,
+        ctr.trial_start_at as trial_start_at,
+        ctr.trial_end_at as trial_end_at,
         l.lead_id as existing_lead_id,
         cm.campaign_member_id as existing_campaign_member_id,
         '{{ var('cloud_enterprise_trial_campaign_id') }}' as campaign_id,
         l.lead_id is not null as is_existing_lead,
         cm.campaign_member_id is not null as is_existing_campaign_member,
+        ctr.cws_dns as workspace_dns,
         -- Campaign member status
         CASE
             WHEN ctr.cws_installation is not null then 'Workspace Created'
