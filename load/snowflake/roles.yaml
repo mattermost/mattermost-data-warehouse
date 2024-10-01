@@ -233,7 +233,7 @@ roles:
                     - archive.*.*
                     - dev.*.*
 
-     - test_bi:
+    - test_bi:
         warehouses:
             - transform_xs
         privileges:
@@ -246,6 +246,7 @@ roles:
             tables:
                 read:
                     - snowflake_sample_data.*.*
+
     # Object Roles
 
     # User Roles
