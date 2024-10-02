@@ -298,6 +298,9 @@ users:
         can_login: yes
         member_of:
             - stitch
+    - test_user:
+        can_login: no
+        member_of: test_bi
 
 # Warehouses
 warehouses:
