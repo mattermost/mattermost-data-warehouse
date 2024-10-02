@@ -17,6 +17,9 @@ databases:
     - snowflake:
         shared: yes
 
+    - snowflake_sample_data:
+        shared: yes
+
 
 # Roles
 roles:
