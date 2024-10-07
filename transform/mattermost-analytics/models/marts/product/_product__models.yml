@@ -84,7 +84,10 @@ models:
         description: Whether there are data reported for that server and date from front-end telemetry.
       - name: has_server_telemetry_data
         description: Whether there are data reported for that server and date from server-side telemetry.
-
+      - name: is_feature_shared_channels_enabled
+        description: Whether the shared channels feature has been enabled at the server
+      - name: is_feature_remote_cluster_service_enabled
+        description: Whether the remote cluster feature has been enabled at the server
     tests:
       # A date should only appear once per server
       - dbt_utils.unique_combination_of_columns:
