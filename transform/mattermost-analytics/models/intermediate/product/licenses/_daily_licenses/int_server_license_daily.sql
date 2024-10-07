@@ -11,7 +11,7 @@ with daily_licenses as (
         , starts_at
         , expire_at
         , timestamp
-        , is_feature_shared_channels_enabled,
+        , is_feature_shared_channels_enabled
         , is_feature_remote_cluster_service_enabled
     from
         {{ ref('stg_mm_telemetry_prod__license') }}
