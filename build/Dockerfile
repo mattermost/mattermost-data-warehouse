@@ -1,4 +1,4 @@
-ARG PYTHON_IMAGE=python:3.10.13-slim@sha256:4a5330e9f281d53214299d80d98198dcda3ce97ada3f3d48f2e617d43a6e15b3
+ARG PYTHON_IMAGE=python:3.10.15-slim@sha256:1eb5d76bf3e9e612176ebf5eadf8f27ec300b7b4b9a99f5856f8232fd33aa16e
 
 ## ---------------------------base stage ----------------------------- ##
 
@@ -28,7 +28,7 @@ ARG POETRY_VERSION=1.7.1
 RUN apt-get update && apt-get install -y --no-install-recommends \
      make=4.3-4.1 \
      g++=4:12.2.0-3 \
-     git=1:2.39.2-1.1 && \
+     git=1:2.39.5-0+deb12u1 && \
      rm -rf /var/lib/apt/lists/*
 
 # Sane python defaults
