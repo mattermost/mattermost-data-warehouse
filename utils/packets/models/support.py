@@ -115,3 +115,16 @@ class SupportPacketV1(BaseModel):
     ldap_sync_jobs: List[JobV1] | None = Field(None, description="LDAP sync jobs")
     migration_jobs: List[JobV1] | None = Field(None, description="Migration jobs")
     compliance_jobs: List[JobV1] | None = Field(None, description="Compliance jobs")
+
+    def all_jobs(self):
+        all_jobs = [
+            self.data_retention_jobs,
+            self.bleve_post_indexing_jobs,
+            self.message_export_jobs,
+            self.elastic_post_indexing_jobs,
+            self.elastic_post_aggregation_jobs,
+            self.ldap_sync_jobs,
+            self.migration_jobs,
+            self.compliance_jobs,
+        ]
+        return [job for job_list in all_jobs if job_list for job in job_list]

@@ -3,7 +3,7 @@ from typing import List, Optional
 
 import pandas as pd
 from snowflake.sqlalchemy import URL
-from sqlalchemy import create_engine, inspect
+from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.engine import Connection, Engine
 
 TableStats = namedtuple('TableStats', ['schema', 'name', 'rows', 'created_at'])
@@ -126,16 +126,31 @@ def copy_from_stage(
     conn.execute(query)
 
 
-def append_dataframe_to_table(conn: Connection, target_schema: str, target_table: str, df: pd.DataFrame):
-    """
-    Appends a dataframe into a table. If the table doesn't exist, it's automatically created.
-    """
-
-    df.to_sql(target_table, conn, schema=target_schema, if_exists="append", index=False)
-
-
 def table_exists(conn: Connection, target_schema: str, target_table: str) -> bool:
     """
     Returns True if the table exists.
     """
     return inspect(conn).has_table(target_table, schema=target_schema)
+
+
+def upsert_dataframe_to_table(
+    conn: Connection, target_schema: str, target_table: str, df: pd.DataFrame, server_id: str, source_uri: str
+):
+    """
+    Upserts a dataframe into a table. If the table doesn't exist, it's automatically created.
+    """
+    if table_exists(conn, target_schema, target_table):
+        conn.execute(
+            text(
+                f"""
+                DELETE FROM {target_schema}.{target_table}
+                WHERE
+                    metadata_server_id = :server_id
+                    AND source = :source_uri
+            """
+            ),
+            server_id=server_id,
+            source_uri=source_uri,
+        )
+
+    df.to_sql(target_table, conn, schema=target_schema, if_exists="append", index=False)

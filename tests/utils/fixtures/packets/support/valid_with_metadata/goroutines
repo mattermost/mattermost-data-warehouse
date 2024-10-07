@@ -1,0 +1,1493 @@
+goroutine 1241 [running]:
+runtime/pprof.writeGoroutineStacks({0x46d0920, 0xc004ab0390})
+	runtime/pprof/pprof.go:703 +0x6a
+runtime/pprof.writeGoroutine({0x46d0920?, 0xc004ab0390?}, 0x41ad08?)
+	runtime/pprof/pprof.go:692 +0x25
+runtime/pprof.(*Profile).WriteTo(0x3c70a22?, {0x46d0920?, 0xc004ab0390?}, 0x3839cc0?)
+	runtime/pprof/pprof.go:329 +0x146
+github.com/mattermost/mattermost/server/v8/channels/app.(*App).createGoroutineProfile(0xc004ada6e8?, {0xc004ada330?, 0xc004ada690?})
+	github.com/mattermost/mattermost/server/v8/channels/app/support_packet.go:405 +0x4a
+github.com/mattermost/mattermost/server/v8/channels/app.(*App).GenerateSupportPacket(0xc007770e68, {0x4708fa0, 0xc004c01e60}, 0xc0090a5bc0)
+	github.com/mattermost/mattermost/server/v8/channels/app/support_packet.go:53 +0x6f2
+github.com/mattermost/mattermost/server/v8/channels/api4.generateSupportPacket(0xc0062439f0, {0x46e1c98, 0xc007b8a200}, 0xc00143c200)
+	github.com/mattermost/mattermost/server/v8/channels/api4/system.go:110 +0x2f1
+github.com/mattermost/mattermost/server/v8/channels/web.Handler.ServeHTTP({0xc0028b4000, 0x3e746b8, {0x4e20898, 0x15}, 0x1, 0x0, 0x0, 0x0, 0x1, 0x0, ...}, ...)
+	github.com/mattermost/mattermost/server/v8/channels/web/handlers.go:376 +0x35f6
+github.com/klauspost/compress/gzhttp.NewWrapper.func1.1({0x46e1e48, 0xc006929420}, 0xc004c06c00?)
+	github.com/klauspost/compress@v1.17.7/gzhttp/compress.go:495 +0x357
+net/http.HandlerFunc.ServeHTTP(0xc00143c100?, {0x46e1e48?, 0xc006929420?}, 0x411cbe?)
+	net/http/server.go:2136 +0x29
+github.com/gorilla/mux.(*Router).ServeHTTP(0xc000284300, {0x46e1e48, 0xc006929420}, 0xc00143c000)
+	github.com/gorilla/mux@v1.8.1/mux.go:212 +0x1c5
+github.com/mattermost/mattermost/server/v8/channels/app.(*Server).Start.(*Handler).Handle.(*Handler).handle.func5({0x46e1e48, 0xc006929420}, 0xc007cfbf00)
+	github.com/getsentry/sentry-go@v0.27.0/http/sentryhttp.go:118 +0x2f1
+net/http.HandlerFunc.ServeHTTP(0x67cc480?, {0x46e1e48?, 0xc006929420?}, 0xc004c11b50?)
+	net/http/server.go:2136 +0x29
+net/http.serverHandler.ServeHTTP({0xc005204cc0?}, {0x46e1e48?, 0xc006929420?}, 0x6?)
+	net/http/server.go:2938 +0x8e
+net/http.(*conn).serve(0xc000a194d0, {0x46e63b8, 0xc001cdad50})
+	net/http/server.go:2009 +0x5f4
+created by net/http.(*Server).Serve in goroutine 1188
+	net/http/server.go:3086 +0x5cb
+
+goroutine 1 [chan receive, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/cmd/mattermost/commands.runServer(0xc00025e0e0, 0xb?)
+	github.com/mattermost/mattermost/server/v8/cmd/mattermost/commands/server.go:120 +0x1f7
+github.com/mattermost/mattermost/server/v8/cmd/mattermost/commands.serverCmdF(0xc00029e200?, {0x3c5f452?, 0x4?, 0x3c5f42a?})
+	github.com/mattermost/mattermost/server/v8/cmd/mattermost/commands/server.go:58 +0x10f
+github.com/spf13/cobra.(*Command).execute(0x6767b00, {0xc0001b4050, 0x0, 0x0})
+	github.com/spf13/cobra@v1.8.0/command.go:983 +0xabc
+github.com/spf13/cobra.(*Command).ExecuteC(0x6767b00)
+	github.com/spf13/cobra@v1.8.0/command.go:1115 +0x3ff
+github.com/spf13/cobra.(*Command).Execute(...)
+	github.com/spf13/cobra@v1.8.0/command.go:1039
+github.com/mattermost/mattermost/server/v8/cmd/mattermost/commands.Run(...)
+	github.com/mattermost/mattermost/server/v8/cmd/mattermost/commands/root.go:17
+main.main()
+	github.com/mattermost/mattermost/server/v8/cmd/mattermost/main.go:20 +0x88
+
+goroutine 5 [select, 1 minutes]:
+github.com/blevesearch/bleve_index_api.AnalysisWorker({0xc0008af0e0?, 0xc0008af140?})
+	github.com/blevesearch/bleve_index_api@v1.1.6/analysis.go:46 +0x89
+created by github.com/blevesearch/bleve_index_api.NewAnalysisQueue in goroutine 1
+	github.com/blevesearch/bleve_index_api@v1.1.6/analysis.go:38 +0x9f
+
+goroutine 6 [select, 1 minutes]:
+github.com/blevesearch/bleve_index_api.AnalysisWorker({0xc0008af0e0?, 0xc0008af140?})
+	github.com/blevesearch/bleve_index_api@v1.1.6/analysis.go:46 +0x89
+created by github.com/blevesearch/bleve_index_api.NewAnalysisQueue in goroutine 1
+	github.com/blevesearch/bleve_index_api@v1.1.6/analysis.go:38 +0x9f
+
+goroutine 7 [select, 1 minutes]:
+github.com/blevesearch/bleve_index_api.AnalysisWorker({0xc0008af0e0?, 0xc0008af140?})
+	github.com/blevesearch/bleve_index_api@v1.1.6/analysis.go:46 +0x89
+created by github.com/blevesearch/bleve_index_api.NewAnalysisQueue in goroutine 1
+	github.com/blevesearch/bleve_index_api@v1.1.6/analysis.go:38 +0x9f
+
+goroutine 8 [select, 1 minutes]:
+github.com/blevesearch/bleve_index_api.AnalysisWorker({0xc0008af0e0?, 0xc0008af140?})
+	github.com/blevesearch/bleve_index_api@v1.1.6/analysis.go:46 +0x89
+created by github.com/blevesearch/bleve_index_api.NewAnalysisQueue in goroutine 1
+	github.com/blevesearch/bleve_index_api@v1.1.6/analysis.go:38 +0x9f
+
+goroutine 11 [select]:
+github.com/mattermost/logr/v2.(*Logr).start(0xc000375ef0)
+	github.com/mattermost/logr/v2@v2.0.21/logr.go:428 +0xb3
+created by github.com/mattermost/logr/v2.New in goroutine 1
+	github.com/mattermost/logr/v2@v2.0.21/logr.go:81 +0x3b8
+
+goroutine 255 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/public/model.createTask.func1()
+	github.com/mattermost/mattermost/server/public/model/scheduled_task.go:69 +0x205
+created by github.com/mattermost/mattermost/server/public/model.createTask in goroutine 295
+	github.com/mattermost/mattermost/server/public/model/scheduled_task.go:46 +0x165
+
+goroutine 12 [select, 1 minutes]:
+github.com/mattermost/logr/v2.(*TargetHost).start(0xc0006d8310)
+	github.com/mattermost/logr/v2@v2.0.21/target.go:233 +0xb7
+created by github.com/mattermost/logr/v2.newTargetHost in goroutine 1
+	github.com/mattermost/logr/v2@v2.0.21/target.go:92 +0x306
+
+goroutine 13 [select]:
+github.com/mattermost/logr/v2.(*TargetHost).start(0xc0006d8380)
+	github.com/mattermost/logr/v2@v2.0.21/target.go:233 +0xb7
+created by github.com/mattermost/logr/v2.newTargetHost in goroutine 1
+	github.com/mattermost/logr/v2@v2.0.21/target.go:92 +0x306
+
+goroutine 14 [select, 1 minutes]:
+github.com/mattermost/logr/v2.(*Logr).start(0xc0028cc000)
+	github.com/mattermost/logr/v2@v2.0.21/logr.go:428 +0xb3
+created by github.com/mattermost/logr/v2.New in goroutine 1
+	github.com/mattermost/logr/v2@v2.0.21/logr.go:81 +0x3b8
+
+goroutine 15 [select, 1 minutes]:
+github.com/mattermost/logr/v2.(*TargetHost).start(0xc0006d8460)
+	github.com/mattermost/logr/v2@v2.0.21/target.go:233 +0xb7
+created by github.com/mattermost/logr/v2.newTargetHost in goroutine 1
+	github.com/mattermost/logr/v2@v2.0.21/target.go:92 +0x306
+
+goroutine 16 [select, 1 minutes]:
+github.com/mattermost/logr/v2.(*TargetHost).start(0xc0006d84d0)
+	github.com/mattermost/logr/v2@v2.0.21/target.go:233 +0xb7
+created by github.com/mattermost/logr/v2.newTargetHost in goroutine 1
+	github.com/mattermost/logr/v2@v2.0.21/target.go:92 +0x306
+
+goroutine 169 [select, 1 minutes]:
+database/sql.(*DB).connectionOpener(0xc0028c8c30, {0x46e63f0, 0xc0028ece60})
+	database/sql/sql.go:1218 +0x87
+created by database/sql.OpenDB in goroutine 1
+	database/sql/sql.go:791 +0x165
+
+goroutine 98 [chan receive, 1 minutes]:
+gopkg.in/natefinch/lumberjack%2ev2.(*Logger).millRun(0xc0027078c0)
+	gopkg.in/natefinch/lumberjack.v2@v2.2.1/lumberjack.go:379 +0x3f
+created by gopkg.in/natefinch/lumberjack%2ev2.(*Logger).mill.func1 in goroutine 12
+	gopkg.in/natefinch/lumberjack.v2@v2.2.1/lumberjack.go:390 +0x96
+
+goroutine 28 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/public/model.createTask.func1()
+	github.com/mattermost/mattermost/server/public/model/scheduled_task.go:69 +0x205
+created by github.com/mattermost/mattermost/server/public/model.createTask in goroutine 294
+	github.com/mattermost/mattermost/server/public/model/scheduled_task.go:46 +0x165
+
+goroutine 175 [select, 1 minutes]:
+database/sql.(*DB).connectionCleaner(0xc0028c8c30, 0x0?)
+	database/sql/sql.go:1061 +0x9c
+created by database/sql.(*DB).startCleanerLocked in goroutine 1
+	database/sql/sql.go:1048 +0x105
+
+goroutine 177 [select]:
+github.com/mattermost/mattermost/server/v8/channels/store/sqlstore.(*SqlStore).monitorReplicas(0xc000201c00)
+	github.com/mattermost/mattermost/server/v8/channels/store/sqlstore/store.go:468 +0xfe
+created by github.com/mattermost/mattermost/server/v8/channels/store/sqlstore.New in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/store/sqlstore/store.go:162 +0x236
+
+goroutine 1059 [select, 1 minutes]:
+github.com/hashicorp/yamux.(*Stream).Read(0xc00195d2b0, {0xc00152f000, 0x1000, 0x67cc480?})
+	github.com/hashicorp/yamux@v0.1.1/stream.go:145 +0x425
+bufio.(*Reader).Read(0xc002980360, {0xc002586077, 0x1, 0xc002575d68?})
+	bufio/bufio.go:244 +0x197
+io.ReadAtLeast({0x46d1960, 0xc002980360}, {0xc002586077, 0x1, 0x9}, 0x1)
+	io/io.go:335 +0x90
+io.ReadFull(...)
+	io/io.go:354
+encoding/gob.decodeUintReader({0x46d1960, 0xc002980360}, {0xc002586077, 0x9, 0x9})
+	encoding/gob/decode.go:116 +0x51
+encoding/gob.(*Decoder).recvMessage(0xc001cbc300)
+	encoding/gob/decoder.go:82 +0x33
+encoding/gob.(*Decoder).decodeTypeSequence(0xc001cbc300, 0x0)
+	encoding/gob/decoder.go:148 +0x47
+encoding/gob.(*Decoder).DecodeValue(0xc001cbc300, {0x34c8c00?, 0xc005a69830?, 0x7fffb03133c8?})
+	encoding/gob/decoder.go:227 +0x16e
+encoding/gob.(*Decoder).Decode(0xc001cbc300, {0x34c8c00?, 0xc005a69830?})
+	encoding/gob/decoder.go:204 +0x125
+net/rpc.(*gobClientCodec).ReadResponseHeader(0x3736a80?, 0x34f9880?)
+	net/rpc/client.go:228 +0x25
+net/rpc.(*Client).input(0xc0029804e0)
+	net/rpc/client.go:109 +0x9f
+created by net/rpc.NewClientWithCodec in goroutine 884
+	net/rpc/client.go:206 +0xb6
+
+goroutine 221 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/public/model.createTask.func1()
+	github.com/mattermost/mattermost/server/public/model/scheduled_task.go:69 +0x205
+created by github.com/mattermost/mattermost/server/public/model.createTask in goroutine 298
+	github.com/mattermost/mattermost/server/public/model/scheduled_task.go:46 +0x165
+
+goroutine 1060 [select, 1 minutes]:
+github.com/hashicorp/yamux.(*Stream).Read(0xc0019264e0, {0xc0033f4000, 0x8000, 0xb2a00000b1a?})
+	github.com/hashicorp/yamux@v0.1.1/stream.go:145 +0x425
+io.copyBuffer({0x46d1140, 0xc005470028}, {0x46d2ba0, 0xc0019264e0}, {0x0, 0x0, 0x0})
+	io/io.go:430 +0x1a6
+io.Copy(...)
+	io/io.go:389
+github.com/hashicorp/go-plugin.copyStream({0x3c66066, 0x6}, {0x46d1140?, 0xc005470028?}, {0x46d2ba0?, 0xc0019264e0?})
+	github.com/hashicorp/go-plugin@v1.6.0/stream.go:18 +0x7d
+created by github.com/hashicorp/go-plugin.(*RPCClient).SyncStreams in goroutine 884
+	github.com/hashicorp/go-plugin@v1.6.0/rpc_client.go:111 +0xc9
+
+goroutine 878 [select]:
+github.com/hashicorp/yamux.(*Stream).Read(0xc00195dba0, {0xc0013db000, 0x1000, 0xc007b05c88?})
+	github.com/hashicorp/yamux@v0.1.1/stream.go:145 +0x425
+bufio.(*Reader).Read(0xc0061527e0, {0xc00245c0d4, 0x1, 0xc007b05d68?})
+	bufio/bufio.go:244 +0x197
+io.ReadAtLeast({0x46d1960, 0xc0061527e0}, {0xc00245c0d4, 0x1, 0x9}, 0x1)
+	io/io.go:335 +0x90
+io.ReadFull(...)
+	io/io.go:354
+encoding/gob.decodeUintReader({0x46d1960, 0xc0061527e0}, {0xc00245c0d4, 0x9, 0x9})
+	encoding/gob/decode.go:116 +0x51
+encoding/gob.(*Decoder).recvMessage(0xc0022b5280)
+	encoding/gob/decoder.go:82 +0x33
+encoding/gob.(*Decoder).decodeTypeSequence(0xc0022b5280, 0x0)
+	encoding/gob/decoder.go:148 +0x47
+encoding/gob.(*Decoder).DecodeValue(0xc0022b5280, {0x34c8c00?, 0xc006682480?, 0x7fffb0134b48?})
+	encoding/gob/decoder.go:227 +0x16e
+encoding/gob.(*Decoder).Decode(0xc0022b5280, {0x34c8c00?, 0xc006682480?})
+	encoding/gob/decoder.go:204 +0x125
+net/rpc.(*gobClientCodec).ReadResponseHeader(0x3736a80?, 0x0?)
+	net/rpc/client.go:228 +0x25
+net/rpc.(*Client).input(0xc0061528a0)
+	net/rpc/client.go:109 +0x9f
+created by net/rpc.NewClientWithCodec in goroutine 884
+	net/rpc/client.go:206 +0xb6
+
+goroutine 1053 [select]:
+github.com/hashicorp/yamux.(*Stream).Read(0xc0022c4000, {0xc001772000, 0x1000, 0x0?})
+	github.com/hashicorp/yamux@v0.1.1/stream.go:145 +0x425
+bufio.(*Reader).Read(0xc0013f0ea0, {0xc005a654d4, 0x1, 0x3849d00?})
+	bufio/bufio.go:244 +0x197
+io.ReadAtLeast({0x46d1960, 0xc0013f0ea0}, {0xc005a654d4, 0x1, 0x9}, 0x1)
+	io/io.go:335 +0x90
+io.ReadFull(...)
+	io/io.go:354
+encoding/gob.decodeUintReader({0x46d1960, 0xc0013f0ea0}, {0xc005a654d4, 0x9, 0x9})
+	encoding/gob/decode.go:116 +0x51
+encoding/gob.(*Decoder).recvMessage(0xc00510b780)
+	encoding/gob/decoder.go:82 +0x33
+encoding/gob.(*Decoder).decodeTypeSequence(0xc00510b780, 0x0)
+	encoding/gob/decoder.go:148 +0x47
+encoding/gob.(*Decoder).DecodeValue(0xc00510b780, {0x34c8bc0?, 0xc004e486e0?, 0xc00510b7f0?})
+	encoding/gob/decoder.go:227 +0x16e
+encoding/gob.(*Decoder).Decode(0xc00510b780, {0x34c8bc0?, 0xc004e486e0?})
+	encoding/gob/decoder.go:204 +0x125
+net/rpc.(*gobServerCodec).ReadRequestHeader(0xc001003ac0?, 0x4e2cbf?)
+	net/rpc/server.go:402 +0x25
+net/rpc.(*Server).readRequestHeader(0xc001003ac0, {0x46e7260, 0xc00142b560})
+	net/rpc/server.go:588 +0x58
+net/rpc.(*Server).readRequest(0x94c0d38?, {0x46e7260, 0xc00142b560})
+	net/rpc/server.go:548 +0x2f
+net/rpc.(*Server).ServeCodec(0xc001003ac0, {0x46e7260?, 0xc00142b560})
+	net/rpc/server.go:463 +0x7c
+net/rpc.(*Server).ServeConn(0xc001003ac0?, {0x7fffb060c448?, 0xc0022c4000})
+	net/rpc/server.go:454 +0x32c
+github.com/hashicorp/go-plugin.serve({0x7fffb060c448, 0xc0022c4000}, {0x3c65cca, 0x6}, {0x3c26f80, 0xc00639a120})
+	github.com/hashicorp/go-plugin@v1.6.0/rpc_server.go:208 +0x126
+github.com/hashicorp/go-plugin.(*MuxBroker).AcceptAndServe(0x18fc3c5?, 0x5e88000?, {0x3c26f80, 0xc00639a120})
+	github.com/hashicorp/go-plugin@v1.6.0/mux_broker.go:90 +0xed
+github.com/mattermost/mattermost/server/public/plugin.(*hooksRPCClient).OnActivate.func1()
+	github.com/mattermost/mattermost/server/public/plugin/client_rpc.go:246 +0xbf
+created by github.com/mattermost/mattermost/server/public/plugin.(*hooksRPCClient).OnActivate in goroutine 884
+	github.com/mattermost/mattermost/server/public/plugin/client_rpc.go:244 +0x9e
+
+goroutine 696 [select, 1 minutes]:
+github.com/hashicorp/yamux.(*Session).keepalive(0xc004fd6540)
+	github.com/hashicorp/yamux@v0.1.1/session.go:349 +0x85
+created by github.com/hashicorp/yamux.newSession in goroutine 639
+	github.com/hashicorp/yamux@v0.1.1/session.go:121 +0x4af
+
+goroutine 1049 [select]:
+github.com/hashicorp/yamux.(*Session).sendLoop(0xc001df2b40)
+	github.com/hashicorp/yamux@v0.1.1/session.go:467 +0x125
+github.com/hashicorp/yamux.(*Session).send(0xc0028acfb8?)
+	github.com/hashicorp/yamux@v0.1.1/session.go:456 +0x18
+created by github.com/hashicorp/yamux.newSession in goroutine 884
+	github.com/hashicorp/yamux@v0.1.1/session.go:119 +0x465
+
+goroutine 1061 [select, 1 minutes]:
+github.com/hashicorp/yamux.(*Stream).Read(0xc001926820, {0xc004a14000, 0x8000, 0xcea00000cba?})
+	github.com/hashicorp/yamux@v0.1.1/stream.go:145 +0x425
+io.copyBuffer({0x46d1140, 0xc005470038}, {0x46d2ba0, 0xc001926820}, {0x0, 0x0, 0x0})
+	io/io.go:430 +0x1a6
+io.Copy(...)
+	io/io.go:389
+github.com/hashicorp/go-plugin.copyStream({0x3c66060, 0x6}, {0x46d1140?, 0xc005470038?}, {0x46d2ba0?, 0xc001926820?})
+	github.com/hashicorp/go-plugin@v1.6.0/stream.go:18 +0x7d
+created by github.com/hashicorp/go-plugin.(*RPCClient).SyncStreams in goroutine 884
+	github.com/hashicorp/go-plugin@v1.6.0/rpc_client.go:112 +0x165
+
+goroutine 235 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start.func1()
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:387 +0x507
+github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start.func2()
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:580 +0x34
+created by github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:597 +0x125
+
+goroutine 236 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start.func1()
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:387 +0x507
+github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start.func2()
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:580 +0x34
+created by github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:597 +0x125
+
+goroutine 237 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start.func1()
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:387 +0x507
+github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start.func2()
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:580 +0x34
+created by github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:597 +0x125
+
+goroutine 238 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start.func1()
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:387 +0x507
+github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start.func2()
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:580 +0x34
+created by github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:597 +0x125
+
+goroutine 239 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start.func1()
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:387 +0x507
+github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start.func2()
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:580 +0x34
+created by github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:597 +0x125
+
+goroutine 240 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start.func1()
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:387 +0x507
+github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start.func2()
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:580 +0x34
+created by github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:597 +0x125
+
+goroutine 241 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start.func1()
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:387 +0x507
+github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start.func2()
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:580 +0x34
+created by github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:597 +0x125
+
+goroutine 242 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start.func1()
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:387 +0x507
+github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start.func2()
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:580 +0x34
+created by github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:597 +0x125
+
+goroutine 243 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start.func1()
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:387 +0x507
+github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start.func2()
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:580 +0x34
+created by github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:597 +0x125
+
+goroutine 244 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start.func1()
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:387 +0x507
+github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start.func2()
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:580 +0x34
+created by github.com/mattermost/mattermost/server/v8/channels/app/platform.(*Hub).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/web_hub.go:597 +0x125
+
+goroutine 245 [chan receive, 1 minutes]:
+github.com/getsentry/sentry-go.(*HTTPTransport).worker(0xc0003f50a0)
+	github.com/getsentry/sentry-go@v0.27.0/transport.go:471 +0x12a
+created by github.com/getsentry/sentry-go.(*HTTPTransport).Configure.func1 in goroutine 1
+	github.com/getsentry/sentry-go@v0.27.0/transport.go:343 +0x56
+
+goroutine 246 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/app.(*PushNotificationsHub).start(0xc002a0ca80, {0x4708fa0?, 0xc001be3320})
+	github.com/mattermost/mattermost/server/v8/channels/app/notification_push.go:402 +0x105
+created by github.com/mattermost/mattermost/server/v8/channels/app.(*Server).createPushNotificationsHub in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/app/notification_push.go:394 +0x25f
+
+goroutine 247 [IO wait, 1 minutes]:
+internal/poll.runtime_pollWait(0x7fffb816e4b0, 0x72)
+	runtime/netpoll.go:343 +0x85
+internal/poll.(*pollDesc).wait(0xc000dd6720?, 0xc00280feb0?, 0x1)
+	internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.(*pollDesc).waitRead(...)
+	internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0xc000dd6720, {0xc00280feb0, 0x10000, 0x10000})
+	internal/poll/fd_unix.go:164 +0x27a
+os.(*File).read(...)
+	os/file_posix.go:29
+os.(*File).Read(0xc000d46610, {0xc00280feb0?, 0x1000001000001?, 0x100000100000100?})
+	os/file.go:118 +0x52
+github.com/fsnotify/fsnotify.(*Watcher).readEvents(0xc0026f9f40)
+	github.com/fsnotify/fsnotify@v1.7.0/backend_inotify.go:483 +0xd2
+created by github.com/fsnotify/fsnotify.NewBufferedWatcher in goroutine 1
+	github.com/fsnotify/fsnotify@v1.7.0/backend_inotify.go:270 +0x1c5
+
+goroutine 248 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/platform/shared/templates.NewWithWatcher.func1()
+	github.com/mattermost/mattermost/server/v8/platform/shared/templates/templates.go:94 +0x1ac
+created by github.com/mattermost/mattermost/server/v8/platform/shared/templates.NewWithWatcher in goroutine 1
+	github.com/mattermost/mattermost/server/v8/platform/shared/templates/templates.go:88 +0x20c
+
+goroutine 249 [chan receive, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/app.NewServer.func3()
+	github.com/mattermost/mattermost/server/v8/channels/app/server.go:332 +0x94
+github.com/mattermost/mattermost/server/v8/channels/app/platform.(*PlatformService).Go.func1()
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/goroutines.go:14 +0x23
+created by github.com/mattermost/mattermost/server/v8/channels/app/platform.(*PlatformService).Go in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/app/platform/goroutines.go:13 +0x73
+
+goroutine 260 [select]:
+github.com/rudderlabs/analytics-go.(*client).loop(0xc0017a8000)
+	github.com/rudderlabs/analytics-go@v3.3.3+incompatible/analytics.go:522 +0x229
+created by github.com/rudderlabs/analytics-go.NewWithConfig in goroutine 296
+	github.com/rudderlabs/analytics-go@v3.3.3+incompatible/analytics.go:99 +0x6ef
+
+goroutine 251 [select, 1 minutes]:
+github.com/mattermost/logr/v2.(*Logr).start(0xc002a342c0)
+	github.com/mattermost/logr/v2@v2.0.21/logr.go:428 +0xb3
+created by github.com/mattermost/logr/v2.New in goroutine 1
+	github.com/mattermost/logr/v2@v2.0.21/logr.go:81 +0x3b8
+
+goroutine 691 [semacquire, 1 minutes]:
+sync.runtime_Semacquire(0x3?)
+	runtime/sema.go:62 +0x25
+sync.(*WaitGroup).Wait(0xc0018183c0?)
+	sync/waitgroup.go:116 +0x48
+github.com/hashicorp/go-plugin.(*Client).Start.func2()
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:772 +0xa8
+created by github.com/hashicorp/go-plugin.(*Client).Start in goroutine 639
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:764 +0x1a6e
+
+goroutine 53 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/public/model.createTask.func1()
+	github.com/mattermost/mattermost/server/public/model/scheduled_task.go:69 +0x205
+created by github.com/mattermost/mattermost/server/public/model.createTask in goroutine 301
+	github.com/mattermost/mattermost/server/public/model/scheduled_task.go:46 +0x165
+
+goroutine 29 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/public/model.createTask.func1()
+	github.com/mattermost/mattermost/server/public/model/scheduled_task.go:69 +0x205
+created by github.com/mattermost/mattermost/server/public/model.createTask in goroutine 294
+	github.com/mattermost/mattermost/server/public/model/scheduled_task.go:46 +0x165
+
+goroutine 280 [chan receive, 1 minutes]:
+github.com/rudderlabs/analytics-go.(*executor).loop(0xc0027123c0)
+	github.com/rudderlabs/analytics-go@v3.3.3+incompatible/executor.go:39 +0x49
+created by github.com/rudderlabs/analytics-go.newExecutor in goroutine 260
+	github.com/rudderlabs/analytics-go@v3.3.3+incompatible/executor.go:17 +0xa5
+
+goroutine 690 [IO wait, 1 minutes]:
+internal/poll.runtime_pollWait(0x7fffb816db00, 0x72)
+	runtime/netpoll.go:343 +0x85
+internal/poll.(*pollDesc).wait(0xc001d2e900?, 0xc006100000?, 0x1)
+	internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.(*pollDesc).waitRead(...)
+	internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0xc001d2e900, {0xc006100000, 0x10000, 0x10000})
+	internal/poll/fd_unix.go:164 +0x27a
+os.(*File).read(...)
+	os/file_posix.go:29
+os.(*File).Read(0xc000b2c508, {0xc006100000?, 0x3c63a7a?, 0x367c700?})
+	os/file.go:118 +0x52
+bufio.(*Reader).fill(0xc002a02f30)
+	bufio/bufio.go:113 +0x103
+bufio.(*Reader).ReadSlice(0xc002a02f30, 0x1?)
+	bufio/bufio.go:379 +0x29
+bufio.(*Reader).ReadLine(0xc002a02f30)
+	bufio/bufio.go:408 +0x25
+github.com/hashicorp/go-plugin.(*Client).logStderr(0xc001ecf500, {0xc004ba47d0?, 0xc005ce76e0?}, {0x46d08e0?, 0xc000b2c508?})
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:1170 +0x2b5
+created by github.com/hashicorp/go-plugin.(*Client).Start in goroutine 639
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:761 +0x19e5
+
+goroutine 1236 [IO wait]:
+internal/poll.runtime_pollWait(0x7fffb03771b0, 0x72)
+	runtime/netpoll.go:343 +0x85
+internal/poll.(*pollDesc).wait(0xc00526b380?, 0xc001bd6000?, 0x0)
+	internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.(*pollDesc).waitRead(...)
+	internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0xc00526b380, {0xc001bd6000, 0x1000, 0x1000})
+	internal/poll/fd_unix.go:164 +0x27a
+net.(*netFD).Read(0xc00526b380, {0xc001bd6000?, 0x4b0905?, 0x7fffb03772a0?})
+	net/fd_posix.go:55 +0x25
+net.(*conn).Read(0xc000844268, {0xc001bd6000?, 0x0?, 0xc0020d9e68?})
+	net/net.go:179 +0x45
+net/http.(*connReader).Read(0xc0020d9e60, {0xc001bd6000, 0x1000, 0x1000})
+	net/http/server.go:791 +0x14b
+bufio.(*Reader).fill(0xc005a538c0)
+	bufio/bufio.go:113 +0x103
+bufio.(*Reader).Peek(0xc005a538c0, 0x4)
+	bufio/bufio.go:151 +0x53
+net/http.(*conn).serve(0xc000a18870, {0x46e63b8, 0xc001cdad50})
+	net/http/server.go:2044 +0x75c
+created by net/http.(*Server).Serve in goroutine 1188
+	net/http/server.go:3086 +0x5cb
+
+goroutine 293 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/public/model.createTask.func1()
+	github.com/mattermost/mattermost/server/public/model/scheduled_task.go:69 +0x205
+created by github.com/mattermost/mattermost/server/public/model.createTask in goroutine 1
+	github.com/mattermost/mattermost/server/public/model/scheduled_task.go:46 +0x165
+
+goroutine 953 [select]:
+github.com/hashicorp/yamux.(*Session).AcceptStream(0xc00664a000)
+	github.com/hashicorp/yamux@v0.1.1/session.go:242 +0x69
+github.com/hashicorp/go-plugin.(*MuxBroker).Run(0xc0062660c0)
+	github.com/hashicorp/go-plugin@v1.6.0/mux_broker.go:142 +0x2a
+created by github.com/hashicorp/go-plugin.NewRPCClient in goroutine 882
+	github.com/hashicorp/go-plugin@v1.6.0/rpc_client.go:91 +0x1e5
+
+goroutine 1188 [IO wait]:
+internal/poll.runtime_pollWait(0x7fffb0377590, 0x72)
+	runtime/netpoll.go:343 +0x85
+internal/poll.(*pollDesc).wait(0xc00526ad80?, 0x4?, 0x0)
+	internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.(*pollDesc).waitRead(...)
+	internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Accept(0xc00526ad80)
+	internal/poll/fd_unix.go:611 +0x2ac
+net.(*netFD).accept(0xc00526ad80)
+	net/fd_unix.go:172 +0x29
+net.(*TCPListener).accept(0xc0066813c0)
+	net/tcpsock_posix.go:152 +0x1e
+net.(*TCPListener).Accept(0xc0066813c0)
+	net/tcpsock.go:315 +0x30
+net/http.(*Server).Serve(0xc004f100f0, {0x46e1a88, 0xc0066813c0})
+	net/http/server.go:3056 +0x364
+github.com/mattermost/mattermost/server/v8/channels/app.(*Server).Start.func2()
+	github.com/mattermost/mattermost/server/v8/channels/app/server.go:1062 +0x26e
+created by github.com/mattermost/mattermost/server/v8/channels/app.(*Server).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/app/server.go:999 +0x2086
+
+goroutine 302 [sleep, 1 minutes]:
+time.Sleep(0x34630b8a000)
+	runtime/time.go:195 +0x125
+github.com/mattermost/enterprise/compliance.(*ComplianceInterfaceImpl).StartComplianceDailyJob(0xc00218ce68)
+	github.com/mattermost/enterprise/compliance/compliance.go:300 +0x3b1
+created by github.com/mattermost/mattermost/server/v8/channels/app.(*Server).runJobs in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/app/server.go:534 +0x31f
+
+goroutine 303 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/jobs.(*SimpleWorker).Run(0xc0006d6af0)
+	github.com/mattermost/mattermost/server/v8/channels/jobs/base_workers.go:48 +0x131
+created by github.com/mattermost/mattermost/server/v8/channels/jobs.(*Workers).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/jobs/workers.go:52 +0x12b
+
+goroutine 304 [select, 1 minutes]:
+github.com/mattermost/enterprise/data_retention.(*DataRetentionWorker).Run(0xc002980480)
+	github.com/mattermost/enterprise/data_retention/worker.go:76 +0x1f5
+created by github.com/mattermost/mattermost/server/v8/channels/jobs.(*Workers).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/jobs/workers.go:52 +0x12b
+
+goroutine 305 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/jobs.(*SimpleWorker).Run(0xc0006d6910)
+	github.com/mattermost/mattermost/server/v8/channels/jobs/base_workers.go:48 +0x131
+created by github.com/mattermost/mattermost/server/v8/channels/jobs.(*Workers).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/jobs/workers.go:52 +0x12b
+
+goroutine 306 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/jobs.(*SimpleWorker).Run(0xc0006d6c80)
+	github.com/mattermost/mattermost/server/v8/channels/jobs/base_workers.go:48 +0x131
+created by github.com/mattermost/mattermost/server/v8/channels/jobs.(*Workers).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/jobs/workers.go:52 +0x12b
+
+goroutine 307 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/jobs.(*SimpleWorker).Run(0xc0006d7770)
+	github.com/mattermost/mattermost/server/v8/channels/jobs/base_workers.go:48 +0x131
+created by github.com/mattermost/mattermost/server/v8/channels/jobs.(*Workers).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/jobs/workers.go:52 +0x12b
+
+goroutine 308 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/jobs.(*SimpleWorker).Run(0xc0006d7860)
+	github.com/mattermost/mattermost/server/v8/channels/jobs/base_workers.go:48 +0x131
+created by github.com/mattermost/mattermost/server/v8/channels/jobs.(*Workers).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/jobs/workers.go:52 +0x12b
+
+goroutine 309 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/platform/services/searchengine/bleveengine/indexer.(*BleveIndexerWorker).Run(0xc000897680)
+	github.com/mattermost/mattermost/server/v8/platform/services/searchengine/bleveengine/indexer/indexing_job.go:125 +0x1f5
+created by github.com/mattermost/mattermost/server/v8/channels/jobs.(*Workers).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/jobs/workers.go:52 +0x12b
+
+goroutine 310 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/jobs.(*BatchWorker).Run(0xc0008977a0)
+	github.com/mattermost/mattermost/server/v8/channels/jobs/batch_worker.go:76 +0x1f5
+created by github.com/mattermost/mattermost/server/v8/channels/jobs.(*Workers).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/jobs/workers.go:52 +0x12b
+
+goroutine 311 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/jobs/resend_invitation_email.(*ResendInvitationEmailWorker).Run(0xc000999b90)
+	github.com/mattermost/mattermost/server/v8/channels/jobs/resend_invitation_email/worker.go:66 +0x131
+created by github.com/mattermost/mattermost/server/v8/channels/jobs.(*Workers).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/jobs/workers.go:52 +0x12b
+
+goroutine 312 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/jobs/plugins.(*Worker).Run(0xc0006d6730)
+	github.com/mattermost/mattermost/server/v8/channels/jobs/plugins/worker.go:50 +0x131
+created by github.com/mattermost/mattermost/server/v8/channels/jobs.(*Workers).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/jobs/workers.go:52 +0x12b
+
+goroutine 693 [chan receive, 1 minutes]:
+github.com/hashicorp/go-plugin.(*Client).Start.func4.1()
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:816 +0x77
+created by github.com/hashicorp/go-plugin.(*Client).Start.func4 in goroutine 639
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:814 +0x6e
+
+goroutine 313 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/jobs.(*SimpleWorker).Run(0xc0006d6a00)
+	github.com/mattermost/mattermost/server/v8/channels/jobs/base_workers.go:48 +0x131
+created by github.com/mattermost/mattermost/server/v8/channels/jobs.(*Workers).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/jobs/workers.go:52 +0x12b
+
+goroutine 314 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/jobs.(*SimpleWorker).Run(0xc0006d7590)
+	github.com/mattermost/mattermost/server/v8/channels/jobs/base_workers.go:48 +0x131
+created by github.com/mattermost/mattermost/server/v8/channels/jobs.(*Workers).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/jobs/workers.go:52 +0x12b
+
+goroutine 315 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/jobs.(*BatchWorker).Run(0xc000897800)
+	github.com/mattermost/mattermost/server/v8/channels/jobs/batch_worker.go:76 +0x1f5
+created by github.com/mattermost/mattermost/server/v8/channels/jobs.(*Workers).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/jobs/workers.go:52 +0x12b
+
+goroutine 316 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/jobs.(*SimpleWorker).Run(0xc0006d6ff0)
+	github.com/mattermost/mattermost/server/v8/channels/jobs/base_workers.go:48 +0x131
+created by github.com/mattermost/mattermost/server/v8/channels/jobs.(*Workers).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/jobs/workers.go:52 +0x12b
+
+goroutine 317 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/jobs.(*SimpleWorker).Run(0xc0006d74a0)
+	github.com/mattermost/mattermost/server/v8/channels/jobs/base_workers.go:48 +0x131
+created by github.com/mattermost/mattermost/server/v8/channels/jobs.(*Workers).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/jobs/workers.go:52 +0x12b
+
+goroutine 318 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/jobs/migrations.(*Worker).Run(0xc0008976e0)
+	github.com/mattermost/mattermost/server/v8/channels/jobs/migrations/worker.go:62 +0x171
+created by github.com/mattermost/mattermost/server/v8/channels/jobs.(*Workers).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/jobs/workers.go:52 +0x12b
+
+goroutine 319 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/jobs.(*SimpleWorker).Run(0xc0006d7680)
+	github.com/mattermost/mattermost/server/v8/channels/jobs/base_workers.go:48 +0x131
+created by github.com/mattermost/mattermost/server/v8/channels/jobs.(*Workers).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/jobs/workers.go:52 +0x12b
+
+goroutine 320 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/jobs.(*BatchWorker).Run(0xc000897860)
+	github.com/mattermost/mattermost/server/v8/channels/jobs/batch_worker.go:76 +0x1f5
+created by github.com/mattermost/mattermost/server/v8/channels/jobs.(*Workers).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/jobs/workers.go:52 +0x12b
+
+goroutine 695 [select]:
+github.com/hashicorp/yamux.(*Session).sendLoop(0xc004fd6540)
+	github.com/hashicorp/yamux@v0.1.1/session.go:467 +0x125
+github.com/hashicorp/yamux.(*Session).send(0x0?)
+	github.com/hashicorp/yamux@v0.1.1/session.go:456 +0x18
+created by github.com/hashicorp/yamux.newSession in goroutine 639
+	github.com/hashicorp/yamux@v0.1.1/session.go:119 +0x465
+
+goroutine 533 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/public/model.createTask.func1()
+	github.com/mattermost/mattermost/server/public/model/scheduled_task.go:69 +0x205
+created by github.com/mattermost/mattermost/server/public/model.createTask in goroutine 297
+	github.com/mattermost/mattermost/server/public/model/scheduled_task.go:46 +0x165
+
+goroutine 321 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/jobs.(*SimpleWorker).Run(0xc0006d6d70)
+	github.com/mattermost/mattermost/server/v8/channels/jobs/base_workers.go:48 +0x131
+created by github.com/mattermost/mattermost/server/v8/channels/jobs.(*Workers).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/jobs/workers.go:52 +0x12b
+
+goroutine 370 [select]:
+github.com/mattermost/mattermost/server/v8/channels/jobs.(*Watcher).Start(0xc002b31440)
+	github.com/mattermost/mattermost/server/v8/channels/jobs/jobs_watcher.go:51 +0x1b5
+created by github.com/mattermost/mattermost/server/v8/channels/jobs.(*Workers).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/jobs/workers.go:56 +0x17f
+
+goroutine 948 [select]:
+github.com/hashicorp/yamux.(*Session).sendLoop(0xc00664a000)
+	github.com/hashicorp/yamux@v0.1.1/session.go:467 +0x125
+github.com/hashicorp/yamux.(*Session).send(0x0?)
+	github.com/hashicorp/yamux@v0.1.1/session.go:456 +0x18
+created by github.com/hashicorp/yamux.newSession in goroutine 882
+	github.com/hashicorp/yamux@v0.1.1/session.go:119 +0x465
+
+goroutine 371 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/v8/channels/jobs.(*Schedulers).Start.func1()
+	github.com/mattermost/mattermost/server/v8/channels/jobs/schedulers.go:72 +0x369
+created by github.com/mattermost/mattermost/server/v8/channels/jobs.(*Schedulers).Start in goroutine 1
+	github.com/mattermost/mattermost/server/v8/channels/jobs/schedulers.go:53 +0x136
+
+goroutine 33 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/public/model.createTask.func1()
+	github.com/mattermost/mattermost/server/public/model/scheduled_task.go:69 +0x205
+created by github.com/mattermost/mattermost/server/public/model.createTask in goroutine 300
+	github.com/mattermost/mattermost/server/public/model/scheduled_task.go:46 +0x165
+
+goroutine 947 [IO wait]:
+internal/poll.runtime_pollWait(0x7fffb0377688, 0x72)
+	runtime/netpoll.go:343 +0x85
+internal/poll.(*pollDesc).wait(0xc001862000?, 0xc00285b000?, 0x0)
+	internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.(*pollDesc).waitRead(...)
+	internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0xc001862000, {0xc00285b000, 0x1000, 0x1000})
+	internal/poll/fd_unix.go:164 +0x27a
+net.(*netFD).Read(0xc001862000, {0xc00285b000?, 0x46d1960?, 0xc0061f8180?})
+	net/fd_posix.go:55 +0x25
+net.(*conn).Read(0xc006246000, {0xc00285b000?, 0x7fffff53af18?, 0x18?})
+	net/net.go:179 +0x45
+bufio.(*Reader).Read(0xc0061f8180, {0xc000f62110, 0xc, 0x2?})
+	bufio/bufio.go:244 +0x197
+io.ReadAtLeast({0x46d1960, 0xc0061f8180}, {0xc000f62110, 0xc, 0xc}, 0xc)
+	io/io.go:335 +0x90
+io.ReadFull(...)
+	io/io.go:354
+github.com/hashicorp/yamux.(*Session).recvLoop(0xc00664a000)
+	github.com/hashicorp/yamux@v0.1.1/session.go:536 +0xb0
+github.com/hashicorp/yamux.(*Session).recv(0xc006255a10?)
+	github.com/hashicorp/yamux@v0.1.1/session.go:515 +0x18
+created by github.com/hashicorp/yamux.newSession in goroutine 882
+	github.com/hashicorp/yamux@v0.1.1/session.go:118 +0x426
+
+goroutine 348 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/public/model.createTask.func1()
+	github.com/mattermost/mattermost/server/public/model/scheduled_task.go:69 +0x205
+created by github.com/mattermost/mattermost/server/public/model.createTask in goroutine 299
+	github.com/mattermost/mattermost/server/public/model/scheduled_task.go:46 +0x165
+
+goroutine 949 [select]:
+github.com/hashicorp/yamux.(*Session).keepalive(0xc00664a000)
+	github.com/hashicorp/yamux@v0.1.1/session.go:349 +0x85
+created by github.com/hashicorp/yamux.newSession in goroutine 882
+	github.com/hashicorp/yamux@v0.1.1/session.go:121 +0x4af
+
+goroutine 895 [select]:
+github.com/hashicorp/yamux.(*Stream).Read(0xc001d56820, {0xc0028fd000, 0x1000, 0xc004dcbc88?})
+	github.com/hashicorp/yamux@v0.1.1/stream.go:145 +0x425
+bufio.(*Reader).Read(0xc005a52300, {0xc000f62140, 0x1, 0xc004dcbd68?})
+	bufio/bufio.go:244 +0x197
+io.ReadAtLeast({0x46d1960, 0xc005a52300}, {0xc000f62140, 0x1, 0x9}, 0x1)
+	io/io.go:335 +0x90
+io.ReadFull(...)
+	io/io.go:354
+encoding/gob.decodeUintReader({0x46d1960, 0xc005a52300}, {0xc000f62140, 0x9, 0x9})
+	encoding/gob/decode.go:116 +0x51
+encoding/gob.(*Decoder).recvMessage(0xc005802180)
+	encoding/gob/decoder.go:82 +0x33
+encoding/gob.(*Decoder).decodeTypeSequence(0xc005802180, 0x0)
+	encoding/gob/decoder.go:148 +0x47
+encoding/gob.(*Decoder).DecodeValue(0xc005802180, {0x34c8c00?, 0xc0061de420?, 0x7fffb036a6b0?})
+	encoding/gob/decoder.go:227 +0x16e
+encoding/gob.(*Decoder).Decode(0xc005802180, {0x34c8c00?, 0xc0061de420?})
+	encoding/gob/decoder.go:204 +0x125
+net/rpc.(*gobClientCodec).ReadResponseHeader(0x3736a80?, 0x0?)
+	net/rpc/client.go:228 +0x25
+net/rpc.(*Client).input(0xc005a52420)
+	net/rpc/client.go:109 +0x9f
+created by net/rpc.NewClientWithCodec in goroutine 882
+	net/rpc/client.go:206 +0xb6
+
+goroutine 955 [select, 1 minutes]:
+github.com/hashicorp/yamux.(*Stream).Read(0xc001d80d00, {0xc001e6a000, 0x8000, 0xc0024cded0?})
+	github.com/hashicorp/yamux@v0.1.1/stream.go:145 +0x425
+io.copyBuffer({0x46d1140, 0xc000844d00}, {0x46d2ba0, 0xc001d80d00}, {0x0, 0x0, 0x0})
+	io/io.go:430 +0x1a6
+io.Copy(...)
+	io/io.go:389
+github.com/hashicorp/go-plugin.copyStream({0x3c66066, 0x6}, {0x46d1140?, 0xc000844d00?}, {0x46d2ba0?, 0xc001d80d00?})
+	github.com/hashicorp/go-plugin@v1.6.0/stream.go:18 +0x7d
+created by github.com/hashicorp/go-plugin.(*RPCClient).SyncStreams in goroutine 882
+	github.com/hashicorp/go-plugin@v1.6.0/rpc_client.go:111 +0xc9
+
+goroutine 954 [select, 1 minutes]:
+github.com/hashicorp/yamux.(*Stream).Read(0xc001d80820, {0xc006321000, 0x1000, 0x67cc480?})
+	github.com/hashicorp/yamux@v0.1.1/stream.go:145 +0x425
+bufio.(*Reader).Read(0xc0061f85a0, {0xc001c1a090, 0x1, 0xc005e3bd68?})
+	bufio/bufio.go:244 +0x197
+io.ReadAtLeast({0x46d1960, 0xc0061f85a0}, {0xc001c1a090, 0x1, 0x9}, 0x1)
+	io/io.go:335 +0x90
+io.ReadFull(...)
+	io/io.go:354
+encoding/gob.decodeUintReader({0x46d1960, 0xc0061f85a0}, {0xc001c1a090, 0x9, 0x9})
+	encoding/gob/decode.go:116 +0x51
+encoding/gob.(*Decoder).recvMessage(0xc001862a80)
+	encoding/gob/decoder.go:82 +0x33
+encoding/gob.(*Decoder).decodeTypeSequence(0xc001862a80, 0x0)
+	encoding/gob/decoder.go:148 +0x47
+encoding/gob.(*Decoder).DecodeValue(0xc001862a80, {0x34c8c00?, 0xc005a68000?, 0x7fffb03133c8?})
+	encoding/gob/decoder.go:227 +0x16e
+encoding/gob.(*Decoder).Decode(0xc001862a80, {0x34c8c00?, 0xc005a68000?})
+	encoding/gob/decoder.go:204 +0x125
+net/rpc.(*gobClientCodec).ReadResponseHeader(0x3736a80?, 0x34f9880?)
+	net/rpc/client.go:228 +0x25
+net/rpc.(*Client).input(0xc0061f8660)
+	net/rpc/client.go:109 +0x9f
+created by net/rpc.NewClientWithCodec in goroutine 882
+	net/rpc/client.go:206 +0xb6
+
+goroutine 638 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/public/plugin.(*PluginHealthCheckJob).run(0xc0057cacd0)
+	github.com/mattermost/mattermost/server/public/plugin/health_check.go:38 +0x112
+created by github.com/mattermost/mattermost/server/public/plugin.(*Environment).TogglePluginHealthCheckJob in goroutine 1
+	github.com/mattermost/mattermost/server/public/plugin/environment.go:665 +0x23f
+
+goroutine 694 [IO wait]:
+internal/poll.runtime_pollWait(0x7fffb816da08, 0x72)
+	runtime/netpoll.go:343 +0x85
+internal/poll.(*pollDesc).wait(0xc004f8c780?, 0xc0060df000?, 0x0)
+	internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.(*pollDesc).waitRead(...)
+	internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0xc004f8c780, {0xc0060df000, 0x1000, 0x1000})
+	internal/poll/fd_unix.go:164 +0x27a
+net.(*netFD).Read(0xc004f8c780, {0xc0060df000?, 0x46d1960?, 0xc001d2eae0?})
+	net/fd_posix.go:55 +0x25
+net.(*conn).Read(0xc000b2c518, {0xc0060df000?, 0x40b550?, 0xc002b65e60?})
+	net/net.go:179 +0x45
+bufio.(*Reader).Read(0xc001d2eae0, {0xc000efb4d0, 0xc, 0x2?})
+	bufio/bufio.go:244 +0x197
+io.ReadAtLeast({0x46d1960, 0xc001d2eae0}, {0xc000efb4d0, 0xc, 0xc}, 0xc)
+	io/io.go:335 +0x90
+io.ReadFull(...)
+	io/io.go:354
+github.com/hashicorp/yamux.(*Session).recvLoop(0xc004fd6540)
+	github.com/hashicorp/yamux@v0.1.1/session.go:536 +0xb0
+github.com/hashicorp/yamux.(*Session).recv(0xc004f8c480?)
+	github.com/hashicorp/yamux@v0.1.1/session.go:515 +0x18
+created by github.com/hashicorp/yamux.newSession in goroutine 639
+	github.com/hashicorp/yamux@v0.1.1/session.go:118 +0x426
+
+goroutine 692 [IO wait, 1 minutes]:
+internal/poll.runtime_pollWait(0x7fffb816dcf0, 0x72)
+	runtime/netpoll.go:343 +0x85
+internal/poll.(*pollDesc).wait(0xc001d2e840?, 0xc0060de026?, 0x1)
+	internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.(*pollDesc).waitRead(...)
+	internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0xc001d2e840, {0xc0060de026, 0xfda, 0xfda})
+	internal/poll/fd_unix.go:164 +0x27a
+os.(*File).read(...)
+	os/file_posix.go:29
+os.(*File).Read(0xc000b2c4f8, {0xc0060de026?, 0x40b080?, 0xc000802d00?})
+	os/file.go:118 +0x52
+bufio.(*Scanner).Scan(0xc002ecff40)
+	bufio/scan.go:214 +0x81b
+github.com/hashicorp/go-plugin.(*Client).Start.func3()
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:800 +0x165
+created by github.com/hashicorp/go-plugin.(*Client).Start in goroutine 639
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:795 +0x1b26
+
+goroutine 700 [select]:
+github.com/hashicorp/yamux.(*Session).AcceptStream(0xc004fd6540)
+	github.com/hashicorp/yamux@v0.1.1/session.go:242 +0x69
+github.com/hashicorp/go-plugin.(*MuxBroker).Run(0xc004bd2f60)
+	github.com/hashicorp/go-plugin@v1.6.0/mux_broker.go:142 +0x2a
+created by github.com/hashicorp/go-plugin.NewRPCClient in goroutine 639
+	github.com/hashicorp/go-plugin@v1.6.0/rpc_client.go:91 +0x1e5
+
+goroutine 701 [select, 1 minutes]:
+github.com/hashicorp/yamux.(*Stream).Read(0xc001439e10, {0xc0060e9000, 0x1000, 0x67cc480?})
+	github.com/hashicorp/yamux@v0.1.1/stream.go:145 +0x425
+bufio.(*Reader).Read(0xc001d2f020, {0xc000efb520, 0x1, 0xc001ae1d68?})
+	bufio/bufio.go:244 +0x197
+io.ReadAtLeast({0x46d1960, 0xc001d2f020}, {0xc000efb520, 0x1, 0x9}, 0x1)
+	io/io.go:335 +0x90
+io.ReadFull(...)
+	io/io.go:354
+encoding/gob.decodeUintReader({0x46d1960, 0xc001d2f020}, {0xc000efb520, 0x9, 0x9})
+	encoding/gob/decode.go:116 +0x51
+encoding/gob.(*Decoder).recvMessage(0xc004f8c980)
+	encoding/gob/decoder.go:82 +0x33
+encoding/gob.(*Decoder).decodeTypeSequence(0xc004f8c980, 0x0)
+	encoding/gob/decoder.go:148 +0x47
+encoding/gob.(*Decoder).DecodeValue(0xc004f8c980, {0x34c8c00?, 0xc005ed71a0?, 0x7fffb0151888?})
+	encoding/gob/decoder.go:227 +0x16e
+encoding/gob.(*Decoder).Decode(0xc004f8c980, {0x34c8c00?, 0xc005ed71a0?})
+	encoding/gob/decoder.go:204 +0x125
+net/rpc.(*gobClientCodec).ReadResponseHeader(0x3736a80?, 0x34f9880?)
+	net/rpc/client.go:228 +0x25
+net/rpc.(*Client).input(0xc001d2f0e0)
+	net/rpc/client.go:109 +0x9f
+created by net/rpc.NewClientWithCodec in goroutine 639
+	net/rpc/client.go:206 +0xb6
+
+goroutine 702 [select, 1 minutes]:
+github.com/hashicorp/yamux.(*Stream).Read(0xc0014661a0, {0xc005a48000, 0x8000, 0x0?})
+	github.com/hashicorp/yamux@v0.1.1/stream.go:145 +0x425
+io.copyBuffer({0x46d1140, 0xc000b2c4d0}, {0x46d2ba0, 0xc0014661a0}, {0x0, 0x0, 0x0})
+	io/io.go:430 +0x1a6
+io.Copy(...)
+	io/io.go:389
+github.com/hashicorp/go-plugin.copyStream({0x3c66066, 0x6}, {0x46d1140?, 0xc000b2c4d0?}, {0x46d2ba0?, 0xc0014661a0?})
+	github.com/hashicorp/go-plugin@v1.6.0/stream.go:18 +0x7d
+created by github.com/hashicorp/go-plugin.(*RPCClient).SyncStreams in goroutine 639
+	github.com/hashicorp/go-plugin@v1.6.0/rpc_client.go:111 +0xc9
+
+goroutine 703 [select, 1 minutes]:
+github.com/hashicorp/yamux.(*Stream).Read(0xc0014664e0, {0xc006144000, 0x8000, 0x0?})
+	github.com/hashicorp/yamux@v0.1.1/stream.go:145 +0x425
+io.copyBuffer({0x46d1140, 0xc000b2c4d8}, {0x46d2ba0, 0xc0014664e0}, {0x0, 0x0, 0x0})
+	io/io.go:430 +0x1a6
+io.Copy(...)
+	io/io.go:389
+github.com/hashicorp/go-plugin.copyStream({0x3c66060, 0x6}, {0x46d1140?, 0xc000b2c4d8?}, {0x46d2ba0?, 0xc0014664e0?})
+	github.com/hashicorp/go-plugin@v1.6.0/stream.go:18 +0x7d
+created by github.com/hashicorp/go-plugin.(*RPCClient).SyncStreams in goroutine 639
+	github.com/hashicorp/go-plugin@v1.6.0/rpc_client.go:112 +0x165
+
+goroutine 705 [select]:
+github.com/hashicorp/yamux.(*Stream).Read(0xc0014671e0, {0xc0060ed000, 0x1000, 0xc001b49c88?})
+	github.com/hashicorp/yamux@v0.1.1/stream.go:145 +0x425
+bufio.(*Reader).Read(0xc001d2f5c0, {0xc000efb780, 0x1, 0xc001b49d68?})
+	bufio/bufio.go:244 +0x197
+io.ReadAtLeast({0x46d1960, 0xc001d2f5c0}, {0xc000efb780, 0x1, 0x9}, 0x1)
+	io/io.go:335 +0x90
+io.ReadFull(...)
+	io/io.go:354
+encoding/gob.decodeUintReader({0x46d1960, 0xc001d2f5c0}, {0xc000efb780, 0x9, 0x9})
+	encoding/gob/decode.go:116 +0x51
+encoding/gob.(*Decoder).recvMessage(0xc004f8ca00)
+	encoding/gob/decoder.go:82 +0x33
+encoding/gob.(*Decoder).decodeTypeSequence(0xc004f8ca00, 0x0)
+	encoding/gob/decoder.go:148 +0x47
+encoding/gob.(*Decoder).DecodeValue(0xc004f8ca00, {0x34c8c00?, 0xc004ff0d80?, 0x7fffb0608470?})
+	encoding/gob/decoder.go:227 +0x16e
+encoding/gob.(*Decoder).Decode(0xc004f8ca00, {0x34c8c00?, 0xc004ff0d80?})
+	encoding/gob/decoder.go:204 +0x125
+net/rpc.(*gobClientCodec).ReadResponseHeader(0x3736a80?, 0x0?)
+	net/rpc/client.go:228 +0x25
+net/rpc.(*Client).input(0xc001d2f680)
+	net/rpc/client.go:109 +0x9f
+created by net/rpc.NewClientWithCodec in goroutine 639
+	net/rpc/client.go:206 +0xb6
+
+goroutine 706 [select]:
+github.com/hashicorp/yamux.(*Stream).Read(0xc0018956c0, {0xc0061cf000, 0x1000, 0x4?})
+	github.com/hashicorp/yamux@v0.1.1/stream.go:145 +0x425
+bufio.(*Reader).Read(0xc0061a9ce0, {0xc000efbd70, 0x1, 0x3849580?})
+	bufio/bufio.go:244 +0x197
+io.ReadAtLeast({0x46d1960, 0xc0061a9ce0}, {0xc000efbd70, 0x1, 0x9}, 0x1)
+	io/io.go:335 +0x90
+io.ReadFull(...)
+	io/io.go:354
+encoding/gob.decodeUintReader({0x46d1960, 0xc0061a9ce0}, {0xc000efbd70, 0x9, 0x9})
+	encoding/gob/decode.go:116 +0x51
+encoding/gob.(*Decoder).recvMessage(0xc0061be500)
+	encoding/gob/decoder.go:82 +0x33
+encoding/gob.(*Decoder).decodeTypeSequence(0xc0061be500, 0x0)
+	encoding/gob/decoder.go:148 +0x47
+encoding/gob.(*Decoder).DecodeValue(0xc0061be500, {0x34c8bc0?, 0xc00180eee0?, 0xc0061be570?})
+	encoding/gob/decoder.go:227 +0x16e
+encoding/gob.(*Decoder).Decode(0xc0061be500, {0x34c8bc0?, 0xc00180eee0?})
+	encoding/gob/decoder.go:204 +0x125
+net/rpc.(*gobServerCodec).ReadRequestHeader(0xc000ee3e80?, 0xc001d05f60?)
+	net/rpc/server.go:402 +0x25
+net/rpc.(*Server).readRequestHeader(0xc000ee3e80, {0x46e7260, 0xc0061a3560})
+	net/rpc/server.go:588 +0x58
+net/rpc.(*Server).readRequest(0x7fffff53aa68?, {0x46e7260, 0xc0061a3560})
+	net/rpc/server.go:548 +0x2f
+net/rpc.(*Server).ServeCodec(0xc000ee3e80, {0x46e7260?, 0xc0061a3560})
+	net/rpc/server.go:463 +0x7c
+net/rpc.(*Server).ServeConn(0xc000ee3e80?, {0x7fffb060c448?, 0xc0018956c0})
+	net/rpc/server.go:454 +0x32c
+github.com/hashicorp/go-plugin.serve({0x7fffb060c448, 0xc0018956c0}, {0x3c65cca, 0x6}, {0x3c26f80, 0xc004fee7c8})
+	github.com/hashicorp/go-plugin@v1.6.0/rpc_server.go:208 +0x126
+github.com/hashicorp/go-plugin.(*MuxBroker).AcceptAndServe(0xc000cf3740?, 0xd06330?, {0x3c26f80, 0xc004fee7c8})
+	github.com/hashicorp/go-plugin@v1.6.0/mux_broker.go:90 +0xed
+github.com/mattermost/mattermost/server/public/plugin.(*hooksRPCClient).OnActivate.func1()
+	github.com/mattermost/mattermost/server/public/plugin/client_rpc.go:246 +0xbf
+created by github.com/mattermost/mattermost/server/public/plugin.(*hooksRPCClient).OnActivate in goroutine 639
+	github.com/mattermost/mattermost/server/public/plugin/client_rpc.go:244 +0x9e
+
+goroutine 707 [select]:
+github.com/hashicorp/yamux.(*Stream).Read(0xc0014da270, {0xc0060f5000, 0x1000, 0x5?})
+	github.com/hashicorp/yamux@v0.1.1/stream.go:145 +0x425
+bufio.(*Reader).Read(0xc0060f20c0, {0xc000efb9e0, 0x1, 0xa9cd65?})
+	bufio/bufio.go:244 +0x197
+io.ReadAtLeast({0x46d1960, 0xc0060f20c0}, {0xc000efb9e0, 0x1, 0x9}, 0x1)
+	io/io.go:335 +0x90
+io.ReadFull(...)
+	io/io.go:354
+encoding/gob.decodeUintReader({0x46d1960, 0xc0060f20c0}, {0xc000efb9e0, 0x9, 0x9})
+	encoding/gob/decode.go:116 +0x51
+encoding/gob.(*Decoder).recvMessage(0xc004f8d500)
+	encoding/gob/decoder.go:82 +0x33
+encoding/gob.(*Decoder).decodeTypeSequence(0xc004f8d500, 0x0)
+	encoding/gob/decoder.go:148 +0x47
+encoding/gob.(*Decoder).DecodeValue(0xc004f8d500, {0x34c8bc0?, 0xc004bd3300?, 0xc004f8d570?})
+	encoding/gob/decoder.go:227 +0x16e
+encoding/gob.(*Decoder).Decode(0xc004f8d500, {0x34c8bc0?, 0xc004bd3300?})
+	encoding/gob/decoder.go:204 +0x125
+net/rpc.(*gobServerCodec).ReadRequestHeader(0xc005e8f040?, 0xc001d052c0?)
+	net/rpc/server.go:402 +0x25
+net/rpc.(*Server).readRequestHeader(0xc005e8f040, {0x46e7260, 0xc004ff15c0})
+	net/rpc/server.go:588 +0x58
+net/rpc.(*Server).readRequest(0x7fffff53aa68?, {0x46e7260, 0xc004ff15c0})
+	net/rpc/server.go:548 +0x2f
+net/rpc.(*Server).ServeCodec(0xc005e8f040, {0x46e7260?, 0xc004ff15c0})
+	net/rpc/server.go:463 +0x7c
+net/rpc.(*Server).ServeConn(0xc005e8f040?, {0x7fffb060c448?, 0xc0014da270})
+	net/rpc/server.go:454 +0x32c
+github.com/hashicorp/go-plugin.serve({0x7fffb060c448, 0xc0014da270}, {0x3c65cca, 0x6}, {0x3b1aac0, 0xc00141f250})
+	github.com/hashicorp/go-plugin@v1.6.0/rpc_server.go:208 +0x126
+github.com/hashicorp/go-plugin.(*MuxBroker).AcceptAndServe(0xc0005e4528?, 0x5e4b58?, {0x3b1aac0, 0xc00141f250})
+	github.com/hashicorp/go-plugin@v1.6.0/mux_broker.go:90 +0xed
+github.com/mattermost/mattermost/server/public/plugin.(*hooksRPCClient).OnActivate.func2()
+	github.com/mattermost/mattermost/server/public/plugin/client_rpc.go:256 +0xa6
+created by github.com/mattermost/mattermost/server/public/plugin.(*hooksRPCClient).OnActivate in goroutine 639
+	github.com/mattermost/mattermost/server/public/plugin/client_rpc.go:254 +0x118
+
+goroutine 1058 [select]:
+github.com/hashicorp/yamux.(*Session).AcceptStream(0xc001df2b40)
+	github.com/hashicorp/yamux@v0.1.1/session.go:242 +0x69
+github.com/hashicorp/go-plugin.(*MuxBroker).Run(0xc001798000)
+	github.com/hashicorp/go-plugin@v1.6.0/mux_broker.go:142 +0x2a
+created by github.com/hashicorp/go-plugin.NewRPCClient in goroutine 884
+	github.com/hashicorp/go-plugin@v1.6.0/rpc_client.go:91 +0x1e5
+
+goroutine 1048 [IO wait]:
+internal/poll.runtime_pollWait(0x7fffb03773a0, 0x72)
+	runtime/netpoll.go:343 +0x85
+internal/poll.(*pollDesc).wait(0xc001eead00?, 0xc0014b2000?, 0x0)
+	internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.(*pollDesc).waitRead(...)
+	internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0xc001eead00, {0xc0014b2000, 0x1000, 0x1000})
+	internal/poll/fd_unix.go:164 +0x27a
+net.(*netFD).Read(0xc001eead00, {0xc0014b2000?, 0x46d1960?, 0xc005a2f2c0?})
+	net/fd_posix.go:55 +0x25
+net.(*conn).Read(0xc0061dc390, {0xc0014b2000?, 0x40b550?, 0xc002b1fe60?})
+	net/net.go:179 +0x45
+bufio.(*Reader).Read(0xc005a2f2c0, {0xc002586080, 0xc, 0x2?})
+	bufio/bufio.go:244 +0x197
+io.ReadAtLeast({0x46d1960, 0xc005a2f2c0}, {0xc002586080, 0xc, 0xc}, 0xc)
+	io/io.go:335 +0x90
+io.ReadFull(...)
+	io/io.go:354
+github.com/hashicorp/yamux.(*Session).recvLoop(0xc001df2b40)
+	github.com/hashicorp/yamux@v0.1.1/session.go:536 +0xb0
+github.com/hashicorp/yamux.(*Session).recv(0xc002b1ffb8?)
+	github.com/hashicorp/yamux@v0.1.1/session.go:515 +0x18
+created by github.com/hashicorp/yamux.newSession in goroutine 884
+	github.com/hashicorp/yamux@v0.1.1/session.go:118 +0x426
+
+goroutine 1228 [IO wait]:
+internal/poll.runtime_pollWait(0x7fffb03770b8, 0x72)
+	runtime/netpoll.go:343 +0x85
+internal/poll.(*pollDesc).wait(0xc005314200?, 0xc001bf8000?, 0x0)
+	internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.(*pollDesc).waitRead(...)
+	internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0xc005314200, {0xc001bf8000, 0x1000, 0x1000})
+	internal/poll/fd_unix.go:164 +0x27a
+net.(*netFD).Read(0xc005314200, {0xc001bf8000?, 0x4b0905?, 0x7fffb03771a8?})
+	net/fd_posix.go:55 +0x25
+net.(*conn).Read(0xc000d47800, {0xc001bf8000?, 0x0?, 0xc00211cc98?})
+	net/net.go:179 +0x45
+net/http.(*connReader).Read(0xc00211cc90, {0xc001bf8000, 0x1000, 0x1000})
+	net/http/server.go:791 +0x14b
+bufio.(*Reader).fill(0xc005a53b60)
+	bufio/bufio.go:113 +0x103
+bufio.(*Reader).Peek(0xc005a53b60, 0x4)
+	bufio/bufio.go:151 +0x53
+net/http.(*conn).serve(0xc001bca2d0, {0x46e63b8, 0xc001cdad50})
+	net/http/server.go:2044 +0x75c
+created by net/http.(*Server).Serve in goroutine 1188
+	net/http/server.go:3086 +0x5cb
+
+goroutine 1054 [select, 1 minutes]:
+github.com/hashicorp/yamux.(*Stream).Read(0xc0022c5450, {0xc001786000, 0x1000, 0x5?})
+	github.com/hashicorp/yamux@v0.1.1/stream.go:145 +0x425
+bufio.(*Reader).Read(0xc0013f1800, {0xc005a65524, 0x1, 0xa9cd65?})
+	bufio/bufio.go:244 +0x197
+io.ReadAtLeast({0x46d1960, 0xc0013f1800}, {0xc005a65524, 0x1, 0x9}, 0x1)
+	io/io.go:335 +0x90
+io.ReadFull(...)
+	io/io.go:354
+encoding/gob.decodeUintReader({0x46d1960, 0xc0013f1800}, {0xc005a65524, 0x9, 0x9})
+	encoding/gob/decode.go:116 +0x51
+encoding/gob.(*Decoder).recvMessage(0xc00516c200)
+	encoding/gob/decoder.go:82 +0x33
+encoding/gob.(*Decoder).decodeTypeSequence(0xc00516c200, 0x0)
+	encoding/gob/decoder.go:148 +0x47
+encoding/gob.(*Decoder).DecodeValue(0xc00516c200, {0x34c8bc0?, 0xc000f84920?, 0xc00516c270?})
+	encoding/gob/decoder.go:227 +0x16e
+encoding/gob.(*Decoder).Decode(0xc00516c200, {0x34c8bc0?, 0xc000f84920?})
+	encoding/gob/decoder.go:204 +0x125
+net/rpc.(*gobServerCodec).ReadRequestHeader(0xc001003c40?, 0xc007ca8400?)
+	net/rpc/server.go:402 +0x25
+net/rpc.(*Server).readRequestHeader(0xc001003c40, {0x46e7260, 0xc0013df4a0})
+	net/rpc/server.go:588 +0x58
+net/rpc.(*Server).readRequest(0x411cbe?, {0x46e7260, 0xc0013df4a0})
+	net/rpc/server.go:548 +0x2f
+net/rpc.(*Server).ServeCodec(0xc001003c40, {0x46e7260?, 0xc0013df4a0})
+	net/rpc/server.go:463 +0x7c
+net/rpc.(*Server).ServeConn(0xc001003c40?, {0x7fffb060c448?, 0xc0022c5450})
+	net/rpc/server.go:454 +0x32c
+github.com/hashicorp/go-plugin.serve({0x7fffb060c448, 0xc0022c5450}, {0x3c65cca, 0x6}, {0x3b1aac0, 0xc001bd44a0})
+	github.com/hashicorp/go-plugin@v1.6.0/rpc_server.go:208 +0x126
+github.com/hashicorp/go-plugin.(*MuxBroker).AcceptAndServe(0x18fc3c5?, 0x27b520?, {0x3b1aac0, 0xc001bd44a0})
+	github.com/hashicorp/go-plugin@v1.6.0/mux_broker.go:90 +0xed
+github.com/mattermost/mattermost/server/public/plugin.(*hooksRPCClient).OnActivate.func2()
+	github.com/mattermost/mattermost/server/public/plugin/client_rpc.go:256 +0xa6
+created by github.com/mattermost/mattermost/server/public/plugin.(*hooksRPCClient).OnActivate in goroutine 884
+	github.com/mattermost/mattermost/server/public/plugin/client_rpc.go:254 +0x118
+
+goroutine 1050 [select]:
+github.com/hashicorp/yamux.(*Session).keepalive(0xc001df2b40)
+	github.com/hashicorp/yamux@v0.1.1/session.go:349 +0x85
+created by github.com/hashicorp/yamux.newSession in goroutine 884
+	github.com/hashicorp/yamux@v0.1.1/session.go:121 +0x4af
+
+goroutine 894 [IO wait, 1 minutes]:
+internal/poll.runtime_pollWait(0x7fffb816dbf8, 0x72)
+	runtime/netpoll.go:343 +0x85
+internal/poll.(*pollDesc).wait(0xc005a520c0?, 0xc001ec3027?, 0x1)
+	internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.(*pollDesc).waitRead(...)
+	internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0xc005a520c0, {0xc001ec3027, 0xfd9, 0xfd9})
+	internal/poll/fd_unix.go:164 +0x27a
+os.(*File).read(...)
+	os/file_posix.go:29
+os.(*File).Read(0xc000d460e8, {0xc001ec3027?, 0x40b080?, 0xc0017bc820?})
+	os/file.go:118 +0x52
+bufio.(*Scanner).Scan(0xc000099f40)
+	bufio/scan.go:214 +0x81b
+github.com/hashicorp/go-plugin.(*Client).Start.func3()
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:800 +0x165
+created by github.com/hashicorp/go-plugin.(*Client).Start in goroutine 882
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:795 +0x1b26
+
+goroutine 765 [select]:
+github.com/hashicorp/yamux.(*Stream).Read(0xc002a1a0d0, {0xc005ee1000, 0x1000, 0x5?})
+	github.com/hashicorp/yamux@v0.1.1/stream.go:145 +0x425
+bufio.(*Reader).Read(0xc005a53020, {0xc000f621f4, 0x1, 0xa9cd65?})
+	bufio/bufio.go:244 +0x197
+io.ReadAtLeast({0x46d1960, 0xc005a53020}, {0xc000f621f4, 0x1, 0x9}, 0x1)
+	io/io.go:335 +0x90
+io.ReadFull(...)
+	io/io.go:354
+encoding/gob.decodeUintReader({0x46d1960, 0xc005a53020}, {0xc000f621f4, 0x9, 0x9})
+	encoding/gob/decode.go:116 +0x51
+encoding/gob.(*Decoder).recvMessage(0xc005802f00)
+	encoding/gob/decoder.go:82 +0x33
+encoding/gob.(*Decoder).decodeTypeSequence(0xc005802f00, 0x0)
+	encoding/gob/decoder.go:148 +0x47
+encoding/gob.(*Decoder).DecodeValue(0xc005802f00, {0x34c8bc0?, 0xc0009ee660?, 0xc005802f70?})
+	encoding/gob/decoder.go:227 +0x16e
+encoding/gob.(*Decoder).Decode(0xc005802f00, {0x34c8bc0?, 0xc0009ee660?})
+	encoding/gob/decoder.go:204 +0x125
+net/rpc.(*gobServerCodec).ReadRequestHeader(0xc0008f8840?, 0xc001175e20?)
+	net/rpc/server.go:402 +0x25
+net/rpc.(*Server).readRequestHeader(0xc0008f8840, {0x46e7260, 0xc0061dea80})
+	net/rpc/server.go:588 +0x58
+net/rpc.(*Server).readRequest(0x7fffff53a5b8?, {0x46e7260, 0xc0061dea80})
+	net/rpc/server.go:548 +0x2f
+net/rpc.(*Server).ServeCodec(0xc0008f8840, {0x46e7260?, 0xc0061dea80})
+	net/rpc/server.go:463 +0x7c
+net/rpc.(*Server).ServeConn(0xc0008f8840?, {0x7fffb060c448?, 0xc002a1a0d0})
+	net/rpc/server.go:454 +0x32c
+github.com/hashicorp/go-plugin.serve({0x7fffb060c448, 0xc002a1a0d0}, {0x3c65cca, 0x6}, {0x3b1aac0, 0xc0063a61a0})
+	github.com/hashicorp/go-plugin@v1.6.0/rpc_server.go:208 +0x126
+github.com/hashicorp/go-plugin.(*MuxBroker).AcceptAndServe(0xc0005e4528?, 0x5e4b58?, {0x3b1aac0, 0xc0063a61a0})
+	github.com/hashicorp/go-plugin@v1.6.0/mux_broker.go:90 +0xed
+github.com/mattermost/mattermost/server/public/plugin.(*hooksRPCClient).OnActivate.func2()
+	github.com/mattermost/mattermost/server/public/plugin/client_rpc.go:256 +0xa6
+created by github.com/mattermost/mattermost/server/public/plugin.(*hooksRPCClient).OnActivate in goroutine 882
+	github.com/mattermost/mattermost/server/public/plugin/client_rpc.go:254 +0x118
+
+goroutine 1047 [chan receive, 1 minutes]:
+github.com/hashicorp/go-plugin.(*Client).Start.func4.1()
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:816 +0x77
+created by github.com/hashicorp/go-plugin.(*Client).Start.func4 in goroutine 884
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:814 +0x6e
+
+goroutine 946 [chan receive, 1 minutes]:
+github.com/hashicorp/go-plugin.(*Client).Start.func4.1()
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:816 +0x77
+created by github.com/hashicorp/go-plugin.(*Client).Start.func4 in goroutine 882
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:814 +0x6e
+
+goroutine 942 [IO wait, 1 minutes]:
+internal/poll.runtime_pollWait(0x7fffb0377498, 0x72)
+	runtime/netpoll.go:343 +0x85
+internal/poll.(*pollDesc).wait(0xc001764960?, 0xc002880000?, 0x1)
+	internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.(*pollDesc).waitRead(...)
+	internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0xc001764960, {0xc002880000, 0x10000, 0x10000})
+	internal/poll/fd_unix.go:164 +0x27a
+os.(*File).read(...)
+	os/file_posix.go:29
+os.(*File).Read(0xc005470070, {0xc002880000?, 0x3c63a7a?, 0x367c700?})
+	os/file.go:118 +0x52
+bufio.(*Reader).fill(0xc002553f30)
+	bufio/bufio.go:113 +0x103
+bufio.(*Reader).ReadSlice(0xc002553f30, 0x1?)
+	bufio/bufio.go:379 +0x29
+bufio.(*Reader).ReadLine(0xc002553f30)
+	bufio/bufio.go:408 +0x25
+github.com/hashicorp/go-plugin.(*Client).logStderr(0xc001ece000, {0xc005ef4090?, 0x24a0000021a?}, {0x46d08e0?, 0xc005470070?})
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:1170 +0x2b5
+created by github.com/hashicorp/go-plugin.(*Client).Start in goroutine 884
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:761 +0x19e5
+
+goroutine 892 [IO wait, 1 minutes]:
+internal/poll.runtime_pollWait(0x7fffb816d818, 0x72)
+	runtime/netpoll.go:343 +0x85
+internal/poll.(*pollDesc).wait(0xc005a52180?, 0xc002522000?, 0x1)
+	internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.(*pollDesc).waitRead(...)
+	internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0xc005a52180, {0xc002522000, 0x10000, 0x10000})
+	internal/poll/fd_unix.go:164 +0x27a
+os.(*File).read(...)
+	os/file_posix.go:29
+os.(*File).Read(0xc000d462f0, {0xc002522000?, 0x3c63a7a?, 0x367c700?})
+	os/file.go:118 +0x52
+bufio.(*Reader).fill(0xc002b4af30)
+	bufio/bufio.go:113 +0x103
+bufio.(*Reader).ReadSlice(0xc002b4af30, 0x1?)
+	bufio/bufio.go:379 +0x29
+bufio.(*Reader).ReadLine(0xc002b4af30)
+	bufio/bufio.go:408 +0x25
+github.com/hashicorp/go-plugin.(*Client).logStderr(0xc000dbca00, {0xc006e7d780?, 0xc005ecf0e0?}, {0x46d08e0?, 0xc000d462f0?})
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:1170 +0x2b5
+created by github.com/hashicorp/go-plugin.(*Client).Start in goroutine 882
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:761 +0x19e5
+
+goroutine 764 [select]:
+github.com/hashicorp/yamux.(*Stream).Read(0xc0018aa1a0, {0xc00084c000, 0x1000, 0x6?})
+	github.com/hashicorp/yamux@v0.1.1/stream.go:145 +0x425
+bufio.(*Reader).Read(0xc00581d260, {0xc0005c84c0, 0x1, 0x396d520?})
+	bufio/bufio.go:244 +0x197
+io.ReadAtLeast({0x46d1960, 0xc00581d260}, {0xc0005c84c0, 0x1, 0x9}, 0x1)
+	io/io.go:335 +0x90
+io.ReadFull(...)
+	io/io.go:354
+encoding/gob.decodeUintReader({0x46d1960, 0xc00581d260}, {0xc0005c84c0, 0x9, 0x9})
+	encoding/gob/decode.go:116 +0x51
+encoding/gob.(*Decoder).recvMessage(0xc00660df80)
+	encoding/gob/decoder.go:82 +0x33
+encoding/gob.(*Decoder).decodeTypeSequence(0xc00660df80, 0x0)
+	encoding/gob/decoder.go:148 +0x47
+encoding/gob.(*Decoder).DecodeValue(0xc00660df80, {0x34c8bc0?, 0xc0009ee040?, 0xc00660dff0?})
+	encoding/gob/decoder.go:227 +0x16e
+encoding/gob.(*Decoder).Decode(0xc00660df80, {0x34c8bc0?, 0xc0009ee040?})
+	encoding/gob/decoder.go:204 +0x125
+net/rpc.(*gobServerCodec).ReadRequestHeader(0xc000f9c0c0?, 0xc007e60500?)
+	net/rpc/server.go:402 +0x25
+net/rpc.(*Server).readRequestHeader(0xc000f9c0c0, {0x46e7260, 0xc00631bb30})
+	net/rpc/server.go:588 +0x58
+net/rpc.(*Server).readRequest(0x94c0d38?, {0x46e7260, 0xc00631bb30})
+	net/rpc/server.go:548 +0x2f
+net/rpc.(*Server).ServeCodec(0xc000f9c0c0, {0x46e7260?, 0xc00631bb30})
+	net/rpc/server.go:463 +0x7c
+net/rpc.(*Server).ServeConn(0xc000f9c0c0?, {0x7fffb060c448?, 0xc0018aa1a0})
+	net/rpc/server.go:454 +0x32c
+github.com/hashicorp/go-plugin.serve({0x7fffb060c448, 0xc0018aa1a0}, {0x3c65cca, 0x6}, {0x3c26f80, 0xc0017b4b70})
+	github.com/hashicorp/go-plugin@v1.6.0/rpc_server.go:208 +0x126
+github.com/hashicorp/go-plugin.(*MuxBroker).AcceptAndServe(0x0?, 0x0?, {0x3c26f80, 0xc0017b4b70})
+	github.com/hashicorp/go-plugin@v1.6.0/mux_broker.go:90 +0xed
+github.com/mattermost/mattermost/server/public/plugin.(*hooksRPCClient).OnActivate.func1()
+	github.com/mattermost/mattermost/server/public/plugin/client_rpc.go:246 +0xbf
+created by github.com/mattermost/mattermost/server/public/plugin.(*hooksRPCClient).OnActivate in goroutine 882
+	github.com/mattermost/mattermost/server/public/plugin/client_rpc.go:244 +0x9e
+
+goroutine 944 [IO wait, 1 minutes]:
+internal/poll.runtime_pollWait(0x7fffb816d910, 0x72)
+	runtime/netpoll.go:343 +0x85
+internal/poll.(*pollDesc).wait(0xc0017647e0?, 0xc00607c026?, 0x1)
+	internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.(*pollDesc).waitRead(...)
+	internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0xc0017647e0, {0xc00607c026, 0xfda, 0xfda})
+	internal/poll/fd_unix.go:164 +0x27a
+os.(*File).read(...)
+	os/file_posix.go:29
+os.(*File).Read(0xc005470058, {0xc00607c026?, 0x40b080?, 0xc005005ba0?})
+	os/file.go:118 +0x52
+bufio.(*Scanner).Scan(0xc002555f40)
+	bufio/scan.go:214 +0x81b
+github.com/hashicorp/go-plugin.(*Client).Start.func3()
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:800 +0x165
+created by github.com/hashicorp/go-plugin.(*Client).Start in goroutine 884
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:795 +0x1b26
+
+goroutine 943 [semacquire, 1 minutes]:
+sync.runtime_Semacquire(0x9ba000009aa?)
+	runtime/sema.go:62 +0x25
+sync.(*WaitGroup).Wait(0x9ba000009aa?)
+	sync/waitgroup.go:116 +0x48
+github.com/hashicorp/go-plugin.(*Client).Start.func2()
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:772 +0xa8
+created by github.com/hashicorp/go-plugin.(*Client).Start in goroutine 884
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:764 +0x1a6e
+
+goroutine 941 [select, 1 minutes]:
+github.com/mattermost/mattermost/server/public/model.createTask.func1()
+	github.com/mattermost/mattermost/server/public/model/scheduled_task.go:69 +0x205
+created by github.com/mattermost/mattermost/server/public/model.createTask in goroutine 296
+	github.com/mattermost/mattermost/server/public/model/scheduled_task.go:46 +0x165
+
+goroutine 893 [semacquire, 1 minutes]:
+sync.runtime_Semacquire(0xc002b8ff8c?)
+	runtime/sema.go:62 +0x25
+sync.(*WaitGroup).Wait(0xc0061b3aa0?)
+	sync/waitgroup.go:116 +0x48
+github.com/hashicorp/go-plugin.(*Client).Start.func2()
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:772 +0xa8
+created by github.com/hashicorp/go-plugin.(*Client).Start in goroutine 882
+	github.com/hashicorp/go-plugin@v1.6.0/client.go:764 +0x1a6e
+
+goroutine 956 [select, 1 minutes]:
+github.com/hashicorp/yamux.(*Stream).Read(0xc001d81040, {0xc004b3c000, 0x8000, 0x7fffb05cb5e8?})
+	github.com/hashicorp/yamux@v0.1.1/stream.go:145 +0x425
+io.copyBuffer({0x46d1140, 0xc000844d08}, {0x46d2ba0, 0xc001d81040}, {0x0, 0x0, 0x0})
+	io/io.go:430 +0x1a6
+io.Copy(...)
+	io/io.go:389
+github.com/hashicorp/go-plugin.copyStream({0x3c66060, 0x6}, {0x46d1140?, 0xc000844d08?}, {0x46d2ba0?, 0xc001d81040?})
+	github.com/hashicorp/go-plugin@v1.6.0/stream.go:18 +0x7d
+created by github.com/hashicorp/go-plugin.(*RPCClient).SyncStreams in goroutine 882
+	github.com/hashicorp/go-plugin@v1.6.0/rpc_client.go:112 +0x165
+
+goroutine 1190 [syscall, 1 minutes]:
+os/signal.signal_recv()
+	runtime/sigqueue.go:152 +0x29
+os/signal.loop()
+	os/signal/signal_unix.go:23 +0x13
+created by os/signal.Notify.func1.1 in goroutine 1
+	os/signal/signal.go:151 +0x1f
+
+goroutine 1207 [IO wait]:
+internal/poll.runtime_pollWait(0x7fffb0376ec8, 0x72)
+	runtime/netpoll.go:343 +0x85
+internal/poll.(*pollDesc).wait(0xc005208a80?, 0xc001cef000?, 0x0)
+	internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.(*pollDesc).waitRead(...)
+	internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0xc005208a80, {0xc001cef000, 0x1000, 0x1000})
+	internal/poll/fd_unix.go:164 +0x27a
+net.(*netFD).Read(0xc005208a80, {0xc001cef000?, 0x4b0905?, 0x7fffb0376fb8?})
+	net/fd_posix.go:55 +0x25
+net.(*conn).Read(0xc002849230, {0xc001cef000?, 0x0?, 0xc00208d8f8?})
+	net/net.go:179 +0x45
+net/http.(*connReader).Read(0xc00208d8f0, {0xc001cef000, 0x1000, 0x1000})
+	net/http/server.go:791 +0x14b
+bufio.(*Reader).fill(0xc0017a4f60)
+	bufio/bufio.go:113 +0x103
+bufio.(*Reader).Peek(0xc0017a4f60, 0x4)
+	bufio/bufio.go:151 +0x53
+net/http.(*conn).serve(0xc0016f3b00, {0x46e63b8, 0xc001cdad50})
+	net/http/server.go:2044 +0x75c
+created by net/http.(*Server).Serve in goroutine 1188
+	net/http/server.go:3086 +0x5cb
+
+goroutine 1208 [IO wait]:
+internal/poll.runtime_pollWait(0x7fffb0376dd0, 0x72)
+	runtime/netpoll.go:343 +0x85
+internal/poll.(*pollDesc).wait(0xc005208b00?, 0xc001c9f000?, 0x0)
+	internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.(*pollDesc).waitRead(...)
+	internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0xc005208b00, {0xc001c9f000, 0x1000, 0x1000})
+	internal/poll/fd_unix.go:164 +0x27a
+net.(*netFD).Read(0xc005208b00, {0xc001c9f000?, 0x4b0905?, 0x7fffb0376ec0?})
+	net/fd_posix.go:55 +0x25
+net.(*conn).Read(0xc002849238, {0xc001c9f000?, 0x0?, 0xc00208d6b8?})
+	net/net.go:179 +0x45
+net/http.(*connReader).Read(0xc00208d6b0, {0xc001c9f000, 0x1000, 0x1000})
+	net/http/server.go:791 +0x14b
+bufio.(*Reader).fill(0xc0017a4e40)
+	bufio/bufio.go:113 +0x103
+bufio.(*Reader).Peek(0xc0017a4e40, 0x4)
+	bufio/bufio.go:151 +0x53
+net/http.(*conn).serve(0xc0016f3b90, {0x46e63b8, 0xc001cdad50})
+	net/http/server.go:2044 +0x75c
+created by net/http.(*Server).Serve in goroutine 1188
+	net/http/server.go:3086 +0x5cb
+
+goroutine 1209 [IO wait]:
+internal/poll.runtime_pollWait(0x7fffb0376cd8, 0x72)
+	runtime/netpoll.go:343 +0x85
+internal/poll.(*pollDesc).wait(0xc005208b80?, 0xc001cf9000?, 0x0)
+	internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.(*pollDesc).waitRead(...)
+	internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0xc005208b80, {0xc001cf9000, 0x1000, 0x1000})
+	internal/poll/fd_unix.go:164 +0x27a
+net.(*netFD).Read(0xc005208b80, {0xc001cf9000?, 0x4b0905?, 0x7fffb0376dc8?})
+	net/fd_posix.go:55 +0x25
+net.(*conn).Read(0xc002849240, {0xc001cf9000?, 0x0?, 0xc00208dfb8?})
+	net/net.go:179 +0x45
+net/http.(*connReader).Read(0xc00208dfb0, {0xc001cf9000, 0x1000, 0x1000})
+	net/http/server.go:791 +0x14b
+bufio.(*Reader).fill(0xc0017a4fc0)
+	bufio/bufio.go:113 +0x103
+bufio.(*Reader).Peek(0xc0017a4fc0, 0x4)
+	bufio/bufio.go:151 +0x53
+net/http.(*conn).serve(0xc0016f3c20, {0x46e63b8, 0xc001cdad50})
+	net/http/server.go:2044 +0x75c
+created by net/http.(*Server).Serve in goroutine 1188
+	net/http/server.go:3086 +0x5cb
+
+goroutine 1719 [IO wait]:
+internal/poll.runtime_pollWait(0x7fffb03768f8, 0x72)
+	runtime/netpoll.go:343 +0x85
+internal/poll.(*pollDesc).wait(0xc00783cf80?, 0xc0021da000?, 0x0)
+	internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.(*pollDesc).waitRead(...)
+	internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0xc00783cf80, {0xc0021da000, 0x1000, 0x1000})
+	internal/poll/fd_unix.go:164 +0x27a
+net.(*netFD).Read(0xc00783cf80, {0xc0021da000?, 0x4b0905?, 0x7fffb03769e8?})
+	net/fd_posix.go:55 +0x25
+net.(*conn).Read(0xc0077704a8, {0xc0021da000?, 0x0?, 0xc00786d448?})
+	net/net.go:179 +0x45
+net/http.(*connReader).Read(0xc00786d440, {0xc0021da000, 0x1000, 0x1000})
+	net/http/server.go:791 +0x14b
+bufio.(*Reader).fill(0xc0017a5aa0)
+	bufio/bufio.go:113 +0x103
+bufio.(*Reader).Peek(0xc0017a5aa0, 0x4)
+	bufio/bufio.go:151 +0x53
+net/http.(*conn).serve(0xc007878870, {0x46e63b8, 0xc001cdad50})
+	net/http/server.go:2044 +0x75c
+created by net/http.(*Server).Serve in goroutine 1188
+	net/http/server.go:3086 +0x5cb
+
+goroutine 1970 [IO wait, 1 minutes]:
+internal/poll.runtime_pollWait(0x7fffb060e0a8, 0x72)
+	runtime/netpoll.go:343 +0x85
+internal/poll.(*pollDesc).wait(0xc005361b80?, 0xc007b0d000?, 0x0)
+	internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.(*pollDesc).waitRead(...)
+	internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0xc005361b80, {0xc007b0d000, 0x1000, 0x1000})
+	internal/poll/fd_unix.go:164 +0x27a
+net.(*netFD).Read(0xc005361b80, {0xc007b0d000?, 0x4b0905?, 0x7fffb060e198?})
+	net/fd_posix.go:55 +0x25
+net.(*conn).Read(0xc001f92920, {0xc007b0d000?, 0x0?, 0xc00511b058?})
+	net/net.go:179 +0x45
+net/http.(*connReader).Read(0xc00511b050, {0xc007b0d000, 0x1000, 0x1000})
+	net/http/server.go:791 +0x14b
+bufio.(*Reader).fill(0xc004d425a0)
+	bufio/bufio.go:113 +0x103
+bufio.(*Reader).Peek(0xc004d425a0, 0x4)
+	bufio/bufio.go:151 +0x53
+net/http.(*conn).serve(0xc002652750, {0x46e63b8, 0xc001cdad50})
+	net/http/server.go:2044 +0x75c
+created by net/http.(*Server).Serve in goroutine 1188
+	net/http/server.go:3086 +0x5cb
+
+goroutine 1945 [IO wait]:
+internal/poll.runtime_pollWait(0x7fffb060dfb0, 0x72)
+	runtime/netpoll.go:343 +0x85
+internal/poll.(*pollDesc).wait(0xc007c94980?, 0xc005451000?, 0x0)
+	internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.(*pollDesc).waitRead(...)
+	internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0xc007c94980, {0xc005451000, 0x1000, 0x1000})
+	internal/poll/fd_unix.go:164 +0x27a
+net.(*netFD).Read(0xc007c94980, {0xc005451000?, 0x4b0905?, 0x7fffb060e0a0?})
+	net/fd_posix.go:55 +0x25
+net.(*conn).Read(0xc00194b510, {0xc005451000?, 0x0?, 0xc007ca7568?})
+	net/net.go:179 +0x45
+net/http.(*connReader).Read(0xc007ca7560, {0xc005451000, 0x1000, 0x1000})
+	net/http/server.go:791 +0x14b
+bufio.(*Reader).fill(0xc0056b0cc0)
+	bufio/bufio.go:113 +0x103
+bufio.(*Reader).Peek(0xc0056b0cc0, 0x4)
+	bufio/bufio.go:151 +0x53
+net/http.(*conn).serve(0xc005c71320, {0x46e63b8, 0xc001cdad50})
+	net/http/server.go:2044 +0x75c
+created by net/http.(*Server).Serve in goroutine 1188
+	net/http/server.go:3086 +0x5cb
+
+goroutine 2274 [IO wait]:
+internal/poll.runtime_pollWait(0x7fffb0376fc0, 0x72)
+	runtime/netpoll.go:343 +0x85
+internal/poll.(*pollDesc).wait(0xc005360000?, 0xc005204cd1?, 0x0)
+	internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.(*pollDesc).waitRead(...)
+	internal/poll/fd_poll_runtime.go:89
+internal/poll.(*FD).Read(0xc005360000, {0xc005204cd1, 0x1, 0x1})
+	internal/poll/fd_unix.go:164 +0x27a
+net.(*netFD).Read(0xc005360000, {0xc005204cd1?, 0x46f3a70?, 0xc0076768a8?})
+	net/fd_posix.go:55 +0x25
+net.(*conn).Read(0xc001f92578, {0xc005204cd1?, 0x80?, 0x0?})
+	net/net.go:179 +0x45
+net/http.(*connReader).backgroundRead(0xc005204cc0)
+	net/http/server.go:683 +0x37
+created by net/http.(*connReader).startBackgroundRead in goroutine 1241
+	net/http/server.go:679 +0xba

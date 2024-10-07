@@ -79,7 +79,9 @@ def user_survey(
 
 @packets.command()
 @click.argument('input', type=click.Path(exists=True, dir_okay=False, readable=True, resolve_path=True))
+@click.pass_context
 def support_v1(
+    ctx: click.Context,
     input: click.Path,
 ) -> None:
     """
@@ -87,4 +89,5 @@ def support_v1(
 
     :param input: The zip file with the support package.
     """
-    ingest_support_packet(input)
+    with ctx.obj['engine'].begin() as conn:
+        ingest_support_packet(conn, ctx.parent.params['schema'], input, click.format_filename(input))
