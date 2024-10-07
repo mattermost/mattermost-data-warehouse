@@ -33,8 +33,8 @@ select
     s.has_legacy_telemetry_data,
     s.has_diagnostics_data,
     s.is_missing_activity_data,
-    s.is_feature_shared_channels_enabled,
-    s.is_feature_remote_cluster_service_enabled,
+    l.is_feature_shared_channels_enabled,
+    l.is_feature_remote_cluster_service_enabled,
     l.daily_server_id is null as is_missing_license_data
 from
     {{ ref('int_server_active_days_spined') }} s
