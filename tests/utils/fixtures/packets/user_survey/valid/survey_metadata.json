@@ -1,0 +1,28 @@
+{
+	"detractor_count": 0,
+	"duration": "30",
+	"id": "xsafa7f17tg67xgbtpxux5ua7o",
+	"nps_score": 100,
+	"passive_count": 0,
+	"promoter_count": 1,
+	"questions": [
+		{
+			"id": "c4d6652c-d9c2-4ff3-bac9-b2cb3681a42f",
+			"text": "How likely are you to suggest this app to someone else?",
+			"type": "linear_scale"
+		},
+		{
+			"id": "1221d218-4007-4dd6-b01d-2b21d7bfa33f",
+			"text": "How can we make this app better for you?",
+			"type": "text"
+		},
+		{
+			"id": "9c57ad87-882e-48b4-b85e-03039b464d51",
+			"text": "What is 2 + 2?",
+			"type": "text"
+		}
+	],
+	"receipt_count": 1,
+	"response_count": 1,
+	"start_time": "1 July 2024"
+}

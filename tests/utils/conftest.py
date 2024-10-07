@@ -5,6 +5,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 from responses import Response
+from sqlalchemy import create_engine
 
 
 @pytest.fixture(autouse=True)
@@ -138,7 +139,6 @@ def post_data_error(responses):
 
 @pytest.fixture
 def config_data(monkeypatch, mocker):
-
     # mocking loading k8 secrets to environment variables
     monkeypatch.setenv("NPS_WEBHOOK_URL", "https://mattermost.example.com/hooks/hookid")
     monkeypatch.setenv("DOCS_WEBHOOK_URL", "https://mattermost.example.com/hooks/hookid")
@@ -148,3 +148,10 @@ def config_data(monkeypatch, mocker):
     monkeypatch.setenv("SNOWFLAKE_TRANSFORM_WAREHOUSE", "test warehouse")
     monkeypatch.setenv("SNOWFLAKE_TRANSFORM_DATABASE", "test database")
     monkeypatch.setenv("SNOWFLAKE_TRANSFORM_SCHEMA", "test schema")
+
+
+@pytest.fixture
+def sqlalchemy_memory_engine():
+    engine = create_engine('sqlite:///:memory:')
+    yield engine
+    engine.dispose()

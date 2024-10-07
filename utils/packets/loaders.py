@@ -50,6 +50,8 @@ def load_user_survey(survey_metadata_file: IO, survey_data_file: IO) -> pd.DataF
 
     # Unpivot dataframe so that a shared structure can be used
     df = df.melt(id_vars=[e.value for e in UserSurveyFixedColumns], var_name='Question', value_name='Answer')
+    # Be consistent on data type, using always string representation.
+    df['Answer'] = df['Answer'].astype(str)
 
     # Add survey data
     df['Survey ID'] = metadata.id
