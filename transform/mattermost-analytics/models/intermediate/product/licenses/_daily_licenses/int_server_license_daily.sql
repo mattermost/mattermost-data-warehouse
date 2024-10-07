@@ -11,6 +11,8 @@ with daily_licenses as (
         , starts_at
         , expire_at
         , timestamp
+        , is_feature_shared_channels_enabled,
+        , is_feature_remote_cluster_service_enabled
     from
         {{ ref('stg_mm_telemetry_prod__license') }}
 
@@ -29,6 +31,8 @@ with daily_licenses as (
         , starts_at
         , expire_at
         , timestamp
+        , null as is_feature_shared_channels_enabled 
+        , null as is_feature_remote_cluster_service_enabled
     from
         {{ ref('stg_mattermost2__license') }}
 )
@@ -41,6 +45,8 @@ select
     , installation_id
     , license_name
     , licensed_seats
+    , is_feature_shared_channels_enabled
+    , is_feature_remote_cluster_service_enabled
     , issued_at
     , starts_at
     , expire_at
