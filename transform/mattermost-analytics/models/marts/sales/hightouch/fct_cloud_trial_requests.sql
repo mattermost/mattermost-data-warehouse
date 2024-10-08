@@ -1,7 +1,8 @@
 with cloud_trial_requests_pre as (
     select
         email,
-        cws_installation, 
+        cws_installation,
+        cws_dns,
         trial_start_at,
         trial_end_at
     from
@@ -17,6 +18,8 @@ cloud_trial_requests as (
         ctr.email,
         ctr.trial_start_at,
         ctr.trial_end_at,
+        ctr.cws_installation,
+        ctr.cws_dns,
         l.lead_id as existing_lead_id,
         cm.campaign_member_id as existing_campaign_member_id,
         '{{ var('cloud_enterprise_trial_campaign_id') }}' as campaign_id,

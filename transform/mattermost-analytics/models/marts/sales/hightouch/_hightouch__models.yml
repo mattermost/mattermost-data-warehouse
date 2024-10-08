@@ -102,6 +102,26 @@ models:
           - not_null
           - dbt_utils.not_empty_string
           - unique
+      - name: trial_start_at
+        description: The starting date of the trial.
+      - name: trial_end_at
+        description: The ending date of the trial.
+      - name: cws_installation
+        description: The installation id of the Cloud server provisioned for the trial.
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+      - name: cws_dns
+        description: The URL of the Cloud server provisioned for the trial.
+        tests:
+          - not_null
+          - dbt_utils.not_empty_string
+      - name: existing_lead_id
+        description: The id of the lead to update (if any exists), matched on email.
+      - name: existing_campaign_member_id
+        description: The id of the campaign member to update (if any exists), matched on email.
+      - name: campaign_id
+        description: The id of the campaign to attribute this lead to.
       - name: is_existing_lead
         description: Whether there's already a lead with the same email.
       - name: is_existing_campaign_member
@@ -109,11 +129,16 @@ models:
       - name: campaign_member_status
         description: The campaign member's status.
         # Removing the test for now.
-        # tests:
-        #   - accepted_values:
-        #       values: ['Account created', 'Email verified', 'Workspace created', null]
+        tests:
+          - accepted_values:
+            values: ['Workspace created', null]
       - name: is_valid_email
         description: Whether the email is valid. Used to skip invalid emails.
+      - name: is_blacklisted_email
+        description: Whether the email is blacklisted.
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: "trial_start_at < trial_end_at"
 
   - name: sync_lead_account_link
     description: |
