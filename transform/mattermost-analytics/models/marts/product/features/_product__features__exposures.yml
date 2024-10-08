@@ -14,8 +14,6 @@ exposures:
     depends_on:
       - ref('fct_feature_daily_snapshot')
       - ref('dim_excludable_servers')
-      - ref('dim_cloud_customers')
-      - ref('dim_daily_license')
 
   - name: hub_community_feature_usage
     type: dashboard
@@ -30,5 +28,3 @@ exposures:
     depends_on:
       - ref('fct_feature_daily_snapshot')
       - ref('dim_excludable_servers')
-      - ref('dim_cloud_customers')
-      - ref('dim_daily_license')
