@@ -38,7 +38,7 @@ with deduped_legacy_licenses as (
         license_start_date__c as starts_at,
         license_end_date__c as expire_at,
         seats_from_name,
-        a.arr_current_c as account_arr
+        a.arr_current__c as account_arr
     from
         {{ ref('stg_salesforce__opportunity') }} o
         left join {{ ref('stg_salesforce__account') }} a  on o.account_id = a.account_id
