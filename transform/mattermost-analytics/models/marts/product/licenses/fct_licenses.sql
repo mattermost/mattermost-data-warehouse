@@ -24,5 +24,6 @@ select
     , in_legacy
     , in_salesforce
     , in_telemetry
+    , salesforce_account_arr
 from
     {{ ref('int_known_licenses') }}
