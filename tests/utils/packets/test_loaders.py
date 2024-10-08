@@ -1,11 +1,11 @@
 from datetime import date, datetime, timezone
-from pathlib import Path
 
 import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
 from pydantic import ValidationError
 
+from tests.utils.packets import METADATA_DIR, SUPPORT_DIR, SURVEY_DIR
 from utils.packets.loaders import (
     load_metadata,
     load_support_packet_file,
@@ -15,12 +15,6 @@ from utils.packets.loaders import (
 )
 from utils.packets.models.metadata import Extras, SupportPacketMetadata, SupportPacketTypeEnum
 from utils.packets.models.support import JobV1
-
-FIXTURE_DIR = Path(__file__).parent.parent / 'fixtures' / 'packets'
-METADATA_DIR = FIXTURE_DIR / 'metadata'
-SURVEY_DIR = FIXTURE_DIR / 'user_survey'
-SUPPORT_DIR = FIXTURE_DIR / 'support'
-
 
 #
 # Metadata loader tests
@@ -143,7 +137,7 @@ def test_load_user_survey():
                     'How can we make this app better for you?',
                     'What is 2 + 2?',
                 ],
-                'Answer': [10, 'response 1!!!', 'Its 4, obviously, but this might be a trick question 🤔🤔🤔'],
+                'Answer': ['10', 'response 1!!!', 'Its 4, obviously, but this might be a trick question 🤔🤔🤔'],
                 'Question Type': ['linear_scale', 'text', 'text'],
             }
         ),
@@ -226,7 +220,7 @@ def test_load_valid_user_survey_package():
                     'How can we make this app better for you?',
                     'What is 2 + 2?',
                 ],
-                'Answer': [10, 'response 1!!!', 'Its 4, obviously, but this might be a trick question 🤔🤔🤔'],
+                'Answer': ['10', 'response 1!!!', 'Its 4, obviously, but this might be a trick question 🤔🤔🤔'],
                 'Question Type': ['linear_scale', 'text', 'text'],
             }
         ),
