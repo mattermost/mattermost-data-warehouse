@@ -6,6 +6,7 @@ select
     , event_date as event_date
     , timestamp as timestamp
     -- server_version only contains major and minor
+    , server_version_full
     , server_version_major || '.' || server_version_minor as server_version
     , score as score
     , user_role as user_role
@@ -20,6 +21,7 @@ select
     , license_id as license_id
     , event_date as event_date
     , timestamp as timestamp
+    , server_version_full
     -- server_version only contains major and minor
     , server_version_major || '.' || server_version_minor as server_version
     , score as score
@@ -33,6 +35,7 @@ select server_id
         , license_id
         , event_date
         , timestamp
+        , server_version_full
         , server_version
         , score
         , user_role
@@ -44,6 +47,7 @@ select server_id
         , license_id
         , event_date
         , timestamp
+        , server_version_full
         , server_version
         , score
         , user_role
