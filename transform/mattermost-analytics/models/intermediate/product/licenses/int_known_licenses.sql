@@ -37,7 +37,8 @@ with deduped_legacy_licenses as (
         license_key__c as license_id,
         license_start_date__c as starts_at,
         license_end_date__c as expire_at,
-        seats_from_name
+        seats_from_name,
+        a.arr_current__c as account_arr
     from
         {{ ref('stg_salesforce__opportunity') }} o
         left join {{ ref('stg_salesforce__account') }} a  on o.account_id = a.account_id
@@ -89,6 +90,7 @@ select
     , legacy.expire_at as legacy_expire_at
     , sf.expire_at as salesforce_expire_at
     , t.expire_at as telemetry_expire_at
+    , sf.account_arr as salesforce_account_arr
 
     -- Metadata related to source of information for each license.
     , cws.license_id is not null as in_cws
