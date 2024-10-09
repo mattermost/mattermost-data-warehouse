@@ -15,6 +15,7 @@ select
     , coalesce(k.in_cws, false) as in_cws
     , coalesce(k.in_legacy, false) as in_legacy
     , coalesce(k.in_salesforce, false) as in_salesforce
+    , k.salesforce_account_arr
 
     -- Metadata to be used for tests
     , l.expire_at = k.expire_at as is_matching_expiration_date
