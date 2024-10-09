@@ -1,13 +1,20 @@
 import os
+from datetime import datetime, timedelta
 from enum import Enum
 from logging import getLogger
+from typing import Callable
 
 import pandas as pd
 from click import ClickException
 from sqlalchemy.engine import Connection
+from sqlalchemy.exc import OperationalError
 
 from utils.db.helpers import upsert_dataframe_to_table
+from utils.helpers import daterange
+from utils.packets.aws import bucket_exists, object_iter
 from utils.packets.loaders import UserSurveyFixedColumns, load_support_packet_file, load_user_survey_package
+
+DATE_FORMAT = '%Y-%m-%d'
 
 logger = getLogger(__name__)
 
@@ -48,6 +55,7 @@ def ingest_survey_packet(conn: Connection, target_schema: str, survey_packet: st
         enriched_df['metadata_extras_plugin_id'] = metadata.extras.plugin_id
         enriched_df['metadata_extras_plugin_version'] = metadata.extras.plugin_version
         enriched_df['source'] = source_uri
+        enriched_df['ingestion_date'] = datetime.today().strftime(DATE_FORMAT)
 
         # Upsert data
         upsert_dataframe_to_table(
@@ -105,11 +113,13 @@ def ingest_support_packet(conn: Connection, target_schema: str, support_packet: 
         sp_df['metadata_license_id'] = metadata.license_id if metadata else None
         sp_df['metadata_customer_id'] = metadata.customer_id if metadata else None
         sp_df['source'] = source_uri
+        sp_df['ingestion_date'] = datetime.today().strftime(DATE_FORMAT)
 
         job_df = pd.DataFrame([job.model_dump() for job in sp.all_jobs()])
         job_df['data'] = job_df['data'].astype(str)
         job_df['metadata_server_id'] = server_id
         job_df['source'] = source_uri
+        sp_df['ingestion_date'] = datetime.today().strftime(DATE_FORMAT)
 
         # Upsert data
         upsert_dataframe_to_table(conn, target_schema, TableNames.SUPPORT_PACKET_V1.value, sp_df, server_id, source_uri)
@@ -119,3 +129,54 @@ def ingest_support_packet(conn: Connection, target_schema: str, support_packet: 
 
     except ValueError as e:
         raise ClickException(f'Error loading support package: {e}')
+
+
+def _ingest_packet_from_s3(
+    conn: Connection, target_schema: str, bucket: str, prefix: str, ingest_func: Callable, table: TableNames
+):
+    if not bucket_exists(bucket):
+        raise ValueError(f'Bucket {bucket} does not exist')
+
+    try:
+        checkpoint = conn.execute(
+            f'SELECT MAX(ingestion_date) as checkpoint FROM \'{target_schema}\'.{table.value}'
+        ).scalar()
+    except OperationalError:
+        # Table does not exist
+        checkpoint = None
+    if checkpoint:
+        logger.info(f'Resuming ingestion from: {checkpoint}')
+        start_date = datetime.strptime(checkpoint, DATE_FORMAT)
+        for date in daterange(start_date, datetime.today() + timedelta(days=1)):
+            for key, content in object_iter(bucket, f'{prefix}/{date.strftime("%Y/%m/%d")}'):
+                logger.info(f'Ingesting {key}')
+                ingest_func(conn, target_schema, content, f's3://{bucket}/{key}')
+    else:
+        logger.info('Starting ingestion from the beginning')
+        for key, content in object_iter(bucket, f'{prefix}/'):
+            logger.info(f'Ingesting {key}')
+            ingest_func(conn, target_schema, content, f's3://{bucket}/{key}')
+
+
+def ingest_surveys_from_s3(conn: Connection, target_schema: str, bucket: str, prefix: str):
+    """
+    Load all survey packages from S3
+
+    :conn: The SQLAlchemy connection to use for ingesting the data.
+    :target_schema: The schema to ingest the data into.
+    :bucket: The S3 bucket name.
+    :prefix: The S3 bucket prefix where the survey packets are located at.
+    """
+    _ingest_packet_from_s3(conn, target_schema, bucket, prefix, ingest_survey_packet, TableNames.USER_SURVEY)
+
+
+def ingest_support_packets_from_s3(conn: Connection, target_schema: str, bucket: str, prefix: str):
+    """
+    Load all support packets from S3
+
+    :conn: The SQLAlchemy connection to use for ingesting the data.
+    :target_schema: The schema to ingest the data into.
+    :bucket: The S3 bucket name.
+    :prefix: The S3 bucket prefix where the survey packets are located at.
+    """
+    _ingest_packet_from_s3(conn, target_schema, bucket, prefix, ingest_support_packet, TableNames.SUPPORT_PACKET_V1)
