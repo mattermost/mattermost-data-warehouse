@@ -81,6 +81,8 @@ with user_metrics as (
 SELECT a.*,
     {{ dbt_utils.generate_surrogate_key(['a.activity_date', 'a.server_id']) }} AS daily_server_id,
     b.server_version AS server_version,
+    a.server_version_full as server_version_full,
+    {{ dbt_utils.generate_surrogate_key(['server_version_full']) }} AS version_id,
     a.count_user_promoters_daily + a.count_team_admin_promoters_daily + a.count_system_admin_promoters_daily AS count_promoters_daily,
     a.count_user_detractors_daily + a.count_team_admin_detractors_daily + a.count_system_admin_detractors_daily AS count_detractors_daily,
     a.count_user_passives_daily + a.count_team_admin_passives_daily + a.count_system_admin_passives_daily AS count_passives_daily,
