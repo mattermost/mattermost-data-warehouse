@@ -33,5 +33,5 @@ def object_iter(bucket: str, prefix: str) -> Generator[Tuple[str, BytesIO], None
     # Iterate
     for result in paginator.paginate(Bucket=bucket, Prefix=prefix):
         # Download each file individually
-        for key in result['Contents']:
+        for key in result.get('Contents', []):
             yield key['Key'], BytesIO(s3.get_object(Bucket=bucket, Key=key['Key'])["Body"].read())
