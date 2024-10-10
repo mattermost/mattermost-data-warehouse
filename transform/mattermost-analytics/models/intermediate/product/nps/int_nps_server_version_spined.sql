@@ -36,6 +36,7 @@ server_version_cte AS (
 SELECT 
     activity_date,
     server_id,
+    server_version_full,
     FIRST_VALUE(server_version IGNORE NULLS) OVER (
         PARTITION BY server_id 
         ORDER BY activity_date DESC
