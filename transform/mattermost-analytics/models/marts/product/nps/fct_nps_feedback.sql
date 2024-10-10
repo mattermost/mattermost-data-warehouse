@@ -5,7 +5,7 @@ select {{ dbt_utils.generate_surrogate_key(['nf.server_id', 'nf.user_id', 'nf.fe
        , nf.feedback as feedback
        , ns.score as score
        , coalesce(nf.server_version_full, ns.server_version_full) as server_version_full
-       , {{ dbt_utils.generate_surrogate_key(['server_version_full']) }} AS version_id, 
+       , {{ dbt_utils.generate_surrogate_key(['server_version_full']) }} AS version_id 
        , nf.server_version as server_version
        , nf.user_role as user_role
        , nf.event_date as feedback_date
