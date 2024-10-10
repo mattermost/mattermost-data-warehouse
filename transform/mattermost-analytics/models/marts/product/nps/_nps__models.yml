@@ -24,8 +24,6 @@ models:
         description: NPS feedback submitted.
       - name: score
         description: NPS score submitted.
-      - name: server_version
-        description: The server's version.     
       - name: user_role
         description: The role of the user who submitted feedback.        
       - name: feedback_date
@@ -59,8 +57,6 @@ models:
         description: The ID of the server the NPS score event originated from.
         tests:
           - not_null
-      - name: server_version
-        description: The server's version.
       - name: daily_server_id
         description: A unique identifier for the nps score generated from server_id, activity_date.
         tests:

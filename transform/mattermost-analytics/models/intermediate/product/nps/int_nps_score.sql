@@ -32,7 +32,6 @@ select server_id
         , event_date
         , timestamp
         , server_version_full
-        , server_version
         , score
         , user_role
         , score_received_at 
@@ -44,7 +43,6 @@ select server_id
         , event_date
         , timestamp
         , server_version_full
-        , server_version
         , score
         , user_role
         , score_received_at  
