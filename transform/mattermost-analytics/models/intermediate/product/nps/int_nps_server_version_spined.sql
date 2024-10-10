@@ -1,3 +1,11 @@
+{{
+    config({
+        "materialized": "table",
+        "cluster_by": ['activity_date', 'server_id'],
+        "snowflake_warehouse": "transform_xs"
+    })
+}}
+
 WITH first_server_version AS (
     SELECT 
         server_id,
