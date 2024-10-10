@@ -19,6 +19,8 @@ models:
         description: The date the event was sent.
       - name: timestamp
         description: Timestamp registered by Rudderstack & Segment when the event occurred refactored to clients clock skew.
+      - name: server_version_full
+        description: Full server version
       - name: server_version
         description: The server's version.
       - name: feedback
@@ -48,6 +50,8 @@ models:
         description: The date the event was sent.
       - name: timestamp
         description: Timestamp registered by Rudderstack & Segment when the event occurred refactored to clients clock skew.
+      - name: server_version_full
+        description: Full server version
       - name: server_version
         description: The server's version.
       - name: score

@@ -1,3 +1,11 @@
+{{
+    config({
+        "materialized": "table",
+        "cluster_by": ['activity_date', 'server_id'],
+        "snowflake_warehouse": "transform_xs"
+    })
+}}
+
 WITH first_server_version AS (
     SELECT 
         server_id,
@@ -17,6 +25,7 @@ server_version_cte AS (
     SELECT 
         sp.activity_date,
         sp.server_id,
+        nps_score.server_version_full as server_version_full,
         nps_score.server_version AS server_version
     FROM spined sp 
     LEFT JOIN {{ ref('int_nps_score') }} nps_score 
@@ -27,10 +36,12 @@ server_version_cte AS (
 SELECT 
     activity_date,
     server_id,
+    server_version_full,
     FIRST_VALUE(server_version IGNORE NULLS) OVER (
         PARTITION BY server_id 
         ORDER BY activity_date DESC
         ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
-    ) AS server_version
+    ) AS server_version_original,
+    server_version
 FROM server_version_cte
 ORDER BY ACTIVITY_DATE DESC

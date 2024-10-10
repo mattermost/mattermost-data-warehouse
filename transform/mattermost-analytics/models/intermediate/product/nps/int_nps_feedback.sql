@@ -5,6 +5,7 @@ select
     , license_id as license_id
     , event_date as event_date
     , timestamp as timestamp
+    , server_version_full
     -- server_version only contains major and minor
     , server_version_major || '.' || server_version_minor as server_version   
     , feedback as feedback
@@ -22,6 +23,7 @@ select
     , license_id as license_id
     , event_date as event_date
     , timestamp as timestamp
+    , server_version_full
     -- server_version only contains major and minor
     , server_version_major || '.' || server_version_minor as server_version
     , feedback as feedback
