@@ -21,8 +21,6 @@ models:
         description: Timestamp registered by Rudderstack & Segment when the event occurred refactored to clients clock skew.
       - name: server_version_full
         description: Full server version
-      - name: server_version
-        description: The server's version.
       - name: feedback
         description: NPS feedback submitted.
       - name: user_role
@@ -52,8 +50,6 @@ models:
         description: Timestamp registered by Rudderstack & Segment when the event occurred refactored to clients clock skew.
       - name: server_version_full
         description: Full server version
-      - name: server_version
-        description: The server's version.
       - name: score
         description: NPS score submitted.
       - name: user_role
