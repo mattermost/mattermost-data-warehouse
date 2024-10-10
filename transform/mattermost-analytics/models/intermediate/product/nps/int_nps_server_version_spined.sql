@@ -25,8 +25,7 @@ server_version_cte AS (
     SELECT 
         sp.activity_date,
         sp.server_id,
-        nps_score.server_version_full as server_version_full,
-        nps_score.server_version AS server_version
+        nps_score.server_version_full as server_version_full
     FROM spined sp 
     LEFT JOIN {{ ref('int_nps_score') }} nps_score 
         ON sp.server_id = nps_score.server_id AND sp.activity_date = nps_score.event_date
@@ -36,12 +35,10 @@ server_version_cte AS (
 SELECT 
     activity_date,
     server_id,
-    server_version_full,
-    FIRST_VALUE(server_version IGNORE NULLS) OVER (
+    FIRST_VALUE(server_version_full IGNORE NULLS) OVER (
         PARTITION BY server_id 
         ORDER BY activity_date DESC
         ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
-    ) AS server_version_original,
-    server_version
+    ) AS server_version_full
 FROM server_version_cte
 ORDER BY ACTIVITY_DATE DESC

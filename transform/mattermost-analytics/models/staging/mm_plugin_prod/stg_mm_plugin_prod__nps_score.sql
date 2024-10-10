@@ -35,9 +35,6 @@ renamed as (
         -- Same as useractualid above
         , COALESCE(pluginid, plugin_id) as plugin_id
         , COALESCE(serverversion, server_version) as server_version_full
-        , split_part(COALESCE(serverversion, server_version), '.', 1) as server_version_major
-        , split_part(COALESCE(serverversion, server_version), '.', 2) as server_version_minor
-        , split_part(COALESCE(serverversion, server_version), '.', 3) as server_version_patch        
         , COALESCE(pluginversion, plugin_version) as plugin_version
 
         -- Metadata from Rudderstack

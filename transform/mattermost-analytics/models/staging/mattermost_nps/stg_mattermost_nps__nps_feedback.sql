@@ -19,10 +19,7 @@ with source as (
         , feedback            as feedback
         , server_install_date as server_install_date
         , server_version      as server_version_full
-        , split_part(server_version, '.', 1) as server_version_major
-        , split_part(server_version, '.', 2) as server_version_minor
-        , split_part(server_version, '.', 3) as server_version_patch
-
+        
         -- Metadata from Segment
         , context_library_version as context_library_version
         , context_library_name as context_library_name
