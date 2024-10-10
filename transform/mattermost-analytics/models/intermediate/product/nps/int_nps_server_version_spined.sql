@@ -41,7 +41,7 @@ SELECT
         PARTITION BY server_id 
         ORDER BY activity_date DESC
         ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING
-    ) AS server_version_original
+    ) AS server_version_original,
     server_version
 FROM server_version_cte
 ORDER BY ACTIVITY_DATE DESC
