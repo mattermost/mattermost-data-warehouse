@@ -62,7 +62,7 @@ models:
         tags: [pii]
       - name: plugin_id
         description: The ID of the plugin.
-      - name: server_version
+      - name: server_version_full
         description: The full version string of the server's semver.
       - name: plugin_version      
         description: The plugin's version.
@@ -112,7 +112,7 @@ models:
         description: Server installation date.
       - name: plugin_id
         description: The ID of the plugin.
-      - name: server_version
+      - name: server_version_full
         description: The full version string of the server's semver.
       - name: plugin_version      
         description: The plugin's version.
