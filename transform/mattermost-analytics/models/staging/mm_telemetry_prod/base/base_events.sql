@@ -12,5 +12,5 @@ where
     -- Hack to disable incremental for now
     false
 {% else %}
-    timestamp < '2024-10-01'
+    timestamp < '2024-01-01'
 {% endif %}
