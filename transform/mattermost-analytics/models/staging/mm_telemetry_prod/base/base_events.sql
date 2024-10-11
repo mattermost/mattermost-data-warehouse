@@ -1,7 +1,6 @@
 {{config({
     "materialized": "incremental",
     "snowflake_warehouse": "transform_l",
-    "cluster_by": ["timestamp"]
   })
 }}
 select
