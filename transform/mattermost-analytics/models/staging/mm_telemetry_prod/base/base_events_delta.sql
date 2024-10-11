@@ -16,6 +16,6 @@ where
 {% if is_incremental() %}
     received_at >= (select max(received_at) FROM {{ this }})
 {% else %}
-    received_at >= '2024-10-01'
+    received_at >= '2024-01-01'
 {% endif %}
 qualify 1 = row_number() over (partition by id order by received_at desc)
