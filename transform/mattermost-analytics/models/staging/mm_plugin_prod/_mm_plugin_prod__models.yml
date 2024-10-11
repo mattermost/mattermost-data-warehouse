@@ -62,14 +62,8 @@ models:
         tags: [pii]
       - name: plugin_id
         description: The ID of the plugin.
-      - name: server_version
+      - name: server_version_full
         description: The full version string of the server's semver.
-      - name: server_version_major
-        description: The major version of the server at the time the event was submitted.
-      - name: server_version_minor
-        description: The minor version of the server at the time the event was submitted.
-      - name: server_version_patch
-        description: The patch version of the server at the time the event was submitted.  
       - name: plugin_version      
         description: The plugin's version.
       - name: context_library_version
@@ -118,14 +112,8 @@ models:
         description: Server installation date.
       - name: plugin_id
         description: The ID of the plugin.
-      - name: server_version
+      - name: server_version_full
         description: The full version string of the server's semver.
-      - name: server_version_major
-        description: The major version of the server at the time the event was submitted.
-      - name: server_version_minor
-        description: The minor version of the server at the time the event was submitted.
-      - name: server_version_patch
-        description: The patch version of the server at the time the event was submitted.  
       - name: plugin_version      
         description: The plugin's version.
       - name: context_library_version
