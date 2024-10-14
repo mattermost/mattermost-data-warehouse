@@ -17,6 +17,9 @@ models:
         description: The server's unique id.
         tests:
           - not_null
+          - relationships:
+              to: ref('dim_server_info')
+              field: server_id
       - name: count_message_ack_events_daily
         description: The number of events related to Message Acknowledgement feature for the current day.
       - name: count_message_ack_events_monthly
