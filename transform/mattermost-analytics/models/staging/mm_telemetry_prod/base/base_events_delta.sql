@@ -1,9 +1,10 @@
 {{config({
-    "materialized": 'incremental',
-    "transient": true,
-    "snowflake_warehouse": "transform_l",
-    "incremental_strategy": "delete+insert",
-    "unique_key": ['id'],
+    'materialized': 'incremental',
+    'transient': true,
+    'snowflake_warehouse': 'transform_l',
+    'incremental_strategy': 'delete+insert',
+    'unique_key': ['id'],
+    'cluster_by': ['to_date(received_at)'],
   })
 }}
 select
