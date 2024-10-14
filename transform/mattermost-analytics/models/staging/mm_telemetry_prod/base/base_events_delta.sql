@@ -10,4 +10,4 @@ select
 from
     {{ source('mm_telemetry_prod', 'event') }}
 where
-    received_at >= (select max(received_at) FROM {{ reF('base_events') }})
+    received_at >= (select max(received_at) FROM {{ ref('base_events') }})
