@@ -9,6 +9,8 @@ from
     {{ source('mm_telemetry_prod', 'event') }}
 where
 {% if is_incremental() %}
-    -- Hack to disable incremental for now
+    -- Hack to run only once
     false
+{% else %}
+    received_at < current_date()
 {% endif %}
