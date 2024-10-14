@@ -1,10 +1,8 @@
 {{config({
-    'materialized': 'incremental',
+    'materialized': 'table',
     'transient': true,
     'snowflake_warehouse': 'transform_l',
-    'incremental_strategy': 'delete+insert',
-    'unique_key': ['id'],
-    'cluster_by': ['to_date(received_at)'],
+    'cluster_by': ['to_date(timestamp)'],
   })
 }}
 select
@@ -12,8 +10,4 @@ select
 from
     {{ source('mm_telemetry_prod', 'event') }}
 where
-{% if is_incremental() %}
-    received_at >= (select max(received_at) FROM {{ this }})
-{% else %}
-    received_at >= '2024-09-01'
-{% endif %}
+    received_at >= (select max(received_at) FROM {{ reF('base_events') }})

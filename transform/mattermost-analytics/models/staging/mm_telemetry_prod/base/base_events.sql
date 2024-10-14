@@ -1,6 +1,6 @@
 {{config({
-    "materialized": "incremental",
-    "snowflake_warehouse": "transform_l",
+    'materialized': 'incremental',
+    'snowflake_warehouse': 'transform_l',
   })
 }}
 select
@@ -11,6 +11,4 @@ where
 {% if is_incremental() %}
     -- Hack to disable incremental for now
     false
-{% else %}
-    timestamp < '2024-01-01'
 {% endif %}
