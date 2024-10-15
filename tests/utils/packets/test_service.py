@@ -1,8 +1,10 @@
 import pandas as pd
+import pytest
+from moto import mock_aws
 from pandas._testing import assert_frame_equal
 
 from tests.utils.packets import SUPPORT_DIR, SURVEY_DIR
-from utils.packets.service import ingest_support_packet, ingest_survey_packet
+from utils.packets.service import ingest_support_packet, ingest_survey_packet, ingest_surveys_from_s3
 
 
 def test_ingest_survey_packet(sqlalchemy_memory_engine):
@@ -202,3 +204,82 @@ def test_ingest_support_packet_twice(sqlalchemy_memory_engine):
         )
         assert result['metadata_server_id'] == 'rmg9ib5rspy93jxswyc454bwzo'
         assert result['source'] == 's3://bucket/valid_with_metadata.zip'
+
+
+@mock_aws
+def test_ingest_survey_from_s3_fresh(s3_boto, sqlalchemy_memory_engine):
+    with sqlalchemy_memory_engine.connect() as conn:
+        # GIVEN: database setup has been completed
+        conn.execute("ATTACH DATABASE ':memory:' AS 'test_schema'")
+
+        # GIVEN: an S3 bucket
+        bucket_name = 'bucket-with-files'
+        s3_boto.create_bucket(Bucket=bucket_name)
+        # GIVEN: survey packets for 3 days exist in the bucket
+        s3_boto.upload_file(SURVEY_DIR / 'valid.zip', bucket_name, 'prefix/2024/09/03/mattermost/user-survey.zip')
+        s3_boto.upload_file(SURVEY_DIR / 'valid.zip', bucket_name, 'prefix/2024/10/02/mattermost/user-survey.zip')
+        s3_boto.upload_file(SURVEY_DIR / 'valid.zip', bucket_name, 'prefix/2024/10/02/example/user-survey.zip')
+
+        # WHEN: request to ingest all
+
+        ingest_surveys_from_s3(conn, 'test_schema', bucket_name, 'prefix')
+
+        # THEN: expect the data to be in the database
+        df = pd.read_sql("SELECT * FROM 'test_schema'.user_survey ORDER BY source", conn)
+
+        assert len(df) == 9
+        assert (
+            df['source'].tolist()
+            == ['s3://bucket-with-files/prefix/2024/09/03/mattermost/user-survey.zip'] * 3
+            + ['s3://bucket-with-files/prefix/2024/10/02/example/user-survey.zip'] * 3
+            + ['s3://bucket-with-files/prefix/2024/10/02/mattermost/user-survey.zip'] * 3
+        )
+
+
+@mock_aws
+@pytest.mark.freeze_time
+def test_ingest_survey_from_s3_resume(s3_boto, sqlalchemy_memory_engine, freezer):
+    with sqlalchemy_memory_engine.connect() as conn:
+        # GIVEN: database setup has been completed
+        conn.execute("ATTACH DATABASE ':memory:' AS 'test_schema'")
+
+        # GIVEN: an S3 bucket
+        bucket_name = 'bucket-with-files'
+        s3_boto.create_bucket(Bucket=bucket_name)
+        # GIVEN: survey packets for 3 days exist in the bucket
+        s3_boto.upload_file(SURVEY_DIR / 'valid.zip', bucket_name, 'prefix/2024/09/03/mattermost/user-survey.zip')
+        s3_boto.upload_file(SURVEY_DIR / 'valid.zip', bucket_name, 'prefix/2024/10/02/mattermost/user-survey.zip')
+        s3_boto.upload_file(SURVEY_DIR / 'valid.zip', bucket_name, 'prefix/2024/10/02/example/user-survey.zip')
+
+        # GIVEN: first file was ingested in the past
+        freezer.move_to('2024-09-10')
+        ingest_surveys_from_s3(conn, 'test_schema', bucket_name, 'prefix')
+        freezer.move_to('2024-10-02')
+
+        # WHEN: request to ingest
+        ingest_surveys_from_s3(conn, 'test_schema', bucket_name, 'prefix')
+
+        # THEN: expect the data to be in the database
+        df = pd.read_sql("SELECT * FROM 'test_schema'.user_survey ORDER BY source", conn)
+
+        assert len(df) == 9
+        assert (
+            df['source'].tolist()
+            == ['s3://bucket-with-files/prefix/2024/09/03/mattermost/user-survey.zip'] * 3
+            + ['s3://bucket-with-files/prefix/2024/10/02/example/user-survey.zip'] * 3
+            + ['s3://bucket-with-files/prefix/2024/10/02/mattermost/user-survey.zip'] * 3
+        )
+        assert df['ingestion_date'].tolist() == ['2024-09-10'] * 3 + ['2024-10-02'] * 6
+
+
+def test_ingest_survey_from_s3_unknown_bucket(s3_boto, sqlalchemy_memory_engine):
+    with sqlalchemy_memory_engine.connect() as conn:
+        # GIVEN: database setup has been completed
+        conn.execute("ATTACH DATABASE ':memory:' AS 'test_schema'")
+
+        # WHEN: request to ingest from an unkwnown bucket
+        with pytest.raises(ValueError) as e:
+            ingest_surveys_from_s3(conn, 'test_schema', "not-exists", 'prefix')
+
+        # THEN: expect an error
+        assert str(e.value) == 'Bucket not-exists does not exist'

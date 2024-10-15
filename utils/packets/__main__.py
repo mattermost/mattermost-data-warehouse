@@ -5,7 +5,12 @@ import click
 
 from utils.db.helpers import snowflake_engine
 from utils.helpers import initialize_cli_logging
-from utils.packets.service import ingest_support_packet, ingest_survey_packet
+from utils.packets.service import (
+    ingest_support_packet,
+    ingest_support_packets_from_s3,
+    ingest_survey_packet,
+    ingest_surveys_from_s3,
+)
 
 initialize_cli_logging(logging.INFO, 'stderr')
 
@@ -78,6 +83,20 @@ def user_survey(
 
 
 @packets.command()
+@click.argument('bucket', type=str)
+@click.argument('prefix', type=str)
+@click.pass_context
+def user_survey_s3(ctx: click.Context, bucket: str, prefix: str) -> None:
+    """
+    Ingest user survey packets from S3.
+    :param bucket: The S3 bucket to ingest from/
+    :param prefix: The prefix to search for support packages.
+    """
+    with ctx.obj['engine'].begin() as conn:
+        ingest_surveys_from_s3(conn, ctx.parent.params['schema'], bucket, prefix)
+
+
+@packets.command()
 @click.argument('input', type=click.Path(exists=True, dir_okay=False, readable=True, resolve_path=True))
 @click.pass_context
 def support_v1(
@@ -91,3 +110,17 @@ def support_v1(
     """
     with ctx.obj['engine'].begin() as conn:
         ingest_support_packet(conn, ctx.parent.params['schema'], input, click.format_filename(input))
+
+
+@packets.command()
+@click.argument('bucket', type=str)
+@click.argument('prefix', type=str)
+@click.pass_context
+def support_v1_s3(ctx: click.Context, bucket: str, prefix: str) -> None:
+    """
+    Ingest support packets from S3.
+    :param bucket: The S3 bucket to ingest from/
+    :param prefix: The prefix to search for support packages.
+    """
+    with ctx.obj['engine'].begin() as conn:
+        ingest_support_packets_from_s3(conn, ctx.parent.params['schema'], bucket, prefix)
