@@ -18,9 +18,6 @@ def bucket_exists(bucket: str) -> bool:
         return False
 
 
-# The bucket does not exist or you ha
-
-
 def object_iter(bucket: str, prefix: str) -> Generator[Tuple[str, BytesIO], None, None]:
     """
     Iterates over all items from a bucket with a given prefix, return .
