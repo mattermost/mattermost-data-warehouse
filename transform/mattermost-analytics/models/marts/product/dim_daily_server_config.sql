@@ -263,6 +263,8 @@ with segment_oauth as (
         , version_webex
         , version_welcome_bot
         , version_zoom
+        , context_traits_installationid
+        , context_traits_installation_id
     from
         {{ ref('stg_mm_telemetry_prod__plugin') }}
     qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
@@ -621,6 +623,8 @@ with segment_oauth as (
         , uses_letsencrypt
         , websocket_url
         , web_server_mode
+        , context_traits_installationid
+        , context_traits_installation_id
     from
         {{ ref('stg_mm_telemetry_prod__service') }}
     qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
