@@ -161,6 +161,7 @@ with segment_oauth as (
         , enable_marketplace
         , enable_mattermostautolink
         , enable_mattermost_profanityfilter
+        , enable_mattermost_autolink
         , enable_mattermost_plugin_azure_devops
         , enable_mattermost_plugin_hackerone
         , enable_mattermost_plugin_servicenow
@@ -171,13 +172,14 @@ with segment_oauth as (
         , enable_nps
         , enable_nps_survey
         , enable_playbooks
+        , enable_remote_marketplace
         , enable_ru_loop_plugin_embeds
         , enable_ru_loop_plugin_scheduler
         , enable_ru_loop_plugin_user_fields
         , enable_ru_loop_plugin_welcomebot
         , enable_set_default_theme
         , enable_skype4business
-        , enable_skype_4_businesswe
+        , enable_skype_4_business
         , enable_todo
         , enable_uploads
         , enable_webex
