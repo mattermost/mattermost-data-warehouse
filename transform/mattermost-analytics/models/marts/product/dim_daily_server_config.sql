@@ -675,7 +675,7 @@ select
     , coalesce(ss.enable_admin_attribute, sr.enable_admin_attribute)                                 as enable_admin_attribute
     , coalesce(ss.enable_sync_with_ldap, sr.enable_sync_with_ldap)                                   as enable_sync_with_ldap
     , coalesce(ss.enable_sync_with_ldap_include_auth, sr.enable_sync_with_ldap_include_auth)         as enable_sync_with_ldap_include_auth
-    , coalesce(ss.encrypt, sr.encrypt)                                                               as encrypt_saml
+    , coalesce(ss.encrypt_saml, sr.encrypt_saml)                                                     as encrypt_saml
     , coalesce(sr.ignore_guests_ldap_sync, null)                                                     as ignore_guests_ldap_sync
     , coalesce(ss.isdefault_admin_attribute, sr.isdefault_admin_attribute)                           as isdefault_admin_attribute
     , coalesce(ss.isdefault_canonical_algorithm, sr.isdefault_canonical_algorithm)                   as isdefault_canonical_algorithm
