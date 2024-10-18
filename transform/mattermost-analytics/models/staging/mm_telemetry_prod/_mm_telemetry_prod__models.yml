@@ -330,3 +330,12 @@ models:
         description: The name of Rudderstack library used to send this event.
       - name: sent_at
       - name: original_timestamp
+
+  - name: stg_mm_telemetry_prod__event
+    description: Contains all raw events, as they are stored by Rudderstack. Might contain duplicates.
+
+  - name: stg_mm_telemetry_prod__event_deduped
+    description: |
+      Contains all raw events. Deduplication has been implemented using 
+      [deferred merge](https://quickstarts.snowflake.com/guide/connectors_example_push_based_java/img/e5a0394034661f7.pdf)
+      pattern.
