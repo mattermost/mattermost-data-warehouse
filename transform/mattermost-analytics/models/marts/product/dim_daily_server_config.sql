@@ -655,9 +655,9 @@ select
     , coalesce(ls.isdefault_login_button_text_color_ldap, lr.isdefault_login_button_text_color_ldap) as isdefault_login_button_text_color_ldap
     , coalesce(ls.isdefault_login_field_name, lr.isdefault_login_field_name)                         as isdefault_login_field_name
     , coalesce(ls.isdefault_login_id_attribute, lr.isdefault_login_id_attribute)                     as isdefault_login_id_attribute
-    , coalesce(ls.isdefault_nickname_attribute, lr.isdefault_nickname_attribute)                     as isdefault_nickname_attribute
-    , coalesce(ls.isdefault_position_attribute, lr.isdefault_position_attribute)                     as isdefault_position_attribute
-    , coalesce(ls.isdefault_username_attribute, lr.isdefault_username_attribute)                     as isdefault_username_attribute
+    , coalesce(ls.isdefault_nickname_attribute_ldap, lr.isdefault_nickname_attribute_ldap)           as isdefault_nickname_attribute_ldap
+    , coalesce(ls.isdefault_position_attribute_ldap, lr.isdefault_position_attribute_ldap)           as isdefault_position_attribute_ldap
+    , coalesce(ls.isdefault_username_attribute_ldap, lr.isdefault_username_attribute_ldap)           as isdefault_username_attribute_ldap
     , coalesce(ls.isempty_admin_filter, lr.isempty_admin_filter)                                     as isempty_admin_filter
     , coalesce(ls.isempty_group_filter, lr.isempty_group_filter)                                     as isempty_group_filter
     , coalesce(ls.isempty_guest_filter, lr.isempty_guest_filter)                                     as isempty_guest_filter
