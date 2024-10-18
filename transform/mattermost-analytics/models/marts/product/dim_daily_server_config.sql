@@ -809,8 +809,7 @@ select
     , coalesce(pr.enable_comnilsbrinkmannicebreaker, pr.enable_com_nilsbrinkmann_icebreaker)         as enable_comnilsbrinkmannicebreaker
     , coalesce(pr.enable_com_github_mattermost_plugin_circleci, 
                pr.enable_comgithubmattermostplugincircleci)                                          as enable_circleci
-    , coalesce(pr.enable_focalboard, null)                                                           as enable_focalboard
-
+    
     -- VERSIONS 
     , coalesce(pr.version_alertmanager, null)                                                        as version_alertmanager
     , coalesce(ps.version_antivirus, pr.version_antivirus)                                           as version_antivirus
