@@ -92,7 +92,8 @@ renamed as (
         , enable_jitsi
         , enable_marketplace
         , enable_mattermostautolink
-        , enable_mattermost_profanityfilter
+        , enable_mattermostprofanityfilter
+        , enable_mattermost_autolink
         , enable_mattermost_plugin_azure_devops
         , enable_mattermost_plugin_hackerone
         , enable_mattermost_plugin_servicenow
