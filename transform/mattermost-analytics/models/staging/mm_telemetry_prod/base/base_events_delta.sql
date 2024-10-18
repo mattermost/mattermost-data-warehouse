@@ -1,10 +1,10 @@
 {{
     config({
-        "materialized": "incremental",
-        "incremental_strategy": "delete+insert",
-        "unique_key": ['id'],
-        "cluster_by": ['received_at_date'],
-        on_schema_change='append_new_columns'
+        'materialized': 'incremental',
+        'incremental_strategy': 'delete+insert',
+        'unique_key': ['id'],
+        'cluster_by': ['received_at_date'],
+        'on_schema_change': 'append_new_columns'
     })
 }}
 
