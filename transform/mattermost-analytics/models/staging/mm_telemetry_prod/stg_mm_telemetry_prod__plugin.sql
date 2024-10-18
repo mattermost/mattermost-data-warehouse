@@ -110,7 +110,7 @@ renamed as (
         , enable_ru_loop_plugin_welcomebot
         , enable_set_default_theme
         , enable_skype4business
-        , enable_skype_4_businesswe
+        , enable_skype_4_business
         , enable_todo
         , enable_uploads
         , enable_webex
