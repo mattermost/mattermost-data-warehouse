@@ -5,7 +5,9 @@
         'unique_key': ['id'],
         'cluster_by': ['to_date(received_at)'],
         'on_schema_change': 'append_new_columns',
-        'snowflake_warehouse': 'transform_l'
+        'snowflake_warehouse': 'transform_l',
+        # Keep events that haven't been merged into the base_events table
+        'post_hook': 'delete from {{this}} where received_at < (select max(received_at) from source(\'rudder_support\', \'base_events\')'
     })
 }}
 
