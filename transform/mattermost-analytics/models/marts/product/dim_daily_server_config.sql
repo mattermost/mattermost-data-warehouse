@@ -917,9 +917,9 @@ select
     , coalesce(vr.enable_legacy_sidebar, null)                                                       as enable_legacy_sidebar
     , coalesce(vr.enable_link_previews, null)                                                        as enable_link_previews
     , coalesce(vs.enable_local_mode, vr.enable_local_mode)                                           as enable_local_mode
-    , coalesce(vs.enable_multifactor_authentication, 
+    , coalesce(vs.enable_multifactor_authentication_service, 
                vr.elable_multifactor_authentication,
-               vr.enable_multifactor_authentication)                                                 as enable_multifactor_authentication
+               vr.enable_multifactor_authentication_service)                                                 as enable_multifactor_authentication
     , coalesce(vs.enable_oauth_service_provider_service, 
                vr.enable_oauth_service_provider_service)                                             as enable_oauth_service_provider_service
     , coalesce(vr.enable_onboarding_flow, null)                                                      as enable_onboarding_flow
