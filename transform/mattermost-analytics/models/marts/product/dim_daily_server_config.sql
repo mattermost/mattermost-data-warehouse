@@ -878,7 +878,7 @@ select
     -- Service section
     , coalesce(vs.allow_cookies_for_subdomains, vr.allow_cookies_for_subdomains)                     as allow_cookies_for_subdomains
     , coalesce(vs.allow_edit_post_service, vr.allow_edit_post_service)                               as allow_edit_post_service
-    , coalesce(vs.allow_persistent_notifications, null)                                              as allow_persistent_notifications
+    , coalesce(vr.allow_persistent_notifications, null)                                              as allow_persistent_notifications
     , coalesce(vr.allow_persistent_notifications_for_guests, null)                                   as allow_persistent_notifications_for_guests                                       
     , coalesce(vr.allow_synced_drafts, null)                                                         as allow_synced_drafts
     , coalesce(vs.close_unused_direct_messages, vr.close_unused_direct_messages)                     as close_unused_direct_messages
