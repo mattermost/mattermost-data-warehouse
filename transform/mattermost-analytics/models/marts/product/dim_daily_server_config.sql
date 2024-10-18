@@ -84,7 +84,7 @@ with segment_oauth as (
         , allow_insecure_download_url
         , automatic_prepackaged_plugins
         , chimera_oauth_proxy_url
-        , enable as enable_plugin
+        , enable_plugin
         , enable_alertmanager
         , enable_antivirus
         , enable_autolink
