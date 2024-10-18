@@ -104,6 +104,7 @@ renamed as (
         , enable_nps
         , enable_nps_survey
         , enable_playbooks
+        , enable_remote_marketplace
         , enable_ru_loop_plugin_embeds
         , enable_ru_loop_plugin_scheduler
         , enable_ru_loop_plugin_user_fields
