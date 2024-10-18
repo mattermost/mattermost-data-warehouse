@@ -761,7 +761,7 @@ select
     , coalesce(ps.enable_nps_survey, pr.enable_nps_survey)                                           as enable_nps_survey
     , coalesce(pr.enable_playbooks, null)                                                            as enable_playbooks
     , coalesce(ps.enable_remote_marketplace, null)                                                   as enable_remote_marketplace
-    , coalesce(ps.enable_set_default_theme, null)                                                    as enable_set_default_theme
+    , coalesce(pr.enable_set_default_theme, null)                                                    as enable_set_default_theme
     , coalesce(ps.enable_skype4business, pr.enable_skype4business, pr.enable_skype_4_business)       as enable_skype4business
     , coalesce(ps.enable_todo, 
                pr.enable_todo, 
