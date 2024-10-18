@@ -674,9 +674,9 @@ select
     , coalesce(ss.enable_saml, sr.enable_saml)                                                       as enable_saml
     , coalesce(ss.enable_admin_attribute, sr.enable_admin_attribute)                                 as enable_admin_attribute
     , coalesce(ss.enable_sync_with_ldap, sr.enable_sync_with_ldap)                                   as enable_sync_with_ldap
-    , coalesce(ss.enable_sync_with_ldap_include_auth, s.enable_sync_with_ldap_include_auth)          as enable_sync_with_ldap_include_auth
+    , coalesce(ss.enable_sync_with_ldap_include_auth, sr.enable_sync_with_ldap_include_auth)         as enable_sync_with_ldap_include_auth
     , coalesce(ss.encrypt, sr.encrypt)                                                               as encrypt_saml
-    , coalesce(lr.ignore_guests_ldap_sync, null)                                                     as ignore_guests_ldap_sync
+    , coalesce(sr.ignore_guests_ldap_sync, null)                                                     as ignore_guests_ldap_sync
     , coalesce(ss.isdefault_admin_attribute, sr.isdefault_admin_attribute)                           as isdefault_admin_attribute
     , coalesce(ss.isdefault_canonical_algorithm, sr.isdefault_canonical_algorithm)                   as isdefault_canonical_algorithm
     , coalesce(ss.isdefault_email_attribute_saml, sr.isdefault_email_attribute_saml)                 as isdefault_email_attribute_saml
