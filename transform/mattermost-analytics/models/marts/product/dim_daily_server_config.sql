@@ -698,7 +698,6 @@ select
     , coalesce(ss.isdefault_username_attribute_saml, sr.isdefault_username_attribute_saml)           as isdefault_username_attribute_saml
     , coalesce(ss.sign_request, sr.sign_request)                                                     as sign_request
     , coalesce(ss.verify_saml, sr.verify_saml)                                                       as verify_saml           
-    , coalesce(ss.context_traits_installationid, ss.context_traits_installation_id)                  as installation_id_saml
         
     -- Plugin section
     , coalesce(ps.allow_insecure_download_url, pr.allow_insecure_download_url)                       as allow_insecure_download_url
