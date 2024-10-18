@@ -884,7 +884,7 @@ select
     , coalesce(vs.close_unused_direct_messages, vr.close_unused_direct_messages)                     as close_unused_direct_messages
     , coalesce(vs.cluster_log_timeout_milliseconds, vr.cluster_log_timeout_milliseconds)             as cluster_log_timeout_milliseconds
     , coalesce(vr.collapsed_threads, null)                                                           as collapsed_threads
-    , coalesce(vs.connection_security, vr.connection_security)                                       as connection_security
+    , coalesce(vs.connection_security_service, vr.connection_security_service)                       as connection_security_service
     , coalesce(vs.cors_allow_credentials, vr.cors_allow_credentials)                                 as cors_allow_credentials
     , coalesce(vs.cors_debug, vr.cors_debug)                                                         as cors_debug
     , coalesce(vs.custom_service_terms_enabled, null)                                                as custom_service_terms_enabled
@@ -940,14 +940,12 @@ select
     , coalesce(vs.enable_user_access_tokens, vr.enable_user_access_tokens)                           as enable_user_access_tokens
     , coalesce(vs.enable_user_statuses, vr.enable_user_statuses)                                     as enable_user_statuses
     , coalesce(vs.enable_user_typing_messages, vr.enable_user_typing_messages)                       as enable_user_typing_messages
-
     , coalesce(vs.enforce_multifactor_authentication_service,
                vr.enforce_multifactor_authentication_service)                                        as enforce_multifactor_authentication_service
     , coalesce(vs.experimental_channel_organization, vr.experimental_channel_organization)           as experimental_channel_organization
     , coalesce(vs.experimental_channel_sidebar_organization, 
                vr.experimental_channel_sidebar_organization)                                         as experimental_channel_sidebar_organization
     , coalesce(vr.experimental_data_prefetch, null)                                                  as experimental_data_prefetch
-    
     , coalesce(vs.experimental_enable_authentication_transfer, 
                vr.experimental_enable_authentication_transfer)                                       as experimental_enable_authentication_transfer
     , coalesce(vs.experimental_enable_default_channel_leave_join_messages, 
