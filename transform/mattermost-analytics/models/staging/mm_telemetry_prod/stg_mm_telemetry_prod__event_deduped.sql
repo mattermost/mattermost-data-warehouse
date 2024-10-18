@@ -1,8 +1,8 @@
 with events_deduped as (
     select
-        {{ dbt_utils.star(from=source('rudder_support', 'base_events')) }} b
+        {{ dbt_utils.star(from=source('rudder_support', 'base_events')) }}
     from
-        {{ source('rudder_support', 'base_events') }}
+        {{ source('rudder_support', 'base_events') }} b
     where
         not exists (select 1 from {{ ref('base_events_delta') }} d where d.id = b.id)
 
