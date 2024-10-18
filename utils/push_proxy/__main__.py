@@ -2,8 +2,8 @@ import logging
 
 import click
 
+from utils.cli.logging import initialize_cli_logging
 from utils.db.helpers import snowflake_engine
-from utils.helpers import initialize_cli_logging
 from utils.push_proxy.service import load_stage_to_table
 
 initialize_cli_logging(logging.INFO, 'stderr')

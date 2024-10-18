@@ -59,6 +59,7 @@ contributors = "utils.github.__main__:contributors"
 push_proxy = "utils.push_proxy.__main__:push_proxy"
 geolite = "utils.geolite.__main__:geolite"
 packets = "utils.packets.__main__:packets"
+snowflake = "utils.db.__main__:snowflake"
 
 
 [tool.pytest.ini_options]

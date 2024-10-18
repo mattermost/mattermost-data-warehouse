@@ -1,10 +1,17 @@
+import logging
+import re
 from collections import namedtuple
+from datetime import timedelta
+from textwrap import dedent
 from typing import List, Optional
 
 import pandas as pd
-from snowflake.sqlalchemy import URL
-from sqlalchemy import create_engine, inspect, text
+from snowflake.sqlalchemy import URL, MergeInto
+from sqlalchemy import Column, MetaData, Table, and_, bindparam, create_engine, inspect, text
 from sqlalchemy.engine import Connection, Engine
+from sqlalchemy.exc import InvalidRequestError, ProgrammingError
+
+logger = logging.getLogger(__name__)
 
 TableStats = namedtuple('TableStats', ['schema', 'name', 'rows', 'created_at'])
 
@@ -154,3 +161,153 @@ def upsert_dataframe_to_table(
         )
 
     df.to_sql(target_table, conn, schema=target_schema, if_exists="append", index=False)
+
+
+def validate_object_name(object: str, name: str):
+    """
+    Validates that the object name contains only alphanumeric characters and underscores.
+    """
+    if not bool(re.match(r'^[\w]+$', name)):
+        raise ValueError(
+            f"{object} name '{name}' is invalid. Only alphanumeric characters and underscores are allowed."
+        )
+
+
+def clone_table(
+    conn: Connection,
+    source_database: str,
+    source_schema: str,
+    source_table: str,
+    target_database: str,
+    target_schema: str,
+    target_table: str,
+    replace_if_exists=False,
+):
+    """
+    Clones a table from a source database/schema to a target database/schema. Assumes that target database/schema
+    already exist.
+    """
+
+    validate_object_name('Source database', source_database)
+    validate_object_name('Source schema', source_schema)
+    validate_object_name('Source table', source_table)
+    validate_object_name('Target database', target_database)
+    validate_object_name('Target schema', target_schema)
+    validate_object_name('Target table', target_table)
+
+    source = f'{source_database}.{source_schema}.{source_table}'
+    target = f'{target_database}.{target_schema}.{target_table}'
+
+    if replace_if_exists:
+        logger.info(f'Creating (or replacing) table {target} as a clone of {source}')
+        conn.execute(
+            dedent(
+                f"""
+                CREATE OR REPLACE TABLE {target_database}.{target_schema}.{target_table}
+                CLONE {source_database}.{source_schema}.{source_table}
+            """
+            )
+        )
+    else:
+        logger.info(f'Creating table {target} as a clone of {source}')
+        try:
+            conn.execute(
+                dedent(
+                    f"""
+                    CREATE TABLE {target_database}.{target_schema}.{target_table}
+                    CLONE {source_database}.{source_schema}.{source_table}
+                """
+                )
+            )
+        except ProgrammingError as e:
+            if 'already exists' in str(e):
+                logger.info(f'Table {target} already exists. Skipping creation.')
+            else:
+                raise e
+
+
+def same_columns(t1: Table, t2: Table) -> bool:
+    return frozenset([(c.name, str(c.type)) for c in t1.columns]) == frozenset(
+        [(c.name, str(c.type)) for c in t2.columns]
+    )
+
+
+def escape_special_column_names(column: str | Column) -> str:
+    if isinstance(column, Column) and column.name == '_':
+        return f'{column.table.name}."_"'
+    if column == '_':
+        return '"_"'
+    return column
+
+
+def load_table_definition(conn: Connection, schema: str, table: str) -> Table:
+    """
+    Loads the table definition from the database.
+    """
+    try:
+        meta = MetaData(schema=schema)
+        meta.reflect(conn, only=[table])
+        return meta.tables[f'{schema}.{table}']
+    except InvalidRequestError:
+        # Table doesn't exist
+        return None
+
+
+def merge_event_delta_table_into(
+    conn: Connection,
+    base_schema: str,
+    base_table: str,
+    delta_schema: str,
+    delta_table: str,
+    dedup_prune_days: int = 7,
+):
+    """
+    Merges a delta table containing event data into a base table. Assumes that the base table already exists.
+
+    On match: do nothing.
+    On not match: insert the new row.
+    """
+
+    validate_object_name('Base schema', base_schema)
+    validate_object_name('Base table', base_table)
+    validate_object_name('Delta schema', delta_schema)
+    validate_object_name('Delta table', delta_table)
+
+    # Load base and delta table information
+    logging.info('Loading table definitions')
+    t_base = load_table_definition(conn, base_schema, base_table)
+    t_delta = load_table_definition(conn, delta_schema, delta_table)
+
+    if t_base is None or t_delta is None:
+        raise ValueError('Base and/or delta table does not exist!')
+
+    if not same_columns(t_base, t_delta):
+        raise ValueError('Base and delta tables do not have the same schema!')
+
+    logger.info('Checking if delta table contains data')
+    min_date = conn.execute(text(f'SELECT MIN(received_at) FROM {delta_schema}.{delta_table}')).scalar()
+
+    if not min_date:
+        # Nothing to merge
+        logger.info('No data to merge')
+        return
+
+    logger.info('Merging')
+
+    first_duplicate_date = (min_date - timedelta(days=dedup_prune_days)).isoformat()
+
+    merge = MergeInto(
+        target=t_base,
+        source=t_delta,
+        on=and_(t_base.c.id == t_delta.c.id, t_base.c.received_at >= bindparam('first_duplicate_date')),
+    )
+    merge.when_matched_then_update().values(after=t_base.c.after)
+    value_mapping = {
+        escape_special_column_names(c.name): escape_special_column_names(t_delta.c[c.name]) for c in t_base.columns
+    }
+
+    merge.when_not_matched_then_insert().values(**value_mapping)
+    # Workaround for https://github.com/snowflakedb/snowflake-sqlalchemy/issues/536
+    stmt = text(merge.__repr__()).bindparams(first_duplicate_date=first_duplicate_date)
+    stmt.params()
+    conn.execute(stmt)

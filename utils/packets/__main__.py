@@ -1,10 +1,9 @@
 import logging
-from contextlib import contextmanager
 
 import click
 
-from utils.db.helpers import snowflake_engine
-from utils.helpers import initialize_cli_logging
+from utils.cli.context import snowflake_engine_context
+from utils.cli.logging import initialize_cli_logging
 from utils.packets.service import (
     ingest_support_packet,
     ingest_support_packets_from_s3,
@@ -13,15 +12,6 @@ from utils.packets.service import (
 )
 
 initialize_cli_logging(logging.INFO, 'stderr')
-
-
-@contextmanager
-def snowflake_engine_context(conn_dict: dict):
-    try:
-        engine = snowflake_engine(conn_dict)
-        yield engine
-    finally:
-        engine.dispose()
 
 
 @click.group()
