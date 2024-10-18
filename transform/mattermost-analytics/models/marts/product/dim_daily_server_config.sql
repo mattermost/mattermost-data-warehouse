@@ -743,12 +743,11 @@ select
     , coalesce(ps.enable_jira, pr.enable_jira)                                                       as enable_jira
     , coalesce(ps.enable_jitsi, pr.enable_jitsi)                                                     as enable_jitsi
     , coalesce(ps.enable_marketplace, pr.enable_marketplace)                                         as enable_marketplace
-    , coalesce(pr.enable_mattermostprofanityfilter, pr.enable_mattermost_profanityfilter)            as enable_mattermostprofanityfilter
+    , coalesce(pr.enable_mattermostprofanityfilter, pr.enable_mattermost_profanity_filter)           as enable_mattermostprofanityfilter
     , coalesce(pr.enable_mattermost_plugin_azure_devops, null)                                       as enable_mattermost_plugin_azure_devops
     , coalesce(pr.enable_mattermost_plugin_hackerone, null)                                          as enable_mattermost_plugin_hackerone
     , coalesce(pr.enable_mattermost_plugin_servicenow, null)                                         as enable_mattermost_plugin_servicenow
     , coalesce(pr.enable_mattermost_plugin_servicenow_virtual_agent, null)                           as enable_mattermost_plugin_servicenow_virtual_agent
-    , coalesce(pr.enable_mattermost_profanity_filter, null)                                          as enable_mattermost_profanity_filter
     , coalesce(pr.enable_memes, null)                                                                as enable_memes
     , coalesce(ps.enable_mscalendar, 
                pr.enable_mscalendar,
