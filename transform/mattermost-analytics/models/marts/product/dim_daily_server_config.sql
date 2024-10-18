@@ -919,14 +919,14 @@ select
     , coalesce(vs.enable_local_mode, vr.enable_local_mode)                                           as enable_local_mode
     , coalesce(vs.enable_multifactor_authentication_service, 
                vr.elable_multifactor_authentication,
-               vr.enable_multifactor_authentication_service)                                                 as enable_multifactor_authentication
+               vr.enable_multifactor_authentication_service)                                         as enable_multifactor_authentication
     , coalesce(vs.enable_oauth_service_provider_service, 
                vr.enable_oauth_service_provider_service)                                             as enable_oauth_service_provider_service
     , coalesce(vr.enable_onboarding_flow, null)                                                      as enable_onboarding_flow
     , coalesce(vs.enable_only_admin_integrations_service, 
                vr.enable_only_admin_integrations_service)                                            as enable_only_admin_integrations_service
     , coalesce(vs.enable_opentracing, vr.enable_opentracing)                                         as enable_opentracing
-    , coalesce(vr.enable_outgoing_oauth_connections)                                                 as enable_outgoing_oauth_connections
+    , coalesce(vr.enable_outgoing_oauth_connections, null)                                           as enable_outgoing_oauth_connections
     , coalesce(vs.enable_outgoing_webhooks, vr.enable_outgoing_webhooks)                             as enable_outgoing_webhooks
     , coalesce(vr.enable_permalink_previews, null)                                                   as enable_permalink_previews
     , coalesce(vs.enable_post_icon_override, vr.enable_post_icon_override)                           as enable_post_icon_override
