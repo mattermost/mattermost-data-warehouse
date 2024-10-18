@@ -1,5 +1,5 @@
 with source as (
-    select * from {{ source('mattermost2', 'config_ldap') }}
+    select * from {{ source('mattermost2', 'config_saml') }}
 ),
 
 renamed as (

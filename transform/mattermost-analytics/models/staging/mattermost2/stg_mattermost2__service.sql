@@ -41,7 +41,6 @@ renamed as (
         , enable_only_admin_integrations       as enable_only_admin_integrations_service
         , enable_opentracing
         , enable_outgoing_webhooks
-        , enable_permalink_previews
         , enable_post_icon_override
         , enable_post_search
         , enable_post_username_override

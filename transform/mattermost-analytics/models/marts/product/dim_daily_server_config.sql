@@ -443,7 +443,6 @@ with segment_oauth as (
         , enable_only_admin_integrations_service
         , enable_opentracing
         , enable_outgoing_webhooks
-        , enable_permalink_previews
         , enable_post_icon_override
         , enable_post_search
         , enable_post_username_override
@@ -927,6 +926,7 @@ select
     , coalesce(vs.enable_opentracing, vr.enable_opentracing)                                         as enable_opentracing
     , coalesce(vr.enable_outgoing_oauth_connections)                                                 as enable_outgoing_oauth_connections
     , coalesce(vs.enable_outgoing_webhooks, vr.enable_outgoing_webhooks)                             as enable_outgoing_webhooks
+    , coalesce(vr.enable_permalink_previews, null)                                                   as enable_permalink_previews
     , coalesce(vs.enable_post_icon_override, vr.enable_post_icon_override)                           as enable_post_icon_override
     , coalesce(vs.enable_post_search, vr.enable_post_search)                                         as enable_post_search
     , coalesce(vs.enable_post_username_override, vr.enable_post_username_override)                   as enable_post_username_override
