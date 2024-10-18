@@ -96,6 +96,11 @@ def merge(
     delta_table: str,
     dedup_prune_days: int,
 ):
+    """
+    Helper to implement deferred merge on events table. Merges an event delta table to the base table.
+
+    Expects that base and delta tables have columns 'id', 'received_at' and 'after'.
+    """
     with ctx.obj['engine'].begin() as conn, conn.begin():
         merge_event_delta_table_into(
             conn,
