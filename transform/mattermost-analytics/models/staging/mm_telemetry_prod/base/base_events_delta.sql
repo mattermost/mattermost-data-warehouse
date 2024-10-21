@@ -1,4 +1,4 @@
-{# Keep events that have not been merged into the base_events table #}
+{# Events that have been merged to the base table are deleted in the post hook #}
 
 {{
     config({
