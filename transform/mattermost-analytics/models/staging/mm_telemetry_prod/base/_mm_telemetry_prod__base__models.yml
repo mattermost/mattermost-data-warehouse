@@ -3,8 +3,8 @@ version: 2
 models:
   - name: base_events_delta
     description: |
-      Contains raw events that have been ingested by {{ source('mm_telemetry_prod', 'event') }} but haven't yet been
-      deduplicated. This model is used as a "staging" table before adding deduplicated data back to base events table.
+      Contains raw events that have been ingested in mm_telemetry_prod but haven't yet been deduplicated. This model is
+      used as a "staging" table before adding deduplicated data back to base events table.
 
     columns:
       - name: context_page_referrer
