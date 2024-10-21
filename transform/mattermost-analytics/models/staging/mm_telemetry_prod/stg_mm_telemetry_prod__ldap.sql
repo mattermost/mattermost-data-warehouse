@@ -12,6 +12,11 @@ renamed as (
         , received_at    as received_at
         , timestamp      as timestamp
 
+        -- Server info
+        , coalesce(context_traits_installationid,  context_traits_installation_id) as installation_id
+        , anonymous_id
+        , context_ip as server_ip
+
         , connection_security                     as connection_security_ldap
         , enable                                  as enable_ldap
         , enable_admin_filter

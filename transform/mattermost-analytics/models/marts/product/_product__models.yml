@@ -444,7 +444,6 @@ models:
       - name: is_default_marketplace_url
       - name: require_plugin_signature
       - name: as signature_public_key_files
-    
       - name: enable_plugin
       - name: enable_alertmanager
       - name: enable_antivirus
@@ -527,8 +526,7 @@ models:
       - name: version_circleci
       - name: version_diceroller
       - name: version_focalboard
-
-      - name: installation_id_plugin
+      
       - name: allow_cookies_for_subdomains
       - name: allow_edit_post_service
       - name: allow_persistent_notifications
@@ -603,7 +601,7 @@ models:
       - name: gfycat_api_secret
       - name: isdefault_allowed_untrusted_internal_connections
       - name: isdefault_allow_cors_from 
-      - name:  isdefault_cors_exposed_headers
+      - name: isdefault_cors_exposed_headers
       - name: isdefault_google_developer_key
       - name: isdefault_idle_timeout   
       - name: isdefault_image_proxy_options
@@ -649,8 +647,6 @@ models:
       - name: uses_letsencrypt
       - name: websocket_url
       - name: web_server_mode
-      - name: installation_id_service
-      
       
       - name: has_segment_telemetry_data
         description: True if data for given server and date were found on Segment, false else.

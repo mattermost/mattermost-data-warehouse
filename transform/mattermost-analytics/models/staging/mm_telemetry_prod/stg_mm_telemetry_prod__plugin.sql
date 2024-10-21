@@ -13,6 +13,11 @@ renamed as (
         , received_at    as received_at
         , timestamp      as timestamp
 
+        -- Server info
+        , coalesce(context_traits_installationid,  context_traits_installation_id) as installation_id
+        , anonymous_id
+        , context_ip as server_ip
+
         , allow_insecure_download_url
         , automatic_prepackaged_plugins
         , chimera_oauth_proxy_url
@@ -199,12 +204,8 @@ renamed as (
        -- Ignored - Always null
         -- , channel
         -- Metadata from Rudderstack
-        , context_ip
         , context_library_name
         , context_library_version
-        , context_request_ip
-        , context_traits_installationid
-        , context_traits_installation_id
         , sent_at
         , original_timestamp
 

@@ -12,6 +12,11 @@ renamed as (
         , received_at    as received_at
         , timestamp      as timestamp
 
+        -- Server info
+        , coalesce(context_traits_installationid,  context_traits_installation_id) as installation_id
+        , anonymous_id
+        , context_ip as server_ip
+
         , allow_cookies_for_subdomains
         , allow_edit_post                      as allow_edit_post_service
         , allow_persistent_notifications
@@ -131,8 +136,6 @@ renamed as (
         -- Metadata from Rudderstack
         , context_library_name
         , context_library_version
-        , context_traits_installationid
-        , context_traits_installation_id
         , sent_at
         , original_timestamp
 

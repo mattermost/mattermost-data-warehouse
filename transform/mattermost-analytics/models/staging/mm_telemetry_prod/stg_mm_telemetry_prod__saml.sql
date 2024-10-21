@@ -12,6 +12,11 @@ renamed as (
         , received_at    as received_at
         , timestamp      as timestamp
         
+         -- Server info
+        , coalesce(context_traits_installationid,  context_traits_installation_id) as installation_id
+        , anonymous_id
+        , context_ip as server_ip
+
         , enable                                  as enable_saml 
         , enable_admin_attribute
         , enable_sync_with_ldap
@@ -45,8 +50,6 @@ renamed as (
         -- Metadata from Rudderstack
         , context_library_name
         , context_library_version
-        , context_traits_installationid
-        , context_traits_installation_id
         , sent_at
         , original_timestamp
 

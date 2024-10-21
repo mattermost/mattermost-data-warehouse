@@ -335,7 +335,6 @@ select
                pr.version_com_github_moussetc_mattermost_plugin_diceroller)                          as version_diceroller
     , coalesce(pr.version_focalboard, null)                                                          as version_focalboard
 
-    , coalesce(pr.context_traits_installationid, pr.context_traits_installation_id)                  as installation_id_plugin
     -- Service section
     , coalesce(vs.allow_cookies_for_subdomains, vr.allow_cookies_for_subdomains)                     as allow_cookies_for_subdomains
     , coalesce(vs.allow_edit_post_service, vr.allow_edit_post_service)                               as allow_edit_post_service
@@ -475,7 +474,6 @@ select
     , coalesce(vs.websocket_url, vr.websocket_url)                                                   as websocket_url
     , coalesce(vs.web_server_mode, vr.web_server_mode)                                               as web_server_mode           
     
-    , coalesce(vr.context_traits_installationid, vr.context_traits_installation_id)                  as installation_id_service
     -- Metadata
     , s.server_id is not null or ls.server_id is not null or ss.server_id is not null or ps.server_id is not null or vs.server_id is not null as has_segment_telemetry_data
     , r.server_id is not null or lr.server_id is not null or sr.server_id is not null or pr.server_id is not null or vr.server_id is not null as has_rudderstack_telemetry_data
