@@ -3,7 +3,7 @@ import re
 from collections import namedtuple
 from datetime import timedelta
 from textwrap import dedent
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 import pandas as pd
 from snowflake.sqlalchemy import URL, MergeInto
@@ -226,10 +226,15 @@ def clone_table(
                 raise e
 
 
-def same_columns(t1: Table, t2: Table) -> bool:
-    return frozenset([(c.name, str(c.type)) for c in t1.columns]) == frozenset(
-        [(c.name, str(c.type)) for c in t2.columns]
-    )
+def diff_columns(t1: Table, t2: Table) -> Tuple[List[Tuple[str, str]], List[Tuple[str, str]]]:
+    """
+    Compares two tables and returns the columns that exist only on each table.
+    """
+    table_1_cols = frozenset([(c.name, str(c.type)) for c in t1.columns])
+    table_2_cols = frozenset([(c.name, str(c.type)) for c in t2.columns])
+    return [col for col in table_1_cols if col not in table_2_cols], [
+        col for col in table_2_cols if col not in table_1_cols
+    ]
 
 
 def escape_special_column_names(column: str | Column) -> str:
@@ -281,8 +286,12 @@ def merge_event_delta_table_into(
     if t_base is None or t_delta is None:
         raise ValueError('Base and/or delta table does not exist!')
 
-    if not same_columns(t_base, t_delta):
-        raise ValueError('Base and delta tables do not have the same schema!')
+    _, delta_only_columns = diff_columns(t_base, t_delta)
+    if delta_only_columns:
+        logging.info('Adding new columns to base table')
+        # Add new columns to base table in alphabetical order
+        new_columns = ', '.join([f'{col[0]} {col[1]}' for col in sorted(delta_only_columns, key=lambda x: x[0])])
+        conn.execute(f'ALTER TABLE {base_schema}.{base_table} ADD COLUMN {new_columns}')
 
     logger.info('Checking if delta table contains data')
     min_date = conn.execute(text(f'SELECT MIN(received_at) FROM {delta_schema}.{delta_table}')).scalar()
@@ -309,5 +318,4 @@ def merge_event_delta_table_into(
     merge.when_not_matched_then_insert().values(**value_mapping)
     # Workaround for https://github.com/snowflakedb/snowflake-sqlalchemy/issues/536
     stmt = text(merge.__repr__()).bindparams(first_duplicate_date=first_duplicate_date)
-    stmt.params()
     conn.execute(stmt)

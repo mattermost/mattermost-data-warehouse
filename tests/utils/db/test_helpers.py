@@ -263,15 +263,14 @@ def test_load_table_definition_unknown_table(sqlalchemy_memory_engine):
         assert result is None
 
 
-def test_should_merge_table(mocker, test_deferred_merge_tables):
+def test_should_merge_table_with_same_structure(mocker, base_table, delta_table_1):
     # GIVEN: mock connection
     mock_connection = mocker.MagicMock()
     mock_exec = mocker.MagicMock()
     mock_connection.execute = mock_exec
 
     # GIVEN: deferred merge tables exist
-    base_table, delta_table = test_deferred_merge_tables
-    mocker.patch('utils.db.helpers.load_table_definition', side_effect=[base_table, delta_table])
+    mocker.patch('utils.db.helpers.load_table_definition', side_effect=[base_table, delta_table_1])
 
     # GIVEN: delta table contains data
     mock_exec.return_value.scalar.return_value = datetime(2022, 12, 28, 23, 55, 59)
@@ -293,15 +292,14 @@ def test_should_merge_table(mocker, test_deferred_merge_tables):
     assert mock_exec.call_args[0][0].compile().params == {"first_duplicate_date": "2022-12-21T23:55:59"}
 
 
-def test_should_not_merge_table_if_delta_empty(mocker, test_deferred_merge_tables):
+def test_should_not_merge_table_if_delta_empty(mocker, base_table, delta_table_1):
     # GIVEN: mock connection
     mock_connection = mocker.MagicMock()
     mock_exec = mocker.MagicMock()
     mock_connection.execute = mock_exec
 
     # GIVEN: deferred merge tables exist
-    base_table, delta_table = test_deferred_merge_tables
-    mocker.patch('utils.db.helpers.load_table_definition', side_effect=[base_table, delta_table])
+    mocker.patch('utils.db.helpers.load_table_definition', side_effect=[base_table, delta_table_1])
 
     # GIVEN: delta table does not contain data
     mock_exec.return_value.scalar.return_value = None
@@ -313,14 +311,13 @@ def test_should_not_merge_table_if_delta_empty(mocker, test_deferred_merge_table
     assert mock_exec.call_count == 1
 
 
-def test_should_not_merge_table_if_delta_missing(mocker, test_deferred_merge_tables):
+def test_should_not_merge_table_if_delta_missing(mocker, base_table):
     # GIVEN: mock connection
     mock_connection = mocker.MagicMock()
     mock_exec = mocker.MagicMock()
     mock_connection.execute = mock_exec
 
     # GIVEN: deferred merge tables do not exist
-    base_table, delta_table = test_deferred_merge_tables
     mocker.patch('utils.db.helpers.load_table_definition', side_effect=[base_table, None])
 
     # GIVEN: delta table does not contain data
@@ -332,3 +329,36 @@ def test_should_not_merge_table_if_delta_missing(mocker, test_deferred_merge_tab
         merge_event_delta_table_into(mock_connection, "base_schema", "base_table", "delta_schema", "delta_table")
 
     assert e.value.args[0] == 'Base and/or delta table does not exist!'
+
+
+def test_should_add_new_columns_and_merge_table(mocker, base_table, delta_table_2):
+    # GIVEN: mock connection
+    mock_connection = mocker.MagicMock()
+    mock_exec = mocker.Mock()
+    mock_connection.execute = mock_exec
+
+    # GIVEN: deferred merge tables exist
+    # GIVEN: delta table contains two extra columns
+    mocker.patch('utils.db.helpers.load_table_definition', side_effect=[base_table, delta_table_2])
+
+    # GIVEN: delta table contains data
+    mock_exec.return_value.scalar.return_value = datetime(2022, 12, 28, 23, 55, 59)
+
+    # WHEN: request to clone a table
+    merge_event_delta_table_into(mock_connection, "base_schema", "base_table", "delta_schema", "delta_table")
+
+    # THEN: expect base statement structure to be updated with the new columns
+    mock_exec.assert_any_call('ALTER TABLE base_schema.base_table ADD COLUMN column_b INTEGER, extra VARCHAR(255)')
+
+    # THEN: expect a merge statement according to the spec of the tables
+    assert (
+        mock_exec.call_args[0][0].text == 'MERGE INTO base_schema.base_table USING delta_schema.delta_table '
+        'ON base_schema.base_table.id = delta_schema.delta_table.id '
+        'AND base_schema.base_table.received_at >= :first_duplicate_date '
+        'WHEN MATCHED THEN UPDATE SET after = base_table.after '
+        'WHEN NOT MATCHED THEN INSERT (id, column_a, "_", after, received_at) '
+        'VALUES (delta_table.id, delta_table.column_a, delta_table."_", delta_table.after, delta_table.received_at)'
+    )
+
+    # THEN: expect the merge statement to have the correct parameters
+    assert mock_exec.call_args[0][0].compile().params == {"first_duplicate_date": "2022-12-21T23:55:59"}
