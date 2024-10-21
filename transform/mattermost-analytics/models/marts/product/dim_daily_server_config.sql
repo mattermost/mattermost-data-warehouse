@@ -28,73 +28,65 @@ with segment_oauth as (
     qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
 ), segment_plugin as (
     select
-        server_id
-        , cast(timestamp as date) as server_date
-        , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
+        cast(timestamp as date) as server_date
         , {{ dbt_utils.star(ref('stg_mattermost2__plugin')) }}
+        , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
     from
         {{ ref('stg_mattermost2__plugin') }}
     qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
 ), rudderstack_plugin as (
     select
-        server_id
-        , cast(timestamp as date) as server_date
-        , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
+        cast(timestamp as date) as server_date
         , {{ dbt_utils.star(ref('stg_mm_telemetry_prod__plugin')) }}
+        , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
     from
         {{ ref('stg_mm_telemetry_prod__plugin') }}
     qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
 ), segment_ldap as (
     select
-        server_id
-        , cast(timestamp as date) as server_date
-        , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
+        cast(timestamp as date) as server_date
         , {{ dbt_utils.star(ref('stg_mattermost2__ldap')) }}
+        , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
     from
         {{ ref('stg_mattermost2__ldap') }}
     qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
 ), rudderstack_ldap as (
     select
-        server_id
-        , cast(timestamp as date) as server_date
-        , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
+        cast(timestamp as date) as server_date
         , {{ dbt_utils.star(ref('stg_mm_telemetry_prod__ldap')) }}
+        , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
     from
         {{ ref('stg_mm_telemetry_prod__ldap') }}
     qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
 ), segment_saml as (
     select
-        server_id
-        , cast(timestamp as date) as server_date
-        , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
+        cast(timestamp as date) as server_date
         , {{ dbt_utils.star(ref('stg_mattermost2__saml')) }}
+        , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
     from
         {{ ref('stg_mattermost2__saml') }}
     qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
 ), rudderstack_saml as (
     select
-        server_id
-        , cast(timestamp as date) as server_date
-        , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
+        cast(timestamp as date) as server_date
         , {{ dbt_utils.star(ref('stg_mm_telemetry_prod__saml')) }}
+        , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
     from
         {{ ref('stg_mm_telemetry_prod__saml') }}
     qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
 ), segment_service as (
     select
-        server_id
-        , cast(timestamp as date) as server_date
-        , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
+        cast(timestamp as date) as server_date
         , {{ dbt_utils.star(ref('stg_mattermost2__service')) }}
+        , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
     from
         {{ ref('stg_mattermost2__service') }}
     qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
 ), rudderstack_service as (
     select
-        server_id
-        , cast(timestamp as date) as server_date
-        , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
+        cast(timestamp as date) as server_date
         , {{ dbt_utils.star(ref('stg_mm_telemetry_prod__service')) }}
+        , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
     from
         {{ ref('stg_mm_telemetry_prod__service') }}
     qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
