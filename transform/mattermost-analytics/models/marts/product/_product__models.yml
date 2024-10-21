@@ -489,6 +489,7 @@ models:
       - name: enable_diceroller
       - name: enable_comgithubjespinorecommend
       - name: enable_msteams_meetings
+      - name: enable_msteams_sync
       - name: enable_commattermostpluginchannelexport 
       - name: enable_comnilsbrinkmannicebreaker
       - name: enable_circleci
@@ -501,6 +502,7 @@ models:
       - name: version_gitlab
       - name: version_jenkins
       - name: version_jira
+      - name: version_msteams_meetings
       - name: version_nps
       - name: version_webex
       - name: version_welcome_bot

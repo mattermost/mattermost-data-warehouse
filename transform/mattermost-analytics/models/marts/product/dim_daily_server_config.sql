@@ -266,6 +266,7 @@ select
     , coalesce(pr.enable_comgithubjespinorecommend, pr.enable_com_github_jespino_recommend)          as enable_comgithubjespinorecommend
     , coalesce(pr.enable_commattermostmsteamsmeetings, 
                pr.enable_com_mattermost_msteamsmeetings)                                             as enable_msteams_meetings
+    , coalesce(pr.enable_com_mattermost_msteams_sync, null)                                          as enable_msteams_sync
     , coalesce(pr.enable_commattermostpluginchannelexport, 
                pr.enable_com_mattermost_plugin_channel_export)                                       as enable_commattermostpluginchannelexport 
     , coalesce(pr.enable_comnilsbrinkmannicebreaker, pr.enable_com_nilsbrinkmann_icebreaker)         as enable_comnilsbrinkmannicebreaker
@@ -293,6 +294,7 @@ select
                pr.version_com_github_manland_mattermost_plugin_gitlab)                               as version_gitlab
     , coalesce(ps.version_jenkins, pr.version_jenkins)                                               as version_jenkins
     , coalesce(ps.version_jira, pr.version_jira)                                                     as version_jira
+    , coalesce(pr.version_com_mattermost_msteams_sync, null)                                         as version_msteams_sync
     , coalesce(ps.version_nps, 
                pr.version_nps, 
                pr.version_commattermostnps, 
