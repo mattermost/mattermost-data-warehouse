@@ -31,47 +31,7 @@ with segment_oauth as (
         server_id
         , cast(timestamp as date) as server_date
         , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
-
-        , allow_insecure_download_url
-        , automatic_prepackaged_plugins
-        , enable_plugin
-        , enable_antivirus
-        , enable_autolink
-        , enable_aws_sns
-        , enable_confluence
-        , enable_custom_user_attributes
-        , enable_github
-        , enable_gitlab
-        , enable_health_check
-        , enable_jenkins
-        , enable_jira
-        , enable_jitsi
-        , enable_marketplace
-        , enable_mscalendar
-        , enable_nps
-        , enable_nps_survey
-        , enable_remote_marketplace
-        , enable_skype4business
-        , enable_todo
-        , enable_uploads
-        , enable_webex
-        , enable_welcome_bot
-        , enable_zoom
-        , is_default_marketplace_url
-        , require_plugin_signature
-        , signature_public_key_files
-        , version_antivirus
-        , version_autolink
-        , version_aws_sns
-        , version_custom_user_attributes
-        , version_github
-        , version_gitlab
-        , version_jenkins
-        , version_jira
-        , version_nps
-        , version_webex
-        , version_welcome_bot
-        , version_zoom 
+        , {{ dbt_utils.star(ref('stg_mattermost2__plugin')) }}
     from
         {{ ref('stg_mattermost2__plugin') }}
     qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
@@ -80,191 +40,7 @@ with segment_oauth as (
         server_id
         , cast(timestamp as date) as server_date
         , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
-
-        , allow_insecure_download_url
-        , automatic_prepackaged_plugins
-        , chimera_oauth_proxy_url
-        , enable_plugin
-        , enable_alertmanager
-        , enable_antivirus
-        , enable_autolink
-        , enable_aws_sns
-        , enable_bitbucket
-        , enable_classroom_autolink
-        , enable_comgithubjespinorecommend
-        , enable_comgithubmanlandmattermostplugingitlab
-        , enable_comgithubmattermostplugincircleci
-        , enable_comgithubmatterpollmatterpoll
-        , enable_comgithubmoussetcmattermostplugindiceroller
-        , enable_comgithubmoussetcmattermostplugingiphy
-        , enable_comgithubphillipaherezamattermostplugindigitalocean
-        , enable_commattermostagenda
-        , enable_commattermostawssns
-        , enable_commattermostconfluence
-        , enable_commattermostcustomattributes
-        , enable_commattermostmscalendar
-        , enable_commattermostmsteamsmeetings
-        , enable_commattermostnps
-        , enable_commattermostpluginchannelexport
-        , enable_commattermostpluginincidentmanagement
-        , enable_commattermostpluginincidentresponse
-        , enable_commattermostplugintodo
-        , enable_commattermostwebex
-        , enable_commattermostwelcomebot
-        , enable_comnilsbrinkmannicebreaker
-        , enable_com_classroom_aws_sns
-        , enable_com_classroom_confluence
-        , enable_com_classroom_custom_attributes
-        , enable_com_classroom_mscalendar
-        , enable_com_classroom_nps
-        , enable_com_classroom_plugin_channel_export
-        , enable_com_classroom_plugin_incident_management
-        , enable_com_classroom_plugin_todo
-        , enable_com_classroom_webex
-        , enable_com_classroom_welcomebot
-        , enable_com_github_jespino_recommend
-        , enable_com_github_manland_classroom_plugin_gitlab
-        , enable_com_github_manland_mattermost_plugin_gitlab
-        , enable_com_github_mattermost_plugin_circleci
-        , enable_com_github_matterpoll_matterpoll
-        , enable_com_github_moussetc_classroom_plugin_giphy
-        , enable_com_github_moussetc_mattermost_plugin_diceroller
-        , enable_com_github_moussetc_mattermost_plugin_giphy
-        , enable_com_github_phillipahereza_classroom_plugin_digitalocean
-        , enable_com_github_phillipahereza_mattermost_plugin_digitalocean
-        , enable_com_mattermost_agenda
-        , enable_com_mattermost_apps
-        , enable_com_mattermost_aws_sns
-        , enable_com_mattermost_calls
-        , enable_com_mattermost_confluence
-        , enable_com_mattermost_custom_attributes
-        , enable_com_mattermost_mscalendar
-        , enable_com_mattermost_msteamsmeetings
-        , enable_com_mattermost_msteams_sync
-        , enable_com_mattermost_nps
-        , enable_com_mattermost_plugin_channel_export
-        , enable_com_mattermost_plugin_incident_management
-        , enable_com_mattermost_plugin_incident_response
-        , enable_com_mattermost_plugin_todo
-        , enable_com_mattermost_webex
-        , enable_com_mattermost_welcomebot
-        , enable_com_nilsbrinkmann_icebreaker
-        , enable_confluence
-        , enable_custom_user_attributes
-        , enable_focalboard
-        , enable_github
-        , enable_gitlab
-        , enable_health_check
-        , enable_jenkins
-        , enable_jira
-        , enable_jitsi
-        , enable_marketplace
-        , enable_mattermostautolink
-        , enable_mattermostprofanityfilter
-        , enable_mattermost_autolink
-        , enable_mattermost_plugin_azure_devops
-        , enable_mattermost_plugin_hackerone
-        , enable_mattermost_plugin_servicenow
-        , enable_mattermost_plugin_servicenow_virtual_agent
-        , enable_mattermost_profanity_filter
-        , enable_memes
-        , enable_mscalendar
-        , enable_nps
-        , enable_nps_survey
-        , enable_playbooks
-        , enable_remote_marketplace
-        , enable_ru_loop_plugin_embeds
-        , enable_ru_loop_plugin_scheduler
-        , enable_ru_loop_plugin_user_fields
-        , enable_ru_loop_plugin_welcomebot
-        , enable_set_default_theme
-        , enable_skype4business
-        , enable_skype_4_business
-        , enable_todo
-        , enable_uploads
-        , enable_webex
-        , enable_welcome_bot
-        , enable_zoom
-        , is_default_marketplace_url
-        , require_pluginsignature
-        , require_plugin_signature
-        , signature_public_key_files
-        , version_alertmanager
-        , version_antivirus
-        , version_autolink
-        , version_aws_sns
-        , version_bitbucket
-        , version_comgithubjespinorecommend
-        , version_comgithubmanlandmattermostplugingitlab
-        , version_comgithubmattermostplugincircleci
-        , version_comgithubmatterpollmatterpoll
-        , version_comgithubmoussetcmattermostplugindiceroller
-        , version_comgithubmoussetcmattermostplugingiphy
-        , version_comgithubphillipaherezamattermostplugindigitalocean
-        , version_commattermostagenda
-        , version_commattermostawssns
-        , version_commattermostconfluence
-        , version_commattermostcustomattributes
-        , version_commattermostmscalendar
-        , version_commattermostmsteamsmeetings
-        , version_commattermostnps
-        , version_commattermostpluginchannelexport
-        , version_commattermostpluginincidentmanagement
-        , version_commattermostpluginincidentresponse
-        , version_commattermostplugintodo
-        , version_commattermostwebex
-        , version_commattermostwelcomebot
-        , version_comnilsbrinkmannicebreaker
-        , version_com_github_jespino_recommend
-        , version_com_github_manland_mattermost_plugin_gitlab
-        , version_com_github_mattermost_plugin_circleci
-        , version_com_github_matterpoll_matterpoll
-        , version_com_github_moussetc_mattermost_plugin_diceroller
-        , version_com_github_moussetc_mattermost_plugin_giphy
-        , version_com_github_phillipahereza_mattermost_plugin_digitalocean
-        , version_com_mattermost_agenda
-        , version_com_mattermost_apps
-        , version_com_mattermost_aws_sns
-        , version_com_mattermost_calls
-        , version_com_mattermost_confluence
-        , version_com_mattermost_custom_attributes
-        , version_com_mattermost_mscalendar
-        , version_com_mattermost_msteamsmeetings
-        , version_com_mattermost_msteams_sync
-        , version_com_mattermost_nps
-        , version_com_mattermost_plugin_channel_export
-        , version_com_mattermost_plugin_incident_management
-        , version_com_mattermost_plugin_incident_response
-        , version_com_mattermost_plugin_todo
-        , version_com_mattermost_webex
-        , version_com_mattermost_welcomebot
-        , version_com_nilsbrinkmann_icebreaker
-        , version_custom_user_attributes
-        , version_focalboard
-        , version_github
-        , version_gitlab
-        , version_jenkins
-        , version_jira
-        , version_jitsi
-        , version_mattermostautolink
-        , version_mattermostprofanityfilter
-        , version_mattermost_autolink
-        , version_mattermost_plugin_azure_devops
-        , version_mattermost_plugin_hackerone
-        , version_mattermost_plugin_servicenow
-        , version_mattermost_plugin_servicenow_virtual_agent
-        , version_mattermost_profanity_filter
-        , version_memes
-        , version_nps
-        , version_playbooks
-        , version_set_default_theme
-        , version_skype4business
-        , version_skype_4_business
-        , version_webex
-        , version_welcome_bot
-        , version_zoom
-        , context_traits_installationid
-        , context_traits_installation_id
+        , {{ dbt_utils.star(ref('stg_mm_telemetry_prod__plugin')) }}
     from
         {{ ref('stg_mm_telemetry_prod__plugin') }}
     qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
@@ -273,34 +49,7 @@ with segment_oauth as (
         server_id
         , cast(timestamp as date) as server_date
         , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
-
-        , connection_security_ldap
-        , enable_ldap
-        , enable_admin_filter
-        , enable_sync
-        , isdefault_email_attribute_ldap
-        , isdefault_first_name_attribute_ldap
-        , isdefault_group_display_name_attribute
-        , isdefault_group_id_attribute
-        , isdefault_id_attribute_ldap
-        , isdefault_last_name_attribute_ldap
-        , isdefault_login_button_border_color_ldap
-        , isdefault_login_button_color_ldap
-        , isdefault_login_button_text_color_ldap
-        , isdefault_login_field_name
-        , isdefault_login_id_attribute
-        , isdefault_nickname_attribute_ldap
-        , isdefault_position_attribute_ldap
-        , isdefault_username_attribute_ldap
-        , isempty_admin_filter
-        , isempty_group_filter
-        , isempty_guest_filter
-        , isnotempty_picture_attribute
-        , max_page_size
-        , query_timeout_ldap
-        , segment_dedupe_id_ldap
-        , skip_certificate_verification
-        , sync_interval_minutes
+        , {{ dbt_utils.star(ref('stg_mattermost2__ldap')) }}
     from
         {{ ref('stg_mattermost2__ldap') }}
     qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
@@ -309,35 +58,7 @@ with segment_oauth as (
         server_id
         , cast(timestamp as date) as server_date
         , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
-
-        , connection_security_ldap
-        , enable_ldap
-        , enable_admin_filter
-        , enable_sync
-        , isdefault_email_attribute_ldap
-        , isdefault_first_name_attribute_ldap
-        , isdefault_group_display_name_attribute
-        , isdefault_group_id_attribute
-        , isdefault_id_attribute_ldap
-        , isdefault_last_name_attribute_ldap
-        , isdefault_login_button_border_color_ldap
-        , isdefault_login_button_color_ldap
-        , isdefault_login_button_text_color_ldap
-        , isdefault_login_field_name
-        , isdefault_login_id_attribute
-        , isdefault_nickname_attribute_ldap
-        , isdefault_position_attribute_ldap
-        , isdefault_username_attribute_ldap
-        , isempty_admin_filter
-        , isempty_group_filter
-        , isempty_guest_filter
-        , isnotempty_picture_attribute
-        , isnotempty_private_key
-        , isnotempty_public_certificate
-        , max_page_size
-        , query_timeout_ldap
-        , skip_certificate_verification
-        , sync_interval_minutes
+        , {{ dbt_utils.star(ref('stg_mm_telemetry_prod__ldap')) }}
     from
         {{ ref('stg_mm_telemetry_prod__ldap') }}
     qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
@@ -346,32 +67,7 @@ with segment_oauth as (
         server_id
         , cast(timestamp as date) as server_date
         , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
-
-        , enable_saml 
-        , enable_admin_attribute
-        , enable_sync_with_ldap
-        , enable_sync_with_ldap_include_auth
-        , encrypt_saml
-        , isdefault_admin_attribute
-        , isdefault_canonical_algorithm
-        , isdefault_email_attribute_saml
-        , isdefault_first_name_attribute_saml
-        , isdefault_guest_attribute
-        , isdefault_id_attribute_saml
-        , isdefault_last_name_attribute_saml
-        , isdefault_locale_attribute
-        , isdefault_login_button_border_color_saml
-        , isdefault_login_button_color_saml
-        , isdefault_login_button_text
-        , isdefault_login_button_text_color_saml
-        , isdefault_nickname_attribute_saml
-        , isdefault_position_attribute_saml
-        , isdefault_scoping_idp_name
-        , isdefault_scoping_idp_provider_id
-        , isdefault_signature_algorithm
-        , isdefault_username_attribute_saml
-        , sign_request
-        , verify_saml
+        , {{ dbt_utils.star(ref('stg_mattermost2__saml')) }}
     from
         {{ ref('stg_mattermost2__saml') }}
     qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
@@ -380,33 +76,7 @@ with segment_oauth as (
         server_id
         , cast(timestamp as date) as server_date
         , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
-
-        , enable_saml 
-        , enable_admin_attribute
-        , enable_sync_with_ldap
-        , enable_sync_with_ldap_include_auth
-        , encrypt_saml
-        , ignore_guests_ldap_sync
-        , isdefault_admin_attribute
-        , isdefault_canonical_algorithm
-        , isdefault_email_attribute_saml
-        , isdefault_first_name_attribute_saml
-        , isdefault_guest_attribute
-        , isdefault_id_attribute_saml
-        , isdefault_last_name_attribute_saml
-        , isdefault_locale_attribute
-        , isdefault_login_button_border_color_saml
-        , isdefault_login_button_color_saml
-        , isdefault_login_button_text
-        , isdefault_login_button_text_color_saml
-        , isdefault_nickname_attribute_saml
-        , isdefault_position_attribute_saml
-        , isdefault_scoping_idp_name
-        , isdefault_scoping_idp_provider_id
-        , isdefault_signature_algorithm
-        , isdefault_username_attribute_saml
-        , sign_request
-        , verify_saml 
+        , {{ dbt_utils.star(ref('stg_mm_telemetry_prod__saml')) }}
     from
         {{ ref('stg_mm_telemetry_prod__saml') }}
     qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
@@ -415,90 +85,7 @@ with segment_oauth as (
         server_id
         , cast(timestamp as date) as server_date
         , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
-
-        , allow_cookies_for_subdomains
-        , allow_edit_post_service
-        , close_unused_direct_messages
-        , cluster_log_timeout_milliseconds
-        , connection_security_service
-        , cors_allow_credentials
-        , cors_debug
-        , custom_service_terms_enabled
-        , disable_bots_when_owner_is_deactivated
-        , disable_legacy_mfa
-        , enable_apiv3
-        , enable_api_team_deletion
-        , enable_bot_account_creation
-        , enable_channel_viewed_messages_service
-        , enable_commands_service
-        , enable_custom_emoji_service
-        , enable_developer_service
-        , enable_email_invitations
-        , enable_emoji_picker_service
-        , enable_gif_picker
-        , enable_incoming_webhooks_service
-        , enable_insecure_outgoing_connections_service
-        , enable_latex
-        , enable_local_mode
-        , enable_multifactor_authentication_service
-        , enable_oauth_service_provider_service
-        , enable_only_admin_integrations_service
-        , enable_opentracing
-        , enable_outgoing_webhooks
-        , enable_post_icon_override
-        , enable_post_search
-        , enable_post_username_override
-        , enable_preview_features
-        , enable_security_fix_alert
-        , enable_svgs
-        , enable_testing
-        , enable_tutorial
-        , enable_user_access_tokens
-        , enable_user_statuses
-        , enable_user_typing_messages
-        , enforce_multifactor_authentication_service
-        , experimental_channel_organization
-        , experimental_channel_sidebar_organization
-        , experimental_enable_authentication_transfer
-        , experimental_enable_default_channel_leave_join_messages
-        , experimental_enable_hardened_mode
-        , experimental_group_unread_channels
-        , experimental_ldap_group_sync
-        , experimental_limit_client_config
-        , experimental_strict_csrf_enforcement
-        , extend_session_length_with_activity
-        , forward_80_to_443
-        , gfycat_api_key
-        , gfycat_api_secret
-        , isdefault_allowed_untrusted_internal_connections
-        , isdefault_allowed_untrusted_inteznal_connections
-        , isdefault_allow_cors_from
-        , isdefault_cors_exposed_headers
-        , isdefault_google_developer_key
-        , isdefault_idle_timeout
-        , isdefault_image_proxy_options
-        , isdefault_image_proxy_type
-        , isdefault_image_proxy_url
-        , isdefault_read_timeout
-        , isdefault_site_url
-        , isdefault_tls_cert_file
-        , isdefault_tls_key_file
-        , isdefault_write_timeout
-        , maximum_login_attempts
-        , minimum_hashtag_length
-        , post_edit_time_limit
-        , restrict_custom_emoji_creation
-        , restrict_post_delete
-        , session_cache_in_minutes
-        , session_idle_timeout_in_minutes
-        , session_length_mobile_in_days
-        , session_length_sso_in_days
-        , session_length_web_in_days
-        , time_between_user_typing_updates_milliseconds
-        , tls_strict_transport
-        , uses_letsencrypt
-        , websocket_url
-        , web_server_mode
+        , {{ dbt_utils.star(ref('stg_mattermost2__service')) }}
     from
         {{ ref('stg_mattermost2__service') }}
     qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
@@ -507,124 +94,7 @@ with segment_oauth as (
         server_id
         , cast(timestamp as date) as server_date
         , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
-
-        , allow_cookies_for_subdomains
-        , allow_edit_post_service
-        , allow_persistent_notifications
-        , allow_persistent_notifications_for_guests
-        , allow_synced_drafts
-        , close_unused_direct_messages
-        , cluster_log_timeout_milliseconds
-        , collapsed_threads
-        , connection_security_service
-        , cors_allow_credentials
-        , cors_debug
-        , custom_cert_header
-        , default_team_name
-        , developer_flags
-        , disable_bots_when_owner_is_deactivated
-        , disable_legacy_mfa
-        , elable_multifactor_authentication
-        , enable_api_channel_deletion
-        , enable_api_post_deletion
-        , enable_api_team_deletion
-        , enable_api_trigger_admin_notification
-        , enable_api_user_deletion
-        , enable_bot_account_creation
-        , enable_channel_viewed_messages_service
-        , enable_commands_service
-        , enable_custom_emoji_service
-        , enable_developer_service
-        , enable_email_invitations
-        , enable_emoji_picker_service
-        , enable_file_search
-        , enable_gif_picker
-        , enable_incoming_webhooks_service
-        , enable_insecure_outgoing_connections_service
-        , enable_latex
-        , enable_latez
-        , enable_legacy_sidebar
-        , enable_link_previews
-        , enable_local_mode
-        , enable_multifactor_authentication_service
-        , enable_oauth_service_provider_service
-        , enable_onboarding_flow
-        , enable_only_admin_integrations_service
-        , enable_opentracing
-        , enable_outgoing_oauth_connections
-        , enable_outgoing_webhooks
-        , enable_permalink_previews
-        , enable_post_icon_override
-        , enable_post_search
-        , enable_post_username_override
-        , enable_preview_features
-        , enable_security_fix_alert
-        , enable_svgs
-        , enable_testing
-        , enable_tutorial
-        , enable_user_access_tokens
-        , enable_user_statuses
-        , enable_user_typing_messages
-        , enforce_multifactor_authentication_service
-        , experimental_channel_organization
-        , experimental_channel_sidebar_organization
-        , experimental_data_prefetch
-        , experimental_enable_authentication_transfer
-        , experimental_enable_default_channel_leave_join_messages
-        , experimental_enable_hardened_mode
-        , experimental_group_unread_channels
-        , experimental_strict_csrf_enforcement
-        , extend_session_length_with_activity
-        , forward_80_to_443
-        , gfycat_api_key
-        , gfycat_api_secret
-        , isdefault_allowed_untrusted_internal_connections
-        , isdefault_allow_cors_from
-        , isdefault_cors_exposed_headers
-        , isdefault_google_developer_key
-        , isdefault_idle_timeout
-        , isdefault_read_timeout
-        , isdefault_site_url
-        , isdefault_tls_cert_file
-        , isdefault_tls_key_file
-        , isdefault_write_timeout
-        , limit_load_search_result
-        , login_with_certificate
-        , managed_resource_paths
-        , maximum_login_attempts
-        , maximum_payload_size
-        , maximum_url_length
-        , minimum_hashtag_length
-        , outgoing_integrations_requests_timeout
-        , persistent_notification_interval_minutes
-        , persistent_notification_max_count
-        , persistent_notification_max_recipients
-        , post_edit_time_limit
-        , post_priority
-        , refresh_post_stats_run_time
-        , restrict_custom_emoji_creation
-        , restrict_link_previews
-        , restrict_post_delete
-        , self_hosted_expansion
-        , self_hosted_purchase
-        , session_cache_in_minutes
-        , session_idle_timeout_in_minutes
-        , session_length_mobile_in_days
-        , session_length_mobile_in_hours
-        , session_length_sso_in_days
-        , session_length_sso_in_hours
-        , session_length_web_in_days
-        , session_length_web_in_hours
-        , skip_login_page
-        , terminate_sessions_on_password_change
-        , thread_auto_follow
-        , time_between_user_typing_updates_milliseconds
-        , tls_strict_transport
-        , uses_letsencrypt
-        , websocket_url
-        , web_server_mode
-        , context_traits_installationid
-        , context_traits_installation_id
+        , {{ dbt_utils.star(ref('stg_mm_telemetry_prod__service')) }}
     from
         {{ ref('stg_mm_telemetry_prod__service') }}
     qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
@@ -790,7 +260,7 @@ select
     , coalesce(pr.enable_comgithubphillipaherezamattermostplugindigitalocean,
                pr.enable_com_github_phillipahereza_classroom_plugin_digitalocean,
                pr.enable_com_github_phillipahereza_mattermost_plugin_digitalocean)                   as enable_digital_ocean
-    , coalesce(pr.enable_commattermostagenda, pr.enable_com_mattermost_agenda)                       as enable_commattermostagenda
+    , coalesce(pr.enable_commattermostagenda, pr.enable_com_mattermost_agenda)                       as enable_agenda
     , coalesce(pr.enable_com_mattermost_apps,null)                                                   as enable_mattermost_apps
     , coalesce(pr.enable_com_mattermost_calls, null)                                                 as enable_calls
     , coalesce(pr.enable_commattermostpluginincidentmanagement, 
@@ -849,6 +319,8 @@ select
                pr.version_com_github_phillipahereza_mattermost_plugin_digitalocean)                  as version_digital_ocean
     , coalesce(pr.version_commattermostconfluence, pr.version_com_mattermost_confluence)             as version_confluence
     , coalesce(pr.version_commattermostmscalendar, pr.version_com_mattermost_mscalendar)             as version_mscalendar
+    , coalesce(pr.version_commattermostpluginincidentmanagement, 
+               pr.version_com_mattermost_plugin_incident_management)                                 as version_incident_management
     , coalesce(pr.version_commattermostpluginincidentresponse, 
                pr.version_com_mattermost_plugin_incident_response)                                   as version_incident_response
     , coalesce(pr.version_commattermostplugintodo, pr.version_com_mattermost_plugin_todo)            as version_todo
@@ -857,12 +329,10 @@ select
     , coalesce(pr.version_skype4business, pr.version_skype_4_business)                               as version_skype4business
     , coalesce(pr.version_mattermostprofanityfilter, pr.version_mattermost_profanity_filter)         as version_mattermostprofanityfilter
     , coalesce(pr.version_comgithubmatterpollmatterpoll, 
-               pr.version_com_github_matterpoll_matterpoll)                                          as version_comgithubmatterpollmatterpoll
-    , coalesce(pr.version_commattermostpluginincidentmanagement, 
-               pr.version_com_mattermost_plugin_incident_management)                                 as version_commattermostpluginincidentmanagement
+               pr.version_com_github_matterpoll_matterpoll)                                          as version_materpoll
     , coalesce(pr.version_comgithubjespinorecommend, pr.version_com_github_jespino_recommend)        as version_comgithubjespinorecommend
-    , coalesce(pr.version_commattermostagenda, pr.version_com_mattermost_agenda)                     as version_commattermostagenda        
-    , coalesce(pr.version_commattermostmsteamsmeetings, pr.version_com_mattermost_msteamsmeetings)   as version_commattermostmsteamsmeetings
+    , coalesce(pr.version_commattermostagenda, pr.version_com_mattermost_agenda)                     as version_agenda        
+    , coalesce(pr.version_commattermostmsteamsmeetings, pr.version_com_mattermost_msteamsmeetings)   as version_msteams_meetings
     , coalesce(pr.version_commattermostpluginchannelexport, 
                pr.version_com_mattermost_plugin_channel_export)                                      as version_commattermostpluginchannelexport
     , coalesce(pr.version_comnilsbrinkmannicebreaker, pr.version_com_nilsbrinkmann_icebreaker)       as version_comnilsbrinkmannicebreaker
@@ -918,7 +388,7 @@ select
     , coalesce(vs.enable_local_mode, vr.enable_local_mode)                                           as enable_local_mode
     , coalesce(vs.enable_multifactor_authentication_service, 
                vr.elable_multifactor_authentication,
-               vr.enable_multifactor_authentication_service)                                         as enable_multifactor_authentication
+               vr.enable_multifactor_authentication_service)                                         as enable_multifactor_authentication_service
     , coalesce(vs.enable_oauth_service_provider_service, 
                vr.enable_oauth_service_provider_service)                                             as enable_oauth_service_provider_service
     , coalesce(vr.enable_onboarding_flow, null)                                                      as enable_onboarding_flow
@@ -964,7 +434,6 @@ select
     , coalesce(vs.isdefault_allowed_untrusted_internal_connections,
                vs.isdefault_allowed_untrusted_inteznal_connections, 
                vr.isdefault_allowed_untrusted_internal_connections)                                  as isdefault_allowed_untrusted_internal_connections
-    , coalesce(vs.isdefault_allowed_untrusted_inteznal_connections, null)                            as isdefault_allowed_untrusted_inteznal_connections
     , coalesce(vs.isdefault_allow_cors_from, vr.isdefault_allow_cors_from)                           as isdefault_allow_cors_from 
     , coalesce(vs.isdefault_cors_exposed_headers, vr.isdefault_cors_exposed_headers)                 as isdefault_cors_exposed_headers
     , coalesce(vs.isdefault_google_developer_key, vr.isdefault_google_developer_key)                 as isdefault_google_developer_key
