@@ -22,6 +22,10 @@ with feedback as (
                 then parse_ip(context_ip || '/7', 'INET'):ipv4_range_start
             else null
         end as ip_bucket
+        , case
+            when context_user_agent is not null then mattermost_analytics.parse_user_agent(context_user_agent)
+            else null
+        end as parsed_user_agent
         , context_page_title as page_title
         , context_page_path as page_path
         , context_locale as browser_locale
@@ -52,10 +56,13 @@ select
     , f.received_at
     , f.client_ip
     , l.country_name as geolocated_country_name
-    , f.page_path
     , f.browser_locale
+    , f.page_path
     , f.page_title
     , f.page_search
+    , f.parsed_user_agent:browser_family::varchar as ua_browser_family
+    , f.parsed_user_agent:os_family::varchar as ua_os_family
+    , f.parsed_user_agent:device_family::varchar as ua_device_family
     , f.utm_campaign_source
     , f.utm_campaign_name
     , f.utm_campaign_medium
