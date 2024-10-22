@@ -22,12 +22,19 @@ with feedback as (
                 then parse_ip(context_ip || '/7', 'INET'):ipv4_range_start
             else null
         end as ip_bucket
+        , context_page_title as page_title
         , context_page_path as page_path
         , context_locale as browser_locale
         , context_page_search as page_search
         , context_campaign_source as utm_campaign_source
         , context_campaign_name as utm_campaign_name
         , context_campaign_medium as utm_campaign_medium
+        , context_page_initial_referrer as initial_referrer
+        , context_page_initial_referring_domain as initial_referring_domain
+        , context_page_referrer as referrer
+        , context_page_referring_domain as referring_domain
+
+
     from
         {{ ref('stg_mattermost_docs__feedback_submitted') }}
 {% if is_incremental() %}
@@ -47,10 +54,15 @@ select
     , l.country_name as geolocated_country_name
     , f.page_path
     , f.browser_locale
+    , f.page_title
     , f.page_search
     , f.utm_campaign_source
     , f.utm_campaign_name
     , f.utm_campaign_medium
+    , f.initial_referrer
+    , f.initial_referring_domain
+    , f.referrer
+    , f.referring_domain
 from
     feedback f
     left join {{ ref('int_ip_country_lookup') }} l
