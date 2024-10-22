@@ -356,8 +356,9 @@ def test_should_add_new_columns_and_merge_table(mocker, base_table, delta_table_
         'ON base_schema.base_table.id = delta_schema.delta_table.id '
         'AND base_schema.base_table.received_at >= :first_duplicate_date '
         'WHEN MATCHED THEN UPDATE SET after = base_table.after '
-        'WHEN NOT MATCHED THEN INSERT (id, column_a, "_", after, received_at) '
-        'VALUES (delta_table.id, delta_table.column_a, delta_table."_", delta_table.after, delta_table.received_at)'
+        'WHEN NOT MATCHED THEN INSERT (id, column_a, "_", after, received_at, extra, column_b) '
+        'VALUES (delta_table.id, delta_table.column_a, delta_table."_", delta_table.after, delta_table.received_at,'
+        ' delta_table.extra, delta_table.column_b)'
     )
 
     # THEN: expect the merge statement to have the correct parameters

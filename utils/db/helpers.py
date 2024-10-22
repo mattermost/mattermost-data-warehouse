@@ -312,7 +312,7 @@ def merge_event_delta_table_into(
     )
     merge.when_matched_then_update().values(after=t_base.c.after)
     value_mapping = {
-        escape_special_column_names(c.name): escape_special_column_names(t_delta.c[c.name]) for c in t_base.columns
+        escape_special_column_names(c.name): escape_special_column_names(t_delta.c[c.name]) for c in t_delta.columns
     }
 
     merge.when_not_matched_then_insert().values(**value_mapping)

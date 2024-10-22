@@ -83,7 +83,6 @@ def clone(
 @snowflake.command()
 @click.pass_context
 @click.argument('base_table', type=str)
-@click.argument('delta_table_db', type=str)
 @click.argument('delta_table_schema', type=str)
 @click.argument('delta_table', type=str)
 @click.option(
