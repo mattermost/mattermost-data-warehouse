@@ -10,7 +10,88 @@ sources:
 
     tables:
       - name: feedback_submitted
-        description: Holds a record for each `tracks` call where event name is `feedback_submitted`.
+        description: Feedback submitted from the Mattermost Docs.
+
+        columns:
+          # Common fields - see https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/
+          - name: id
+            description: Unique identifier for the event.
+          - name: user_id
+            description: Unique identification for the user in the database
+          - name: anonymous_id
+            description: Pseudo-identifier for the user in cases where `user_id`` is absent. This is the same as the device ID.
+          - name: event
+            description: Captures the user action that you want to record. Should be always `feedback_submitted`.
+          - name: event_text
+            description: |
+              Captures the user action that you want to record. Should be always `feedback_submitted`.
+          - name: channel
+            description: Identifies the source of the event. Permitted values are mobile, web, server and sources.
+          - name: timestamp
+            description: |
+              RudderStack calculates this field to account for any client-side clock skew using the formula:
+              `timestamp = receivedAt - (sentAt - originalTimestamp)`.
+          - name: original_timestamp
+            description: |
+              Records the actual time (in UTC) when the event occurred. Make sure it conforms to the ISO 8601 date
+              format yyyy-MM-ddTHH:mm:ss.SSSZ.
+          - name: sent_at
+            description: |
+              Captures the time (in UTC) when the event was sent from the client to RudderStack. Make sure it conforms
+              to the ISO 8601 date format yyyy-MM-ddTHH:mm:ss.SSSZ.
+          - name: received_at
+            description: Time in UTC when RudderStack ingests the event.
+          - name: uuid_ts
+            description: Added by RudderStack for debugging purposes. Can be ignored for analytics.
+
+
+            # Properties
+          - name: rating
+            description: Rating given by the user. Can be `1` (No), `2` (Maybe), `3` (Yes).
+          - name: feedback
+            description: The text of the feedback.
+          - name: label
+            description: The label of the rating. It can be one  of `No`, `Maybe`, `Yes`.
+
+          # Standard Rudderstack context - see https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/#contextual-fields
+          - name: context_ip
+          - name: context_app_version
+          - name: context_screen_width
+          - name: context_page_path
+          - name: context_page_initial_referrer
+          - name: context_page_initial_referring_domain
+          - name: context_locale
+          - name: context_user_agent
+          - name: context_page_referring_domain
+          - name: context_page_url
+          - name: context_screen_height
+          - name: context_screen_inner_height
+          - name: context_page_tab_url
+          - name: context_screen_inner_width
+          - name: context_page_referrer
+          - name: context_library_version
+          - name: context_app_build
+          - name: context_app_namespace
+          - name: context_page_title
+          - name: context_request_ip
+          - name: context_library_name
+          - name: context_app_name
+          - name: context_screen_density
+          - name: context_traits_portal_customer_id
+          - name: context_page_search
+          - name: context_campaign_source
+          - name: context_campaign_name
+          - name: context_campaign_medium
+          - name: context_source_type
+          - name: context_destination_id
+          - name: context_source_id
+          - name: context_destination_type
+          - name: context_traits_use_oauth
+          - name: context_traits_auth_provider
+          - name: context_session_id
+          - name: context_session_start
+          - name: context_campaign_content
+
 
       - name: pages
         description: Holds a record for every `page` call.
