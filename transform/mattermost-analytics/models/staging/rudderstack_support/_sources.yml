@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: rudder_support
+    database: 'ANALYTICS'
+    schema: rudderstack_support
+    description: |
+      Contains tables managed outside of DBT that support Rudderstack-related operations.
+
+    tables:
+      - name: base_events
+        description: |
+          Contains deduplicated events from client telemetry. Starts as a clone of `raw.mm_telemetry_prod event`, but 
+          delta table is gradually merged in this table.
