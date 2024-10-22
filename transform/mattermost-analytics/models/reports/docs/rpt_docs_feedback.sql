@@ -1,3 +1,12 @@
+{{
+    config({
+        "materialized": "incremental",
+        "incremental_strategy": "delete+insert",
+        "unique_key": ['event_id'],
+        "cluster_by": ['to_date(received_at)'],
+        "snowflake_warehouse": "transform_l"
+    })
+}}
 with feedback as (
     select
         id as event_id
@@ -21,6 +30,11 @@ with feedback as (
         , context_campaign_medium as utm_campaign_medium
     from
         {{ ref('stg_mattermost_docs__feedback_submitted') }}
+{% if is_incremental() %}
+    where
+        -- this filter will only be applied on an incremental run
+       received_at >= (select max(received_at) from {{ this }})
+{% endif %}
 )
 select
     f.event_id
