@@ -9,6 +9,15 @@ sources:
       Salesforce entities replicated to data warehouse.
     tags:
       - stitch
+    freshness:
+        warn_after:
+          count: 1
+          period: day
+        error_after:
+          count: 2
+          period: day
+    loaded_at_field: createddate
+
 
     tables:
       - name: _sdc_rejected
