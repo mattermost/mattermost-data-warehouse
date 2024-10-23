@@ -1,21 +1,18 @@
 from datetime import datetime, timedelta
 
+from airflow import DAG
+from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
+from airflow.utils.trigger_rule import TriggerRule
+
 from mattermost_dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, pod_defaults, pod_env_vars, send_alert
 from mattermost_dags.kube_secrets import (
     DBT_CLOUD_API_ACCOUNT_ID,
     DBT_CLOUD_API_KEY,
     SNOWFLAKE_ACCOUNT,
     SNOWFLAKE_PASSWORD,
-    SNOWFLAKE_TRANSFORM_ROLE,
-    SNOWFLAKE_TRANSFORM_SCHEMA,
     SNOWFLAKE_TRANSFORM_WAREHOUSE,
     SNOWFLAKE_USER,
-    SSH_KEY,
 )
-
-from airflow import DAG
-from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
-from airflow.utils.trigger_rule import TriggerRule
 
 # Load the env vars into a dict and set Secrets
 env_vars = {**pod_env_vars, **{}}
@@ -81,13 +78,6 @@ dbt_run_cloud = KubernetesPodOperator(
     secrets=[
         DBT_CLOUD_API_ACCOUNT_ID,
         DBT_CLOUD_API_KEY,
-        SNOWFLAKE_ACCOUNT,
-        SNOWFLAKE_USER,
-        SNOWFLAKE_PASSWORD,
-        SNOWFLAKE_TRANSFORM_ROLE,
-        SNOWFLAKE_TRANSFORM_WAREHOUSE,
-        SNOWFLAKE_TRANSFORM_SCHEMA,
-        SSH_KEY,
     ],
     env_vars={**env_vars, "DBT_JOB_TIMEOUT": "4200"},
     arguments=["python -m  utils.run_dbt_cloud_job 19444 \"Airflow dbt hourly\""],
@@ -104,13 +94,6 @@ dbt_run_cloud_nightly = KubernetesPodOperator(
     secrets=[
         DBT_CLOUD_API_ACCOUNT_ID,
         DBT_CLOUD_API_KEY,
-        SNOWFLAKE_ACCOUNT,
-        SNOWFLAKE_USER,
-        SNOWFLAKE_PASSWORD,
-        SNOWFLAKE_TRANSFORM_ROLE,
-        SNOWFLAKE_TRANSFORM_WAREHOUSE,
-        SNOWFLAKE_TRANSFORM_SCHEMA,
-        SSH_KEY,
     ],
     env_vars={**env_vars, "DBT_JOB_TIMEOUT": "4800"},
     arguments=["python -m utils.run_dbt_cloud_job 19427 \"Airflow dbt nightly\""],
@@ -127,13 +110,6 @@ dbt_run_cloud_mattermost_analytics_nightly = KubernetesPodOperator(
     secrets=[
         DBT_CLOUD_API_ACCOUNT_ID,
         DBT_CLOUD_API_KEY,
-        SNOWFLAKE_ACCOUNT,
-        SNOWFLAKE_USER,
-        SNOWFLAKE_PASSWORD,
-        SNOWFLAKE_TRANSFORM_ROLE,
-        SNOWFLAKE_TRANSFORM_WAREHOUSE,
-        SNOWFLAKE_TRANSFORM_SCHEMA,
-        SSH_KEY,
     ],
     # Set timeout to 2.5 hours
     env_vars={**env_vars, "DBT_JOB_TIMEOUT": "9000"},
