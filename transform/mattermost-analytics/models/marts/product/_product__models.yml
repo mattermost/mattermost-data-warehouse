@@ -290,11 +290,7 @@ models:
         description: The number of licensed seats, as reported by telemetry.
       - name: is_missing_license_data
         description: Whether license data are unavailable for the date.
-      - name: is_feature_shared_channels_enabled
-        description: Whether the shared channels feature has been enabled at the server
-      - name: is_feature_remote_cluster_service_enabled
-        description: Whether the remote cluster feature has been enabled at the server
-
+      
   - name: dim_server_info
     description: Static information for a given server.
     columns:
