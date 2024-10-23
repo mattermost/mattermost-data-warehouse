@@ -98,7 +98,6 @@ def load_support_packet_file(
     support_packet_zip_file: str | os.PathLike,
 ) -> Tuple[SupportPacketMetadata, SupportPacketV1]:
     with ZipFile(support_packet_zip_file, 'r') as zipfile:
-
         if SUPPORT_PACKET_METADATA_FILE in zipfile.namelist():
             # Metadata might not be present in older versions of the support packet
             with zipfile.open(SUPPORT_PACKET_METADATA_FILE) as metadata_fp:
