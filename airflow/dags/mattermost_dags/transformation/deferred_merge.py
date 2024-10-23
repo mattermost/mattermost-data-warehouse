@@ -31,7 +31,7 @@ doc_md = """
 #### Purpose
 This DAG triggers deferred merge. It merges the event delta table into the base table.
 
-This DAG does not have a schedule. It can be triggered manually in Aiflow UI.
+This DAG does not have a schedule. It can be triggered manually in Airflow UI.
 """
 
 
