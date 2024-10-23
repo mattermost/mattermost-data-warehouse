@@ -54,43 +54,43 @@ sources:
             description: The label of the rating. It can be one  of `No`, `Maybe`, `Yes`.
 
           # Standard Rudderstack context - see https://www.rudderstack.com/docs/event-spec/standard-events/common-fields/#contextual-fields
-          - name: context_ip
+          - name: context_app_build
+          - name: context_app_name
+          - name: context_app_namespace
           - name: context_app_version
-          - name: context_screen_width
-          - name: context_page_path
+          - name: context_campaign_content
+          - name: context_campaign_medium
+          - name: context_campaign_name
+          - name: context_campaign_source
+          - name: context_destination_id
+          - name: context_destination_type
+          - name: context_ip
+          - name: context_library_name
+          - name: context_library_version
+          - name: context_locale
           - name: context_page_initial_referrer
           - name: context_page_initial_referring_domain
-          - name: context_locale
-          - name: context_user_agent
+          - name: context_page_path
+          - name: context_page_referrer
           - name: context_page_referring_domain
+          - name: context_page_search
+          - name: context_page_tab_url
+          - name: context_page_title
           - name: context_page_url
+          - name: context_request_ip
+          - name: context_screen_density
           - name: context_screen_height
           - name: context_screen_inner_height
-          - name: context_page_tab_url
           - name: context_screen_inner_width
-          - name: context_page_referrer
-          - name: context_library_version
-          - name: context_app_build
-          - name: context_app_namespace
-          - name: context_page_title
-          - name: context_request_ip
-          - name: context_library_name
-          - name: context_app_name
-          - name: context_screen_density
-          - name: context_traits_portal_customer_id
-          - name: context_page_search
-          - name: context_campaign_source
-          - name: context_campaign_name
-          - name: context_campaign_medium
-          - name: context_source_type
-          - name: context_destination_id
-          - name: context_source_id
-          - name: context_destination_type
-          - name: context_traits_use_oauth
-          - name: context_traits_auth_provider
+          - name: context_screen_width
           - name: context_session_id
           - name: context_session_start
-          - name: context_campaign_content
+          - name: context_source_id
+          - name: context_source_type
+          - name: context_traits_auth_provider
+          - name: context_traits_portal_customer_id
+          - name: context_traits_use_oauth
+          - name: context_user_agent
 
 
       - name: pages
