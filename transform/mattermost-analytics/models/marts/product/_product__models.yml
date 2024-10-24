@@ -286,10 +286,6 @@ models:
         description: Whether there were security update server data reported for this server on the given date.
       - name: is_missing_activity_data
         description: Whether server activity data are available for the given date and server id.
-      - name: licensed_seats
-        description: The number of licensed seats, as reported by telemetry.
-      - name: is_missing_license_data
-        description: Whether license data are unavailable for the date.
       
   - name: dim_server_info
     description: Static information for a given server.
