@@ -1,0 +1,52 @@
+version: 2
+
+models:
+  - name: rpt_docs_feedback
+    description: |
+      Contains the feedback on the docs.
+    columns:
+      - name: event_id
+        description: The feedback's unique id
+        tests:
+          - unique
+          - not_null
+      - name: timestamp
+        description: The date and time the feedback was submitted.
+      - name: rating
+        description: Rating given by the user. Can be `1` (No), `2` (Maybe), `3` (Yes).
+      - name: feedback
+        description: The text of the feedback.
+      - name: label
+        description: The label of the rating. It can be one  of `No`, `Maybe`, `Yes`.
+      - name: received_at
+        description: The date and time the feedback was ingested. Used to track ingestion process.
+      - name: client_ip
+        description: The IP address of the user who submitted the feedback.
+      - name: geolocated_country_name
+        description: The country of the user who submitted the feedback. Geolocated from the user's IP address.
+      - name: page_path
+        description: The path of the page where the feedback was submitted from.
+      - name: page_title
+        description: The title of the page where the feedback was submitted from.
+      - name: page_search
+        description: The search of the current page in the browser.
+      - name: ua_browser_family
+        description: The browser family of the user who submitted the feedback.
+      - name: ua_os_family
+        description: The operating system family of the user who submitted the feedback.
+      - name: ua_device_family
+        description: The device family of the user who submitted the feedback.
+      - name: utm_campaign_source
+        description: The source of the campaign.
+      - name: utm_campaign_name
+        description: The name of the campaign.
+      - name: utm_campaign_medium
+        description: The medium of the campaign.
+      - name: initial_referrer
+        description: Initial referrer of the current page in the browser.
+      - name: initial_referrer_domain
+        description: Domain of the initial referrer.
+      - name: referrer
+        description: Referrer of the current page in the browser.
+      - name: referring_domain
+        description: Domain of the referrer.
