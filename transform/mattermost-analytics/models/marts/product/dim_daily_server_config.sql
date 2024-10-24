@@ -1,3 +1,6 @@
+{{ config(
+    tags=["disabled"]
+) }}
 with segment_oauth as (
     select
         server_id
