@@ -5,7 +5,6 @@ select
     s.activity_date,
 
     -- Dimensions
-    l.license_id,
     {{ dbt_utils.generate_surrogate_key(['version_full']) }} AS version_id,
     -- Degenerate dimensions
     s.installation_type,
@@ -26,14 +25,11 @@ select
     s.is_enterprise_ready,
     s.count_reported_versions,
     -- TODO: handle cloud instances.
-    coalesce(l.licensed_seats, 0) as licensed_seats,
 
     -- Metadata
     s.has_telemetry_data,
     s.has_legacy_telemetry_data,
     s.has_diagnostics_data,
     s.is_missing_activity_data,
-    l.daily_server_id is null as is_missing_license_data
 from
     {{ ref('int_server_active_days_spined') }} s
-    left join {{ ref('int_server_license_daily') }} l on s.daily_server_id = l.daily_server_id
