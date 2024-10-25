@@ -78,6 +78,7 @@ deferred_merge = KubernetesPodOperator(
     image=MATTERMOST_DATAWAREHOUSE_IMAGE,  # Uses latest build from master
     task_id="deferred-merge",
     name="deferred-merge",
+    trigger_rule=TriggerRule.ALL_DONE,
     secrets=[
         SNOWFLAKE_USER,
         SNOWFLAKE_PASSWORD,

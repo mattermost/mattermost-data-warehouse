@@ -39,6 +39,7 @@ with DAG(
     "manual_deferred_merge",
     default_args=default_args,
     catchup=False,
+    schedule=None,  # Don't schedule this DAG, trigger manually
     max_active_runs=1,  # Don't allow multiple concurrent dag executions
     doc_md=doc_md,
 ) as dag:

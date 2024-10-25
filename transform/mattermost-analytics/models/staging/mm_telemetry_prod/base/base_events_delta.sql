@@ -8,7 +8,7 @@
         'cluster_by': ['to_date(received_at)'],
         'on_schema_change': 'append_new_columns',
         'snowflake_warehouse': 'transform_l',
-        'post_hook': 'delete from {{this}} where received_at < (select max(received_at) from {{ source(\'rudder_support\', \'base_events\') }})'
+        'post_hook': 'delete from {{this}} where received_at < (select max(received_at) from {{ source(\'rudder_support\', \'base_events\') }})',
     })
 }}
 
