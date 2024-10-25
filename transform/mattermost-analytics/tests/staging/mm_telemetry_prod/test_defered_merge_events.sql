@@ -1,3 +1,9 @@
+{{
+    config({
+        'tags': ['hourly'],
+    })
+}}
+
 -- Assert that there's no overlap between base and delta table.
 -- Overlap should be addressed by the post-hook of the delta table.
 with base_table as (
