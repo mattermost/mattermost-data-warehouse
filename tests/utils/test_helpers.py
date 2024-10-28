@@ -1,6 +1,11 @@
+import json
 from datetime import date
+from textwrap import dedent
 
-from utils.helpers import daterange
+import pandas as pd
+from responses import Response
+
+from utils.helpers import daterange, post_to_mattermost
 
 
 def test_include_start_exclude_end():
@@ -21,3 +26,37 @@ def test_start_date_end_date_match():
 
 def test_end_date_next_day_of_start_date():
     assert list(daterange(date(2024, 2, 18), date(2024, 2, 19))) == [date(2024, 2, 18)]
+
+
+def test_post_to_mattermost(responses):
+    # GIVEN: A Mattermost URL, and channel that returns HTTP OK
+    url = 'https://mattermost.a-test-server.com/path/to/hookid'
+    channel = 'test-channel'
+
+    response = Response(
+        method="POST",
+        url='https://mattermost.a-test-server.com/path/to/hookid',
+        status=200,
+        content_type='application/json',
+    )
+    responses.add(response)
+
+    # GIVEN: Some data to post
+    df = pd.DataFrame({'id': [1, 2], 'title': ['The Great Gatsby', 'The Lord of the Rings']})
+
+    # WHEN: request is made to Mattermost
+    post_to_mattermost(url, channel, df, headers=['ISBN', 'Book Title'])
+
+    # THEN: A request is made to the Mattermost server
+    assert len(responses.calls) == 1
+    assert json.loads(responses.calls[0].request.body) == {
+        'text': dedent(
+            '''
+            |   ISBN | Book Title            |
+            |--------|-----------------------|
+            |      1 | The Great Gatsby      |
+            |      2 | The Lord of the Rings |
+        '''
+        ).strip(),
+        'channel': 'test-channel',
+    }
