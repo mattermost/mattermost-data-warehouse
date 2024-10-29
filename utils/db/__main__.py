@@ -128,14 +128,15 @@ def feedback(ctx: click.Context, url: str, channel: str):
             '''
                 SELECT
                     to_date(timestamp) as date
-                    , feedback
+                    , COALESCE(feedback, 'No feedback') as feedback
                     , rating
                     , page_path
                     , ua_browser_family
                     , ua_os_family
                     , geolocated_country_name
                 FROM "REPORTS_DOCS".rpt_docs_feedback
-                WHERE timestamp::date >= current_date() - 7 AND timestamp::date <= current_date() - 1
+                WHERE
+                    timestamp::date >= current_date() - 7 AND timestamp::date <= current_date() - 1
                 ORDER BY timestamp DESC
             ''',
             ['Date', 'Feedback', 'Rating', 'Path', 'Browser', 'OS', 'Country'],
