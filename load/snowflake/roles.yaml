@@ -242,12 +242,15 @@ roles:
         privileges:
             databases:
                 read:
+                    - analytics
                     - snowflake_sample_data
             schemas:
                 read:
+                    - analytics.mart_product
                     - snowflake_sample_data.*
             tables:
                 read:
+                    - analytics.mart_product.*
                     - snowflake_sample_data.*.*
 
     # Object Roles
