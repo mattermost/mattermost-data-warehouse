@@ -4,8 +4,8 @@ import click
 
 from utils.cli.context import snowflake_engine_context
 from utils.cli.logging import initialize_cli_logging
-from utils.db.helpers import clone_table, load_query, merge_event_delta_table_into
-from utils.helpers import post_to_mattermost
+from utils.db.helpers import clone_table, merge_event_delta_table_into
+from utils.db.service import post_query_results
 
 initialize_cli_logging(logging.INFO, 'stderr')
 
@@ -113,32 +113,34 @@ def merge(
 
 
 @snowflake.group()
-@click.pass_context
 def post_query():
     pass
 
 
 @post_query.command()
 @click.pass_context
-def feedback(ctx: click.Context, url: str):
+@click.argument('url', type=str)
+@click.argument('channel', type=str)
+def feedback(ctx: click.Context, url: str, channel: str):
     with ctx.obj['engine'].begin() as conn, conn.begin():
-        df = load_query(
+        post_query_results(
             conn,
             '''
-        SELECT
-            feedback
-            , rating
-            , page_path
-            , ua_browser_family
-            , ua_os_family
-            , geolocated_country_name
-        FROM "REPORTS_DOCS".rpt_docs_feedback
-        WHERE timestamp::date >= current_date() - 7 AND timestamp::date <= current_date() - 1 
-        ORDER BY timestamp DESC
-        ''',
-        )
-        post_to_mattermost(
-            url, 'mattermost-documentation-feedback', df, ['Feedback', 'Rating', 'Path', 'Browser', 'OS', 'Country']
+                SELECT
+                    to_date(timestamp) as date
+                    , feedback
+                    , rating
+                    , page_path
+                    , ua_browser_family
+                    , ua_os_family
+                    , geolocated_country_name
+                FROM "REPORTS_DOCS".rpt_docs_feedback
+                WHERE timestamp::date >= current_date() - 7 AND timestamp::date <= current_date() - 1
+                ORDER BY timestamp DESC
+            ''',
+            ['Date', 'Feedback', 'Rating', 'Path', 'Browser', 'OS', 'Country'],
+            url,
+            channel,
         )
 
 
