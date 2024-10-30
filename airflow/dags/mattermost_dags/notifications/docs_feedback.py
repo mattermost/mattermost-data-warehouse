@@ -68,4 +68,4 @@ def docs_feedback():
     post_docs_feedback
 
 
-docs_feedback()
+dag = docs_feedback()
