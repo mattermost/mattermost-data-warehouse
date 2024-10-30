@@ -5,6 +5,7 @@ import click
 from utils.cli.context import snowflake_engine_context
 from utils.cli.logging import initialize_cli_logging
 from utils.db.helpers import clone_table, merge_event_delta_table_into
+from utils.db.service import post_query_results
 
 initialize_cli_logging(logging.INFO, 'stderr')
 
@@ -108,6 +109,39 @@ def merge(
             delta_table_schema,
             delta_table,
             dedup_prune_days=dedup_prune_days,
+        )
+
+
+@snowflake.group()
+def post_query():
+    pass
+
+
+@post_query.command()
+@click.pass_context
+@click.argument('url', type=str)
+@click.argument('channel', type=str)
+def feedback(ctx: click.Context, url: str, channel: str):
+    with ctx.obj['engine'].begin() as conn, conn.begin():
+        post_query_results(
+            conn,
+            '''
+                SELECT
+                    to_date(timestamp) as date
+                    , COALESCE(feedback, 'No feedback') as feedback
+                    , rating
+                    , page_path
+                    , ua_browser_family
+                    , ua_os_family
+                    , geolocated_country_name
+                FROM "REPORTS_DOCS".rpt_docs_feedback
+                WHERE
+                    timestamp::date >= current_date() - 7 AND timestamp::date <= current_date() - 1
+                ORDER BY timestamp DESC
+            ''',
+            ['Date', 'Feedback', 'Rating', 'Path', 'Browser', 'OS', 'Country'],
+            url,
+            channel,
         )
 
 

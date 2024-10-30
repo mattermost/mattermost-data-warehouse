@@ -319,3 +319,10 @@ def merge_event_delta_table_into(
     # Workaround for https://github.com/snowflakedb/snowflake-sqlalchemy/issues/536
     stmt = text(merge.__repr__()).bindparams(first_duplicate_date=first_duplicate_date)
     conn.execute(stmt)
+
+
+def load_query(conn: Connection, query: str) -> pd.DataFrame:
+    """
+    Loads a query into a DataFrame.
+    """
+    return pd.read_sql(query, conn)

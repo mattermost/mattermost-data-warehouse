@@ -2,6 +2,7 @@ from contextlib import contextmanager
 from datetime import datetime, timezone
 from textwrap import dedent
 
+import pandas as pd
 import pytest
 from mock.mock import call
 
@@ -9,6 +10,7 @@ from utils.db.helpers import (
     TableStats,
     clone_table,
     get_table_stats_for_schema,
+    load_query,
     load_table_definition,
     merge_event_delta_table_into,
     move_table,
@@ -363,3 +365,9 @@ def test_should_add_new_columns_and_merge_table(mocker, base_table, delta_table_
 
     # THEN: expect the merge statement to have the correct parameters
     assert mock_exec.call_args[0][0].compile().params == {"first_duplicate_date": "2022-12-21T23:55:59"}
+
+
+def test_load_query(sqlalchemy_memory_engine, test_data):
+    with sqlalchemy_memory_engine.connect() as conn, conn.begin():
+        df = load_query(conn, "SELECT id, title FROM books")
+        pd.testing.assert_frame_equal(df, test_data)
