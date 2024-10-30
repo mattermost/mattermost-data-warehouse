@@ -142,6 +142,7 @@ def feedback(ctx: click.Context, url: str, channel: str):
             ['Date', 'Feedback', 'Rating', 'Path', 'Browser', 'OS', 'Country'],
             url,
             channel,
+            'There were no reviews this week.',
         )
 
 
