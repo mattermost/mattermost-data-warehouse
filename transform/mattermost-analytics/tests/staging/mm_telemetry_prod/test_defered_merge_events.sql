@@ -17,5 +17,5 @@ select
 from
     base_table cross join delta_table
 where
-    dateadd(day, -2, base_table.last_received_at) > delta_table.first_received_at
+    dateadd(day, -{{ var('base_table_overlap_days') }}, base_table.last_received_at) > delta_table.first_received_at
 
