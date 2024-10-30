@@ -20,5 +20,6 @@ where
 {% if is_incremental() %}
     received_at >= (select max(received_at) from {{ this }})
 {% else %}
-    received_at >= (select max(received_at) from {{ source('rudder_support', 'base_events') }})
+    -- Add buffer for late arriving events.
+    received_at >= (select dateadd(day, -2, max(received_at)) from {{ source('rudder_support', 'base_events') }})
 {% endif %}
