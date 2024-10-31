@@ -18,14 +18,14 @@ renamed as (
         , context_ip as server_ip
 
         , allow_cookies_for_subdomains
-        , allow_edit_post                      as allow_edit_post_service
+        , allow_edit_post                              as allow_edit_post_service
         , allow_persistent_notifications
         , allow_persistent_notifications_for_guests
         , allow_synced_drafts
         , close_unused_direct_messages
         , cluster_log_timeout_milliseconds
         , collapsed_threads
-        , connection_security                  as connection_security_service
+        , connection_security                          as connection_security_service
         , cors_allow_credentials
         , cors_debug
         , custom_cert_header
@@ -33,32 +33,31 @@ renamed as (
         , developer_flags
         , disable_bots_when_owner_is_deactivated
         , disable_legacy_mfa
-        , elable_multifactor_authentication
         , enable_api_channel_deletion
         , enable_api_post_deletion
         , enable_api_team_deletion
         , enable_api_trigger_admin_notification
         , enable_api_user_deletion
         , enable_bot_account_creation
-        , enable_channel_viewed_messages       as enable_channel_viewed_messages_service
-        , enable_commands                      as enable_commands_service
-        , enable_custom_emoji                  as enable_custom_emoji_service
-        , enable_developer                     as enable_developer_service
+        , enable_channel_viewed_messages               as enable_channel_viewed_messages_service
+        , enable_commands                              as enable_commands_service
+        , enable_custom_emoji                          as enable_custom_emoji_service
+        , enable_developer                             as enable_developer_service
         , enable_email_invitations
-        , enable_emoji_picker                  as enable_emoji_picker_service
+        , enable_emoji_picker                          as enable_emoji_picker_service
         , enable_file_search
         , enable_gif_picker
-        , enable_incoming_webhooks             as enable_incoming_webhooks_service
-        , enable_insecure_outgoing_connections as enable_insecure_outgoing_connections_service
-        , enable_latex
-        , enable_latez
+        , enable_incoming_webhooks                     as enable_incoming_webhooks_service
+        , enable_insecure_outgoing_connections         as enable_insecure_outgoing_connections_service
+        , coalesce(enable_latex, enable_latez)         as enable_latex
         , enable_legacy_sidebar
         , enable_link_previews
         , enable_local_mode
-        , enable_multifactor_authentication    as enable_multifactor_authentication_service
-        , enable_oauth_service_provider        as enable_oauth_service_provider_service
+        , coalesce(elable_multifactor_authentication, 
+                   enable_multifactor_authentication)  as enable_multifactor_authentication_service
+        , enable_oauth_service_provider                as enable_oauth_service_provider_service
         , enable_onboarding_flow
-        , enable_only_admin_integrations       as enable_only_admin_integrations_service
+        , enable_only_admin_integrations               as enable_only_admin_integrations_service
         , enable_opentracing
         , enable_outgoing_oauth_connections
         , enable_outgoing_webhooks
@@ -74,7 +73,7 @@ renamed as (
         , enable_user_access_tokens
         , enable_user_statuses
         , enable_user_typing_messages
-        , enforce_multifactor_authentication   as enforce_multifactor_authentication_service
+        , enforce_multifactor_authentication           as enforce_multifactor_authentication_service
         , experimental_channel_organization
         , experimental_channel_sidebar_organization
         , experimental_data_prefetch
