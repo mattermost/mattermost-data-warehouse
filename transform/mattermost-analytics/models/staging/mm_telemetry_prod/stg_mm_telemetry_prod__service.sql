@@ -58,6 +58,7 @@ renamed as (
         , enable_oauth_service_provider                as enable_oauth_service_provider_service
         , enable_onboarding_flow
         , enable_only_admin_integrations               as enable_only_admin_integrations_service
+
         , enable_opentracing
         , enable_outgoing_oauth_connections
         , enable_outgoing_webhooks

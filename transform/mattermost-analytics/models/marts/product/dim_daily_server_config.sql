@@ -1,3 +1,7 @@
+{{ config(
+    tags=["disabled"]
+) }}
+
 with int_config_oauth as (
     select
         server_id

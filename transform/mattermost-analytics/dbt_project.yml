@@ -84,6 +84,9 @@ models:
     reports:
       +materialized: table
       tags: ['reports']
+      mattermost-docs:
+        schema: reports_docs
+        tags: [ 'nightly', 'product' ]
       product:
         schema: reports_product
         tags: [ 'nightly', 'product' ]
@@ -244,6 +247,9 @@ vars:
     - "total_duration"
     - "total_size"
     - "user_actual_role"
+
+  # Deferred merge configuration
+  base_table_overlap_days: 2
 
 on-run-start:
   -  '{{ create_parse_qs_udf()}}'

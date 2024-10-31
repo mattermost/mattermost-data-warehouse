@@ -1,17 +1,7 @@
 from datetime import datetime, timedelta
 
 from mattermost_dags.airflow_utils import MATTERMOST_DATAWAREHOUSE_IMAGE, pod_defaults, pod_env_vars, send_alert
-from mattermost_dags.kube_secrets import (
-    DBT_CLOUD_API_ACCOUNT_ID,
-    DBT_CLOUD_API_KEY,
-    SNOWFLAKE_ACCOUNT,
-    SNOWFLAKE_PASSWORD,
-    SNOWFLAKE_TRANSFORM_ROLE,
-    SNOWFLAKE_TRANSFORM_SCHEMA,
-    SNOWFLAKE_TRANSFORM_WAREHOUSE,
-    SNOWFLAKE_USER,
-    SSH_KEY,
-)
+from mattermost_dags.kube_secrets import DBT_CLOUD_API_ACCOUNT_ID, DBT_CLOUD_API_KEY
 
 from airflow import DAG
 from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
@@ -49,13 +39,6 @@ dbt_run_cloud_mattermost_analytics_hourly = KubernetesPodOperator(
     secrets=[
         DBT_CLOUD_API_ACCOUNT_ID,
         DBT_CLOUD_API_KEY,
-        SNOWFLAKE_ACCOUNT,
-        SNOWFLAKE_USER,
-        SNOWFLAKE_PASSWORD,
-        SNOWFLAKE_TRANSFORM_ROLE,
-        SNOWFLAKE_TRANSFORM_WAREHOUSE,
-        SNOWFLAKE_TRANSFORM_SCHEMA,
-        SSH_KEY,
     ],
     env_vars=env_vars,
     arguments=["python -m  utils.run_dbt_cloud_job 215330 \"Mattermost Analytics DBT hourly\""],
