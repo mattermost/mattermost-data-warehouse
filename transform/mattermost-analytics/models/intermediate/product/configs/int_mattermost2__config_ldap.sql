@@ -15,7 +15,7 @@ select
     from {{ ref('stg_mattermost2__ldap') }} tmp
     where
     -- Exclude items with missing timestamps
-        and timestamp is not null     
+       timestamp is not null     
 {% if is_incremental() %}
     -- this filter will only be applied on an incremental run
     and received_at >= (SELECT max(received_at) FROM {{ this }})
