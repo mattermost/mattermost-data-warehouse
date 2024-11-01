@@ -254,7 +254,7 @@ select event_id
                version_com_mattermost_plugin_channel_export)                     as version_channel_export
     , coalesce(version_comgithubmattermostplugincircleci,
                version_com_github_mattermost_plugin_circleci)                    as version_circleci
-    , confluence(version_commattermostconfluence,
+    , coalesce(version_commattermostconfluence,
                  version_com_mattermost_confluence)                              as version_confluence
     , coalesce(version_commattermostcustomattributes,
                version_com_mattermost_custom_attributes,
