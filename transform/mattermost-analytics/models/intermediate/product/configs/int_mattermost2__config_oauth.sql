@@ -12,7 +12,7 @@ select
      {{ dbt_utils.star(ref('stg_mattermost2__oauth')) }}
      , cast(received_at AS date) AS received_at_date
      , server_id is not null as has_segment_telemetry_data
-    from {{ ref('stg_mattermost2_oauth') }} tmp
+    from {{ ref('stg_mattermost2__oauth') }} tmp
     where
     -- Exclude items with missing timestamps
         and timestamp is not null     

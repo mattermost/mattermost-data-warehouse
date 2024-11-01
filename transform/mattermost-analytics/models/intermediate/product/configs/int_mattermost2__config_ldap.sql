@@ -12,7 +12,7 @@ select
      {{ dbt_utils.star(ref('stg_mattermost2__ldap')) }}
      , cast(received_at AS date) AS received_at_date
      , server_id is not null as has_segment_telemetry_data
-    from {{ ref('stg_mattermost2_ldap') }} tmp
+    from {{ ref('stg_mattermost2__ldap') }} tmp
     where
     -- Exclude items with missing timestamps
         and timestamp is not null     
