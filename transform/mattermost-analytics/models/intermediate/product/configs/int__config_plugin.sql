@@ -85,6 +85,7 @@ select event_id
     , version_custom_user_attributes
     , null as version_diceroller
     , null as version_digitalocean
+    , null as version_focalboard
     , null as version_giphy
     , version_github
     , version_gitlab
@@ -95,7 +96,7 @@ select event_id
     , null as version_jespino_recommend
     , version_jira
     , null as version_jitsi
-    , null as version_materpoll
+    , null as version_matterpoll
     , null as version_mattermost_agenda
     , null as version_mattermost_apps
     , null as version_mattermost_azure_devops
@@ -111,6 +112,7 @@ select event_id
     , version_nps
     , null as version_playbooks
     , null as version_set_default_theme
+    , null as version_skype4business
     , null as version_todo
     , version_webex
     , version_welcome_bot
@@ -290,7 +292,7 @@ select event_id
     , version_com_mattermost_calls                                               as version_mattermost_calls
     , version_mattermost_plugin_hackerone                                        as version_mattermost_hackerone
     , coalesce(version_commattermostmsteamsmeetings,
-               version_com_mattermost_msteamsmeetings)                           as version_mattermost_ms_teams_meetings
+               version_com_mattermost_msteamsmeetings)                           as version_mattermost_msteams_meetings
     , version_com_mattermost_msteams_sync                                        as version_mattermost_msteams_sync
     , coalesce(version_mattermostprofanityfilter, 
                version_mattermost_profanity_filter)                              as version_mattermost_profanity_filter
