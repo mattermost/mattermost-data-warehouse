@@ -15,7 +15,7 @@ renamed as (
 
         , allow_insecure_download_url
         , automatic_prepackaged_plugins
-        , enable as enable_plugin
+        , enable         as enable_plugin
         , enable_antivirus
         , enable_autolink
         , enable_aws_sns
