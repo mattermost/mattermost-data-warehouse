@@ -40,7 +40,7 @@ select event_id
     , null as enable_incident_management
     , null as enable_incident_response
     , enable_jenkins
-    , enable_jespino_recommend
+    , null as enable_jespino_recommend
     , enable_jira
     , enable_jitsi
     , enable_marketplace
