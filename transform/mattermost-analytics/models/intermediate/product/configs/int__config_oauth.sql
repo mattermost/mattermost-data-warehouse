@@ -50,8 +50,8 @@ select event_id
     , is_openid_gitlab_enabled
     , is_openid_office365_enabled
 
-    , context_library_version
     , context_library_name
+    , context_library_version
     , sent_at
     , original_timestamp
 from {{ ref('int_mm_telemetry_prod__config_oauth') }}

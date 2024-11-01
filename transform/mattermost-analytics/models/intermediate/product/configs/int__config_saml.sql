@@ -39,7 +39,6 @@ select event_id
     , sign_request
     , verify_saml
 
-    -- Metadata from Segment
     , context_library_name
     , context_library_version
     , sent_at

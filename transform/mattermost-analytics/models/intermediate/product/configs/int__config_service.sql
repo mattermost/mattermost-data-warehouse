@@ -137,7 +137,6 @@ select event_id
     , websocket_url
     , web_server_mode
 
-    -- Metadata from Segment
     , context_library_name
     , context_library_version
     , sent_at

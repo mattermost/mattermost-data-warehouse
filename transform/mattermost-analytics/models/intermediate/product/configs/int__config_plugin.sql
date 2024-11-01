@@ -116,7 +116,6 @@ select event_id
     , version_welcome_bot
     , version_zoom
 
-    -- Metadata from Segment
     , context_library_name
     , context_library_version
     , sent_at

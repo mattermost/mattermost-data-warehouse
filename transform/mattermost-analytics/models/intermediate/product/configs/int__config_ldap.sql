@@ -42,7 +42,6 @@ select event_id
     , skip_certificate_verification
     , sync_interval_minutes
 
-    -- Metadata from Segment
     , context_library_name
     , context_library_version
     , sent_at
