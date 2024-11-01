@@ -114,7 +114,7 @@ select event_id
     , context_library_version
     , sent_at
     , original_timestamp
-from {{ ref('int_mattermost2__config_saml') }}
+from {{ ref('int_mattermost2__config_plugin') }}
 union
 select event_id
     , event_table
@@ -314,5 +314,5 @@ select event_id
     , context_library_version
     , sent_at
     , original_timestamp
-from {{ ref('int_mm_telemetry_prod__config_saml') }}
+from {{ ref('int_mm_telemetry_prod__config_plugin') }}
 
