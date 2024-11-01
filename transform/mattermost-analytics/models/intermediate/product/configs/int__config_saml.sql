@@ -12,6 +12,10 @@ select event_id
     , received_at
     , timestamp
 
+    , null as installation_id
+    , null as anonymous_id
+    , null as server_ip
+
     , enable_saml 
     , enable_admin_attribute
     , enable_sync_with_ldap
@@ -52,7 +56,6 @@ select event_id
     , received_at
     , timestamp
 
-     -- Server info
     , installation_id
     , anonymous_id
     , server_ip

@@ -12,6 +12,10 @@ select event_id
     , received_at
     , timestamp
 
+    , null as installation_id
+    , null as anonymous_id
+    , null as server_ip
+    
     , connection_security_ldap
     , enable_ldap
     , enable_admin_filter
