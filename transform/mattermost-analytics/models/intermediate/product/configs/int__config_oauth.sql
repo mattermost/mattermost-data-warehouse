@@ -1,3 +1,10 @@
+{{
+    config({
+        "materialized": "table",
+        "snowflake_warehouse": "transform_xs"
+    })
+}}
+
 select event_id
     , event_table
     , event_name
