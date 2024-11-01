@@ -41,7 +41,6 @@ select event_id
     , anonymous_id
     , server_ip
 
-    -- OAuth information
     , is_office365_enabled
     , is_google_enabled
     , is_gitlab_enabled
