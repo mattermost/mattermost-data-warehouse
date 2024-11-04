@@ -193,7 +193,7 @@ select
     , ps.version_jespino_recommend
     , ps.version_jira
     , ps.version_jitsi
-    , ps.version_materpoll
+    , ps.version_matterpoll
     , ps.version_mattermost_agenda
     , ps.version_mattermost_apps
     , ps.version_mattermost_azure_devops

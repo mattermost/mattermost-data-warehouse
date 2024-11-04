@@ -447,7 +447,7 @@ models:
       - name: version_jitsi
       - name: version_skype4business
       - name: version_mattermostprofanityfilter
-      - name: version_materpoll
+      - name: version_matterpoll
       - name: version_comgithubjespinorecommend
       - name: version_agenda        
       - name: version_msteams_meetings
