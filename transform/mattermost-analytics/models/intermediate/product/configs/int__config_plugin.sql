@@ -119,7 +119,7 @@ select event_id
     , context_library_version
     , sent_at
     , original_timestamp
-    , has_segment_telemetry
+    , has_segment_telemetry_data
 from {{ ref('int_mattermost2__config_plugin') }}
 union
 select event_id
@@ -317,5 +317,5 @@ select event_id
     , context_library_version
     , sent_at
     , original_timestamp
-    , has_rudderstack_telemetry
+    , has_rudderstack_telemetry_data
 from {{ ref('int_mm_telemetry_prod__config_plugin') }}
