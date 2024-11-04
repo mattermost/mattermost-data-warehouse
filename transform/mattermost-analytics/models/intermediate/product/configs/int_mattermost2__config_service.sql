@@ -14,7 +14,8 @@ select
      , server_id is not null as has_segment_telemetry_data
     from {{ ref('stg_mattermost2__service') }} tmp
     where
+    received_at <= CURRENT_TIMESTAMP
 {% if is_incremental() %}
     -- this filter will only be applied on an incremental run
-    received_at >= (SELECT max(received_at) FROM {{ this }})
+    and received_at >= (SELECT max(received_at) FROM {{ this }})
 {% endif %}
