@@ -42,7 +42,7 @@ select event_id
     , enable_jira
     , enable_jitsi
     , enable_marketplace
-    , null as enable_materpoll
+    , null as enable_matterpoll
     , null as enable_mattermost_agenda
     , null as enable_mattermost_apps
     , null as enable_mattermost_azure_devops
@@ -189,7 +189,7 @@ select event_id
     , enable_jitsi
     , enable_marketplace
     , coalesce(enable_comgithubmatterpollmatterpoll,
-               enable_com_github_matterpoll_matterpoll) as enable_materpoll
+               enable_com_github_matterpoll_matterpoll) as enable_matterpoll
     , coalesce(enable_com_mattermost_agenda,
                enable_commattermostagenda) as enable_mattermost_agenda
     , enable_com_mattermost_apps as enable_mattermost_apps

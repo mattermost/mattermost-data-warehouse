@@ -142,7 +142,7 @@ select
     , ps.enable_jira
     , ps.enable_jitsi
     , ps.enable_marketplace
-    , ps.enable_materpoll
+    , ps.enable_matterpoll
     , ps.enable_mattermost_agenda
     , ps.enable_mattermost_apps
     , ps.enable_mattermost_azure_devops
