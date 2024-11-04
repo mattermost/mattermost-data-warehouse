@@ -1,3 +1,10 @@
+{{
+    config({
+        "materialized": "table",
+        "snowflake_warehouse": "transform_l"
+    })
+}}
+
 with int_config_oauth as (
     select
         server_id
