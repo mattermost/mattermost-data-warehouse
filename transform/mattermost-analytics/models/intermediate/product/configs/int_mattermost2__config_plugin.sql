@@ -14,9 +14,7 @@ select
      , server_id is not null as has_segment_telemetry_data
     from {{ ref('stg_mattermost2__plugin') }} tmp
     where
-    -- Exclude items with missing timestamps
-       timestamp is not null     
 {% if is_incremental() %}
     -- this filter will only be applied on an incremental run
-    and received_at >= (SELECT max(received_at) FROM {{ this }})
+    received_at >= (SELECT max(received_at) FROM {{ this }})
 {% endif %}
