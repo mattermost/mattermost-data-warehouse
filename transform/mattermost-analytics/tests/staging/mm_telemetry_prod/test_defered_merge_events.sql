@@ -4,7 +4,7 @@
     })
 }}
 
--- Assert that there's no overlap between base and delta table for more than the last 2 days.
+-- Assert that there's no overlap between base and delta table.
 -- Overlap should be addressed by the post-hook of the delta table.
 with base_table as (
     select max(received_at) as last_received_at from {{ source('rudder_support', 'base_events') }}
