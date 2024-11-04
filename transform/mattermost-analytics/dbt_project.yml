@@ -248,8 +248,6 @@ vars:
     - "total_size"
     - "user_actual_role"
 
-  # Deferred merge configuration
-  base_table_overlap_days: 2
 
 on-run-start:
   -  '{{ create_parse_qs_udf()}}'

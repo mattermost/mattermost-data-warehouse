@@ -21,5 +21,5 @@ where
     received_at >= (select max(received_at) from {{ this }})
 {% else %}
     -- Add buffer for late arriving events.
-    received_at >= (select dateadd(day, -{{ var('base_table_overlap_days') }}, max(received_at)) from {{ source('rudder_support', 'base_events') }})
+    received_at >= (select max(received_at) from {{ source('rudder_support', 'base_events') }})
 {% endif %}
