@@ -320,6 +320,14 @@ def merge_event_delta_table_into(
     stmt = text(merge.__repr__()).bindparams(first_duplicate_date=first_duplicate_date)
     conn.execute(stmt)
 
+    # Delete rows from delta table that were merged
+    conn.execute(
+        text(
+            f'DELETE FROM {delta_schema}.{delta_table} '
+            f'WHERE id IN (SELECT id FROM {base_schema}.{base_table} WHERE received_at >= :first_duplicate_date)'
+        ).bindparams(first_duplicate_date=first_duplicate_date)
+    )
+
 
 def load_query(conn: Connection, query: str) -> pd.DataFrame:
     """

@@ -282,7 +282,7 @@ def test_should_merge_table_with_same_structure(mocker, base_table, delta_table_
 
     # THEN: expect a merge statement according to the spec of the tables
     assert (
-        mock_exec.call_args[0][0].text == 'MERGE INTO base_schema.base_table USING delta_schema.delta_table '
+        mock_exec.call_args_list[1].args[0].text == 'MERGE INTO base_schema.base_table USING delta_schema.delta_table '
         'ON base_schema.base_table.id = delta_schema.delta_table.id '
         'AND base_schema.base_table.received_at >= :first_duplicate_date '
         'WHEN MATCHED THEN UPDATE SET after = base_table.after '
@@ -291,7 +291,15 @@ def test_should_merge_table_with_same_structure(mocker, base_table, delta_table_
     )
 
     # THEN: expect the merge statement to have the correct parameters
-    assert mock_exec.call_args[0][0].compile().params == {"first_duplicate_date": "2022-12-21T23:55:59"}
+    assert mock_exec.call_args_list[1].args[0].compile().params == {"first_duplicate_date": "2022-12-21T23:55:59"}
+    # THEN: expect a delete statement
+    assert (
+        mock_exec.call_args_list[2].args[0].text == 'DELETE FROM delta_schema.delta_table '
+        'WHERE id IN (SELECT id FROM base_schema.base_table WHERE received_at >= :first_duplicate_date)'
+    )
+
+    # THEN: expect the delete statement to have the correct parameters
+    assert mock_exec.call_args_list[2].args[0].compile().params == {"first_duplicate_date": "2022-12-21T23:55:59"}
 
 
 def test_should_not_merge_table_if_delta_empty(mocker, base_table, delta_table_1):
@@ -354,7 +362,7 @@ def test_should_add_new_columns_and_merge_table(mocker, base_table, delta_table_
 
     # THEN: expect a merge statement according to the spec of the tables
     assert (
-        mock_exec.call_args[0][0].text == 'MERGE INTO base_schema.base_table USING delta_schema.delta_table '
+        mock_exec.call_args_list[2].args[0].text == 'MERGE INTO base_schema.base_table USING delta_schema.delta_table '
         'ON base_schema.base_table.id = delta_schema.delta_table.id '
         'AND base_schema.base_table.received_at >= :first_duplicate_date '
         'WHEN MATCHED THEN UPDATE SET after = base_table.after '
@@ -364,7 +372,16 @@ def test_should_add_new_columns_and_merge_table(mocker, base_table, delta_table_
     )
 
     # THEN: expect the merge statement to have the correct parameters
-    assert mock_exec.call_args[0][0].compile().params == {"first_duplicate_date": "2022-12-21T23:55:59"}
+    assert mock_exec.call_args_list[2].args[0].compile().params == {"first_duplicate_date": "2022-12-21T23:55:59"}
+
+    # THEN: expect a delete statement
+    assert (
+        mock_exec.call_args_list[3].args[0].text == 'DELETE FROM delta_schema.delta_table '
+        'WHERE id IN (SELECT id FROM base_schema.base_table WHERE received_at >= :first_duplicate_date)'
+    )
+
+    # THEN: expect the delete statement to have the correct parameters
+    assert mock_exec.call_args_list[3].args[0].compile().params == {"first_duplicate_date": "2022-12-21T23:55:59"}
 
 
 def test_load_query(sqlalchemy_memory_engine, test_data):
