@@ -246,10 +246,12 @@ roles:
                     - snowflake_sample_data
             schemas:
                 read:
+                    - analytics.mart_common
                     - analytics.mart_product
                     - snowflake_sample_data.*
             tables:
                 read:
+                    - analytics.mart_common.*
                     - analytics.mart_product.*
                     - snowflake_sample_data.*.*
 
