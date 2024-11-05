@@ -294,7 +294,7 @@ def test_should_merge_table_with_same_structure(mocker, base_table, delta_table_
     assert mock_exec.call_args_list[1].args[0].compile().params == {"first_duplicate_date": "2022-12-21T23:55:59"}
     # THEN: expect a delete statement
     assert (
-        mock_exec.call_args_list[2].args[0].text == 'DELETE FROM delta_schema.delta_table ' \
+        mock_exec.call_args_list[2].args[0].text == 'DELETE FROM delta_schema.delta_table '
         'WHERE id IN (SELECT id FROM base_schema.base_table WHERE received_at >= :first_duplicate_date)'
     )
 
@@ -376,7 +376,7 @@ def test_should_add_new_columns_and_merge_table(mocker, base_table, delta_table_
 
     # THEN: expect a delete statement
     assert (
-        mock_exec.call_args_list[3].args[0].text == 'DELETE FROM delta_schema.delta_table ' \
+        mock_exec.call_args_list[3].args[0].text == 'DELETE FROM delta_schema.delta_table '
         'WHERE id IN (SELECT id FROM base_schema.base_table WHERE received_at >= :first_duplicate_date)'
     )
 
