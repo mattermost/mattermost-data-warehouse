@@ -248,6 +248,7 @@ vars:
     - "total_size"
     - "user_actual_role"
 
+
 on-run-start:
   -  '{{ create_parse_qs_udf()}}'
   -  '{{ create_extract_license_data_udf()}}'

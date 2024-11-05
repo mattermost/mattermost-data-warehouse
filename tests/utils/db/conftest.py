@@ -1,3 +1,4 @@
+import pandas as pd
 import pytest
 from sqlalchemy import VARCHAR, Column, DateTime, Integer, MetaData, Table
 
@@ -44,3 +45,12 @@ def delta_table_2():
         Column('extra', VARCHAR(255)),
         Column('column_b', Integer()),
     )
+
+
+@pytest.fixture
+def test_data(sqlalchemy_memory_engine):
+    with sqlalchemy_memory_engine.connect() as conn, conn.begin():
+        df = pd.DataFrame({'id': [1, 2], 'title': ['The Great Gatsby', 'The Lord of the Rings']})
+        df.to_sql('books', conn)
+
+        return df
