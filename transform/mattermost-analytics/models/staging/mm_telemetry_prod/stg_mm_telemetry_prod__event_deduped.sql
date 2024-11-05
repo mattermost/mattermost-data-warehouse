@@ -1,4 +1,4 @@
-with events_deduped as (z
+with events_deduped as (
     select
         {{ dbt_utils.star(from=source('rudder_support', 'base_events')) }}
     from
