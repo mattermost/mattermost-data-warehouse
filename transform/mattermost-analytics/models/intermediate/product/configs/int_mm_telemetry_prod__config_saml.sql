@@ -11,7 +11,7 @@
 select 
      {{ dbt_utils.star(ref('stg_mm_telemetry_prod__saml')) }}
      , cast(received_at AS date) AS received_at_date
-     , server_id is not null as has_rudderstack_telemetry_data
+     , true as has_rudderstack_telemetry_data
     from {{ ref('stg_mm_telemetry_prod__saml') }} tmp
     where
     received_at <= CURRENT_TIMESTAMP
