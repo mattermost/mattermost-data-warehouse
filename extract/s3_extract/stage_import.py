@@ -54,33 +54,6 @@ def diagnostics_import(import_date):
         )
 
 
-def push_proxy_import(log_type, import_date):
-    """
-    Function to load data from a previously set up Snowflake stage
-    for push proxy data from AWS ELB
-
-    @log_type: Str with valid values of US, TEST, or DE
-    @import_date: Date with format "%Y/%m/%d"
-    """
-    loc = PUSH_PROXY_LOCATIONS[log_type]
-    aws_account_id = os.getenv('AWS_ACCOUNT_ID')
-    az = loc['az']
-
-    extract_from_stage(
-        loc['table'],
-        loc['stage'],
-        'push_proxy',
-        get_path(aws_account_id, az),
-        get_push_proxy_pattern(import_date),
-        os.environ.copy(),
-    )
-
-
-def get_push_proxy_pattern(import_date):
-    date = import_date.replace('/', '\\/')
-    return f".*{date}\\/.*"
-
-
 def get_diagnostics_pattern(loc, import_date):
     return f".*{loc}.{import_date}.*"
 
