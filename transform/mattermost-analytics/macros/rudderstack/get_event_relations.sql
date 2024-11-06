@@ -13,13 +13,21 @@
 {% endmacro %}
 
 
-{% macro get_event_relations(schema_pattern, min_rows=100, database=target.database) -%}
+{% macro get_event_relations(schema_pattern, min_rows=100, database=target.database), exclude=[] -%}
     -- Based on https://github.com/dbt-labs/dbt-utils/blob/main/macros/sql/get_relations_by_pattern.sql.
     {%- call statement('get_tables', fetch_result=True) %}
 
         {{ get_potential_event_tables(schema_pattern, min_rows=min_rows, database=database) }}
 
     {%- endcall -%}
+
+    {%- set all_excludes = [] -%}
+
+    {%- if exclude -%}
+        {%- for exc in exclude -%}
+            {%- do all_excludes.append(exc | upper) -%}
+        {%- endfor -%}
+    {%- endif -%}
 
     {%- set table_list = load_result('get_tables') -%}
     {%-
@@ -29,7 +37,9 @@
     {%- if table_list and table_list['table'] -%}
         {%- set tbl_relations = [] -%}
         {%- for row in table_list['table'] -%}
-            {%- if row.table_name.upper() not in rudderstack_tables -%}
+            {%- if exclude and table_list['table'] | upper in all_excludes -%}
+
+            {%- elif row.table_name.upper() not in rudderstack_tables -%}
                 {%- set tbl_relation = api.Relation.create(
                     database=database,
                     schema=row.table_schema,
