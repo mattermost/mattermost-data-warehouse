@@ -13,7 +13,7 @@
 {% endmacro %}
 
 
-{% macro get_event_relations(schema_pattern, min_rows=100, database=target.database), exclude=[] -%}
+{% macro get_event_relations(schema_pattern, min_rows=100, database=target.database, exclude=[]) -%}
     -- Based on https://github.com/dbt-labs/dbt-utils/blob/main/macros/sql/get_relations_by_pattern.sql.
     {%- call statement('get_tables', fetch_result=True) %}
 
