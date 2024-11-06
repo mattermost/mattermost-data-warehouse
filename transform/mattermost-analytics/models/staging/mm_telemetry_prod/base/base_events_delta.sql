@@ -14,7 +14,7 @@
 with time_thresholds as (
     -- Last date of the base table will be used if (a) it's the first run of the model or (b) the model is incremental
     -- but doesn't contain any rows.
-    select max(received_at) as time_threshold from {{ source('rudder_support', 'base_events') }})
+    select max(received_at) as time_threshold from {{ source('rudder_support', 'base_events') }}
 {% if is_incremental() %}
     -- If model is incremental, also consider the last date of the model itself. If there are rows, then received_at
     -- will be greater than the max value of received at of the base table.
