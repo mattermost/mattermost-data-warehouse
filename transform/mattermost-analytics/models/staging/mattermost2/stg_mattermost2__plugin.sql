@@ -15,7 +15,7 @@ renamed as (
 
         , allow_insecure_download_url
         , automatic_prepackaged_plugins
-        , enable as enable_plugin
+        , enable         as enable_plugin
         , enable_antivirus
         , enable_autolink
         , enable_aws_sns
@@ -58,7 +58,7 @@ renamed as (
         , context_library_name
         , context_library_version
         , sent_at
-        , original_timestamp
+        , try_to_timestamp_ntz(original_timestamp) as original_timestamp
 
         -- Ignored - used by Segment for debugging purposes
         -- , uuid_ts

@@ -66,8 +66,8 @@ renamed as (
         , forward_80_to_443
         , gfycat_api_key
         , gfycat_api_secret
-        , isdefault_allowed_untrusted_internal_connections
-        , isdefault_allowed_untrusted_inteznal_connections
+        , coalesce (isdefault_allowed_untrusted_internal_connections, 
+                    isdefault_allowed_untrusted_inteznal_connections) as isdefault_allowed_untrusted_internal_connections
         , isdefault_allow_cors_from
         , isdefault_cors_exposed_headers
         , isdefault_google_developer_key
@@ -100,7 +100,7 @@ renamed as (
         , context_library_name
         , context_library_version
         , sent_at
-        , original_timestamp
+        , try_to_timestamp_ntz(original_timestamp) as original_timestamp
 
         -- Ignored - used by segment for debugging purposes
         -- , uuid_ts

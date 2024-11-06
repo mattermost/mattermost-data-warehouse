@@ -42,7 +42,7 @@ renamed as (
         , context_library_name
         , context_library_version
         , sent_at
-        , original_timestamp
+        , try_to_timestamp_ntz(original_timestamp) as original_timestamp
 
         -- Ignored - used by segment for debugging purposes
         -- , uuid_ts
