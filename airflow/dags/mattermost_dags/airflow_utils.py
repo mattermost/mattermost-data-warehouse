@@ -51,9 +51,6 @@ pod_env_vars = {
     "SNOWFLAKE_TRANSFORM_DATABASE": "ANALYTICS",
 }
 
-# Warehouse variable declaration
-xs_warehouse = "'{{warehouse_name: transforming_xs}}'"
-
 
 def create_alert_body(context):
     """
