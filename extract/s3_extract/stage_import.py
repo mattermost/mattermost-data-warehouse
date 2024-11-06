@@ -54,11 +54,6 @@ def diagnostics_import(import_date):
         )
 
 
-def get_push_proxy_pattern(import_date):
-    date = import_date.replace('/', '\\/')
-    return f".*{date}\\/.*"
-
-
 def get_diagnostics_pattern(loc, import_date):
     return f".*{loc}.{import_date}.*"
 
