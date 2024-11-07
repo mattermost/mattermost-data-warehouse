@@ -27,5 +27,7 @@ select
 from
     {{ source('mm_telemetry_prod', 'event') }}
 where
+    -- Event received in the past two days
     received_at >= (select dateadd(day, -2, max(time_threshold)) from time_thresholds)
-    and id not in (select id from {{ source('rudder_support', 'base_events') }} where received_at >= (select  dateadd(day, -2, max(time_threshold)) from time_thresholds)
+    -- Event has not bneen merged to the base table
+    and id not in (select id from {{ source('rudder_support', 'base_events') }} where received_at >= (select  dateadd(day, -2, max(time_threshold)) from time_thresholds))
