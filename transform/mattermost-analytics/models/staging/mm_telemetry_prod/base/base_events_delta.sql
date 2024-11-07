@@ -27,4 +27,5 @@ select
 from
     {{ source('mm_telemetry_prod', 'event') }}
 where
-    received_at >= (select max(time_threshold) from time_thresholds)
+    received_at >= (select dateadd(day, -2, max(time_threshold)) from time_thresholds)
+    and id not in (select id from {{ source('rudder_support', 'base_events') }} where received_at >= (select  dateadd(day, -2, max(time_threshold)) from time_thresholds)
