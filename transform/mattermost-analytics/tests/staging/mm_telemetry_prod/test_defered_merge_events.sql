@@ -17,4 +17,4 @@ select
 from
     base_table cross join delta_table
 where
-    base_table.last_received_at > delta_table.first_received_at
+    base_table.last_received_at > dateadd(day, -2, delta_table.first_received_at)
