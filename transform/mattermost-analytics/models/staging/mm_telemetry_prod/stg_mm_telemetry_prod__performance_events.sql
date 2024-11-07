@@ -9,7 +9,7 @@ WITH performance_events AS (
         , timestamp::date as event_date
         , received_at::date as received_at_date
     FROM
-      {{ ref('stg_mm_telemetry_prod__event_deduped') }}
+      {{ ref('base_events_merged') }}
     WHERE CATEGORY = 'performance'
 )
 SELECT * FROM performance_events

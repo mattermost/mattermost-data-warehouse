@@ -4,7 +4,7 @@
 
 {{
     dbt_utils.union_relations(
-        relations=relations + [ref('stg_mm_telemetry_prod__event_deduped')],
+        relations=relations + [ref('base_events_merged')],
         include=get_base_event_columns() + extra_columns,
         source_column_name=None
     )
