@@ -21,7 +21,12 @@
 
     {%- endcall -%}
 
-    {%- set all_excludes = [] -%}
+
+    {%- set table_list = load_result('get_tables') -%}
+    {%-
+        set rudderstack_tables = ['IDENTIFIES', 'USERS', 'TRACKS', 'PAGES', 'SCREENS', 'GROUPS', 'ALIASES', 'RUDDER_DISCARDS']
+    -%}
+    {%- set all_excludes = rudderstack_tables -%}
 
     {%- if exclude -%}
         {%- for exc in exclude -%}
@@ -29,17 +34,10 @@
         {%- endfor -%}
     {%- endif -%}
 
-    {%- set table_list = load_result('get_tables') -%}
-    {%-
-        set rudderstack_tables = ['IDENTIFIES', 'USERS', 'TRACKS', 'PAGES', 'SCREENS', 'GROUPS', 'ALIASES', 'RUDDER_DISCARDS']
-    -%}
-
     {%- if table_list and table_list['table'] -%}
         {%- set tbl_relations = [] -%}
         {%- for row in table_list['table'] -%}
-            {%- if exclude and row.table_name | upper in all_excludes -%}
-
-            {%- elif row.table_name.upper() not in rudderstack_tables -%}
+            {%-lif row.table_name.upper() not in all_excludes -%}
                 {%- set tbl_relation = api.Relation.create(
                     database=database,
                     schema=row.table_schema,
