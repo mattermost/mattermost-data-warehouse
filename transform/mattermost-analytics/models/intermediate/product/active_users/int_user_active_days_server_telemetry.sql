@@ -45,6 +45,7 @@ select
     , true as is_active
     -- Required for incremental loading
     -- Use max to ensure that the most recent received_at_date is used
+>>>>>>> 416f4e84 (Handle late arriving events)
     , max(received_at_date) as received_at_date
     , {{ dbt_utils.pivot('client_type', ['IS_DESKTOP', 'IS_WEBAPP']) }}
     from tmp
