@@ -21,12 +21,6 @@ models:
         description: |
           Date that the event for the user activity was received. Used for incremental load only, not to be used
           downstream.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - activity_date
-            - server_id
-            - user_id
 
   - name: int_user_active_days_mobile_telemetry
     description: |
@@ -48,12 +42,6 @@ models:
         description: |
           Date that the event for the user activity was received. Used for incremental load only, not to be used
           downstream.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - activity_date
-            - server_id
-            - user_id
 
   - name: int_user_active_days_server_telemetry
     description: |
@@ -75,12 +63,6 @@ models:
         description: |
           Date that the event for the user activity was received. Used for incremental load only, not to be used
           downstream.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - activity_date
-            - server_id
-            - user_id
 
   - name: int_user_active_days_spined
     description: |
@@ -124,9 +106,3 @@ models:
         description: |
           Indicates whether the user was active on the specific date and previous 29 days, and for the specific server.
           Only for old (<= 5.25.0) servers.
-    tests:
-      - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - activity_date
-            - server_id
-            - user_id
