@@ -44,10 +44,11 @@ select
     , user_id
     , true as is_active
     -- Required for incremental loading
-    , received_at_date
+    -- Use max to ensure that the most recent received_at_date is used
+    , max(received_at_date) as received_at_date
     , {{ dbt_utils.pivot('client_type', ['IS_DESKTOP', 'IS_WEBAPP']) }}
     from tmp
 where
     activity_date >= '{{ var('telemetry_start_date')}}'
 group by 
-    activity_date, server_id, user_id, received_at_date
+    activity_date, server_id, user_id
