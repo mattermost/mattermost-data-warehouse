@@ -248,11 +248,15 @@ roles:
                 read:
                     - analytics.mart_common
                     - analytics.mart_product
+                    - analytics.mart_release
+                    - analytics.mart_sales
                     - snowflake_sample_data.*
             tables:
                 read:
                     - analytics.mart_common.*
                     - analytics.mart_product.*
+                    - analytics.mart_release.*
+                    - analytics.mart_sales.*
                     - snowflake_sample_data.*.*
 
     # Object Roles
