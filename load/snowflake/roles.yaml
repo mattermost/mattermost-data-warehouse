@@ -259,11 +259,6 @@ roles:
                     - analytics.mart_sales.*
                     - snowflake_sample_data.*.*
 
-    # Object Roles
-
-    # User Roles
-
-
 # Users
 users:
     - airflow:
