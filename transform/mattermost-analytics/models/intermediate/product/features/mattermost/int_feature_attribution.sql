@@ -42,7 +42,7 @@ select
 {% endfor %}
     , not ({{ ' or '.join(feature_mappings.keys()) }}) as unknown_feature
 from
-    {{ ref('stg_mm_telemetry_prod__event') }}
+    {{ ref('stg_mm_telemetry_prod__event_deduped') }}
 where
     -- Exclude items without user info
     user_id is not null
