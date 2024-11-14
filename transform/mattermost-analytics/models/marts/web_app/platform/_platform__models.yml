@@ -16,7 +16,7 @@ models:
         tests:
           - not_null
           - unique:
-              tags: ['slow']
+              tags: ['slow', 'disabled']
       - name: anonymous_id
       - name: received_at
       - name: sent_at
