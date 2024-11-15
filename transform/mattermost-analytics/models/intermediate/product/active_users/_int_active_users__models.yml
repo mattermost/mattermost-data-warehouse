@@ -130,3 +130,4 @@ models:
             - activity_date
             - server_id
             - user_id
+          tags: ['run-on-ci-only']
