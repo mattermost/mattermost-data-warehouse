@@ -15,7 +15,7 @@ select
     , event_id
     , event_name
     , event_type
-    , context_feature_name as feature_name
+    , feature_name
 from
     {{ ref('stg_mm_telemetry_prod__tracks') }}
 where
