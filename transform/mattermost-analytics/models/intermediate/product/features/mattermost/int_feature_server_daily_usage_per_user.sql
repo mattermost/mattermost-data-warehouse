@@ -12,7 +12,7 @@ select
     , server_id
     , user_id
     ,  {{ dbt_utils.pivot(
-          'color',
+          'feature_name',
           dbt_utils.get_column_values(ref('int_server_feature_attribution'), 'feature_name'),
           agg='sum',
           prefix='feature_'
