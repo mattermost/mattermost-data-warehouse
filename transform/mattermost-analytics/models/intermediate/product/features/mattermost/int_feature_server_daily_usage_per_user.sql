@@ -11,13 +11,12 @@ select
     , activity_date
     , server_id
     , user_id
-    ,  {{ dbt_utils.pivot(
+    , {{ dbt_utils.pivot(
           'feature_name',
           dbt_utils.get_column_values(ref('int_server_feature_attribution'), 'feature_name'),
           agg='sum',
-          prefix='feature_'
+          prefix='count_'
       ) }}
-    , count_if(feature_name is null) as count_unknown_features
     , count(event_id) as count_total
 from
     {{ ref('int_server_feature_attribution') }}

@@ -17,6 +17,6 @@ SELECT
      , timestamp      AS timestamp
      , coalesce(context_useragent, context_user_agent) AS context_user_agent
     -- Backfill past events
-    , coalesce(context_feature_name, 'Copilot') as feature_name
+    , coalesce(context_feature_name, 'unknown_features') as feature_name
     , parse_json(coalesce(context_feature_skus, '[]'))::array as feature_skus
 FROM tracks
