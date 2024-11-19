@@ -14,7 +14,6 @@ select
     , user_id
     , event_id
     , event_name
-    , event_type
     , feature_name
 from
     {{ ref('stg_mm_telemetry_prod__server_tracks') }}
