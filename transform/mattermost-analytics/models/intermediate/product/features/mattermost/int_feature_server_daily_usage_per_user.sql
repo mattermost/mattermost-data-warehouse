@@ -25,7 +25,8 @@ select
           agg='sum',
           prefix='count_'
       ) }}
-    , {% for feature in values if feature != 'unknown_features' %}
+    , (
+    {% for feature in values if feature != 'unknown_features' %}
          count_{{feature}}  {%- if not loop.last %} + {% endif -%}
     {% endfor %}
     ) as count_known_features
