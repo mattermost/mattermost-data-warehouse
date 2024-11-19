@@ -14,6 +14,7 @@
 {%-
 set partial_daily_models = {
     ref('int_feature_daily_usage_per_user'): "mattermost",
+    ref('int_feature_server_daily_usage_per_user'): "mattermost_server",
     ref('int_playbooks_daily_usage_per_user'): "playbooks",
     ref('int_calls_daily_usage_per_user'): "calls",
     ref('int_copilot_daily_usage_per_user'): "copilot",
