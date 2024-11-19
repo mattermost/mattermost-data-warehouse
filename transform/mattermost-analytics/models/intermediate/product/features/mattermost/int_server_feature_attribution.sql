@@ -34,3 +34,5 @@ where
     -- TODO: handle late arriving events
     and received_at >= (select max(received_at_date) from {{ this }})
 {% endif %}
+qualify
+    row_number() over (partition by event_id order by timestamp desc) = 1
