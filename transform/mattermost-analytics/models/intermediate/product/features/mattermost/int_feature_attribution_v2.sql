@@ -34,7 +34,7 @@ select
         {%- if rule["PROPERTY_NAME"] and rule["PROPERTY_VALUE"] is not none -%}
             and {{ rule["PROPERTY_NAME"] }} = '{{ rule["PROPERTY_VALUE"] }}'
         {% endif %}
-            then feature
+            then '{{ feature | trim | lower }}'
     {% endfor %}
         else coalesce(feature_name, 'unknown_features')
     end as feature_name
