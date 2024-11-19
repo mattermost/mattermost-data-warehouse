@@ -25,6 +25,10 @@ select
           agg='sum',
           prefix='count_'
       ) }}
+    , {% for feature in values if feature != 'unknown_features' %}
+         count_{{feature}}  {%- if not loop.last %} + {% endif -%}
+    {% endfor %}
+    ) as count_known_features
     , count(event_id) as count_total
 from
     {{ ref('int_server_feature_attribution') }}
