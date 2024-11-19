@@ -20,7 +20,6 @@ select
     , user_id
     , event_id
     , event_name
-    , category
     , event_type
     {% for feature, rules in feature_mappings.items() %}
     , case
