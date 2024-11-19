@@ -1,8 +1,9 @@
 {{config({
-    "materialized": 'incremental',
-    "unique_key": 'id',
+    "materialized": "incremental",
+    "unique_key": "id",
+    "on_schema_change": "append_new_columns",
     "schema": "mattermost",
-    "tags":["nightly"]
+    "tags": ["nightly"]
   })
 }}
 
@@ -42,47 +43,6 @@ min_nps                AS (
                        AND d.date <= current_date
          GROUP BY 1, 2, 3
      ),
-
-     daily_feedback_scores AS (
-    
-        SELECT
-            timestamp::date as date
-          , timestamp::timestamp AS timestamp
-          , id
-          , user_id as server_id
-          , COALESCE(user_actual_id, null) as user_id
-          , feedback
-  	FROM (
-          SELECT ROW_NUMBER() over (PARTITION BY timestamp::DATE, COALESCE(user_actual_id, null) ORDER BY timestamp DESC) AS rownum, *
-          FROM {{ source('mattermost_nps', 'nps_feedback') }}
-          WHERE TIMESTAMP::DATE <= CURRENT_DATE
-            {% if is_incremental() %}
-            AND TIMESTAMP::date >= (SELECT MAX(date) from {{this}})
-            {% endif %}
-      )
-  	where rownum = 1
-    
-    UNION ALL
-    
-        SELECT
-            timestamp::date as date
-          , timestamp::timestamp as timestamp
-          , id
-          , user_id as server_id
-          , COALESCE(user_actual_id, useractualid) as user_id
-          , feedback
-        FROM (
-                SELECT ROW_NUMBER() over (PARTITION BY timestamp::DATE, COALESCE(user_actual_id, useractualid) ORDER BY timestamp DESC) AS rownum, *
-                FROM {{ source('mm_plugin_prod', 'nps_nps_feedback') }} 
-                WHERE TIMESTAMP::DATE <= CURRENT_DATE
-            {% if is_incremental() %}
-            AND TIMESTAMP::date >= (SELECT MAX(date) from {{this}})
-            {% endif %}
-        )
-        WHERE rownum = 1
-    
-), 
-
      max_date_by_month      AS (
          SELECT
              d.date
@@ -131,7 +91,7 @@ min_nps                AS (
                   ELSE 'Promoter' END                                                             AS promoter_type
            , nps.user_create_at::DATE                                                             AS user_created_at
            , nps.server_install_date::DATE                                                        AS server_install_date
-           , LISTAGG(DISTINCT nps.feedback, '; ') WITHIN GROUP (ORDER BY nps.feedback)       AS feedback
+           , LISTAGG(DISTINCT nps.feedback, '; ') WITHIN GROUP (ORDER BY nps.feedback)            AS feedback
            , MAX(nps.timestamp::DATE)                                                             AS last_feedback_date                        
            , m.responses
            , m.promoter_responses
@@ -142,6 +102,7 @@ min_nps                AS (
            , m.feedback_count
            , m.feedback_count_alltime
            , m.id
+           , LISTAGG(DISTINCT nps.email, '; ') WITHIN GROUP (ORDER BY nps.email)                 AS email
          FROM max_date_by_month                     m
               JOIN daily_nps_scores         nps
                    ON m.server_id = nps.server_id
