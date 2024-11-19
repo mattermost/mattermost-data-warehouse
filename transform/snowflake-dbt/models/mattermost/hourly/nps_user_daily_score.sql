@@ -1,8 +1,9 @@
 {{config({
-    "materialized": 'incremental',
-    "unique_key": 'id',
+    "materialized": "incremental",
+    "unique_key": "id",
+    "on_schema_change": "append_new_columns",
     "schema": "mattermost",
-    "tags":["nightly"]
+    "tags": ["nightly"]
   })
 }}
 
@@ -90,7 +91,7 @@ min_nps                AS (
                   ELSE 'Promoter' END                                                             AS promoter_type
            , nps.user_create_at::DATE                                                             AS user_created_at
            , nps.server_install_date::DATE                                                        AS server_install_date
-           , LISTAGG(DISTINCT nps.feedback, '; ') WITHIN GROUP (ORDER BY nps.feedback)       AS feedback
+           , LISTAGG(DISTINCT nps.feedback, '; ') WITHIN GROUP (ORDER BY nps.feedback)            AS feedback
            , MAX(nps.timestamp::DATE)                                                             AS last_feedback_date                        
            , m.responses
            , m.promoter_responses
@@ -101,6 +102,7 @@ min_nps                AS (
            , m.feedback_count
            , m.feedback_count_alltime
            , m.id
+           , LISTAGG(DISTINCT nps.email, '; ') WITHIN GROUP (ORDER BY nps.email)                 AS email
          FROM max_date_by_month                     m
               JOIN daily_nps_scores         nps
                    ON m.server_id = nps.server_id
