@@ -37,6 +37,7 @@ def post_nps():
             user_role,
             lsf.customer_name,
             lsf.license_email,
+            coalesce(email, '') as email,
             sf.max_active_user_count as user_count
         from ANALYTICS.MATTERMOST.NPS_USER_DAILY_SCORE nps
         left join mattermost.server_fact sf on nps.server_id = sf.server_id
@@ -69,6 +70,7 @@ def post_nps():
                     'User Role',
                     'Customer Name',
                     'License Email',
+                    'Email',
                     'User Count',
                 ],
                 tablefmt='github',
