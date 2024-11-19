@@ -17,7 +17,7 @@ select
     , event_type
     , feature_name
 from
-    {{ ref('stg_mm_telemetry_prod__tracks') }}
+    {{ ref('stg_mm_telemetry_prod__server_tracks') }}
 where
     -- Exclude items without user info
     user_id is not null
