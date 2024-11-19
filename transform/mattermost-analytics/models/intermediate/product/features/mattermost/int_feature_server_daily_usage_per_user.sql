@@ -10,7 +10,7 @@
 -%}
 
 {%- if 'unknown_features' not in values -%}
-    {%- values.append('unknown_features') -%}
+    {{ values.append('unknown_features') }}
 {%- endif -%}
 
 select
