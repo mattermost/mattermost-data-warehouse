@@ -1,8 +1,9 @@
 {{config({
-    "materialized": 'incremental',
+    "materialized": "incremental",
+    "on_schema_change": "append_new_columns",
     "schema": "mattermost",
-    "unique_key":'id',
-    "tags":["nightly"]
+    "unique_key": "id",
+    "tags": ["nightly"]
   })
 }}
 
@@ -17,7 +18,7 @@ daily_nps_scores AS (
 WITH daily_nps_scores AS (
 {% endif %}
     
-        SELECT timestamp::date as date
+    SELECT timestamp::date as date
   		, license_id
         , server_version
         , user_role
@@ -74,6 +75,7 @@ daily_feedback_scores AS (
             timestamp::date as date
           , user_actual_id
           , feedback
+          , null as email
           , id as feedback_id
   	    FROM (
                 SELECT ROW_NUMBER() over (PARTITION BY nps.timestamp::DATE, nps.user_actual_id ORDER BY nps.timestamp DESC) AS rownum, nps.*
@@ -92,6 +94,7 @@ daily_feedback_scores AS (
             timestamp::date as date
           , COALESCE(useractualid, user_actual_id) as user_actual_id
           , feedback
+          , email
           , id as feedback_id
         FROM (
                 SELECT ROW_NUMBER() over (PARTITION BY nps.timestamp::DATE, COALESCE(nps.useractualid, nps.user_actual_id) ORDER BY nps.timestamp DESC) AS rownum, nps.*
@@ -118,6 +121,7 @@ daily_feedback_scores AS (
        daily_nps_scores.user_actual_id AS user_id,
        daily_nps_scores.user_id AS server_id,
        daily_feedback_scores.feedback,
+       daily_feedback_scores.email,
        daily_nps_scores.timestamp,
        daily_nps_scores.nps_id,
        daily_feedback_scores.feedback_id,

@@ -42,47 +42,6 @@ min_nps                AS (
                        AND d.date <= current_date
          GROUP BY 1, 2, 3
      ),
-
-     daily_feedback_scores AS (
-    
-        SELECT
-            timestamp::date as date
-          , timestamp::timestamp AS timestamp
-          , id
-          , user_id as server_id
-          , COALESCE(user_actual_id, null) as user_id
-          , feedback
-  	FROM (
-          SELECT ROW_NUMBER() over (PARTITION BY timestamp::DATE, COALESCE(user_actual_id, null) ORDER BY timestamp DESC) AS rownum, *
-          FROM {{ source('mattermost_nps', 'nps_feedback') }}
-          WHERE TIMESTAMP::DATE <= CURRENT_DATE
-            {% if is_incremental() %}
-            AND TIMESTAMP::date >= (SELECT MAX(date) from {{this}})
-            {% endif %}
-      )
-  	where rownum = 1
-    
-    UNION ALL
-    
-        SELECT
-            timestamp::date as date
-          , timestamp::timestamp as timestamp
-          , id
-          , user_id as server_id
-          , COALESCE(user_actual_id, useractualid) as user_id
-          , feedback
-        FROM (
-                SELECT ROW_NUMBER() over (PARTITION BY timestamp::DATE, COALESCE(user_actual_id, useractualid) ORDER BY timestamp DESC) AS rownum, *
-                FROM {{ source('mm_plugin_prod', 'nps_nps_feedback') }} 
-                WHERE TIMESTAMP::DATE <= CURRENT_DATE
-            {% if is_incremental() %}
-            AND TIMESTAMP::date >= (SELECT MAX(date) from {{this}})
-            {% endif %}
-        )
-        WHERE rownum = 1
-    
-), 
-
      max_date_by_month      AS (
          SELECT
              d.date
