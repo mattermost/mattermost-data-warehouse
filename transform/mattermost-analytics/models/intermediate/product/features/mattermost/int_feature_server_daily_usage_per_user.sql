@@ -23,7 +23,8 @@ select
           'feature_name',
           values,
           agg='sum',
-          prefix='count_'
+          prefix='count_',
+          quote_identifiers=False
       ) }}
     , (
     {% for feature in values if feature != 'unknown_features' %}
