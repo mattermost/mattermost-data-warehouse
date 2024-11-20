@@ -31,6 +31,8 @@ with tmp as (
 {% endif %}
     group by received_at_date, activity_date, server_id, user_id
     order by received_at_date
+    -- In case of late arriving events, keep latest
+    qualify row_number() over (partition by activity_date, server_id, user_id order by received_at desc) = 1
 )
 select
     -- Surrogate key required as it's both a good practice, as well as allows merge incremental strategy.
