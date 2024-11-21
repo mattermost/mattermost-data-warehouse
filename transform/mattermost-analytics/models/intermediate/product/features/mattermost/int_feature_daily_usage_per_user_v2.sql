@@ -5,19 +5,10 @@
     })
 }}
 
-with daily_usage as (
-    select
-        {{ dbt_utils.star(from=ref('int_client_feature_attribution'), quote_identifiers=False) }}
-    from
-        {{ ref('int_client_feature_attribution') }}
+{%-
+    set values = dbt_utils.get_column_values(ref('int_mattermost_feature_attribution'), 'feature_name')
+-%}
 
-    union all
-
-    select
-        {{ dbt_utils.star(from=ref('int_server_feature_attribution'), quote_identifiers=False) }}
-    from
-        {{ ref('int_server_feature_attribution') }}
-)
 select
     -- Surrogate key required as it's both a good practice, as well as allows merge incremental strategy.
     {{ dbt_utils.generate_surrogate_key(['activity_date', 'server_id', 'user_id']) }} as daily_user_id
@@ -33,7 +24,7 @@ select
       ) }}
     , count(event_id) as count_total
 from
-    daily_usage
+    {{ ref('int_mattermost_feature_attribution') }}
 group by
     daily_user_id
     , activity_date
