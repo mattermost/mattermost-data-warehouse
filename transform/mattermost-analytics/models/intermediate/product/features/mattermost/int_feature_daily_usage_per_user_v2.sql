@@ -22,8 +22,8 @@ select
           prefix='count_',
           quote_identifiers=False
       ) }}
-    , {% for val in values -%}
-         count_{{val}} {%- if not loop.first %} + {% endif -%}
+    , {% for val in values %}
+         {% if not loop.first %} + {% endif -%} count_{{val}}
     {% endfor %} as count_total
     , count(event_id) as count_total
 from
