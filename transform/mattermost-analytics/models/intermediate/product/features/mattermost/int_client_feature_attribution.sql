@@ -5,7 +5,8 @@
         "materialized": "incremental",
         "incremental_strategy": "delete+insert",
         "unique_key": ['event_id'],
-        "snowflake_warehouse": "transform_l"
+        "snowflake_warehouse": "transform_l",
+        "cluster_by": ['received_at_date'],
     })
 }}
 
