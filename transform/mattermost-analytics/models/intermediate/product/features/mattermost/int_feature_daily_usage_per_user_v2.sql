@@ -7,7 +7,7 @@
 
 with daily_usage as (
     {{ dbt_utils.union_relations(
-        relations=[ref('int_client_feature_attribution'), ref('int_server_feature_attribution'
+        relations=[ref('int_client_feature_attribution'), ref('int_server_feature_attribution']
     ) }}
 )
 select
