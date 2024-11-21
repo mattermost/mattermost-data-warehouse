@@ -24,7 +24,7 @@ select
       ) }}
     , {% for val in values %}
          {% if not loop.first %} + {% endif -%} count_{{val}}
-    {% endfor %} as count_total
+    {% endfor %} as count_known_features
     , count(event_id) as count_total
 from
     {{ ref('int_mattermost_feature_attribution') }}
