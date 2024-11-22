@@ -9,7 +9,7 @@
     set values = dbt_utils.get_column_values(ref('int_mattermost_feature_attribution'), 'feature_name')
 -%}
 {%-
-    set known_features = values | reject(var('const_unknown_features'))
+    set known_features = values | reject("==", var('const_unknown_features'))
 -%}
 
 
