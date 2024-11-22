@@ -62,6 +62,15 @@ models:
       - name: count_scheduled_posts_users_monthly
         description: The number of unique users related to Scheduled Posts feature for the current day and past 29 days.
 
+      - name: count_read_only_channels_events_daily
+        description: The number of events related to Read Only Channels feature for the current day.
+      - name: count_read_only_channels_events_monthly
+        description: The number of events related to Read Only Channels feature for the current day and past 29 days.
+      - name: count_read_only_channels_users_daily
+        description: The number of unique users related to Read Only Channels feature for the current day.
+      - name: count_read_only_channels_users_monthly
+        description: The number of unique users related to Read Only Channels feature for the current day and past 29 days.
+
       - name: count_playbooks_events_daily
         description: The number of events related to Playbooks feature for the current day.
       - name: count_playbooks_events_monthly
