@@ -50,7 +50,7 @@ where
     -- Recalculate the past 2 days from the earliest source before last received_at_date in order to include
     -- any late-arriving events to calculations. Another way to see it is that it recalculate already calculated data
     -- for a rolling window in order to reconcile for late-arriving events.
-    received_at >= (select dateadd(day, -2, min(received_at_date)) from time_thresholds)
+    received_at_date >= (select dateadd(day, -2, min(received_at_date)) from time_thresholds)
 {% endif %}
 group by
     daily_user_id
