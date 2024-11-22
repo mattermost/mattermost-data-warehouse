@@ -55,7 +55,7 @@ where
 {% if is_incremental() %}
     -- Incremental with reconcile for late arriving events up to two days.
     -- Event received in the past two days
-    received_at >= (select dateadd(day, -2, max(received_at_date)) from {{ this }})
+    and received_at >= (select dateadd(day, -2, max(received_at_date)) from {{ this }})
     -- Event has not been merged to the current table
     and event_id not in (select event_id from {{ this }} where received_at_date >= (select dateadd(day, -2, max(received_at_date)) from {{ this }}))
 {% endif %}
