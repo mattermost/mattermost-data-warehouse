@@ -31,9 +31,11 @@ where
     -- Exclude items from the future
     and received_at <= current_timestamp
 {% if is_incremental() %}
-    -- This filter will only be applied on an incremental run
-    -- TODO: handle late arriving events
-    and received_at >= (select max(received_at_date) from {{ this }})
+    -- Incremental with reconcile for late arriving events up to two days.
+    -- Event received in the past two days
+    received_at >= (select dateadd(day, -2, max(received_at_date)) from {{ this }})
+    -- Event has not been merged to the current table
+    and event_id not in (select event_id from {{ this }} where received_at >= (select dateadd(day, -2, max(received_at_date)) from {{ this }}))
 {% endif %}
 qualify
     row_number() over (partition by event_id order by timestamp desc) = 1
