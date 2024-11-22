@@ -36,7 +36,7 @@ select
             then '{{ feature }}'
         {% endfor %}
     {% endfor %}
-        else 'unknown_features'
+        else '{{ var("const_unknown_features") }}'
     end as feature_name
 from
     {{ ref('stg_mm_telemetry_prod__event_deduped') }}

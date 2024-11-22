@@ -8,6 +8,10 @@
 {%-
     set values = dbt_utils.get_column_values(ref('int_mattermost_feature_attribution'), 'feature_name')
 -%}
+{%-
+    set known_features = values.pop(var('const_unknown_features'))
+-%}
+
 
 select
     -- Surrogate key required as it's both a good practice, as well as allows merge incremental strategy.
@@ -22,7 +26,7 @@ select
           prefix='count_',
           quote_identifiers=False
       ) }}
-    , {% for val in values %}
+    , {% for val in known_features %}
          {% if not loop.first %} + {% endif -%} count_{{val}}
     {%- endfor %} as count_known_features
     , count(event_id) as count_total

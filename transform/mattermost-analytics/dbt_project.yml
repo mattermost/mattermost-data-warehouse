@@ -248,6 +248,8 @@ vars:
     - "total_size"
     - "user_actual_role"
 
+  # Reusable constants
+  const_unknown_features: 'unknown_features'
 
 on-run-start:
   -  '{{ create_parse_qs_udf()}}'
