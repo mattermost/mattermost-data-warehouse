@@ -5,7 +5,7 @@
         "materialized": "incremental",
         "incremental_strategy": "delete+insert",
         "unique_key": ['event_id'],
-        "snowflake_warehouse": "transform_l"
+        "snowflake_warehouse": "transform_l",
     })
 }}
 
@@ -20,11 +20,9 @@ select
     , user_id
     , event_id
     , event_name
-    , category
-    , event_type
-    {% for feature, rules in feature_mappings.items() %}
     , case
-    {% for rule in rules %}
+    {% for feature, rules in feature_mappings.items() %}
+        {% for rule in rules %}
         when
             event_name = '{{ rule["EVENT_NAME"] }}'
             and category = '{{ rule["CATEGORY"] }}'
@@ -35,12 +33,11 @@ select
         {%- if rule["PROPERTY_NAME"] and rule["PROPERTY_VALUE"] is not none -%}
             and {{ rule["PROPERTY_NAME"] }} = '{{ rule["PROPERTY_VALUE"] }}'
         {% endif %}
-            then true
+            then '{{ feature }}'
+        {% endfor %}
     {% endfor %}
-        else false
-    end as {{ feature }}
-{% endfor %}
-    , not ({{ ' or '.join(feature_mappings.keys()) }}) as unknown_feature
+        else '{{ var("const_unknown_features") }}'
+    end as feature_name
 from
     {{ ref('stg_mm_telemetry_prod__event_deduped') }}
 where
