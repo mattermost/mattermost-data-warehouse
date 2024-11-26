@@ -63,7 +63,7 @@ def test_post_query_results_with_new_line(sqlalchemy_memory_engine, test_data_wi
             ['ISBN', 'Title'],
             'https://mattermost.a-test-server.com',
             'book-club',
-            'No books found'
+            'No books found',
         )
 
     # THEN: a request is made to the Mattermost server
@@ -108,4 +108,3 @@ def test_post_query_results_with_empty_results(sqlalchemy_memory_engine, test_da
         'text': 'No books found',
         'channel': 'book-club',
     }
-
