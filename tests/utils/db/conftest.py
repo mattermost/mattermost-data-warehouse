@@ -54,3 +54,12 @@ def test_data(sqlalchemy_memory_engine):
         df.to_sql('books', conn)
 
         return df
+
+
+@pytest.fixture
+def test_data_with_newline(sqlalchemy_memory_engine):
+    with sqlalchemy_memory_engine.connect() as conn, conn.begin():
+        df = pd.DataFrame({'id': [1, 2], 'title': ['The Great Gatsby', 'The Lord of the Rings:\nThe Two Towers']})
+        df.to_sql('books', conn)
+
+        return df
