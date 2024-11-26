@@ -136,7 +136,7 @@ def feedback(ctx: click.Context, url: str, channel: str):
                     , geolocated_country_name
                 FROM "REPORTS_DOCS".rpt_docs_feedback
                 WHERE
-                    timestamp::date >= current_date() - 7 AND timestamp::date <= current_date() - 1
+                    timestamp::date >= current_date() - 14 AND timestamp::date <= current_date() - 1
                 ORDER BY timestamp DESC
             ''',
             ['Date', 'Feedback', 'Rating', 'Path', 'Browser', 'OS', 'Country'],
