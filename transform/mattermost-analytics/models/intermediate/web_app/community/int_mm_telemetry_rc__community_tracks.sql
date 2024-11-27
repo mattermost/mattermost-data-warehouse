@@ -5,7 +5,6 @@
         "incremental_strategy": "delete+insert",
         "unique_key": ['event_id'],
         "snowflake_warehouse": "transform_l",
-        "on_schema_change": 'append_new_columns',
     })
 }}
 
