@@ -5,7 +5,6 @@
         "incremental_strategy": "delete+insert",
         "unique_key": ['event_id'],
         "snowflake_warehouse": "transform_l",
-        "full_refresh": True
     })
 }}
 
