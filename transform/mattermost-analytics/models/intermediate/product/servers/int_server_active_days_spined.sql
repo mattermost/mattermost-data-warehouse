@@ -75,6 +75,15 @@ select
     coalesce(t.operating_system, l.operating_system, d.operating_system) as operating_system,
     coalesce(t.database_type, l.database_type, d.database_type) as database_type,
     coalesce(t.database_version, l.database_version) as database_version,
+    case
+        when regexp_like(database_version, '\\d+\.\\d+.\\d+.*') then regexp_substr(database_version, '\\d+\.\\d+')
+        when regexp_like(database_version, '\\d+\.\\d+.*') then regexp_substr(database_version, '\\d+\.\\d+')
+        when regexp_like(database_version, '\\d+beta.*') then regexp_substr(database_version, '\\d+') || '.0'
+        when regexp_like(database_version, '\\d+devel.*') then regexp_substr(database_version, '\\d+') || '.0'
+        when regexp_like(database_version, '\\d+rc.*') then regexp_substr(database_version, '\\d+') || '.0'
+    end as database_version_semver,
+    split_part(database_version_semver, '.', 1)::int as database_version_major,
+    split_part(database_version_semver, '.', 2)::int as database_version_minor,
     coalesce(t.edition, l.edition, d.is_enterprise_ready) as is_enterprise_ready,
     case
         when coalesce(t.edition, l.edition, d.is_enterprise_ready) = true then 'E0'
