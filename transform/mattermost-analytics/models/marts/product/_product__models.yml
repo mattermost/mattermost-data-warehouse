@@ -115,7 +115,13 @@ models:
       - name: database_type
         description: The type of the database used for this installation (i.e. postgres, mysql, ...).
       - name: database_version
-        description: The version of the database.
+        description: The raw version string of the database, as reported by upstream models.
+      - name: database_version_semver
+        description: The semver version of the database.
+      - name: database_version_major
+        description: The major part of the database version.
+      - name: database_version_minor
+        description: The minor part of the database version.
       - name: is_enterprise_ready
         description: |
           Whether this server is running an enterprise-ready build.

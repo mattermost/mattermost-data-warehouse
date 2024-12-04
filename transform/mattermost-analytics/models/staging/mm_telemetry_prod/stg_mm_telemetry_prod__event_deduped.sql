@@ -1,21 +1,4 @@
-with events_deduped as (
-    select
-        {{ dbt_utils.star(from=source('rudder_support', 'base_events')) }}
-    from
-        {{ source('rudder_support', 'base_events') }} b
-    where
-        not exists (select 1 from {{ ref('base_events_delta') }} d where d.id = b.id)
-
-    union all
-
-    -- Note that base_events_delta is already deduped. This helps avoid re-deduping the same data every time the view is
-    -- called.
-    select
-        {{ dbt_utils.star(from=ref('base_events_delta')) }}
-    from
-        {{ ref('base_events_delta') }}
-),
-renamed as (
+with renamed as (
 
     select
 
@@ -312,7 +295,7 @@ renamed as (
         , warnmetricid
         , zoom
 
-    from events_deduped
+    from {{ ref('base_events_merged') }}
 
 )
 

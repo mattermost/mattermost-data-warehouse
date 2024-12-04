@@ -18,6 +18,9 @@ def post_df_to_mattermost(url: str, channel: str, df: pd.DataFrame, headers: Lis
             json={"text": empty_data_message, "channel": channel},
         )
     else:
+        for col in df.select_dtypes(include=['object']).columns:
+            df[col] = df[col].apply(lambda val: val.replace("\n", "\\n") if val and type(val) == str else val)
+
         msg = tabulate(df, headers=headers, tablefmt='github', showindex='never')
         response = requests.post(
             url,

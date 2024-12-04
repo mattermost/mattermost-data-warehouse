@@ -11,7 +11,7 @@
 
 with tmp as (
     select
-        cast(received_at as date) as received_at_date,
+        max(cast(received_at as date)) as received_at_date,
         cast(timestamp as date) as activity_date,
         server_id,
         user_id
@@ -29,12 +29,12 @@ with tmp as (
         -- this filter will only be applied on an incremental run
         and received_at >= (select max(received_at_date) from {{ this }})
 {% endif %}
-    group by received_at_date, activity_date, server_id, user_id
-    order by received_at_date
+    group by activity_date, server_id, user_id
+    qualify row_number() over (partition by activity_date, server_id, user_id order by received_at_date desc) = 1
 )
 select
     -- Surrogate key required as it's both a good practice, as well as allows merge incremental strategy.
-    {{ dbt_utils.generate_surrogate_key(['received_at_date', 'activity_date', 'server_id', 'user_id']) }} as daily_user_id
+    {{ dbt_utils.generate_surrogate_key(['activity_date', 'server_id', 'user_id']) }} as daily_user_id
     , activity_date
     , server_id
     , user_id
