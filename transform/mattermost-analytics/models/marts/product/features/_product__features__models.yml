@@ -26,13 +26,13 @@ models:
       - name: count_message_ack_users_monthly
         description: The number of unique users related to Message Acknowledgement feature for the current day and past 29 days.
 
-      - name: count_custom_ug_events_daily
+      - name: count_custom_groups_events_daily
         description: The number of events related to Custom user groups feature for the current day.
-      - name: count_custom_ug_events_monthly
+      - name: count_custom_groups_events_monthly
         description: The number of events related to Custom user groups feature for the current day and past 29 days.
-      - name: count_custom_ug_users_daily
+      - name: count_custom_groups_users_daily
         description: The number of unique users related to Custom user groups feature for the current day.
-      - name: count_custom_ug_users_monthly
+      - name: count_custom_groups_users_monthly
         description: The number of unique users related to Custom user groups feature for the current day and past 29 days.
 
       - name: count_guest_accounts_events_daily
@@ -61,6 +61,24 @@ models:
         description: The number of unique users related to Scheduled Posts feature for the current day.
       - name: count_scheduled_posts_users_monthly
         description: The number of unique users related to Scheduled Posts feature for the current day and past 29 days.
+
+      - name: count_shared_channels_events_daily
+        description: The number of events related to Shared Channels feature for the current day.
+      - name: count_shared_channels_events_monthly
+        description: The number of events related to Shared Channels feature for the current day and past 29 days.
+      - name: count_shared_channels_users_daily
+        description: The number of unique users related to Shared Channels feature for the current day.
+      - name: count_shared_channels_users_monthly
+        description: The number of unique users related to Shared Channels feature for the current day and past 29 days.
+
+      - name: count_passive_keywords_events_daily
+        description: The number of events related to Passive Keywords feature for the current day.
+      - name: count_passive_keywords_events_monthly
+        description: The number of events related to Passive Keywords feature for the current day and past 29 days.
+      - name: count_passive_keywords_users_daily
+        description: The number of unique users related to Passive Keywords feature for the current day.
+      - name: count_passive_keywords_users_monthly
+        description: The number of unique users related to Passive Keywords feature for the current day and past 29 days.
 
       - name: count_read_only_channels_events_daily
         description: The number of events related to Read Only Channels feature for the current day.
