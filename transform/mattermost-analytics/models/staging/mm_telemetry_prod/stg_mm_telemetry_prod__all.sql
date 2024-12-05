@@ -14,7 +14,6 @@ renamed as (
         , timestamp      as timestamp
 
         -- Server info
-        , coalesce(context_traits_installationid,  context_traits_installation_id) as installation_id
         , anonymous_id
         , context_ip as server_ip
 
