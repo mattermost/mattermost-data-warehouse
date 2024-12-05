@@ -56,3 +56,38 @@ models:
         description: | 
           Whether this is the last Sunday of the month the date belongs to. Note that for current month, the last 
           Sunday up to (and including) today is considered.
+
+  - name: dim_user_agent
+    description: |
+      Details about user agents. Information is extracted from the user agent string of each event.
+
+    columns:
+      - name: user_agent_id
+        description: A unique ID for the user agent.
+        tests:
+          - not_null
+          - unique
+      - name: browser_family
+        description: The family of the browser.
+      - name: browser_version_major
+        description: The major version of the browser.
+      - name: browser_version_minor
+        description: The minor version of the browser.
+      - name: browser_version_patch
+        description: The patch version of the browser.
+      - name: device_brand
+        description: The brand of the device.
+      - name: device_family
+        description: The family of the device.
+      - name: device_model
+        description: The model of the device.
+      - name: os_family
+        description: The family of the operating system.
+      - name: os_version_major
+        description: The major version of the operating system. Can be string (i.e. for Windows NT).
+      - name: os_version_minor
+        description: The minor version of the operating system. Can be string (i.e. for Windows NT).
+      - name: os_version_patch
+        description: The patch version of the operating system. Can be string (i.e. for Windows NT).
+      - name: os_version_patch_minor
+        description: The minor patch version of the operating system. Can be string (i.e. for Windows NT).
