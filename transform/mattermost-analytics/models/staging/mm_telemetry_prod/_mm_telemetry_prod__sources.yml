@@ -147,6 +147,9 @@ sources:
       - name: config_theme
         description: The raw Server theme configuration data sent to Mattermost by Telemetry-Enabled Servers.
 
+      - name: configs
+        description: The raw Server configuration data (includes all config_* data) sent to Mattermost by Telemetry-Enabled Servers.
+
       - name: elasticsearch
         description: Contains raw server-level ElasticSearch data as a single row per server per timestamp.
 
