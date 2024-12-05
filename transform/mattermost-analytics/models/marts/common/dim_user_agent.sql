@@ -16,8 +16,8 @@ select
     user_agent:device_family::varchar as device_family,
     user_agent:device_model::varchar as device_model,
     user_agent:os_family::varchar as os_family,
-    user_agent:os_version_major::int as os_version_major,
-    user_agent:os_version_minor::int as os_version_minor,
+    user_agent:os_version_major::varchar as os_version_major,
+    user_agent:os_version_minor::varchar as os_version_minor,
     user_agent:os_version_patch::varchar as os_version_patch,
     user_agent:os_version_patch_minor::varchar as os_version_patch_minor,
     context_user_agent as raw_user_agent
