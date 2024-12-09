@@ -88,7 +88,7 @@ renamed as (
         , config_plugin_automatic_prepackaged_plugins                                             as automatic_prepackaged_plugins
         //, config_plugin_chimera_oauth_proxy_url                                                   as chimera_oauth_proxy_url
         , config_plugin_enable                                                                    as enable_plugin
-        , config_plugin_enable_alertmanager                                                       as enable_alertmanager
+        //, config_plugin_enable_alertmanager                                                       as enable_alertmanager
         , config_plugin_enable_antivirus                                                          as enable_antivirus
         , coalesce(config_plugin_enable_autolink,
                    config_plugin_enable_classroom_autolink,

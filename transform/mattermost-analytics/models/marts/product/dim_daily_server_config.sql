@@ -133,7 +133,7 @@ select
     , coalesce(as.automatic_prepackaged_plugins, ps.automatic_prepackaged_plugins)
     , coalesce(ps.chimera_oauth_proxy_url)                                                           as chimera_oauth_proxy_url
     , coalesce(as.enable_plugin, ps.enable_plugin)                                                   as enable_plugin
-    , coalesce(as.enable_alertmanager, ps.enable_alertmanager)                                       as enable_alertmanager
+    , coalesce(ps.enable_alertmanager)                                                               as enable_alertmanager
     , coalesce(as.enable_antivirus, ps.enable_antivirus)                                             as enable_antivirus
     , coalesce(as.enable_autolink, ps.enable_autolink)                                               as enable_autolink
     , coalesce(as.enable_aws_sns, ps.enable_aws_sns)                                                 as enable_aws_sns
