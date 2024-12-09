@@ -113,7 +113,6 @@ renamed as (
         , config_plugin_enable_nps_survey                                                         as enable_nps_survey
         , config_plugin_enable_playbooks                                                          as enable_playbooks
         , config_plugin_enable_remote_marketplace                                                 as enable_remote_marketplace
-        , config_plugin_enable_set_default_theme                                                  as enable_set_default_theme
         , config_plugin_enable_skype_4_business                                                   as enable_skype4business
         , config_plugin_enable_com_mattermost_plugin_todo                                         as enable_todo
         , config_plugin_enable_uploads                                                            as enable_uploads
