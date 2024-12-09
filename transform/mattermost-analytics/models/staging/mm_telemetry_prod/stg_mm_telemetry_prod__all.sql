@@ -130,7 +130,7 @@ renamed as (
         , config_plugin_version_focalboard                                                        as version_focalboard
         , config_plugin_version_com_github_moussetc_mattermost_plugin_giphy                       as version_giphy
         , config_plugin_version_github                                                            as version_github
-        , config_plugin_version_com_github_manland_mattermost_plugin_gitlab                       as version_gitlab                                               as version_gitlab
+        , config_plugin_version_com_github_manland_mattermost_plugin_gitlab                       as version_gitlab
         , config_plugin_version_jira                                                              as version_jira
         , config_plugin_version_com_mattermost_calls                                              as version_mattermost_calls
         , config_plugin_version_com_mattermost_msteams_sync                                       as version_mattermost_msteams_sync
