@@ -86,185 +86,59 @@ renamed as (
         -- Plugin information
         , config_plugin_allow_insecure_download_url                                               as allow_insecure_download_url
         , config_plugin_automatic_prepackaged_plugins                                             as automatic_prepackaged_plugins
-        //, config_plugin_chimera_oauth_proxy_url                                                   as chimera_oauth_proxy_url
         , config_plugin_enable                                                                    as enable_plugin
-        //, config_plugin_enable_alertmanager                                                       as enable_alertmanager
         , config_plugin_enable_antivirus                                                          as enable_antivirus
-        //, coalesce(config_plugin_enable_autolink,
-        //           config_plugin_enable_classroom_autolink,
-        //           config_plugin_enable_mattermostautolink,
-        //           config_plugin_enable_mattermost_autolink)                                      as enable_autolink
-        , coalesce(config_plugin_enable_aws_sns,
-                   config_plugin_enable_commattermostawssns,
-                   config_plugin_enable_com_mattermost_aws_sns,
-                   config_plugin_enable_com_classroom_aws_sns)                                    as enable_aws_sns
-        , config_plugin_enable_bitbucket                                                          as enable_bitbucket
-        , coalesce(config_plugin_enable_commattermostpluginchannelexport,
-                   config_plugin_enable_com_classroom_plugin_channel_export,
-                   config_plugin_enable_com_mattermost_plugin_channel_export)                     as enable_channel_export
-        , coalesce(config_plugin_enable_comgithubmattermostplugincircleci,
-                   config_plugin_enable_com_github_mattermost_plugin_circleci)                    as enable_circleci
-        , coalesce(config_plugin_enable_confluence,
-                   config_plugin_enable_commattermostconfluence,
-                   config_plugin_enable_com_classroom_confluence,
-                   config_plugin_enable_com_mattermost_confluence)                                as enable_confluence
-        , coalesce(config_plugin_enable_custom_user_attributes,
-                   config_plugin_enable_commattermostcustomattributes,
-                   config_plugin_enable_com_mattermost_custom_attributes,
-                   config_plugin_enable_com_classroom_custom_attributes)                          as enable_custom_user_attributes
-        , coalesce(config_plugin_enable_comgithubmoussetcmattermostplugindiceroller,
-                   config_plugin_enable_com_github_moussetc_mattermost_plugin_diceroller)         as enable_diceroller
-        , coalesce(config_plugin_enable_comgithubphillipaherezamattermostplugindigitalocean,
-                   config_plugin_enable_com_github_phillipahereza_classroom_plugin_digitalocean,
-                   config_plugin_enable_com_github_phillipahereza_mattermost_plugin_digitalocean) as enable_digitalocean
+        , config_plugin_enable_mattermost_autolink                                                as enable_mattermost_autolink
+        , config_plugin_enable_com_mattermost_aws_sns                                             as enable_aws_sns
+        , config_plugin_enable_com_mattermost_plugin_channel_export                               as enable_channel_export
+        , config_plugin_enable_com_mattermost_confluence                                          as enable_confluence
+        , config_plugin_enable_com_mattermost_custom_attributes                                   as enable_custom_user_attributes
+        , config_plugin_enable_com_github_phillipahereza_mattermost_plugin_digitalocean           as enable_digitalocean
         , config_plugin_enable_focalboard                                                         as enable_focalboard
-        , coalesce(config_plugin_enable_comgithubmoussetcmattermostplugingiphy,
-                   config_plugin_enable_com_github_moussetc_mattermost_plugin_giphy,
-                   config_plugin_enable_com_github_moussetc_classroom_plugin_giphy)               as enable_giphy
+        , config_plugin_enable_com_github_moussetc_mattermost_plugin_giphy                        as enable_giphy
         , config_plugin_enable_github                                                             as enable_github
-        , coalesce(config_plugin_enable_gitlab,
-                   config_plugin_enable_comgithubmanlandmattermostplugingitlab,
-                   config_plugin_enable_com_github_manland_classroom_plugin_gitlab,
-                   config_plugin_enable_com_github_manland_mattermost_plugin_gitlab)              as enable_gitlab
+        , config_plugin_enable_com_github_manland_mattermost_plugin_gitlab                        as enable_gitlab
         , config_plugin_enable_health_check                                                       as enable_health_check
-        , coalesce(config_plugin_enable_comnilsbrinkmannicebreaker,
-                   config_plugin_enable_com_nilsbrinkmann_icebreaker)                             as enable_icebreaker
-        , coalesce(config_plugin_enable_commattermostpluginincidentmanagement,
-                   config_plugin_enable_com_classroom_plugin_incident_management,
-                   config_plugin_enable_com_mattermost_plugin_incident_management)                as enable_incident_management
-        , coalesce(config_plugin_enable_commattermostpluginincidentresponse,
-                   config_plugin_enable_com_mattermost_plugin_incident_response)                  as enable_incident_response
+        , config_plugin_enable_com_mattermost_plugin_incident_management                          as enable_incident_management
         , config_plugin_enable_jenkins                                                            as enable_jenkins
-        , coalesce(config_plugin_enable_comgithubjespinorecommend,
-                   config_plugin_enable_com_github_jespino_recommend)                             as enable_jespino_recommend
         , config_plugin_enable_jira                                                               as enable_jira
         , config_plugin_enable_jitsi                                                              as enable_jitsi
         , config_plugin_enable_marketplace                                                        as enable_marketplace
-        , coalesce(config_plugin_enable_comgithubmatterpollmatterpoll,
-                   config_plugin_enable_com_github_matterpoll_matterpoll)                         as enable_matterpoll
-        , coalesce(config_plugin_enable_com_mattermost_agenda,
-                   config_plugin_enable_commattermostagenda)                                      as enable_mattermost_agenda
-        , config_plugin_enable_com_mattermost_apps                                                as enable_mattermost_apps
-        , config_plugin_enable_mattermost_plugin_azure_devops                                     as enable_mattermost_azure_devops
         , config_plugin_enable_com_mattermost_calls                                               as enable_mattermost_calls
-        , config_plugin_enable_mattermost_plugin_hackerone                                        as enable_mattermost_hackerone
-        , coalesce(config_plugin_enable_commattermostmsteamsmeetings,
-                   config_plugin_enable_com_mattermost_msteamsmeetings)                           as enable_mattermost_msteams_meetings
         , config_plugin_enable_com_mattermost_msteams_sync                                        as enable_mattermost_msteams_sync
-        , coalesce(config_plugin_enable_mattermostprofanityfilter,
-                   config_plugin_enable_mattermost_profanity_filter)                              as enable_mattermost_profanity_filter
         , config_plugin_enable_mattermost_plugin_servicenow                                       as enable_mattermost_servicenow
-        , config_plugin_enable_mattermost_plugin_servicenow_virtual_agent                         as enable_mattermost_servicenow_virtual_agent
         , config_plugin_enable_memes                                                              as enable_memes
-        , coalesce(config_plugin_enable_mscalendar,
-                   config_plugin_enable_commattermostmscalendar,
-                   config_plugin_enable_com_classroom_mscalendar,
-                   config_plugin_enable_com_mattermost_mscalendar)                                as enable_mscalendar
-        , coalesce(config_plugin_enable_nps,
-                   config_plugin_enable_com_mattermost_nps,
-                   config_plugin_enable_com_classroom_nps,
-                   config_plugin_enable_commattermostnps)                                         as enable_nps
+        , config_plugin_enable_com_mattermost_mscalendar                                          as enable_mscalendar
+        , config_plugin_enable_com_mattermost_nps                                                 as enable_nps
         , config_plugin_enable_nps_survey                                                         as enable_nps_survey
         , config_plugin_enable_playbooks                                                          as enable_playbooks
         , config_plugin_enable_remote_marketplace                                                 as enable_remote_marketplace
-        , config_plugin_enable_ru_loop_plugin_embeds                                              as enable_ru_loop_plugin_embeds
-        , config_plugin_enable_ru_loop_plugin_scheduler                                           as enable_ru_loop_plugin_scheduler
-        , config_plugin_enable_ru_loop_plugin_user_fields                                         as enable_ru_loop_plugin_user_fields
         , config_plugin_enable_set_default_theme                                                  as enable_set_default_theme
-        , coalesce(config_plugin_enable_skype4business,
-                   config_plugin_enable_skype_4_business)                                         as enable_skype4business
-        , coalesce(config_plugin_enable_todo,
-                   config_plugin_enable_com_classroom_plugin_todo,
-                   config_plugin_enable_commattermostplugintodo,
-                   config_plugin_enable_com_mattermost_plugin_todo)                               as enable_todo
+        , config_plugin_enable_skype_4_business                                                   as enable_skype4business
+        , config_plugin_enable_com_mattermost_plugin_todo                                         as enable_todo
         , config_plugin_enable_uploads                                                            as enable_uploads
-        , coalesce(config_plugin_enable_com_mattermost_webex,
-                   config_plugin_enable_commattermostwebex,
-                   config_plugin_enable_webex,
-                   config_plugin_enable_com_classroom_webex)                                      as enable_webex
-        , coalesce(config_plugin_enable_welcome_bot,
-                   config_plugin_enable_com_classroom_welcomebot,
-                   config_plugin_enable_ru_loop_plugin_welcomebot,
-                   config_plugin_enable_commattermostwelcomebot,
-                   config_plugin_enable_com_mattermost_welcomebot)                                as enable_welcome_bot
+        , config_plugin_enable_com_mattermost_webex                                               as enable_webex
+        , config_plugin_enable_com_mattermost_welcomebot                                          as enable_welcome_bot
         , config_plugin_enable_zoom                                                               as enable_zoom
         , config_plugin_is_default_marketplace_url                                                as is_default_marketplace_url
-        , coalesce(config_plugin_require_pluginsignature,
-                   config_plugin_require_plugin_signature)                                        as require_plugin_signature
+        , config_plugin_require_plugin_signature                                                  as require_plugin_signature
         , config_plugin_signature_public_key_files                                                as signature_public_key_files
-        , config_plugin_version_alertmanager                                                      as version_alertmanager
-        , config_plugin_version_antivirus                                                         as version_antivirus
-        , coalesce(config_plugin_version_autolink,
-                   config_plugin_version_mattermost_autolink,
-                   config_plugin_version_mattermostautolink)                                      as version_autolink
-        , coalesce(config_plugin_version_aws_sns,
-                   config_plugin_version_com_mattermost_aws_sns,
-                   config_plugin_version_commattermostawssns)                                     as version_aws_sns
-        , config_plugin_version_bitbucket                                                         as version_bitbucket
-        , coalesce(config_plugin_version_commattermostpluginchannelexport,
-                   config_plugin_version_com_mattermost_plugin_channel_export)                    as version_channel_export
-        , coalesce(config_plugin_version_comgithubmattermostplugincircleci,
-                   config_plugin_version_com_github_mattermost_plugin_circleci)                   as version_circleci
-        , coalesce(config_plugin_version_commattermostconfluence,
-                   config_plugin_version_com_mattermost_confluence)                               as version_confluence
-        , coalesce(config_plugin_version_commattermostcustomattributes,
-                   config_plugin_version_com_mattermost_custom_attributes,
-                   config_plugin_version_custom_user_attributes)                                  as version_custom_user_attributes
-        , coalesce(config_plugin_version_comgithubmoussetcmattermostplugindiceroller,
-                   config_plugin_version_com_github_moussetc_mattermost_plugin_diceroller)        as version_diceroller
-        , coalesce(config_plugin_version_comgithubphillipaherezamattermostplugindigitalocean,
-                   config_plugin_version_com_github_phillipahereza_mattermost_plugin_digitalocean) as version_digitalocean
+        , config_plugin_version_mattermost_autolink                                               as version_autolink
+        , config_plugin_version_com_mattermost_aws_sns                                            as enable_aws_sns
+        , config_plugin_version_com_mattermost_confluence                                         as version_confluence
+        , config_plugin_version_com_mattermost_custom_attributes                                  as version_custom_user_attributes
         , config_plugin_version_focalboard                                                        as version_focalboard
-        , coalesce(config_plugin_version_comgithubmoussetcmattermostplugingiphy,
-                   config_plugin_version_com_github_moussetc_mattermost_plugin_giphy)             as version_giphy
+        , config_plugin_version_com_github_moussetc_mattermost_plugin_giphy                       as version_giphy
         , config_plugin_version_github                                                            as version_github
-        , coalesce(config_plugin_version_com_github_manland_mattermost_plugin_gitlab,
-                   config_plugin_version_comgithubmanlandmattermostplugingitlab,
-                   config_plugin_version_gitlab)                                                  as version_gitlab
-        , coalesce(config_plugin_version_comnilsbrinkmannicebreaker,
-                   config_plugin_version_com_nilsbrinkmann_icebreaker)                            as version_icebreaker
-        , coalesce(config_plugin_version_commattermostpluginincidentmanagement,
-                   config_plugin_version_com_mattermost_plugin_incident_management)               as version_incident_management
-        , coalesce(config_plugin_version_commattermostpluginincidentresponse,
-                   config_plugin_version_com_mattermost_plugin_incident_response)                 as version_incident_response
-        , config_plugin_version_jenkins                                                           as version_jenkins
-        , coalesce(config_plugin_version_comgithubjespinorecommend,
-                   config_plugin_version_com_github_jespino_recommend)                            as version_jespino_recommend
+        , config_plugin_version_com_github_manland_mattermost_plugin_gitlab                       as version_gitlab                                               as version_gitlab
         , config_plugin_version_jira                                                              as version_jira
-        , config_plugin_version_jitsi                                                             as version_jitsi
-        , coalesce(config_plugin_version_comgithubmatterpollmatterpoll,
-                   config_plugin_version_com_github_matterpoll_matterpoll)                        as version_matterpoll
-        , coalesce(config_plugin_version_com_mattermost_agenda,
-                   config_plugin_version_commattermostagenda)                                     as version_mattermost_agenda
-        , config_plugin_version_com_mattermost_apps                                               as version_mattermost_apps
-        , config_plugin_version_mattermost_plugin_azure_devops                                    as version_mattermost_azure_devops
         , config_plugin_version_com_mattermost_calls                                              as version_mattermost_calls
-        , config_plugin_version_mattermost_plugin_hackerone                                       as version_mattermost_hackerone
-        , coalesce(config_plugin_version_commattermostmsteamsmeetings,
-                   config_plugin_version_com_mattermost_msteamsmeetings)                          as version_mattermost_msteams_meetings
         , config_plugin_version_com_mattermost_msteams_sync                                       as version_mattermost_msteams_sync
-        , coalesce(config_plugin_version_mattermostprofanityfilter,
-                   config_plugin_version_mattermost_profanity_filter)                             as version_mattermost_profanity_filter
-        , config_plugin_version_mattermost_plugin_servicenow                                      as version_mattermost_servicenow
-        , config_plugin_version_mattermost_plugin_servicenow_virtual_agent                        as version_mattermost_servicenow_virtual_agent
         , config_plugin_version_memes                                                             as version_memes
-        , coalesce(config_plugin_version_commattermostmscalendar,
-                   config_plugin_version_com_mattermost_mscalendar)                               as version_mscalendar
-        , coalesce(config_plugin_version_com_mattermost_nps,
-                   config_plugin_version_commattermostnps,
-                   config_plugin_version_nps)                                                     as version_nps
+        , config_plugin_version_com_mattermost_nps                                                as version_nps
         , config_plugin_version_playbooks                                                         as version_playbooks
-        , config_plugin_version_set_default_theme                                                 as version_set_default_theme
-        , coalesce(config_plugin_version_skype4business,
-                   config_plugin_version_skype_4_business)                                        as version_skype4business
-        , coalesce(config_plugin_version_com_mattermost_plugin_todo,
-                   config_plugin_version_commattermostplugintodo)                                 as version_todo
-        , coalesce(config_plugin_version_webex,
-                   config_plugin_version_commattermostwebex,
-                   config_plugin_version_com_mattermost_webex)                                    as version_webex
-        , coalesce(config_plugin_version_commattermostwelcomebot,
-                   config_plugin_version_com_mattermost_welcomebot,
-                   config_plugin_version_welcome_bot)                                             as version_welcome_bot
+        , config_plugin_version_com_mattermost_plugin_todo                                        as version_todo
+        , config_plugin_version_com_mattermost_welcomebot                                         as version_welcome_bot
         , config_plugin_version_zoom                                                              as version_zoom
         -- Service information
         , config_service_allow_cookies_for_subdomains                                             as allow_cookies_for_subdomains
