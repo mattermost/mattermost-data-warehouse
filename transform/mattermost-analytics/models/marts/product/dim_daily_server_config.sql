@@ -131,7 +131,7 @@ select
     , coalesce(as.allow_insecure_download_url, 
                ps.allow_insecure_download_url)                                                       as allow_insecure_download_url
     , coalesce(as.automatic_prepackaged_plugins, ps.automatic_prepackaged_plugins)
-    , coalesce(as.chimera_oauth_proxy_url, ps.chimera_oauth_proxy_url)                               as chimera_oauth_proxy_url
+    , coalesce(ps.chimera_oauth_proxy_url)                                                           as chimera_oauth_proxy_url
     , coalesce(as.enable_plugin, ps.enable_plugin)                                                   as enable_plugin
     , coalesce(as.enable_alertmanager, ps.enable_alertmanager)                                       as enable_alertmanager
     , coalesce(as.enable_antivirus, ps.enable_antivirus)                                             as enable_antivirus
