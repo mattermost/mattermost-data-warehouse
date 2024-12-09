@@ -176,7 +176,6 @@ renamed as (
         , config_service_enable_multifactor_authentication                                        as enable_multifactor_authentication_service
         , config_service_enable_oauth_service_provider                                            as enable_oauth_service_provider_service
         , config_service_enable_onboarding_flow                                                   as enable_onboarding_flow
-        , config_service_enable_only_admin_integrations                                           as enable_only_admin_integrations_service
         , config_service_enable_opentracing                                                       as enable_opentracing
         , config_service_enable_outgoing_oauth_connections                                        as enable_outgoing_oauth_connections
         , config_service_enable_outgoing_webhooks                                                 as enable_outgoing_webhooks
