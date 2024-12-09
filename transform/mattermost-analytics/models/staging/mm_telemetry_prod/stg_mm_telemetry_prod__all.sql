@@ -141,21 +141,16 @@ renamed as (
         , config_plugin_version_zoom                                                              as version_zoom
         -- Service information
         , config_service_allow_cookies_for_subdomains                                             as allow_cookies_for_subdomains
-        , config_service_allow_edit_post                                                          as allow_edit_post_service
         , config_service_allow_persistent_notifications                                           as allow_persistent_notifications
         , config_service_allow_persistent_notifications_for_guests                                as allow_persistent_notifications_for_guests
         , config_service_allow_synced_drafts                                                      as allow_synced_drafts
-        , config_service_close_unused_direct_messages                                             as close_unused_direct_messages
         , config_service_cluster_log_timeout_milliseconds                                         as cluster_log_timeout_milliseconds
         , config_service_collapsed_threads                                                        as collapsed_threads
         , config_service_connection_security                                                      as connection_security_service
         , config_service_cors_allow_credentials                                                   as cors_allow_credentials
         , config_service_cors_debug                                                               as cors_debug
-        , config_service_custom_cert_header                                                       as custom_cert_header
-        , config_service_default_team_name                                                        as default_team_name
         , config_service_developer_flags                                                          as developer_flags
         , config_service_disable_bots_when_owner_is_deactivated                                   as disable_bots_when_owner_is_deactivated
-        , config_service_disable_legacy_mfa                                                       as disable_legacy_mfa
         , config_service_enable_api_channel_deletion                                              as enable_api_channel_deletion
         , config_service_enable_api_post_deletion                                                 as enable_api_post_deletion
         , config_service_enable_api_team_deletion                                                 as enable_api_team_deletion
@@ -173,13 +168,12 @@ renamed as (
         , config_service_enable_file_search                                                       as enable_file_search
         , config_service_enable_gif_picker                                                        as enable_gif_picker
         , config_service_enable_incoming_webhooks                                                 as enable_incoming_webhooks_service
+        , config_service_enable_inline_latex                                                      as enable_inline_latex
         , config_service_enable_insecure_outgoing_connections                                     as enable_insecure_outgoing_connections_service
         , config_service_enable_latex                                                             as enable_latex
-        , config_service_enable_legacy_sidebar                                                    as enable_legacy_sidebar
         , config_service_enable_link_previews                                                     as enable_link_previews
         , config_service_enable_local_mode                                                        as enable_local_mode
-        , coalesce(config_service_elable_multifactor_authentication, 
-                   config_service_enable_multifactor_authentication)                              as enable_multifactor_authentication_service
+        , config_service_enable_multifactor_authentication                                        as enable_multifactor_authentication_service
         , config_service_enable_oauth_service_provider                                            as enable_oauth_service_provider_service
         , config_service_enable_onboarding_flow                                                   as enable_onboarding_flow
         , config_service_enable_only_admin_integrations                                           as enable_only_admin_integrations_service
@@ -190,7 +184,6 @@ renamed as (
         , config_service_enable_post_icon_override                                                as enable_post_icon_override
         , config_service_enable_post_search                                                       as enable_post_search
         , config_service_enable_post_username_override                                            as enable_post_username_override
-        , config_service_enable_preview_features                                                  as enable_preview_features
         , config_service_enable_security_fix_alert                                                as enable_security_fix_alert
         , config_service_enable_svgs                                                              as enable_svgs
         , config_service_enable_testing                                                           as enable_testing
@@ -199,9 +192,6 @@ renamed as (
         , config_service_enable_user_statuses                                                     as enable_user_statuses
         , config_service_enable_user_typing_messages                                              as enable_user_typing_messages
         , config_service_enforce_multifactor_authentication                                       as enforce_multifactor_authentication_service
-        , config_service_experimental_channel_organization                                        as experimental_channel_organization
-        , config_service_experimental_channel_sidebar_organization                                as experimental_channel_sidebar_organization
-        , config_service_experimental_data_prefetch                                               as experimental_data_prefetch
         , config_service_experimental_enable_authentication_transfer                              as experimental_enable_authentication_transfer
         , config_service_experimental_enable_default_channel_leave_join_messages                  as experimental_enable_default_channel_leave_join_messages
         , config_service_experimental_enable_hardened_mode                                        as experimental_enable_hardened_mode
@@ -209,8 +199,6 @@ renamed as (
         , config_service_experimental_strict_csrf_enforcement                                     as experimental_strict_csrf_enforcement
         , config_service_extend_session_length_with_activity                                      as extend_session_length_with_activity
         , config_service_forward_80_to_443                                                        as forward_80_to_443
-        , config_service_gfycat_api_key                                                           as gfycat_api_key
-        , config_service_gfycat_api_secret                                                        as gfycat_api_secret
         , config_service_isdefault_allowed_untrusted_internal_connections                         as isdefault_allowed_untrusted_internal_connections
         , config_service_isdefault_allow_cors_from                                                as isdefault_allow_cors_from
         , config_service_isdefault_cors_exposed_headers                                           as isdefault_cors_exposed_headers
@@ -221,8 +209,6 @@ renamed as (
         , config_service_isdefault_tls_cert_file                                                  as isdefault_tls_cert_file
         , config_service_isdefault_tls_key_file                                                   as isdefault_tls_key_file
         , config_service_isdefault_write_timeout                                                  as isdefault_write_timeout
-        , config_service_limit_load_search_result                                                 as limit_load_search_result
-        , config_service_login_with_certificate                                                   as login_with_certificate
         , config_service_managed_resource_paths                                                   as managed_resource_paths
         , config_service_maximum_login_attempts                                                   as maximum_login_attempts
         , config_service_maximum_payload_size                                                     as maximum_payload_size
@@ -235,20 +221,12 @@ renamed as (
         , config_service_post_edit_time_limit                                                     as post_edit_time_limit
         , config_service_post_priority                                                            as post_priority
         , config_service_refresh_post_stats_run_time                                              as refresh_post_stats_run_time
-        , config_service_restrict_custom_emoji_creation                                           as restrict_custom_emoji_creation
         , config_service_restrict_link_previews                                                   as restrict_link_previews
-        , config_service_restrict_post_delete                                                     as restrict_post_delete
-        , config_service_self_hosted_expansion                                                    as self_hosted_expansion
-        , config_service_self_hosted_purchase                                                     as self_hosted_purchase
         , config_service_session_cache_in_minutes                                                 as session_cache_in_minutes
         , config_service_session_idle_timeout_in_minutes                                          as session_idle_timeout_in_minutes
-        , config_service_session_length_mobile_in_days                                            as session_length_mobile_in_days
         , config_service_session_length_mobile_in_hours                                           as session_length_mobile_in_hours
-        , config_service_session_length_sso_in_days                                               as session_length_sso_in_days
         , config_service_session_length_sso_in_hours                                              as session_length_sso_in_hours
-        , config_service_session_length_web_in_days                                               as session_length_web_in_days
         , config_service_session_length_web_in_hours                                              as session_length_web_in_hours
-        , config_service_skip_login_page                                                          as skip_login_page
         , config_service_terminate_sessions_on_password_change                                    as terminate_sessions_on_password_change
         , config_service_thread_auto_follow                                                       as thread_auto_follow
         , config_service_time_between_user_typing_updates_milliseconds                            as time_between_user_typing_updates_milliseconds
