@@ -90,10 +90,10 @@ renamed as (
         , config_plugin_enable                                                                    as enable_plugin
         //, config_plugin_enable_alertmanager                                                       as enable_alertmanager
         , config_plugin_enable_antivirus                                                          as enable_antivirus
-        , coalesce(config_plugin_enable_autolink,
-                   config_plugin_enable_classroom_autolink,
-                   config_plugin_enable_mattermostautolink,
-                   config_plugin_enable_mattermost_autolink)                                      as enable_autolink
+        //, coalesce(config_plugin_enable_autolink,
+        //           config_plugin_enable_classroom_autolink,
+        //           config_plugin_enable_mattermostautolink,
+        //           config_plugin_enable_mattermost_autolink)                                      as enable_autolink
         , coalesce(config_plugin_enable_aws_sns,
                    config_plugin_enable_commattermostawssns,
                    config_plugin_enable_com_mattermost_aws_sns,

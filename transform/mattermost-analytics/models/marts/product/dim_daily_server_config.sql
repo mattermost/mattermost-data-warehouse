@@ -135,7 +135,7 @@ select
     , coalesce(as.enable_plugin, ps.enable_plugin)                                                   as enable_plugin
     , coalesce(ps.enable_alertmanager)                                                               as enable_alertmanager
     , coalesce(as.enable_antivirus, ps.enable_antivirus)                                             as enable_antivirus
-    , coalesce(as.enable_autolink, ps.enable_autolink)                                               as enable_autolink
+    , coalesce(ps.enable_autolink)                                                                   as enable_autolink
     , coalesce(as.enable_aws_sns, ps.enable_aws_sns)                                                 as enable_aws_sns
     , coalesce(as.enable_bitbucket, ps.enable_bitbucket)                                             as enable_bitbucket
     , coalesce(as.enable_channel_export, ps.enable_channel_export)                                   as enable_channel_export
