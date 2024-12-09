@@ -123,7 +123,7 @@ renamed as (
         , config_plugin_require_plugin_signature                                                  as require_plugin_signature
         , config_plugin_signature_public_key_files                                                as signature_public_key_files
         , config_plugin_version_mattermost_autolink                                               as version_autolink
-        , config_plugin_version_com_mattermost_aws_sns                                            as enable_aws_sns
+        , config_plugin_version_com_mattermost_aws_sns                                            as version_aws_sns
         , config_plugin_version_com_mattermost_confluence                                         as version_confluence
         , config_plugin_version_com_mattermost_custom_attributes                                  as version_custom_user_attributes
         , config_plugin_version_focalboard                                                        as version_focalboard
