@@ -45,7 +45,7 @@ with int_config_oauth as (
     from
         {{ ref('int__config_service') }}
     qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
-), int__config_all as (
+), int_config_all as (
     select
         cast(timestamp as date) as server_date
         , {{ dbt_utils.star(ref('int__config_all')) }}
