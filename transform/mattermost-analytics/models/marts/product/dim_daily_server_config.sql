@@ -216,7 +216,7 @@ select
     , ps.version_mattermost_agenda                                                                      as version_mattermost_agenda
     , ps.version_mattermost_apps                                                                        as version_mattermost_apps
     , ps.version_mattermost_azure_devops                                                                as version_mattermost_azure_devops
-    , coalesce(alls.version_mattermost_calls, ps.version_mattermost_calls)                              as version_mattermost_calls                                                                    as version_mattermost_calls
+    , coalesce(alls.version_mattermost_calls, ps.version_mattermost_calls)                              as version_mattermost_calls
     , ps.version_mattermost_hackerone                                                                   as version_mattermost_hackerone
     , ps.version_mattermost_msteams_meetings                                                            as version_mattermost_msteams_meetings
     , coalesce(alls.version_mattermost_msteams_sync, 
