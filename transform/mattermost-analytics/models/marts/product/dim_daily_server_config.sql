@@ -289,8 +289,7 @@ select
     , coalesce(alls.enable_oauth_service_provider_service,
                vs.enable_oauth_service_provider_service)                                                as enable_oauth_service_provider_service
     , coalesce(alls.enable_onboarding_flow, vs.enable_onboarding_flow)                                  as enable_onboarding_flow
-    , coalesce(alls.enable_only_admin_integrations_service,
-               vs.enable_only_admin_integrations_service)                                               as enable_only_admin_integrations_service
+    , vs.enable_only_admin_integrations_service                                                         as enable_only_admin_integrations_service
     , coalesce(alls.enable_opentracing, vs.enable_opentracing)                                          as enable_opentracing
     , coalesce(alls.enable_outgoing_oauth_connections,
                vs.enable_outgoing_oauth_connections)                                                    as enable_outgoing_oauth_connections
@@ -363,20 +362,20 @@ select
     , coalesce(alls.post_edit_time_limit, vs.post_edit_time_limit)                                      as post_edit_time_limit
     , coalesce(alls.post_priority, vs.post_priority)                                                    as post_priority
     , coalesce(alls.refresh_post_stats_run_time, vs.refresh_post_stats_run_time)                        as refresh_post_stats_run_time
-    , coalesce(alls.restrict_custom_emoji_creation, vs.restrict_custom_emoji_creation)                  as restrict_custom_emoji_creation
+    , vs.restrict_custom_emoji_creation                                                                 as restrict_custom_emoji_creation
     , coalesce(alls.restrict_link_previews, vs.restrict_link_previews)                                  as restrict_link_previews
-    , coalesce(alls.restrict_post_delete, vs.restrict_post_delete)                                      as restrict_post_delete
-    , coalesce(alls.self_hosted_expansion, vs.self_hosted_expansion)                                    as self_hosted_expansion
-    , coalesce(alls.self_hosted_purchase, vs.self_hosted_purchase)                                      as self_hosted_purchase
+    , vs.restrict_post_delete                                                                           as restrict_post_delete
+    , vs.self_hosted_expansion                                                                          as self_hosted_expansion
+    , vs.self_hosted_purchase                                                                           as self_hosted_purchase
     , coalesce(alls.session_cache_in_minutes, vs.session_cache_in_minutes)                              as session_cache_in_minutes
     , coalesce(alls.session_idle_timeout_in_minutes, vs.session_idle_timeout_in_minutes)                as session_idle_timeout_in_minutes
-    , coalesce(alls.session_length_mobile_in_days, vs.session_length_mobile_in_days)                    as session_length_mobile_in_days
+    , vs.session_length_mobile_in_days                                                                  as session_length_mobile_in_days
     , coalesce(alls.session_length_mobile_in_hours, vs.session_length_mobile_in_hours)                  as session_length_mobile_in_hours
-    , coalesce(alls.session_length_sso_in_days, vs.session_length_sso_in_days)                          as session_length_sso_in_days
+    , vs.session_length_sso_in_days                                                                     as session_length_sso_in_days
     , coalesce(alls.session_length_sso_in_hours, vs.session_length_sso_in_hours)                        as session_length_sso_in_hours
-    , coalesce(alls.session_length_web_in_days, vs.session_length_web_in_days)                          as session_length_web_in_days
+    , vs.session_length_web_in_days                                                                     as session_length_web_in_days
     , coalesce(alls.session_length_web_in_hours, vs.session_length_web_in_hours)                        as session_length_web_in_hours
-    , coalesce(alls.skip_login_page, vs.skip_login_page)                                                as skip_login_page
+    , vs.skip_login_page                                                                                as skip_login_page
     , coalesce(alls.terminate_sessions_on_password_change, 
                vs.terminate_sessions_on_password_change)                                                as terminate_sessions_on_password_change
     , coalesce(alls.thread_auto_follow, vs.thread_auto_follow)                                          as thread_auto_follow
