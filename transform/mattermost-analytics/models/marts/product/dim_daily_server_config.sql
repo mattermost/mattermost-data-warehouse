@@ -385,8 +385,8 @@ select
     , coalesce(alls.web_server_mode, vs.web_server_mode)                                                as web_server_mode 
     
     -- Metadata
-    , os.has_segment_telemetry_data or lds.has_segment_telemetry_data or ss.has_segment_telemetry_data or ps.has_segment_telemetry_data or vs.has_segment_telemetry_data alls has_segment_telemetry_data
-    , os.has_rudderstack_telemetry_data or lds.has_rudderstack_telemetry_data or ss.has_rudderstack_telemetry_data or ps.has_rudderstack_telemetry_data or vs.has_rudderstack_telemetry_data alls has_rudderstack_telemetry_data
+    , os.has_segment_telemetry_data or lds.has_segment_telemetry_data or ss.has_segment_telemetry_data or ps.has_segment_telemetry_data or vs.has_segment_telemetry_data or alls.has_segment_telemetry_data
+    , os.has_rudderstack_telemetry_data or lds.has_rudderstack_telemetry_data or ss.has_rudderstack_telemetry_data or ps.has_rudderstack_telemetry_data or vs.has_rudderstack_telemetry_data or alls.has_rudderstack_telemetry_data
 from
     {{ ref('int_server_active_days_spined') }} spine
     left join int_config_oauth os on spine.daily_server_id = os.daily_server_id
