@@ -95,7 +95,7 @@ select
     , coalesce(alls.isnotempty_public_certificate, lds.isnotempty_public_certificate)                   as isnotempty_public_certificate
     , coalesce(alls.max_page_size, lds.max_page_size)                                                   as max_page_size
     , coalesce(alls.query_timeout_ldap, lds.query_timeout_ldap)                                         as query_timeout_ldap
-    , coalesce(alls.segment_dedupe_id_ldap, lds.segment_dedupe_id_ldap)                                 as segment_dedupe_id_ldap
+    , lds.segment_dedupe_id_ldap                                                                        as segment_dedupe_id_ldap
     , coalesce(alls.skip_certificate_verification, lds.skip_certificate_verification)                   as skip_certificate_verification
     , coalesce(alls.sync_interval_minutes, lds.sync_interval_minutes)                                   as sync_interval_minutes
     -- Saml section
@@ -130,12 +130,12 @@ select
     -- Plugin section
     , coalesce(alls.allow_insecure_download_url, 
                ps.allow_insecure_download_url)                                                          as allow_insecure_download_url
-    , coalesce(alls.automatic_prepackaged_plugins, ps.automatic_prepackaged_plugins)
+    , coalesce(alls.automatic_prepackaged_plugins, ps.automatic_prepackaged_plugins)                    as automatic_prepackaged_plugins
     , ps.chimera_oauth_proxy_url                                                                        as chimera_oauth_proxy_url
     , coalesce(alls.enable_plugin, ps.enable_plugin)                                                    as enable_plugin
     , ps.enable_alertmanager                                                                            as enable_alertmanager
     , coalesce(alls.enable_antivirus, ps.enable_antivirus)                                              as enable_antivirus
-    , ps.enable_autolink                                                                                as enable_autolink
+    , coalesce(alls.enable_mattermost_autolink, ps.enable_autolink)                                     as enable_autolink
     , coalesce(alls.enable_aws_sns, ps.enable_aws_sns)                                                  as enable_aws_sns
     , ps.enable_bitbucket                                                                               as enable_bitbucket
     , coalesce(alls.enable_channel_export, ps.enable_channel_export)                                    as enable_channel_export
