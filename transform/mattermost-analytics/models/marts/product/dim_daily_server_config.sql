@@ -158,24 +158,18 @@ select
     , coalesce(alls.enable_jira, ps.enable_jira)                                                        as enable_jira
     , coalesce(alls.enable_jitsi, ps.enable_jitsi)                                                      as enable_jitsi
     , coalesce(alls.enable_marketplace, ps.enable_marketplace)                                          as enable_marketplace
-    , coalesce(alls.enable_matterpoll, ps.enable_matterpoll)                                            as enable_matterpoll
-    , coalesce(alls.enable_mattermost_agenda, 
-               ps.enable_mattermost_agenda)                                                             as enable_mattermost_agenda
-    , coalesce(alls.enable_mattermost_apps, ps.enable_mattermost_apps)                                  as enable_mattermost_apps
-    , coalesce(alls.enable_mattermost_azure_devops, 
-               ps.enable_mattermost_azure_devops)                                                       as enable_mattermost_azure_devops
+    , ps.enable_matterpoll                                                                              as enable_matterpoll
+    , ps.enable_mattermost_agenda                                                                       as enable_mattermost_agenda
+    , ps.enable_mattermost_apps                                                                         as enable_mattermost_apps
+    , ps.enable_mattermost_azure_devops                                                                 as enable_mattermost_azure_devops
     , coalesce(alls.enable_mattermost_calls, ps.enable_mattermost_calls)                                as enable_mattermost_calls
-    , coalesce(alls.enable_mattermost_hackerone, 
-               ps.enable_mattermost_hackerone)                                                          as enable_mattermost_hackerone
-    , coalesce(alls.enable_mattermost_msteams_meetings, 
-               ps.enable_mattermost_msteams_meetings)                                                   as enable_mattermost_msteams_meetings
+    , ps.enable_mattermost_hackerone                                                                    as enable_mattermost_hackerone
+    , ps.enable_mattermost_msteams_meetings                                                             as enable_mattermost_msteams_meetings
     , coalesce(alls.enable_mattermost_msteams_sync, 
                ps.enable_mattermost_msteams_sync)                                                       as enable_mattermost_msteams_sync
-    , coalesce(alls.enable_mattermost_profanity_filter, 
-               ps.enable_mattermost_profanity_filter)                                                   as enable_mattermost_profanity_filter
+    , ps.enable_mattermost_profanity_filter                                                             as enable_mattermost_profanity_filter
     , coalesce(alls.enable_mattermost_servicenow, ps.enable_mattermost_servicenow)                      as enable_mattermost_servicenow
-    , coalesce(alls.enable_mattermost_servicenow_virtual_agent, 
-               ps.enable_mattermost_servicenow_virtual_agent)                                           as enable_mattermost_servicenow_virtual_agent
+    , ps.enable_mattermost_servicenow_virtual_agent                                                     as enable_mattermost_servicenow_virtual_agent
     , coalesce(alls.enable_memes, ps.enable_memes)                                                      as enable_memes
     , coalesce(alls.enable_mscalendar, ps.enable_mscalendar)                                            as enable_mscalendar
     , coalesce(alls.enable_nps, ps.enable_nps)                                                          as enable_nps
@@ -186,7 +180,7 @@ select
     , ps.enable_ru_loop_plugin_embeds                                                                   as enable_ru_loop_plugin_embeds
     , ps.enable_ru_loop_plugin_scheduler                                                                as enable_ru_loop_plugin_scheduler
     , ps.enable_ru_loop_plugin_user_fields                                                              as enable_ru_loop_plugin_user_fields
-    , coalesce(alls.enable_set_default_theme, ps.enable_set_default_theme)                              as enable_set_default_theme
+    , ps.enable_set_default_theme                                                                       as enable_set_default_theme
     , coalesce(alls.enable_skype4business, ps.enable_skype4business)                                    as enable_skype4business
     , coalesce(alls.enable_todo, ps.enable_todo)                                                        as enable_todo
     , coalesce(alls.enable_uploads, ps.enable_uploads)                                                  as enable_uploads
