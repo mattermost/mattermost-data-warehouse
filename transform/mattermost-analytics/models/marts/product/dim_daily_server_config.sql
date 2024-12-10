@@ -230,7 +230,7 @@ select
     , coalesce(alls.version_playbooks, ps.version_playbooks)                                            as version_playbooks
     , ps.version_set_default_theme                                                                      as version_set_default_theme
     , coalesce(alls.version_todo, ps.version_todo)                                                      as version_todo
-    , coalesce(alls.version_webex, ps.version_webex)                                                    as version_webex
+    , ps.version_webex                                                                                  as version_webex
     , coalesce(alls.version_welcome_bot, ps.version_welcome_bot)                                        as version_welcome_bot
     , coalesce(alls.version_zoom, ps.version_zoom)                                                      as version_zoom
     -- Service section
@@ -299,7 +299,7 @@ select
     , coalesce(alls.enable_post_icon_override, vs.enable_post_icon_override)                            as enable_post_icon_override
     , coalesce(alls.enable_post_search, vs.enable_post_search)                                          as enable_post_search
     , coalesce(alls.enable_post_username_override, vs.enable_post_username_override)                    as enable_post_username_override
-    , coalesce(alls.enable_preview_features, vs.enable_preview_features)                                as enable_preview_features
+    , vs.enable_preview_features                                                                        as enable_preview_features
     , coalesce(alls.enable_security_fix_alert, vs.enable_security_fix_alert)                            as enable_security_fix_alert
     , coalesce(alls.enable_svgs, vs.enable_svgs)                                                        as enable_svgs
     , coalesce(alls.enable_testing, vs.enable_testing)                                                  as enable_testing
@@ -309,12 +309,9 @@ select
     , coalesce(alls.enable_user_typing_messages, vs.enable_user_typing_messages)                        as enable_user_typing_messages
     , coalesce(alls.enforce_multifactor_authentication_service,
                vs.enforce_multifactor_authentication_service)                                           as enable_multifactor_authentication_service
-    , coalesce(alls.experimental_channel_organization,
-               vs.experimental_channel_organization)                                                    as experimental_channel_organization
-    , coalesce(alls.experimental_channel_sidebar_organization,
-               vs.experimental_channel_sidebar_organization)                                            as experimental_channel_sidebar_organization
-    , coalesce(alls.experimental_data_prefetch,
-               vs.experimental_data_prefetch)                                                           as experimental_data_prefetch
+    , vs.experimental_channel_organization                                                              as experimental_channel_organization
+    , vs.experimental_channel_sidebar_organization                                                      as experimental_channel_sidebar_organization
+    , vs.experimental_data_prefetch                                                                     as experimental_data_prefetch
     , coalesce(alls.experimental_enable_authentication_transfer,
                vs.experimental_enable_authentication_transfer)                                          as experimental_enable_authentication_transfer
     , coalesce(alls.experimental_enable_default_channel_leave_join_messages,
@@ -332,24 +329,24 @@ select
     , coalesce(alls.extend_session_length_with_activity, 
                vs.extend_session_length_with_activity)                                                  as extend_session_length_with_activity
     , coalesce(alls.forward_80_to_443, vs.forward_80_to_443)                                            as forward_80_to_443
-    , coalesce(alls.gfycat_api_key, vs.gfycat_api_key)                                                  as gfycat_api_key
-    , coalesce(alls.gfycat_api_secret, vs.gfycat_api_secret)                                            as gfycat_api_secret
+    , vs.gfycat_api_key                                                                                 as gfycat_api_key
+    , vs.gfycat_api_secret                                                                              as gfycat_api_secret
     , coalesce(alls.isdefault_allowed_untrusted_internal_connections,
                vs.isdefault_allowed_untrusted_internal_connections)                                     as isdefault_allowed_untrusted_internal_connections
     , coalesce(alls.isdefault_allow_cors_from, vs.isdefault_allow_cors_from)                            as isdefault_allow_cors_from
     , coalesce(alls.isdefault_cors_exposed_headers, vs.isdefault_cors_exposed_headers)                  as isdefault_cors_exposed_headers
     , coalesce(alls.isdefault_google_developer_key, vs.isdefault_google_developer_key)                  as isdefault_google_developer_key
     , coalesce(alls.isdefault_idle_timeout, vs.isdefault_idle_timeout)                                  as isdefault_idle_timeout
-    , coalesce(alls.isdefault_image_proxy_options, vs.isdefault_image_proxy_options)                    as isdefault_image_proxy_options
-    , coalesce(alls.isdefault_image_proxy_type, vs.isdefault_image_proxy_type)                          as isdefault_image_proxy_type
-    , coalesce(alls.isdefault_image_proxy_url, vs.isdefault_image_proxy_url)                            as isdefault_image_proxy_url
+    , vs.isdefault_image_proxy_options                                                                  as isdefault_image_proxy_options
+    , vs.isdefault_image_proxy_type                                                                     as isdefault_image_proxy_type
+    , vs.isdefault_image_proxy_url                                                                      as isdefault_image_proxy_url
     , coalesce(alls.isdefault_read_timeout, vs.isdefault_read_timeout)                                  as isdefault_read_timeout
     , coalesce(alls.isdefault_site_url, vs.isdefault_site_url)                                          as isdefault_site_url
     , coalesce(alls.isdefault_tls_cert_file, vs.isdefault_tls_cert_file)                                as isdefault_tls_cert_file
     , coalesce(alls.isdefault_tls_key_file, vs.isdefault_tls_key_file)                                  as isdefault_tls_key_file
     , coalesce(alls.isdefault_write_timeout, vs.isdefault_write_timeout)                                as isdefault_write_timeout
-    , coalesce(alls.limit_load_search_result, vs.limit_load_search_result)                              as limit_load_search_result
-    , coalesce(alls.login_with_certificate, vs.login_with_certificate)                                  as login_with_certificate
+    , vs.limit_load_search_result                                                                       as limit_load_search_result
+    , vs.login_with_certificate                                                                         as login_with_certificate
     , coalesce(alls.managed_resource_paths, vs.managed_resource_paths)                                  as managed_resource_paths
     , coalesce(alls.maximum_login_attempts, vs.maximum_login_attempts)                                  as maximum_login_attempts
     , coalesce(alls.maximum_payload_size, vs.maximum_payload_size)                                      as maximum_payload_size
