@@ -191,7 +191,7 @@ select
     , coalesce(alls.require_plugin_signature, ps.require_plugin_signature)                              as require_plugin_signature
     , coalesce(alls.signature_public_key_files, ps.signature_public_key_files)                          as signature_public_key_files
     , ps.version_alertmanager                                                                           as version_alertmanager
-    , coalesce(alls.version_antivirus, ps.version_antivirus)                                            as version_antivirus
+    , ps.version_antivirus                                                                              as version_antivirus
     , coalesce(alls.version_autolink, ps.version_autolink)                                              as version_autolink
     , coalesce(alls.version_aws_sns, ps.version_aws_sns)                                                as version_aws_sns
     , ps.version_bitbucket                                                                              as version_bitbucket
