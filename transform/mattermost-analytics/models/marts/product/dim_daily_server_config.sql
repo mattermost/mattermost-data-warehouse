@@ -67,38 +67,37 @@ select
     , coalesce(alls.is_openid_gitlab_enabled, os.is_openid_gitlab_enabled)                             as is_openid_gitlab_enabled
     , coalesce(alls.is_openid_google_enabled, os.is_openid_google_enabled)                             as is_openid_google_enabled
     , coalesce(alls.is_openid_office365_enabled, os.is_openid_office365_enabled)                       as is_openid_office365_enabled
-    
     -- Ldap section
-    , coalesce(alls.connection_security_ldap, ls.connection_security_ldap)                             as connection_security_ldap
-    , coalesce(alls.enable_ldap, ls.enable_ldap)                                                       as enable_ldap
-    , coalesce(alls.enable_admin_filter ls.enable_admin_filter)                                        as enable_admin_filter
-    , coalesce(alls.enable_sync, ls.enable_sync)                                                       as enable_sync
-    , coalesce(alls.isdefault_email_attribute_ldap, ls.isdefault_email_attribute_ldap)                 as isdefault_email_attribute_ldap
-    , coalesce(alls.isdefault_first_name_attribute_ldap, ls.isdefault_first_name_attribute_ldap)       as isdefault_first_name_attribute_ldap
-    , coalesce(alls.isdefault_group_display_name_attribute, ls.isdefault_group_display_name_attribute) as isdefault_group_display_name_attribute
-    , coalesce(alls.isdefault_group_id_attribute, ls.isdefault_group_id_attribute)                     as isdefault_group_id_attribute
-    , coalesce(alls.isdefault_id_attribute_ldap, ls.isdefault_id_attribute_ldap)                       as isdefault_id_attribute_ldap
-    , coalesce(alls.isdefault_last_name_attribute_ldap, ls.isdefault_last_name_attribute_ldap)         as isdefault_last_name_attribute_ldap
+    , coalesce(alls.connection_security_ldap, lds.connection_security_ldap)                             as connection_security_ldap
+    , coalesce(alls.enable_ldap, lds.enable_ldap)                                                       as enable_ldap
+    , coalesce(alls.enable_admin_filter, lds.enable_admin_filter)                                        as enable_admin_filter
+    , coalesce(alls.enable_sync, lds.enable_sync)                                                       as enable_sync
+    , coalesce(alls.isdefault_email_attribute_ldap, lds.isdefault_email_attribute_ldap)                 as isdefault_email_attribute_ldap
+    , coalesce(alls.isdefault_first_name_attribute_ldap, lds.isdefault_first_name_attribute_ldap)       as isdefault_first_name_attribute_ldap
+    , coalesce(alls.isdefault_group_display_name_attribute, lds.isdefault_group_display_name_attribute) as isdefault_group_display_name_attribute
+    , coalesce(alls.isdefault_group_id_attribute, lds.isdefault_group_id_attribute)                     as isdefault_group_id_attribute
+    , coalesce(alls.isdefault_id_attribute_ldap, lds.isdefault_id_attribute_ldap)                       as isdefault_id_attribute_ldap
+    , coalesce(alls.isdefault_last_name_attribute_ldap, lds.isdefault_last_name_attribute_ldap)         as isdefault_last_name_attribute_ldap
     , coalesce(alls.isdefault_login_button_border_color_ldap,
-               ls.isdefault_login_button_border_color_ldap)                                          as isdefault_login_button_border_color_ldap
-    , coalesce(alls.isdefault_login_button_color_ldap, ls.isdefault_login_button_color_ldap)           as isdefault_login_button_color_ldap
-    , coalesce(alls.isdefault_login_button_text_color_ldap, ls.isdefault_login_button_text_color_ldap) as isdefault_login_button_text_color_ldap
-    , coalesce(alls.isdefault_login_field_name, ls.isdefault_login_field_name)                         as isdefault_login_field_name
-    , coalesce(alls.isdefault_login_id_attribute, ls.isdefault_login_id_attribute)                     as isdefault_login_id_attribute
-    , coalesce(alls.isdefault_nickname_attribute_ldap, ls.isdefault_nickname_attribute_ldap)           as isdefault_nickname_attribute_ldap
-    , coalesce(alls.isdefault_position_attribute_ldap, ls.isdefault_position_attribute_ldap)           as isdefault_position_attribute_ldap
-    , coalesce(alls.isdefault_username_attribute_ldap, ls.isdefault_username_attribute_ldap)           as isdefault_username_attribute_ldap
-    , coalesce(alls.isempty_admin_filter, ls.isempty_admin_filter)                                     as isempty_admin_filter
-    , coalesce(alls.isempty_group_filter, ls.isempty_group_filter)                                     as isempty_group_filter
-    , coalesce(alls.isempty_guest_filter, ls.isempty_guest_filter)                                     as isempty_guest_filter
-    , coalesce(alls.isnotempty_picture_attribute, ls.isnotempty_picture_attribute)                     as isnotempty_picture_attribute
-    , coalesce(alls.isnotempty_private_key, ss.isnotempty_private_key)                                 as isnotempty_private_key
-    , coalesce(alls.isnotempty_public_certificate, s.isnotempty_public_certificate)                    as isnotempty_public_certificate
-    , coalesce(alls.max_page_size, ls.max_page_size)                                                   as max_page_size
-    , coalesce(alls.query_timeout_ldap, ls.query_timeout_ldap)                                         as query_timeout_ldap
-    , coalesce(alls.segment_dedupe_id_ldap, ss.segment_dedupe_id_ldap)                                 as segment_dedupe_id_ldap
-    , coalesce(alls.skip_certificate_verification, ls.skip_certificate_verification)                   as skip_certificate_verification
-    , coalesce(alls.sync_interval_minutes, ls.sync_interval_minutes)                                   as sync_interval_minutes
+               lds.isdefault_login_button_border_color_ldap)                                          as isdefault_login_button_border_color_ldap
+    , coalesce(alls.isdefault_login_button_color_ldap, lds.isdefault_login_button_color_ldap)           as isdefault_login_button_color_ldap
+    , coalesce(alls.isdefault_login_button_text_color_ldap, lds.isdefault_login_button_text_color_ldap) as isdefault_login_button_text_color_ldap
+    , coalesce(alls.isdefault_login_field_name, lds.isdefault_login_field_name)                         as isdefault_login_field_name
+    , coalesce(alls.isdefault_login_id_attribute, lds.isdefault_login_id_attribute)                     as isdefault_login_id_attribute
+    , coalesce(alls.isdefault_nickname_attribute_ldap, lds.isdefault_nickname_attribute_ldap)           as isdefault_nickname_attribute_ldap
+    , coalesce(alls.isdefault_position_attribute_ldap, lds.isdefault_position_attribute_ldap)           as isdefault_position_attribute_ldap
+    , coalesce(alls.isdefault_username_attribute_ldap, lds.isdefault_username_attribute_ldap)           as isdefault_username_attribute_ldap
+    , coalesce(alls.isempty_admin_filter, lds.isempty_admin_filter)                                     as isempty_admin_filter
+    , coalesce(alls.isempty_group_filter, lds.isempty_group_filter)                                     as isempty_group_filter
+    , coalesce(alls.isempty_guest_filter, lds.isempty_guest_filter)                                     as isempty_guest_filter
+    , coalesce(alls.isnotempty_picture_attribute, lds.isnotempty_picture_attribute)                     as isnotempty_picture_attribute
+    , coalesce(alls.isnotempty_private_key, lds.isnotempty_private_key)                                 as isnotempty_private_key
+    , coalesce(alls.isnotempty_public_certificate, lds.isnotempty_public_certificate)                    as isnotempty_public_certificate
+    , coalesce(alls.max_page_size, lds.max_page_size)                                                   as max_page_size
+    , coalesce(alls.query_timeout_ldap, lds.query_timeout_ldap)                                         as query_timeout_ldap
+    , coalesce(alls.segment_dedupe_id_ldap, lds.segment_dedupe_id_ldap)                                 as segment_dedupe_id_ldap
+    , coalesce(alls.skip_certificate_verification, lds.skip_certificate_verification)                   as skip_certificate_verification
+    , coalesce(alls.sync_interval_minutes, lds.sync_interval_minutes)                                   as sync_interval_minutes
     -- Saml section
     , coalesce(alls.enable_saml, ss.enable_saml)                                                       as enable_saml
     , coalesce(alls.enable_admin_attribute, ss.enable_admin_attribute)                                 as enable_admin_attribute
@@ -406,7 +405,7 @@ select
 from
     {{ ref('int_server_active_days_spined') }} spine
     left join int_config_oauth os on spine.daily_server_id = os.daily_server_id
-    left join int_config_ldap ls on spine.daily_server_id = ls.daily_server_id
+    left join int_config_ldap lds on spine.daily_server_id = lds.daily_server_id
     left join int_config_saml ss on spine.daily_server_id = ss.daily_server_id
     left join int_config_plugin ps on spine.daily_server_id = ps.daily_server_id
     left join int_config_service vs on spine.daily_server_id = vs.daily_server_id
