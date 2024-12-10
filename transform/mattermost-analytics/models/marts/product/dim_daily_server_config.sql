@@ -131,30 +131,30 @@ select
     , coalesce(as.allow_insecure_download_url, 
                ps.allow_insecure_download_url)                                                       as allow_insecure_download_url
     , coalesce(as.automatic_prepackaged_plugins, ps.automatic_prepackaged_plugins)
-    , coalesce(ps.chimera_oauth_proxy_url)                                                           as chimera_oauth_proxy_url
+    , ps.chimera_oauth_proxy_url                                                                     as chimera_oauth_proxy_url
     , coalesce(as.enable_plugin, ps.enable_plugin)                                                   as enable_plugin
-    , coalesce(ps.enable_alertmanager)                                                               as enable_alertmanager
+    , ps.enable_alertmanager                                                                         as enable_alertmanager
     , coalesce(as.enable_antivirus, ps.enable_antivirus)                                             as enable_antivirus
-    , coalesce(ps.enable_autolink)                                                                   as enable_autolink
+    , ps.enable_autolink                                                                             as enable_autolink
     , coalesce(as.enable_aws_sns, ps.enable_aws_sns)                                                 as enable_aws_sns
-    , coalesce(as.enable_bitbucket, ps.enable_bitbucket)                                             as enable_bitbucket
+    , ps.enable_bitbucket                                                                            as enable_bitbucket
     , coalesce(as.enable_channel_export, ps.enable_channel_export)                                   as enable_channel_export
-    , coalesce(as.enable_circleci, ps.enable_circleci)                                               as enable_circleci
+    , ps.enable_circleci                                                                             as enable_circleci
     , coalesce(as.enable_confluence, ps.enable_confluence)                                           as enable_confluence
     , coalesce(as.enable_custom_user_attributes, 
                ps.enable_custom_user_attributes)                                                     as enable_custom_user_attributes
-    , coalesce(as.enable_diceroller, ps.enable_diceroller)                                           as enable_diceroller
+    , ps.enable_diceroller                                                                           as enable_diceroller
     , coalesce(as.enable_digitalocean, ps.enable_digitalocean)                                       as enable_digitalocean
     , coalesce(as.enable_focalboard, ps.enable_focalboard)                                           as enable_focalboard
     , coalesce(as.enable_giphy, ps.enable_giphy)                                                     as enable_giphy
     , coalesce(as.enable_github, ps.enable_github)                                                   as enable_github
     , coalesce(as.enable_gitlab, ps.enable_gitlab)                                                   as enable_gitlab
     , coalesce(as.enable_health_check, ps.enable_health_check)                                       as enable_health_check
-    , coalesce(as.enable_icebreaker, ps.enable_icebreaker)                                           as enable_icebreaker
+    , ps.enable_icebreaker                                                                           as enable_icebreaker
     , coalesce(as.enable_incident_management, ps.enable_incident_management)                         as enable_incident_management
-    , coalesce(as.enable_incident_response, ps.enable_incident_response)                             as enable_incident_response
+    , ps.enable_incident_response                                                                    as enable_incident_response
     , coalesce(as.enable_jenkins, ps.enable_jenkins)                                                 as enable_jenkins
-    , coalesce(as.enable_jespino_recommend, ps.enable_jespino_recommend)                             as enable_jespino_recommend
+    , ps.enable_jespino_recommend                                                                    as enable_jespino_recommend
     , coalesce(as.enable_jira, ps.enable_jira)                                                       as enable_jira
     , coalesce(as.enable_jitsi, ps.enable_jitsi)                                                     as enable_jitsi
     , coalesce(as.enable_marketplace, ps.enable_marketplace)                                         as enable_marketplace
