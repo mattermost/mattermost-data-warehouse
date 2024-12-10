@@ -222,7 +222,7 @@ select
     , coalesce(alls.version_mattermost_msteams_sync, 
                ps.version_mattermost_msteams_sync)                                                      as version_mattermost_msteams_sync
     , ps.version_mattermost_profanity_filter                                                            as version_mattermost_profanity_filter
-    , coalesce(alls.version_mattermost_servicenow, ps.version_mattermost_servicenow)                    as version_mattermost_servicenow
+    , ps.version_mattermost_servicenow                                                                  as version_mattermost_servicenow
     , ps.version_mattermost_servicenow_virtual_agent                                                    as version_mattermost_servicenow_virtual_agent
     , coalesce(alls.version_memes, ps.version_memes)                                                    as version_memes
     , ps.version_mscalendar                                                                             as version_mscalendar
