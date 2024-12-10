@@ -212,7 +212,7 @@ select
     , ps.version_jespino_recommend                                                                      as version_jespino_recommend
     , coalesce(alls.version_jira, ps.version_jira)                                                      as version_jira
     , ps.version_jitsi                                                                                  as version_jitsi
-    , coalesce(alls.version_matterpoll, ps.version_matterpoll)                                          as version_matterpoll
+    , ps.version_matterpoll                                                                             as version_matterpoll
     , ps.version_mattermost_agenda                                                                      as version_mattermost_agenda
     , ps.version_mattermost_apps                                                                        as version_mattermost_apps
     , ps.version_mattermost_azure_devops                                                                as version_mattermost_azure_devops
