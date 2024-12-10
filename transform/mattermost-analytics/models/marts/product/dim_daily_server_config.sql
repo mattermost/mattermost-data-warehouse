@@ -317,8 +317,8 @@ select
     , coalesce(alls.enable_user_access_tokens, vs.enable_user_access_tokens)                           as enable_user_access_tokens
     , coalesce(alls.enable_user_statuses, vs.enable_user_statuses)                                     as enable_user_statuses
     , coalesce(alls.enable_user_typing_messages, vs.enable_user_typing_messages)                       as enable_user_typing_messages
-    , coalesce(alls.enable_user_typing_messages,
-               vs.enforce_multifactor_authentication_service)                                        as enable_user_typing_messages
+    , coalesce(alls.enforce_multifactor_authentication_service,
+               vs.enforce_multifactor_authentication_service)                                        as enable_multifactor_authentication_service
     , coalesce(alls.experimental_channel_organization,
                vs.experimental_channel_organization)                                                 as experimental_channel_organization
     , coalesce(alls.experimental_channel_sidebar_organization,
