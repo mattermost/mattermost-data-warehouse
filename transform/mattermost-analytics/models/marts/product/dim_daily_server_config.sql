@@ -195,7 +195,7 @@ select
     , coalesce(alls.version_autolink, ps.version_autolink)                                              as version_autolink
     , coalesce(alls.version_aws_sns, ps.version_aws_sns)                                                as version_aws_sns
     , ps.version_bitbucket                                                                              as version_bitbucket
-    , coalesce(alls.version_channel_export, ps.version_channel_export)                                  as version_channel_export
+    , ps.version_channel_export                                                                         as version_channel_export
     , ps.version_circleci                                                                               as version_circleci
     , coalesce(alls.version_confluence, ps.version_confluence)                                          as version_confluence
     , coalesce(alls.version_custom_user_attributes, 
