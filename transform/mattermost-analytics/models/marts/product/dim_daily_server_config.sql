@@ -201,7 +201,7 @@ select
     , coalesce(alls.version_custom_user_attributes, 
                ps.version_custom_user_attributes)                                                       as version_custom_user_attributes
     , ps.version_diceroller                                                                             as version_diceroller
-    , coalesce(alls.version_digitalocean, ps.version_digitalocean)                                      as version_digitalocean
+    , ps.version_digitalocean                                                                           as version_digitalocean
     , coalesce(alls.version_giphy, ps.version_giphy)                                                    as version_giphy
     , coalesce(alls.version_github, ps.version_github)                                                  as version_github
     , coalesce(alls.version_gitlab, ps.version_gitlab)                                                  as version_gitlab
@@ -236,28 +236,27 @@ select
     -- Service section
     , coalesce(alls.allow_cookies_for_subdomains,
                vs.allow_cookies_for_subdomains)                                                         as allow_cookies_for_subdomains
-    , coalesce(alls.allow_edit_post_service,
-               vs.allow_edit_post_service)                                                              as allow_edit_post_service
+    , vs.allow_edit_post_service                                                                        as allow_edit_post_service
     , coalesce(alls.allow_persistent_notifications,
                vs.allow_persistent_notifications)                                                       as allow_persistent_notifications
     , coalesce(alls.allow_persistent_notifications_for_guests,
                vs.allow_persistent_notifications_for_guests)                                            as allow_persistent_notifications_for_guests
     , coalesce(alls.allow_synced_drafts, vs.allow_synced_drafts)                                        as allow_synced_drafts
-    , coalesce(alls.close_unused_direct_messages, vs.close_unused_direct_messages)                      as close_unused_direct_messages
+    , vs.close_unused_direct_messages                                                                   as close_unused_direct_messages
     , coalesce(alls.cluster_log_timeout_milliseconds, vs.cluster_log_timeout_milliseconds)              as cluster_log_timeout_milliseconds
     , coalesce(alls.collapsed_threads, vs.collapsed_threads)                                            as collapsed_threads
     , coalesce(alls.connection_security_service, vs.connection_security_service)                        as connection_security_service
     , coalesce(alls.cors_allow_credentials, vs.cors_allow_credentials)                                  as cors_allow_credentials
     , coalesce(alls.cors_debug, vs.cors_debug)                                                          as cors_debug
-    , coalesce(alls.custom_cert_header, vs.custom_cert_header)                                          as custom_cert_header
-    , coalesce(alls.custom_service_terms_enabled, vs.custom_service_terms_enabled)                      as custom_service_terms_enabled
-    , coalesce(alls.default_team_name, vs.default_team_name)                                            as default_team_name
+    , vs.custom_cert_header                                                                             as custom_cert_header
+    , vs.custom_service_terms_enabled                                                                   as custom_service_terms_enabled
+    , vs.default_team_name                                                                              as default_team_name
     , coalesce(alls.developer_flags, vs.developer_flags)                                                as developer_flags
     , coalesce(alls.disable_bots_when_owner_is_deactivated,
                vs.disable_bots_when_owner_is_deactivated)                                               as disable_bots_when_owner_is_deactivated
-    , coalesce(alls.disable_legacy_mfa, vs.disable_legacy_mfa)                                          as disable_legacy_mfa
+    , vs.disable_legacy_mfa                                                                             as disable_legacy_mfa
     , coalesce(alls.enable_api_channel_deletion, vs.enable_api_channel_deletion)                        as enable_api_channel_deletion
-    , coalesce(alls.enable_apiv3, vs.enable_apiv3)                                                      as enable_apiv3
+    , vs.enable_apiv3                                                                                   as enable_apiv3
     , coalesce(alls.enable_api_post_deletion, vs.enable_api_post_deletion)                              as enable_api_post_deletion
     , coalesce(alls.enable_api_team_deletion, vs.enable_api_team_deletion)                              as enable_api_team_deletion
     , coalesce(alls.enable_api_trigger_admin_notification,
@@ -268,7 +267,9 @@ select
     , coalesce(alls.enable_channel_viewed_messages_service,
                vs.enable_channel_viewed_messages_service)                                               as enable_channel_viewed_messages_service
     , coalesce(alls.enable_commands_service, vs.enable_commands_service)                                as enable_commands_service
+    , alls.enable_client_performance_debugging_service                                                  as enable_client_performance_debugging_service
     , coalesce(alls.enable_custom_emoji_service, vs.enable_custom_emoji_service)                        as enable_custom_emoji_service
+    , alls.enable_custom_groups_service                                                                 as enable_custom_groups_service
     , coalesce(alls.enable_developer_service, vs.enable_developer_service)                              as enable_developer_service
     , coalesce(alls.enable_email_invitations, vs.enable_email_invitations)                              as enable_email_invitations
     , coalesce(alls.enable_emoji_picker_service, vs.enable_emoji_picker_service)                        as enable_emoji_picker_service
@@ -276,10 +277,11 @@ select
     , coalesce(alls.enable_gif_picker, vs.enable_gif_picker)                                            as enable_gif_picker
     , coalesce(alls.enable_incoming_webhooks_service,
                vs.enable_incoming_webhooks_service)                                                     as enable_incoming_webhooks_service
+    , alls.enable_inline_latex                                                                          as enable_inline_latex
     , coalesce(alls.enable_insecure_outgoing_connections_service, 
                vs.enable_insecure_outgoing_connections_service)                                         as enable_insecure_outgoing_connections_service
     , coalesce(alls.enable_latex, vs.enable_latex)                                                      as enable_latex
-    , coalesce(alls.enable_legacy_sidebar, vs.enable_legacy_sidebar)                                    as enable_legacy_sidebar
+    , vs.enable_legacy_sidebar                                                                          as enable_legacy_sidebar
     , coalesce(alls.enable_link_previews, vs.enable_link_previews)                                      as enable_link_previews
     , coalesce(alls.enable_local_mode, vs.enable_local_mode)                                            as enable_local_mode
     , coalesce(alls.enable_multifactor_authentication_service,
