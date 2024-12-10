@@ -307,7 +307,7 @@ select
     , coalesce(alls.enable_user_statuses, vs.enable_user_statuses)                                      as enable_user_statuses
     , coalesce(alls.enable_user_typing_messages, vs.enable_user_typing_messages)                        as enable_user_typing_messages
     , coalesce(alls.enforce_multifactor_authentication_service,
-               vs.enforce_multifactor_authentication_service)                                           as enable_multifactor_authentication_service
+               vs.enforce_multifactor_authentication_service)                                           as enforce_multifactor_authentication_service
     , vs.experimental_channel_organization                                                              as experimental_channel_organization
     , vs.experimental_channel_sidebar_organization                                                      as experimental_channel_sidebar_organization
     , vs.experimental_data_prefetch                                                                     as experimental_data_prefetch
