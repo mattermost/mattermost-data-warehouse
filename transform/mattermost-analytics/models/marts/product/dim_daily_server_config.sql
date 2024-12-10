@@ -190,13 +190,13 @@ select
     , coalesce(alls.is_default_marketplace_url, ps.is_default_marketplace_url)                          as is_default_marketplace_url
     , coalesce(alls.require_plugin_signature, ps.require_plugin_signature)                              as require_plugin_signature
     , coalesce(alls.signature_public_key_files, ps.signature_public_key_files)                          as signature_public_key_files
-    , coalesce(alls.version_alertmanager, ps.version_alertmanager)                                      as version_alertmanager
+    , ps.version_alertmanager                                                                           as version_alertmanager
     , coalesce(alls.version_antivirus, ps.version_antivirus)                                            as version_antivirus
     , coalesce(alls.version_autolink, ps.version_autolink)                                              as version_autolink
     , coalesce(alls.version_aws_sns, ps.version_aws_sns)                                                as version_aws_sns
-    , coalesce(alls.version_bitbucket, ps.version_bitbucket)                                            as version_bitbucket
+    , ps.version_bitbucket                                                                              as version_bitbucket
     , coalesce(alls.version_channel_export, ps.version_channel_export)                                  as version_channel_export
-    , coalesce(alls.version_circleci, ps.version_circleci)                                              as version_circleci
+    , ps.version_circleci                                                                               as version_circleci
     , coalesce(alls.version_confluence, ps.version_confluence)                                          as version_confluence
     , coalesce(alls.version_custom_user_attributes, 
                ps.version_custom_user_attributes)                                                       as version_custom_user_attributes
@@ -205,37 +205,30 @@ select
     , coalesce(alls.version_giphy, ps.version_giphy)                                                    as version_giphy
     , coalesce(alls.version_github, ps.version_github)                                                  as version_github
     , coalesce(alls.version_gitlab, ps.version_gitlab)                                                  as version_gitlab
-    , coalesce(alls.version_icebreaker, ps.version_icebreaker)                                          as version_icebreaker
+    , ps.version_icebreaker                                                                             as version_icebreaker
     , coalesce(alls.version_incident_management, ps.version_incident_management)                        as version_incident_management
-    , coalesce(alls.version_incident_response, ps.version_incident_response)                            as version_incident_response
+    , ps.version_incident_response                                                                      as version_incident_response
     , coalesce(alls.version_jenkins, ps.version_jenkins)                                                as version_jenkins
-    , coalesce(alls.version_jespino_recommend, ps.version_jespino_recommend)                            as version_jespino_recommend
+    , ps.version_jespino_recommend                                                                      as version_jespino_recommend
     , coalesce(alls.version_jira, ps.version_jira)                                                      as version_jira
-    , coalesce(alls.version_jitsi, ps.version_jitsi)                                                    as version_jitsi
+    , ps.version_jitsi                                                                                  as version_jitsi
     , coalesce(alls.version_matterpoll, ps.version_matterpoll)                                          as version_matterpoll
-    , coalesce(alls.version_mattermost_agenda, 
-               ps.version_mattermost_agenda)                                                            as version_mattermost_agenda
-    , coalesce(alls.version_mattermost_apps, ps.version_mattermost_apps)                                as version_mattermost_apps
-    , coalesce(alls.version_mattermost_azure_devops, 
-               ps.version_mattermost_azure_devops)                                                      as version_mattermost_azure_devops
-    , coalesce(alls.version_mattermost_calls, 
-               ps.version_mattermost_calls)                                                             as version_mattermost_calls
-    , coalesce(alls.version_mattermost_hackerone, 
-               ps.version_mattermost_hackerone)                                                         as version_mattermost_hackerone
-    , coalesce(alls.version_mattermost_msteams_meetings, 
-               ps.version_mattermost_msteams_meetings)                                                  as version_mattermost_msteams_meetings
+    , ps.version_mattermost_agenda                                                                      as version_mattermost_agenda
+    , ps.version_mattermost_apps                                                                        as version_mattermost_apps
+    , ps.version_mattermost_azure_devops                                                                as version_mattermost_azure_devops
+    , ps.version_mattermost_calls                                                                       as version_mattermost_calls
+    , ps.version_mattermost_hackerone                                                                   as version_mattermost_hackerone
+    , ps.version_mattermost_msteams_meetings                                                            as version_mattermost_msteams_meetings
     , coalesce(alls.version_mattermost_msteams_sync, 
                ps.version_mattermost_msteams_sync)                                                      as version_mattermost_msteams_sync
-    , coalesce(alls.version_mattermost_profanity_filter, 
-               ps.version_mattermost_profanity_filter)                                                  as version_mattermost_profanity_filter
+    , ps.version_mattermost_profanity_filter                                                            as version_mattermost_profanity_filter
     , coalesce(alls.version_mattermost_servicenow, ps.version_mattermost_servicenow)                    as version_mattermost_servicenow
-    , coalesce(alls.version_mattermost_servicenow_virtual_agent, 
-               ps.version_mattermost_servicenow_virtual_agent)                                          as version_mattermost_servicenow_virtual_agent
+    , ps.version_mattermost_servicenow_virtual_agent                                                    as version_mattermost_servicenow_virtual_agent
     , coalesce(alls.version_memes, ps.version_memes)                                                    as version_memes
-    , coalesce(alls.version_mscalendar, ps.version_mscalendar)                                          as version_mscalendar
+    , ps.version_mscalendar                                                                             as version_mscalendar
     , coalesce(alls.version_nps, ps.version_nps)                                                        as version_nps
     , coalesce(alls.version_playbooks, ps.version_playbooks)                                            as version_playbooks
-    , coalesce(alls.version_set_default_theme, ps.version_set_default_theme)                            as version_set_default_theme
+    , ps.version_set_default_theme                                                                      as version_set_default_theme
     , coalesce(alls.version_todo, ps.version_todo)                                                      as version_todo
     , coalesce(alls.version_webex, ps.version_webex)                                                    as version_webex
     , coalesce(alls.version_welcome_bot, ps.version_welcome_bot)                                        as version_welcome_bot
