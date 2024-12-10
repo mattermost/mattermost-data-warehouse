@@ -206,9 +206,9 @@ select
     , coalesce(alls.version_github, ps.version_github)                                                  as version_github
     , coalesce(alls.version_gitlab, ps.version_gitlab)                                                  as version_gitlab
     , ps.version_icebreaker                                                                             as version_icebreaker
-    , coalesce(alls.version_incident_management, ps.version_incident_management)                        as version_incident_management
+    , ps.version_incident_management                                                                    as version_incident_management
     , ps.version_incident_response                                                                      as version_incident_response
-    , coalesce(alls.version_jenkins, ps.version_jenkins)                                                as version_jenkins
+    , ps.version_jenkins                                                                                as version_jenkins
     , ps.version_jespino_recommend                                                                      as version_jespino_recommend
     , coalesce(alls.version_jira, ps.version_jira)                                                      as version_jira
     , ps.version_jitsi                                                                                  as version_jitsi
@@ -216,7 +216,7 @@ select
     , ps.version_mattermost_agenda                                                                      as version_mattermost_agenda
     , ps.version_mattermost_apps                                                                        as version_mattermost_apps
     , ps.version_mattermost_azure_devops                                                                as version_mattermost_azure_devops
-    , ps.version_mattermost_calls                                                                       as version_mattermost_calls
+    , coalesce(alls.version_mattermost_calls, ps.version_mattermost_calls)                              as version_mattermost_calls                                                                    as version_mattermost_calls
     , ps.version_mattermost_hackerone                                                                   as version_mattermost_hackerone
     , ps.version_mattermost_msteams_meetings                                                            as version_mattermost_msteams_meetings
     , coalesce(alls.version_mattermost_msteams_sync, 
