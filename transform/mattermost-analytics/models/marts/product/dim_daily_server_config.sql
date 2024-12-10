@@ -319,10 +319,8 @@ select
                vs.experimental_enable_hardened_mode)                                                    as experimental_enable_hardened_mode
     , coalesce(alls.experimental_group_unread_channels, 
                vs.experimental_group_unread_channels)                                                   as experimental_group_unread_channels
-    , coalesce(alls.experimental_ldap_group_sync, 
-               vs.experimental_ldap_group_sync)                                                         as experimental_ldap_group_sync
-    , coalesce(alls.experimental_limit_client_config, 
-               vs.experimental_limit_client_config)                                                     as experimental_limit_client_config
+    , vs.experimental_ldap_group_sync                                                                   as experimental_ldap_group_sync
+    , vs.experimental_limit_client_config                                                               as experimental_limit_client_config
     , coalesce(alls.experimental_strict_csrf_enforcement, 
                vs.experimental_strict_csrf_enforcement)                                                 as experimental_strict_csrf_enforcement
     , coalesce(alls.extend_session_length_with_activity, 
