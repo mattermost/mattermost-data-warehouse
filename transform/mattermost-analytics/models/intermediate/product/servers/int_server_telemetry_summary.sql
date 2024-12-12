@@ -9,7 +9,8 @@ select
     last_value(count_registered_active_users) over (partition by server_id order by activity_date asc) as last_count_registered_active_users,
     last_value(daily_active_users) over (partition by server_id order by activity_date asc) as last_daily_active_users,
     last_value(monthly_active_users) over (partition by server_id order by activity_date asc) as last_monthly_active_users,
-    last_value(server_ip) over (partition by server_id order by activity_date asc) as last_server_ip
+    last_value(server_ip) over (partition by server_id order by activity_date asc) as last_server_ip,
+    'v' || REGEXP_SUBSTR(version_full, '^\\d+\\.\\d+') as short_version,
 from
     {{ ref('int_server_active_days_spined') }}
 -- Keep only one row per server as the current query creates duplicates

@@ -1,3 +1,4 @@
+
 with account_hierarchy as (
    select
         sys_connect_by_path(account_id, ' -> ') as path,
@@ -70,9 +71,20 @@ with account_hierarchy as (
         , last_daily_active_users
         , last_monthly_active_users
         , last_count_registered_active_users
+        , short_version
     from
         {{ ref('int_server_telemetry_summary') }}
     where server_id in (select server_id from all_telemetry_reported_licenses)
+), release_versions as (
+    -- Keep releases
+    select
+        version,
+        short_version,
+        rc1_date,
+    from
+        {{ ref('stg_mattermost__version_release_dates') }}
+    where
+        rc1_date is not null
 )
 select
     o.opportunity_id
@@ -97,10 +109,12 @@ select
     , array_size(active_servers) > 0 as has_user_activity
     , min(datediff('day', st.last_activity_date, current_date)) as days_since_last_user_activity
     , max(st.last_monthly_active_users) as max_last_monthly_active_users
+    , st.short_version
 from
     opportunities o
     left join all_telemetry_reported_licenses l on o.license_id = l.license_id
     left join {{ ref('int_known_licenses') }} kl on o.license_id = kl.license_id
     -- Keep only servers with telemetry and active users
     left join latest_active_users st on l.server_id = st.server_id and st.last_monthly_active_users > 0
+    left join release_versions rv on st.short_version = rv.short_version
 group by all
