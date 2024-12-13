@@ -83,6 +83,7 @@ renamed as (
         , config_saml_isdefault_username_attribute            as isdefault_username_attribute_saml
         , config_saml_sign_request                            as sign_request
         , config_saml_verify                                  as verify_saml
+        
         -- Plugin information
         , config_plugin_allow_insecure_download_url                                               as allow_insecure_download_url
         , config_plugin_automatic_prepackaged_plugins                                             as automatic_prepackaged_plugins
