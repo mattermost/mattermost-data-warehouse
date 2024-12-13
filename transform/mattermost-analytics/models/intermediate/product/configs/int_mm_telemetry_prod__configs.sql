@@ -9,11 +9,11 @@
 }}
 
 select 
-     {{ dbt_utils.star(ref('stg_mm_telemetry_prod__all')) }}
+     {{ dbt_utils.star(ref('stg_mm_telemetry_prod__configs')) }}
      , cast(received_at AS date) AS received_at_date
      , true as has_rudderstack_telemetry_data
      , false as has_segment_telemetry_data
-    from {{ ref('stg_mm_telemetry_prod__all') }} tmp
+    from {{ ref('stg_mm_telemetry_prod__configs') }} tmp
     where
     received_at <= CURRENT_TIMESTAMP
 {% if is_incremental() %}

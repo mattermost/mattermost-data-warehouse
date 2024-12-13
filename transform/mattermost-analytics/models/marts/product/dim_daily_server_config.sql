@@ -48,10 +48,10 @@ with int_config_oauth as (
 ), int_config_all as (
     select
         cast(timestamp as date) as server_date
-        , {{ dbt_utils.star(ref('int__config_all')) }}
+        , {{ dbt_utils.star(ref('int_mm_telemetry_prod__configs')) }}
         , {{ dbt_utils.generate_surrogate_key(['server_id', 'server_date']) }} as daily_server_id
     from
-        {{ ref('int__config_all') }}
+        {{ ref('int_mm_telemetry_prod__configs') }}
     qualify row_number() over (partition by server_id, server_date order by timestamp desc) = 1
 )
 
