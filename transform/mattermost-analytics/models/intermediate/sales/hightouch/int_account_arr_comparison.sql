@@ -32,8 +32,10 @@ WITH dates as (
 )
 SELECT
     a.account_id AS account_id,
+    oli.end_date__c AS end_date,
+    oli.start_date__c AS start_date,
     oli.end_date__c::date - oli.start_date__c::date + 1 - crosses_leap_day AS days,
-    datediff(day, oli.start_date__c::date, oli.end_date__c::date)  AS days_diff,
+    datediff(day, oli.start_date__c::date, oli.end_date__c::date) + 1 AS days_diff,
     crosses_leap_day
 FROM
     {{ ref('stg_salesforce__opportunity_line_item') }} oli
