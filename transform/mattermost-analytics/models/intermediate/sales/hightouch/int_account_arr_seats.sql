@@ -23,7 +23,7 @@ WITH account_w_arr AS (
     FROM {{ ref('stg_salesforce__account') }} a
     LEFT JOIN {{ ref('stg_salesforce__opportunity') }} o ON a.account_id = o.account_id AND o.status_wlo__c = 'Won'
     LEFT JOIN {{ ref('stg_salesforce__opportunity_line_item') }} oli ON o.opportunity_id = oli.opportunity_id
-    LEFT JOIN {{ ref('stg_salesforce__product2') }} ON oli.product2id = product2.product2_id
+    LEFT JOIN {{ ref('stg_salesforce__product2') }} product2 ON oli.product2id = product2.product2_id
     WHERE
         current_date >= oli.start_date__c AND current_date <= oli.end_date__c
     GROUP BY 1
