@@ -24,9 +24,10 @@ WITH dates as (
         o.opportunity_id,
         oli.opportunity_line_item_id AS opportunitylineitem_sfid,
         MAX(CASE WHEN leap_years.date BETWEEN start_date__c::date AND end_date__c::date THEN 1 ELSE 0 END) AS crosses_leap_day
-    FROM {{ ref('stg_salesforce__opportunity_line_item') }} o
-    LEFT JOIN {{ ref('opportunitylineitem') }} oli ON o.opportunity_id = oli.opportunity_id
-    LEFT JOIN leap_years ON 1 = 1
+    FROM
+        {{ ref('stg_salesforce__opportunity') }} o
+        LEFT JOIN {{ ref('stg_salesforce__opportunity_line_item') }} oli ON o.opportunity_id = oli.opportunity_id
+        LEFT JOIN leap_years ON 1 = 1
     GROUP BY opportunity_id, opportunitylineitem_sfid
 ), account_w_arr AS (
     SELECT
