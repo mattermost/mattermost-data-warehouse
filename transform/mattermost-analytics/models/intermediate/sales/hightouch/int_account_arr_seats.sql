@@ -28,7 +28,7 @@ WITH dates as (
         {{ ref('stg_salesforce__opportunity') }} o
         LEFT JOIN {{ ref('stg_salesforce__opportunity_line_item') }} oli ON o.opportunity_id = oli.opportunity_id
         LEFT JOIN leap_years ON 1 = 1
-    GROUP BY opportunity_id, opportunitylineitem_sfid
+    GROUP BY opportunity_id, opportunity_line_item_id
 ), account_w_arr AS (
     SELECT
         a.account_id AS account_id,
