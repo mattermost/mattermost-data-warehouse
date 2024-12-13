@@ -26,7 +26,7 @@ renamed as (
         lastmodifieddate as last_modified_at,
         systemmodstamp as system_modstamp_at,
         lastvieweddate as last_viewed_at,
-        lastreferenceddate as last_reference_date
+        lastreferenceddate as last_reference_date,
 
         -- Custom columns
 
