@@ -22,7 +22,7 @@ WITH dates as (
 ), opportunitylineitems_impacted AS (
     SELECT
         o.opportunity_id,
-        oli.opportunity_line_item_id AS opportunitylineitem_sfid,
+        oli.opportunity_line_item_id,
         MAX(CASE WHEN leap_years.date BETWEEN start_date__c::date AND end_date__c::date THEN 1 ELSE 0 END) AS crosses_leap_day
     FROM
         {{ ref('stg_salesforce__opportunity') }} o
@@ -32,7 +32,7 @@ WITH dates as (
 ), account_w_arr AS (
     SELECT
         a.account_id AS account_id,
-        SUM(365*(oli.total_price)/(opportunitylineitem.end_date__c::date - opportunitylineitem.start_date__c::date + 1 - crosses_leap_day) AS total_arr
+        SUM(365*(oli.total_price)/(opportunitylineitem.end_date__c::date - opportunitylineitem.start_date__c::date + 1 - crosses_leap_day)) AS total_arr
     FROM
         {{ ref('stg_salesforce__opportunity_line_item') }} oli
         LEFT JOIN opportunitylineitems_impacted ON opportunitylineitems_impacted.opportunity_line_item_id = oli.opportunity_line_item_id
