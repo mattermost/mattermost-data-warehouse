@@ -1,14 +1,40 @@
-{{config({
-    "materialized": 'table',
+{{
+  config({
+    "materialized": 'table'
   })
 }}
 
-WITH account_w_arr AS (
+WITH dates as (
+  {{
+    dbt_utils.date_spine(
+      start_date="to_date('02/01/2010', 'mm/dd/yyyy')",
+      datepart="day",
+      end_date="dateadd(year, 5, current_date)"
+     )
+  }}
+), leap_years AS (
+    SELECT
+        dates.date AS date
+    FROM dates
+    WHERE dates.date::varchar LIKE '%-02-29'
+    GROUP BY 1
+
+), opportunitylineitems_impacted AS (
+    SELECT
+        o.opportunity_id,
+        oli.opportunity_line_item_id AS opportunitylineitem_sfid,
+        MAX(CASE WHEN leap_years.date BETWEEN start_date__c::date AND end_date__c::date THEN 1 ELSE 0 END) AS crosses_leap_day
+    FROM {{ ref('stg_salesforce__opportunity_line_item') }} o
+    LEFT JOIN {{ ref('opportunitylineitem') }} oli ON o.opportunity_id = oli.opportunity_id
+    LEFT JOIN leap_years ON 1 = 1
+    GROUP BY opportunity_id, opportunitylineitem_sfid
+), account_w_arr AS (
     SELECT
         a.account_id AS account_id,
-        SUM(365*(oli.total_price)/(datediff(day, oli.end_date__c::date , oli.start_date__c::date ) + 1)) AS total_arr
+        SUM(365*(oli.total_price)/(opportunitylineitem.end_date__c::date - opportunitylineitem.start_date__c::date + 1 - crosses_leap_day) AS total_arr
     FROM
         {{ ref('stg_salesforce__opportunity_line_item') }} oli
+        LEFT JOIN opportunitylineitems_impacted ON opportunitylineitems_impacted.opportunity_line_item_id = oli.opportunity_line_item_id
         LEFT JOIN {{ ref('stg_salesforce__opportunity') }} o ON o.opportunity_id = oli.opportunity_id
         LEFT JOIN {{ ref('stg_salesforce__account') }} a ON a.account_id = o.account_id
     WHERE

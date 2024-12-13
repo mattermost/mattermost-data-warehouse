@@ -8,7 +8,7 @@ with source as (
 renamed as (
 
     select
-        id as opportunity_line_item,
+        id as opportunity_line_item_id,
 
         -- Foreign keys
         createdbyid as created_by_id,

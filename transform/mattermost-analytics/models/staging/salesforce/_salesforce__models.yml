@@ -1395,7 +1395,7 @@ models:
       Deleted opportunity line items are excluded.
 
     columns:
-      - name: opportunity_line_item
+      - name: opportunity_line_item_id
         description: "The opportunity line item's ID, as defined by Salesforce"
         tests:
           - not_null
