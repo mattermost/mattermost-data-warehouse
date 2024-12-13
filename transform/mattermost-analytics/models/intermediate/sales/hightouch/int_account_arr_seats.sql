@@ -16,7 +16,7 @@ WITH dates as (
     SELECT
         date_day as date
     FROM dates
-    WHERE dates.date::varchar LIKE '%-02-29'
+    WHERE date_day::varchar LIKE '%-02-29'
     GROUP BY 1
 
 ), opportunitylineitems_impacted AS (
