@@ -8,7 +8,7 @@ with source as (
 renamed as (
 
     select
-          id as s
+          id as account_id
 
         -- Foreign Keys
         , ownerid as owner_id
