@@ -14,7 +14,7 @@ WITH dates as (
   }}
 ), leap_years AS (
     SELECT
-        dates.date AS date
+        date_day as date
     FROM dates
     WHERE dates.date::varchar LIKE '%-02-29'
     GROUP BY 1
