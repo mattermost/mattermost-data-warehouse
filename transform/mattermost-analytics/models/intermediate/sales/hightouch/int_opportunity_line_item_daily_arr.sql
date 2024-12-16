@@ -28,7 +28,7 @@ FROM
     {{ ref( 'stg_salesforce__opportunity_line_item') }}  AS opportunitylineitem
     LEFT JOIN opportunitylineitems_impacted ON opportunitylineitems_impacted.opportunitylineitem_sfid = opportunitylineitem.sfid
     LEFT JOIN {{ ref( 'stg_salesforce__opportunity') }}  AS opportunity ON opportunity.opportunity_id = opportunitylineitem.opportunity_id
-    LEFT JOIN {{ ref('arr_dates') }}  AS util_dates ON util_dates.date_day::date >= opportunitylineitem.start_date__c::date AND util_dates.date::date <= opportunitylineitem.end_date__c::date
+    LEFT JOIN {{ ref('arr_days') }}  AS util_dates ON util_dates.date_day::date >= opportunitylineitem.start_date__c::date AND util_dates.date::date <= opportunitylineitem.end_date__c::date
 WHERE
     opportunitylineitem.end_date__c::date-opportunitylineitem.start_date__c::date <> 0
     AND opportunitylineitem.end_date__c::date - opportunitylineitem.start_date__c::date + 1 - crosses_leap_day <> 0
