@@ -7,7 +7,7 @@ WITH opportunity_daily_arr AS (
   SELECT
     account.account_id,
     coalesce(master_account.account_id, account.account_id) as master_account_sfid,
-    opportunity.opportunity_id AS opoprtunity_id,
+    opportunity.opportunity_id,
   	day,
   	SUM(won_arr)::int AS won_arr,
     SUM(lost_arr)::int AS lost_arr,
