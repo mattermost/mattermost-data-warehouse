@@ -24,10 +24,10 @@ WITH w_end_date AS (
 ), w_oppt_commit AS ( 
   SELECT
        o.opportunity_id,
-       min(ofh.created_date) as first_commit_date,
-       max(ofh.created_date) as last_commit_date,
+       min(ofh.createddate) as first_commit_date,
+       max(ofh.createddate) as last_commit_date,
        count(distinct(to_char(ofh.created_date,'YYYY-MM'))) as num_times_slipped
-  FROM {{ ref('stg_salesforce__opportunity_field_history') }} ofh
+  FROM {{ ref('stg_salesforce__opportunity_field_history_migrated') }} ofh
   LEFT JOIN {{ ref('stg_salesforce__opportunity') }} o ON (ofh.opportunity_id = o.opportunity_id)
   WHERE ofh.field = 'ForecastCategoryName'
   AND ofh.newvalue = 'Commit'
