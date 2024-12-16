@@ -4,21 +4,12 @@
   })
 }}
 
-WITH dates as (
-  {{
-    dbt_utils.date_spine(
-      start_date="to_date('02/01/2010', 'mm/dd/yyyy')",
-      datepart="day",
-      end_date="dateadd(year, 5, current_date)"
-     )
-  }}
-), leap_years AS (
+WITH leap_years AS (
     SELECT
         date_day as date
-    FROM dates
+    FROM {{ ref('arr_days') }}
     WHERE date_day::varchar LIKE '%-02-29'
     GROUP BY 1
-
 ), opportunitylineitems_impacted AS (
     SELECT
         o.opportunity_id,
