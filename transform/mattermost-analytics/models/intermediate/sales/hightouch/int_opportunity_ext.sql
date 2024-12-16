@@ -66,7 +66,7 @@ WITH w_end_date AS (
   GROUP BY 1
 ), opp_products AS (
   SELECT 
-      opportunity_id,
+      opportunity.opportunity_id,
       SUM(
           IFF(PRODUCT_LINE_TYPE__C = 'Expansion', TOTAL_PRICE/((END_DATE__C::date - START_DATE__C::date +1)/365),
           IFF(PRODUCT_LINE_TYPE__C = 'New', TOTAL_PRICE/((END_DATE__C::date - START_DATE__C::date + 1)/365), 0))
