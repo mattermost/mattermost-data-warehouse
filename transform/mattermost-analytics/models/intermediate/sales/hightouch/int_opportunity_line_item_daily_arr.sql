@@ -20,7 +20,7 @@ WITH leap_years AS (
 SELECT
     opportunitylineitem.opportunity_line_item_id,
     opportunity.opportunity_id,
-  	util_dates.dates_day::date AS day,
+  	util_dates.date_day::date AS day,
   	SUM(CASE WHEN opportunity.is_won THEN 365*(opportunitylineitem.totalprice)/(opportunitylineitem.end_date__c::date - opportunitylineitem.start_date__c::date + 1 - crosses_leap_day) ELSE 0 END )::int AS won_arr,
     SUM(CASE WHEN opportunity.is_closed AND NOT opportunity.iswon THEN 365*(opportunitylineitem.totalprice)/(opportunitylineitem.end_date__c::date - opportunitylineitem.start_date__c::date + 1 - crosses_leap_day)ELSE 0 END )::int AS lost_arr,
     SUM(CASE WHEN NOT opportunity.is_closed THEN 365*(opportunitylineitem.totalprice)/(opportunitylineitem.end_date__c::date - opportunitylineitem.start_date__c::date + 1 - crosses_leap_day) ELSE 0 END )::int AS open_arr
