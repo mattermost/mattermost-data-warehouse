@@ -11,7 +11,6 @@ renamed as (
 
         -- Foreign keys
         opportunityid as opportunity_id,
-        contractid as contract_id,
 
         -- Metadata
         createddate as created_at,
