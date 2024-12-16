@@ -15,7 +15,7 @@ WITH leap_years AS (
       MAX(CASE WHEN leap_years.date BETWEEN start_date__c::date AND end_date__c::date THEN 1 ELSE 0 END) AS crosses_leap_day
     FROM {{ ref( 'stg_salesforce__opportunity_line_item') }}
     LEFT JOIN leap_years ON 1 = 1
-    GROUP BY opportunitylineitem_sfid
+    GROUP BY 1
 )
 SELECT
     opportunitylineitem.opportunity_line_item_id,
