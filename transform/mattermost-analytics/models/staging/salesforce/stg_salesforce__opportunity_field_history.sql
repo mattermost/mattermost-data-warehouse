@@ -13,7 +13,7 @@ renamed as (
         opportunityid as opportunity_id,
 
         -- Metadata
-        createddate as created_at,
+        createddate as created_date,
         isdeleted as is_deleted,
 
         -- Values
