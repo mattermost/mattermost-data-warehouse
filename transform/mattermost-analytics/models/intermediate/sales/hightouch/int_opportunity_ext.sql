@@ -78,36 +78,36 @@ WITH w_end_date AS (
   SELECT
       opportunity.opportunity_id,
       IFNULL(opportunity.Override_Total_Net_New_ARR__c, Net_New_ARR__c) as Net_New_ARR_with_Override__c
-  FROM {{ ref('stg_salesforce__opportunity') }}
+  FROM {{ ref('stg_salesforce__opportunity') }} opportunity
   LEFT JOIN opp_products on opp_products.opportunity_id = opportunity.opportunity_id
 ), opp_created_by_segment as (
   SELECT
     opportunity.opportunity_id,
     case 
       when userrole.name like '%Federal%' then 'Federal'
-      when coalesce(numberofemployees,0) <= 999 and userrole.name = 'Sales Dev Reps' then 'Commercial BDR'
-      when coalesce(numberofemployees,0) <= 999 and userrole.name not like '%Federal%' then 'Commercial AE'
-      when coalesce(numberofemployees,0) > 999 and userrole.name = 'Sales Dev Reps' then 'Enterprise BDR'
-      when coalesce(numberofemployees,0) > 999 and userrole.name not like '%Federal%' then 'Enterprise AE'
+      when coalesce(number_of_employees,0) <= 999 and userrole.name = 'Sales Dev Reps' then 'Commercial BDR'
+      when coalesce(number_of_employees,0) <= 999 and userrole.name not like '%Federal%' then 'Commercial AE'
+      when coalesce(number_of_employees,0) > 999 and userrole.name = 'Sales Dev Reps' then 'Enterprise BDR'
+      when coalesce(number_of_employees,0) > 999 and userrole.name not like '%Federal%' then 'Enterprise AE'
     else null 
     end as created_by_segment
   FROM {{ ref('stg_salesforce__opportunity') }} opportunity
   JOIN {{ ref('stg_salesforce__user') }} creator on opportunity.owner_id = creator.user_id
   JOIN {{ ref('stg_salesforce__user_role') }} userrole on creator.user_role_id = userrole.user_role_id
-  JOIN {{ ref('stg_salesforce__account') }} on opportunity.account_id = account.account_id
+  JOIN {{ ref('stg_salesforce__account') }} account on opportunity.account_id = account.account_id
 ), opp_owner_role AS (
   SELECT 
     opportunity.opportunity_id,
-    userrole.sfid as owner_role_sfid,
+    userrole.user_role_id,
     userrole.name as owner_role_name
   FROM {{ ref('stg_salesforce__opportunity') }} as opportunity
   JOIN {{ ref('stg_salesforce__user') }} as owner on opportunity.owner_id = owner.user_id
-  JOIN {{ ref('stg_salesforce__user_role') }} on owner.user_role_id = userrole.user_role_id
+  JOIN {{ ref('stg_salesforce__user_role') }} as userrole on owner.user_role_id = userrole.user_role_id
 ), opportunity_ext AS (
   SELECT
       opportunity.opportunity_id,
       opportunity.account_id as account_id,
-      case when owner_role_name like '%Federal%' then 'Federal' when coalesce(numberofemployees,0) <= 999 then 'Commercial' when coalesce(numberofemployees,0) > 999 then 'Enterprise' end as market_segment,
+      case when owner_role_name like '%Federal%' then 'Federal' when coalesce(number_of_employees,0) <= 999 then 'Commercial' when coalesce(number_of_employees,0) > 999 then 'Enterprise' end as market_segment,
       opp_owner_role.owner_role_name,
       opp_created_by_segment.created_by_segment,
       opportunity.close_at as close_date,
@@ -139,8 +139,8 @@ WITH w_end_date AS (
       SUM(multi_amount__c) AS sum_multi_amount,
       SUM(renewal_multi_amount__c) AS sum_renewal_multi_amount
   FROM {{ ref('stg_salesforce__opportunity') }} opportunity
-  LEFT JOIN {{ ref('stg_salesforce__opportunity_line_item') }} opportunitylineitem ON opportunity.sfid = opportunitylineitem.opportunity_id
-  JOIN {{ ref('stg_salesforce__account') }} on opportunity.account_id = account.account_id
+  LEFT JOIN {{ ref('stg_salesforce__opportunity_line_item') }} opportunitylineitem ON opportunity.opportunity_id = opportunitylineitem.opportunity_id
+  JOIN {{ ref('stg_salesforce__account') }} account on opportunity.account_id = account.account_id
   LEFT JOIN w_end_date ON opportunity.opportunity_id = w_end_date.opportunity_id
   LEFT JOIN w_start_date ON opportunity.opportunity_id = w_start_date.opportunity_id
   LEFT JOIN w_oppt_commit ON opportunity.opportunity_id = w_oppt_commit.opportunity_id
