@@ -93,7 +93,7 @@ WITH w_end_date AS (
     end as created_by_segment
   FROM {{ ref('stg_salesforce__opportunity') }} opportunity
   JOIN {{ ref('stg_salesforce__user') }} creator on opportunity.owner_id = creator.user_id
-  JOIN {{ ref('stg_salesforce__userrole') }} userrole on creator.user_role_id = userrole.user_role_id
+  JOIN {{ ref('stg_salesforce__user_role') }} userrole on creator.user_role_id = userrole.user_role_id
   JOIN {{ ref('stg_salesforce__account') }} on opportunity.account_id = account.account_id
 ), opp_owner_role AS (
   SELECT 
