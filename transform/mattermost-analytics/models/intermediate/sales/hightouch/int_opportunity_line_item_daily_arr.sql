@@ -5,9 +5,9 @@
 }}
 
 WITH leap_years AS (
-    SELECT dates.date
+    SELECT dates.date_day as date
     FROM {{ ref('arr_days') }}
-    WHERE dates.date LIKE '%-02-29'
+    WHERE dates.date_day LIKE '%-02-29'
     GROUP BY 1
 ), opportunitylineitems_impacted AS (
     SELECT
