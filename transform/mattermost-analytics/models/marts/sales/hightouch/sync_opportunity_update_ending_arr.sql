@@ -3,7 +3,7 @@ with opportunity_end_date as (
     opportunity_ext.opportunity_id,
     opportunity.renewed_by_opportunity_id__c as renewal_opportunity_sfid,
     max_end_date
-  from {{ ref('int_opportunity_ext') } opportunity_ext
+  from {{ ref('int_opportunity_ext') }} opportunity_ext
   join {{ ref('stg_salesforce__opportunity') }} opportunity on opportunity_ext.opportunity_id = opportunity_id.sfid
   where opportunity.is_won
 ),
@@ -28,5 +28,4 @@ opportunity_update_ending_arr as (
     on opportunity_ending_arr.opportunity_id = original_opportunity_ending_arr.renewal_opportunity_sfid
   group by 1, 2
 )
-
 select * from opportunity_update_ending_arr
