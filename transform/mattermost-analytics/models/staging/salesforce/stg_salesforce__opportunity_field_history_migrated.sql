@@ -3,7 +3,9 @@
 SELECT
     DISTINCT o.id as sfid,
              o.*,
-             o.opportunity_id as opportunity_id,
+             -- Rename fields actually used downstream to be consistent with the rest of the code
+             o.opportunityid as opportunity_id,
+             o.createddate as created_date,
              coalesce(NEWVALUE__BO::VARCHAR,NEWVALUE__DE::VARCHAR,NEWVALUE__FL::VARCHAR,NEWVALUE__ST::VARCHAR) as newvalue,
              coalesce(OLDVALUE__BO::VARCHAR,OLDVALUE__DE::VARCHAR,OLDVALUE__FL::VARCHAR,OLDVALUE__ST::VARCHAR) as oldvalue
 FROM {{ source('salesforce', 'opportunityfieldhistory') }} o
