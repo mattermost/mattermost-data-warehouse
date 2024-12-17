@@ -25,7 +25,10 @@ with account_type as (
 )
 
 select
-    account_update_arr_seats_type.*
+    account_update_arr_seats_type.account_id as sfid,
+    account_update_arr_seats_type.total_arr,
+    account_update_arr_seats_type.seats,
+    account_update_arr_seats_type.account_type
 from account_update_arr_seats_type
 join {{ ref('stg_salesforce__account') }} a on a.account_id = account_update_arr_seats_type.account_id
 where

@@ -20,7 +20,7 @@ opportunity_ending_arr as (
 
 opportunity_update_ending_arr as (
   select
-    opportunity_ending_arr.opportunity_id,
+    opportunity_ending_arr.opportunity_id as opportunity_sfid,
     coalesce(opportunity_ending_arr.ending_arr,0) as ending_arr,
     sum(coalesce(original_opportunity_ending_arr.ending_arr,0)) as original_opportunity_ending_arr
   from opportunity_ending_arr

@@ -154,3 +154,33 @@ models:
         description: The name of the account.
       - name: clearbit_domain
         description: The email domain assigned to the account via Clearbit.
+
+
+  - name: sync_account_arr_and_type
+    description: |
+      Assigns ARR and Account Type to accounts. This model is used to sync ARR and Account Type to Salesforce.
+
+    columns:
+      - name: account_id
+        description: The Salesforce id of the account.
+        tests:
+          - not_null
+          - unique
+      - name: total_arr
+        description: The total ARR of the account.
+      - name: account_type
+        description: The type of the account.
+
+  - name: sync_opportunity_update_ending_arr
+    description: |
+      Updates the ending ARR of an opportunity. This model is used to update the ending ARR of an opportunity in 
+      Salesforce.
+
+    columns:
+      - name: opportunity_sfid
+        description: The Salesforce id of the opportunity.
+        tests:
+          - not_null
+          - unique
+      - name: ending_arr
+        description: The ending ARR of the opportunity.
