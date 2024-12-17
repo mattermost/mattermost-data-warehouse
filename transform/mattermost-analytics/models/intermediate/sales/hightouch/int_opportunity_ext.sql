@@ -1,8 +1,3 @@
-{{config({
-    "materialized": "table"
-  })
-}}
-
 WITH w_end_date AS (
   SELECT
         opportunity_id,

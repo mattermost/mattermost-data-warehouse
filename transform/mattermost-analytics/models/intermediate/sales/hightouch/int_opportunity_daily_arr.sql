@@ -1,8 +1,3 @@
-{{
-  config({
-    "materialized": "table",
-  })
-}}
 WITH opportunity_daily_arr AS (
   SELECT
     account.account_id,

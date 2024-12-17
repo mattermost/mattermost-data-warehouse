@@ -1,9 +1,3 @@
-{{
-  config({
-    "materialized": "table",
-  })
-}}
-
 WITH leap_years AS (
     SELECT dates.date_day as date
     FROM {{ ref('arr_days') }} dates
