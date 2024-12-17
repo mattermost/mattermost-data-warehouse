@@ -162,7 +162,7 @@ models:
 
     columns:
       - name: sfid
-        description: The Salesforce id of the account.
+        description: The Salesforce ID of the account.
         tests:
           - not_null
           - unique
@@ -178,7 +178,7 @@ models:
 
     columns:
       - name: opportunity_sfid
-        description: The Salesforce id of the opportunity.
+        description: The Salesforce ID of the opportunity.
         tests:
           - not_null
           - unique
