@@ -33,3 +33,5 @@ models:
         description: |
           The total ending annual recurring revenue (ARR) for the account. This is the sum of all opportunities'
           ending ARR.
+      - name: account_current_arr
+        description: The current annual recurring revenue (ARR) for the account.

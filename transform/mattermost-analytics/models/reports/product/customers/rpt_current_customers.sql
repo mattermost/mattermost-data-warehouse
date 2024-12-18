@@ -8,7 +8,8 @@ select
     o.license_end_date__c::date as license_ends_at,
     o.close_at,
     o.ending_arr__c as ending_arr,
-    sum(o.ending_arr__c) over(partition by a.account_id) as total_ending_arr
+    sum(o.ending_arr__c) over(partition by a.account_id) as total_ending_arr,
+    a.arr_current_c as account_current_arr
 from
     {{ ref('stg_salesforce__opportunity') }} o
     join {{ ref('stg_salesforce__account') }} a on o.account_id = a.account_id
