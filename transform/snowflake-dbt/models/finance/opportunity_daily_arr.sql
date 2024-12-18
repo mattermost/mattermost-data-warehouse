@@ -1,7 +1,6 @@
-{{config({
+{{
+  config({
     "materialized": "table",
-    "schema": "finance",
-    "tags":["nightly"]
   })
 }}
 
