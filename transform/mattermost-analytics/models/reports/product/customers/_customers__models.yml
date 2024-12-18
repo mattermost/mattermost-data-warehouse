@@ -35,3 +35,5 @@ models:
           ending ARR.
       - name: account_current_arr
         description: The current annual recurring revenue (ARR) for the account.
+      - name: account_type
+        description: The type of account (SMB or MME).

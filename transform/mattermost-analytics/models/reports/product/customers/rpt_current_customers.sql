@@ -9,7 +9,8 @@ select
     o.close_at,
     o.ending_arr__c as ending_arr,
     sum(o.ending_arr__c) over(partition by a.account_id) as total_ending_arr,
-    a.arr_current__c as account_current_arr
+    a.arr_current__c as account_current_arr,
+    a.smb_mme__c as account_type
 from
     {{ ref('stg_salesforce__opportunity') }} o
     join {{ ref('stg_salesforce__account') }} a on o.account_id = a.account_id
