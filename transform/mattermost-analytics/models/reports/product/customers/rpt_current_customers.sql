@@ -14,4 +14,5 @@ from
     join {{ ref('stg_salesforce__account') }} a on o.account_id = a.account_id
 where
     o.stage_name = '6. Closed Won'
+    and o.license_end_date__c::date >= current_date
     and o.ending_arr__c is not null
