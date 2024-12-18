@@ -20,7 +20,7 @@ renamed as (
             else contactfirstname
         end as first_name,
         case
-            when contactlastname = '' then null
+            when trim(contactlastname) = '' then null
             else contactlastname
         end as last_name,
         -- Attempt to extract first and last name from name.
