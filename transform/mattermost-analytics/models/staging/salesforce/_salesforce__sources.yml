@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: salesforce
-    database: analytics
+    database: 'ANALYTICS'
     schema: orgm_raw
     loader: Stitch
     description: |
