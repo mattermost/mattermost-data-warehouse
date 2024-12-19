@@ -4,6 +4,6 @@ packages:
   - package: dbt-labs/codegen
     version: 0.13.1
   - package: dbt-labs/dbt_project_evaluator
-    version: 1.0.0
+    version: 0.14.3
   - package: get-select/dbt_snowflake_query_tags
     version: [">=2.0.0", "<3.0.0"]
