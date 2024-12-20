@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: mattermost_nps
-    database: raw
+    database: 'RAW'
     schema: mattermost_nps
     loader: Segment
     description: |
