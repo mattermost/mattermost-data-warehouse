@@ -2,7 +2,7 @@ import json
 
 import looker_sdk
 import tqdm
-from looker_sdk import error, models40
+from looker_sdk import error, models40, serialize as sr
 from slugify import slugify
 
 sdk = looker_sdk.init40()  # or init31() for the older v3.1 API
@@ -54,8 +54,26 @@ def export_dashboards():
     print(f"Failed to extract {count} lookml")
 
 
+def export_looks():
+    looks = sdk.search_looks(deleted=False)
+    count = 0
+    for look in tqdm.tqdm(looks):
+        try:
+            full_look = sdk.look(look.id)
+            title = slugify(full_look.title)
+            with open(f'looks/{look.id}-{title}.json', 'wb') as fp:
+                fp.write(sr.serialize(api_model=full_look, converter=full_look._get_converter()))
+        except error.SDKError as e:
+            count += 1
+            print(f"Cannot extract details for look {look.id}.")
+
+    print(f"Total: {len(looks)} dashboards")
+    print(f"Failed to extract {count} looks")
+
+
 if __name__ == '__main__':
     # Make sure that the environment variables defined in
     # https://github.com/looker-open-source/sdk-codegen?tab=readme-ov-file#environment-variable-configuration have been
     # set.
     export_dashboards()
+    export_looks()
