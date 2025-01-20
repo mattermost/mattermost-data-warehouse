@@ -63,7 +63,7 @@ def export_looks():
             title = slugify(full_look.title)
             with open(f'looks/{look.id}-{title}.json', 'wb') as fp:
                 fp.write(sr.serialize(api_model=full_look, converter=full_look._get_converter()))
-        except error.SDKError as e:
+        except error.SDKError:
             count += 1
             print(f"Cannot extract details for look {look.id}.")
 
