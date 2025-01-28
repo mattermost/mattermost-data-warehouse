@@ -3,16 +3,6 @@
 
 {%
     set excludes = [
-        'COUNT',
-        'DURATION',
-        'FIRST_EFFECTIVENESS',
-        'FIRST_RECOMPUTATIONS',
-        'INVITE_COUNT',
-        'MAX_API_RESOURCE_SIZE',
-        'NUM_HIGH',
-        'NUM_INVITATIONS',
-        'NUM_LOW',
-        'NUM_MEDIUM',
         'NUM_OF_REQUEST',
         'NUM_TOTAL',
         'REMAINING',
