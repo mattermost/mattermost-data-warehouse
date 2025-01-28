@@ -3,7 +3,8 @@
 
 {%
     set excludes = [
-        'REMAINING'
+        'NUM_OF_REQUEST',
+        'NUM_TOTAL'
     ]
 %}
 
