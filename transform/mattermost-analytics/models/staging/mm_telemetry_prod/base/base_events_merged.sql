@@ -3,8 +3,7 @@
 
 {%
     set excludes = [
-        'REQUEST_COUNT',
-        'SEATS'
+        'REMAINING'
     ]
 %}
 
