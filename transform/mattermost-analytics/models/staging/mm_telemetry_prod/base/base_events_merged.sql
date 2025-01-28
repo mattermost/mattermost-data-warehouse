@@ -1,7 +1,7 @@
 -- View containing the merge of base events and base events delta. This view is used to avoid re-deduping the same data.
 -- Should be used as a replacement of source('mm_telemetry_prod', 'event') in downstream models.
 
-{%-
+{%
     set excludes = [
         'COLUMN_NAME',
         'CHANNEL_LEN',
@@ -44,8 +44,7 @@
         'NUM_OF_REQUEST',
         'INVITE_COUNT'
     ]
--%}
-
+%}
 
 select
     {{ dbt_utils.star(from=source('rudder_support', 'base_events'), except=excludes) }}
