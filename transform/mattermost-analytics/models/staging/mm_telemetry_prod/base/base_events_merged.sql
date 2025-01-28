@@ -5,7 +5,6 @@
     set excludes = [
 
         'CONTEXT_TRAITS_ENVIRONMENT_HOST_TIER',
-        'CONTEXT_TRAITS_ID',
         'CONTEXT_TRAITS_ITEM_IN_CART'
     ]
 %}
