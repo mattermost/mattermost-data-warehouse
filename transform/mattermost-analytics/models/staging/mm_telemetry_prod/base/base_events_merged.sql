@@ -4,7 +4,17 @@
 {%
     set excludes = [
         'NUM_OF_REQUEST',
-        'NUM_TOTAL'
+        'NUM_TOTAL',
+        'REMAINING',
+        'REQUEST_COUNT',
+        'SEATS',
+        'SECOND_EFFECTIVENESS',
+        'SECOND_RECOMPUTATIONS',
+        'THIRD_EFFECTIVENESS',
+        'THIRD_RECOMPUTATIONS',
+        'TOTAL_DURATION',
+        'TOTAL_SIZE',
+        'USERS'
     ]
 %}
 
