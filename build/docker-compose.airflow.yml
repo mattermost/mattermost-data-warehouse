@@ -102,7 +102,7 @@ services:
     - K3S_TOKEN=secret
 
   k3s-airflow-config:
-    image: python:3.8.15-slim@sha256:fc2f284772a4443ce7238930ba9a8d5e3c720926616fca074b99213484a3820f
+    image: python:3.8.15-slim
     depends_on:
       - k3s-agent
       - k3s-server
