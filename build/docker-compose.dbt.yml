@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
     dbt_image:
-      image: ghcr.io/dbt-labs/dbt-snowflake:1.2.0@sha256:ebfb5c168d6fc125500585389fa67244908a90f507a18758b96909c16aa840f4
+      image: ghcr.io/dbt-labs/dbt-snowflake:1.2.0
       env_file:
         - ../.dbt.env
       environment:
@@ -26,7 +26,7 @@ services:
           read_only: True
 
     mattermost_analytics:
-      image: ghcr.io/dbt-labs/dbt-snowflake:1.6.5@sha256:6eb3e2607dfbfcdcff1b10d176fd2768aec5274bce8accbc8c5d99684e5b30d5
+      image: ghcr.io/dbt-labs/dbt-snowflake:1.6.5
       env_file:
         - ../.dbt.env
       environment:
