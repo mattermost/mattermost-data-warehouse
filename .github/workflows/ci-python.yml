@@ -71,7 +71,7 @@ jobs:
         run: make docker-lint
 
       - name: Build & push docker image
-        run: make docker-login && make docker-build && make docker-push
+        run: make docker-login && make docker-build
         env:
           DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}

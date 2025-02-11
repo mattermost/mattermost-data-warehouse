@@ -167,6 +167,11 @@ airflow-test: $(VIRTUALENV_AIRFLOW)  ## to run airflow tests
 
 .PHONY: docker-build
 docker-build: ## to build the docker image (multi-arch via buildx)
+	@if [ -z "$(DOCKER_USERNAME)" ] || [ -z "$(DOCKER_PASSWORD)" ]; then \
+		echo "DOCKER_USERNAME and/or DOCKER_PASSWORD not set. Skipping Docker login."; \
+	else \
+		echo $(DOCKER_PASSWORD) | docker login --username $(DOCKER_USERNAME) --password-stdin; \
+	fi
 	@$(INFO) Performing Docker build ${APP_NAME}:${APP_VERSION}
 	$(AT)$(DOCKER) buildx build \
 		--platform $(PLATFORMS) \
@@ -175,20 +180,6 @@ docker-build: ## to build the docker image (multi-arch via buildx)
 		-t ${APP_NAME}:${APP_VERSION} \
 		--push || ${FAIL}
 	@$(OK) Performing Docker build ${APP_NAME}:${APP_VERSION}
-
-.PHONY: docker-push
-docker-push: ## to push the docker image
-	@$(INFO) Pushing to registry...
-	$(AT)$(DOCKER) tag ${APP_NAME}:${APP_VERSION} $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:${APP_VERSION} || ${FAIL}
-	$(AT)$(DOCKER) push $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:${APP_VERSION} || ${FAIL}
-# if we are on a latest semver APP_VERSION tag, also push latest
-ifneq ($(shell echo $(APP_VERSION) | egrep '^v([0-9]+\.){0,2}(\*|[0-9]+)'),)
-  ifeq ($(shell git tag -l --sort=v:refname | tail -n1),$(APP_VERSION))
-	$(AT)$(DOCKER) tag ${APP_NAME}:${APP_VERSION} $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:latest || ${FAIL}
-	$(AT)$(DOCKER) push $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:latest || ${FAIL}
-  endif
-endif
-	@$(OK) Pushing to registry $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:${APP_VERSION}
 
 .PHONY: docker-sign
 docker-sign: ## to sign the docker image
