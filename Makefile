@@ -35,8 +35,12 @@ PERMIFROST_DOCKER_FILE  += ./build/permifrost.Dockerfile
 # Docker compose DBT file
 DOCKER_COMPOSE_DBT_FILE += ./build/docker-compose.dbt.yml
 
-# Docker options to inherit for all docker run commands
-DOCKER_OPTS             += --rm -u $$(id -u):$$(id -g) --platform "linux/amd64"
+# Docker options to inherit for all docker run commands (removed fixed platform)
+DOCKER_OPTS             += --rm -u $$(id -u):$$(id -g)
+
+# Multi-architecture build platforms (default: amd64 and arm64)
+PLATFORMS ?= linux/amd64,linux/arm64
+
 # Registry to upload images
 DOCKER_REGISTRY                    ?= docker.io
 DOCKER_REGISTRY_REPO               ?= mattermost/${APP_NAME}
@@ -44,10 +48,12 @@ DOCKER_REGISTRY_PERMIFROST_REPO    ?= mattermost/${PERMIFROST_NAME}
 # Registry credentials
 DOCKER_USER             ?= user
 DOCKER_PASSWORD         ?= password
+
 ## Docker Images
-DOCKER_IMAGE_PYTHON     += "python:3.10.15-slim@sha256:1eb5d76bf3e9e612176ebf5eadf8f27ec300b7b4b9a99f5856f8232fd33aa16e"
-DOCKER_IMAGE_DOCKERLINT += "hadolint/hadolint:v2.9.2@sha256:d355bd7df747a0f124f3b5e7b21e9dafd0cb19732a276f901f0fdee243ec1f3b"
-DOCKER_IMAGE_COSIGN     += "bitnami/cosign:1.8.0@sha256:8c2c61c546258fffff18b47bb82a65af6142007306b737129a7bd5429d53629a"
+# Use the base image without a fixed digest so that the correct multi-arch image is pulled.
+DOCKER_IMAGE_PYTHON     += "python:3.10.15-slim"
+DOCKER_IMAGE_DOCKERLINT += "hadolint/hadolint:v2.9.2"
+DOCKER_IMAGE_COSIGN     += "bitnami/cosign:1.8.0"
 
 ## Cosign Variables
 # The public key
@@ -160,12 +166,14 @@ airflow-test: $(VIRTUALENV_AIRFLOW)  ## to run airflow tests
 	@$(OK) testing airflow
 
 .PHONY: docker-build
-docker-build: ## to build the docker image
+docker-build: ## to build the docker image (multi-arch via buildx)
 	@$(INFO) Performing Docker build ${APP_NAME}:${APP_VERSION}
-	$(AT)$(DOCKER) build \
-	--build-arg PYTHON_IMAGE=${DOCKER_IMAGE_PYTHON} \
-	-f ${DOCKER_FILE} . \
-	-t ${APP_NAME}:${APP_VERSION} || ${FAIL}
+	$(AT)$(DOCKER) buildx build \
+		--platform $(PLATFORMS) \
+		--build-arg PYTHON_IMAGE=${DOCKER_IMAGE_PYTHON} \
+		-f ${DOCKER_FILE} . \
+		-t ${APP_NAME}:${APP_VERSION} \
+		--push || ${FAIL}
 	@$(OK) Performing Docker build ${APP_NAME}:${APP_VERSION}
 
 .PHONY: docker-push
@@ -187,28 +195,28 @@ docker-sign: ## to sign the docker image
 	@$(INFO) Signing the docker image...
 	$(AT)echo "$${COSIGN_KEY}" > cosign.key && \
 	$(DOCKER) run ${DOCKER_OPTS} \
-	--entrypoint '/bin/sh' \
+		--entrypoint '/bin/sh' \
         -v $(PWD):/app -w /app \
-	-e COSIGN_PASSWORD=${COSIGN_PASSWORD} \
-	-e HOME="/tmp" \
-    ${DOCKER_IMAGE_COSIGN} \
-	-c \
-	"echo Signing... && \
-	cosign login $(DOCKER_REGISTRY) -u ${DOCKER_USER} -p ${DOCKER_PASSWORD} && \
-	cosign sign --key cosign.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:${APP_VERSION}" || ${FAIL}
+		-e COSIGN_PASSWORD=${COSIGN_PASSWORD} \
+		-e HOME="/tmp" \
+        ${DOCKER_IMAGE_COSIGN} \
+		-c \
+		"echo Signing... && \
+		cosign login $(DOCKER_REGISTRY) -u ${DOCKER_USER} -p ${DOCKER_PASSWORD} && \
+		cosign sign --key cosign.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:${APP_VERSION}" || ${FAIL}
 # if we are on a latest semver APP_VERSION tag, also sign latest tag
 ifneq ($(shell echo $(APP_VERSION) | egrep '^v([0-9]+\.){0,2}(\*|[0-9]+)'),)
   ifeq ($(shell git tag -l --sort=v:refname | tail -n1),$(APP_VERSION))
 	$(DOCKER) run ${DOCKER_OPTS} \
-	--entrypoint '/bin/sh' \
+		--entrypoint '/bin/sh' \
         -v $(PWD):/app -w /app \
-	-e COSIGN_PASSWORD=${COSIGN_PASSWORD} \
-	-e HOME="/tmp" \
-	${DOCKER_IMAGE_COSIGN} \
-	-c \
-	"echo Signing... && \
-	cosign login $(DOCKER_REGISTRY) -u ${DOCKER_USER} -p ${DOCKER_PASSWORD} && \
-	cosign sign --key cosign.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:latest" || ${FAIL}
+		-e COSIGN_PASSWORD=${COSIGN_PASSWORD} \
+		-e HOME="/tmp" \
+		${DOCKER_IMAGE_COSIGN} \
+		-c \
+		"echo Signing... && \
+		cosign login $(DOCKER_REGISTRY) -u ${DOCKER_USER} -p ${DOCKER_PASSWORD} && \
+		cosign sign --key cosign.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:latest" || ${FAIL}
   endif
 endif
 	$(AT)rm -f cosign.key || ${FAIL}
@@ -219,22 +227,22 @@ docker-verify: ## to verify the docker image
 	@$(INFO) Verifying the published docker image...
 	$(AT)echo "$${COSIGN_PUBLIC_KEY}" > cosign_public.key && \
 	$(DOCKER) run ${DOCKER_OPTS} \
-	--entrypoint '/bin/sh' \
-	-v $(PWD):/app -w /app \
-	${DOCKER_IMAGE_COSIGN} \
-	-c \
-	"echo Verifying... && \
-	cosign verify --key cosign_public.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:${APP_VERSION}" || ${FAIL}
+		--entrypoint '/bin/sh' \
+		-v $(PWD):/app -w /app \
+		${DOCKER_IMAGE_COSIGN} \
+		-c \
+		"echo Verifying... && \
+		cosign verify --key cosign_public.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:${APP_VERSION}" || ${FAIL}
 # if we are on a latest semver APP_VERSION tag, also verify latest tag
 ifneq ($(shell echo $(APP_VERSION) | egrep '^v([0-9]+\.){0,2}(\*|[0-9]+)'),)
   ifeq ($(shell git tag -l --sort=v:refname | tail -n1),$(APP_VERSION))
 	$(DOCKER) run ${DOCKER_OPTS} \
-	--entrypoint '/bin/sh' \
-	-v $(PWD):/app -w /app \
-	${DOCKER_IMAGE_COSIGN} \
-	-c \
-	"echo Verifying... && \
-	cosign verify --key cosign_public.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:latest" || ${FAIL}
+		--entrypoint '/bin/sh' \
+		-v $(PWD):/app -w /app \
+		${DOCKER_IMAGE_COSIGN} \
+		-c \
+		"echo Verifying... && \
+		cosign verify --key cosign_public.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_REPO}:latest" || ${FAIL}
   endif
 endif
 	$(AT)rm -f cosign_public.key || ${FAIL}
@@ -256,8 +264,8 @@ docker-scan: ## to print a vulnerability report
 docker-lint: ## to lint the Dockerfile
 	@$(INFO) Dockerfile linting...
 	$(AT)$(DOCKER) run -i ${DOCKER_OPTS} \
-	${DOCKER_IMAGE_DOCKERLINT} \
-	< ${DOCKER_FILE} || ${FAIL}
+		${DOCKER_IMAGE_DOCKERLINT} \
+		< ${DOCKER_FILE} || ${FAIL}
 	@$(OK) Dockerfile linting
 
 .PHONY: docker-login
@@ -268,16 +276,18 @@ docker-login: ## to login to a container registry
 
 
 .PHONY: permifrost-docker-build
-permifrost-docker-build: ## to build the docker image
+permifrost-docker-build: ## to build the permifrost docker image (multi-arch via buildx)
 	@$(INFO) Performing Permifrost Docker build ${PERMIFROST_NAME}:${APP_VERSION}
-	$(AT)$(DOCKER) build \
-	--build-arg PYTHON_IMAGE=${DOCKER_IMAGE_PYTHON} \
-	-f ${PERMIFROST_DOCKER_FILE} . \
-	-t ${PERMIFROST_NAME}:${APP_VERSION} || ${FAIL}
+	$(AT)$(DOCKER) buildx build \
+		--platform $(PLATFORMS) \
+		--build-arg PYTHON_IMAGE=${DOCKER_IMAGE_PYTHON} \
+		-f ${PERMIFROST_DOCKER_FILE} . \
+		-t ${PERMIFROST_NAME}:${APP_VERSION} \
+		--push || ${FAIL}
 	@$(OK) Performing Permifrost Docker build ${PERMIFROST_NAME}:${APP_VERSION}
 
 .PHONY: permifrost-docker-push
-permifrost-docker-push: ## to push the docker image
+permifrost-docker-push: ## to push the permifrost docker image
 	@$(INFO) Pushing permifrost to registry...
 	$(AT)$(DOCKER) tag ${PERMIFROST_NAME}:${APP_VERSION} $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:${APP_VERSION} || ${FAIL}
 	$(AT)$(DOCKER) push $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:${APP_VERSION} || ${FAIL}
@@ -295,54 +305,54 @@ permifrost-docker-sign: ## to sign the permifrost docker image
 	@$(INFO) Signing the Permifrost Docker image...
 	$(AT)echo "$${COSIGN_KEY}" > cosign.key && \
 	$(DOCKER) run ${DOCKER_OPTS} \
-	--entrypoint '/bin/sh' \
+		--entrypoint '/bin/sh' \
         -v $(PWD):/app -w /app \
-	-e COSIGN_PASSWORD=${COSIGN_PASSWORD} \
-	-e HOME="/tmp" \
-    ${DOCKER_IMAGE_COSIGN} \
-	-c \
-	"echo Signing... && \
-	cosign login $(DOCKER_REGISTRY) -u ${DOCKER_USER} -p ${DOCKER_PASSWORD} && \
-	cosign sign --key cosign.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:${APP_VERSION}" || ${FAIL}
+		-e COSIGN_PASSWORD=${COSIGN_PASSWORD} \
+		-e HOME="/tmp" \
+        ${DOCKER_IMAGE_COSIGN} \
+		-c \
+		"echo Signing... && \
+		cosign login $(DOCKER_REGISTRY) -u ${DOCKER_USER} -p ${DOCKER_PASSWORD} && \
+		cosign sign --key cosign.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:${APP_VERSION}" || ${FAIL}
 # if we are on a latest semver APP_VERSION tag, also sign latest tag
 ifneq ($(shell echo $(APP_VERSION) | egrep '^v([0-9]+\.){0,2}(\*|[0-9]+)'),)
   ifeq ($(shell git tag -l --sort=v:refname | tail -n1),$(APP_VERSION))
 	$(DOCKER) run ${DOCKER_OPTS} \
-	--entrypoint '/bin/sh' \
+		--entrypoint '/bin/sh' \
         -v $(PWD):/app -w /app \
-	-e COSIGN_PASSWORD=${COSIGN_PASSWORD} \
-	-e HOME="/tmp" \
-	${DOCKER_IMAGE_COSIGN} \
-	-c \
-	"echo Signing... && \
-	cosign login $(DOCKER_REGISTRY) -u ${DOCKER_USER} -p ${DOCKER_PASSWORD} && \
-	cosign sign --key cosign.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:latest" || ${FAIL}
+		-e COSIGN_PASSWORD=${COSIGN_PASSWORD} \
+		-e HOME="/tmp" \
+		${DOCKER_IMAGE_COSIGN} \
+		-c \
+		"echo Signing... && \
+		cosign login $(DOCKER_REGISTRY) -u ${DOCKER_USER} -p ${DOCKER_PASSWORD} && \
+		cosign sign --key cosign.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:latest" || ${FAIL}
   endif
 endif
 	$(AT)rm -f cosign.key || ${FAIL}
 	@$(OK) Signing the Permifrost Docker image: $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:${APP_VERSION}
 
 .PHONY: permifrost-docker-verify
-permifrost-docker-verify: ## to verify the Permifrost Docker image
+permifrost-docker-verify: ## to verify the permifrost docker image
 	@$(INFO) Verifying the published Permifrost Docker image...
 	$(AT)echo "$${COSIGN_PUBLIC_KEY}" > cosign_public.key && \
 	$(DOCKER) run ${DOCKER_OPTS} \
-	--entrypoint '/bin/sh' \
-	-v $(PWD):/app -w /app \
-	${DOCKER_IMAGE_COSIGN} \
-	-c \
-	"echo Verifying... && \
-	cosign verify --key cosign_public.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:${APP_VERSION}" || ${FAIL}
+		--entrypoint '/bin/sh' \
+		-v $(PWD):/app -w /app \
+		${DOCKER_IMAGE_COSIGN} \
+		-c \
+		"echo Verifying... && \
+		cosign verify --key cosign_public.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:${APP_VERSION}" || ${FAIL}
 # if we are on a latest semver APP_VERSION tag, also verify latest tag
 ifneq ($(shell echo $(APP_VERSION) | egrep '^v([0-9]+\.){0,2}(\*|[0-9]+)'),)
   ifeq ($(shell git tag -l --sort=v:refname | tail -n1),$(APP_VERSION))
 	$(DOCKER) run ${DOCKER_OPTS} \
-	--entrypoint '/bin/sh' \
-	-v $(PWD):/app -w /app \
-	${DOCKER_IMAGE_COSIGN} \
-	-c \
-	"echo Verifying... && \
-	cosign verify --key cosign_public.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:latest" || ${FAIL}
+		--entrypoint '/bin/sh' \
+		-v $(PWD):/app -w /app \
+		${DOCKER_IMAGE_COSIGN} \
+		-c \
+		"echo Verifying... && \
+		cosign verify --key cosign_public.key $(DOCKER_REGISTRY)/${DOCKER_REGISTRY_PERMIFROST_REPO}:latest" || ${FAIL}
   endif
 endif
 	$(AT)rm -f cosign_public.key || ${FAIL}
@@ -354,19 +364,18 @@ permifrost-docker-sbom: ## to print a sbom report for Permifrost Docker image
 	$(AT)$(DOCKER) sbom ${PERMIFROST_NAME}:${APP_VERSION} || ${FAIL}
 	@$(OK) Performing Permifrost Docker sbom report
 
-
 .PHONY: permifrost-docker-scan
-permifrost-docker-scan: ## to print a vulnerability report  for Permifrost Docker image
+permifrost-docker-scan: ## to print a vulnerability report for Permifrost Docker image
 	@$(INFO) Performing Permifrost Docker scan report...
 	$(AT)$(DOCKER) scan ${PERMIFROST_NAME}:${APP_VERSION} || ${FAIL}
-	@$(OK) Performing Docker scan report
+	@$(OK) Performing Permifrost Docker scan report
 
 .PHONY: permifrost-docker-lint
 permifrost-docker-lint: ## to lint the Permifrost Dockerfile
 	@$(INFO) Dockerfile linting...
 	$(AT)$(DOCKER) run -i ${DOCKER_OPTS} \
-	${DOCKER_IMAGE_DOCKERLINT} \
-	< ${PERMIFROST_DOCKER_FILE} || ${FAIL}
+		${DOCKER_IMAGE_DOCKERLINT} \
+		< ${PERMIFROST_DOCKER_FILE} || ${FAIL}
 	@$(OK) Dockerfile linting
 
 .PHONY: dbt-docs
@@ -378,7 +387,7 @@ dbt-docs: ## to generate and serve dbt docs
 .PHONY: dbt-generate-docs
 dbt-generate-docs: ## to generate dbt docs
 	$(AT)$(INFO) Generating docs...
-	$(AT)$(DOCKER) compose -f ${DOCKER_COMPOSE_DBT_FILE} run dbt_image bash -c "dbt deps && dbt docs generate -t prod" } || ${FAIL}
+	$(AT)$(DOCKER) compose -f ${DOCKER_COMPOSE_DBT_FILE} run dbt_image bash -c "dbt deps && dbt docs generate -t prod" || ${FAIL}
 	$(AT)$(OK) Generated docs
 
 .PHONY: dbt-bash
