@@ -13,9 +13,9 @@ with source as (
         -- Server info
         , system_admins  as count_system_admins
         , split_part(version, '-', 1) as version_full
-        , try_to_decimal(split_part(version, '.', 1)) as version_major
-        , try_to_decimal(split_part(version, '.', 2)) as version_minor
-        , try_to_decimal(split_part(version, '.', 3)) as version_patch
+        , try_to_decimal(split_part(version_full, '.', 1)) as version_major
+        , try_to_decimal(split_part(version_full, '.', 2)) as version_minor
+        , try_to_decimal(split_part(version_full, '.', 3)) as version_patch
 
         -- Deployment info
         , operating_system
