@@ -13,10 +13,10 @@ with source as (
 
         -- Server info
         , system_admins  as count_system_admins
-        , version        as version_full
-        , try_to_decimal(split_part(version, '.', 1)) as version_major
-        , try_to_decimal(split_part(version, '.', 2)) as version_minor
-        , try_to_decimal(split_part(version, '.', 3)) as version_patch
+        , split_part(version, '-', 1) as version_full
+        , try_to_decimal(split_part(version_full, '.', 1)) as version_major
+        , try_to_decimal(split_part(version_full, '.', 2)) as version_minor
+        , try_to_decimal(split_part(version_full, '.', 3)) as version_patch
         , case
             -- Handle special case of community migration
             when user_id = '{{ var("community_server_id") }}' and coalesce(context_traits_installationid, context_traits_installation_id) is not null then 'rxocmq9isjfm3dgyf4ujgnfz3c'
