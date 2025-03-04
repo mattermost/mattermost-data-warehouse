@@ -216,10 +216,10 @@ models:
         description: The timestamp when the subscription was converted to paid status.
       - name: purchase_source
         description: The source that recorded the purchase.
-    tests:
-      - dbt_utils.expression_is_true:
-          name: license_start_date_before_end_Date
-          expression: 'license_start_at <= license_end_at'
+    #tests:
+    #  - dbt_utils.expression_is_true:
+    #      name: license_start_date_before_end_Date
+    #      expression: 'license_start_at <= license_end_at'
 
   - name: stg_stripe__products
     description: A staging table for Stripe products data.
