@@ -19,15 +19,19 @@ with trial_requests as (
         -- Salesforce lowercases email
         lower(coalesce(contact_email, email)) as normalized_email, -- Mapped to field email of lead
         left(split_part(normalized_email, '@', 1), 40) as email_prefix, -- To be used in case name is missing.
-        coalesce(
-            first_name,
-            case when extracted_first_name = '' then null else extracted_first_name end,
-            email_prefix
+        left(
+            coalesce(
+                first_name,
+                case when extracted_first_name = '' then null else extracted_first_name end,
+                email_prefix
+            ), 40
         ) as first_name,                                        -- Mapped to field first_name of lead
-        coalesce(
-            last_name,
-            case when extracted_last_name = '' then null else extracted_last_name end,
-            email_prefix
+        left(
+            coalesce(
+                last_name,
+                case when extracted_last_name = '' then null else extracted_last_name end,
+                email_prefix
+            ), 40
         ) as last_name,         -- Mapped to field last_name of lead
         case
         {% for bucket, size_lower in size_buckets.items() -%}
@@ -78,14 +82,15 @@ select
     'Responded' as campaign_member_status,
     '{{ var('in_product_trial_campaign_id') }}' as campaign_id,
     -- Extra validation
-    {{ validate_email('tr.normalized_email') }} as is_valid_email
+    {{ validate_email('tr.normalized_email') }} as is_valid_email,
+    {{ is_blacklisted_email('tr.normalized_email') }} as is_blacklisted_email
 from
     trial_requests tr
     -- Used for normalizing the mix of country codes/country names
     left join {{ ref('country_codes') }} cc on tr.country = cc.code
     left join {{ ref('stg_salesforce__lead') }} l on tr.normalized_email = l.email
     left join {{ ref('stg_salesforce__campaign_member') }} cm
-        on l.lead_id = cm.lead_id and tr.normalized_email = cm.email and cm.campaign_id = '{{ var('in_product_trial_campaign_id') }}'
+        on l.lead_id = cm.lead_id and cm.campaign_id = '{{ var('in_product_trial_campaign_id') }}'
     left join {{ ref('int_onprem_trial_license_information') }} tli on tli.trial_request_id = tr.trial_request_id
 where
     -- Skip invalid emails

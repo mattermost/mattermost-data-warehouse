@@ -1,0 +1,13 @@
+version: 2
+
+macros:
+
+  - name: is_blacklisted_email
+    description: |
+      Checks if an email is blacklisted in Salesforce. Blacklisted emails are those that have a top-level domain (TLD) 
+      from a list of blacklisted country TLDs OR the domain part of the email belongs to a list of blacklisted domains.
+
+    arguments:
+      - name: column
+        type: string
+        description: The column containing email addresses.

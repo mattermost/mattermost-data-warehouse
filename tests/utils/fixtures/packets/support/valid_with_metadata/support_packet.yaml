@@ -1,0 +1,42 @@
+server_os: linux
+server_architecture: amd64
+server_version: 9.11.0
+build_hash: 0bc2ddd42375a75ab14e63f038165150d4f07659
+database_type: postgres
+database_version: "13.10"
+database_schema_version: "124"
+websocket_connections: 0
+master_db_connections: 19
+read_db_connections: 0
+cluster_id: 3sbcu5w1rbb9mk4uukqa944aph
+file_driver: local
+file_status: OK
+ldap_vendor_name: unknown
+ldap_vendor_version: unknown
+license_to: Mattermost
+license_supported_users: 200000
+active_users: 1
+daily_active_users: 0
+monthly_active_users: 0
+inactive_user_count: 0
+total_posts: 6
+total_channels: 2
+total_teams: 1
+data_retention_jobs: []
+message_export_jobs: []
+elastic_post_indexing_jobs: []
+elastic_post_aggregation_jobs: []
+bleve_post_indexin_jobs: []
+ldap_sync_jobs: []
+migration_jobs:
+- id: 4555h6cxb38q3rhnyfu95dypxh
+  type: migrations
+  priority: 0
+  createat: 1723734966121
+  startat: 1723734980530
+  lastactivityat: 1723734981002
+  status: success
+  progress: 0
+  data:
+    last_done: '{"current_table":"ChannelMembers","last_team_id":"crro7gj13bdzfjm4rmm6ept6sa","last_channel_id":"mpmdxijsftdodkzbehncatthcr","last_user":"wg94o7yd4jyxjbxoihettwgmah"}'
+    migration_key: migration_advanced_permissions_phase_2

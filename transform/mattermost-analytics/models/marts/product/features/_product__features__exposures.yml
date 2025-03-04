@@ -1,0 +1,30 @@
+version: 2
+
+exposures:
+  - name: feature_usage
+    type: dashboard
+    description: Feature Usage dashboard in Looker.
+    url: https://mattermost.looker.com/dashboards/438
+    tags:
+      - looker
+    maturity: medium
+    owner:
+      name: Ioannis Foukarakis
+      email: ioannis.foukarakis@mattermost.com
+    depends_on:
+      - ref('fct_feature_daily_snapshot')
+      - ref('dim_excludable_servers')
+
+  - name: hub_community_feature_usage
+    type: dashboard
+    description: Hub & Community Feature Usage dashboard in Looker.
+    url: https://mattermost.looker.com/dashboards/439
+    tags:
+      - looker
+    maturity: medium
+    owner:
+      name: Ioannis Foukarakis
+      email: ioannis.foukarakis@mattermost.com
+    depends_on:
+      - ref('fct_feature_daily_snapshot')
+      - ref('dim_excludable_servers')

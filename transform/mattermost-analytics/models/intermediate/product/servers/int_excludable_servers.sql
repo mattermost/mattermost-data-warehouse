@@ -22,3 +22,5 @@ union all
 select * from {{ ref('int_excludable_servers_single_day_activity') }} where server_id is not null
 union all
 select * from {{ ref('int_excludable_servers_invalid_server_id')}} where server_id is not null
+union all
+select * from {{ ref('int_excludable_servers_country')}} where server_id is not null

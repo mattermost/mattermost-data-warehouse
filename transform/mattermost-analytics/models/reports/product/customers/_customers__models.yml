@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: rpt_current_customers
+    description: |
+      Contains the list of won opportunities customers with a license that's currently active, as derived from
+      Salesforce data.
+
+    columns:
+      - name: opportunity_id
+        description: The opportunity's unique id.
+        tests:
+          - unique
+          - not_null
+      - name: account_id
+        description: |
+          The account's unique id. This is the account that the opportunity is associated with.
+      - name: account_name
+        description: The name of the account.
+      - name: opportunity_name
+        description: The name of the opportunity.
+      - name: license_key
+        description: The license key associated with the opportunity.
+      - name: license_starts_at
+        description: The start date of the license.
+      - name: license_ends_at
+        description: The end date of the license.
+      - name: close_at
+        description: The date when the opportunity was closed.
+      - name: ending_arr
+        description: The ending annual recurring revenue (ARR) for the opportunity.
+      - name: total_ending_arr
+        description: |
+          The total ending annual recurring revenue (ARR) for the account. This is the sum of all opportunities'
+          ending ARR.
+      - name: account_current_arr
+        description: The current annual recurring revenue (ARR) for the account.
+      - name: account_type
+        description: The type of account (SMB or MME).

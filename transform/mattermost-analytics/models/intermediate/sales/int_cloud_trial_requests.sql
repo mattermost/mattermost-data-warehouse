@@ -35,6 +35,7 @@ cloud_trial_requests as (
         subscriptions.trial_start_at,
         subscriptions.trial_end_at,
         subscriptions.cws_installation,
+        subscriptions.cws_dns,
         products.product_id,
         products.name as product_name
     from

@@ -13,11 +13,15 @@ with source as (
 
         -- Server info
         , system_admins  as count_system_admins
-        , version        as version_full
-        , split_part(version, '.', 1) as version_major
-        , split_part(version, '.', 2) as version_minor
-        , split_part(version, '.', 3) as version_patch
-        , coalesce(context_traits_installationid,  context_traits_installation_id) as installation_id
+        , split_part(version, '-', 1) as version_full
+        , try_to_decimal(split_part(version_full, '.', 1)) as version_major
+        , try_to_decimal(split_part(version_full, '.', 2)) as version_minor
+        , try_to_decimal(split_part(version_full, '.', 3)) as version_patch
+        , case
+            -- Handle special case of community migration
+            when user_id = '{{ var("community_server_id") }}' and coalesce(context_traits_installationid, context_traits_installation_id) is not null then 'rxocmq9isjfm3dgyf4ujgnfz3c'
+            else coalesce(context_traits_installationid, context_traits_installation_id)
+        end as installation_id
         , installation_type
         , anonymous_id
         , context_ip as server_ip
@@ -26,7 +30,11 @@ with source as (
         , operating_system
         , database_type
         , database_version
-        , edition
+        , case
+            when edition = 'true' then true
+            when edition = 'false' then false
+            else null
+        end as edition
 
         -- Metadata from segment
         , context_library_version
@@ -52,4 +60,12 @@ with source as (
         id is not null
 )
 
-select * from renamed
+select
+    renamed.*
+from
+    renamed
+    -- Filter installation id/server id pairs that are blacklisted
+    left join {{ ref('server_blacklist') }} sb
+        on renamed.server_id = sb.server_id and renamed.installation_id = sb.installation_id
+where
+    sb.server_id is null

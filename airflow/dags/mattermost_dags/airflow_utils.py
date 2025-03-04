@@ -12,7 +12,6 @@ PERMIFROST_IMAGE = "mattermost/mattermost-permifrost:master"
 
 MATTERMOST_DATAWAREHOUSE_IMAGE = "mattermost/mattermost-data-warehouse:master"
 
-mm_webhook_url = os.getenv("MATTERMOST_WEBHOOK_URL")
 DEFAULT_AIRFLOW_NAMESPACE = "airflow-dev"  # to prevent tests from failing
 IS_DEV_MODE = os.getenv("ENVIRONMENT") == 'docker-compose'
 
@@ -51,9 +50,6 @@ pod_env_vars = {
     "SNOWFLAKE_LOAD_DATABASE": "RAW",
     "SNOWFLAKE_TRANSFORM_DATABASE": "ANALYTICS",
 }
-
-# Warehouse variable declaration
-xs_warehouse = "'{{warehouse_name: transforming_xs}}'"
 
 
 def create_alert_body(context):

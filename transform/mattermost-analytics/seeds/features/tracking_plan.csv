@@ -1,0 +1,7 @@
+event_name,category,event_type,property_name,property_value,feature_name
+event,api,api_posts_ack,,,message_ack
+event,ui,ui_channels_create_user_group,,,custom_groups
+event,api,api_groups_get_associated_to_channel,,,custom_groups
+event,api,api_teams_invite_guests,,,guest_accounts
+event,api,api_posts_create,priority,urgent,message_priority
+event,api,api_posts_create,priority,important,message_priority

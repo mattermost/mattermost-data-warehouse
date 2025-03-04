@@ -71,7 +71,6 @@ invoices as (
           , payment as payment
           , forgiven as forgiven
           , billing as billing
-          , tax_percent as tax_percent
           , finalized_at as finalized_at
           , closed as closed_at
           , updated_by_event_type as updated_by_event_type

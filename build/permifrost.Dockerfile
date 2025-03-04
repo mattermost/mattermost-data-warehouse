@@ -1,4 +1,4 @@
-ARG PYTHON_IMAGE=python:3.10.13-slim@sha256:8f2783ef8daefbcaea50242479638d1c950ec43db2a345f066f635ef2ad1626f
+ARG PYTHON_IMAGE=python:3.10.13-slim
 
 ## ---------------------------base stage ----------------------------- ##
 
@@ -33,7 +33,7 @@ RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Install dependencies excluding dev and current package
-RUN pip install "permifrost==0.15.4"
+RUN pip install "snowflake-sqlalchemy==1.5.3" "permifrost==0.15.4"
 
 ## ---------------------------final stage ----------------------------- ##
 

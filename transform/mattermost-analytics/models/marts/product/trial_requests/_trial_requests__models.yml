@@ -1,0 +1,85 @@
+version: 2
+
+models:
+  - name: fct_trial_request_history
+    description: |
+      Contains the full history of trial requests. Includes trial requests from mattermost.com, in-product or cloud
+      trials. Note that since the processes are currently different, there is some degree of normalization. Data
+      existing only on one of the two trial request types (cloud or on-prem) are omitted.
+
+    columns:
+      - name: trial_request_id
+        description: A unique id for each trial request
+        tests:
+          - unique
+          - not_null
+      - name: server_id
+        description: The unique identifier of the server
+      - name: trial_email
+        description: |
+          The email requesting the trial. It is the contact email provided in the signup form. If not filled in, it's 
+          the email of the user requesting the trial.
+        tests:
+          - not_null
+        tags: ['pii']
+      - name: contact_email
+        description: The contact email in the signup form (if any).
+        tags: ['pii']
+      - name: user_email
+        description: |
+          The email of the user requesting the trial request. Not to be confused with contact email. Available only in
+          on-prem trial requests.
+        tags: [ 'pii' ]
+      - name: email_domain
+        description: The domain part of the email.
+      - name: first_name
+        description: The user's first name.
+        tags: [ 'pii' ]
+      - name: last_name
+        description: The user's last name.
+        tags: [ 'pii' ]
+      - name: company_name
+        description: |
+          The company's name. If not provided, `Unknown` is used.
+        tests:
+          - dbt_utils.not_empty_string
+      - name: site_url
+        description: The URL of the installation.
+      - name: created_at
+        description: When the trial request was created at.
+      - name: start_at
+        description: Start timestamp of trial request.
+      - name: end_at
+        description: End timestamp of trial request.
+      - name: request_source
+        description: The source of the request. Can be `In-Product`, `Website` or `Stripe`.
+      - name: request_type
+        description: The type of the request. Can be `cloud` or `in-product`.
+      - name: stripe_product_id
+        description: id of the product (from Stripe).
+      - name: converted_to_paid_at
+        description: The timestamp when the subscription was converted to paid status.
+      - name: status
+        description: The status of the subscription.
+      - name: first_trial_start_at
+        description: The start time of the first trial for the given `trial_email`.
+      - name: last_trial_start_at
+        description: The start time of the last trial for the given `trial_email`.
+      - name: num_company_types
+        description: |
+          The number of company types this email can be mapped to. Multiple company types indicate multiple leads in 
+          Salesforce.
+      - name: marked_as_smb
+        description: Whether a lead for the `trial_email` exists with company type SMB.
+      - name: marked_as_enterprise
+        description: Whether a lead for the `trial_email` exists with company type Enterprise.
+      - name: marked_as_midmarket
+        description: Whether a lead for the `trial_email` exists with company type Midmarket.
+      - name: marked_as_federal
+        description: Whether a lead for the `trial_email` exists with company type Federal.
+      - name: marked_as_academic
+        description: Whether a lead for the `trial_email` exists with company type Academic.
+      - name: marked_as_mme
+        description: Whether a lead for the `trial_email` exists with company type MME.
+      - name: marked_as_non_profit
+        description: Whether a lead for the `trial_email` exists with company type Non-profit.

@@ -1386,13 +1386,16 @@ models:
       - name: use_case__c
         description: ""
 
+      - name: seats_from_name
+        description: Number of seats, as extracted from the opportunity's name.
+
   - name: stg_salesforce__opportunity_line_item
     description: |
       Opportunity Line Items are the Products which are associated to an Opportunity.
       Deleted opportunity line items are excluded.
 
     columns:
-      - name: opportunity_line_item
+      - name: opportunity_line_item_id
         description: "The opportunity line item's ID, as defined by Salesforce"
         tests:
           - not_null
@@ -1811,4 +1814,33 @@ models:
       - name : integrations__c
       - name : sector_picklist__c
 
- 
+
+  - name: stg_salesforce__product2
+    description: |
+      Represents an product in SFDC.
+    columns:
+      - name: product2_id
+        tests:
+          - not_null
+          - unique
+      - name: created_by_id
+      - name: last_modified_by_id
+      - name: name
+      - name: description
+      - name: family
+      - name: is_active
+      - name: product_code
+      - name: created_at
+      - name: is_deleted
+      - name: last_modified_at
+      - name: system_modstamp_at
+      - name: last_viewed_at
+      - name: last_reference_date
+      - name: netsuite_conn__celigo_update__c
+      - name: netsuite_conn__netsuite_id__c
+      - name: netsuite_conn__push_to_netsuite__c
+      - name: netsuite_conn__sync_in_progress__c
+      - name: pricing_type__c
+      - name: product_id_18_digit__c
+      - name: product_id__c
+      - name: required_term_length_days__c

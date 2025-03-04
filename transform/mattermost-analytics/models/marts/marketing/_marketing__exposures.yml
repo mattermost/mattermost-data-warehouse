@@ -1,0 +1,20 @@
+version: 2
+
+exposures:
+  - name: security_newsletter_lead_insert
+    type: application
+    description: |
+      Update Salesforce leads and campaign members from security newsletter. Combines CWS data with Salesforce lead and 
+      campaign members to decide which data to push to Salesforce. The result is 
+      synced with Salesforce via a set of hightouch syncs.
+
+    url: https://app.hightouch.com/mattermost-com/syncs?search=Security+Newsletter
+    tags:
+      - looker
+    maturity: medium
+    owner:
+      name: Ioannis Foukarakis
+      email: ioannis.foukarakis@mattermost.com
+    depends_on:
+      - ref('fct_security_newsletter')
+

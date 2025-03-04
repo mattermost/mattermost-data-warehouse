@@ -8,11 +8,12 @@ select
     , license_expire_at
     , coalesce(is_trial, false) as is_trial_license
     , cloud_plan_name
-    , coalesce(license_source, cloud_source) as source
     -- Metadata
     , license_id is not null as found_matching_license_data
     , installation_id is not null as found_matching_stripe_entry
     , last_license_telemetry_date
     , last_installation_id_date
+    , license_name
+    , coalesce(license_licensed_seats, cloud_licensed_seats) as licensed_seats
 from
     {{ ref('int_latest_server_customer_info') }}

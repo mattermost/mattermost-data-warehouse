@@ -65,8 +65,6 @@ models:
         description: The customer's billing address.
       - name: default_card
         description: The default payment card associated with the customer.
-      - name: discount
-        description: The discount.
       - name: updated_by_event_type
         description: The event type that updated the customer.
 
@@ -148,8 +146,6 @@ models:
         description: The quantity of the subscription.
       - name: status
         description: The status of the subscription.
-      - name: tax_percent
-        description: The tax rate applied to a subscription.
       - name: updated_by_event_type
         description: The type of event that triggered the last update to the record.
       - name: default_payment_method
@@ -255,10 +251,6 @@ models:
         description: The timestamp at which the product was last updated.
       - name: unit_label
         description: The label used to indicate the unit of measurement for a product.
-      - name: updated_by_event_type
-        description: The type of event that triggered the last update to the record.
-      - name: deactivate_on
-        description: The date and time when a product will be deactivated or no longer available.
 
   - name: stg_stripe__invoices
     description: Staging table for Stripe Invoices
@@ -393,8 +385,6 @@ models:
         description: Instead of checking the forgiven field on an invoice, check for the uncollectible status.
       - name: billing
         description: Billing information associated with the invoice.
-      - name: tax_percent
-        description: The percentage of tax on this invoice.
       - name: finalized_at
         description: The finalized_at property has been moved into the status_transitions hash.
       - name: closed_at
@@ -448,7 +438,7 @@ models:
       - name: proration_details
         description: Additional details for proration line items
       - name: quantity
-        description: Quantity of units for the invoice item.
+        description: Quantity of units for the invoice item. This quantity represents the number of seats purchased.
       - name: subscription_id
         description: The subscription that this invoice item has been created for, if any.
       - name: subscription_item

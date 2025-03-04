@@ -34,14 +34,16 @@ with tmp as (
 )
 select
     -- Surrogate key required as it's both a good practice, as well as allows merge incremental strategy.
-    {{ dbt_utils.generate_surrogate_key(['received_at_date', 'activity_date', 'server_id', 'user_id']) }} as daily_user_id
+    {{ dbt_utils.generate_surrogate_key(['activity_date', 'server_id', 'user_id']) }} as daily_user_id
     , activity_date
     , server_id
     , user_id
     , true as is_active
     -- Required for incremental loading
-    , received_at_date
+    -- Use max to ensure that the most recent received_at_date is used
+    , max(received_at_date) as received_at_date
 from
     tmp
 where
     activity_date >= '{{ var('telemetry_start_date')}}'
+group by activity_date, server_id, user_id

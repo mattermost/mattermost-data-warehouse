@@ -1,7 +1,7 @@
 {{config({
     "materialized": "incremental",
     "schema": "bizops",
-    "tags":"nightly",
+    "tags":["nightly"],
   })
 }}
 

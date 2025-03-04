@@ -1,9 +1,9 @@
-SELECT DISTINCT
+select distinct
     event_id
     , event_name
     , event_table
     , category
     , event_type
     , source
-FROM
+from
     {{ ref('int_events_aggregated_to_date') }}

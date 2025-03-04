@@ -1,0 +1,93 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: |
+      Details about dates. Information is extracted from each date.
+
+    columns:
+      - name: date_day
+        description: The date that this row represents.
+        tests:
+          - not_null
+          - unique
+      - name: day_name
+        description: The 3-letter name of the day. Any of `'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'.
+      - name: last_day_of_month
+        description: The date of the last day of the month where `date_day` belongs.
+      - name: week_actual
+        description: The number of the week the date belongs to. Integer in range 1-54.
+      - name: month_actual
+        description: The month part of the date.
+      - name: year_actual
+        description: The year part of the date.
+      - name: quarter_actual
+        description: The quarter of the year the date belongs to.
+      - name: is_last_day_of_week
+        description: | 
+          Whether the date is the last day of the week. Uses ISO-like semantics (Monday is the first day of week).
+      - name: is_last_day_of_month
+        description: Whether this is the last day of the month.
+      - name: is_last_mon_of_month
+        description: | 
+          Whether this is the last Monday of the month the date belongs to. Note that for current month, the last 
+          Monday up to (and including) today is considered.
+      - name: is_last_tue_of_month
+        description: | 
+          Whether this is the last Tuesday of the month the date belongs to. Note that for current month, the last 
+          Tuesday up to (and including) today is considered.
+      - name: is_last_wed_of_month
+        description: | 
+          Whether this is the last Wednesday of the month the date belongs to. Note that for current month, the last 
+          Wednesday up to (and including) today is considered.
+      - name: is_last_thu_of_month
+        description: | 
+          Whether this is the last Thursday of the month the date belongs to. Note that for current month, the last 
+          Thursday up to (and including) today is considered.
+      - name: is_last_fri_of_month
+        description: | 
+          Whether this is the last Friday of the month the date belongs to. Note that for current month, the last 
+          Friday up to (and including) today is considered.
+      - name: is_last_sat_of_month
+        description: | 
+          Whether this is the last Saturday of the month the date belongs to. Note that for current month, the last 
+          Saturday up to (and including) today is considered.
+      - name: is_last_sun_of_month
+        description: | 
+          Whether this is the last Sunday of the month the date belongs to. Note that for current month, the last 
+          Sunday up to (and including) today is considered.
+
+  - name: dim_user_agent
+    description: |
+      Details about user agents. Information is extracted from the user agent string of each event.
+
+    columns:
+      - name: user_agent_id
+        description: A unique ID for the user agent.
+        tests:
+          - not_null
+          - unique
+      - name: browser_family
+        description: The family of the browser.
+      - name: browser_version_major
+        description: The major version of the browser.
+      - name: browser_version_minor
+        description: The minor version of the browser.
+      - name: browser_version_patch
+        description: The patch version of the browser.
+      - name: device_brand
+        description: The brand of the device.
+      - name: device_family
+        description: The family of the device.
+      - name: device_model
+        description: The model of the device.
+      - name: os_family
+        description: The family of the operating system.
+      - name: os_version_major
+        description: The major version of the operating system. Can be string (i.e. for Windows NT).
+      - name: os_version_minor
+        description: The minor version of the operating system. Can be string (i.e. for Windows NT).
+      - name: os_version_patch
+        description: The patch version of the operating system. Can be string (i.e. for Windows NT).
+      - name: os_version_patch_minor
+        description: The minor patch version of the operating system. Can be string (i.e. for Windows NT).

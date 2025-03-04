@@ -34,8 +34,15 @@ sources:
       - name: user_raise_hand
       - name: user_share_screen
       - name: user_start_recording
+        freshness: # Check that telemetry data have been received in the past 7 days
+        warn_after: { count: 4, period: day }
+        error_after: { count: 7, period: day }
+        loaded_at_field: received_at
       - name: user_stop_recording
-        freshness: null # Events are really sparse
+        freshness: # Check that telemetry data have been received in the past 14 days
+        warn_after: { count: 7, period: day }
+        error_after: { count: 14, period: day }
+        loaded_at_field: received_at
       - name: user_unshare_screen
 
       - name: tracks

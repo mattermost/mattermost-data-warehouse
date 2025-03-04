@@ -92,58 +92,6 @@ models:
           Whether the expiration date is consistent in case there's multiple sources that report the license. True if 
           more than one expiration dates are reported, false else.
 
-  - name: dim_self_hosted_customers
-    description: |
-      List of known self-hosted customers with active or inactive licenses along with their server details. 
-      Note that the same customer/server might appear more than once in case the details are different for the given license.
-      We are de-duplicating servers based on the latest telemetry received, there will be only 1 row per server_id
-
-    columns:
-      - name: server_id
-        description: The server id of the license.    
-        tests:
-          - not_null
-          - unique
-      - name: license_id
-        description: The id of the license.
-        tests:
-          - not_null
-      - name: customer_id
-        description: The id of the customer this license is generated for.
-      - name: customer_email
-        description: The customer's email.
-        tags: ['pii']
-      - name: company_name
-        description: The company's name.
-      - name: license_name
-        description: The name of the license or plan of the customer.
-
-  - name: dim_cloud_customers
-    description: |
-      List of known Cloud customers with active or inactive installation along with their server details. 
-      Note that the same customer/server might appear more than once in case the details are different for the given installation.
-      We are de-duplicating servers based on the latest telemetry received, there will be only 1 row per server_id.
-
-    columns:
-      - name: server_id
-        description: The server id of the cloud installation.
-        tests:
-          - not_null
-          - unique
-      - name: installation_id
-        description: The id of the installation.
-        tests:
-          - not_null
-      - name: license_id
-        description: The id of the license.
-      - name: customer_email
-        description: The customer's email.
-        tags: ['pii']
-      - name: company_name
-        description: The company's name.
-      - name: license_name
-        description: The name of the license or plan of the customer.
-
   - name: dim_latest_server_customer_info
     description: |
       Contains the latest customer info for each server. Data contains any values available either from
@@ -176,12 +124,6 @@ models:
           is automatically set to `false`. If no license is found, then it's automatically set to false.
         tests:
           - not_null
-      - name: source
-        description: |
-          The source of the license data. One of `CWS`, `Legacy`,  `CWS and Legacy`, 'Stripe'.
-        tests:
-          - accepted_values:
-              values: ['CWS', 'Legacy', 'CWS and Legacy', 'Stripe']
 
       - name: found_matching_license_data
         description: | 
@@ -198,3 +140,107 @@ models:
         description: The last date that license data was available for the current server ID over telemetry.
       - name: last_installation_id_date
         description: The last date that installation id data was available for the current server ID over telemetry.
+
+
+  - name: fct_licenses
+    description: | 
+      List of all known licenses from all sources (CWS, legacy, telemetry, Salesforce). Contains data points from
+      each source in order to allow comparison and identification of potential data issues.
+
+    columns:
+      - name: license_id
+        description: The ID of the license.
+        tests:
+          - unique
+          - not_null
+      - name: company_name
+        description: |
+          The name of the company. Available only if license information is reported in CWS, Legacy or Salesforce.
+      - name: contact_email
+        description: |
+          The contact email attached to the license. Available only if license information is reported in CWS or legacy.
+        tags: ["pii"]
+      - name: sku_short_name
+        description: | 
+          The SKU short name of the license. Available only if license information is reported in CWS or telemetry and 
+          is one of the expected valid values ('E10', 'E20',  'starter', 'professional', 'enterprise'). 'Unknown' if a 
+          value is not found.
+        tests:
+          - accepted_values:
+              values: ['E10', 'E20',  'starter', 'professional', 'enterprise', 'Unknown']
+      - name: license_name
+        description: The name of the license. Available only if license information is reported in telemetry.
+      - name: starts_at
+        description: The start date of the license.
+      - name: expire_at
+        description: The expiration date of the license
+      - name: has_expired
+        description: Whether the license has expired (true if expiration date before today.
+      - name: is_trial
+        description: Whether the license is a trial license. Available only if license is reported in CWS.
+      - name: licensed_seats
+        description: The number of seats the license permits.
+      - name: cws_licensed_seats
+        description: The number of seats the license permits, as reported in CWS.
+      - name: salesforce_licensed_seats
+        description: The number of seats the license permits, as reported in Saleesforce.
+      - name: telemetry_licensed_seats
+        description: The number of seats the license permits, as reported in telemetry.
+      - name: cws_starts_at
+        description: The license start date from CWS. Null if license doesn't exist in CWS.
+      - name: legacy_starts_at
+        description: The license start date from legacy data. Null if license doesn't exist in legacy data.
+      - name: salesforce_starts_at
+        description: The license start date from Salesforce. Null if license doesn't exist in Salesforce.
+      - name: telemetry_starts_at
+        description: The license start date from telemetry. Null if license doesn't exist in telemetry.
+      - name: cws_expire_at
+        description: The license expiration date from CWS. Null if license doesn't exist in CWS.
+      - name: legacy_expire_at
+        description: The license start expiration from legacy data. Null if license doesn't exist in legacy data.
+      - name: salesforce_expire_at
+        description: The license start expiration from Salesforce. Null if license doesn't exist in Salesforce.
+      - name: telemetry_expire_at
+        description: The license start expiration from telemetry. Null if license doesn't exist in telemetry.
+      - name: in_cws
+        description: Whether the license was found in CWS.
+      - name: in_legacy
+        description: Whether the license was found in legacy data.
+      - name: in_salesforce
+        description: Whether the license was found in Salesforce.
+      - name: in_telemetry
+        description: Whether the license was found in telemetry.
+
+  - name: bdg_license_server
+    description: |
+      Bridge table to map licenses to server ids/installation ids and vice versa. The mapping is based on telemetry
+      data.
+
+    columns:
+      - name: bdg_license_server_id
+        description: A unique key for each row in the table.
+        tests:
+          - not_null
+          - unique
+      - name: license_id
+        description: The ID of the license.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fct_licenses')
+              field: license_id
+      - name: server_id
+        description: The ID of the server.
+        tests:
+          - not_null
+          # Temporarily disable as there's a small number of servers appearing in license telemetry
+          # but not in server telemetry/activity data/security update check.
+          # - relationships:
+          #    to: ref('dim_server_info')
+          #     field: server_id
+      - name: installation_id
+        description: The installation ID, in case of cloud installations.
+      - name: first_telemetry_date
+        description: The first date when telemetry reported the current license/server combination.
+      - name: last_telemetry_date
+        description: The last date when telemetry reported the current license/server combination.

@@ -1,6 +1,6 @@
-{{config({
+{{
+  config({
     "materialized": "table",
-    "schema": "finance"
   })
 }}
 

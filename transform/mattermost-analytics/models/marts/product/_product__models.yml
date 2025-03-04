@@ -31,6 +31,10 @@ models:
               field: server_id
       - name: daily_active_users
         description: The number of unique active users for the given server and date.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
       - name: monthly_active_users
         description: The number of unique active users for the date and previous 29 days.
       - name: weekly_active_users
@@ -57,8 +61,16 @@ models:
           Bots and deleted users are excluded. Reported by mattermost server.
       - name: count_registered_users
         description: Total number of users, including deleted users. Reported by mattermost server.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
       - name: count_registered_deactivated_users
         description: Total number of inactive (deleted) users. Reported by mattermost server.
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              inclusive: true
       - name: version_id
         description: The id of the server's version for the given date.
         tests:
@@ -98,16 +110,18 @@ models:
         description: The date that server sent the information.
         tests:
           - not_null
-      - name: installation_type
-        description: The method used for installing the Mattermost server (docker, deb package, ...).
-      - name: server_ip
-        description: The IP address of the server.
       - name: operating_system
         description: The name of the operating system the server is installed at.
       - name: database_type
         description: The type of the database used for this installation (i.e. postgres, mysql, ...).
       - name: database_version
-        description: The version of the database.
+        description: The raw version string of the database, as reported by upstream models.
+      - name: database_version_semver
+        description: The semver version of the database.
+      - name: database_version_major
+        description: The major part of the database version.
+      - name: database_version_minor
+        description: The minor part of the database version.
       - name: is_enterprise_ready
         description: |
           Whether this server is running an enterprise-ready build.
@@ -123,8 +137,12 @@ models:
           There are two "flavours" of the server binary:
           - TE = Team Edition (fully open source and contains no Mattermost proprietary code).
           - E0 = Enterprise Edition (TE + Mattermost proprietary code, and with features activated with a license).
-      - name: reported_versions
-        description: The unique versions reported from the server for that date.
+      - name: installation_id
+        description: The installation ID reported by the server. Exists only for cloud installations.
+      - name: server_ip
+        description: The IP address of the server.
+      - name: installation_type
+        description: The method used for installing the Mattermost server (docker, deb package, ...).
       - name: count_reported_versions
         description: The total number of distinct versions reported for the given date & server.
         tests:
@@ -140,6 +158,13 @@ models:
         description: Whether there were legacy (segment) telemetry data reported for this server on the given date.
       - name: has_diagnostics_data
         description: Whether there were security update server data reported for this server on the given date.
+    tests:
+      # A combination of server id/installation id must be unique per day
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - activity_date
+            - server_id
+            - installation_id
 
   - name: dim_excludable_servers
     description: List of known excludable servers
@@ -176,6 +201,8 @@ models:
         description: Whether the server is in the seed file with known test servers. Data originates from seed file.
       - name: has_reason_community
         description: Whether the server is the community server. Data originated from seed file.
+      - name: has_reason_country
+        description: Whether the server's IP is in a list of excluded countries.
 
   - name: dim_version
     description: List of known server versions
@@ -222,6 +249,11 @@ models:
         tests:
           - unique
           - not_null
+          - relationships:
+              to: ref('dim_daily_license')
+              field: daily_server_id
+              config:
+                where: "activity_date < dateadd(day, -1, current_date) and not is_missing_license_data"
       - name: activity_date
         description: The date for the measurement.
         tests:
@@ -244,6 +276,8 @@ models:
         description: The method used for installing the Mattermost server (docker, deb package, ...).
       - name: registered_user_bin
         description: The group the server belongs based on the number of active (non deleted) registered users.
+      - name: daily_active_users
+        description: The number of daily active users.
       - name: count_registered_active_users
         description: The number of active (not deleted) registered users.
       - name: is_enterprise_ready
@@ -258,7 +292,9 @@ models:
         description: Whether there were security update server data reported for this server on the given date.
       - name: is_missing_activity_data
         description: Whether server activity data are available for the given date and server id.
-
+      - name: is_missing_license_data
+        description: Whether license data are unavailable for the date.
+      
   - name: dim_server_info
     description: Static information for a given server.
     columns:
@@ -269,6 +305,10 @@ models:
           - unique
       - name: installation_id
         description: The id of the installation. Exists only for cloud installations.
+        tests:
+          # An installation ID should exist only for a specific server id
+          - unique:
+              where: "installation_id is not null"
       - name: hosting_type
         description: |
           Type of hosting for this server. Can be one of:
@@ -303,6 +343,16 @@ models:
         description: Count of daily active users on the last day that telemetry was received at.
       - name: last_monthly_active_users
         description: Count of monthly active users on the last day that telemetry was received at.
+      - name: last_server_ip
+        description: The most recent IP address of the server.
+      - name: last_known_ip_country
+        description: The last known country the server is running on, as derived from the last known IP address.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          # Server id with installation id must have a 1:1 relationship
+          combination_of_columns:
+            - server_id
+            - installation_id
 
   - name: dim_daily_server_config
     description: Daily server configuration.
@@ -330,6 +380,276 @@ models:
         description: Whether OpenID with Gitlab OAuth is enabled
       - name: is_openid_office365_enabled
         description: Whether OpenID with Office365 OAuth is enabled
+
+      - name: connection_security_ldap
+      - name: enable_ldap
+      - name: enable_admin_filter
+      - name: enable_sync
+      - name: isdefault_email_attribute_ldap
+      - name: isdefault_first_name_attribute_ldap
+      - name: isdefault_group_display_name_attribute
+      - name: isdefault_group_id_attribute
+      - name: isdefault_id_attribute_ldap
+      - name: isdefault_last_name_attribute_ldap
+      - name: isdefault_login_button_border_color_ldap
+      - name: isdefault_login_button_color_ldap
+      - name: isdefault_login_button_text_color_ldap
+      - name: isdefault_login_field_name
+      - name: isdefault_login_id_attribute
+      - name: isdefault_nickname_attribute_ldap
+      - name: isdefault_position_attribute_ldap
+      - name: isdefault_username_attribute_ldap
+      - name: isempty_admin_filter
+      - name: isempty_group_filter
+      - name: isempty_guest_filter
+      - name: isnotempty_picture_attribute
+      - name: isnotempty_private_key
+      - name: isnotempty_public_certificate
+      - name: max_page_size
+      - name: query_timeout_ldap
+      - name: segment_dedupe_id_ldap
+      - name: skip_certificate_verification
+      - name: sync_interval_minutes
+    
+      - name: enable_saml
+      - name: enable_admin_attribute
+      - name: enable_sync_with_ldap
+      - name: enable_sync_with_ldap_include_auth
+      - name: encrypt_saml
+      - name: ignore_guests_ldap_sync
+      - name: isdefault_admin_attribute
+      - name: isdefault_canonical_algorithm
+      - name: isdefault_email_attribute_saml
+      - name: isdefault_first_name_attribute_saml
+      - name: isdefault_guest_attribute
+      - name: isdefault_id_attribute_saml
+      - name: isdefault_last_name_attribute_saml
+      - name: isdefault_locale_attribute
+      - name: isdefault_login_button_border_color_saml
+      - name: isdefault_login_button_color_saml
+      - name: isdefault_login_button_text
+      - name: isdefault_login_button_text_color_saml
+      - name: isdefault_nickname_attribute_saml
+      - name: isdefault_position_attribute_saml
+      - name: isdefault_scoping_idp_name
+      - name: isdefault_scoping_idp_provider_id
+      - name: isdefault_signature_algorithm
+      - name: isdefault_username_attribute_saml
+      - name: sign_request
+      - name: verify_saml
+
+      - name: allow_insecure_download_url
+      - name: automatic_prepackaged_plugins
+      - name: chimera_oauth_proxy_url
+      - name: is_default_marketplace_url
+      - name: require_plugin_signature
+      - name: as signature_public_key_files
+      - name: enable_plugin
+      - name: enable_alertmanager
+      - name: enable_antivirus
+      - name: enable_autolink
+      - name: enable_aws_sns
+      - name: enable_bitbucket
+      - name: enable_confluence
+      - name: enable_custom_user_attributes
+      - name: enable_focalboard
+      - name: enable_github
+      - name: enable_gitlab
+      - name: enable_health_check
+      - name: enable_jenkins
+      - name: enable_jira
+      - name: enable_jitsi
+      - name: enable_marketplace
+      - name: enable_mattermostprofanityfilter
+      - name: enable_mattermost_plugin_azure_devops
+      - name: enable_mattermost_plugin_hackerone
+      - name: enable_mattermost_plugin_servicenow
+      - name: enable_mattermost_plugin_servicenow_virtual_agent
+      - name: enable_memes
+      - name: enable_mscalendar
+      - name: enable_nps
+      - name: enable_nps_survey
+      - name: enable_playbooks
+      - name: enable_remote_marketplace
+      - name: enable_set_default_theme
+      - name: enable_skype4business
+      - name: enable_todo
+      - name: enable_uploads
+      - name: enable_webex
+      - name: enable_welcome_bot
+      - name: enable_zoom
+      - name: enable_giphy
+      - name: enable_digital_ocean
+      - name: enable_agenda
+      - name: enable_mattermost_apps
+      - name: enable_calls
+      - name: enable_incident_management
+      - name: enable_incident_response
+      - name: enable_matterpoll
+      - name: enable_diceroller
+      - name: enable_comgithubjespinorecommend
+      - name: enable_msteams_meetings
+      - name: enable_msteams_sync
+      - name: enable_commattermostpluginchannelexport 
+      - name: enable_comnilsbrinkmannicebreaker
+      - name: enable_circleci
+      - name: version_alertmanager
+      - name: version_antivirus
+      - name: version_autolink
+      - name: version_aws_sns
+      - name: version_custom_user_attributes
+      - name: version_github
+      - name: version_gitlab
+      - name: version_jenkins
+      - name: version_jira
+      - name: version_msteams_meetings
+      - name: version_nps
+      - name: version_webex
+      - name: version_welcome_bot
+      - name: version_zoom
+      - name: version_giphy
+      - name: version_digital_ocean
+      - name: version_confluence
+      - name: version_mscalendar
+      - name: version_incident_management
+      - name: version_incident_response
+      - name: version_todo
+      - name: version_memes
+      - name: version_jitsi
+      - name: version_skype4business
+      - name: version_mattermostprofanityfilter
+      - name: version_matterpoll
+      - name: version_comgithubjespinorecommend
+      - name: version_agenda        
+      - name: version_msteams_meetings
+      - name: version_commattermostpluginchannelexport
+      - name: version_comnilsbrinkmannicebreaker
+      - name: version_mattermost_apps
+      - name: version_circleci
+      - name: version_diceroller
+      - name: version_focalboard
+      
+      - name: allow_cookies_for_subdomains
+      - name: allow_edit_post_service
+      - name: allow_persistent_notifications
+      - name: allow_persistent_notifications_for_guests                                       
+      - name: allow_synced_drafts
+      - name: close_unused_direct_messages
+      - name: cluster_log_timeout_milliseconds
+      - name: collapsed_threads
+      - name: connection_security_service
+      - name: cors_allow_credentials
+      - name: cors_debug
+      - name: custom_service_terms_enabled
+      - name: custom_cert_header
+      - name: default_team_name
+      - name: developer_flags
+      - name: disable_bots_when_owner_is_deactivated
+      - name: disable_legacy_mfa
+      - name: enable_apiv3
+      - name: enable_api_channel_deletion
+      - name: enable_api_post_deletion
+      - name: enable_api_team_deletion
+      - name: enable_api_trigger_admin_notification
+      - name: enable_api_user_deletion
+      - name: enable_bot_account_creation
+      - name: enable_channel_viewed_messages_service
+      - name: enable_commands_service
+      - name: enable_custom_emoji_service
+      - name: enable_developer_service
+      - name: enable_email_invitations
+      - name: enable_emoji_picker_service
+      - name: enable_file_search
+      - name: enable_gif_picker
+      - name: enable_incoming_webhooks_service
+      - name: enable_insecure_outgoing_connections_service
+      - name: enable_latex
+      - name: enable_legacy_sidebar
+      - name: enable_link_previews
+      - name: enable_local_mode
+      - name: enable_multifactor_authentication_service
+      - name: enable_oauth_service_provider_service
+      - name: enable_onboarding_flow
+      - name: enable_only_admin_integrations_service
+      - name: enable_opentracing
+      - name: enable_outgoing_oauth_connections
+      - name: enable_outgoing_webhooks
+      - name: enable_permalink_previews
+      - name: enable_post_icon_override
+      - name: enable_post_search
+      - name: enable_post_username_override
+      - name: enable_preview_features
+      - name: enable_security_fix_alert
+      - name: enable_svgs
+      - name: enable_testing
+      - name: enable_tutorial
+      - name: enable_user_access_tokens
+      - name: enable_user_statuses
+      - name: enable_user_typing_messages
+      - name: enforce_multifactor_authentication_service
+      - name: experimental_channel_organization
+      - name: experimental_channel_sidebar_organization
+      - name: experimental_data_prefetch
+      - name: experimental_enable_authentication_transfer
+      - name: experimental_enable_default_channel_leave_join_messages
+      - name: experimental_enable_hardened_mode
+      - name: experimental_group_unread_channels
+      - name: experimental_ldap_group_sync
+      - name: experimental_limit_client_config
+      - name: experimental_strict_csrf_enforcement
+      - name: as extend_session_length_with_activity
+      - name: forward_80_to_443
+      - name: gfycat_api_key
+      - name: gfycat_api_secret
+      - name: isdefault_allowed_untrusted_internal_connections
+      - name: isdefault_allow_cors_from 
+      - name: isdefault_cors_exposed_headers
+      - name: isdefault_google_developer_key
+      - name: isdefault_idle_timeout   
+      - name: isdefault_image_proxy_options
+      - name: isdefault_image_proxy_type
+      - name: isdefault_image_proxy_url
+      - name: isdefault_read_timeout
+      - name: isdefault_site_url
+      - name: isdefault_tls_cert_file
+      - name: isdefault_tls_key_file
+      - name: isdefault_write_timeout
+      - name: limit_load_search_result
+      - name: login_with_certificate
+      - name: managed_resource_paths
+      - name: maximum_login_attempts
+      - name: maximum_payload_size
+      - name: maximum_url_length
+      - name: minimum_hashtag_length
+      - name: outgoing_integrations_requests_timeout
+      - name: persistent_notification_interval_minutes
+      - name: persistent_notification_max_count
+      - name: persistent_notification_max_recipients
+      - name: post_edit_time_limit
+      - name: post_priority
+      - name: refresh_post_stats_run_time
+      - name: restrict_custom_emoji_creation
+      - name: restrict_link_previews
+      - name: restrict_post_delete
+      - name: self_hosted_expansion
+      - name: self_hosted_purchase 
+      - name: session_cache_in_minutes
+      - name: session_idle_timeout_in_minutes
+      - name: session_length_mobile_in_days
+      - name: session_length_mobile_in_hours
+      - name: session_length_sso_in_days
+      - name: session_length_sso_in_hours
+      - name: session_length_web_in_days
+      - name: session_length_web_in_hours
+      - name: skip_login_page
+      - name: terminate_sessions_on_password_change
+      - name: thread_auto_follow
+      - name: time_between_user_typing_updates_milliseconds
+      - name: tls_strict_transport
+      - name: uses_letsencrypt
+      - name: websocket_url
+      - name: web_server_mode
+      
       - name: has_segment_telemetry_data
         description: True if data for given server and date were found on Segment, false else.
       - name: has_rudderstack_telemetry_data
@@ -400,3 +720,52 @@ models:
         description: The most recent server id reporting the current installation id.
       - name: count_server_id
         description: The number of unique server ids reporting the current installation id.
+
+
+  - name: dim_daily_license
+    description: | 
+      Summary of license information for each server, based on license reported by telemetry. License is enriched with 
+      CWS data.
+
+    columns:
+      - name: daily_server_id
+        description: A unique id for each server and date
+        tests:
+          - unique
+          - not_null
+      - name: license_id
+        description: The license's unique identifier.
+      - name: customer_id
+        description: The id of the customer assigned to the license. Taken from telemetry data.
+      - name: license_name
+        description: The name of the current license.
+      - name: licensed_seats
+        description: The number of licensed seats for the current license.
+      - name: issued_at
+        description: The date and time the license was issued at.
+      - name: starts_at
+        description: The date and time the license started at.
+      - name: expire_at
+        description: The date and time the license expires at.
+      - name: has_license_expired
+        description: Whether the server reported a license that has expired.
+      - name: is_trial
+        description: Whether the license is a trial license or not.
+      - name: company_name
+        description: The name of the company that this license has been issued for.
+      - name: contact_email
+        description: The email to be used for contacting the license's holder.
+        tags: ['pii']
+      - name: sku_short_name.
+        description: The SKU for the license or `Unknown` if it's not known (i.e. in legacy licenses).
+      - name: source
+        description: |
+          The source of extra data for license. Currently "CWS" for CWS, "Legacy" for legacy license data from S3,
+          or both.
+      - name: is_matching_expiration_date
+        description: |
+          Whether the expiration date reported via telemetry is matching the telemetry date from license information.
+      - name: is_matching_license_seats
+        description: |
+          Whether the licensed seats reported via telemetry is matching the number of licensed seats from license 
+          information.

@@ -24,12 +24,17 @@ models:
         description: NPS feedback submitted.
       - name: score
         description: NPS score submitted.
-      - name: server_version
-        description: The server's version.     
+      - name: version_id
+        description: The id of the server's version for the given date.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_version')
+              field: version_id
       - name: user_role
         description: The role of the user who submitted feedback.        
       - name: feedback_date
-        description: The date the feedback event was sent.            
+        description: The date the feedback event was sent.           
       - name: score_date
         description: The date the score event was sent.
       - name: feedback_timestamp
@@ -59,8 +64,13 @@ models:
         description: The ID of the server the NPS score event originated from.
         tests:
           - not_null
-      - name: server_version
-        description: The server's version.
+      - name: version_id
+        description: The id of the server's version for the given date.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_version')
+              field: version_id
       - name: daily_server_id
         description: A unique identifier for the nps score generated from server_id, activity_date.
         tests:

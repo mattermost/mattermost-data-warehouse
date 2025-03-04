@@ -41,6 +41,9 @@ macros:
       - name: database
         type: string
         description: The database that contains the schema provided as the first argument.
+      - name: exclude
+        type: list
+        description: Relations to not include (if exist).
 
   - name: rudder_daily_event_count
     description: |

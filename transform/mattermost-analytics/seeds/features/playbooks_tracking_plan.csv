@@ -1,0 +1,130 @@
+event_name,event_action,deprecated,deprecation_reason,feature_name
+checklists,add_checklist,false,,playbooks
+checklists,skip_checklist,false,,playbooks
+checklists,rename_checklist,false,,playbooks
+checklists,restore_checklist,false,,playbooks
+checklists,remove_checklist,false,,playbooks
+checklists,move_checklist,false,,playbooks
+frontend,checklists_filter_selected,false,,playbooks
+frontend,click_template_icon,false,,playbooks
+frontend,follower_clicked_run_finished_dm,false,,playbooks
+frontend,follower_clicked_run_started_dm,false,,playbooks
+frontend,playbook_dashboard_run_clicked,false,,playbooks
+frontend,playbook_duplicate_clicked_in_playbook,false,,playbooks
+frontend,playbook_duplicate_clicked_in_playbooks_list,false,,playbooks
+frontend,playbook_export_clicked_in_playbook,false,,playbooks
+frontend,playbook_export_clicked_in_playbooks_list,false,,playbooks
+frontend,playbook_list_run_clicked,false,,playbooks
+frontend,playbook_makeprivate,false,,playbooks
+frontend,playbook_metrics_tab_clicked,false,,playbooks
+frontend,playbook_outline_tab_clicked,false,,playbooks
+frontend,playbook_preview_navbar_section_actions_clicked,false,,playbooks
+frontend,playbook_preview_navbar_section_description_clicked,false,,playbooks
+frontend,playbook_preview_navbar_section_retrospective_clicked,false,,playbooks
+frontend,playbook_preview_navbar_section_status-updates_clicked,false,,playbooks
+frontend,playbook_preview_navbar_section_summary_clicked,false,,playbooks
+frontend,playbook_preview_tab_clicked,false,,playbooks
+frontend,playbook_reports_tab_clicked,false,,playbooks
+frontend,playbook_usage_tab_clicked,false,,playbooks
+frontend,playbookrun_request_update,false,,playbooks
+frontend,playbookrun_request_update_click,false,,playbooks
+frontend,timeline_tab_clicked,false,,playbooks
+frontend,todo_assignedtask_clicked,false,,playbooks
+frontend,todo_overduestatus_clicked,false,,playbooks
+frontend,use_template_option,false,,playbooks
+frontend,view_playbook_outline,false,,playbooks
+frontend,view_playbook_reports,false,,playbooks
+frontend,view_playbook_usage,false,,playbooks
+frontend,view_run_channels_rhs_details,false,,playbooks
+frontend,view_run_details,false,,playbooks
+frontend,view_run_overview,false,,playbooks
+frontend,view_run_retrospective,false,,playbooks
+incident,restore,false,,playbooks
+incident,create,false,,playbooks
+incident,add_timeline_event_from_post,false,,playbooks
+incident,end,false,,playbooks
+incident,remove_timeline_event,false,,playbooks
+incident,unfollow,false,,playbooks
+incident,update_status,false,,playbooks
+incident,change_commander,false,,playbooks
+lhs_category,unfavorite_run,false,,playbooks
+lhs_category,favorite_playbook,false,,playbooks
+lhs_category,favorite_run,false,,playbooks
+lhs_category,unfavorite_playbook,false,,playbooks
+notify_admins,start_trial_to_set_checklist_item_due_date,false,,playbooks
+notify_admins,start_trial_to_access_playbook_dashboard,false,,playbooks
+notify_admins,start_trial_to_access_metrics,false,,playbooks
+notify_admins,start_trial_to_request_update,false,,playbooks
+notify_admins,start_trial_to_create_playbook,false,,playbooks
+notify_admins,start_trial_to_access_retrospective,false,,playbooks
+notify_admins,start_trial_to_add_message_to_timeline,false,,playbooks
+playbookrun_action,update_playbookrun_actions,false,,playbooks
+playbookrun_action,run_playbookrun_action,false,,playbooks
+playbookrun_create,,false,,playbooks
+playbookrun_follow,,false,,playbooks
+playbookrun_leave,,false,,playbooks
+playbookrun_participate,,false,,playbooks
+playbookrun_unfollow,,false,,playbooks
+playbookrun_update_actions,,false,,playbooks
+start_trial,start_trial_to_restrict_playbook_creation,false,,playbooks
+start_trial,start_trial_to_access_playbook_dashboard,false,,playbooks
+start_trial,start_trial_to_access_metrics,false,,playbooks
+start_trial,start_trial_to_access_retrospective,false,,playbooks
+start_trial,start_trial_to_add_message_to_timeline,false,,playbooks
+playbook,create,false,,playbooks
+playbook,delete,false,,playbooks
+playbook,update,false,,playbooks
+playbook,restore,false,,playbooks
+playbook,import,false,,playbooks
+playbook,auto_follow,false,,playbooks
+playbook,auto_unfollow,false,,playbooks
+settings,digest,false,,playbooks
+taskactions_action_executed,mark_item_as_done,false,,playbooks
+taskactions_triggered,,false,,playbooks
+taskactions_updated,,false,,playbooks
+tasks,add_task,false,,playbooks
+tasks,set_assignee_for_task,false,,playbooks
+tasks,move_task,false,,playbooks
+tasks,skip_task,false,,playbooks
+tasks,run_task_slash_command,false,,playbooks
+tasks,restore_task,false,,playbooks
+tasks,modify_task_state,false,,playbooks
+tasks,publish_retrospective,false,,playbooks
+tasks,rename_task,false,,playbooks
+tasks,update_retrospective,false,,playbooks
+tasks,remove_task,false,,playbooks
+UpdatePlaybook,,true,"Previous version of telemetry",playbooks
+CreatePlaybook,,true,"Previous version of telemetry",playbooks
+CreateIncident,,true,"Previous version of telemetry",playbooks
+EndIncident,,true,"Previous version of telemetry",playbooks
+ModifyStateChecklistItem,,true,"Previous version of telemetry",playbooks
+CheckChecklistItem,,true,"Previous version of telemetry",playbooks
+SetAssignee,,true,"Previous version of telemetry",playbooks
+ChangeStage,,true,"Previous version of telemetry",playbooks
+ChangeCommander,,true,"Previous version of telemetry",playbooks
+RunChecklistItemSlashCommand,,true,"Previous version of telemetry",playbooks
+RestartIncident,,true,"Previous version of telemetry",playbooks
+DeletePlaybook,,true,"Previous version of telemetry",playbooks
+AddChecklistItem,,true,"Previous version of telemetry",playbooks
+UncheckChecklistItem,,true,"Previous version of telemetry",playbooks
+RenameChecklistItem,,true,"Previous version of telemetry",playbooks
+MoveChecklistItem,,true,"Previous version of telemetry",playbooks
+RemoveChecklistItem,,true,"Previous version of telemetry",playbooks
+frontend,playbook_preview_navbar_section_checklists_clicked,false,,playbooks
+frontend,playbook_preview_navbar_runs_in_progress_button_clicked,false,,playbooks
+notify_admins,start_trial_to_export_channel,false,,playbooks
+frontend,playbookrun_get_involved_click,false,,playbooks
+frontend,playbook_preview_navbar_section_statusUpdates_clicked,false,,playbooks
+frontend,dm_assignedtask_clicked,false,,playbooks
+start_trial,start_trial_to_set_checklist_item_due_date,false,,playbooks
+start_trial,start_trial_to_restrict_playbook_access,false,,playbooks
+start_trial,start_trial_to_export_channel,false,,playbooks
+start_trial,start_trial_to_create_playbook,false,,playbooks
+notify_admins,start_trial_to_view_timeline,false,,playbooks
+notify_admins,start_trial_to_restrict_playbook_access,false,,playbooks
+start_trial,start_trial_to_view_timeline,false,,playbooks
+frontend,playbookrun_get_involved_join,true,"Replaced by playbookrun_participate",playbooks
+frontend,todo_runsinprogress_clicked,true,"Not found in code",playbooks
+frontend,timeline_tab_filter_selected,true,"Not found in code",playbooks
+incident,restart,false,,playbooks
+incident,change_stage,true,"Not found in code",playbooks

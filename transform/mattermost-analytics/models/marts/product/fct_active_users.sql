@@ -39,6 +39,12 @@ select
     , coalesce(sas.monthly_active_users, 0) as server_monthly_active_users
     , coalesce(sas.count_registered_users, 0) as count_registered_users
     , coalesce(sas.count_registered_deactivated_users, 0) as count_registered_deactivated_users
+    , coalesce(sas.count_public_channels, 0) as count_public_channels
+    , coalesce(sas.count_private_channels, 0) as count_private_channels
+    , coalesce(sas.count_teams, 0) as count_teams
+    , coalesce(sas.count_slash_commands, 0) as count_slash_commands
+    , coalesce(sas.count_direct_message_channels, 0) as count_direct_message_channels
+    , coalesce(sas.count_posts, 0) as count_posts
     -- Extra dimensions
     , {{ dbt_utils.generate_surrogate_key(['sas.version_full']) }} AS version_id
     -- Metadata

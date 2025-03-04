@@ -1,0 +1,572 @@
+version: 2
+
+models:
+  - name: base_events_delta
+    description: |
+      Contains raw events that have been ingested in mm_telemetry_prod but haven't yet been deduplicated. This model is
+      used as a "staging" table before adding deduplicated data back to base events table.
+
+    columns:
+      - name: context_page_referrer
+        data_type: varchar
+      - name: channel
+        data_type: varchar
+      - name: context_app_namespace
+        data_type: varchar
+      - name: id
+        data_type: varchar
+      - name: event
+        data_type: varchar
+      - name: user_actual_id
+        data_type: varchar
+      - name: event_text
+        data_type: varchar
+      - name: original_timestamp
+        data_type: timestamp_ntz
+      - name: context_library_name
+        data_type: varchar
+      - name: sent_at
+        data_type: timestamp_ntz
+      - name: type
+        data_type: varchar
+      - name: context_app_version
+        data_type: varchar
+      - name: user_actual_role
+        data_type: varchar
+      - name: context_page_url
+        data_type: varchar
+      - name: context_os_name
+        data_type: varchar
+      - name: uuid_ts
+        data_type: timestamp_ntz
+      - name: context_page_title
+        data_type: varchar
+      - name: timestamp
+        data_type: timestamp_ntz
+      - name: channel_id
+        data_type: varchar
+      - name: anonymous_id
+        data_type: varchar
+      - name: context_app_build
+        data_type: varchar
+      - name: context_page_search
+        data_type: varchar
+      - name: context_library_version
+        data_type: varchar
+      - name: context_ip
+        data_type: varchar
+      - name: context_useragent
+        data_type: varchar
+      - name: context_app_name
+        data_type: varchar
+      - name: context_locale
+        data_type: varchar
+      - name: context_screen_density
+        data_type: number
+      - name: context_page_path
+        data_type: varchar
+      - name: context_os_version
+        data_type: varchar
+      - name: received_at
+        data_type: timestamp_ntz
+      - name: category
+        data_type: varchar
+      - name: duration
+        data_type: number
+      - name: user_id
+        data_type: varchar
+      - name: root_id
+        data_type: varchar
+      - name: post_id
+        data_type: varchar
+      - name: sort
+        data_type: varchar
+      - name: team_id
+        data_type: varchar
+      - name: userid
+        data_type: varchar
+      - name: version
+        data_type: varchar
+      - name: keyword
+        data_type: varchar
+      - name: count
+        data_type: number
+      - name: gfyid
+        data_type: varchar
+      - name: context
+        data_type: varchar
+      - name: field
+        data_type: varchar
+      - name: plugin_id
+        data_type: varchar
+      - name: installed_version
+        data_type: varchar
+      - name: group_constrained
+        data_type: boolean
+      - name: value
+        data_type: varchar
+      - name: include_deleted
+        data_type: boolean
+      - name: role
+        data_type: varchar
+      - name: channel_ids_0
+        data_type: varchar
+      - name: channel_ids_1
+        data_type: varchar
+      - name: privacy
+        data_type: varchar
+      - name: scheme_id
+        data_type: varchar
+      - name: channel_ids_2
+        data_type: varchar
+      - name: channelsids
+        data_type: varchar
+      - name: channel_ids
+        data_type: varchar
+      - name: from_page
+        data_type: varchar
+      - name: context_compiled
+        data_type: boolean
+      - name: context_terminators_lastindex
+        data_type: number
+      - name: context_contains
+        data_type: varchar
+      - name: context_relevance
+        data_type: number
+      - name: warnmetricid
+        data_type: varchar
+      - name: metric
+        data_type: varchar
+      - name: error
+        data_type: varchar
+      - name: num_invitations_sent
+        data_type: varchar
+      - name: num_invitations
+        data_type: number
+      - name: channel_sidebar
+        data_type: boolean
+      - name: app
+        data_type: varchar
+      - name: method
+        data_type: varchar
+      - name: remaining
+        data_type: number
+      - name: screen
+        data_type: varchar
+      - name: filter
+        data_type: varchar
+      - name: context_campaign_name
+        data_type: varchar
+      - name: context_campaign_source
+        data_type: varchar
+      - name: context_campaign_medium
+        data_type: varchar
+      - name: context_campaign_content
+        data_type: varchar
+      - name: context_passed_ip
+        data_type: varchar
+      - name: context_request_ip
+        data_type: varchar
+      - name: context_user_agent
+        data_type: varchar
+      - name: channels_ids
+        data_type: varchar
+      - name: context_page_referring_domain
+        data_type: varchar
+      - name: context_app_where
+        data_type: varchar
+      - name: context_where
+        data_type: varchar
+      - name: context_page_where
+        data_type: varchar
+      - name: context_campaign_where
+        data_type: varchar
+      - name: context_screen_where
+        data_type: varchar
+      - name: context_library_where
+        data_type: varchar
+      - name: context_os_where
+        data_type: varchar
+      - name: _where
+        data_type: varchar
+      - name: context_traits_where
+        data_type: varchar
+      - name: context_page_initial_referrer
+        data_type: varchar
+      - name: context_page_initial_referring_domain
+        data_type: varchar
+      - name: context_page_tab_url
+        data_type: varchar
+      - name: warn_metric_id
+        data_type: varchar
+      - name: app_id
+        data_type: varchar
+      - name: context_campaign_term
+        data_type: varchar
+      - name: context_screen_width
+        data_type: number
+      - name: context_screen_height
+        data_type: number
+      - name: context_screen_inner_width
+        data_type: number
+      - name: context_screen_inner_height
+        data_type: number
+      - name: context_campaign_referrer
+        data_type: varchar
+      - name: context_scregn_density
+        data_type: number
+      - name: context_destination_id
+        data_type: varchar
+      - name: context_source_type
+        data_type: varchar
+      - name: context_source_id
+        data_type: varchar
+      - name: context_destination_type
+        data_type: varchar
+      - name: context_app_namgspace
+        data_type: varchar
+      - name: catggory
+        data_type: varchar
+      - name: fresh
+        data_type: boolean
+      - name: channels
+        data_type: boolean
+      - name: boards
+        data_type: boolean
+      - name: playbooks
+        data_type: boolean
+      - name: invite_count
+        data_type: number
+      - name: todo
+        data_type: boolean
+      - name: github
+        data_type: boolean
+      - name: jira
+        data_type: boolean
+      - name: gitlab
+        data_type: boolean
+      - name: zoom
+        data_type: boolean
+      - name: context_traits_order_id
+        data_type: varchar
+      - name: context_traits_tenant
+        data_type: varchar
+      - name: context_traits_session_id
+        data_type: varchar
+      - name: num_total
+        data_type: number
+      - name: num_medium
+        data_type: number
+      - name: is_first_preload
+        data_type: boolean
+      - name: num_low
+        data_type: number
+      - name: num_high
+        data_type: number
+      - name: context_traits_event_tenant
+        data_type: varchar
+      - name: context_traits_id
+        data_type: number
+      - name: context_traits_lastname
+        data_type: varchar
+      - name: context_traits_firstname
+        data_type: varchar
+      - name: context_traits_user_id
+        data_type: number
+      - name: context_traits_email
+        data_type: varchar
+      - name: context_traits_instance_id
+        data_type: varchar
+      - name: max_api_resource_size
+        data_type: number
+      - name: num_of_request
+        data_type: number
+      - name: longest_api_resource
+        data_type: varchar
+      - name: longest_api_resource_duration
+        data_type: float
+      - name: total_size
+        data_type: number
+      - name: total_duration
+        data_type: number
+      - name: channel_len
+        data_type: number
+      - name: first
+        data_type: varchar
+      - name: third_recomputations
+        data_type: number
+      - name: first_recomputations
+        data_type: number
+      - name: first_effectiveness
+        data_type: number
+      - name: second_effectiveness
+        data_type: number
+      - name: after
+        data_type: varchar
+      - name: second_recomputations
+        data_type: number
+      - name: second
+        data_type: varchar
+      - name: third
+        data_type: varchar
+      - name: third_effectiveness
+        data_type: number
+      - name: context_campaign_id
+        data_type: varchar
+      - name: context_traits_shipping_method_kind
+        data_type: varchar
+      - name: context_traits_last_audience_visit
+        data_type: timestamp_ntz
+      - name: context_traits_nb_of_audience_visit
+        data_type: number
+      - name: caller_info
+        data_type: varchar
+      - name: context_campaign_source_utm_campaign
+        data_type: varchar
+      - name: request_count
+        data_type: number
+      - name: context_traits_longitude
+        data_type: float
+      - name: context_traits_latitude
+        data_type: float
+      - name: context_traits_active_address_id
+        data_type: number
+      - name: context_traits_cellphone
+        data_type: varchar
+      - name: context_session_start
+        data_type: boolean
+      - name: context_session_id
+        data_type: number
+      - name: context_traits_referrer
+        data_type: varchar
+      - name: context_traits_version_cli
+        data_type: varchar
+      - name: context_traits_address
+        data_type: varchar
+      - name: context_traits_district
+        data_type: varchar
+      - name: context_traits_item_in_cart
+        data_type: number
+      - name: context_traits_province
+        data_type: varchar
+      - name: context_traits_city
+        data_type: varchar
+      - name: context_traits_subdistrict
+        data_type: varchar
+      - name: context_campaign_expid
+        data_type: varchar
+      - name: context_traits_auth_provider
+        data_type: varchar
+      - name: context_traits_portal_customer_id
+        data_type: varchar
+      - name: context_traits_use_oauth
+        data_type: boolean
+      - name: context_campaign
+        data_type: varchar
+      - name: started_by_role
+        data_type: varchar
+      - name: type_location
+        data_type: varchar
+      - name: context_campaign_sources
+        data_type: varchar
+      - name: context_app_proto_node_options
+        data_type: varchar
+      - name: context_campaign_proto_shell
+        data_type: varchar
+      - name: context_screen_proto_shell
+        data_type: varchar
+      - name: context_library_proto_node_options
+        data_type: varchar
+      - name: context_os_proto_shell
+        data_type: varchar
+      - name: __proto_shell
+        data_type: varchar
+      - name: context_os_proto_node_options
+        data_type: varchar
+      - name: context_campaign_proto_node_options
+        data_type: varchar
+      - name: context_page_proto_node_options
+        data_type: varchar
+      - name: context_traits_proto_shell
+        data_type: varchar
+      - name: context_library_proto_shell
+        data_type: varchar
+      - name: context_proto_node_options
+        data_type: varchar
+      - name: context_page_proto_shell
+        data_type: varchar
+      - name: context_traits_proto_node_options
+        data_type: varchar
+      - name: context_screen_proto_node_options
+        data_type: varchar
+      - name: __proto_node_options
+        data_type: varchar
+      - name: context_app_proto_shell
+        data_type: varchar
+      - name: priority
+        data_type: varchar
+      - name: requested_ack
+        data_type: boolean
+      - name: utm_campaign
+        data_type: varchar
+      - name: utm_medium
+        data_type: varchar
+      - name: utm_source
+        data_type: varchar
+      - name: source
+        data_type: varchar
+      - name: context_traits_language
+        data_type: varchar
+      - name: context_traits_org_id
+        data_type: number
+      - name: context_campaign_params
+        data_type: varchar
+      - name: view_type
+        data_type: varchar
+      - name: _view
+        data_type: varchar
+      - name: board
+        data_type: varchar
+      - name: card
+        data_type: varchar
+      - name: card_template_id
+        data_type: varchar
+      - name: uid
+        data_type: varchar
+      - name: sid
+        data_type: varchar
+      - name: utm_content
+        data_type: varchar
+      - name: download
+        data_type: varchar
+      - name: board_template_id
+        data_type: varchar
+      - name: ticket_form_id
+        data_type: varchar
+        data_type: varchar
+      - name: mkt_tok
+        data_type: varchar
+      - name: email
+        data_type: varchar
+      - name: name
+        data_type: varchar
+      - name: inquiry
+        data_type: varchar
+      - name: inapp_notice
+        data_type: varchar
+      - name: banner
+        data_type: varchar
+      - name: cta
+        data_type: varchar
+      - name: src
+        data_type: varchar
+      - name: _from
+        data_type: varchar
+      - name: success
+        data_type: boolean
+      - name: errors
+        data_type: varchar
+      - name: section
+        data_type: varchar
+      - name: template
+        data_type: varchar
+      - name: customized_visibility
+        data_type: boolean
+      - name: customized_name
+        data_type: boolean
+      - name: checksum
+        data_type: varchar
+      - name: inquiry_issue
+        data_type: varchar
+      - name: tf_description
+        data_type: varchar
+      - name: tf_anonymous_requester_email
+        data_type: varchar
+      - name: tf_subject
+        data_type: varchar
+      - name: qx
+        data_type: varchar
+      - name: qw
+        data_type: varchar
+      - name: qk
+        data_type: varchar
+      - name: qp
+        data_type: varchar
+      - name: typeform_source
+        data_type: varchar
+      - name: context_traits_name
+        data_type: varchar
+      - name: context_traits_identity
+        data_type: varchar
+      - name: persistent_notifications
+        data_type: boolean
+      - name: utm_id
+        data_type: varchar
+      - name: context_user_agent_data_mobile
+        data_type: boolean
+      - name: context_user_agent_data_brands
+        data_type: varchar
+      - name: context_user_agent_data_platform
+        data_type: varchar
+      - name: servicenow
+        data_type: boolean
+      - name: sort_by
+        data_type: varchar
+      - name: q
+        data_type: varchar
+      - name: u
+        data_type: varchar
+      - name: license_id
+        data_type: varchar
+      - name: context_traits_phone
+        data_type: varchar
+      - name: org_id
+        data_type: varchar
+      - name: redirect_source
+        data_type: varchar
+      - name: url
+        data_type: varchar
+      - name: context_traits_version
+        data_type: varchar
+      - name: context_traits_edition
+        data_type: varchar
+      - name: uype
+        data_type: varchar
+      - name: seats
+        data_type: number
+      - name: users
+        data_type: number
+      - name: join_call
+        data_type: varchar
+      - name: my_auth
+        data_type: boolean
+      - name: context_timezone
+        data_type: varchar
+      - name: context_traits_phone_number
+        data_type: varchar
+      - name: context_traits_date_of_birth
+        data_type: timestamp_tz
+      - name: context_campaign_device
+        data_type: varchar
+      - name: context_campaign_contentewd
+        data_type: varchar
+      - name: context_campaign_placement
+        data_type: varchar
+      - name: context_campaign_type
+        data_type: varchar
+      - name: context_campaign_sq
+        data_type: varchar
+      - name: context_campaign_creative
+        data_type: varchar
+      - name: context_campaign_network
+        data_type: varchar
+      - name: context_campaign_matchtype
+        data_type: varchar
+      - name: context_campaign_adgroup
+        data_type: varchar
+      - name: context_campaign_channel
+        data_type: varchar
+      - name: context_campaign_keyword
+        data_type: varchar
+      - name: context_campaign_nooverride
+        data_type: varchar

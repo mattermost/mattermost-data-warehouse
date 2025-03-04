@@ -17,6 +17,9 @@ databases:
     - snowflake:
         shared: yes
 
+    - snowflake_sample_data:
+        shared: yes
+
 
 # Roles
 roles:
@@ -233,10 +236,28 @@ roles:
                     - archive.*.*
                     - dev.*.*
 
-    # Object Roles
-
-    # User Roles
-
+    - test_bi:
+        warehouses:
+            - transform_xs
+        privileges:
+            databases:
+                read:
+                    - analytics
+                    - snowflake_sample_data
+            schemas:
+                read:
+                    - analytics.mart_common
+                    - analytics.mart_product
+                    - analytics.mart_release
+                    - analytics.mart_sales
+                    - snowflake_sample_data.*
+            tables:
+                read:
+                    - analytics.mart_common.*
+                    - analytics.mart_product.*
+                    - analytics.mart_release.*
+                    - analytics.mart_sales.*
+                    - snowflake_sample_data.*.*
 
 # Users
 users:
@@ -252,6 +273,12 @@ users:
             - stitch
 
     - rudderstack:
+        can_login: yes
+        member_of:
+            - rudderstack
+            - stitch
+
+    - rudderstack_bot:
         can_login: yes
         member_of:
             - rudderstack
@@ -278,6 +305,11 @@ users:
         can_login: yes
         member_of:
             - stitch
+
+    - test_user:
+        can_login: no
+        member_of:
+            - test_bi
 
 # Warehouses
 warehouses:

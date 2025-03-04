@@ -1,0 +1,45 @@
+version: 2
+
+models:
+  - name: grp_copilot_tracks
+    description: |
+      Copilot events. Offers a semi-structured view of raw data.
+
+    columns:
+      - name: event_id
+        description: The event's id.
+      - name: event_name
+        description: The name of the event.
+      - name: event_table
+        description: The name of the event table.
+      - name: user_id
+        description: |
+          The ID of the user that sent the event. 
+          The user_id is participant_id in server side event tables and actual_user_id in client side event tables, this is handled using coalesce.
+      - name: server_id
+        description: The ID of the server the event originated from.
+      - name: received_at
+        description: Timestamp registered by RudderStack when the event was ingested (received).
+      - name: timestamp
+        description: Timestamp registered by RudderStack when the event occurred refactored to clients clock skew.
+      - name: event_date
+        description: The date that the event was received at.
+      - name: feature_name
+        description: The name of the feature. Always `Copilot` for Copilot Plugin.
+      - name: feature_skus
+        description: An array with the SKUs that this event may be triggered from.
+      # Extra columns appearing in majority of events
+      - name: plugin_version
+        description: The version of the copilot plugin.
+      - name: plugin_build
+        description: The build of the copilot plugin.
+      - name: server_version
+        description: The version of the server running the copilot plugin.
+      - name: bot_id
+        description: The id of the bot.
+      - name: bot_service_type
+        description: The service type of the bot.
+    tests:
+      - dbt_utils.expression_is_true:
+          name: assert_valid_sku_names
+          expression: "array_size(array_except(feature_skus, {{ var('known_skus') }})) = 0 "

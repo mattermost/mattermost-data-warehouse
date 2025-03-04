@@ -1,7 +1,8 @@
 with cloud_trial_requests_pre as (
     select
         email,
-        cws_installation, 
+        cws_installation,
+        cws_dns,
         trial_start_at,
         trial_end_at
     from
@@ -17,6 +18,8 @@ cloud_trial_requests as (
         ctr.email,
         ctr.trial_start_at,
         ctr.trial_end_at,
+        ctr.cws_installation,
+        ctr.cws_dns,
         l.lead_id as existing_lead_id,
         cm.campaign_member_id as existing_campaign_member_id,
         '{{ var('cloud_enterprise_trial_campaign_id') }}' as campaign_id,
@@ -28,7 +31,8 @@ cloud_trial_requests as (
             ELSE null
         END as campaign_member_status,
         -- Extra validation
-        {{ validate_email('ctr.email') }} as is_valid_email
+        {{ validate_email('ctr.email') }} as is_valid_email,
+        {{ is_blacklisted_email('ctr.email') }} as is_blacklisted_email
     from
         cloud_trial_requests_pre ctr
         left join {{ ref('stg_salesforce__lead') }} l on ctr.email = l.email

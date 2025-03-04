@@ -1,6 +1,7 @@
 {{config({
     "materialized": 'incremental',
     "schema": "mattermost",
+    "incremental_strategy": "delete+insert",
     "unique_key":'id',
     "snowflake_warehouse": "transform_l"
   })

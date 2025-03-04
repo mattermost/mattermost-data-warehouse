@@ -61,6 +61,18 @@ models:
         description: |
           Total number of active registered users. Calculated as 
           `count_registered_users - count_registered_deactivated_users`.
+      - name: count_public_channels
+        description: Number of public channels
+      - name: count_private_channels
+        description: Number of private channels
+      - name: count_teams
+        description: Number of teams
+      - name: count_slash_commands
+        description: Number of slash commands
+      - name: count_direct_message_channels
+        description: Number of DMs
+      - name: count_posts
+        description: Number of posts
       - name: age_in_days
         description: Number of days since the first telemetry received from the server.
         tests:
@@ -138,3 +150,39 @@ models:
         description: The server's installation id.
       - name: cloud_hostname
         description: The name of the cloud workspace. Must be in format `<name>.cloud.mattermost.com`.
+
+  - name: int_server_telemetry_summary
+    description: A summary of telemetry received from each server.
+
+    columns:
+      - name: server_id
+        description: The server id.
+      - name: first_activity_date
+        description: The first date that telemetry was received from the server.
+      - name: last_activity_date
+        description: The last date that telemetry was received from the server.
+      - name: first_binary_edition
+        description: The first binary edition reported by the server.
+      - name: last_binary_edition
+        description: The last binary edition reported by the server.
+      - name: first_count_registered_active_users
+        description: The first count of registered (but not deleted) users reported by the server.
+      - name: last_count_registered_active_users
+        description: The last count of registered (but not deleted) users reported by the server.
+      - name: last_daily_active_users
+        description: The last daily active users reported by the server.
+      - name: last_monthly_active_users
+        description: The last monthly active users reported by the server.
+      - name: last_server_ip
+        description: The last known IP address of the server.
+
+  - name: int_server_ip_to_country
+    description: A mapping of server to country via the server's last known IP address.
+
+    columns:
+      - name: server_id
+        description: The server id.
+      - name: last_server_ip
+        description: The server's last known IP address.
+      - name: last_known_ip_country
+        description: The country of the server's last known IP address.

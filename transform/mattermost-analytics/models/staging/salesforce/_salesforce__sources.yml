@@ -2,16 +2,26 @@ version: 2
 
 sources:
   - name: salesforce
-    database: analytics
+    database: 'ANALYTICS'
     schema: orgm_raw
     loader: Stitch
     description: |
       Salesforce entities replicated to data warehouse.
     tags:
       - stitch
+    freshness:
+        warn_after:
+          count: 1
+          period: day
+        error_after:
+          count: 2
+          period: day
+    loaded_at_field: createddate
+
 
     tables:
       - name: _sdc_rejected
+        freshness: null # do not check freshness for this table
         columns:
           - name: record
           - name: reason
@@ -170,6 +180,7 @@ sources:
           - name: recordtypeid
 
       - name: billing_entity__c
+        freshness: null # do not check freshness for this table
         columns:
           - name: createdbyid
           - name: createddate
@@ -495,6 +506,7 @@ sources:
           - name: lastreferenceddate
 
       - name: customer_onboarding__c
+        freshness: null # do not check freshness for this table
         columns:
           - name: account_name__c
           - name: account_owner__c
@@ -558,6 +570,7 @@ sources:
           - name: lastactivitydate
 
       - name: customer_reference__c
+        freshness: null # do not check freshness for this table
         columns:
           - name: account__c
           - name: approved_by_legal__c
@@ -594,6 +607,7 @@ sources:
           - name: lastvieweddate
 
       - name: customer_risk__c
+        freshness: null # do not check freshness for this table
         columns:
           - name: account_owner__c
           - name: account__c
@@ -638,6 +652,7 @@ sources:
           - name: lastreferenceddate
 
       - name: customer_risk__history
+        freshness: null # do not check freshness for this table
         columns:
           - name: createdbyid
           - name: createddate
@@ -854,6 +869,7 @@ sources:
           - name: trial_activation_date__c
 
       - name: netsuite_conn__netsuite_financial__c
+        freshness: null # do not check freshness for this table
         columns:
           - name: createdbyid
           - name: createddate
@@ -1036,6 +1052,7 @@ sources:
           - name: pricebook2id
 
       - name: opportunity_sg
+        freshness: null # do not check freshness for this table
         columns:
           - name: accountid
           - name: additional_environment_details__c
@@ -1305,6 +1322,7 @@ sources:
           - name: subs_prev_version_id__c
 
       - name: pricebookentry
+        freshness: null # do not check freshness for this table
         columns:
           - name: createdbyid
           - name: createddate
@@ -1327,6 +1345,7 @@ sources:
           - name: _sdc_table_version
 
       - name: product2
+        freshness: null # do not check freshness for this table
         columns:
           - name: createdbyid
           - name: createddate
@@ -1633,6 +1652,7 @@ sources:
           - name: completeddatetime
 
       - name: territory_mapping__c
+        freshness: null # do not check freshness for this table
         columns:
           - name: area__c
           - name: commercial_csm__c
@@ -1698,6 +1718,7 @@ sources:
           - name: lastvieweddate
 
       - name: user
+        freshness: null # do not check freshness for this table
         columns:
           - name: createddate
           - name: department
@@ -1733,6 +1754,7 @@ sources:
           - name: _sdc_table_version
 
       - name: userrole
+        freshness: null # do not check freshness for this table
         columns:
           - name: caseaccessforaccountowner
           - name: contactaccessforaccountowner

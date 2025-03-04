@@ -1,0 +1,7 @@
+version: 1
+type: plugin-packet
+license_id: 0ubekqbvxkptxoasnq1qdadkz1
+customer_id: jcvj1vkppgc7takujqe4449itu
+extras:
+  plugin_id: com.mattermost.plugin
+  plugin_version: 1.0.1

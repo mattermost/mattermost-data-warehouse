@@ -6,9 +6,7 @@ from extract.s3_extract.stage_import import (
     extract_from_stage,
     get_diagnostics_pattern,
     get_path,
-    get_push_proxy_pattern,
     licenses_import,
-    push_proxy_import,
     releases_import,
 )
 
@@ -84,44 +82,6 @@ def test_get_diagnostics_pattern(loc, import_date, pattern):
 )
 def test_get_path(aws_account_id, az, expected):
     assert get_path(aws_account_id, az) == expected
-
-
-@pytest.mark.parametrize(
-    "import_date,expected",
-    [
-        ("2022-10-01", ".*2022-10-01\\/.*"),
-        ("2022/10/01", ".*2022\\/10\\/01\\/.*"),
-    ],
-)
-def test_get_push_proxy_pattern(import_date, expected):
-    assert get_push_proxy_pattern(import_date) == expected
-
-
-@pytest.mark.parametrize(
-    "location,table,stage,zone",
-    [
-        ("US", "logs", "push_proxy_stage", "us-east-1"),
-        ("DE", "de_logs", "push_proxy_de_stage", "eu-central-1"),
-        ("TEST", "test_logs", "push_proxy_test_stage", "us-east-1"),
-    ],
-)
-def test_push_proxy_import(mocker, mock_environment, location, table, stage, zone):
-    # GIVEN: environment configured for handling push proxy import
-    # GIVEN: calls to extract from stage are captured
-    mock_extract = mocker.patch("extract.s3_extract.stage_import.extract_from_stage")
-
-    # WHEN: push proxy job is triggered for a specific location and date
-    push_proxy_import(location, "2022/10/01")
-
-    # THEN: expect extract to have been called once
-    mock_extract.assert_called_once_with(
-        table,
-        stage,
-        "push_proxy",
-        f"AWSLogs/test-aws-account-id/elasticloadbalancing/{zone}",
-        ".*2022\\/10\\/01\\/.*",
-        mock_environment,
-    )
 
 
 def test_licenses_import(mocker, mock_environment):

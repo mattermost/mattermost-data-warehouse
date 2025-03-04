@@ -54,6 +54,9 @@ models:
     marts:
       +materialized: table
       tags: ['marts']
+      common:
+        schema: mart_common
+        tags: ['nightly', 'common']
       data_eng:
         schema: mart_data_eng
         tags: ['nightly', 'data-eng']
@@ -81,6 +84,9 @@ models:
     reports:
       +materialized: table
       tags: ['reports']
+      mattermost-docs:
+        schema: reports_docs
+        tags: [ 'nightly', 'product' ]
       product:
         schema: reports_product
         tags: [ 'nightly', 'product' ]
@@ -108,20 +114,34 @@ seeds:
         +column_types:
           code: varchar(2)
           name: varchar(50)
+      email_domain_blacklist:
+        +column_types:
+          email_domain: varchar(50)
     features:
       +schema: seed_product_features
-      event_to_feature_mapping:
+      tracking_plan:
         # Override column types
         +column_types:
           event_name: varchar(100)
           category: varchar(100)
           event_type: varchar(200)
+          property_name: varchar(100)
+          property_value: varchar(200)
           feature_name: varchar(50)
-      feature_aliases:
+      playbooks_tracking_plan:
         # Override column types
         +column_types:
-          alias: varchar(20)
+          event_name: varchar(100)
+          event_action: varchar(100)
+          deprecated: boolean
+          deprecation_reason: varchar(200)
           feature_name: varchar(50)
+    servers:
+      server_blacklist:
+        +column_types:
+          installation_id: varchar(100)
+          server_id: varchar(100)
+          reason: varchar(200)
 
 tests:
   dbt_project_evaluator:
@@ -140,12 +160,14 @@ vars:
     test_coverage_target: 75
     model_types: [ 'staging', 'intermediate', 'marts', 'other', 'reports' ]
     staging_prefixes: ['stg_', 'base_']
-    marts_prefixes: ['fct_', 'dim_', 'grp_']
+    marts_prefixes: ['fct_', 'dim_', 'grp_', 'bdg_', 'sync_']
     reports_folder_name: reports
     reports_prefixes: [ 'rpt_' ]
 
+  env_vars_to_query_tag_list: ['DBT_CLOUD_PR_ID', 'DBT_CLOUD_PROJECT_ID']
 
-    # Community Server ID
+
+  # Community Server ID
   community_server_id : 93mykbogbjfrbbdqphx3zhze5c
 
   # Salesforce variables
@@ -163,7 +185,84 @@ vars:
   # equals to a total of 30 days.
   monthly_days: 29
 
+  # List of Known SKUs
+  known_skus: ["professional", "enterprise"]
+
+  # List of excludable countries
+  excluded_countries: ["Russia", "Iran", "North Korea"]
+
+  # List of country top-level domains blacklisted in SF
+  blacklisted_country_tlds:
+    - ".by"
+    - ".cu"
+    - ".ir"
+    - ".kp"
+    - ".mm"
+    - ".ru"
+    - ".sy"
+    - ".ve"
+
+
+  # List of properties for performance metrics
+  performance_metrics_properties:
+    # Event and user properties
+    - "category"
+    - "user_id"
+    - "type"
+    - "user_actual_id"
+    # Context properties
+    - "context_app_namespace"
+    - "context_library_name"
+    - "context_app_version"
+    - "context_app_build"
+    - "context_library_version"
+    - "context_app_name"
+    - "context_locale"
+    - "context_screen_density"
+    # Properties
+    - "after"
+    - "channel"
+    - "count"
+    - "duration"
+    - "first"
+    - "first_effectiveness"
+    - "first_recomputations"
+    - "fresh"
+    - "is_first_preload"
+    - "longest_api_resource"
+    - "longest_api_resource_duration"
+    - "max_api_resource_size"
+    - "num_high"
+    - "num_low"
+    - "num_medium"
+    - "num_of_request"
+    - "num_total"
+    - "request_count"
+    - "second"
+    - "second_effectiveness"
+    - "second_recomputations"
+    - "third"
+    - "third_effectiveness"
+    - "third_recomputations"
+    - "total_duration"
+    - "total_size"
+    - "user_actual_role"
+
+  # Reusable constants
+  const_unknown_features: 'unknown_features'
+
 on-run-start:
   -  '{{ create_parse_qs_udf()}}'
   -  '{{ create_extract_license_data_udf()}}'
   -  '{{ create_parse_user_agent_udf()}}'
+
+dispatch:
+  - macro_namespace: dbt
+    search_order:
+      - mattermost_analytics
+      - dbt_snowflake_query_tags
+      - dbt
+
+query-comment:
+  comment: '{{ dbt_snowflake_query_tags.get_query_comment(node) }}'
+  append: true # Snowflake removes prefixed comments.

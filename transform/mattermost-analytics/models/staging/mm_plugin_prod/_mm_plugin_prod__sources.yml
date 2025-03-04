@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: mm_plugin_prod
-    database: raw
+    database: 'RAW'
     schema: mm_plugin_prod
     loader: Rudderstack
     description: |
